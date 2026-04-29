@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import "./globals.css";
+import Footer from "./components/Footer";
 
 export default function RootLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
       <body className={`transition-colors duration-500 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
         <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
         {children}
+        <Footer/>
       </body>
     </html>
   );
