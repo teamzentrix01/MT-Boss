@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+
+@layer base {
+  body {
+    @apply font-serif;
+  }
+}
+
+
+h1, h2, h3, h4, h5, h6, button, a {
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif !important;
+}
