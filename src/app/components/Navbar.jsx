@@ -5,7 +5,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { label: "Careers", href: "#" },
+    { label: "Careers", href: "/careers" },
     { label: "Contact", href: "#" },
     { label: "Want to be an Agent?", href: "#" },
   ];
