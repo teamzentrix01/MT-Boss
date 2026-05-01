@@ -20,7 +20,7 @@ const Page = () => {
       <FeaturedProjects />
       <ExperienceSection />
       <TestimonialsSection />
-      <Footer />
+      
     </div>
   );
 }

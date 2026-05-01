@@ -67,7 +67,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </a>
 
             {/* About */}
-            <a href="/about-us" className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}>
+            <a href="/About-us" className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}>
               About Us
             </a>
 
@@ -191,7 +191,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           {/* Static Links */}
           {[
             { label: "Home", href: "/" },
-            { label: "About Us", href: "/about-us" },
+            { label: "About Us", href: "/About-us" },
             { label: "Careers", href: "/careers" },
             { label: "Contact", href: "#" },
           ].map((link) => (
