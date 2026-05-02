@@ -57,7 +57,7 @@ function CompanyStory({ dark }) {
           <h2 className={`text-2xl sm:text-3xl font-black mb-3 leading-tight ${dark ? "text-white" : "text-[#0a3d6e]"}`}>Our Story</h2>
           <div className={`w-8 h-0.5 mb-4 ${dark ? "bg-[#facc15]" : "bg-[#0d6ebd]"}`} />
           <p className={`text-sm leading-relaxed mb-3 ${dark ? "text-zinc-400" : "text-gray-600"}`}>
-            MT BOSS Construction was founded with a single vision — to build infrastructure that stands the test of time. Starting as a small contracting firm, we have grown into one of India's most trusted EPC companies.
+            MTBOSS Construction was founded with a single vision — to build infrastructure that stands the test of time. Starting as a small contracting firm, we have grown into one of India's most trusted EPC companies.
           </p>
           <p className={`text-sm leading-relaxed ${dark ? "text-zinc-400" : "text-gray-600"}`}>
             Over two decades, we have delivered hundreds of projects across residential, commercial, industrial, and infrastructure sectors — always on time, within budget, and with uncompromising quality.
@@ -67,7 +67,7 @@ function CompanyStory({ dark }) {
           <div className="relative">
             <img
               src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80"
-              alt="MT BOSS Construction"
+              alt="MTBOSS Construction"
               className="w-full h-56 object-cover shadow-lg"
             />
             <div className={`absolute -bottom-3 -left-3 px-5 py-3 shadow-md ${dark ? "bg-[#facc15]" : "bg-[#0d6ebd]"}`}>
@@ -142,7 +142,7 @@ function WhyChooseUs({ dark }) {
       <div className="max-w-6xl mx-auto">
         <FadeIn className="text-center mb-8">
           <p className={`text-[10px] uppercase tracking-[0.4em] mb-1.5 font-black ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>Our Strengths</p>
-          <h2 className={`text-2xl sm:text-3xl font-black mb-2 ${dark ? "text-white" : "text-[#0a3d6e]"}`}>Why Choose MT BOSS</h2>
+          <h2 className={`text-2xl sm:text-3xl font-black mb-2 ${dark ? "text-white" : "text-[#0a3d6e]"}`}>Why Choose MTBOSS</h2>
           <div className={`w-8 h-0.5 mx-auto ${dark ? "bg-[#facc15]" : "bg-[#0d6ebd]"}`} />
         </FadeIn>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -333,7 +333,7 @@ function MeetTeamCTA({ dark, onShowTeam }) {
               <div>
                 <p className={`text-[9px] uppercase tracking-[0.4em] font-black mb-2 ${dark ? "text-[#facc15]" : "text-[#cce8ff]"}`}>Leadership</p>
                 <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight leading-tight">
-                  Meet the Minds<br />Behind MT BOSS
+                  Meet the Minds<br />Behind MTBOSS
                 </h2>
                 <p className={`text-xs mt-2 max-w-sm ${dark ? "text-zinc-400" : "text-[#99ccf0]"}`}>
                   Our leadership team brings decades of expertise across engineering, finance, and operations.
@@ -371,7 +371,7 @@ function AboutContent({ dark, onShowTeam }) {
       >
         <div className={`absolute inset-0 transition-colors duration-500 ${dark ? "bg-black/80" : "bg-[#0d6ebd]/75"}`} />
         <div className="relative z-10 px-6">
-          <p className={`text-[10px] uppercase tracking-[0.4em] mb-2 ${dark ? "text-[#facc15]" : "text-[#cce8ff]"}`}>MT BOSS Construction</p>
+          <p className={`text-[10px] uppercase tracking-[0.4em] mb-2 ${dark ? "text-[#facc15]" : "text-[#cce8ff]"}`}>MTBOSS Construction</p>
           <h1 className="text-3xl sm:text-4xl font-black text-white mb-3">About Us</h1>
           <div className={`w-8 h-0.5 mx-auto mb-3 ${dark ? "bg-[#facc15]" : "bg-white"}`} />
           <p className={`text-xs max-w-md mx-auto leading-relaxed ${dark ? "text-zinc-400" : "text-[#cce8ff]"}`}>

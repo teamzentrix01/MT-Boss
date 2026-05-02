@@ -131,11 +131,11 @@ const plans = [
 ];
 
 const benefits = [
-  { icon: "📋", title: "Project Leads", desc: "Get direct access to MT BOSS construction project requirements and tenders." },
+  { icon: "📋", title: "Project Leads", desc: "Get direct access to MTBOSS construction project requirements and tenders." },
   { icon: "✅", title: "Verified Status", desc: "Earn a verified contractor badge that builds trust with clients and partners." },
   { icon: "🌍", title: "Pan India Reach", desc: "Get listed in our national vendor directory visible across 50+ cities." },
   { icon: "💼", title: "Long Term Work", desc: "Build a lasting relationship with one of India's top construction companies." },
-  { icon: "📈", title: "Business Growth", desc: "Scale your contracting business with consistent project inflow from MT BOSS." },
+  { icon: "📈", title: "Business Growth", desc: "Scale your contracting business with consistent project inflow from MTBOSS." },
   { icon: "🤝", title: "Network Access", desc: "Connect with other vendors, suppliers, and contractors in our ecosystem." },
 ];
 
@@ -150,7 +150,7 @@ const faqs = [
   { q: "Is free registration really free forever?", a: "Yes, the free listing is completely free and stays active indefinitely. However, free listings have limited visibility and do not include direct project lead access." },
   { q: "What documents are required for registration?", a: "You need GST registration, PAN card, company or proprietorship documents, work experience certificates, and at least 2 client references. Professional and Enterprise plans require additional verification." },
   { q: "How long does verification take?", a: "Free listings are activated within 24 hours. Professional and Enterprise plan verifications take 3-5 business days as we verify all documents and references." },
-  { q: "What kind of projects will I get access to?", a: "Depending on your category and plan, you can access residential projects, commercial construction, infrastructure work, interior fit-outs, and material supply requirements from MT BOSS and its clients." },
+  { q: "What kind of projects will I get access to?", a: "Depending on your category and plan, you can access residential projects, commercial construction, infrastructure work, interior fit-outs, and material supply requirements from MTBOSS and its clients." },
   { q: "Can I upgrade from Free to Professional later?", a: "Yes, you can upgrade your plan at any time. Your profile data and history will be retained and your listing will be upgraded immediately after payment." },
   { q: "Is there a small franchise option available?", a: "Yes, qualified contractors with strong track records can explore our Small Franchise model for specific service categories. Contact our team for details after registration." },
 ];
@@ -304,14 +304,14 @@ export default function ContractorPage() {
         <div className="absolute inset-0 bg-black/80" />
         <div className="relative z-10 max-w-3xl mx-auto">
           <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
-            MT Boss Construction
+            MTBOSS Construction
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Join Our
             <span className="block text-[#facc15]">Vendor Network</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-            Register as a contractor or vendor with MT BOSS Construction. Get access to real projects, verified status, and a growing network of opportunities across India.
+            Register as a contractor or vendor with MTBOSS Construction. Get access to real projects, verified status, and a growing network of opportunities across India.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-8 mt-6">
@@ -794,7 +794,7 @@ export default function ContractorPage() {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input type="checkbox" required className="mt-0.5 accent-[#facc15]" />
                   <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                    I confirm that all information provided is accurate and that I have the required documents available for verification. I agree to MT BOSS Construction's vendor terms and conditions.
+                    I confirm that all information provided is accurate and that I have the required documents available for verification. I agree to MTBOSS Construction's vendor terms and conditions.
                   </span>
                 </label>
               </div>

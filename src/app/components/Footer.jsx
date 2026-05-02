@@ -54,10 +54,10 @@ export default function Footer() {
           <div className="space-y-6">
             <a href="/" className="inline-block">
               {/* Logo brightness adjustment for dark mode */}
-              <img src="/logo.png" alt="MT BOSS Logo" className={`h-10 w-auto transition-all ${isDark ? 'brightness-200' : 'brightness-100'}`} />
+              <img src="/logo.png" alt="MTBOSS Logo" className={`h-10 w-auto transition-all ${isDark ? 'brightness-200' : 'brightness-100'}`} />
             </a>
             <p className={`text-sm leading-relaxed font-medium ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-              MT BOSS Construction is a technology-led EPC company committed to delivering high-end infrastructure solutions across India.
+              MTBOSS Construction is a technology-led EPC company committed to delivering high-end infrastructure solutions across India.
             </p>
             <div className="flex items-center gap-3">
               {socialLinks.map((s) => (
@@ -128,7 +128,7 @@ export default function Footer() {
       <div className={`py-6 px-6 border-t ${isDark ? 'border-zinc-900 bg-zinc-950' : 'border-zinc-100 bg-zinc-50'}`}>
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-            © {new Date().getFullYear()} MT BOSS CONSTRUCTION — BUILT WITH PRECISION
+            © {new Date().getFullYear()} MTBOSS CONSTRUCTION — BUILT WITH PRECISION
           </p>
           <div className="flex gap-6">
             <a href="#" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[#facc15]">Privacy</a>

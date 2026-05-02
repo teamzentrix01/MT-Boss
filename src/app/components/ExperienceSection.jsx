@@ -102,7 +102,7 @@ export default function ExperienceSection() {
               Two Decades of <br /> <span className="text-[#facc15]">Unmatched</span> <br /> Achievements
             </h2>
             <p className={`text-lg mb-10 leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
-              MT BOSS has evolved from a local contractor to a national engineering powerhouse. Our experience spans across sectors, ensuring that every brick laid is a testament to our commitment to quality.
+              MTBOSS has evolved from a local contractor to a national engineering powerhouse. Our experience spans across sectors, ensuring that every brick laid is a testament to our commitment to quality.
             </p>
             <button className={`px-10 py-4 font-black uppercase text-xs tracking-widest transition-all ${
               isDark ? 'bg-[#facc15] text-black' : 'bg-black text-white hover:bg-[#facc15] hover:text-black'

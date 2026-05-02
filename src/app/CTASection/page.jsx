@@ -34,7 +34,7 @@ export default function CTAHubPage() {
     <main className={`min-h-screen transition-colors duration-500 ${isDark ? "bg-black" : "bg-white"}`}>
       <section className={`pt-40 pb-20 px-6 text-center border-b ${isDark ? 'border-zinc-900' : 'border-zinc-100'}`}>
         <div className="max-w-4xl mx-auto">
-          <p className="text-[#facc15] text-xs font-black uppercase tracking-[0.4em] mb-4">Connect With MT BOSS</p>
+          <p className="text-[#facc15] text-xs font-black uppercase tracking-[0.4em] mb-4">Connect With MTBOSS</p>
           <h1 className={`text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none mb-6 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
             Ready to <span className="text-[#facc15]">Build</span> <br /> Something Big?
           </h1>
@@ -61,7 +61,7 @@ export default function CTAHubPage() {
             isDark={isDark} 
             title="Become an Agent" 
             href="/CTASection/become-agent"
-            subtitle="Join MT BOSS as a strategic partner and help us deliver sustainable projects."
+            subtitle="Join MTBOSS as a strategic partner and help us deliver sustainable projects."
             icon={<svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>}
           />
         </div>

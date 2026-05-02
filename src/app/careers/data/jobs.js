@@ -40,7 +40,7 @@ export const jobs = [
     posted: "5 days ago",
     urgent: false,
     description:
-      "MT BOSS Construction is seeking an experienced Project Manager to oversee large-scale infrastructure and commercial construction projects. The ideal candidate will have a proven track record of delivering complex projects on time and within budget.",
+      "MTBOSS Construction is seeking an experienced Project Manager to oversee large-scale infrastructure and commercial construction projects. The ideal candidate will have a proven track record of delivering complex projects on time and within budget.",
     responsibilities: [
       "Manage end-to-end delivery of construction projects worth 50Cr+",
       "Develop detailed project plans, schedules, and resource allocation",
@@ -160,7 +160,7 @@ export const jobs = [
     posted: "4 days ago",
     urgent: false,
     description:
-      "Join our growing business development team to identify new opportunities, build client relationships, and drive revenue growth for MT BOSS Construction.",
+      "Join our growing business development team to identify new opportunities, build client relationships, and drive revenue growth for MTBOSS Construction.",
     responsibilities: [
       "Identify and pursue new business opportunities in construction sector",
       "Build and maintain strong relationships with developers, architects, and consultants",

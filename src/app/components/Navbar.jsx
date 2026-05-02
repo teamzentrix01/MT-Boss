@@ -17,12 +17,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     { label: "Residential", href: "/buy-sale/residential" },
     { label: "Commercial", href: "/buy-sale/commercial" },
     { label: "Plots & Apartments", href: "/buy-sale/plots" },
+    { label: "Renting", href: "/renting" },
+     { label: "Industrial", href: "/industrial" },        // ← add
+  { label: "Gov & Private Buildings", href: "/buildings" }, // ← add
   ];
 
   const partnerDropdown = [
     { label: "Become an Agent", href: "/agent" },
     { label: "Franchise", href: "/franchise" },
-    { label: "Add Contractor", href: "/contractor" },
+    { label: "Add Vendor", href: "/contractor" },
     { label: "Material Suppliers", href: "/material-suppliers" },
   ];
 
@@ -55,7 +58,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
           {/* Logo */}
           <a href="/" className="flex items-center flex-shrink-0">
-            <img src="/logo.png" alt="MT BOSS" className="h-10 w-auto object-contain" />
+            <img src="/logo.png" alt="MTBOSS" className="h-10 w-auto object-contain" />
           </a>
 
           {/* Desktop Nav */}
@@ -120,7 +123,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </a>
 
             {/* Contact */}
-            <a href="#" className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}>
+            <a href="/contact" className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}>
               Contact
             </a>
 

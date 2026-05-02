@@ -51,7 +51,7 @@ export default function ResidentialPage() {
         <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80" alt="Residential" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
         <div className="relative z-10 max-w-4xl mx-auto px-6 pb-14 w-full">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.5em] mb-3">MT BOSS Construction</p>
+          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.5em] mb-3">MTBOSS Construction</p>
           <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-white leading-none mb-4">
             Residential<br /><span className="text-[#facc15]">Construction</span>
           </h1>
@@ -65,7 +65,7 @@ export default function ResidentialPage() {
           <div>
             <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">About This Service</p>
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">Homes Built<br />to <span className="text-[#facc15]">Last</span></h2>
-            <p className={`text-sm leading-relaxed mb-4 ${muted}`}>MT BOSS has delivered over 500+ residential units across the NCR — from affordable housing to ultra-premium villas. Our in-house team ensures every brick is placed with intent.</p>
+            <p className={`text-sm leading-relaxed mb-4 ${muted}`}>MTBOSS has delivered over 500+ residential units across the NCR — from affordable housing to ultra-premium villas. Our in-house team ensures every brick is placed with intent.</p>
             <p className={`text-sm leading-relaxed ${muted}`}>We follow rigorous IS-code methodology backed by third-party audits and transparent client communication.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -100,7 +100,7 @@ export default function ResidentialPage() {
       <section className={`py-14 px-6 ${isDark ? "bg-zinc-950" : "bg-zinc-50"}`}>
         <div className="max-w-5xl mx-auto">
           <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Why Choose Us</p>
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">The MT BOSS<br />Advantage</h2>
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">The MTBOSS<br />Advantage</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {benefits.map((b) => (
               <div key={b.title} className={`border p-5 hover:border-[#facc15] transition-all ${card}`}>

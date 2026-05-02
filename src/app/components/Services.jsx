@@ -20,7 +20,7 @@ const featuredServices = [
   {
     id: 3,
     title: "Residential Projects",
-    description: "Affordable housing to luxury villas — MT BOSS builds residential spaces that marry comfort and safety.",
+    description: "Affordable housing to luxury villas — MTBOSS builds residential spaces that marry comfort and safety.",
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
     link: "/services/all",
   },

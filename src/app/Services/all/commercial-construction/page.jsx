@@ -51,7 +51,7 @@ export default function CommercialPage() {
         <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80" alt="Commercial" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
         <div className="relative z-10 max-w-4xl mx-auto px-6 pb-14 w-full">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.5em] mb-3">MT BOSS Construction</p>
+          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.5em] mb-3">MTBOSS Construction</p>
           <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-white leading-none mb-4">
             Commercial<br /><span className="text-[#facc15]">Construction</span>
           </h1>
@@ -65,7 +65,7 @@ export default function CommercialPage() {
           <div>
             <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">About This Service</p>
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">Spaces That<br />Drive <span className="text-[#facc15]">Business</span></h2>
-            <p className={`text-sm leading-relaxed mb-4 ${muted}`}>MT BOSS has constructed over 3 million sq.ft of commercial space across the NCR — from Grade-A office towers to multi-level retail plazas, combining architectural ambition with engineering rigour.</p>
+            <p className={`text-sm leading-relaxed mb-4 ${muted}`}>MTBOSS has constructed over 3 million sq.ft of commercial space across the NCR — from Grade-A office towers to multi-level retail plazas, combining architectural ambition with engineering rigour.</p>
             <p className={`text-sm leading-relaxed ${muted}`}>Every project is backed by BIM coordination, dedicated site engineers, and a transparent reporting cadence.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -100,7 +100,7 @@ export default function CommercialPage() {
       <section className={`py-14 px-6 ${isDark ? "bg-zinc-950" : "bg-zinc-50"}`}>
         <div className="max-w-5xl mx-auto">
           <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Why Choose Us</p>
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">The MT BOSS<br />Advantage</h2>
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">The MTBOSS<br />Advantage</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {benefits.map((b) => (
               <div key={b.title} className={`border p-5 hover:border-[#facc15] transition-all ${card}`}>

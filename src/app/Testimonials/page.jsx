@@ -10,7 +10,7 @@ const testimonials = [
     photo: "https://randomuser.me/api/portraits/men/32.jpg",
     rating: 5,
     review:
-      "MT BOSS Construction delivered our commercial complex 2 weeks ahead of schedule. Their attention to detail, quality of materials, and professionalism is unmatched. We have already signed them for our next project.",
+      "MTBOSS Construction delivered our commercial complex 2 weeks ahead of schedule. Their attention to detail, quality of materials, and professionalism is unmatched. We have already signed them for our next project.",
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ const testimonials = [
     photo: "https://randomuser.me/api/portraits/women/44.jpg",
     rating: 5,
     review:
-      "Our 5-star hotel project was handled with exceptional care by MT BOSS. From MEP systems to interior fit-outs, every detail was perfect. The team was responsive, transparent, and truly committed to excellence.",
+      "Our 5-star hotel project was handled with exceptional care by MTBOSS. From MEP systems to interior fit-outs, every detail was perfect. The team was responsive, transparent, and truly committed to excellence.",
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ const testimonials = [
     photo: "https://randomuser.me/api/portraits/men/55.jpg",
     rating: 5,
     review:
-      "We entrusted MT BOSS with our 3-lakh sq ft warehouse project. They managed everything seamlessly — design, procurement, and execution. Delivery was on time and within the agreed budget. Highly recommended.",
+      "We entrusted MTBOSS with our 3-lakh sq ft warehouse project. They managed everything seamlessly — design, procurement, and execution. Delivery was on time and within the agreed budget. Highly recommended.",
   },
   {
     id: 4,
@@ -40,7 +40,7 @@ const testimonials = [
     photo: "https://randomuser.me/api/portraits/women/68.jpg",
     rating: 5,
     review:
-      "MT BOSS transformed our vision into a stunning residential township. Their sustainable construction approach and use of modern technology gave us a product that our buyers absolutely love. Outstanding work.",
+      "MTBOSS transformed our vision into a stunning residential township. Their sustainable construction approach and use of modern technology gave us a product that our buyers absolutely love. Outstanding work.",
   },
   {
     id: 5,
@@ -50,7 +50,7 @@ const testimonials = [
     photo: "https://randomuser.me/api/portraits/men/77.jpg",
     rating: 5,
     review:
-      "The infrastructure division of MT BOSS executed a 42km highway stretch with precision and speed. Safety standards were strictly maintained and the quality of construction exceeded our expectations.",
+      "The infrastructure division of MTBOSS executed a 42km highway stretch with precision and speed. Safety standards were strictly maintained and the quality of construction exceeded our expectations.",
   },
   {
     id: 6,
@@ -60,7 +60,7 @@ const testimonials = [
     photo: "https://randomuser.me/api/portraits/women/12.jpg",
     rating: 5,
     review:
-      "From foundation to finish, MT BOSS delivered our IT park with zero compromise on quality. Their project management team was always available and kept us informed at every stage. A truly reliable partner.",
+      "From foundation to finish, MTBOSS delivered our IT park with zero compromise on quality. Their project management team was always available and kept us informed at every stage. A truly reliable partner.",
   },
 ];
 
@@ -148,7 +148,7 @@ export default function TestimonialsPage() {
        
 
         <div className="relative z-10 px-6">
-          <p className="text-xs uppercase tracking-widest text-[#cce8ff] mb-3">MT BOSS Construction</p>
+          <p className="text-xs uppercase tracking-widest text-[#cce8ff] mb-3">MTBOSS Construction</p>
           <h1
             className="text-4xl sm:text-5xl font-black text-white mb-4"
             style={{ fontFamily: "'Georgia', serif" }}
@@ -157,7 +157,7 @@ export default function TestimonialsPage() {
           </h1>
           <div className="w-10 h-0.5 bg-white mx-auto mb-4 rounded" />
           <p className="text-sm text-[#cce8ff] max-w-xl mx-auto leading-relaxed">
-            What our clients say about working with MT BOSS.
+            What our clients say about working with MTBOSS.
           </p>
         </div>
       </section>

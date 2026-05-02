@@ -9,7 +9,7 @@ const testimonials = [
     role: "Managing Director",
     photo: "https://randomuser.me/api/portraits/men/32.jpg",
     rating: 5,
-    review: "MT BOSS Construction delivered our commercial complex 2 weeks ahead of schedule. Their attention to detail, quality of materials, and professionalism is unmatched.",
+    review: "MTBOSS Construction delivered our commercial complex 2 weeks ahead of schedule. Their attention to detail, quality of materials, and professionalism is unmatched.",
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ const testimonials = [
     role: "CEO",
     photo: "https://randomuser.me/api/portraits/women/44.jpg",
     rating: 5,
-    review: "Our 5-star hotel project was handled with exceptional care by MT BOSS. From MEP systems to interior fit-outs, every detail was perfect. The team was responsive and transparent.",
+    review: "Our 5-star hotel project was handled with exceptional care by MTBOSS. From MEP systems to interior fit-outs, every detail was perfect. The team was responsive and transparent.",
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ const testimonials = [
     role: "Director of Operations",
     photo: "https://randomuser.me/api/portraits/men/55.jpg",
     rating: 5,
-    review: "We entrusted MT BOSS with our 3-lakh sq ft warehouse project. They managed everything seamlessly — design, procurement, and execution. Delivery was on time.",
+    review: "We entrusted MTBOSS with our 3-lakh sq ft warehouse project. They managed everything seamlessly — design, procurement, and execution. Delivery was on time.",
   },
   {
     id: 4,
@@ -36,7 +36,7 @@ const testimonials = [
     role: "Founder",
     photo: "https://randomuser.me/api/portraits/women/68.jpg",
     rating: 5,
-    review: "MT BOSS transformed our vision into a stunning residential township. Their sustainable construction approach and use of modern technology gave us a product buyers love.",
+    review: "MTBOSS transformed our vision into a stunning residential township. Their sustainable construction approach and use of modern technology gave us a product buyers love.",
   },
   {
     id: 5,
@@ -54,7 +54,7 @@ const testimonials = [
     role: "General Manager",
     photo: "https://randomuser.me/api/portraits/women/12.jpg",
     rating: 5,
-    review: "From foundation to finish, MT BOSS delivered our IT park with zero compromise on quality. Their project management team was always available and reliable.",
+    review: "From foundation to finish, MTBOSS delivered our IT park with zero compromise on quality. Their project management team was always available and reliable.",
   },
 ];
 

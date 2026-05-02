@@ -74,7 +74,7 @@ export default function CareersPage() {
         <div className="absolute inset-0 bg-black/75" />
         <div className="relative z-10 max-w-3xl mx-auto">
           <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">
-            MT Boss Construction
+            MTBOSS Construction
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Build Your
@@ -106,7 +106,7 @@ export default function CareersPage() {
           <div className="text-center mb-12">
             <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Perks and Benefits</p>
             <h2 className={`text-3xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
-              Why Join MT BOSS?
+              Why Join MTBOSS?
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

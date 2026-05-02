@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const allServices = [
-  { id: 1, slug: "residential-construction", title: "Residential Construction", description: "Affordable housing to luxury villas — MT BOSS builds spaces that marry comfort, safety, and enduring quality.", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80" },
+  { id: 1, slug: "residential-construction", title: "Residential Construction", description: "Affordable housing to luxury villas — MTBOSS builds spaces that marry comfort, safety, and enduring quality.", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80" },
   { id: 2, slug: "commercial-construction", title: "Commercial Construction", description: "From corporate offices to retail complexes, we design and construct world-class commercial spaces built to last.", image: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80" },
   { id: 3, slug: "turnkey-projects", title: "Turnkey Projects", description: "End-to-end EPC services — we handle design, sourcing, and execution under one roof for seamless delivery.", image: "https://images.unsplash.com/photo-1513828583688-c52646db42da?w=800&q=80" },
   { id: 4, slug: "interior-structural-solutions", title: "Interior & Structural Solutions", description: "Turnkey interior fit-out solutions for offices, hotels, and retail spaces — function meets refined aesthetics.", image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80" },
@@ -35,7 +35,7 @@ export default function AllServicesPage() {
             Full Cycle <span className="text-[#facc15]">Solutions</span>
           </h1>
           <p className={`text-sm max-w-xl mx-auto leading-relaxed ${muted}`}>
-            MT BOSS provides end-to-end engineering and infrastructure services — from conceptual design to final construction.
+            MTBOSS provides end-to-end engineering and infrastructure services — from conceptual design to final construction.
           </p>
         </div>
       </section>

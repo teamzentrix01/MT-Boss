@@ -31,7 +31,7 @@ function useInView(threshold = 0.1) {
 
 const benefits = [
   { icon: "💰", title: "High Commissions", desc: "Earn industry-leading commissions on every successful project referral and closure." },
-  { icon: "🏗️", title: "Strong Brand", desc: "Represent MT BOSS — 20+ years of trust, quality, and recognition across India." },
+  { icon: "🏗️", title: "Strong Brand", desc: "Represent MTBOSS — 20+ years of trust, quality, and recognition across India." },
   { icon: "📋", title: "Ready Leads", desc: "Get access to warm leads from our marketing campaigns and digital channels." },
   { icon: "📚", title: "Full Training", desc: "Complete product training, sales scripts, and ongoing support from our team." },
   { icon: "🌍", title: "Flexible Work", desc: "Work from anywhere, anytime. No fixed hours, no targets pressure." },
@@ -78,9 +78,9 @@ const agentTypes = [
 ];
 
 const faqs = [
-  { q: "Is there any registration fee to become an agent?", a: "No, becoming an MT BOSS agent is completely free. There are no registration fees, no hidden charges, and no monthly commitments." },
+  { q: "Is there any registration fee to become an agent?", a: "No, becoming an MTBOSS agent is completely free. There are no registration fees, no hidden charges, and no monthly commitments." },
   { q: "How much can I earn as an agent?", a: "Your earnings depend on the type and value of deals you close. Property agents earn up to 2%, construction agents up to 3%, and franchise agents can earn up to ₹1 Lakh per successful franchise onboarding." },
-  { q: "Do I need prior real estate or construction experience?", a: "No prior experience is required. We provide complete training and all the tools you need to succeed as an MT BOSS agent." },
+  { q: "Do I need prior real estate or construction experience?", a: "No prior experience is required. We provide complete training and all the tools you need to succeed as an MTBOSS agent." },
   { q: "How are leads tracked and assigned?", a: "All leads you submit go through our CRM system. Each lead is tagged to your agent profile and tracked until closure. You earn commission on every deal that converts." },
   { q: "When and how will I receive my commission?", a: "Commissions are processed within 7 working days of a successful project closure or deal confirmation. Payment is made via bank transfer directly to your account." },
   { q: "Can I work as an agent part-time?", a: "Absolutely. Most of our agents work part-time alongside their regular jobs. There are no fixed working hours or minimum lead requirements." },
@@ -236,14 +236,14 @@ export default function AgentPage() {
           }}
         >
           <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
-            MT Boss Construction
+            MTBOSS Construction
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Become an
             <span className="block text-[#facc15]">Agent</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-            Expand your income by joining MT BOSS's growing agent network. Refer clients, close deals, and earn high commissions — on your own schedule.
+            Expand your income by joining MTBOSS's growing agent network. Refer clients, close deals, and earn high commissions — on your own schedule.
           </p>
 
           {/* Stats */}
@@ -635,7 +635,7 @@ export default function AgentPage() {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input type="checkbox" required className="mt-0.5 accent-[#facc15]" />
                   <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                    I confirm that the information provided is accurate. I agree to MT BOSS Construction's agent terms and understand that registration does not guarantee agent status until verified.
+                    I confirm that the information provided is accurate. I agree to MTBOSS Construction's agent terms and understand that registration does not guarantee agent status until verified.
                   </span>
                 </label>
               </div>

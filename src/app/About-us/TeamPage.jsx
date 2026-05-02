@@ -50,7 +50,7 @@ const leadership = [
     dept: "Executive Leadership",
     exp: "32 Years",
     education: "B.Tech Civil, IIT Delhi · MBA, IIM Ahmedabad",
-    bio: "Rajiv founded MT BOSS with a vision to redefine construction excellence in India. Under his leadership, the company has grown from a 5-person startup to a 500+ strong organization delivering landmark projects nationwide.",
+    bio: "Rajiv founded MTBOSS with a vision to redefine construction excellence in India. Under his leadership, the company has grown from a 5-person startup to a 500+ strong organization delivering landmark projects nationwide.",
     expertise: ["Strategic Planning", "EPC Management", "Government Relations", "Business Development"],
     projects: 120,
     awards: 8,
@@ -64,7 +64,7 @@ const leadership = [
     dept: "Operations",
     exp: "24 Years",
     education: "B.E. Civil, NIT Trichy · PMP Certified",
-    bio: "Priya drives operational excellence at MT BOSS, overseeing end-to-end project delivery across all verticals. Her data-driven approach has improved on-time delivery rates to 97%.",
+    bio: "Priya drives operational excellence at MTBOSS, overseeing end-to-end project delivery across all verticals. Her data-driven approach has improved on-time delivery rates to 97%.",
     expertise: ["Operations", "Project Delivery", "Quality Systems", "ISO 9001"],
     projects: 85,
     awards: 5,
@@ -78,7 +78,7 @@ const leadership = [
     dept: "Engineering",
     exp: "28 Years",
     education: "M.Tech Structural Eng., IISc Bangalore",
-    bio: "Arjun leads all technical innovation at MT BOSS, pioneering the adoption of BIM, drone surveying, and green construction methodologies that have set new industry benchmarks.",
+    bio: "Arjun leads all technical innovation at MTBOSS, pioneering the adoption of BIM, drone surveying, and green construction methodologies that have set new industry benchmarks.",
     expertise: ["Structural Design", "BIM Technology", "Sustainability", "R&D"],
     projects: 95,
     awards: 6,
@@ -92,7 +92,7 @@ const leadership = [
     dept: "Finance",
     exp: "20 Years",
     education: "CA, ICAI · CFA Charterholder",
-    bio: "Sunita manages MT BOSS's financial strategy, fund planning, and investor relations. Her stewardship has delivered consistent year-on-year growth with zero instances of cost overruns.",
+    bio: "Sunita manages MTBOSS's financial strategy, fund planning, and investor relations. Her stewardship has delivered consistent year-on-year growth with zero instances of cost overruns.",
     expertise: ["Financial Planning", "Risk Management", "Investor Relations", "Auditing"],
     projects: 0,
     awards: 3,
@@ -106,7 +106,7 @@ const leadership = [
     dept: "Growth",
     exp: "16 Years",
     education: "MBA Marketing, XLRI Jamshedpur",
-    bio: "Vikram has been instrumental in expanding MT BOSS's client portfolio across public and private sectors, forging partnerships worth ₹2,000+ crore in new contracts.",
+    bio: "Vikram has been instrumental in expanding MTBOSS's client portfolio across public and private sectors, forging partnerships worth ₹2,000+ crore in new contracts.",
     expertise: ["Client Relations", "Tendering", "Market Expansion", "Partnerships"],
     projects: 40,
     awards: 2,
@@ -120,7 +120,7 @@ const leadership = [
     dept: "People & Culture",
     exp: "14 Years",
     education: "MBA HR, Symbiosis Pune · SHRM Certified",
-    bio: "Meera has built MT BOSS's people-first culture, scaling the workforce from 80 to 500+ professionals while maintaining industry-leading retention rates and employee satisfaction scores.",
+    bio: "Meera has built MTBOSS's people-first culture, scaling the workforce from 80 to 500+ professionals while maintaining industry-leading retention rates and employee satisfaction scores.",
     expertise: ["Talent Acquisition", "L&D", "Culture Building", "Workforce Planning"],
     projects: 0,
     awards: 2,
@@ -148,7 +148,7 @@ const leadership = [
     dept: "Design",
     exp: "15 Years",
     education: "B.Arch, SPA Delhi · M.Arch, UCL London",
-    bio: "Anjali leads MT BOSS's in-house design studio, blending form with function to create award-winning facades, interiors, and master plans that have won international recognition.",
+    bio: "Anjali leads MTBOSS's in-house design studio, blending form with function to create award-winning facades, interiors, and master plans that have won international recognition.",
     expertise: ["Architecture", "Interior Design", "Facade Engineering", "Master Planning"],
     projects: 55,
     awards: 7,
@@ -339,13 +339,13 @@ export default function TeamPage({ onBack }) {
       >
         <div className={`absolute inset-0 ${dark ? "bg-black/85" : "bg-[#0a3d6e]/82"}`} />
         <div className="relative z-10 px-6">
-          <p className={`text-[9px] uppercase tracking-[0.5em] mb-2 font-black ${dark ? "text-[#facc15]" : "text-[#cce8ff]"}`}>MT BOSS Construction</p>
+          <p className={`text-[9px] uppercase tracking-[0.5em] mb-2 font-black ${dark ? "text-[#facc15]" : "text-[#cce8ff]"}`}>MTBOSS Construction</p>
           <h1 className="text-3xl sm:text-5xl font-black text-white uppercase tracking-tighter mb-3 leading-none">
             Our <span className="text-[#facc15]">Leadership</span>
           </h1>
           <div className={`w-8 h-0.5 mx-auto mb-3 ${dark ? "bg-[#facc15]" : "bg-white"}`} />
           <p className={`text-xs max-w-md mx-auto leading-relaxed ${dark ? "text-zinc-400" : "text-[#cce8ff]"}`}>
-            The experienced minds who have built MT BOSS from the ground up — and continue to shape its future.
+            The experienced minds who have built MTBOSS from the ground up — and continue to shape its future.
           </p>
         </div>
       </section>
@@ -461,7 +461,7 @@ export default function TeamPage({ onBack }) {
           <div className="max-w-6xl mx-auto">
             <div className={`flex flex-col sm:flex-row items-center justify-between gap-6 p-7 border ${dark ? "border-zinc-800 bg-zinc-900" : "border-zinc-100 bg-zinc-50"}`}>
               <div>
-                <p className={`text-[9px] uppercase tracking-[0.4em] font-black mb-1 ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>Careers at MT BOSS</p>
+                <p className={`text-[9px] uppercase tracking-[0.4em] font-black mb-1 ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>Careers at MTBOSS</p>
                 <p className={`text-base font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-900"}`}>Want to join our team?</p>
                 <p className={`text-xs mt-1 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>We're always looking for talented engineers and professionals.</p>
               </div>

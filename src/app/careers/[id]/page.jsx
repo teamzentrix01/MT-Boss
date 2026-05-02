@@ -553,7 +553,7 @@ export default function JobDetailPage() {
               <p className={`text-[10px] font-black uppercase tracking-widest mb-4 pb-2 border-b ${dark ? "text-zinc-500 border-zinc-800" : "text-zinc-400 border-gray-100"}`}>
                 Cover Letter
               </p>
-              <label className={labelClass}>Why do you want to join MT BOSS? *</label>
+              <label className={labelClass}>Why do you want to join MTBOSS? *</label>
               <textarea
                 name="coverLetter"
                 required
