@@ -15,8 +15,8 @@ const Page = () => {
     <div className="transition-colors duration-500">
       <Hero />
       <AboutSection />
-      <Services />
       <QuickServices />
+      <Services />
       <FeaturedProjects />
       <ExperienceSection />
       <TestimonialsSection />

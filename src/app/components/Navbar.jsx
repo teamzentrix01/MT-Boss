@@ -58,7 +58,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
           {/* Logo */}
           <a href="/" className="flex items-center flex-shrink-0">
-            <img src="/logo.png" alt="MTBOSS" className="h-10 w-auto object-contain" />
+            <img src="/logo.png" alt="MTBOSS" className="h-15 w-auto object-contain" />
           </a>
 
           {/* Desktop Nav */}
