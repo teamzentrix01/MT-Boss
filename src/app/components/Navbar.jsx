@@ -1,4 +1,8 @@
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3353a6504c607d807eac026eddffabacd2b2627d
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -184,7 +188,11 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </DropdownButton>
 
             <Link
+<<<<<<< HEAD
               href="/ShopNow"
+=======
+              href="/shop"
+>>>>>>> 3353a6504c607d807eac026eddffabacd2b2627d
               className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
             >
               Shop Now
@@ -368,7 +376,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           {[
             { label: 'Home', href: '/' },
             { label: 'About Us', href: '/About-us' },
-            { label: 'Shop Now', href: '/ShopNow' },
+            { label: 'Shop Now', href: '/shop' },
             { label: 'Careers', href: '/careers' },
             { label: 'Contact', href: '/contact' },
           ].map((link) => (
