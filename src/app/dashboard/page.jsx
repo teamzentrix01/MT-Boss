@@ -6,6 +6,7 @@ import QuickServicesManager from '../components/QuickServicesManager';
 import PrimaryServicesManager from '../components/PrimaryServicesManager';
 import PropertiesManager from '../components/PropertiesManager';
 import ProjectsManager from '../components/ProjectsManager';
+import VendorManagementAdmin from '../components/VendorManagementAdmin';
 import FranchisesManager from './franchises/page';
 import AgentsManager from './agents/page';
 
@@ -16,6 +17,7 @@ export default function AdminDashboard() {
   const [submissions, setSubmissions] = useState([]);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [pendingProperties, setPendingProperties] = useState(0);
+  const [pendingVendors, setPendingVendors] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -35,18 +37,29 @@ export default function AdminDashboard() {
       try {
         const token = localStorage.getItem('token');
 
+        // Fetch contact submissions
         const contactRes = await fetch('/api/contact', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const contactData = await contactRes.json();
         if (contactData.success) setSubmissions(contactData.data);
 
+        // Fetch properties
         const propsRes = await fetch('/api/properties?status=all', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const propsData = await propsRes.json();
         if (propsData.success) {
           setPendingProperties(propsData.data.filter(p => p.status === 'pending').length);
+        }
+
+        // Fetch vendors
+        const vendorsRes = await fetch('/api/admin/vendors', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const vendorsData = await vendorsRes.json();
+        if (vendorsData.success) {
+          setPendingVendors(vendorsData.data.filter(v => v.verification_status === 'pending').length);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -61,6 +74,7 @@ export default function AdminDashboard() {
   const stats = [
     { label: 'Contact Submissions', value: submissions.length, icon: '📧' },
     { label: 'Pending Properties', value: pendingProperties, icon: '🏠' },
+    { label: 'Pending Vendors', value: pendingVendors, icon: '🏪' },
     { label: 'Contacted', value: submissions.filter(s => s.status === 'Contacted').length, icon: '✓' },
   ];
 
@@ -77,14 +91,13 @@ export default function AdminDashboard() {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: '▦' },
     { id: 'submissions', label: 'Contact Forms', icon: '✉' },
+    { id: 'vendors', label: 'Vendors', icon: '🏪' },
     { id: 'properties', label: 'Properties', icon: '⌂' },
     { id: 'quick-services', label: 'Quick Services', icon: '⚡' },
     { id: 'primary-services', label: 'Primary Services', icon: '⊞' },
     { id: 'agents', label: 'Agents', icon: '👤' },
     { id: 'franchises', label: 'Franchises', icon: '🏢' },
     { id: 'projects', label: 'Projects', icon: '🏗️' },
-
-
   ];
 
   if (loading) {
@@ -95,13 +108,12 @@ export default function AdminDashboard() {
     );
   }
 
-  // Add this function inside the component (before return):
-const handleLogout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  document.cookie = 'auth-token=; path=/; max-age=0';
-  router.push('/login');
-};
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    document.cookie = 'auth-token=; path=/; max-age=0';
+    router.push('/login');
+  };
 
   return (
     <>
@@ -122,6 +134,8 @@ const handleLogout = () => {
           --stat-b-tx: #9a3412;
           --stat-c-bg: #f0fdf4;
           --stat-c-tx: #14532d;
+          --stat-d-bg: #fef3c7;
+          --stat-d-tx: #92400e;
 
           --sn-bg: #dbeafe; --sn-tx: #1e40af;
           --sp-bg: #ffedd5; --sp-tx: #9a3412;
@@ -140,6 +154,7 @@ const handleLogout = () => {
           --stat-a-bg: #1a2035; --stat-a-tx: #93c5fd;
           --stat-b-bg: #2a1a0e; --stat-b-tx: #fb923c;
           --stat-c-bg: #0f2a18; --stat-c-tx: #86efac;
+          --stat-d-bg: #2a1f0e; --stat-d-tx: #fbbf24;
 
           --sn-bg: #1e2a3a; --sn-tx: #93c5fd;
           --sp-bg: #2a1a0e; --sp-tx: #fb923c;
@@ -184,14 +199,14 @@ const handleLogout = () => {
         .dash-export-btn:hover { opacity: .85; }
 
         .dash-logout-btn {
-  display: inline-flex; align-items: center; gap: 0.375rem;
-  padding: 0.4rem 0.875rem;
-  background: transparent; color: var(--muted);
-  border: 1px solid var(--border); border-radius: 6px;
-  font-size: 0.8125rem; font-weight: 600;
-  cursor: pointer; transition: all .15s;
-}
-.dash-logout-btn:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+          display: inline-flex; align-items: center; gap: 0.375rem;
+          padding: 0.4rem 0.875rem;
+          background: transparent; color: var(--muted);
+          border: 1px solid var(--border); border-radius: 6px;
+          font-size: 0.8125rem; font-weight: 600;
+          cursor: pointer; transition: all .15s;
+        }
+        .dash-logout-btn:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
 
         /* ── Tabs ── */
         .dash-tabs-bar {
@@ -231,8 +246,9 @@ const handleLogout = () => {
         }
 
         /* ── Stat Cards ── */
-        .dash-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; margin-bottom: 1rem; }
+        .dash-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.75rem; margin-bottom: 1rem; }
         @media(max-width:640px){ .dash-stats { grid-template-columns: 1fr; } }
+        @media(max-width:1024px){ .dash-stats { grid-template-columns: repeat(2,1fr); } }
 
         .stat-card {
           background: var(--surface);
@@ -244,6 +260,7 @@ const handleLogout = () => {
         .stat-card-a { background: var(--stat-a-bg); border-color: transparent; }
         .stat-card-b { background: var(--stat-b-bg); border-color: transparent; }
         .stat-card-c { background: var(--stat-c-bg); border-color: transparent; }
+        .stat-card-d { background: var(--stat-d-bg); border-color: transparent; }
         .stat-label {
           font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
           letter-spacing: .06em; color: var(--muted); margin-bottom: 0.25rem;
@@ -251,10 +268,12 @@ const handleLogout = () => {
         .stat-card-a .stat-label { color: var(--stat-a-tx); opacity: .7; }
         .stat-card-b .stat-label { color: var(--stat-b-tx); opacity: .7; }
         .stat-card-c .stat-label { color: var(--stat-c-tx); opacity: .7; }
+        .stat-card-d .stat-label { color: var(--stat-d-tx); opacity: .7; }
         .stat-value { font-size: 1.75rem; font-weight: 700; line-height: 1; }
         .stat-card-a .stat-value { color: var(--stat-a-tx); }
         .stat-card-b .stat-value { color: var(--stat-b-tx); }
         .stat-card-c .stat-value { color: var(--stat-c-tx); }
+        .stat-card-d .stat-value { color: var(--stat-d-tx); }
         .stat-icon { font-size: 1.5rem; opacity: .5; }
 
         /* ── Panel ── */
@@ -337,37 +356,6 @@ const handleLogout = () => {
         .search-input:focus { border-color: var(--accent); }
         .search-input::placeholder { color: var(--muted); }
 
-        /* ── Table ── */
-        .data-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
-        .data-table th {
-          padding: 0.5rem 0.875rem;
-          text-align: left;
-          font-size: 0.6875rem; font-weight: 600;
-          text-transform: uppercase; letter-spacing: .06em;
-          color: var(--muted);
-          border-bottom: 1px solid var(--border);
-          background: var(--bg);
-        }
-        .data-table td {
-          padding: 0.6rem 0.875rem;
-          border-bottom: 1px solid var(--border);
-          color: var(--text);
-        }
-        .data-table tr:last-child td { border-bottom: none; }
-        .data-table tr:hover td { background: var(--bg); }
-        .td-name { font-weight: 600; }
-        .td-muted { color: var(--muted); }
-        .view-link {
-          background: none; border: none; cursor: pointer;
-          color: var(--accent); font-size: 0.8125rem; font-weight: 600;
-          padding: 0;
-        }
-        .view-link:hover { text-decoration: underline; }
-        .empty-state {
-          text-align: center; padding: 2rem;
-          font-size: 0.8125rem; color: var(--muted);
-        }
-
         /* ── Modal ── */
         .modal-backdrop {
           position: fixed; inset: 0;
@@ -417,6 +405,11 @@ const handleLogout = () => {
           cursor: pointer; transition: opacity .15s;
         }
         .modal-close-btn:hover { opacity: .85; }
+
+        .empty-state {
+          text-align: center; padding: 2rem;
+          font-size: 0.8125rem; color: var(--muted);
+        }
       `}</style>
 
       <div className="dash-root">
@@ -425,14 +418,14 @@ const handleLogout = () => {
           <div className="dash-header-inner">
             <div>
               <div className="dash-title">Admin Dashboard</div>
-              <div className="dash-subtitle">Manage properties, forms &amp; services</div>
+              <div className="dash-subtitle">Manage properties, forms, vendors &amp; services</div>
             </div>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-  <button className="dash-export-btn">↗ Export</button>
-  <button className="dash-logout-btn" onClick={handleLogout}>
-    ⎋ Logout
-  </button>
-</div>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <button className="dash-export-btn">↗ Export</button>
+              <button className="dash-logout-btn" onClick={handleLogout}>
+                ⎋ Logout
+              </button>
+            </div>
           </div>
         </div>
 
@@ -460,7 +453,7 @@ const handleLogout = () => {
             <>
               <div className="dash-stats">
                 {stats.map((s, i) => (
-                  <div key={i} className={`stat-card stat-card-${['a','b','c'][i]}`}>
+                  <div key={i} className={`stat-card stat-card-${['a','b','c','d'][i]}`}>
                     <div>
                       <div className="stat-label">{s.label}</div>
                       <div className="stat-value">{s.value}</div>
@@ -504,6 +497,18 @@ const handleLogout = () => {
                   </button>
                 </div>
               )}
+
+              {pendingVendors > 0 && (
+                <div className="pending-alert">
+                  <div className="pending-alert-title">Pending Vendor Verification</div>
+                  <div className="pending-alert-body">
+                    <strong>{pendingVendors}</strong> {pendingVendors === 1 ? 'vendor' : 'vendors'} awaiting approval.
+                  </div>
+                  <button onClick={() => setActiveTab('vendors')} className="review-btn">
+                    Review Vendors →
+                  </button>
+                </div>
+              )}
             </>
           )}
 
@@ -515,25 +520,25 @@ const handleLogout = () => {
                 <input type="text" placeholder="Search…" className="search-input" />
               </div>
               <div className="panel">
-                <div className="overflow-x-auto">
-                  <table className="data-table">
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
                     <thead>
-                      <tr>
+                      <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
                         {['Name','Email','Department','Status','Date','Action'].map(col => (
-                          <th key={col}>{col}</th>
+                          <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {submissions.map((item) => (
-                        <tr key={item.id}>
-                          <td className="td-name">{item.name}</td>
-                          <td className="td-muted">{item.email}</td>
-                          <td className="td-muted">{item.department}</td>
-                          <td><span className={`badge ${getStatusColor(item.status)}`}>{item.status}</span></td>
-                          <td className="td-muted">{new Date(item.created_at).toLocaleDateString()}</td>
-                          <td>
-                            <button className="view-link" onClick={() => setSelectedSubmission(item)}>View</button>
+                        <tr key={item.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                          <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>{item.name}</td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.email}</td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.department}</td>
+                          <td style={{ padding: '0.6rem 0.875rem' }}><span className={`badge ${getStatusColor(item.status)}`}>{item.status}</span></td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.created_at).toLocaleDateString()}</td>
+                          <td style={{ padding: '0.6rem 0.875rem' }}>
+                            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '600', padding: 0 }} onClick={() => setSelectedSubmission(item)}>View</button>
                           </td>
                         </tr>
                       ))}
@@ -545,12 +550,13 @@ const handleLogout = () => {
             </div>
           )}
 
+          {activeTab === 'vendors' && <VendorManagementAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'properties' && <PropertiesManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services' && <QuickServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'primary-services' && <PrimaryServicesManager isDarkMode={isDarkMode} />}
-         {activeTab === 'agents' && <AgentsManager />}
-         {activeTab === 'franchises' && <FranchisesManager />}
-         {activeTab === 'projects' && <ProjectsManager />}
+          {activeTab === 'agents' && <AgentsManager />}
+          {activeTab === 'franchises' && <FranchisesManager />}
+          {activeTab === 'projects' && <ProjectsManager />}
 
         </div>
 
