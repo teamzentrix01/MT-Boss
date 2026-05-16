@@ -6,201 +6,186 @@ import jwt from 'jsonwebtoken';
 export async function POST(req) {
   let client;
   try {
-    const {
-      email,
-      password,
-      shop_name,
-      business_name,
-      phone,
-      city,
-      state,
-      country,
-      postal_code,
-      business_type,
-      description,
-      gst_number,
-      pan_number,
-      business_registration_number,
-      bank_account_holder,
-      bank_account_number,
-      bank_name,
-      bank_ifsc_code,
-      services
-    } = await req.json();
+    let email, password, phone, city, state, country, postal_code,
+        aadhar_number, services, profilePhotoBuffer, profilePhotoMime,
+        aadharImageBuffer, aadharImageMime;
 
-    console.log('=== Vendor Signup Request ===');
-    console.log('Email:', email);
-    console.log('Shop:', shop_name);
-    console.log('Services:', services);
+    const contentType = req.headers.get('content-type') || '';
 
-    // ── Validation ──
-    if (!email || !password || !shop_name || !business_name || !city || !state) {
+    if (contentType.includes('multipart/form-data')) {
+      const fd = await req.formData();
+      email         = fd.get('email');
+      password      = fd.get('password');
+      phone         = fd.get('phone');
+      city          = fd.get('city');
+      state         = fd.get('state');
+      country       = fd.get('country') || 'India';
+      postal_code   = fd.get('postal_code');
+      aadhar_number = (fd.get('aadhar_number') || '').replace(/\s/g, '');
+      services      = JSON.parse(fd.get('services') || '[]');
+
+      const profileFile = fd.get('profile_photo');
+      const aadharFile  = fd.get('aadhar_image');
+      if (profileFile?.size > 0) {
+        profilePhotoBuffer = Buffer.from(await profileFile.arrayBuffer());
+        profilePhotoMime   = profileFile.type;
+      }
+      if (aadharFile?.size > 0) {
+        aadharImageBuffer = Buffer.from(await aadharFile.arrayBuffer());
+        aadharImageMime   = aadharFile.type;
+      }
+    } else {
+      const body    = await req.json();
+      email         = body.email;
+      password      = body.password;
+      phone         = body.phone;
+      city          = body.city;
+      state         = body.state;
+      country       = body.country || 'India';
+      postal_code   = body.postal_code;
+      aadhar_number = (body.aadhar_number || '').replace(/\s/g, '');
+      services      = body.services || [];
+    }
+
+    console.log('=== Vendor Signup ===', { email, phone, city });
+
+    // Validation
+    if (!email || !password || !phone || !city || !state || !postal_code) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields: email, password, phone, city, state, postal_code' },
         { status: 400 }
       );
     }
-
-    if (!services || !Array.isArray(services) || services.length === 0) {
-      return NextResponse.json(
-        { error: 'Please select at least one service' },
-        { status: 400 }
-      );
+    if (!aadhar_number || aadhar_number.length !== 12) {
+      return NextResponse.json({ error: 'Invalid Aadhaar number — must be 12 digits' }, { status: 400 });
+    }
+    if (!Array.isArray(services) || services.length === 0) {
+      return NextResponse.json({ error: 'Please select at least one service' }, { status: 400 });
     }
 
-    // ── Check if vendor exists ──
-    const existsResult = await pool.query(
-      'SELECT id FROM vendors WHERE email = $1',
-      [email]
-    );
-
-    if (existsResult.rows.length > 0) {
-      return NextResponse.json(
-        { error: 'Email already registered' },
-        { status: 400 }
-      );
+    // Check duplicate email
+    const exists = await pool.query('SELECT id FROM vendors WHERE email = $1', [email]);
+    if (exists.rows.length > 0) {
+      return NextResponse.json({ error: 'Email already registered' }, { status: 400 });
     }
 
-    // ── Hash password ──
     const hashedPassword = await bcrypt.hash(password, 10);
 
     client = await pool.connect();
     await client.query('BEGIN');
 
-    try {
-      // ── Insert vendor ──
-      const vendorResult = await client.query(
-        `INSERT INTO vendors (
-          email, password, shop_name, business_name, phone,
-          city, state, country, postal_code, business_type, description,
-          bank_account_holder, bank_account_number, bank_name, bank_ifsc_code,
-          gst_number, pan_number, business_registration_number,
-          status, verification_status, created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, NOW(), NOW())
-        RETURNING 
-          id, email, shop_name, business_name, phone, city, state, country, 
-          postal_code, business_type, status, verification_status`,
-        [
-          email,
-          hashedPassword,
-          shop_name,
-          business_name,
-          phone || null,
-          city,
-          state,
-          country || null,
-          postal_code || null,
-          business_type || null,
-          description || null,
-          bank_account_holder || null,
-          bank_account_number || null,
-          bank_name || null,
-          bank_ifsc_code || null,
-          gst_number || null,
-          pan_number || null,
-          business_registration_number || null,
-          'active',
-          'pending'
-        ]
-      );
+    // Detect which columns exist to stay compatible with current schema
+    const colCheck = await client.query(
+      `SELECT column_name FROM information_schema.columns WHERE table_name = 'vendors'`
+    );
+    const cols = new Set(colCheck.rows.map(r => r.column_name));
 
-      if (!vendorResult.rows[0]) {
-        await client.query('ROLLBACK');
-        return NextResponse.json(
-          { error: 'Failed to create vendor account' },
-          { status: 500 }
-        );
-      }
+    // Build INSERT fields dynamically
+    const fields = {
+      email,
+      password: hashedPassword,
+      phone,
+      city,
+      state,
+      country,
+      postal_code,
+      status: 'active',
+      verification_status: 'pending',
+    };
 
-      const vendor = vendorResult.rows[0];
-      console.log('✓ Vendor created:', vendor.id);
+    // Old schema compat — fill required NOT NULL columns with defaults
+    if (cols.has('shop_name'))     fields.shop_name     = email.split('@')[0];
+    if (cols.has('business_name')) fields.business_name = email.split('@')[0];
 
-      // ── Assign services ──
-      try {
-        for (const serviceId of services) {
-          await client.query(
-            `INSERT INTO vendor_services (vendor_id, quick_service_id, is_active)
-             VALUES ($1, $2, TRUE)
-             ON CONFLICT (vendor_id, quick_service_id) 
-             DO UPDATE SET is_active = TRUE`,
-            [vendor.id, serviceId]
-          );
-        }
-        console.log('✓ Services assigned:', services.length);
-      } catch (serviceErr) {
-        console.warn('⚠ Service assignment failed (non-critical):', serviceErr.message);
-      }
+    // New identity columns — only insert if column exists in DB
+    if (cols.has('aadhar_number'))     fields.aadhar_number     = aadhar_number;
+    if (cols.has('profile_photo') && profilePhotoBuffer)
+      fields.profile_photo = profilePhotoBuffer;
+    if (cols.has('profile_photo_mime') && profilePhotoMime)
+      fields.profile_photo_mime = profilePhotoMime;
+    if (cols.has('aadhar_image') && aadharImageBuffer)
+      fields.aadhar_image = aadharImageBuffer;
+    if (cols.has('aadhar_image_mime') && aadharImageMime)
+      fields.aadhar_image_mime = aadharImageMime;
 
-      // ── Create vendor stats ──
+    const colNames     = Object.keys(fields);
+    const paramValues  = Object.values(fields);
+    const placeholders = paramValues.map((_, i) => `$${i + 1}`);
+
+    const insertSQL = `
+      INSERT INTO vendors (${colNames.join(', ')}, created_at, updated_at)
+      VALUES (${placeholders.join(', ')}, NOW(), NOW())
+      RETURNING id, email, phone, city, state, country, postal_code, status, verification_status
+    `;
+
+    const vendorResult = await client.query(insertSQL, paramValues);
+    if (!vendorResult.rows[0]) {
+      await client.query('ROLLBACK');
+      return NextResponse.json({ error: 'Failed to create vendor account' }, { status: 500 });
+    }
+
+    const vendor = vendorResult.rows[0];
+    console.log('✓ Vendor created:', vendor.id);
+
+    // Assign services
+    for (const serviceId of services) {
       try {
         await client.query(
-          `INSERT INTO vendor_stats (vendor_id, created_at, updated_at)
-           VALUES ($1, NOW(), NOW())
-           ON CONFLICT (vendor_id) DO NOTHING`,
-          [vendor.id]
+          `INSERT INTO vendor_services (vendor_id, quick_service_id, is_active)
+           VALUES ($1, $2, TRUE)
+           ON CONFLICT (vendor_id, quick_service_id) DO UPDATE SET is_active = TRUE`,
+          [vendor.id, serviceId]
         );
-        console.log('✓ Vendor stats created');
-      } catch (statsErr) {
-        console.warn('⚠ Stats creation failed (non-critical):', statsErr.message);
+      } catch (e) {
+        console.warn('⚠ Service assign failed for', serviceId, e.message);
       }
-
-      await client.query('COMMIT');
-      console.log('✓ Transaction committed');
-
-      // ── Generate JWT ──
-      const token = jwt.sign(
-        { id: vendor.id, email: vendor.email, role: 'vendor' },
-        process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret',
-        { expiresIn: '7d' }
-      );
-
-      console.log('✓ Signup successful');
-
-      return NextResponse.json({
-        success: true,
-        message: 'Vendor account created successfully',
-        token,
-        vendor: {
-          id: vendor.id,
-          email: vendor.email,
-          shop_name: vendor.shop_name,
-          business_name: vendor.business_name,
-          phone: vendor.phone,
-          city: vendor.city,
-          state: vendor.state,
-          country: vendor.country,
-          postal_code: vendor.postal_code,
-          business_type: vendor.business_type,
-          status: vendor.status,
-          verification_status: vendor.verification_status,
-          role: 'vendor'
-        },
-        redirectTo: '/vendor/dashboard',
-      }, { status: 201 });
-
-    } catch (dbErr) {
-      await client.query('ROLLBACK');
-      console.error('Database error:', dbErr.message);
-      return NextResponse.json(
-        { error: 'Database error: ' + dbErr.message },
-        { status: 500 }
-      );
     }
+    console.log('✓ Services assigned:', services.length);
+
+    // Vendor stats — only insert vendor_id, no timestamps
+    try {
+      await client.query(
+        `INSERT INTO vendor_stats (vendor_id) VALUES ($1) ON CONFLICT (vendor_id) DO NOTHING`,
+        [vendor.id]
+      );
+    } catch (e) {
+      console.warn('⚠ Stats creation failed (non-critical):', e.message);
+    }
+
+    await client.query('COMMIT');
+
+    const token = jwt.sign(
+      { id: vendor.id, email: vendor.email, role: 'vendor' },
+      process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret',
+      { expiresIn: '7d' }
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: 'Vendor account created successfully',
+      token,
+      vendor: {
+        id: vendor.id,
+        email: vendor.email,
+        phone: vendor.phone,
+        city: vendor.city,
+        state: vendor.state,
+        country: vendor.country,
+        postal_code: vendor.postal_code,
+        status: vendor.status,
+        verification_status: vendor.verification_status,
+        role: 'vendor',
+      },
+      redirectTo: '/vendor/dashboard',
+    }, { status: 201 });
 
   } catch (error) {
-    console.error('Signup error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Server error' },
-      { status: 500 }
-    );
-  } finally {
     if (client) {
-      try {
-        await client.query('ROLLBACK');
-      } catch (e) {
-        // Ignore
-      }
-      client.release();
+      try { await client.query('ROLLBACK'); } catch (_) {}
     }
+    console.error('Signup error:', error);
+    return NextResponse.json({ error: error.message || 'Server error' }, { status: 500 });
+  } finally {
+    if (client) client.release();
   }
 }
