@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 export default function VendorManagementAdmin({ isDarkMode }) {
   const [vendors, setVendors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);  // ← New: error tracking
   const [filter, setFilter] = useState('all'); // all, pending, verified, active, inactive
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,104 +17,180 @@ export default function VendorManagementAdmin({ isDarkMode }) {
 
   const fetchVendors = async () => {
     setLoading(true);
+    setError(null);
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      
+      // ← NEW: Logging
+      console.log('🔍 Fetching vendors with token:', token ? 'Present' : 'MISSING');
+      
       const res = await fetch('/api/admin/vendors', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store'  // ← NEW: Prevent caching issues
       });
+
+      // ← NEW: Log response status
+      console.log('📡 API Response Status:', res.status);
+
       const data = await res.json();
+      
+      // ← NEW: Detailed logging
+      console.log('📊 API Response Data:', data);
+      console.log('📈 Total vendors returned:', data.data?.length || 0);
+
       if (data.success) {
-        setVendors(data.data || []);
+        const vendorList = data.data || [];
+        setVendors(vendorList);
+        console.log('✅ Vendors loaded successfully:', vendorList.length);
+      } else {
+        const errorMsg = data.error || 'Unknown error';
+        setError(errorMsg);
+        console.error('❌ API Error:', errorMsg);
       }
     } catch (err) {
-      console.error('Error fetching vendors:', err);
+      const errorMsg = err.message || 'Failed to fetch vendors';
+      setError(errorMsg);
+      console.error('❌ Fetch Error:', err);
     } finally {
       setLoading(false);
     }
   };
 
-const handleApproveVendor = async (vendorId) => {
-  try {
-    const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
-    
-    const res = await fetch('/api/admin/vendors', {        // ← fixed URL
-      method: 'PUT',                                       // ← already correct, keep it
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        vendor_id: vendorId,                               // ← changed
-        action: 'approve'                                  // ← changed
-      })
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      fetchVendors();
-      setSelectedVendor(null);
-    }
-  } catch (err) {
-    console.error('Error approving vendor:', err);
-  }
-};
-
-  const handleRejectVendor = async (vendorId, reason) => {
+  const handleApproveVendor = async (vendorId) => {
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
-      const res = await fetch(`/api/admin/vendors/${vendorId}/reject`, {
+      
+      console.log('✓ Approving vendor:', vendorId);
+
+      const res = await fetch('/api/admin/vendors', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ reason })
+        body: JSON.stringify({
+          vendor_id: vendorId,
+          action: 'approve'
+        })
       });
+
       const data = await res.json();
+      
       if (res.ok) {
-        fetchVendors();
+        console.log('✅ Vendor approved:', data);
+        // ← NEW: Small delay before refresh to ensure DB update
+        setTimeout(() => fetchVendors(), 500);
         setSelectedVendor(null);
+      } else {
+        console.error('❌ Approval failed:', data.error);
+        alert(`Error: ${data.error}`);
       }
     } catch (err) {
-      console.error('Error rejecting vendor:', err);
+      console.error('❌ Error approving vendor:', err);
+      alert(`Error: ${err.message}`);
+    }
+  };
+
+  const handleRejectVendor = async (vendorId, reason) => {
+    try {
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      
+      console.log('✕ Rejecting vendor:', vendorId, 'Reason:', reason);
+
+      const res = await fetch('/api/admin/vendors', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          vendor_id: vendorId,
+          action: 'reject',
+          admin_notes: reason
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        console.log('✅ Vendor rejected:', data);
+        setTimeout(() => fetchVendors(), 500);
+        setSelectedVendor(null);
+      } else {
+        console.error('❌ Rejection failed:', data.error);
+        alert(`Error: ${data.error}`);
+      }
+    } catch (err) {
+      console.error('❌ Error rejecting vendor:', err);
+      alert(`Error: ${err.message}`);
     }
   };
 
   const handleToggleStatus = async (vendorId, newStatus) => {
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
-      const res = await fetch(`/api/admin/vendors/${vendorId}`, {
+      
+      const action = newStatus === 'active' ? 'deactivate' : 'activate';
+      console.log('⚙️ Toggling vendor status:', vendorId, '→', action);
+
+      const res = await fetch('/api/admin/vendors', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({
+          vendor_id: vendorId,
+          action: action
+        })
       });
+
+      const data = await res.json();
+
       if (res.ok) {
-        fetchVendors();
+        console.log('✅ Vendor status toggled:', data);
+        setTimeout(() => fetchVendors(), 500);
+      } else {
+        console.error('❌ Toggle failed:', data.error);
+        alert(`Error: ${data.error}`);
       }
     } catch (err) {
-      console.error('Error updating vendor:', err);
+      console.error('❌ Error updating vendor status:', err);
+      alert(`Error: ${err.message}`);
     }
   };
 
-  // Filter vendors
+  // ← IMPROVED: Better filtering logic
   const filteredVendors = vendors.filter(v => {
-    const matchesFilter = 
-      filter === 'all' ||
-      filter === 'pending' && v.verification_status === 'pending' ||
-      filter === 'verified' && v.verification_status === 'verified' ||
-      filter === 'active' && v.status === 'active' ||
-      filter === 'inactive' && v.status === 'inactive';
+    // Check filter
+    let matchesFilter = true;
     
-    const matchesSearch = 
+    if (filter === 'pending') {
+      matchesFilter = v.verification_status === 'pending';
+    } else if (filter === 'verified') {
+      matchesFilter = v.verification_status === 'verified';
+    } else if (filter === 'active') {
+      matchesFilter = v.status === 'active';
+    } else if (filter === 'inactive') {
+      matchesFilter = v.status === 'inactive';
+    }
+    // 'all' matches everything
+
+    // Check search
+    const matchesSearch = !searchTerm || 
       v.shop_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       v.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       v.business_name?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     return matchesFilter && matchesSearch;
   });
+
+  // ← NEW: Debug logging for filters
+  useEffect(() => {
+    console.log('📋 Filter changed:', filter);
+    console.log('🔎 Search term:', searchTerm);
+    console.log('📊 Filtered results:', filteredVendors.length, '/', vendors.length);
+  }, [filter, searchTerm, filteredVendors]);
 
   const stats = [
     { label: 'Total Vendors', value: vendors.length, color: 'stat-a' },
@@ -127,6 +204,16 @@ const handleApproveVendor = async (vendorId) => {
       <style>{`
         .vendor-manager {
           padding: 1.25rem 1.5rem;
+        }
+
+        .error-banner {
+          background: #fee;
+          border: 1px solid #fcc;
+          color: #c33;
+          padding: 1rem;
+          border-radius: 6px;
+          margin-bottom: 1rem;
+          font-size: 0.8125rem;
         }
 
         .stats-grid {
@@ -431,8 +518,20 @@ const handleApproveVendor = async (vendorId) => {
           background: ${isDarkMode ? '#444' : '#e0e0e0'};
         }
 
-        .loading { text-align: center; padding: 2rem; color: ${isDarkMode ? '#999' : '#999'}; }
+        .loading { 
+          text-align: center; 
+          padding: 2rem; 
+          color: ${isDarkMode ? '#999' : '#999'}; 
+        }
       `}</style>
+
+      {/* Error Banner */}
+      {error && (
+        <div className="error-banner">
+          ❌ <strong>Error:</strong> {error}
+          <button onClick={() => setError(null)} style={{ float: 'right', cursor: 'pointer' }}>✕</button>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="stats-grid">
@@ -472,7 +571,11 @@ const handleApproveVendor = async (vendorId) => {
       {loading ? (
         <div className="loading">Loading vendors...</div>
       ) : filteredVendors.length === 0 ? (
-        <div className="empty-state">No vendors found.</div>
+        <div className="empty-state">
+          {vendors.length === 0 
+            ? 'No vendors registered yet.' 
+            : `No vendors match filter "${filter}" ${searchTerm ? `and search "${searchTerm}"` : ''}`}
+        </div>
       ) : (
         <table className="vendors-table">
           <thead>
@@ -489,8 +592,8 @@ const handleApproveVendor = async (vendorId) => {
             {filteredVendors.map(vendor => (
               <tr key={vendor.id}>
                 <td>
-                  <div className="vendor-name">{vendor.shop_name}</div>
-                  <div className="vendor-meta">{vendor.business_name}</div>
+                  <div className="vendor-name">{vendor.shop_name || vendor.email}</div>
+                  <div className="vendor-meta">{vendor.city}, {vendor.state}</div>
                 </td>
                 <td className="vendor-meta">{vendor.email}</td>
                 <td className="vendor-meta">{vendor.city}</td>

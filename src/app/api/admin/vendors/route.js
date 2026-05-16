@@ -115,10 +115,10 @@ export async function PUT(req) {
         }
 
         // Create vendor stats
-        await client.query(
-          `INSERT INTO vendor_stats (vendor_id, created_at, updated_at)
-           VALUES ($1, NOW(), NOW())
-           ON CONFLICT (vendor_id) DO NOTHING`,
+       await client.query(
+  `INSERT INTO vendor_stats (vendor_id)
+   VALUES ($1)
+   ON CONFLICT (vendor_id) DO NOTHING`,
           [vendor_id]
         );
 
