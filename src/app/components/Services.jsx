@@ -8,21 +8,21 @@ const featuredServices = [
     title: "Commercial Buildings",
     description: "From corporate offices to retail complexes, we design and construct world-class commercial spaces built to last.",
     image: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80",
-    link: "/services/all", // Confirm folder name is 'services' not 'Services'
+    link: "/Services/all", // Confirm folder name is 'services' not 'Services'
   },
   {
     id: 2,
     title: "Hotel & Hospitality",
     description: "We deliver premium hotel and resort construction with meticulous attention to interiors and guest experience.",
     image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
-    link: "/services/all",
+    link: "/Services/all",
   },
   {
     id: 3,
     title: "Residential Projects",
     description: "Affordable housing to luxury villas — MTBOSS builds residential spaces that marry comfort and safety.",
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
-    link: "/services/all",
+    link: "/Services/all",
   },
 ];
 

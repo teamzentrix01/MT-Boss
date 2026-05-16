@@ -2,55 +2,13 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
-const projects = [
-  {
-    id: 1,
-    title: "The Grand Plaza",
-    category: "Commercial",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
-    size: "large", // Grid span control
-  },
-  {
-    id: 2,
-    title: "Urban Heights",
-    category: "Residential",
-    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80",
-    size: "small",
-  },
-  {
-    id: 3,
-    title: "Heritage Resort",
-    category: "Hospitality",
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80",
-    size: "small",
-  },
-  {
-    id: 4,
-    title: "Industrial Hub X",
-    category: "Industrial",
-    image: "https://images.unsplash.com/photo-1581094288338-2314dddb7edd?w=800&q=80",
-    size: "medium",
-  },
-  {
-    id: 5,
-    title: "Skyline Villa",
-    category: "Luxury Home",
-    image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80",
-    size: "medium",
-  },
-  {
-    id: 6,
-    title: "Tech Park Phase II",
-    category: "IT Infrastructure",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
-    size: "small",
-  }
-];
+
 
 export default function ProjectGallery() {
   const [filter, setFilter] = useState("All");
   const [isDark, setIsDark] = useState(false);
   const categories = ["All", "Commercial", "Residential", "Hospitality", "Industrial"];
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     const checkTheme = () => setIsDark(document.documentElement.classList.contains("dark-mode"));
@@ -60,9 +18,19 @@ export default function ProjectGallery() {
     return () => observer.disconnect();
   }, []);
 
-  const filteredProjects = filter === "All" 
-    ? projects 
-    : projects.filter(p => p.category === filter);
+
+    useEffect(() => {
+  // existing theme useEffect stays as-is, add this separately:
+  fetch('/api/projects')
+    .then(r => r.json())
+    .then(data => { if (data.success) setProjects(data.data); })
+    .catch(console.error);
+}, []);
+
+// Update filteredProjects line — already works since it filters from state:
+const filteredProjects = filter === "All"
+  ? projects
+  : projects.filter(p => p.category === filter);
 
   return (
     <section className={`py-24 px-6 transition-colors duration-500 ${isDark ? 'bg-black' : 'bg-white'}`}>
@@ -105,7 +73,8 @@ export default function ProjectGallery() {
               }`}
             >
               <img
-                src={project.image}
+                src={project.image_url}
+
                 alt={project.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
               />

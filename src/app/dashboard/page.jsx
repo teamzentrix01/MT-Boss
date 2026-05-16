@@ -1,0 +1,595 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; 
+import QuickServicesManager from '../components/QuickServicesManager';
+import PrimaryServicesManager from '../components/PrimaryServicesManager';
+import PropertiesManager from '../components/PropertiesManager';
+import ProjectsManager from '../components/ProjectsManager';
+import FranchisesManager from './franchises/page';
+import AgentsManager from './agents/page';
+
+export default function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submissions, setSubmissions] = useState([]);
+  const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [pendingProperties, setPendingProperties] = useState(0);
+  const router = useRouter();
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark-mode');
+    setIsDarkMode(isDark);
+
+    const observer = new MutationObserver(() => {
+      setIsDarkMode(html.classList.contains('dark-mode'));
+    });
+    observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+
+        const contactRes = await fetch('/api/contact', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const contactData = await contactRes.json();
+        if (contactData.success) setSubmissions(contactData.data);
+
+        const propsRes = await fetch('/api/properties?status=all', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const propsData = await propsRes.json();
+        if (propsData.success) {
+          setPendingProperties(propsData.data.filter(p => p.status === 'pending').length);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const stats = [
+    { label: 'Contact Submissions', value: submissions.length, icon: '📧' },
+    { label: 'Pending Properties', value: pendingProperties, icon: '🏠' },
+    { label: 'Contacted', value: submissions.filter(s => s.status === 'Contacted').length, icon: '✓' },
+  ];
+
+  const getStatusColor = (status) => {
+    const map = {
+      'New': 'status-new',
+      'Pending': 'status-pending',
+      'Contacted': 'status-contacted',
+      'Resolved': 'status-resolved',
+    };
+    return map[status] || 'status-new';
+  };
+
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: '▦' },
+    { id: 'submissions', label: 'Contact Forms', icon: '✉' },
+    { id: 'properties', label: 'Properties', icon: '⌂' },
+    { id: 'quick-services', label: 'Quick Services', icon: '⚡' },
+    { id: 'primary-services', label: 'Primary Services', icon: '⊞' },
+    { id: 'agents', label: 'Agents', icon: '👤' },
+    { id: 'franchises', label: 'Franchises', icon: '🏢' },
+    { id: 'projects', label: 'Projects', icon: '🏗️' },
+
+
+  ];
+
+  if (loading) {
+    return (
+      <div className="dash-loading">
+        <span>Loading…</span>
+      </div>
+    );
+  }
+
+  // Add this function inside the component (before return):
+const handleLogout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  document.cookie = 'auth-token=; path=/; max-age=0';
+  router.push('/login');
+};
+
+  return (
+    <>
+      <style>{`
+        /* ── Tokens ── */
+        :root {
+          --bg:        #f5f5f7;
+          --surface:   #ffffff;
+          --border:    #e2e2e7;
+          --text:      #111113;
+          --muted:     #6b6b76;
+          --accent:    #2563eb;
+          --accent-lt: #eff4ff;
+
+          --stat-a-bg: #f0f4ff;
+          --stat-a-tx: #1e3a8a;
+          --stat-b-bg: #fff7ed;
+          --stat-b-tx: #9a3412;
+          --stat-c-bg: #f0fdf4;
+          --stat-c-tx: #14532d;
+
+          --sn-bg: #dbeafe; --sn-tx: #1e40af;
+          --sp-bg: #ffedd5; --sp-tx: #9a3412;
+          --sc-bg: #dbeafe; --sc-tx: #1e40af;
+          --sr-bg: #dcfce7; --sr-tx: #166534;
+        }
+        .dark-mode {
+          --bg:        #0f0f11;
+          --surface:   #18181c;
+          --border:    #2a2a30;
+          --text:      #f0f0f5;
+          --muted:     #7c7c8a;
+          --accent:    #60a5fa;
+          --accent-lt: #1e2a3a;
+
+          --stat-a-bg: #1a2035; --stat-a-tx: #93c5fd;
+          --stat-b-bg: #2a1a0e; --stat-b-tx: #fb923c;
+          --stat-c-bg: #0f2a18; --stat-c-tx: #86efac;
+
+          --sn-bg: #1e2a3a; --sn-tx: #93c5fd;
+          --sp-bg: #2a1a0e; --sp-tx: #fb923c;
+          --sc-bg: #1e2a3a; --sc-tx: #93c5fd;
+          --sr-bg: #0f2a18; --sr-tx: #86efac;
+        }
+
+        /* ── Base ── */
+        .dash-root {
+          min-height: 100vh;
+          background: var(--bg);
+          font-family: 'DM Sans', system-ui, sans-serif;
+          color: var(--text);
+        }
+        .dash-loading {
+          display: flex; align-items: center; justify-content: center;
+          min-height: 100vh;
+          background: var(--bg); color: var(--muted);
+          font-size: 0.875rem;
+        }
+
+        /* ── Header ── */
+        .dash-header {
+          background: var(--surface);
+          border-bottom: 1px solid var(--border);
+        }
+        .dash-header-inner {
+          max-width: 1280px; margin: 0 auto;
+          padding: 0.875rem 1.5rem;
+          display: flex; align-items: center; justify-content: space-between;
+        }
+        .dash-title { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.02em; }
+        .dash-subtitle { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+        .dash-export-btn {
+          display: inline-flex; align-items: center; gap: 0.375rem;
+          padding: 0.4rem 0.875rem;
+          background: var(--accent); color: #fff;
+          border: none; border-radius: 6px;
+          font-size: 0.8125rem; font-weight: 600;
+          cursor: pointer; transition: opacity .15s;
+        }
+        .dash-export-btn:hover { opacity: .85; }
+
+        .dash-logout-btn {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  padding: 0.4rem 0.875rem;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 6px;
+  font-size: 0.8125rem; font-weight: 600;
+  cursor: pointer; transition: all .15s;
+}
+.dash-logout-btn:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+
+        /* ── Tabs ── */
+        .dash-tabs-bar {
+          background: var(--surface);
+          border-bottom: 1px solid var(--border);
+          position: sticky; top: 0; z-index: 40;
+        }
+        .dash-tabs-inner {
+          max-width: 1280px; margin: 0 auto;
+          padding: 0 1.5rem;
+          display: flex; overflow-x: auto;
+          scrollbar-width: none;
+        }
+        .dash-tabs-inner::-webkit-scrollbar { display: none; }
+        .dash-tab {
+          display: flex; align-items: center; gap: 0.375rem;
+          padding: 0.6rem 1rem;
+          font-size: 0.8125rem; font-weight: 500;
+          color: var(--muted);
+          border: none; background: none;
+          border-bottom: 2px solid transparent;
+          cursor: pointer; white-space: nowrap;
+          transition: color .15s, border-color .15s;
+          margin-bottom: -1px;
+        }
+        .dash-tab:hover { color: var(--text); }
+        .dash-tab.active {
+          color: var(--accent);
+          border-bottom-color: var(--accent);
+        }
+        .dash-tab-icon { font-size: 0.875rem; }
+
+        /* ── Content ── */
+        .dash-content {
+          max-width: 1280px; margin: 0 auto;
+          padding: 1.25rem 1.5rem;
+        }
+
+        /* ── Stat Cards ── */
+        .dash-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; margin-bottom: 1rem; }
+        @media(max-width:640px){ .dash-stats { grid-template-columns: 1fr; } }
+
+        .stat-card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 1rem 1.25rem;
+          display: flex; align-items: center; justify-content: space-between;
+        }
+        .stat-card-a { background: var(--stat-a-bg); border-color: transparent; }
+        .stat-card-b { background: var(--stat-b-bg); border-color: transparent; }
+        .stat-card-c { background: var(--stat-c-bg); border-color: transparent; }
+        .stat-label {
+          font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
+          letter-spacing: .06em; color: var(--muted); margin-bottom: 0.25rem;
+        }
+        .stat-card-a .stat-label { color: var(--stat-a-tx); opacity: .7; }
+        .stat-card-b .stat-label { color: var(--stat-b-tx); opacity: .7; }
+        .stat-card-c .stat-label { color: var(--stat-c-tx); opacity: .7; }
+        .stat-value { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+        .stat-card-a .stat-value { color: var(--stat-a-tx); }
+        .stat-card-b .stat-value { color: var(--stat-b-tx); }
+        .stat-card-c .stat-value { color: var(--stat-c-tx); }
+        .stat-icon { font-size: 1.5rem; opacity: .5; }
+
+        /* ── Panel ── */
+        .panel {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          margin-bottom: 0.75rem;
+          overflow: hidden;
+        }
+        .panel-header {
+          padding: 0.75rem 1.25rem;
+          border-bottom: 1px solid var(--border);
+          display: flex; align-items: center; justify-content: space-between;
+        }
+        .panel-title { font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+        .panel-body { padding: 0.875rem 1.25rem; }
+
+        /* ── Submission Row ── */
+        .sub-row {
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 0.6rem 0.75rem;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: background .12s;
+        }
+        .sub-row:hover { background: var(--bg); }
+        .sub-name { font-size: 0.8125rem; font-weight: 600; }
+        .sub-meta { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+
+        /* ── Status Badges ── */
+        .badge {
+          display: inline-block;
+          padding: 0.15rem 0.55rem;
+          border-radius: 999px;
+          font-size: 0.6875rem; font-weight: 600;
+        }
+        .status-new      { background: var(--sn-bg); color: var(--sn-tx); }
+        .status-pending  { background: var(--sp-bg); color: var(--sp-tx); }
+        .status-contacted{ background: var(--sc-bg); color: var(--sc-tx); }
+        .status-resolved { background: var(--sr-bg); color: var(--sr-tx); }
+
+        /* ── Pending Alert ── */
+        .pending-alert {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-left: 3px solid #f97316;
+          border-radius: 8px;
+          padding: 1rem 1.25rem;
+        }
+        .pending-alert-title { font-size: 0.8125rem; font-weight: 700; margin-bottom: 0.375rem; }
+        .pending-alert-body  { font-size: 0.8125rem; color: var(--muted); margin-bottom: 0.75rem; }
+        .pending-alert-body strong { color: #f97316; }
+        .review-btn {
+          padding: 0.4rem 0.875rem;
+          background: #f97316; color: #fff;
+          border: none; border-radius: 6px;
+          font-size: 0.8125rem; font-weight: 600;
+          cursor: pointer; transition: opacity .15s;
+        }
+        .review-btn:hover { opacity: .85; }
+
+        /* ── Submissions Tab ── */
+        .section-head {
+          display: flex; align-items: center; justify-content: space-between;
+          margin-bottom: 0.75rem;
+        }
+        .section-head-title { font-size: 0.875rem; font-weight: 700; }
+        .search-input {
+          padding: 0.35rem 0.75rem;
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          background: var(--surface);
+          color: var(--text);
+          font-size: 0.8125rem;
+          outline: none;
+          width: 200px;
+          transition: border-color .15s;
+        }
+        .search-input:focus { border-color: var(--accent); }
+        .search-input::placeholder { color: var(--muted); }
+
+        /* ── Table ── */
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+        .data-table th {
+          padding: 0.5rem 0.875rem;
+          text-align: left;
+          font-size: 0.6875rem; font-weight: 600;
+          text-transform: uppercase; letter-spacing: .06em;
+          color: var(--muted);
+          border-bottom: 1px solid var(--border);
+          background: var(--bg);
+        }
+        .data-table td {
+          padding: 0.6rem 0.875rem;
+          border-bottom: 1px solid var(--border);
+          color: var(--text);
+        }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover td { background: var(--bg); }
+        .td-name { font-weight: 600; }
+        .td-muted { color: var(--muted); }
+        .view-link {
+          background: none; border: none; cursor: pointer;
+          color: var(--accent); font-size: 0.8125rem; font-weight: 600;
+          padding: 0;
+        }
+        .view-link:hover { text-decoration: underline; }
+        .empty-state {
+          text-align: center; padding: 2rem;
+          font-size: 0.8125rem; color: var(--muted);
+        }
+
+        /* ── Modal ── */
+        .modal-backdrop {
+          position: fixed; inset: 0;
+          background: rgba(0,0,0,.45);
+          display: flex; align-items: center; justify-content: center;
+          padding: 1rem; z-index: 50;
+        }
+        .modal {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          max-width: 540px; width: 100%;
+          max-height: 90vh; overflow-y: auto;
+          padding: 1.5rem;
+          box-shadow: 0 20px 60px rgba(0,0,0,.2);
+        }
+        .modal-head {
+          display: flex; align-items: center; justify-content: space-between;
+          margin-bottom: 1.25rem;
+        }
+        .modal-title { font-size: 0.9375rem; font-weight: 700; }
+        .modal-close {
+          background: none; border: none; cursor: pointer;
+          color: var(--muted); font-size: 1.25rem; line-height: 1;
+          padding: 0.125rem 0.25rem; border-radius: 4px;
+          transition: background .12s;
+        }
+        .modal-close:hover { background: var(--bg); }
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .modal-field-label {
+          font-size: 0.6875rem; font-weight: 600;
+          text-transform: uppercase; letter-spacing: .06em;
+          color: var(--muted); margin-bottom: 0.25rem;
+        }
+        .modal-field-value { font-size: 0.8125rem; font-weight: 600; }
+        .modal-message {
+          background: var(--bg); border-radius: 6px;
+          padding: 0.75rem; font-size: 0.8125rem;
+          color: var(--muted); line-height: 1.6;
+          margin-bottom: 1.25rem;
+        }
+        .modal-close-btn {
+          width: 100%; padding: 0.5rem;
+          background: var(--accent); color: #fff;
+          border: none; border-radius: 6px;
+          font-size: 0.8125rem; font-weight: 600;
+          cursor: pointer; transition: opacity .15s;
+        }
+        .modal-close-btn:hover { opacity: .85; }
+      `}</style>
+
+      <div className="dash-root">
+        {/* Header */}
+        <div className="dash-header">
+          <div className="dash-header-inner">
+            <div>
+              <div className="dash-title">Admin Dashboard</div>
+              <div className="dash-subtitle">Manage properties, forms &amp; services</div>
+            </div>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+  <button className="dash-export-btn">↗ Export</button>
+  <button className="dash-logout-btn" onClick={handleLogout}>
+    ⎋ Logout
+  </button>
+</div>
+          </div>
+        </div>
+
+        {/* Tab Bar */}
+        <div className="dash-tabs-bar">
+          <div className="dash-tabs-inner">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`dash-tab${activeTab === tab.id ? ' active' : ''}`}
+              >
+                <span className="dash-tab-icon">{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="dash-content">
+
+          {/* Overview */}
+          {activeTab === 'overview' && (
+            <>
+              <div className="dash-stats">
+                {stats.map((s, i) => (
+                  <div key={i} className={`stat-card stat-card-${['a','b','c'][i]}`}>
+                    <div>
+                      <div className="stat-label">{s.label}</div>
+                      <div className="stat-value">{s.value}</div>
+                    </div>
+                    <span className="stat-icon">{s.icon}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="panel">
+                <div className="panel-header">
+                  <span className="panel-title">Recent Contact Submissions</span>
+                </div>
+                <div className="panel-body">
+                  {submissions.length === 0 ? (
+                    <p className="empty-state">No submissions yet.</p>
+                  ) : (
+                    <div>
+                      {submissions.slice(0, 5).map((item) => (
+                        <div key={item.id} className="sub-row" onClick={() => setSelectedSubmission(item)}>
+                          <div>
+                            <div className="sub-name">{item.name}</div>
+                            <div className="sub-meta">{item.email} · {item.department}</div>
+                          </div>
+                          <span className={`badge ${getStatusColor(item.status)}`}>{item.status}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {pendingProperties > 0 && (
+                <div className="pending-alert">
+                  <div className="pending-alert-title">Pending Properties Review</div>
+                  <div className="pending-alert-body">
+                    <strong>{pendingProperties}</strong> {pendingProperties === 1 ? 'property' : 'properties'} awaiting verification.
+                  </div>
+                  <button onClick={() => setActiveTab('properties')} className="review-btn">
+                    Review Properties →
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Contact Submissions */}
+          {activeTab === 'submissions' && (
+            <div>
+              <div className="section-head">
+                <span className="section-head-title">Contact Submissions</span>
+                <input type="text" placeholder="Search…" className="search-input" />
+              </div>
+              <div className="panel">
+                <div className="overflow-x-auto">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        {['Name','Email','Department','Status','Date','Action'].map(col => (
+                          <th key={col}>{col}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {submissions.map((item) => (
+                        <tr key={item.id}>
+                          <td className="td-name">{item.name}</td>
+                          <td className="td-muted">{item.email}</td>
+                          <td className="td-muted">{item.department}</td>
+                          <td><span className={`badge ${getStatusColor(item.status)}`}>{item.status}</span></td>
+                          <td className="td-muted">{new Date(item.created_at).toLocaleDateString()}</td>
+                          <td>
+                            <button className="view-link" onClick={() => setSelectedSubmission(item)}>View</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {submissions.length === 0 && <p className="empty-state">No contact submissions yet.</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'properties' && <PropertiesManager isDarkMode={isDarkMode} />}
+          {activeTab === 'quick-services' && <QuickServicesManager isDarkMode={isDarkMode} />}
+          {activeTab === 'primary-services' && <PrimaryServicesManager isDarkMode={isDarkMode} />}
+         {activeTab === 'agents' && <AgentsManager />}
+         {activeTab === 'franchises' && <FranchisesManager />}
+         {activeTab === 'projects' && <ProjectsManager />}
+
+        </div>
+
+        {/* Modal */}
+        {selectedSubmission && (
+          <div className="modal-backdrop" onClick={() => setSelectedSubmission(null)}>
+            <div className="modal" onClick={e => e.stopPropagation()}>
+              <div className="modal-head">
+                <span className="modal-title">Submission Details</span>
+                <button className="modal-close" onClick={() => setSelectedSubmission(null)}>✕</button>
+              </div>
+
+              <div className="modal-grid">
+                {[
+                  ['Name', selectedSubmission.name],
+                  ['Email', selectedSubmission.email],
+                  ['Phone', selectedSubmission.phone],
+                  ['Department', selectedSubmission.department],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="modal-field-label">{label}</div>
+                    <div className="modal-field-value">{value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ marginBottom: '0.75rem' }}>
+                <div className="modal-field-label">Subject</div>
+                <div className="modal-field-value">{selectedSubmission.subject}</div>
+              </div>
+
+              <div className="modal-field-label" style={{ marginBottom: '0.375rem' }}>Message</div>
+              <div className="modal-message">{selectedSubmission.message}</div>
+
+              <button className="modal-close-btn" onClick={() => setSelectedSubmission(null)}>Close</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}

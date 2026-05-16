@@ -1,29 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 
-const quickServices = [
-  { id: 1,  icon: "🔧", label: "Plumbing" },
-  { id: 2,  icon: "⚡", label: "Electrician" },
-  { id: 3,  icon: "🎨", label: "Painting" },
-  { id: 4,  icon: "❄️", label: "AC Service" },
-  { id: 5,  icon: "🪟", label: "Carpentry" },
-  { id: 6,  icon: "🧹", label: "Deep Cleaning" },
-  { id: 7,  icon: "🔒", label: "Locksmith" },
-  { id: 8,  icon: "🏠", label: "Waterproofing" },
-  { id: 9,  icon: "🪣", label: "Tank Cleaning" },
-  { id: 10, icon: "🔥", label: "Gas Pipeline" },
-  { id: 11, icon: "📡", label: "CCTV Install" },
-  { id: 12, icon: "🚿", label: "Bathroom Fit" },
-  { id: 13, icon: "🪞", label: "Glass & Mirrors" },
-  { id: 14, icon: "🏗️", label: "False Ceiling" },
-  { id: 15, icon: "🧱", label: "Tiling & Flooring" },
-  { id: 16, icon: "🔨", label: "Wall Repairs" },
-  { id: 17, icon: "💡", label: "Home Automation" },
-  { id: 18, icon: "🪜", label: "Staircase Work" },
-  { id: 19, icon: "🌿", label: "Garden & Lawn" },
-  { id: 20, icon: "🏠", label: "Pest Control" },
-];
-
 function useInView(threshold = 0.1) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
@@ -42,16 +19,33 @@ export default function QuickServices() {
   const [headerRef, headerVisible] = useInView(0.1);
   const [gridRef, gridVisible] = useInView(0.05);
   const [isDark, setIsDark] = useState(false);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkTheme = () => {
-      // Changed from document.body to document.documentElement
       setIsDark(document.documentElement.classList.contains("dark-mode"));
     };
     checkTheme();
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
+  }, []);
+
+  // Fetch from API — same as /quick/page.jsx
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await fetch("/api/quick-services");
+        const data = await res.json();
+        if (data.success) setServices(data.data);
+      } catch (error) {
+        console.error("Error fetching quick services:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
   }, []);
 
   const themeYellow = "#facc15";
@@ -117,6 +111,15 @@ export default function QuickServices() {
         .qs-grid-item {
           animation: float-up 0.5s ease both;
         }
+        /* Skeleton pulse */
+        @keyframes qs-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+        .qs-skeleton {
+          animation: qs-pulse 1.5s ease infinite;
+          background: ${isDark ? '#27272a' : '#f3f4f6'};
+        }
       `}</style>
 
       <section className={`transition-colors duration-500 py-12 px-4 sm:px-6 ${isDark ? 'bg-black' : 'bg-white'}`}>
@@ -144,25 +147,40 @@ export default function QuickServices() {
             </p>
           </div>
 
-          {/* Services Grid */}
+          {/* Services Grid — exact same layout as before */}
           <div
             ref={gridRef}
             className="grid grid-cols-5 sm:grid-cols-10 shadow-sm"
             style={{ border: isDark ? "1px solid #3f3f46" : "1px solid #f3f4f6" }}
           >
-            {quickServices.map((service, i) => (
-              <div
-                key={service.id}
-                className="qs-card qs-grid-item flex flex-col items-center justify-center gap-1.5 py-4 px-2"
-                style={{
-                  animationDelay: gridVisible ? `${i * 0.04}s` : "none",
-                  animationPlayState: gridVisible ? "running" : "paused",
-                }}
-              >
-                <span className="qs-icon">{service.icon}</span>
-                <span className="qs-label">{service.label}</span>
-              </div>
-            ))}
+            {loading
+              ? /* Skeleton — 20 placeholder cells matching the grid */
+                Array.from({ length: 20 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col items-center justify-center gap-1.5 py-4 px-2"
+                    style={{ border: `1px solid ${isDark ? '#3f3f46' : '#f3f4f6'}` }}
+                  >
+                    <div className="qs-skeleton rounded" style={{ width: 28, height: 28 }} />
+                    <div className="qs-skeleton rounded" style={{ width: 44, height: 10 }} />
+                  </div>
+                ))
+              : services.map((service, i) => (
+                  <a
+                    key={service.id}
+                    href="/quick"
+                    className="qs-card qs-grid-item flex flex-col items-center justify-center gap-1.5 py-4 px-2"
+                    style={{
+                      animationDelay: gridVisible ? `${i * 0.04}s` : "none",
+                      animationPlayState: gridVisible ? "running" : "paused",
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span className="qs-icon">{service.icon}</span>
+                    <span className="qs-label">{service.label}</span>
+                  </a>
+                ))
+            }
           </div>
 
           {/* View All Button */}
@@ -174,11 +192,13 @@ export default function QuickServices() {
               transition: "opacity 0.7s ease 0.4s, transform 0.7s ease 0.4s",
             }}
           >
-            <a href="/quick" 
-               className={`inline-flex items-center gap-2 px-8 py-3 text-xs font-black uppercase tracking-widest rounded transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 bg-[#facc15] text-black hover:bg-[#eab308]`}>
+            <a
+              href="/quick"
+              className="inline-flex items-center gap-2 px-8 py-3 text-xs font-black uppercase tracking-widest rounded transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 bg-[#facc15] text-black hover:bg-[#eab308]"
+            >
               View All Services
               <svg
-                className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                className="w-3.5 h-3.5"
                 fill="none" stroke="currentColor" viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />

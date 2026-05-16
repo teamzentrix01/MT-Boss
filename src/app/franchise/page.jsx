@@ -163,74 +163,46 @@ const handleSubmit = async (e) => {
   setLoading(true);
 
   try {
-    const res = await fetch("https://formsubmit.co/ajax/team.zentrix01@gmail.com", {
+    // Save to DB first
+    const dbRes = await fetch("/api/franchises", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    const dbData = await dbRes.json();
+    if (!dbData.success) {
+      setError(dbData.error || "Something went wrong. Please try again.");
+      setLoading(false);
+      return;
+    }
+
+    // Also send email notification
+    await fetch("https://formsubmit.co/ajax/team.zentrix01@gmail.com", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
-  "Full Name": form.name,
-  "Father / Husband Name": form.fatherName,
-  "Date of Birth": form.dob,
-  "Gender": form.gender,
-  "Marital Status": form.maritalStatus || "Not Provided",
-  "Phone": form.phone,
-  "Email": form.email,
-  "Occupation": form.occupation,
-  "Qualification": form.qualification || "Not Provided",
-  "Annual Income": form.annualIncome || "Not Provided",
-  "ID Type": form.idType,
-  "ID Number": form.idNumber,
-  "PAN Number": form.pan,
-  "Address": form.address,
-  "District": form.district,
-  "City": form.city,
-  "State": form.state,
-  "PIN Code": form.pinCode,
-  "Current Business": form.currentBusiness || "None",
-  "Business Experience": form.experience || "None",
-  "Construction Experience": form.constructionExp || "None",
-  "Employees": form.employees || "Not Provided",
-  "Network": form.network || "Not Provided",
-  "Bank Name": form.bankName,
-  "Branch Name": form.branchName,
-  "Account Number": form.accountNumber,
-  "IFSC Code": form.ifscCode,
-  "Franchise Model": form.model,
-  "Investment Capacity": form.investment,
-  "Preferred Territory": form.territory,
-  "Referral Source": form.referralSource || "Not Provided",
-  "Expected Start Date": form.startDate || "Not Provided",
-  "Service Category": form.serviceCategory || "Not Provided",
-  "Office Area": form.officeArea,
-  "Office District": form.officeDistrict,
-  "Premises Ownership": form.premisesOwnership || "Not Provided",
-  "Lease Duration": form.leaseDuration || "Not Applicable",
-  "Office Size (sqft)": form.officeArea_sqft || "Not Provided",
-  "Office Type": form.officeType || "Not Provided",
-  "Why MT BOSS": form.message,
-  "Applied Other Franchise": form.otherFranchise || "Not Provided",
-  "Willing for Training": form.trainingWilling || "Not Provided",
-  "_subject": `New Franchise Application - ${form.model} - ${form.name}`,
-  "_template": "table",
-  "_captcha": "false",
-}),
+        "Full Name": form.name,
+        "Franchise Model": form.model,
+        "Phone": form.phone,
+        "Email": form.email,
+        "City": form.city,
+        "State": form.state,
+        "Investment": form.investment,
+        "Territory": form.territory,
+        "_subject": `New Franchise Application - ${form.model} - ${form.name}`,
+        "_template": "table",
+        "_captcha": "false",
+      }),
     });
 
-    const data = await res.json();
-
-    if (data.success === "true" || data.success === true) {
-      setSubmitted(true);
-    } else {
-      setError("Something went wrong. Please try again.");
-    }
+    setSubmitted(true);
   } catch (err) {
     setError("Network error. Please try again.");
   } finally {
     setLoading(false);
   }
 };
+
   const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${
     dark
       ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]"

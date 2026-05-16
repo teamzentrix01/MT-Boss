@@ -1,34 +1,20 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 
-const projects = [
-  {
-    id: 1,
-    title: "The Sky Atrium",
-    category: "Commercial",
-    location: "Mumbai, MH",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
-  },
-  {
-    id: 2,
-    title: "Golden Sands Resort",
-    category: "Hospitality",
-    location: "Goa, IN",
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80",
-  },
-  {
-    id: 3,
-    title: "Eco-Tech Park",
-    category: "Industrial",
-    location: "Bangalore, KA",
-    image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80",
-  },
-];
+
 
 export default function FeaturedProjects() {
   const [isDark, setIsDark] = useState(false);
   const sectionRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+  fetch('/api/projects')
+    .then(r => r.json())
+    .then(data => { if (data.success) setProjects(data.data.slice(0, 3)); })
+    .catch(console.error);
+}, []);
 
   useEffect(() => {
     // GLOBAL THEME DETECTION (documentElement focus)
