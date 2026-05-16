@@ -1,6 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// Same dark mode hook as Contact page — watches html.classList for 'dark-mode'
+function useDarkMode() {
+  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    const html = document.documentElement;
+    const update = () => setDark(html.classList.contains('dark-mode'));
+    update();
+    const observer = new MutationObserver(update);
+    observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+  return dark;
+}
 // Inline SVG icons — no lucide-react dependency needed
 const X = ({ size = 20 }) => (
   <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" viewBox="0 0 24 24">
@@ -36,10 +50,13 @@ const Star = ({ size = 18 }) => (
   </svg>
 );
 
-export default function ShopPage({ isDarkMode = false }) {
+export default function ShopPage() {
+  const isDarkMode = useDarkMode();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "", quantity: "", message: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", quantity: "", address: "", message: "" });
+  const [locationStatus, setLocationStatus] = useState('idle'); // idle | loading | success | error
+  const [locationCoords, setLocationCoords] = useState(null);
   const [submitted, setSubmitted] = useState(false);
 
   const categories = [
@@ -49,7 +66,6 @@ export default function ShopPage({ isDarkMode = false }) {
       emoji: "🧱",
       label: "HIGH VOLUME",
       labelColor: "blue",
-      description: "OPC, PPC, RMC, fly ash bricks, AAC blocks and allied products.",
       priceRange: "₹380–450 / bag",
       unit: "per 50kg bag",
     },
@@ -59,7 +75,6 @@ export default function ShopPage({ isDarkMode = false }) {
       emoji: "⚙️",
       label: "ALWAYS NEEDED",
       labelColor: "yellow",
-      description: "TMT bars, structural steel, MS plates, wire mesh and fabrication materials.",
       priceRange: "₹55–65 / kg",
       unit: "per kilogram",
     },
@@ -69,7 +84,6 @@ export default function ShopPage({ isDarkMode = false }) {
       emoji: "🪵",
       label: "GROWING",
       labelColor: "green",
-      description: "Plywood, MDF, hardwood, softwood, veneers and wood-based panels.",
       priceRange: "₹400–800 / sheet",
       unit: "per sheet",
     },
@@ -79,7 +93,6 @@ export default function ShopPage({ isDarkMode = false }) {
       emoji: "🔧",
       label: "STEADY DEMAND",
       labelColor: "purple",
-      description: "Pipes, fittings, fasteners, electrical hardware and plumbing accessories.",
       priceRange: "₹50–500 / unit",
       unit: "per unit",
     },
@@ -89,7 +102,6 @@ export default function ShopPage({ isDarkMode = false }) {
       emoji: "🪟",
       label: "SPECIALIZED",
       labelColor: "pink",
-      description: "Float glass, toughened glass, aluminium sections, UPVC windows and facades.",
       priceRange: "₹150–400 / SFT",
       unit: "per sq. ft.",
     },
@@ -99,7 +111,6 @@ export default function ShopPage({ isDarkMode = false }) {
       emoji: "🎨",
       label: "REGULAR SUPPLY",
       labelColor: "orange",
-      description: "Exterior paints, waterproofing, adhesives, sealants and construction chemicals.",
       priceRange: "₹800–1500 / ltr",
       unit: "per litre",
     },
@@ -109,7 +120,6 @@ export default function ShopPage({ isDarkMode = false }) {
       emoji: "🪨",
       label: "BULK SUPPLY",
       labelColor: "amber",
-      description: "M-sand, river sand, gravel, stone chips, granite and quarrying products.",
       priceRange: "₹35–80 / CFT",
       unit: "per cu. ft.",
     },
@@ -119,7 +129,6 @@ export default function ShopPage({ isDarkMode = false }) {
       emoji: "💡",
       label: "HIGH DEMAND",
       labelColor: "cyan",
-      description: "Wires, cables, switchgear, conduits, panels and electrical accessories.",
       priceRange: "₹10–250 / unit",
       unit: "per unit",
     },
@@ -139,13 +148,46 @@ export default function ShopPage({ isDarkMode = false }) {
   const handleEnquiry = (category) => {
     setSelectedCategory(category);
     setSubmitted(false);
-    setFormData({ name: "", email: "", phone: "", quantity: "", message: "" });
+    setFormData({ name: "", email: "", phone: "", quantity: "", address: "", message: "" });
+    setLocationStatus('loading');
+    setLocationCoords(null);
     setIsModalOpen(true);
+    // Auto-fetch location on modal open
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          setLocationCoords({ latitude, longitude });
+          setLocationStatus('success');
+        },
+        () => setLocationStatus('error'),
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    } else {
+      setLocationStatus('error');
+    }
+  };
+
+  const getLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationStatus('error');
+      return;
+    }
+    setLocationStatus('loading');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setLocationCoords({ latitude, longitude });
+        setLocationStatus('success');
+      },
+      () => setLocationStatus('error'),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Enquiry submitted:", { ...formData, category: selectedCategory });
+    console.log("Enquiry submitted:", { ...formData, category: selectedCategory, locationCoords });
     setSubmitted(true);
     setTimeout(() => setIsModalOpen(false), 2000);
   };
@@ -176,33 +218,27 @@ export default function ShopPage({ isDarkMode = false }) {
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      {/* Hero Banner */}
-      <div className={`relative overflow-hidden ${isDarkMode ? "bg-zinc-900" : "bg-white"} border-b ${cardBorder}`}>
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: "repeating-linear-gradient(45deg, #facc15 0, #facc15 1px, transparent 0, transparent 50%)",
-            backgroundSize: "20px 20px"
-          }} />
-        </div>
+      {/* Hero Banner — always black, no background lines */}
+      <div className="relative overflow-hidden bg-zinc-950">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <div className="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/30 text-yellow-500 text-xs font-bold px-4 py-1.5 rounded-full mb-5 tracking-widest uppercase">
             <Zap size={12} /> Material Marketplace
           </div>
-          <h1 className={`text-4xl md:text-6xl font-extrabold ${headText} mb-4 leading-tight`}>
+          <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 leading-tight">
             Construction Materials,<br />
             <span className="text-yellow-400">Sourced Right.</span>
           </h1>
-          <p className={`text-base md:text-lg ${subText} max-w-xl mx-auto mb-10`}>
+          <p className="text-base md:text-lg text-zinc-400 max-w-xl mx-auto mb-10">
             Browse all major construction categories and get a direct quote from verified suppliers across India.
           </p>
 
           {/* Stats Row */}
           <div className="flex flex-wrap justify-center gap-6">
             {stats.map((s, i) => (
-              <div key={i} className={`flex items-center gap-2 ${isDarkMode ? "text-zinc-300" : "text-gray-700"}`}>
+              <div key={i} className="flex items-center gap-2 text-zinc-300">
                 <span className="text-yellow-400">{s.icon}</span>
                 <span className="font-bold text-lg">{s.value}</span>
-                <span className={`text-sm ${subText}`}>{s.label}</span>
+                <span className="text-sm text-zinc-400">{s.label}</span>
               </div>
             ))}
           </div>
@@ -231,20 +267,15 @@ export default function ShopPage({ isDarkMode = false }) {
                   {cat.label}
                 </span>
 
-                {/* Emoji */}
-                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300 w-fit">
+                {/* Emoji — larger size to fill space left by removed description */}
+                <div className="text-7xl mb-5 group-hover:scale-110 transition-transform duration-300 w-fit">
                   {cat.emoji}
                 </div>
 
                 {/* Name */}
-                <h3 className={`text-sm font-extrabold ${headText} mb-2 leading-snug tracking-wide`}>
+                <h3 className={`text-sm font-extrabold ${headText} mb-4 leading-snug tracking-wide flex-1`}>
                   {cat.name}
                 </h3>
-
-                {/* Description */}
-                <p className={`text-xs ${subText} mb-4 leading-relaxed flex-1`}>
-                  {cat.description}
-                </p>
 
                 {/* Price */}
                 <div className={`border-t ${divider} pt-3 mb-4`}>
@@ -273,8 +304,8 @@ export default function ShopPage({ isDarkMode = false }) {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className={`${modalBg} rounded-2xl shadow-2xl w-full max-w-md border ${isDarkMode ? "border-zinc-700" : "border-gray-100"} overflow-hidden`}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className={`${modalBg} rounded-2xl shadow-2xl w-full max-w-md border ${isDarkMode ? "border-zinc-700" : "border-gray-100"} overflow-hidden my-auto`}>
 
             {/* Modal Header */}
             <div className={`flex items-center justify-between px-6 py-4 border-b ${modalHead}`}>
@@ -293,39 +324,133 @@ export default function ShopPage({ isDarkMode = false }) {
             </div>
 
             {submitted ? (
-              <div className="p-10 text-center">
-                <div className="text-5xl mb-4">🎉</div>
-                <h3 className={`text-xl font-bold ${headText} mb-1`}>Enquiry Submitted!</h3>
+              <div className="py-8 text-center">
+                <div className="text-4xl mb-3">🎉</div>
+                <h3 className={`text-lg font-bold ${headText} mb-1`}>Enquiry Submitted!</h3>
                 <p className={`text-sm ${subText}`}>We'll reach out to you shortly.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                {[
-                  { label: "Full Name", name: "name", type: "text", placeholder: "Your full name" },
-                  { label: "Email Address", name: "email", type: "email", placeholder: "your@email.com" },
-                  { label: "Phone Number", name: "phone", type: "tel", placeholder: "+91 XXXXX XXXXX" },
-                  { label: "Approximate Quantity", name: "quantity", type: "text", placeholder: "e.g. 500 bags, 2 tons" },
-                ].map((field) => (
-                  <div key={field.name}>
-                    <label className={`block text-xs font-bold mb-1.5 ${labelText} uppercase tracking-wide`}>
-                      {field.label}
-                    </label>
-                    <input
-                      type={field.type}
-                      name={field.name}
-                      value={formData[field.name]}
-                      onChange={handleInputChange}
-                      required={field.name !== "quantity"}
-                      placeholder={field.placeholder}
-                      className={`w-full px-4 py-2.5 rounded-lg border-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300 transition-all ${inputBg}`}
-                    />
+              <form onSubmit={handleSubmit} className="p-4 space-y-3">
+
+                {/* Row 1: Name + Phone */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className={`block text-[10px] font-bold mb-1 ${labelText} uppercase tracking-wide`}>Name *</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} required
+                      placeholder="Full name"
+                      className={`w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-300 transition-all ${inputBg}`} />
                   </div>
-                ))}
+                  <div>
+                    <label className={`block text-[10px] font-bold mb-1 ${labelText} uppercase tracking-wide`}>Phone *</label>
+                    <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required
+                      placeholder="+91 XXXXX"
+                      className={`w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-300 transition-all ${inputBg}`} />
+                  </div>
+                </div>
+
+                {/* Row 2: Email + Quantity */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className={`block text-[10px] font-bold mb-1 ${labelText} uppercase tracking-wide`}>Email *</label>
+                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} required
+                      placeholder="your@email.com"
+                      className={`w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-300 transition-all ${inputBg}`} />
+                  </div>
+                  <div>
+                    <label className={`block text-[10px] font-bold mb-1 ${labelText} uppercase tracking-wide`}>Quantity</label>
+                    <input type="text" name="quantity" value={formData.quantity} onChange={handleInputChange}
+                      placeholder="e.g. 500 bags"
+                      className={`w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-300 transition-all ${inputBg}`} />
+                  </div>
+                </div>
+
+                {/* Section: Delivery Address (Manual) */}
+                <div>
+                  <label className={`block text-[10px] font-bold mb-1 ${labelText} uppercase tracking-wide`}>
+                    🏠 Delivery Address *
+                  </label>
+                  <textarea
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    required
+                    rows={2}
+                    placeholder="Type your full delivery address here..."
+                    className={`w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-300 transition-all resize-none ${inputBg}`}
+                  />
+                </div>
+
+                {/* Section: Google Maps Live Location */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className={`block text-[10px] font-bold ${labelText} uppercase tracking-wide`}>
+                      📍 Live Location (Google Maps)
+                    </label>
+                    {locationStatus !== 'loading' && (
+                      <button type="button" onClick={getLocation}
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded border transition-all ${
+                          isDarkMode ? 'border-zinc-600 text-zinc-300 hover:border-yellow-500 hover:text-yellow-400' : 'border-gray-300 text-gray-500 hover:border-yellow-500 hover:text-yellow-600'
+                        }`}>
+                        🔄 Retry
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Loading */}
+                  {locationStatus === 'loading' && (
+                    <div className={`flex items-center gap-2 px-3 py-3 rounded-lg border ${isDarkMode ? 'border-yellow-700 bg-yellow-900/10' : 'border-yellow-300 bg-yellow-50'}`}>
+                      <svg className="w-3.5 h-3.5 animate-spin text-yellow-500 flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                      </svg>
+                      <span className={`text-[10px] font-bold ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                        Fetching your location from GPS...
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Success — Google Maps Embed */}
+                  {locationStatus === 'success' && locationCoords && (
+                    <div className={`rounded-lg border overflow-hidden ${isDarkMode ? 'border-green-700' : 'border-green-400'}`}>
+                      <iframe
+                        title="Your Live Location"
+                        width="100%"
+                        height="140"
+                        style={{ border: 0, display: 'block' }}
+                        loading="lazy"
+                        allowFullScreen
+                        src={`https://maps.google.com/maps?q=${locationCoords.latitude},${locationCoords.longitude}&z=16&output=embed`}
+                      />
+                      <div className={`flex items-center justify-between px-3 py-1.5 ${isDarkMode ? 'bg-green-900/20' : 'bg-green-50'}`}>
+                        <span className={`text-[10px] font-mono font-bold ${isDarkMode ? 'text-green-400' : 'text-green-700'}`}>
+                          ✅ {locationCoords.latitude.toFixed(5)}, {locationCoords.longitude.toFixed(5)}
+                        </span>
+                        <a
+                          href={`https://www.google.com/maps?q=${locationCoords.latitude},${locationCoords.longitude}`}
+                          target="_blank" rel="noopener noreferrer"
+                          className="text-[10px] font-bold text-yellow-500 hover:underline"
+                        >
+                          Open in Maps →
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Error */}
+                  {locationStatus === 'error' && (
+                    <div className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border ${isDarkMode ? 'border-red-700 bg-red-900/20' : 'border-red-300 bg-red-50'}`}>
+                      <span className="text-red-500 text-xs flex-shrink-0">⚠️</span>
+                      <p className={`text-[10px] font-bold ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
+                        Location access denied. Allow permission in browser settings &amp; press Retry.
+                      </p>
+                    </div>
+                  )}
+                </div>
 
                 {/* Category Info */}
-                <div className={`rounded-lg p-3 border ${isDarkMode ? "bg-zinc-800 border-zinc-700" : "bg-yellow-50 border-yellow-100"} flex items-center justify-between`}>
-                  <span className={`text-xs font-bold ${subText}`}>Price Range</span>
-                  <span className={`text-sm font-extrabold ${isDarkMode ? "text-yellow-300" : "text-yellow-600"}`}>{selectedCategory?.priceRange}</span>
+                <div className={`rounded-lg px-3 py-2 border flex items-center justify-between ${isDarkMode ? "bg-zinc-800 border-zinc-700" : "bg-yellow-50 border-yellow-100"}`}>
+                  <span className={`text-[10px] font-bold ${subText}`}>Price Range</span>
+                  <span className={`text-xs font-extrabold ${isDarkMode ? "text-yellow-300" : "text-yellow-600"}`}>{selectedCategory?.priceRange}</span>
                 </div>
 
                 <button

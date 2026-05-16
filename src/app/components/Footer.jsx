@@ -23,6 +23,7 @@ export default function Footer() {
     { label: "Home", href: "/" },
     { label: "About Us", href: "/about-us" },
     { label: "Services", href: "#" },
+    { label: "Shop Now", href: "/ShopNow" },
     { label: "Careers", href: "#" },
     { label: "Contact", href: "#" },
     { label: "Want to be an Agent?", href: "#" },

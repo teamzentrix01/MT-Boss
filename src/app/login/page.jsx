@@ -12,7 +12,6 @@ export default function LoginPage() {
   const [dark, setDark] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
 
-  // Monitor dark mode changes — exactly like your contact page
   useEffect(() => {
     const html = document.documentElement;
     const update = () => setDark(html.classList.contains('dark-mode'));
@@ -43,7 +42,6 @@ export default function LoginPage() {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         document.cookie = `auth-token=${data.token}; path=/; max-age=604800`;
-        // ── Role-based redirect ──
         router.push(data.redirectTo || '/userdashboard');
       } else {
         setError(data.error || data.message || 'Invalid credentials.');
@@ -55,11 +53,10 @@ export default function LoginPage() {
     }
   };
 
-  // Google OAuth — redirects to Google's consent screen
   const handleGoogleLogin = () => {
     window.location.href = '/api/auth/google';
   };
-  
+
   return (
     <>
       <style>{`
@@ -86,7 +83,6 @@ export default function LoginPage() {
           transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        /* ── Split layout ── */
         .lp-wrap {
           display: flex;
           width: 100%;
@@ -99,7 +95,6 @@ export default function LoginPage() {
           transition: background-color 0.5s ease, border-color 0.5s ease;
         }
 
-        /* Left brand panel */
         .lp-brand {
           flex: 0 0 320px;
           background: ${dark ? '#1a1a1a' : '#111113'};
@@ -119,7 +114,6 @@ export default function LoginPage() {
         }
         .lp-brand-logo span { color: #fbbf24; }
 
-        .lp-brand-mid { }
         .lp-brand-heading {
           font-size: 1.5rem;
           font-weight: 700;
@@ -132,13 +126,11 @@ export default function LoginPage() {
           color: #9ca3af;
           line-height: 1.6;
         }
-
         .lp-brand-footer {
           font-size: 0.7rem;
           color: #6b7280;
         }
 
-        /* Right form panel */
         .lp-form-panel {
           flex: 1;
           padding: 2.5rem 2rem;
@@ -163,7 +155,6 @@ export default function LoginPage() {
           transition: color 0.5s ease;
         }
 
-        /* Error */
         .lp-error {
           display: flex;
           align-items: center;
@@ -184,7 +175,6 @@ export default function LoginPage() {
           flex-shrink: 0;
         }
 
-        /* Field */
         .lp-field { margin-bottom: 0.875rem; }
         .lp-label {
           display: block;
@@ -232,7 +222,6 @@ export default function LoginPage() {
         }
         .lp-pw-toggle:hover { color: var(--lp-text); }
 
-        /* Options row */
         .lp-options {
           display: flex;
           align-items: center;
@@ -255,7 +244,6 @@ export default function LoginPage() {
         }
         .lp-forgot:hover { opacity: .75; }
 
-        /* Submit */
         .lp-submit {
           width: 100%;
           padding: 0.55rem 1rem;
@@ -282,7 +270,6 @@ export default function LoginPage() {
           animation: lp-spin .7s linear infinite;
         }
 
-        /* Divider */
         .lp-divider {
           display: flex; align-items: center; gap: 0.75rem;
           margin-bottom: 1.25rem;
@@ -290,8 +277,6 @@ export default function LoginPage() {
         .lp-divider-line { flex: 1; height: 1px; background: var(--lp-border); transition: background-color 0.5s ease; }
         .lp-divider-text { font-size: 0.7rem; color: var(--lp-muted); text-transform: uppercase; letter-spacing: .06em; transition: color 0.5s ease; }
 
-        /* Social buttons */
-        
         .lp-social { display: grid; grid-template-columns: 1fr; gap: 0.5rem; margin-bottom: 1.25rem; }
         .lp-social-btn {
           display: flex; align-items: center; justify-content: center; gap: 0.4rem;
@@ -306,7 +291,6 @@ export default function LoginPage() {
         }
         .lp-social-btn:hover { background: var(--lp-bg); border-color: var(--lp-muted); }
 
-        /* Sign up */
         .lp-signup {
           text-align: center;
           font-size: 0.8rem;
@@ -321,7 +305,6 @@ export default function LoginPage() {
         }
         .lp-signup a:hover { text-decoration: underline; }
 
-        /* Footer */
         .lp-tos {
           text-align: center;
           font-size: 0.7rem;
@@ -332,22 +315,20 @@ export default function LoginPage() {
         .lp-tos a { color: var(--lp-accent); text-decoration: none; transition: color 0.5s ease; }
         .lp-tos a:hover { text-decoration: underline; }
 
-        /* Vendor CTA */
+        /* ── Vendor CTA ── */
         .lp-vendor-cta {
-          margin-top: 2rem;
-          padding-top: 1.5rem;
+          margin-top: 1.5rem;
+          padding-top: 1.25rem;
           border-top: 1px solid var(--lp-border);
           transition: border-color 0.5s ease;
         }
-
         .lp-vendor-cta-text {
           font-size: 0.75rem;
           color: var(--lp-muted);
-          margin-bottom: 0.75rem;
+          margin-bottom: 0.625rem;
           text-align: center;
           transition: color 0.5s ease;
         }
-
         .lp-vendor-cta-btn {
           display: flex;
           align-items: center;
@@ -365,17 +346,48 @@ export default function LoginPage() {
           text-decoration: none;
           transition: all 0.2s;
         }
-
         .lp-vendor-cta-btn:hover {
           background: ${dark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.05)'};
-          border-color: #10b981;
           opacity: 0.9;
         }
+        .lp-vendor-cta-btn svg { width: 14px; height: 14px; }
 
-        .lp-vendor-cta-btn svg {
-          width: 14px;
-          height: 14px;
+        /* ── Supplier CTA ── */
+        .lp-supplier-cta {
+          margin-top: 0.625rem;
+          padding-top: 0.625rem;
+          border-top: 1px solid var(--lp-border);
+          transition: border-color 0.5s ease;
         }
+        .lp-supplier-cta-text {
+          font-size: 0.75rem;
+          color: var(--lp-muted);
+          margin-bottom: 0.625rem;
+          text-align: center;
+          transition: color 0.5s ease;
+        }
+        .lp-supplier-cta-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          width: 100%;
+          padding: 0.5rem 1rem;
+          background: transparent;
+          border: 1px solid #6366f1;
+          color: #6366f1;
+          border-radius: 7px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          text-decoration: none;
+          transition: all 0.2s;
+        }
+        .lp-supplier-cta-btn:hover {
+          background: ${dark ? 'rgba(99, 102, 241, 0.1)' : 'rgba(99, 102, 241, 0.05)'};
+          opacity: 0.9;
+        }
+        .lp-supplier-cta-btn svg { width: 14px; height: 14px; }
       `}</style>
 
       <div className="lp-root">
@@ -482,7 +494,7 @@ export default function LoginPage() {
               <div className="lp-divider-line" />
             </div>
 
-            {/* Social */}
+            {/* Google */}
             <div className="lp-social">
               <button className="lp-social-btn" onClick={handleGoogleLogin}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -506,7 +518,7 @@ export default function LoginPage() {
               <Link href="#">Privacy Policy</Link>
             </div>
 
-            {/* Vendor CTA */}
+            {/* ── Vendor CTA ── */}
             <div className="lp-vendor-cta">
               <div className="lp-vendor-cta-text">Are you a vendor?</div>
               <Link href="/vendor/login" className="lp-vendor-cta-btn">
@@ -516,6 +528,18 @@ export default function LoginPage() {
                 Continue as Vendor
               </Link>
             </div>
+
+            {/* ── Supplier CTA ── */}
+            <div className="lp-supplier-cta">
+              {/* <div className="lp-supplier-cta-text">Are you a supplier?</div> */}
+              <Link href="/supplier/login" className="lp-supplier-cta-btn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+                Continue as Supplier
+              </Link>
+            </div>
+
           </div>
         </div>
       </div>
