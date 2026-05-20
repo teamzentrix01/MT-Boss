@@ -24,13 +24,18 @@ export default function DashboardLayout({ children }) {
   }, []);
 
   const menuItems = [
-    { label: 'Dashboard', icon: '📊', href: '/dashboard' },
-    { label: 'Contact Forms', icon: '📧', href: '/dashboard/contact-forms' },
-    { label: 'Enquiries', icon: '💬', href: '/dashboard/enquiries' },
-    { label: 'Agents', icon: '👤', href: '/dashboard/agents' },
-    { label: 'Franchises', icon: '🏢', href: '/dashboard/franchises' },
-    { label: 'Properties', icon: '🏠', href: '/dashboard/properties' },
-    { label: 'Applications', icon: '📋', href: '/dashboard/applications' },
+    { label: 'Overview',          icon: '📊', tab: '' },
+    { label: 'Service Bookings',  icon: '📝', tab: 'bookings' },
+    { label: 'Free Time Slots',   icon: '📅', tab: 'free-slots' },
+    { label: 'Service Pricing',   icon: '💰', tab: 'quick-services-pricing' },
+    { label: 'Contact Forms',     icon: '✉️', tab: 'submissions' },
+    { label: 'Vendors',           icon: '🏪', tab: 'vendors' },
+    { label: 'Properties',        icon: '🏠', tab: 'properties' },
+    { label: 'Quick Services',    icon: '⚡', tab: 'quick-services' },
+    { label: 'Primary Services',  icon: '⊞', tab: 'primary-services' },
+    { label: 'Agents',            icon: '👤', tab: 'agents' },
+    { label: 'Franchises',        icon: '🏢', tab: 'franchises' },
+    { label: 'Projects',          icon: '🏗️', tab: 'projects' },
   ];
 
   const handleLogout = () => {
@@ -39,7 +44,12 @@ export default function DashboardLayout({ children }) {
     router.push('/login');
   };
 
-  const user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : {};
+  const [user, setUser] = useState({});
+  useEffect(() => {
+    try {
+      setUser(JSON.parse(localStorage.getItem('user') || '{}'));
+    } catch { setUser({}); }
+  }, []);
 
   const bgClass = isDarkMode ? 'bg-black' : 'bg-white';
   const textPrimary = isDarkMode ? 'text-white' : 'text-black';
@@ -67,7 +77,7 @@ export default function DashboardLayout({ children }) {
           {menuItems.map((item) => (
             <Link
               key={item.label}
-              href={item.href}
+              href={item.tab ? `/dashboard?tab=${item.tab}` : '/dashboard'}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isDarkMode ? 'text-gray-400 hover:text-yellow-400 hover:bg-yellow-400/10' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'}`}
             >
               <span className="text-xl">{item.icon}</span>

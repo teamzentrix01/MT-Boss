@@ -97,17 +97,23 @@ export async function PUT(req) {
 
       if (action === 'approve') {
         // Approve vendor and assign services
-        const vendorResult = await client.query(
-          `UPDATE vendors 
-           SET is_approved = TRUE, 
-               verification_status = 'verified',
-               status = 'active',
-               approval_date = NOW(),
-               updated_at = NOW()
-           WHERE id = $1
-           RETURNING *`,
-          [vendor_id]
-        );
+        const vendorResult = await client.query(`
+  UPDATE vendors 
+  SET is_approved = TRUE, 
+      status = 'active',              
+      verification_status = 'verified',
+      approval_date = NOW()
+  WHERE id = $1
+  RETURNING *
+`, [vendor_id]);
+
+// ✅ Send approval email to vendor
+try {
+  await sendApprovalEmail(vendor.email, vendor.shop_name);
+  console.log('✅ Approval email sent');
+} catch (err) {
+  console.warn('⚠ Email failed (non-critical)');
+}
 
         if (vendorResult.rows.length === 0) {
           await client.query('ROLLBACK');

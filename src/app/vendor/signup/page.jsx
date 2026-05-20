@@ -138,7 +138,7 @@ export default function VendorSignupPage() {
 
   const handlePrevious = () => { setError(''); setStep(step - 1); };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep(3)) return;
     setLoading(true);
@@ -167,10 +167,12 @@ export default function VendorSignupPage() {
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem('vendor-token', data.token);
-        localStorage.setItem('vendor', JSON.stringify(data.vendor));
-        document.cookie = `vendor-auth-token=${data.token}; path=/; max-age=604800`;
-        router.push('/vendor/dashboard');
+        // ✅ FIX: Don't store token - vendor is pending approval
+        // Just save email for reference and redirect to pending page
+        localStorage.setItem('vendor-signup-email', formData.email);
+        
+        // Redirect to pending approval page instead of dashboard
+        router.push('/vendor/pending-approval');
       } else {
         setError(data.error || 'Registration failed');
       }

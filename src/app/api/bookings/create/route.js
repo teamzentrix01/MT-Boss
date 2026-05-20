@@ -1,0 +1,149 @@
+// ════════════════════════════════════════════════════════════════════════════════
+// FILE: app/api/bookings/create/route.js
+// CREATE NEW BOOKING - User submits booking form
+// ════════════════════════════════════════════════════════════════════════════════
+ 
+import { NextResponse } from 'next/server';
+import pool from '@/lib/db';
+import jwt from 'jsonwebtoken';
+ 
+export async function POST(req) {
+  try {
+    const token = req.headers.get('Authorization')?.split(' ')[1];
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized - Login required' }, { status: 401 });
+    }
+ 
+    let userId;
+    try {
+      const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret');
+      userId = decoded.id;
+    } catch (err) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    }
+ 
+    const {
+      quick_service_id,
+      user_name,
+      user_phone,
+      user_email,
+      service_address,
+      service_city,
+      service_pincode,
+      property_type,
+      booking_date,
+      booking_time,
+      slot_type, // 'free' or 'paid'
+      time_slot_id, // for free slots
+      user_latitude,
+      user_longitude,
+      location_map_url,
+      urgency, // 'normal' or 'urgent'
+      service_description,
+    } = await req.json();
+ 
+    // Validation
+    if (!user_name || !user_phone || !service_address || !service_city || !service_pincode) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+ 
+    if (!/^[6-9]\d{9}$/.test(user_phone)) {
+      return NextResponse.json({ error: 'Invalid phone number' }, { status: 400 });
+    }
+ 
+    // Get service base price
+    const serviceResult = await pool.query(
+      'SELECT admin_base_price, base_price FROM quick_services WHERE id = $1',
+      [quick_service_id]
+    );
+ 
+    if (serviceResult.rows.length === 0) {
+      return NextResponse.json({ error: 'Service not found' }, { status: 404 });
+    }
+ 
+    const basePrice = serviceResult.rows[0].admin_base_price || serviceResult.rows[0].base_price || 199;
+    const visitFee = urgency === 'urgent' ? 149 : 0;
+    const taxAmount = Math.round((basePrice * 18) / 100);
+    const totalAmount = basePrice + visitFee + taxAmount;
+ 
+    // Generate booking reference
+    const bookingReference = `BK${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+ 
+    // Create booking
+    const bookingResult = await pool.query(
+      `INSERT INTO service_bookings (
+        booking_reference, user_id, quick_service_id, user_name, user_phone, user_email,
+        service_address, service_city, service_pincode, property_type,
+        booking_date, booking_time, slot_type, time_slot_id,
+        user_latitude, user_longitude, location_map_url,
+        urgency, service_description,
+        base_amount, visit_fee, tax_amount, total_amount,
+        status, vendor_status, user_status, payment_status,
+        created_at
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, NOW()
+      ) RETURNING id, booking_reference, total_amount`,
+      [
+        bookingReference, userId, quick_service_id, user_name, user_phone, user_email,
+        service_address, service_city, service_pincode, property_type,
+        booking_date, booking_time, slot_type, time_slot_id,
+        user_latitude, user_longitude, location_map_url,
+        urgency, service_description,
+        basePrice, visitFee, taxAmount, totalAmount,
+        'WAITING_FOR_VENDOR_ACCEPTANCE', null, 'PENDING', 'PENDING'
+      ]
+    );
+ 
+    const booking = bookingResult.rows[0];
+    const bookingId = booking.id;
+ 
+    // Update free slot if used
+    if (slot_type === 'free' && time_slot_id) {
+      await pool.query(
+        `UPDATE free_time_slots
+         SET current_bookings = COALESCE(current_bookings, 0) + 1,
+             is_available = CASE WHEN COALESCE(current_bookings, 0) + 1 >= COALESCE(max_bookings, 1) THEN FALSE ELSE TRUE END
+         WHERE id = $1`,
+        [time_slot_id]
+      );
+    }
+ 
+    // Notify all active vendors in the same city
+    const vendorsResult = await pool.query(
+      `SELECT DISTINCT v.id FROM vendors v
+       WHERE LOWER(v.city) = LOWER($1)
+       AND v.is_approved = TRUE
+       AND v.status = 'active'
+       AND v.id NOT IN (
+         SELECT vendor_id FROM service_bookings
+         WHERE status IN ('VENDOR_ACCEPTED', 'IN_PROGRESS')
+         AND vendor_id IS NOT NULL
+       )`,
+      [service_city]
+    );
+ 
+    // Create notifications for each vendor
+    for (const vendor of vendorsResult.rows) {
+      await pool.query(
+        `INSERT INTO service_notifications (
+          booking_id, vendor_id, notification_type, title, message, is_read, created_at
+        ) VALUES ($1, $2, 'NEW_BOOKING', 'New Service Request', $3, FALSE, NOW())`,
+        [bookingId, vendor.id, `New ${user_name} booking in ${service_city}. Base: ₹${basePrice}`]
+      );
+    }
+ 
+    return NextResponse.json({
+      success: true,
+      message: 'Booking created successfully. Vendors notified.',
+      booking: {
+        id: bookingId,
+        booking_reference: bookingReference,
+        total_amount: totalAmount,
+      }
+    }, { status: 201 });
+ 
+  } catch (error) {
+    console.error('Booking creation error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

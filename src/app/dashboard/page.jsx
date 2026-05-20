@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; 
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import QuickServicesManager from '../components/QuickServicesManager';
 import PrimaryServicesManager from '../components/PrimaryServicesManager';
 import PropertiesManager from '../components/PropertiesManager';
@@ -9,16 +9,32 @@ import ProjectsManager from '../components/ProjectsManager';
 import VendorManagementAdmin from '../components/VendorManagementAdmin';
 import FranchisesManager from './franchises/page';
 import AgentsManager from './agents/page';
+import BookingsManager from '../components/BookingsManager';
+import FreeTimeSlotsManager from '../components/FreeTimeSlotsManager';
+import QuickServicesPricing from '../components/QuickServicesPricing';
 
-export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
+function AdminDashboard() {
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => searchParams.get('tab') || 'overview');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [pendingProperties, setPendingProperties] = useState(0);
   const [pendingVendors, setPendingVendors] = useState(0);
+  const [pendingBookings, setPendingBookings] = useState(0);
+  const [completedBookings, setCompletedBookings] = useState(0);
+  const [activeVendorBookings, setActiveVendorBookings] = useState(0);
+  const [totalCommission, setTotalCommission] = useState(0);
+  const [todayCommission, setTodayCommission] = useState(0);
+  const [totalGST, setTotalGST] = useState(0);
   const router = useRouter();
+
+  // Sync tab from URL when navigating via sidebar
+  useEffect(() => {
+    const tab = searchParams.get('tab') || 'overview';
+    setActiveTab(tab);
+  }, [searchParams]);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -57,6 +73,32 @@ export default function AdminDashboard() {
         const vendorsRes = await fetch('/api/admin/vendors', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        // Fetch bookings
+        const bookingsRes = await fetch('/api/admin/bookings', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const bookingsData = await bookingsRes.json();
+        if (bookingsData.success) {
+          const all = bookingsData.data;
+          const today = new Date().toISOString().split('T')[0];
+
+          setPendingBookings(all.filter(b => b.status === 'WAITING_FOR_VENDOR_ACCEPTANCE').length);
+          setCompletedBookings(all.filter(b => b.status === 'COMPLETED').length);
+          setActiveVendorBookings(all.filter(b => ['VENDOR_ACCEPTED', 'VENDOR_ON_WAY', 'IN_PROGRESS'].includes(b.status)).length);
+
+          const completed = all.filter(b => b.status === 'COMPLETED');
+          const calcCommission = b => Math.round((parseFloat(b.final_amount || b.total_amount || 0)) * 0.15);
+          const calcGST        = b => Math.round((parseFloat(b.final_amount || b.total_amount || 0)) * 0.18);
+
+          setTotalCommission(completed.reduce((s, b) => s + calcCommission(b), 0));
+          setTotalGST(completed.reduce((s, b) => s + calcGST(b), 0));
+          setTodayCommission(
+            completed
+              .filter(b => b.completed_at && b.completed_at.startsWith(today))
+              .reduce((s, b) => s + calcCommission(b), 0)
+          );
+        }
         const vendorsData = await vendorsRes.json();
         if (vendorsData.success) {
           setPendingVendors(vendorsData.data.filter(v => v.verification_status === 'pending').length);
@@ -72,10 +114,10 @@ export default function AdminDashboard() {
   }, []);
 
   const stats = [
-    { label: 'Contact Submissions', value: submissions.length, icon: '📧' },
-    { label: 'Pending Properties', value: pendingProperties, icon: '🏠' },
-    { label: 'Pending Vendors', value: pendingVendors, icon: '🏪' },
-    { label: 'Contacted', value: submissions.filter(s => s.status === 'Contacted').length, icon: '✓' },
+    { label: 'Pending Bookings', value: pendingBookings, icon: '⏳', color: 'a' },
+    { label: 'Active (On Way/Work)', value: activeVendorBookings, icon: '🚀', color: 'b' },
+    { label: 'Completed Bookings', value: completedBookings, icon: '✓', color: 'c' },
+    { label: 'Pending Vendors', value: pendingVendors, icon: '🏪', color: 'd' },
   ];
 
   const getStatusColor = (status) => {
@@ -87,9 +129,11 @@ export default function AdminDashboard() {
     };
     return map[status] || 'status-new';
   };
-
   const tabs = [
     { id: 'overview', label: 'Overview', icon: '▦' },
+    { id: 'bookings', label: 'Service Bookings', icon: '📝' },
+    { id: 'free-slots', label: 'Free Time Slots', icon: '📅' },
+    { id: 'quick-services-pricing', label: 'Service Pricing', icon: '💰' },
     { id: 'submissions', label: 'Contact Forms', icon: '✉' },
     { id: 'vendors', label: 'Vendors', icon: '🏪' },
     { id: 'properties', label: 'Properties', icon: '⌂' },
@@ -453,7 +497,7 @@ export default function AdminDashboard() {
             <>
               <div className="dash-stats">
                 {stats.map((s, i) => (
-                  <div key={i} className={`stat-card stat-card-${['a','b','c','d'][i]}`}>
+                  <div key={i} className={`stat-card stat-card-${['a', 'b', 'c', 'd'][i]}`}>
                     <div>
                       <div className="stat-label">{s.label}</div>
                       <div className="stat-value">{s.value}</div>
@@ -461,6 +505,26 @@ export default function AdminDashboard() {
                     <span className="stat-icon">{s.icon}</span>
                   </div>
                 ))}
+              </div>
+
+              {/* Admin Earnings */}
+              <div className="panel" style={{ marginBottom: '1rem' }}>
+                <div className="panel-header">
+                  <span className="panel-title">💰 Admin Earnings (Commission)</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem', padding: '1rem' }}>
+                  {[
+                    { label: "Today's Commission", value: `₹${todayCommission.toLocaleString('en-IN')}`, sub: '15% of today\'s bookings', color: '#facc15' },
+                    { label: 'Total Commission', value: `₹${totalCommission.toLocaleString('en-IN')}`, sub: '15% of all completed', color: '#4ade80' },
+                    { label: 'Total GST Collected', value: `₹${totalGST.toLocaleString('en-IN')}`, sub: '18% collected from users', color: '#60a5fa' },
+                  ].map(({ label, value, sub, color }) => (
+                    <div key={label} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '1.25rem' }}>
+                      <p style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)', marginBottom: '0.5rem' }}>{label}</p>
+                      <p style={{ fontSize: '1.75rem', fontWeight: 900, color }}>{value}</p>
+                      <p style={{ fontSize: '0.6875rem', color: 'var(--muted)', marginTop: '0.25rem' }}>{sub}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="panel">
@@ -509,6 +573,30 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               )}
+
+              {pendingBookings > 0 && (
+                <div className="pending-alert">
+                  <div className="pending-alert-title">⏳ Pending Service Bookings</div>
+                  <div className="pending-alert-body">
+                    <strong>{pendingBookings}</strong> {pendingBookings === 1 ? 'booking' : 'bookings'} waiting for vendor assignment.
+                  </div>
+                  <button onClick={() => setActiveTab('bookings')} className="review-btn">
+                    Review Bookings →
+                  </button>
+                </div>
+              )}
+
+              {activeVendorBookings > 0 && (
+                <div className="pending-alert">
+                  <div className="pending-alert-title">🚀 Active Vendor Bookings</div>
+                  <div className="pending-alert-body">
+                    <strong>{activeVendorBookings}</strong> {activeVendorBookings === 1 ? 'booking is' : 'bookings are'} currently being worked on.
+                  </div>
+                  <button onClick={() => setActiveTab('bookings')} className="review-btn">
+                    View Details →
+                  </button>
+                </div>
+              )}
             </>
           )}
 
@@ -524,7 +612,7 @@ export default function AdminDashboard() {
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
                     <thead>
                       <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-                        {['Name','Email','Department','Status','Date','Action'].map(col => (
+                        {['Name', 'Email', 'Department', 'Status', 'Date', 'Action'].map(col => (
                           <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
                         ))}
                       </tr>
@@ -557,6 +645,9 @@ export default function AdminDashboard() {
           {activeTab === 'agents' && <AgentsManager />}
           {activeTab === 'franchises' && <FranchisesManager />}
           {activeTab === 'projects' && <ProjectsManager />}
+          {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
+          {activeTab === 'free-slots' && <FreeTimeSlotsManager isDarkMode={isDarkMode} />}
+          {activeTab === 'quick-services-pricing' && <QuickServicesPricing isDarkMode={isDarkMode} />}
 
         </div>
 
@@ -597,5 +688,13 @@ export default function AdminDashboard() {
         )}
       </div>
     </>
+  );
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <Suspense fallback={<div style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh' }}>Loading…</div>}>
+      <AdminDashboard />
+    </Suspense>
   );
 }

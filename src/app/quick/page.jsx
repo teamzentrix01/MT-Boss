@@ -1,75 +1,123 @@
-"use client";
-import { useState, useEffect } from "react";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const TIME_SLOTS = [
-  "08:00 AM – 10:00 AM",
-  "10:00 AM – 12:00 PM",
-  "12:00 PM – 02:00 PM",
-  "02:00 PM – 04:00 PM",
-  "04:00 PM – 06:00 PM",
-  "06:00 PM – 08:00 PM",
+  '08:00 AM – 10:00 AM',
+  '10:00 AM – 12:00 PM',
+  '12:00 PM – 02:00 PM',
+  '02:00 PM – 04:00 PM',
+  '04:00 PM – 06:00 PM',
+  '06:00 PM – 08:00 PM',
 ];
 
-const PROPERTY_TYPES = ["Apartment", "Independent House", "Villa", "Office / Commercial", "Shop / Showroom"];
+const PROPERTY_TYPES = ['Apartment', 'Independent House', 'Villa', 'Office / Commercial', 'Shop / Showroom'];
 
 function getTodayStr() {
-  return new Date().toISOString().split("T")[0];
+  return new Date().toISOString().split('T')[0];
 }
 
 // ─── Booking Modal ─────────────────────────────────────────────────────────────
 function BookingModal({ service, isDark, onClose, onSuccess }) {
+  const router = useRouter();
+
+  // ✅ CRITICAL FIX: Null check for service
+  if (!service) {
+    return null;
+  }
+
   const [step, setStep] = useState(1); // 1 = details, 2 = confirm, 3 = success
   const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    address: "",
-    city: "",
-    pincode: "",
-    propertyType: "",
-    date: "",
-    timeSlot: "",
-    description: "",
-    urgency: "normal",
-    visitCharge: 0,
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    city: '',
+    pincode: '',
+    propertyType: '',
+    date: '',
+    timeSlot: '',
+    description: '',
+    urgency: 'normal',
+    latitude: null,
+    longitude: null,
+    locationUrl: '',
   });
+
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [slotType, setSlotType] = useState('paid'); // 'free' | 'paid'
+  const [freeSlots, setFreeSlots] = useState([]);
+  const [selectedFreeSlot, setSelectedFreeSlot] = useState(null);
+  const [slotsLoading, setSlotsLoading] = useState(false);
 
-  const visitFee = form.urgency === "urgent" ? 149 : 0;
-  const estimatedCost = `₹${service.base_price} onwards`;
+  // ✅ FIX: Use admin_base_price or fallback to base_price
+  const basePrice = service.admin_base_price || service.base_price || 199;
+  const visitFee = form.urgency === 'urgent' ? 149 : 0;
+  const taxAmount = Math.round((basePrice * 18) / 100);
+  const totalAmount = basePrice + visitFee + taxAmount;
 
-  const overlay = isDark ? "bg-black/80" : "bg-zinc-900/60";
-  const modal = isDark ? "bg-zinc-950 border-zinc-800 text-white" : "bg-white border-zinc-200 text-zinc-900";
+  const overlay = isDark ? 'bg-black/80' : 'bg-zinc-900/60';
+  const modal = isDark ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-white border-zinc-200 text-zinc-900';
   const input = isDark
-    ? "bg-zinc-900 border-zinc-700 text-white placeholder-zinc-600 focus:border-[#facc15]"
-    : "bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:border-zinc-900";
-  const label = isDark ? "text-zinc-400" : "text-zinc-500";
-  const muted = isDark ? "text-zinc-500" : "text-zinc-400";
-  const divider = isDark ? "border-zinc-800" : "border-zinc-100";
-  const pillBase = "px-3 py-1.5 text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer";
+    ? 'bg-zinc-900 border-zinc-700 text-white placeholder-zinc-600 focus:border-[#facc15]'
+    : 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:border-zinc-900';
+  const label = isDark ? 'text-zinc-400' : 'text-zinc-500';
+  const muted = isDark ? 'text-zinc-500' : 'text-zinc-400';
+  const divider = isDark ? 'border-zinc-800' : 'border-zinc-100';
+  const pillBase = 'px-3 py-1.5 text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer';
   const pillActive = isDark
-    ? "border-[#facc15] bg-[#facc15] text-black"
-    : "border-zinc-900 bg-zinc-900 text-white";
+    ? 'border-[#facc15] bg-[#facc15] text-black'
+    : 'border-zinc-900 bg-zinc-900 text-white';
   const pillInactive = isDark
-    ? "border-zinc-700 text-zinc-400 hover:border-zinc-500"
-    : "border-zinc-300 text-zinc-500 hover:border-zinc-500";
+    ? 'border-zinc-700 text-zinc-400 hover:border-zinc-500'
+    : 'border-zinc-300 text-zinc-500 hover:border-zinc-500';
 
   function set(field, val) {
     setForm((f) => ({ ...f, [field]: val }));
-    setErrors((e) => ({ ...e, [field]: "" }));
+    setErrors((e) => ({ ...e, [field]: '' }));
+  }
+
+  // Get user's live location
+  function getCurrentLocation() {
+    setLocationLoading(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          set('latitude', latitude);
+          set('longitude', longitude);
+          set('locationUrl', `https://maps.google.com/?q=${latitude},${longitude}`);
+          setLocationLoading(false);
+        },
+        (error) => {
+          console.error('Location error:', error);
+          setErrors((e) => ({ ...e, location: 'Could not access location. Please enable GPS.' }));
+          setLocationLoading(false);
+        }
+      );
+    }
   }
 
   function validate() {
     const e = {};
-    if (!form.name.trim()) e.name = "Name is required";
-    if (!/^[6-9]\d{9}$/.test(form.phone)) e.phone = "Valid 10-digit phone required";
-    if (form.email && !/\S+@\S+\.\S+/.test(form.email)) e.email = "Invalid email";
-    if (!form.address.trim()) e.address = "Address is required";
-    if (!form.city.trim()) e.city = "City is required";
-    if (!form.pincode || form.pincode.length !== 6) e.pincode = "Valid 6-digit pincode required";
-    if (!form.propertyType) e.propertyType = "Select property type";
-    if (!form.date) e.date = "Select a date";
-    if (!form.timeSlot) e.timeSlot = "Select a time slot";
+    if (!form.name.trim()) e.name = 'Name is required';
+    if (!/^[6-9]\d{9}$/.test(form.phone)) e.phone = 'Valid 10-digit phone required';
+    if (form.email && !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Invalid email';
+    if (!form.address.trim()) e.address = 'Address is required';
+    if (!form.city.trim()) e.city = 'City is required';
+    if (!form.pincode || form.pincode.length !== 6) e.pincode = 'Valid 6-digit pincode required';
+    if (!form.propertyType) e.propertyType = 'Select property type';
+    if (slotType === 'free') {
+      if (!selectedFreeSlot) e.freeSlot = 'Select a free slot';
+    } else {
+      if (!form.date) e.date = 'Select a date';
+      if (!form.timeSlot) e.timeSlot = 'Select a time slot';
+    }
+    if (!form.latitude || !form.longitude) e.location = "Location is required. Please click 'Get Location'";
+
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -78,26 +126,102 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
     if (validate()) setStep(2);
   }
 
-  function handleConfirm() {
-    // Here you'd POST to your API / admin dashboard
-    setStep(3);
+  async function handleConfirm() {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login?redirect=/quick');
+        return;
+      }
+
+      const bookingDate = slotType === 'free' ? selectedFreeSlot.slot_date : form.date;
+      const bookingTime = slotType === 'free'
+        ? `${selectedFreeSlot.slot_start} – ${selectedFreeSlot.slot_end}`
+        : form.timeSlot;
+
+      const bookingData = {
+        quick_service_id: service.id,
+        user_name: form.name,
+        user_phone: form.phone,
+        user_email: form.email || null,
+        service_address: form.address,
+        service_city: form.city,
+        service_pincode: form.pincode,
+        property_type: form.propertyType,
+        booking_date: bookingDate,
+        booking_time: bookingTime,
+        slot_type: slotType,
+        time_slot_id: slotType === 'free' ? selectedFreeSlot.id : null,
+        user_latitude: form.latitude,
+        user_longitude: form.longitude,
+        location_map_url: form.locationUrl,
+        urgency: slotType === 'free' ? 'normal' : form.urgency,
+        service_description: form.description,
+      };
+
+      const res = await fetch('/api/bookings/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setErrors({ submit: data.error || 'Booking failed' });
+        return;
+      }
+
+      setStep(3);
+    } catch (error) {
+      console.error('Booking error:', error);
+      setErrors({ submit: error.message });
+    } finally {
+      setLoading(false);
+    }
   }
+
+  // Fetch free slots when city is set and user switches to free mode
+  useEffect(() => {
+    if (slotType !== 'free' || !form.city.trim()) return;
+    setSlotsLoading(true);
+    fetch(`/api/free-slots?city=${encodeURIComponent(form.city)}&service_id=${service.id}&date=${getTodayStr()}`)
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setFreeSlots(d.data); })
+      .catch(() => {})
+      .finally(() => setSlotsLoading(false));
+  }, [slotType, form.city, service.id]);
 
   // Trap scroll
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, []);
 
   return (
     <div
       className={`backdrop-blur-sm ${overlay}`}
-      style={{ position:"fixed", inset:0, zIndex:99999, display:"flex", alignItems:"center", justifyContent:"center", padding:"16px" }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 99999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div
         className={`relative w-full border shadow-2xl flex flex-col ${modal}`}
-        style={{ maxHeight:"calc(100vh - 32px)", maxWidth:"576px", width:"100%", zIndex:100000 }}
+        style={{ maxHeight: 'calc(100vh - 32px)', maxWidth: '576px', width: '100%', zIndex: 100000 }}
       >
         {/* ── Header ── */}
         <div className={`flex-shrink-0 flex items-center justify-between px-6 py-4 border-b ${divider}`}>
@@ -110,7 +234,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
           </div>
           <button
             onClick={onClose}
-            className={`w-8 h-8 flex items-center justify-center border transition-all font-black text-sm ${isDark ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]" : "border-zinc-300 text-zinc-400 hover:border-zinc-900 hover:text-zinc-900"}`}
+            className={`w-8 h-8 flex items-center justify-center border transition-all font-black text-sm ${isDark ? 'border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]' : 'border-zinc-300 text-zinc-400 hover:border-zinc-900 hover:text-zinc-900'}`}
           >
             ✕
           </button>
@@ -119,8 +243,13 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
         {/* ── Step Indicator ── */}
         {step < 3 && (
           <div className={`flex-shrink-0 flex border-b ${divider}`}>
-            {["Your Details", "Confirm & Pay"].map((s, i) => (
-              <div key={i} className={`flex-1 py-2.5 text-center text-[9px] font-black uppercase tracking-widest transition-all ${step === i + 1 ? "text-[#facc15] border-b-2 border-[#facc15]" : muted}`}>
+            {['Your Details', 'Confirm & Pay'].map((s, i) => (
+              <div
+                key={i}
+                className={`flex-1 py-2.5 text-center text-[9px] font-black uppercase tracking-widest transition-all ${
+                  step === i + 1 ? "text-[#facc15] border-b-2 border-[#facc15]" : muted
+                }`}
+              >
                 {i + 1}. {s}
               </div>
             ))}
@@ -128,25 +257,25 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
         )}
 
         {/* ── Scrollable Content ── */}
-        <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
+        <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
 
           {/* ══ STEP 1 ══ */}
           {step === 1 && (
             <div className="p-6 space-y-5">
 
               {/* Service Info Bar */}
-              <div className={`flex items-center justify-between px-4 py-3 border ${isDark ? "border-zinc-800 bg-zinc-900" : "border-zinc-100 bg-zinc-50"}`}>
+              <div className={`flex items-center justify-between px-4 py-3 border ${isDark ? 'border-zinc-800 bg-zinc-900' : 'border-zinc-100 bg-zinc-50'}`}>
                 <div>
-                  <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Estimated Cost</p>
-                  <p className="text-sm font-black text-[#facc15]">{estimatedCost}</p>
+                  <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Base Price</p>
+                  <p className="text-sm font-black text-[#facc15]">₹{basePrice}</p>
                 </div>
                 <div className="text-center">
                   <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Duration</p>
-                  <p className={`text-sm font-black ${isDark ? "text-white" : "text-zinc-900"}`}>{service.duration}</p>
+                  <p className={`text-sm font-black ${isDark ? 'text-white' : 'text-zinc-900'}`}>30 mins</p>
                 </div>
                 <div className="text-right">
-                  <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Warranty</p>
-                  <p className={`text-sm font-black ${isDark ? "text-white" : "text-zinc-900"}`}>30 Days</p>
+                  <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Urgency</p>
+                  <p className={`text-sm font-black ${isDark ? 'text-white' : 'text-zinc-900'}`}>+₹{visitFee}</p>
                 </div>
               </div>
 
@@ -157,7 +286,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                   className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${input}`}
                   placeholder="e.g. Rahul Sharma"
                   value={form.name}
-                  onChange={(e) => set("name", e.target.value)}
+                  onChange={(e) => set('name', e.target.value)}
                 />
               </Field>
 
@@ -168,7 +297,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                     placeholder="10-digit mobile"
                     maxLength={10}
                     value={form.phone}
-                    onChange={(e) => set("phone", e.target.value.replace(/\D/g, ""))}
+                    onChange={(e) => set('phone', e.target.value.replace(/\D/g, ''))}
                   />
                 </Field>
                 <Field label="Email (optional)" error={errors.email} isDark={isDark}>
@@ -176,7 +305,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                     className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${input}`}
                     placeholder="you@example.com"
                     value={form.email}
-                    onChange={(e) => set("email", e.target.value)}
+                    onChange={(e) => set('email', e.target.value)}
                   />
                 </Field>
               </div>
@@ -189,7 +318,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                   className={`w-full px-3 py-2.5 text-sm border outline-none transition-all resize-none ${input}`}
                   placeholder="House/Flat No., Street, Landmark…"
                   value={form.address}
-                  onChange={(e) => set("address", e.target.value)}
+                  onChange={(e) => set('address', e.target.value)}
                 />
               </Field>
 
@@ -199,7 +328,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                     className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${input}`}
                     placeholder="e.g. Delhi"
                     value={form.city}
-                    onChange={(e) => set("city", e.target.value)}
+                    onChange={(e) => set('city', e.target.value)}
                   />
                 </Field>
                 <Field label="Pincode *" error={errors.pincode} isDark={isDark}>
@@ -208,7 +337,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                     placeholder="6-digit pincode"
                     maxLength={6}
                     value={form.pincode}
-                    onChange={(e) => set("pincode", e.target.value.replace(/\D/g, ""))}
+                    onChange={(e) => set('pincode', e.target.value.replace(/\D/g, ''))}
                   />
                 </Field>
               </div>
@@ -219,7 +348,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                     <button
                       key={p}
                       type="button"
-                      onClick={() => set("propertyType", p)}
+                      onClick={() => set('propertyType', p)}
                       className={`${pillBase} ${form.propertyType === p ? pillActive : pillInactive}`}
                     >
                       {p}
@@ -228,54 +357,145 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                 </div>
               </Field>
 
+              <SectionTitle isDark={isDark}>Location</SectionTitle>
+
+              <Field label="Live Location *" error={errors.location} isDark={isDark}>
+                <button
+                  type="button"
+                  onClick={getCurrentLocation}
+                  disabled={locationLoading}
+                  className={`w-full py-2.5 px-3 text-[10px] font-black uppercase tracking-widest border transition-all ${
+                    locationLoading
+                      ? 'opacity-50 cursor-not-allowed'
+                      : form.latitude && form.longitude
+                      ? 'border-green-500 text-green-500 hover:bg-green-500/10'
+                      : isDark
+                      ? 'border-[#facc15] text-[#facc15] hover:bg-[#facc15]/10'
+                      : 'border-zinc-900 text-zinc-900 hover:bg-zinc-50'
+                  }`}
+                >
+                  {locationLoading ? 'Getting Location...' : form.latitude ? '✓ Location Captured' : '📍 Get Live Location'}
+                </button>
+              </Field>
+
               <SectionTitle isDark={isDark}>Schedule & Timing</SectionTitle>
 
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Preferred Date *" error={errors.date} isDark={isDark}>
-                  <input
-                    type="date"
-                    min={getTodayStr()}
-                    className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${input}`}
-                    value={form.date}
-                    onChange={(e) => set("date", e.target.value)}
-                  />
-                </Field>
-
-                <Field label="Time Slot *" error={errors.timeSlot} isDark={isDark}>
-                  <select
-                    className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${input}`}
-                    value={form.timeSlot}
-                    onChange={(e) => set("timeSlot", e.target.value)}
+              {/* Slot type toggle */}
+              <div className="flex gap-3">
+                {[
+                  { key: 'paid', icon: '📅', label: 'Choose My Time', sub: 'Pick any date & slot' },
+                  { key: 'free', icon: '🎁', label: 'Free Admin Slot', sub: 'Pre-scheduled, no extra fee' },
+                ].map(({ key, icon, label, sub }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => { setSlotType(key); setSelectedFreeSlot(null); }}
+                    className={`flex-1 p-3 border text-left transition-all ${
+                      slotType === key
+                        ? isDark ? 'border-[#facc15] bg-[#facc15]/10' : 'border-zinc-900 bg-zinc-50'
+                        : isDark ? 'border-zinc-800' : 'border-zinc-200'
+                    }`}
                   >
-                    <option value="">Select slot</option>
-                    {TIME_SLOTS.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
-                </Field>
+                    <p className={`text-[10px] font-black uppercase tracking-widest ${
+                      slotType === key ? (isDark ? 'text-[#facc15]' : 'text-zinc-900') : muted
+                    }`}>{icon} {label}</p>
+                    <p className={`text-[10px] mt-0.5 ${muted}`}>{sub}</p>
+                  </button>
+                ))}
               </div>
 
-              <Field label="Service Priority" isDark={isDark}>
-                <div className="flex gap-3 mt-1">
-                  {[
-                    { val: "normal", label: "Normal", sub: "Within 24 hrs • Free visit" },
-                    { val: "urgent", label: "Urgent", sub: "Within 4 hrs • ₹149 extra" },
-                  ].map(({ val, label, sub }) => (
-                    <button
-                      key={val}
-                      type="button"
-                      onClick={() => set("urgency", val)}
-                      className={`flex-1 p-3 border text-left transition-all ${form.urgency === val
-                        ? (isDark ? "border-[#facc15] bg-[#facc15]/10" : "border-zinc-900 bg-zinc-50")
-                        : (isDark ? "border-zinc-800" : "border-zinc-200")
-                      }`}
+              {/* FREE SLOT: show available admin slots */}
+              {slotType === 'free' && (
+                <Field label="Available Free Slots *" error={errors.freeSlot} isDark={isDark}>
+                  {!form.city.trim() ? (
+                    <p className={`text-[10px] font-bold ${muted}`}>Enter your city above to see available free slots.</p>
+                  ) : slotsLoading ? (
+                    <p className={`text-[10px] animate-pulse ${muted}`}>Loading slots...</p>
+                  ) : freeSlots.length === 0 ? (
+                    <p className={`text-[10px] font-bold text-yellow-500`}>No free slots available in {form.city} right now. Choose your own time instead.</p>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-2 mt-1">
+                      {freeSlots.map((slot) => (
+                        <button
+                          key={slot.id}
+                          type="button"
+                          onClick={() => { setSelectedFreeSlot(slot); setErrors((e) => ({ ...e, freeSlot: '' })); }}
+                          className={`p-3 border text-left transition-all ${
+                            selectedFreeSlot?.id === slot.id
+                              ? isDark ? 'border-[#facc15] bg-[#facc15]/10' : 'border-zinc-900 bg-zinc-50'
+                              : isDark ? 'border-zinc-800 hover:border-zinc-600' : 'border-zinc-200 hover:border-zinc-400'
+                          }`}
+                        >
+                          <p className={`text-[10px] font-black uppercase tracking-widest ${selectedFreeSlot?.id === slot.id ? (isDark ? 'text-[#facc15]' : 'text-zinc-900') : muted}`}>
+                            {new Date(slot.slot_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </p>
+                          <p className={`text-xs font-bold mt-0.5 ${selectedFreeSlot?.id === slot.id ? (isDark ? 'text-white' : 'text-zinc-900') : ''}`}>
+                            {slot.slot_start?.slice(0, 5)} – {slot.slot_end?.slice(0, 5)}
+                          </p>
+                          <p className={`text-[10px] mt-0.5 ${muted}`}>
+                            {slot.max_bookings - (slot.current_bookings || 0)} slot{slot.max_bookings - (slot.current_bookings || 0) !== 1 ? 's' : ''} left
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </Field>
+              )}
+
+              {/* PAID SLOT: date + time pickers */}
+              {slotType === 'paid' && (
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Preferred Date *" error={errors.date} isDark={isDark}>
+                    <input
+                      type="date"
+                      min={getTodayStr()}
+                      className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${input}`}
+                      value={form.date}
+                      onChange={(e) => set('date', e.target.value)}
+                    />
+                  </Field>
+
+                  <Field label="Time Slot *" error={errors.timeSlot} isDark={isDark}>
+                    <select
+                      className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${input}`}
+                      value={form.timeSlot}
+                      onChange={(e) => set('timeSlot', e.target.value)}
                     >
-                      <p className={`text-[10px] font-black uppercase tracking-widest ${form.urgency === val ? (isDark ? "text-[#facc15]" : "text-zinc-900") : muted}`}>{label}</p>
-                      <p className={`text-[10px] mt-0.5 ${muted}`}>{sub}</p>
-                    </button>
-                  ))}
+                      <option value="">Select slot</option>
+                      {TIME_SLOTS.map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                  </Field>
                 </div>
-              </Field>
+              )}
+
+              {slotType === 'paid' && (
+                <Field label="Service Priority" isDark={isDark}>
+                  <div className="flex gap-3 mt-1">
+                    {[
+                      { val: 'normal', label: 'Normal', sub: 'Within 24 hrs • Free visit' },
+                      { val: 'urgent', label: 'Urgent', sub: 'Within 4 hrs • ₹149 extra' },
+                    ].map(({ val, label, sub }) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => set('urgency', val)}
+                        className={`flex-1 p-3 border text-left transition-all ${
+                          form.urgency === val
+                            ? isDark ? 'border-[#facc15] bg-[#facc15]/10' : 'border-zinc-900 bg-zinc-50'
+                            : isDark ? 'border-zinc-800' : 'border-zinc-200'
+                        }`}
+                      >
+                        <p className={`text-[10px] font-black uppercase tracking-widest ${
+                          form.urgency === val ? (isDark ? 'text-[#facc15]' : 'text-zinc-900') : muted
+                        }`}>{label}</p>
+                        <p className={`text-[10px] mt-0.5 ${muted}`}>{sub}</p>
+                      </button>
+                    ))}
+                  </div>
+                </Field>
+              )}
 
               <Field label="Describe the Problem (optional)" isDark={isDark}>
                 <textarea
@@ -283,7 +503,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                   className={`w-full px-3 py-2.5 text-sm border outline-none transition-all resize-none ${input}`}
                   placeholder="Tell us more so our expert comes prepared…"
                   value={form.description}
-                  onChange={(e) => set("description", e.target.value)}
+                  onChange={(e) => set('description', e.target.value)}
                 />
               </Field>
 
@@ -301,22 +521,22 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
             <div className="p-6 space-y-5">
               <SectionTitle isDark={isDark}>Booking Summary</SectionTitle>
 
-              <div className={`border divide-y ${divider} ${isDark ? "divide-zinc-800" : "divide-zinc-100"}`}>
+              <div className={`border divide-y ${divider} ${isDark ? 'divide-zinc-800' : 'divide-zinc-100'}`}>
                 {[
-                  ["Service", `${service.icon} ${service.label}`],
-                  ["Name", form.name],
-                  ["Phone", form.phone],
-                  ["Email", form.email || "—"],
-                  ["Address", `${form.address}, ${form.city} – ${form.pincode}`],
-                  ["Property", form.propertyType],
-                  ["Date", form.date],
-                  ["Time Slot", form.timeSlot],
-                  ["Priority", form.urgency === "urgent" ? "⚡ Urgent (within 4 hrs)" : "Normal (within 24 hrs)"],
-                  ["Issue", form.description || "—"],
+                  ['Service', `${service.icon} ${service.label}`],
+                  ['Name', form.name],
+                  ['Phone', form.phone],
+                  ['Email', form.email || '—'],
+                  ['Address', `${form.address}, ${form.city} – ${form.pincode}`],
+                  ['Property', form.propertyType],
+                  ['Date', form.date],
+                  ['Time Slot', form.timeSlot],
+                  ['Priority', form.urgency === 'urgent' ? '⚡ Urgent (within 4 hrs)' : 'Normal (within 24 hrs)'],
+                  ['Issue', form.description || '—'],
                 ].map(([k, v]) => (
                   <div key={k} className="flex gap-4 px-4 py-2.5">
                     <p className={`text-[10px] font-black uppercase tracking-widest w-24 shrink-0 ${muted}`}>{k}</p>
-                    <p className={`text-xs font-medium ${isDark ? "text-white" : "text-zinc-800"}`}>{v}</p>
+                    <p className={`text-xs font-medium ${isDark ? 'text-white' : 'text-zinc-800'}`}>{v}</p>
                   </div>
                 ))}
               </div>
@@ -324,17 +544,19 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
               <SectionTitle isDark={isDark}>Charges Breakdown</SectionTitle>
               <div className={`border ${divider}`}>
                 {[
-                  ["Inspection / Visit Fee", form.urgency === "urgent" ? "₹149" : "FREE"],
-                  ["Service Charge", `${estimatedCost}`],
-                  ["GST (18%)", "Included in final bill"],
-                  ["Warranty", "30 Days Parts & Labour"],
+                  ['Service Charge', `₹${basePrice}`],
+                  ['Urgency Fee', form.urgency === 'urgent' ? `₹${visitFee}` : 'FREE'],
+                  ['Tax (18%)', `₹${taxAmount}`],
+                  ['Total Amount', `₹${totalAmount}`],
                 ].map(([k, v], i) => (
-                  <div key={i} className={`flex justify-between px-4 py-2.5 border-b last:border-0 ${isDark ? "border-zinc-800" : "border-zinc-100"}`}>
-                    <p className={`text-xs ${muted}`}>{k}</p>
-                    <p className={`text-xs font-black ${v === "FREE" ? "text-green-500" : (isDark ? "text-white" : "text-zinc-900")}`}>{v}</p>
+                  <div key={i} className={`flex justify-between px-4 py-2.5 border-b last:border-0 ${isDark ? 'border-zinc-800' : 'border-zinc-100'}`}>
+                    <p className={`text-xs ${i === 3 ? 'font-black' : 'font-medium'} ${muted}`}>{k}</p>
+                    <p className={`text-xs font-black ${v === 'FREE' ? 'text-green-500' : isDark ? 'text-white' : 'text-zinc-900'}`}>{v}</p>
                   </div>
                 ))}
               </div>
+
+              {errors.submit && <p className="text-[10px] text-red-500 font-bold p-3 bg-red-50 border border-red-200">{errors.submit}</p>}
 
               <p className={`text-[10px] leading-relaxed ${muted}`}>
                 * Final charges will be confirmed after inspection. You only pay after the job is done & you're satisfied.
@@ -343,15 +565,16 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
               <div className="flex gap-3">
                 <button
                   onClick={() => setStep(1)}
-                  className={`flex-1 py-3 text-[9px] font-black uppercase tracking-widest border transition-all ${isDark ? "border-zinc-700 text-zinc-400 hover:border-zinc-500" : "border-zinc-300 text-zinc-500 hover:border-zinc-700"}`}
+                  className={`flex-1 py-3 text-[9px] font-black uppercase tracking-widest border transition-all ${isDark ? 'border-zinc-700 text-zinc-400 hover:border-zinc-500' : 'border-zinc-300 text-zinc-500 hover:border-zinc-700'}`}
                 >
                   ← Edit Details
                 </button>
                 <button
                   onClick={handleConfirm}
-                  className="flex-1 py-3 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all"
+                  disabled={loading}
+                  className={`flex-1 py-3 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  Confirm Booking ✓
+                  {loading ? 'Confirming...' : 'Confirm Booking ✓'}
                 </button>
               </div>
             </div>
@@ -362,16 +585,16 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
             <div className="p-10 text-center space-y-5">
               <div className="text-6xl animate-bounce">✅</div>
               <p className="text-[#facc15] text-[9px] font-black uppercase tracking-[0.5em]">Booking Confirmed</p>
-              <h3 className={`text-2xl font-black uppercase tracking-tight ${isDark ? "text-white" : "text-zinc-900"}`}>
+              <h3 className={`text-2xl font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                 We're on our way!
               </h3>
-              <p className={`text-xs leading-relaxed max-w-xs mx-auto ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
+              <p className={`text-xs leading-relaxed max-w-xs mx-auto ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                 Your <strong>{service.label}</strong> booking has been placed successfully. Our team will call you at <strong>{form.phone}</strong> within 30 minutes to confirm.
               </p>
 
-              <div className={`border px-5 py-4 text-left space-y-1 ${isDark ? "border-zinc-800" : "border-zinc-100"}`}>
+              <div className={`border px-5 py-4 text-left space-y-1 ${isDark ? 'border-zinc-800' : 'border-zinc-100'}`}>
                 <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Booking Reference</p>
-                <p className={`text-lg font-black tracking-tight ${isDark ? "text-white" : "text-zinc-900"}`}>
+                <p className={`text-lg font-black tracking-tight ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                   #{String(Date.now()).slice(-8).toUpperCase()}
                 </p>
                 <p className={`text-[10px] ${muted}`}>{form.date} • {form.timeSlot}</p>
@@ -385,7 +608,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
               </button>
             </div>
           )}
-        </div>{/* end scrollable content */}
+        </div>
       </div>
     </div>
   );
@@ -395,8 +618,8 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
 function SectionTitle({ children, isDark }) {
   return (
     <div className="flex items-center gap-3">
-      <p className={`text-[9px] font-black uppercase tracking-[0.4em] ${isDark ? "text-zinc-400" : "text-zinc-400"}`}>{children}</p>
-      <div className={`flex-1 h-px ${isDark ? "bg-zinc-800" : "bg-zinc-100"}`} />
+      <p className={`text-[9px] font-black uppercase tracking-[0.4em] ${isDark ? 'text-zinc-400' : 'text-zinc-400'}`}>{children}</p>
+      <div className={`flex-1 h-px ${isDark ? 'bg-zinc-800' : 'bg-zinc-100'}`} />
     </div>
   );
 }
@@ -404,9 +627,11 @@ function SectionTitle({ children, isDark }) {
 function Field({ label, error, isDark, children }) {
   return (
     <div className="space-y-1.5">
-      <label className={`block text-[9px] font-black uppercase tracking-widest ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
-        {label}
-      </label>
+      {label && (
+        <label className={`block text-[9px] font-black uppercase tracking-widest ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+          {label}
+        </label>
+      )}
       {children}
       {error && <p className="text-[10px] text-red-500 font-bold">{error}</p>}
     </div>
@@ -422,10 +647,10 @@ export default function AllQuickServicesPage() {
 
   // Dark mode detection
   useEffect(() => {
-    const check = () => setIsDark(document.documentElement.classList.contains("dark-mode"));
+    const check = () => setIsDark(document.documentElement.classList.contains('dark-mode'));
     check();
     const obs = new MutationObserver(check);
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     return () => obs.disconnect();
   }, []);
 
@@ -433,13 +658,13 @@ export default function AllQuickServicesPage() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await fetch("/api/quick-services");
+        const res = await fetch('/api/quick-services');
         const data = await res.json();
         if (data.success) {
           setServices(data.data);
         }
       } catch (error) {
-        console.error("Error fetching quick services:", error);
+        console.error('Error fetching quick services:', error);
       } finally {
         setLoading(false);
       }
@@ -447,15 +672,15 @@ export default function AllQuickServicesPage() {
     fetchServices();
   }, []);
 
-  const bg = isDark ? "bg-black text-white" : "bg-white text-zinc-900";
-  const border = isDark ? "border-zinc-900" : "border-zinc-100";
+  const bg = isDark ? 'bg-black text-white' : 'bg-white text-zinc-900';
+  const border = isDark ? 'border-zinc-900' : 'border-zinc-100';
   const card = isDark
-    ? "bg-zinc-950 border-zinc-800 hover:border-[#facc15]"
-    : "bg-zinc-50 border-zinc-200 hover:bg-white hover:shadow-lg hover:border-zinc-900";
-  const muted = isDark ? "text-zinc-500" : "text-zinc-600";
+    ? 'bg-zinc-950 border-zinc-800 hover:border-[#facc15]'
+    : 'bg-zinc-50 border-zinc-200 hover:bg-white hover:shadow-lg hover:border-zinc-900';
+  const muted = isDark ? 'text-zinc-500' : 'text-zinc-600';
   const btn = isDark
-    ? "border-[#facc15] text-[#facc15] hover:bg-[#facc15] hover:text-black"
-    : "border-black text-black hover:bg-black hover:text-white";
+    ? 'border-[#facc15] text-[#facc15] hover:bg-[#facc15] hover:text-black'
+    : 'border-black text-black hover:bg-black hover:text-white';
 
   // Loading state
   if (loading) {
@@ -475,7 +700,7 @@ export default function AllQuickServicesPage() {
       <section className={`pt-28 pb-10 px-6 text-center border-b ${border}`}>
         <div className="max-w-3xl mx-auto">
           <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.5em] mb-3">Quality Guaranteed</p>
-          <h1 className={`text-4xl md:text-6xl font-black uppercase tracking-tighter mb-4 ${isDark ? "text-white" : "text-zinc-900"}`}>
+          <h1 className={`text-4xl md:text-6xl font-black uppercase tracking-tighter mb-4 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
             Quick <span className="text-[#facc15]">Home</span> Services
           </h1>
           <p className={`text-sm max-w-xl mx-auto leading-relaxed ${muted}`}>
@@ -490,20 +715,20 @@ export default function AllQuickServicesPage() {
           {services.length > 0 ? (
             services.map((s) => (
               <div key={s.id} className={`group p-5 border transition-all duration-300 relative overflow-hidden ${card}`}>
-                <span className={`absolute -top-1 -right-1 text-6xl font-black opacity-[0.03] group-hover:opacity-10 group-hover:text-[#facc15] transition-all ${isDark ? "text-white" : "text-black"}`}>
+                <span className={`absolute -top-1 -right-1 text-6xl font-black opacity-[0.03] group-hover:opacity-10 group-hover:text-[#facc15] transition-all ${isDark ? 'text-white' : 'text-black'}`}>
                   {s.id < 10 ? `0${s.id}` : s.id}
                 </span>
                 <div className="text-3xl mb-3 transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300 origin-left">
                   {s.icon}
                 </div>
-                <h3 className={`text-base font-black uppercase tracking-tight mb-2 ${isDark ? "text-white" : "text-zinc-900"}`}>
+                <h3 className={`text-base font-black uppercase tracking-tight mb-2 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                   {s.label}
                 </h3>
                 <p className={`text-xs leading-relaxed mb-4 min-h-[48px] ${muted}`}>{s.description}</p>
 
-                {/* Starting price — uses s.base_price (snake_case from DB) */}
-                <p className={`text-[10px] font-black mb-3 ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
-                  Starts at <span className="text-[#facc15]">₹{s.base_price}</span>
+                {/* ✅ FIX: Use admin_base_price or base_price */}
+                <p className={`text-[10px] font-black mb-3 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                  Starts at <span className="text-[#facc15]">₹{s.admin_base_price || s.base_price || 199}</span>
                 </p>
 
                 <button
@@ -522,7 +747,7 @@ export default function AllQuickServicesPage() {
         </div>
       </section>
 
-      {/* Modal */}
+      {/* ✅ Modal - INTEGRATED IN SAME FILE */}
       {selectedService && (
         <BookingModal
           service={selectedService}

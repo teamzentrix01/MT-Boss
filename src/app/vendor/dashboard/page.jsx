@@ -1,642 +1,816 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
+// ════════════════════════════════════════════════════════════════════════════════
+// FILE: app/vendor/dashboard/page.jsx
+// VENDOR DASHBOARD - Notifications, Active Booking, Messages
+// ════════════════════════════════════════════════════════════════════════════════
+ 
+"use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+ 
 export default function VendorDashboard() {
   const router = useRouter();
   const [vendor, setVendor] = useState(null);
-  const [dark, setDark] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [activeBooking, setActiveBooking] = useState(null);
+  const [completedCount, setCompletedCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('profile');
-  const [bookings, setBookings] = useState([]);
-  const [earnings, setEarnings] = useState({
-    totalEarnings: 0,
-    completedBookings: 0,
-    pendingAmount: 0,
-    monthlyEarnings: 0,
-  });
-  const [loadingData, setLoadingData] = useState(false);
-
+  const [isDark, setIsDark] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [isQuickJob, setIsQuickJob] = useState(true);
+  const [extraAmount, setExtraAmount] = useState("");
+  const [vendorNote, setVendorNote] = useState("");
+  const [completeLoading, setCompleteLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("notifications");
+  const [vendorProfile, setVendorProfile] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [profileForm, setProfileForm] = useState({ shop_name: "", phone: "", city: "", state: "", description: "" });
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileMsg, setProfileMsg] = useState("");
+  const [allServices, setAllServices] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const [completedBookings, setCompletedBookings] = useState([]);
+  const [totalEarning, setTotalEarning] = useState(0);
+ 
   useEffect(() => {
-    const html = document.documentElement;
-    const update = () => setDark(html.classList.contains('dark-mode'));
-    update();
-    const obs = new MutationObserver(update);
-    obs.observe(html, { attributes: true, attributeFilter: ['class'] });
+    const check = () => setIsDark(document.documentElement.classList.contains("dark-mode"));
+    check();
+    const obs = new MutationObserver(check);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     return () => obs.disconnect();
   }, []);
-
-useEffect(() => {
-  const vendorData = localStorage.getItem('vendor');
-  const token = localStorage.getItem('vendor-token');
-  if (!token || !vendorData) {
-    router.push('/vendor/login');
-    return;
-  }
-  try {
-    setVendor(JSON.parse(vendorData));
-    setLoading(false);
-
-    // Fetch fresh vendor data from API to get image URLs
-    fetch('/api/vendor/profile', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(r => r.json())
-      .then(data => {
-        if (data.success && data.vendor) {
-          setVendor(data.vendor);
-          localStorage.setItem('vendor', JSON.stringify(data.vendor));
-        }
-      })
-      .catch(() => {});
-
-  } catch {
-    router.push('/vendor/login');
-  }
-}, [router]);
-
-  const fetchBookings = async () => {
-    setLoadingData(true);
+ 
+  useEffect(() => {
+    const token = localStorage.getItem("vendor-token");
+    if (!token) {
+      router.push("/vendor/login");
+      return;
+    }
+ 
+    fetchVendorData(token);
+    const interval = setInterval(() => fetchVendorData(token), 5000); // Poll every 5 seconds
+    return () => clearInterval(interval);
+  }, [router]);
+ 
+  async function fetchVendorData(token) {
     try {
-      const res = await fetch('/api/vendor/bookings', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('vendor-token')}` }
+      const [notRes, bookRes, compRes, profRes] = await Promise.all([
+        fetch("/api/vendor/notifications", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch("/api/vendor/bookings?type=active", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch("/api/vendor/bookings?type=completed", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch("/api/vendor/profile", { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
+
+      const notData = await notRes.json();
+      if (notData.success) setNotifications(notData.notifications);
+
+      const bookData = await bookRes.json();
+      if (bookData.success && bookData.bookings.length > 0) setActiveBooking(bookData.bookings[0]);
+      else setActiveBooking(null);
+
+      const compData = await compRes.json();
+      if (compData.success) {
+        setCompletedCount(compData.bookings.length);
+        setCompletedBookings(compData.bookings);
+        const earned = compData.bookings.reduce((sum, b) => sum + parseFloat(b.vendor_earning || 0), 0);
+        setTotalEarning(Math.round(earned));
+        // Update stats card label too
+      }
+
+      const profData = await profRes.json();
+      if (profData.success) {
+        setVendorProfile(profData.vendor);
+        setSelectedServices((profData.vendor.services || []).map((s) => s.id));
+        setProfileForm({
+          shop_name: profData.vendor.shop_name || "",
+          phone: profData.vendor.phone || "",
+          city: profData.vendor.city || "",
+          state: profData.vendor.state || "",
+          description: profData.vendor.description || "",
+        });
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching vendor data:", error);
+      setLoading(false);
+    }
+  }
+
+  async function loadAllServices() {
+    if (allServices.length > 0) return;
+    try {
+      const res = await fetch("/api/quick-services");
+      const data = await res.json();
+      if (data.success) setAllServices(data.data || data.services || []);
+    } catch {
+      console.error("Failed to load services list");
+    }
+  }
+
+  async function saveProfile() {
+    setProfileLoading(true);
+    setProfileMsg("");
+    const token = localStorage.getItem("vendor-token");
+    try {
+      const res = await fetch("/api/vendor/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ ...profileForm, services: selectedServices }),
       });
       const data = await res.json();
-      if (data.success) setBookings(data.data || []);
-    } catch (err) {
-      console.error('Error fetching bookings:', err);
+      if (data.success) {
+        setVendorProfile(data.vendor);
+        setSelectedServices((data.vendor.services || []).map((s) => s.id));
+        setEditMode(false);
+        setProfileMsg("Profile updated successfully.");
+      } else {
+        setProfileMsg(data.error || "Update failed.");
+      }
+    } catch {
+      setProfileMsg("Network error. Please try again.");
     } finally {
-      setLoadingData(false);
+      setProfileLoading(false);
     }
-  };
+  }
 
-  const fetchEarnings = async () => {
-    setLoadingData(true);
-    try {
-      const res = await fetch('/api/vendor/earnings', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('vendor-token')}` }
-      });
-      const data = await res.json();
-      if (data.success) setEarnings(data.data || earnings);
-    } catch (err) {
-      console.error('Error fetching earnings:', err);
-    } finally {
-      setLoadingData(false);
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('vendor-token');
-    localStorage.removeItem('vendor');
-    document.cookie = 'vendor-auth-token=; path=/; max-age=0';
-    router.push('/vendor/login');
-  };
-
-  if (loading) {
-    return (
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        minHeight: '100vh', background: dark ? '#000' : '#f5f5f7',
-        color: dark ? '#fff' : '#111', fontFamily: 'DM Sans, sans-serif'
-      }}>
-        Loading...
-      </div>
+  function toggleService(id) {
+    setSelectedServices((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
     );
   }
+ 
+  async function acceptBooking(bookingId) {
+    const token = localStorage.getItem("vendor-token");
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}/accept`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSelectedNotification(null);
+        setNotifications((n) => n.filter((x) => x.booking_id !== bookingId));
+        fetchVendorData(token);
+      }
+    } catch (error) {
+      console.error("Error accepting booking:", error);
+    }
+  }
+ 
+  async function rejectBooking(bookingId) {
+    const token = localStorage.getItem("vendor-token");
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}/reject`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSelectedNotification(null);
+        setNotifications((n) => n.filter((x) => x.booking_id !== bookingId));
+      }
+    } catch (error) {
+      console.error("Error rejecting booking:", error);
+    }
+  }
+ 
+  async function markComplete() {
+    if (!activeBooking) return;
+    if (!isQuickJob && !extraAmount) return;
+    setCompleteLoading(true);
+    const token = localStorage.getItem("vendor-token");
+    try {
+      const res = await fetch(`/api/bookings/${activeBooking.id}/complete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          is_quick_job: isQuickJob,
+          extra_amount: isQuickJob ? 0 : parseFloat(extraAmount),
+          vendor_note: vendorNote,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setShowCompleteModal(false);
+        setExtraAmount("");
+        setVendorNote("");
+        setIsQuickJob(true);
+        fetchVendorData(token);
+      }
+    } catch (err) {
+      console.error("Complete error:", err);
+    } finally {
+      setCompleteLoading(false);
+    }
+  }
 
-  const statusColor = (s) => {
-    if (!s) return '#888';
-    if (s === 'active') return '#22c55e';
-    if (s === 'pending') return '#f59e0b';
-    return '#888';
-  };
-
+  async function updateLocation() {
+    if (!activeBooking || !navigator.geolocation) return;
+ 
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const token = localStorage.getItem("vendor-token");
+ 
+        try {
+          const res = await fetch("/api/vendor/location/update", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              booking_id: activeBooking.id,
+              latitude,
+              longitude
+            })
+          });
+ 
+          if (res.ok) {
+            setVendorLocation({ latitude, longitude });
+          }
+        } catch (error) {
+          console.error("Location update error:", error);
+        }
+      }
+    );
+  }
+ 
+  const bg = isDark ? "bg-black text-white" : "bg-white text-zinc-900";
+  const card = isDark ? "bg-zinc-950 border-zinc-800" : "bg-zinc-50 border-zinc-200";
+  const muted = isDark ? "text-zinc-500" : "text-zinc-600";
+ 
+  if (loading) {
+    return (
+      <main className={`min-h-screen font-serif ${bg} flex items-center justify-center`}>
+        <p className={muted}>Loading dashboard...</p>
+      </main>
+    );
+  }
+ 
   return (
-    <>
-      <style>{`
-        /* Scoped to .vd-page — does NOT touch the real site navbar/footer */
-        .vd-page {
-          min-height: 100vh;
-          background: ${dark ? '#0a0a0a' : '#f0ede8'};
-          color: ${dark ? '#fff' : '#111'};
-          font-family: 'DM Sans', system-ui, sans-serif;
-        }
-
-        /* Internal top bar — only inside .vd-page */
-        .vd-topbar {
-          background: ${dark ? '#111' : '#fff'};
-          border-bottom: 1px solid ${dark ? '#222' : '#e5e0d8'};
-          padding: 0 2rem;
-          height: 64px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          position: sticky;
-          top: 0;
-          z-index: 50;
-          /* Reset any inherited shrink from site layout */
-          flex-shrink: 0;
-          width: 100%;
-          box-sizing: border-box;
-        }
-
-        .vd-topbar-left {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          min-width: 0;
-        }
-
-        .vd-logo {
-          font-size: 1rem;
-          font-weight: 800;
-          letter-spacing: -0.02em;
-          white-space: nowrap;
-          color: ${dark ? '#fff' : '#111'};
-          flex-shrink: 0;
-        }
-        .vd-logo span { color: #22c55e; }
-
-        .vd-divider {
-          width: 1px;
-          height: 20px;
-          background: ${dark ? '#333' : '#ddd'};
-          flex-shrink: 0;
-        }
-
-        .vd-vendor-email {
-          font-size: 0.8rem;
-          color: ${dark ? '#666' : '#999'};
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .vd-topbar-right {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          flex-shrink: 0;
-        }
-
-        .vd-status-pill {
-          padding: 0.3rem 0.8rem;
-          border-radius: 20px;
-          font-size: 0.7rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-          background: ${dark ? '#0f2a1a' : '#dcfce7'};
-          color: #22c55e;
-          border: 1px solid #22c55e33;
-        }
-
-        .vd-logout-btn {
-          padding: 0.5rem 1.1rem;
-          background: transparent;
-          color: ${dark ? '#888' : '#666'};
-          border: 1px solid ${dark ? '#333' : '#ddd'};
-          border-radius: 7px;
-          cursor: pointer;
-          font-weight: 600;
-          font-size: 0.78rem;
-          transition: all 0.2s;
-          white-space: nowrap;
-        }
-        .vd-logout-btn:hover {
-          border-color: #ef4444;
-          color: #ef4444;
-        }
-
-        /* Body */
-        .vd-body {
-          max-width: 1100px;
-          margin: 0 auto;
-          padding: 2rem;
-        }
-
-        /* Page header */
-        .vd-page-header {
-          margin-bottom: 2rem;
-        }
-        .vd-page-title {
-          font-size: 1.75rem;
-          font-weight: 700;
-          margin-bottom: 0.3rem;
-          letter-spacing: -0.02em;
-        }
-        .vd-page-sub {
-          font-size: 0.85rem;
-          color: ${dark ? '#555' : '#999'};
-        }
-
-        /* Tabs */
-        .vd-tabs {
-          display: flex;
-          border-bottom: 2px solid ${dark ? '#222' : '#e5e0d8'};
-          margin-bottom: 2rem;
-          gap: 0;
-        }
-        .vd-tab {
-          padding: 0.875rem 1.5rem;
-          background: none;
-          border: none;
-          color: ${dark ? '#555' : '#aaa'};
-          cursor: pointer;
-          font-weight: 600;
-          font-size: 0.78rem;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          position: relative;
-          transition: color 0.2s;
-          white-space: nowrap;
-          font-family: inherit;
-        }
-        .vd-tab:hover { color: ${dark ? '#fff' : '#111'}; }
-        .vd-tab.active { color: #22c55e; }
-        .vd-tab.active::after {
-          content: '';
-          position: absolute;
-          bottom: -2px; left: 0; right: 0;
-          height: 2px;
-          background: #22c55e;
-        }
-
-        /* Cards */
-        .vd-card {
-          background: ${dark ? '#111' : '#fff'};
-          border: 1px solid ${dark ? '#222' : '#e5e0d8'};
-          border-radius: 12px;
-          padding: 1.5rem;
-        }
-
-        .vd-card-title {
-          font-size: 0.7rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: ${dark ? '#555' : '#aaa'};
-          margin-bottom: 1.25rem;
-        }
-
-        /* Profile grid */
-        .vd-profile-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 1.25rem;
-        }
-
-        /* Identity card — full width */
-        .vd-card-full {
-          grid-column: 1 / -1;
-        }
-
-        .vd-rows { display: flex; flex-direction: column; gap: 0; }
-        .vd-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.75rem 0;
-          border-bottom: 1px solid ${dark ? '#1a1a1a' : '#f0ede8'};
-          gap: 1rem;
-        }
-        .vd-row:last-child { border-bottom: none; }
-        .vd-row-label {
-          font-size: 0.78rem;
-          color: ${dark ? '#555' : '#aaa'};
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-          font-weight: 600;
-          flex-shrink: 0;
-        }
-        .vd-row-value {
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: ${dark ? '#ddd' : '#222'};
-          text-align: right;
-        }
-
-        .vd-badge {
-          display: inline-block;
-          padding: 0.25rem 0.7rem;
-          border-radius: 20px;
-          font-size: 0.7rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-        }
-        .vd-badge-green {
-          background: ${dark ? '#0f2a1a' : '#dcfce7'};
-          color: #22c55e;
-        }
-        .vd-badge-yellow {
-          background: ${dark ? '#2a1f00' : '#fef9c3'};
-          color: #ca8a04;
-        }
-
-        /* Bookings */
-        .vd-bookings { display: flex; flex-direction: column; gap: 1rem; }
-        .vd-booking-card {
-          background: ${dark ? '#111' : '#fff'};
-          border: 1px solid ${dark ? '#222' : '#e5e0d8'};
-          border-radius: 12px;
-          padding: 1.25rem 1.5rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          gap: 1rem;
-        }
-        .vd-booking-ref {
-          font-size: 0.75rem;
-          color: ${dark ? '#555' : '#aaa'};
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-          margin-bottom: 0.4rem;
-        }
-        .vd-booking-service {
-          font-size: 0.95rem;
-          font-weight: 700;
-          color: ${dark ? '#ddd' : '#111'};
-          margin-bottom: 0.5rem;
-        }
-        .vd-booking-meta {
-          display: flex;
-          gap: 1.5rem;
-          flex-wrap: wrap;
-        }
-        .vd-booking-meta span {
-          font-size: 0.8rem;
-          color: ${dark ? '#666' : '#888'};
-        }
-        .vd-booking-amount {
-          font-size: 1.1rem;
-          font-weight: 700;
-          color: #22c55e;
-          white-space: nowrap;
-        }
-
-        /* Earnings stats */
-        .vd-stats {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 1.25rem;
-          margin-bottom: 1.5rem;
-        }
-        .vd-stat-card {
-          background: ${dark ? '#111' : '#fff'};
-          border: 1px solid ${dark ? '#222' : '#e5e0d8'};
-          border-radius: 12px;
-          padding: 1.5rem;
-          text-align: center;
-        }
-        .vd-stat-value {
-          font-size: 2rem;
-          font-weight: 700;
-          color: #22c55e;
-          margin-bottom: 0.4rem;
-          letter-spacing: -0.02em;
-        }
-        .vd-stat-label {
-          font-size: 0.72rem;
-          color: ${dark ? '#555' : '#aaa'};
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          font-weight: 600;
-        }
-
-        /* Empty / loading states */
-        .vd-empty {
-          padding: 3rem;
-          text-align: center;
-          color: ${dark ? '#444' : '#bbb'};
-          font-size: 0.875rem;
-        }
-        .vd-loading {
-          padding: 2rem;
-          text-align: center;
-          color: ${dark ? '#555' : '#aaa'};
-          font-size: 0.875rem;
-        }
-
-        @media (max-width: 640px) {
-          .vd-topbar { padding: 0 1rem; }
-          .vd-body { padding: 1rem; }
-          .vd-page-title { font-size: 1.4rem; }
-          .vd-tab { padding: 0.75rem 0.875rem; font-size: 0.7rem; }
-          .vd-booking-card { flex-direction: column; }
-          .vd-vendor-email { display: none; }
-          .vd-divider { display: none; }
-        }
-      `}</style>
-
-      <div className="vd-page">
-
-        {/* Internal top bar — won't interfere with site navbar */}
-        <div className="vd-topbar">
-          <div className="vd-topbar-left">
-            <div className="vd-logo">VENDOR<span>HUB</span></div>
-            <div className="vd-divider" />
-            <div className="vd-vendor-email">{vendor?.email}</div>
+    <main className={`min-h-screen font-serif ${bg} p-6`}>
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <h1 className="text-4xl font-black uppercase">Vendor Dashboard</h1>
+            <p className={`text-sm ${muted} mt-1`}>{vendorProfile?.shop_name || "My Shop"} · {vendorProfile?.city || ""}</p>
           </div>
-          <div className="vd-topbar-right">
-            <span className="vd-status-pill">
-              {vendor?.verification_status || 'Pending'}
-            </span>
-            <button className="vd-logout-btn" onClick={handleLogout}>
-              Logout
-            </button>
+          <div className={`flex border ${isDark ? "border-zinc-800" : "border-zinc-200"}`}>
+            {[
+              { key: "notifications", label: "📬 Bookings" },
+              { key: "history", label: "📋 History" },
+              { key: "profile", label: "👤 Profile" },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all ${
+                  activeTab === tab.key
+                    ? "bg-[#facc15] text-black"
+                    : isDark ? "text-zinc-400 hover:text-white" : "text-zinc-500 hover:text-zinc-900"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
-
-        <div className="vd-body">
-
-          {/* Page header */}
-          <div className="vd-page-header">
-            <div className="vd-page-title">
-              Welcome back 👋
-            </div>
-            <div className="vd-page-sub">
-              {vendor?.email} · {vendor?.city}, {vendor?.state}
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div className="vd-tabs">
-            <button
-              className={`vd-tab ${activeTab === 'profile' ? 'active' : ''}`}
-              onClick={() => setActiveTab('profile')}
-            >
-              👤 Profile
-            </button>
-            <button
-              className={`vd-tab ${activeTab === 'bookings' ? 'active' : ''}`}
-              onClick={() => { setActiveTab('bookings'); fetchBookings(); }}
-            >
-              📅 Bookings
-            </button>
-            <button
-              className={`vd-tab ${activeTab === 'earnings' ? 'active' : ''}`}
-              onClick={() => { setActiveTab('earnings'); fetchEarnings(); }}
-            >
-              💰 Earnings
-            </button>
-          </div>
-
-          {/* ── PROFILE TAB ── */}
-          {activeTab === 'profile' && (
-            <div className="vd-profile-grid">
-
-              {/* Account Info */}
-              <div className="vd-card">
-                <div className="vd-card-title">Account</div>
-                <div className="vd-rows">
-                  <div className="vd-row">
-                    <span className="vd-row-label">Email</span>
-                    <span className="vd-row-value">{vendor?.email}</span>
-                  </div>
-                  <div className="vd-row">
-                    <span className="vd-row-label">Mobile</span>
-                    <span className="vd-row-value">{vendor?.phone || '—'}</span>
-                  </div>
-                  <div className="vd-row">
-                    <span className="vd-row-label">Status</span>
-                    <span className="vd-row-value">
-                      <span className={`vd-badge ${vendor?.status === 'active' ? 'vd-badge-green' : 'vd-badge-yellow'}`}>
-                        {vendor?.status || 'Active'}
-                      </span>
-                    </span>
-                  </div>
-                  <div className="vd-row">
-                    <span className="vd-row-label">Verification</span>
-                    <span className="vd-row-value">
-                      <span className={`vd-badge ${vendor?.verification_status === 'verified' ? 'vd-badge-green' : 'vd-badge-yellow'}`}>
-                        {vendor?.verification_status || 'Pending'}
-                      </span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Address */}
-              <div className="vd-card">
-                <div className="vd-card-title">Address</div>
-                <div className="vd-rows">
-                  <div className="vd-row">
-                    <span className="vd-row-label">City</span>
-                    <span className="vd-row-value">{vendor?.city || '—'}</span>
-                  </div>
-                  <div className="vd-row">
-                    <span className="vd-row-label">State</span>
-                    <span className="vd-row-value">{vendor?.state || '—'}</span>
-                  </div>
-                  <div className="vd-row">
-                    <span className="vd-row-label">Country</span>
-                    <span className="vd-row-value">{vendor?.country || '—'}</span>
-                  </div>
-                  <div className="vd-row">
-                    <span className="vd-row-label">Postal Code</span>
-                    <span className="vd-row-value">{vendor?.postal_code || '—'}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Identity */}
-              <div className="vd-card">
-                <div className="vd-card-title">Identity</div>
-                <div className="vd-rows">
-                  <div className="vd-row">
-                    <span className="vd-row-label">Aadhaar</span>
-                    <span className="vd-row-value">
-                      {vendor?.aadhar_number
-                        ? `XXXX XXXX ${vendor.aadhar_number.slice(-4)}`
-                        : '—'}
-                    </span>
-                  </div>
-                  <div className="vd-row">
-                    <span className="vd-row-label">Aadhaar Card</span>
-                    <span className="vd-row-value">
-                      <span className={`vd-badge ${vendor?.aadhar_image ? 'vd-badge-green' : 'vd-badge-yellow'}`}>
-                        {vendor?.aadhar_image ? 'Uploaded' : 'Pending'}
-                      </span>
-                    </span>
-                  </div>
-                  <div className="vd-row">
-                    <span className="vd-row-label">Profile Photo</span>
-                    <span className="vd-row-value">
-                      <span className={`vd-badge ${vendor?.profile_photo ? 'vd-badge-green' : 'vd-badge-yellow'}`}>
-                        {vendor?.profile_photo ? 'Uploaded' : 'Pending'}
-                      </span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          )}
-
-          {/* ── BOOKINGS TAB ── */}
-          {activeTab === 'bookings' && (
-            loadingData ? (
-              <div className="vd-loading">Loading bookings...</div>
-            ) : bookings.length > 0 ? (
-              <div className="vd-bookings">
-                {bookings.map(booking => (
-                  <div key={booking.id} className="vd-booking-card">
-                    <div>
-                      <div className="vd-booking-ref">#{booking.booking_reference}</div>
-                      <div className="vd-booking-service">{booking.service_label}</div>
-                      <div className="vd-booking-meta">
-                        <span>👤 {booking.user_name}</span>
-                        <span>📅 {new Date(booking.booking_date).toLocaleDateString('en-IN')}</span>
-                        <span className={`vd-badge ${booking.status === 'completed' ? 'vd-badge-green' : 'vd-badge-yellow'}`}>
-                          {booking.status}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="vd-booking-amount">₹{booking.final_amount}</div>
+ 
+        {activeTab === "history" ? (
+          /* ── History Tab ── */
+          <div className="space-y-4">
+            {/* Earnings Summary */}
+            <div className={`border ${card} p-5`}>
+              <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest mb-4">Earnings Breakdown</p>
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { label: "Your Net Earnings (85%)", value: `₹${totalEarning.toLocaleString('en-IN')}`, color: "text-green-500" },
+                  { label: "Admin Commission (15%)", value: `₹${Math.round(completedBookings.reduce((s,b) => s + parseFloat(b.admin_commission||0), 0)).toLocaleString('en-IN')}`, color: "text-yellow-500" },
+                  { label: "GST Collected (18%)", value: `₹${Math.round(completedBookings.reduce((s,b) => s + parseFloat(b.gst_amount||0), 0)).toLocaleString('en-IN')}`, color: "text-zinc-400" },
+                ].map(({ label, value, color }) => (
+                  <div key={label} className={`p-4 border ${isDark ? "border-zinc-800 bg-zinc-900" : "border-zinc-100 bg-zinc-50"}`}>
+                    <p className={`text-[9px] font-black uppercase tracking-widest ${muted}`}>{label}</p>
+                    <p className={`text-2xl font-black mt-1 ${color}`}>{value}</p>
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="vd-empty">No bookings yet — start accepting service requests!</div>
-            )
-          )}
+            </div>
 
-          {/* ── EARNINGS TAB ── */}
-          {activeTab === 'earnings' && (
-            <>
-              <div className="vd-stats">
-                <div className="vd-stat-card">
-                  <div className="vd-stat-value">₹{earnings.totalEarnings.toLocaleString('en-IN')}</div>
-                  <div className="vd-stat-label">Total Earnings</div>
+            {/* Completed Bookings List */}
+            {completedBookings.length === 0 ? (
+              <div className={`border ${card} p-10 text-center`}>
+                <p className={muted}>No completed bookings yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {completedBookings.map((b) => (
+                  <div key={b.id} className={`border ${card} p-5`}>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 space-y-3">
+                        {/* Header */}
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{b.icon}</span>
+                          <div>
+                            <p className="font-black text-sm">{b.label}</p>
+                            <p className={`text-[10px] ${muted}`}>{b.booking_reference} · {b.service_city}</p>
+                          </div>
+                        </div>
+
+                        {/* Customer */}
+                        <div className="flex gap-6">
+                          <div>
+                            <p className={`text-[9px] font-black uppercase ${muted}`}>Customer</p>
+                            <p className="text-sm font-medium">{b.user_name}</p>
+                            <p className={`text-[10px] ${muted}`}>{b.user_phone}</p>
+                          </div>
+                          <div>
+                            <p className={`text-[9px] font-black uppercase ${muted}`}>Date</p>
+                            <p className="text-sm font-medium">{b.booking_date ? new Date(b.booking_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}</p>
+                          </div>
+                          <div>
+                            <p className={`text-[9px] font-black uppercase ${muted}`}>Completed</p>
+                            <p className="text-sm font-medium">{b.completed_at ? new Date(b.completed_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '—'}</p>
+                          </div>
+                        </div>
+
+                        {/* Rating */}
+                        {b.rating_stars ? (
+                          <div className={`p-3 border-l-2 border-[#facc15] ${isDark ? "bg-zinc-900" : "bg-zinc-50"}`}>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[#facc15] font-black">{"★".repeat(b.rating_stars)}{"☆".repeat(5 - b.rating_stars)}</span>
+                              <span className={`text-[10px] font-black ${muted}`}>{b.rating_stars}/5</span>
+                            </div>
+                            {b.review_text && <p className={`text-xs mt-1 ${muted}`}>"{b.review_text}"</p>}
+                          </div>
+                        ) : (
+                          <p className={`text-[10px] ${muted}`}>No rating yet</p>
+                        )}
+                      </div>
+
+                      {/* Earnings */}
+                      <div className={`min-w-35 p-4 border ${isDark ? "border-zinc-800 bg-zinc-900" : "border-zinc-100 bg-zinc-50"} space-y-2`}>
+                        <p className={`text-[9px] font-black uppercase tracking-widest ${muted}`}>Earnings</p>
+                        <div>
+                          <p className={`text-[9px] ${muted}`}>Total Charged</p>
+                          <p className="text-sm font-black">₹{b.final_amount || b.total_amount}</p>
+                        </div>
+                        <div>
+                          <p className={`text-[9px] ${muted}`}>− GST (18%)</p>
+                          <p className="text-xs text-red-400">− ₹{b.gst_amount}</p>
+                        </div>
+                        <div>
+                          <p className={`text-[9px] ${muted}`}>− Commission (15%)</p>
+                          <p className="text-xs text-red-400">− ₹{b.admin_commission}</p>
+                        </div>
+                        <div className={`border-t pt-2 ${isDark ? "border-zinc-700" : "border-zinc-200"}`}>
+                          <p className={`text-[9px] font-black uppercase ${muted}`}>Your Net</p>
+                          <p className="text-lg font-black text-green-500">₹{b.vendor_earning}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : activeTab === "profile" ? (
+          /* ── Profile Tab ── */
+          <div className={`border ${card} p-6 max-w-2xl`}>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest">Your Profile</p>
+                <h2 className="text-2xl font-black uppercase mt-0.5">{vendorProfile?.shop_name || "My Shop"}</h2>
+              </div>
+              {!editMode && (
+                <button
+                  onClick={() => { setEditMode(true); loadAllServices(); }}
+                  className="px-5 py-2 border border-[#facc15] text-[#facc15] text-[9px] font-black uppercase tracking-widest hover:bg-[#facc15]/10 transition-all"
+                >
+                  Edit Profile
+                </button>
+              )}
+            </div>
+
+            {profileMsg && (
+              <p className={`text-xs mb-4 ${profileMsg.includes("success") ? "text-green-500" : "text-red-400"}`}>{profileMsg}</p>
+            )}
+
+            {editMode ? (
+              <div className="space-y-4">
+                {[
+                  { label: "Shop Name", key: "shop_name", placeholder: "Your business name" },
+                  { label: "Phone", key: "phone", placeholder: "10-digit mobile number" },
+                  { label: "City", key: "city", placeholder: "Operating city" },
+                  { label: "State", key: "state", placeholder: "State" },
+                ].map(({ label, key, placeholder }) => (
+                  <div key={key}>
+                    <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>{label}</label>
+                    <input
+                      type="text"
+                      className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${isDark ? "bg-zinc-900 border-zinc-700 text-white" : "bg-zinc-50 border-zinc-300 text-zinc-900"}`}
+                      placeholder={placeholder}
+                      value={profileForm[key]}
+                      onChange={(e) => setProfileForm((f) => ({ ...f, [key]: e.target.value }))}
+                    />
+                  </div>
+                ))}
+                <div>
+                  <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>About / Description</label>
+                  <textarea
+                    rows={3}
+                    className={`w-full px-3 py-2.5 text-sm border outline-none resize-none transition-all ${isDark ? "bg-zinc-900 border-zinc-700 text-white" : "bg-zinc-50 border-zinc-300 text-zinc-900"}`}
+                    placeholder="Describe your services..."
+                    value={profileForm.description}
+                    onChange={(e) => setProfileForm((f) => ({ ...f, description: e.target.value }))}
+                  />
                 </div>
-                <div className="vd-stat-card">
-                  <div className="vd-stat-value">{earnings.completedBookings}</div>
-                  <div className="vd-stat-label">Completed</div>
+
+                {/* Services selection */}
+                <div>
+                  <label className={`block text-[9px] font-black uppercase tracking-widest mb-2 ${muted}`}>Services You Provide</label>
+                  {allServices.length === 0 ? (
+                    <p className={`text-xs ${muted}`}>Loading services...</p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2">
+                      {allServices.map((svc) => (
+                        <label
+                          key={svc.id}
+                          className={`flex items-center gap-2 p-2 border cursor-pointer transition-all ${
+                            selectedServices.includes(svc.id)
+                              ? "border-[#facc15] bg-[#facc15]/10"
+                              : isDark ? "border-zinc-800 hover:border-zinc-600" : "border-zinc-200 hover:border-zinc-300"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedServices.includes(svc.id)}
+                            onChange={() => toggleService(svc.id)}
+                            className="accent-[#facc15]"
+                          />
+                          <span className="text-xs">{svc.icon} {svc.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="vd-stat-card">
-                  <div className="vd-stat-value">₹{earnings.pendingAmount.toLocaleString('en-IN')}</div>
-                  <div className="vd-stat-label">Pending</div>
-                </div>
-                <div className="vd-stat-card">
-                  <div className="vd-stat-value">₹{earnings.monthlyEarnings.toLocaleString('en-IN')}</div>
-                  <div className="vd-stat-label">This Month</div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => { setEditMode(false); setProfileMsg(""); }}
+                    className={`flex-1 py-2.5 border text-[9px] font-black uppercase ${isDark ? "border-zinc-700 text-zinc-400" : "border-zinc-300 text-zinc-500"} hover:border-red-400 hover:text-red-400 transition-all`}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveProfile}
+                    disabled={profileLoading}
+                    className="flex-1 py-2.5 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all disabled:opacity-50"
+                  >
+                    {profileLoading ? "Saving..." : "Save Changes →"}
+                  </button>
                 </div>
               </div>
-              {loadingData ? (
-                <div className="vd-loading">Loading earnings...</div>
+            ) : (
+              <div className="space-y-4">
+                {[
+                  { label: "Email", value: vendorProfile?.email },
+                  { label: "Phone", value: vendorProfile?.phone },
+                  { label: "City", value: vendorProfile?.city },
+                  { label: "State", value: vendorProfile?.state },
+                  { label: "Account Status", value: vendorProfile?.is_approved ? "✅ Approved" : "⏳ Pending Approval" },
+                  { label: "Verification", value: vendorProfile?.verification_status },
+                  { label: "Member Since", value: vendorProfile?.created_at ? new Date(vendorProfile.created_at).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" }) : "—" },
+                ].map(({ label, value }) => (
+                  <div key={label} className={`flex justify-between py-2 border-b ${isDark ? "border-zinc-800" : "border-zinc-100"}`}>
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>{label}</span>
+                    <span className="text-sm font-medium">{value || "—"}</span>
+                  </div>
+                ))}
+                {vendorProfile?.description && (
+                  <div className={`p-3 ${isDark ? "bg-zinc-900" : "bg-zinc-50"}`}>
+                    <p className={`text-[9px] font-black uppercase ${muted} mb-1`}>About</p>
+                    <p className="text-sm">{vendorProfile.description}</p>
+                  </div>
+                )}
+
+                {/* Services provided */}
+                <div>
+                  <p className={`text-[10px] font-black uppercase tracking-widest mb-2 ${muted}`}>Services Provided</p>
+                  {vendorProfile?.services?.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {vendorProfile.services.map((svc) => (
+                        <span
+                          key={svc.id}
+                          className={`px-3 py-1 text-xs font-medium border ${isDark ? "border-zinc-700 bg-zinc-900" : "border-zinc-200 bg-zinc-50"}`}
+                        >
+                          {svc.icon} {svc.label}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className={`text-xs ${muted}`}>
+                      No services assigned yet.{" "}
+                      <button
+                        onClick={() => { setEditMode(true); loadAllServices(); }}
+                        className="text-[#facc15] underline"
+                      >
+                        Add services
+                      </button>
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+        <>
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className={`p-6 border ${card}`}>
+            <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest">Pending</p>
+            <p className="text-3xl font-black mt-2">{notifications.length}</p>
+            <p className={`text-[10px] ${muted} mt-1`}>Incoming requests</p>
+          </div>
+ 
+          <div className={`p-6 border ${card}`}>
+            <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest">Active</p>
+            <p className="text-3xl font-black mt-2">{activeBooking ? 1 : 0}</p>
+            <p className={`text-[10px] ${muted} mt-1`}>Current booking</p>
+          </div>
+ 
+          <div className={`p-6 border ${card}`}>
+            <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest">Completed</p>
+            <p className="text-3xl font-black mt-2">{completedCount}</p>
+            <p className={`text-[10px] ${muted} mt-1`}>Total jobs</p>
+          </div>
+ 
+          <div className={`p-6 border ${card}`}>
+            <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest">Your Earnings</p>
+            <p className="text-3xl font-black mt-2">₹{totalEarning.toLocaleString('en-IN')}</p>
+            <p className={`text-[10px] ${muted} mt-1`}>After GST + commission</p>
+          </div>
+        </div>
+ 
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Notifications / Incoming Requests */}
+          <div className="lg:col-span-2">
+            <div className={`border ${card} p-6`}>
+              <h2 className="text-xl font-black uppercase mb-4">📬 Incoming Requests ({notifications.length})</h2>
+ 
+              {notifications.length === 0 ? (
+                <p className={`${muted} text-center py-8`}>No new booking requests</p>
               ) : (
-                <div className="vd-card">
-                  <div className="vd-empty">Earnings will appear here once you complete bookings.</div>
+                <div className="space-y-3">
+                  {notifications.map((notif) => (
+                    <button
+                      key={notif.booking_id}
+                      onClick={() => setSelectedNotification(notif)}
+                      className={`w-full text-left p-4 border transition-all ${selectedNotification?.booking_id === notif.booking_id
+                        ? "border-[#facc15] bg-[#facc15]/5"
+                        : isDark
+                          ? "border-zinc-800 hover:border-zinc-700"
+                          : "border-zinc-200 hover:border-zinc-300"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="font-black text-[#facc15]">{notif.label} 📍 {notif.service_city}</p>
+                          <p className={`text-sm ${muted} mt-1`}>📞 {notif.user_phone}</p>
+                          <p className="text-[10px] text-green-500 mt-1">₹{notif.base_amount} base + ₹{notif.total_amount - notif.base_amount} (fees & tax)</p>
+                        </div>
+                        <span className="text-2xl">{notif.icon}</span>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               )}
-            </>
-          )}
-
+            </div>
+          </div>
+ 
+          {/* Details Panel */}
+          <div className={`border ${card} p-6 h-fit`}>
+            {selectedNotification ? (
+              <div className="space-y-4">
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[#facc15]">Customer</p>
+                  <p className="font-black">{selectedNotification.user_name}</p>
+                  <p className={`text-[10px] ${muted}`}>{selectedNotification.user_phone}</p>
+                </div>
+ 
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[#facc15]">Location</p>
+                  <p className="text-sm font-medium">{selectedNotification.service_address}</p>
+                  {selectedNotification.location_map_url && (
+                    <a href={selectedNotification.location_map_url} target="_blank" className="text-[10px] text-[#facc15] hover:underline mt-1 inline-block">
+                      📍 View on Map
+                    </a>
+                  )}
+                </div>
+ 
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[#facc15]">Details</p>
+                  <p className="text-sm">{selectedNotification.service_description || "No description"}</p>
+                </div>
+ 
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[#facc15]">Date & Time</p>
+                  <p className="text-sm">{selectedNotification.booking_date} • {selectedNotification.booking_time}</p>
+                </div>
+ 
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => rejectBooking(selectedNotification.booking_id)}
+                    className="flex-1 py-2.5 border border-red-500 text-red-500 text-[9px] font-black uppercase hover:bg-red-50 transition-all"
+                  >
+                    Reject
+                  </button>
+                  <button
+                    onClick={() => acceptBooking(selectedNotification.booking_id)}
+                    className="flex-1 py-2.5 bg-[#facc15] text-black text-[9px] font-black uppercase hover:bg-yellow-300 transition-all"
+                  >
+                    Accept →
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className={`${muted} text-center py-8`}>Select a request to view details</p>
+            )}
+          </div>
         </div>
+ 
+        {/* Active Booking */}
+        {activeBooking && (
+          <div className={`border ${card} p-6 mt-6`}>
+            <h2 className="text-xl font-black uppercase mb-4">🚀 Active Booking</h2>
+ 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[#facc15]">Reference</p>
+                  <p className="font-black text-lg">{activeBooking.booking_reference}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[#facc15]">Customer</p>
+                  <p className="font-medium">{activeBooking.user_name}</p>
+                  <p className={`text-[10px] ${muted}`}>{activeBooking.user_phone}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[#facc15]">Address</p>
+                  <p className="text-sm">{activeBooking.service_address}</p>
+                  <a href={activeBooking.location_map_url} target="_blank" className="text-[10px] text-[#facc15] hover:underline mt-1 inline-block">
+                    📍 Open in Maps
+                  </a>
+                </div>
+              </div>
+ 
+              <div className="space-y-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[#facc15]">Status</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className={`w-3 h-3 rounded-full animate-pulse ${activeBooking.status === 'AWAITING_PAYMENT' ? 'bg-green-500' : 'bg-blue-500'}`}></div>
+                    <p className={`font-black uppercase ${activeBooking.status === 'AWAITING_PAYMENT' ? 'text-green-500' : 'text-blue-500'}`}>
+                      {activeBooking.status === 'AWAITING_PAYMENT' ? 'Work Done · Awaiting Payment' : activeBooking.status}
+                    </p>
+                  </div>
+                </div>
+
+                {activeBooking.status === 'AWAITING_PAYMENT' ? (
+                  <div className={`w-full py-4 text-center border border-green-500/30 ${isDark ? 'bg-green-500/10' : 'bg-green-50'}`}>
+                    <p className="text-green-500 text-[10px] font-black uppercase tracking-widest">✓ Work Marked Complete</p>
+                    <p className={`text-xs mt-1 ${muted}`}>Waiting for customer to confirm payment</p>
+                    {activeBooking.final_amount && (
+                      <p className="text-green-500 font-black text-lg mt-2">₹{activeBooking.final_amount}</p>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      onClick={updateLocation}
+                      className="w-full py-2.5 border border-[#facc15] text-[#facc15] text-[9px] font-black uppercase hover:bg-[#facc15]/10 transition-all"
+                    >
+                      📍 Update My Location
+                    </button>
+                    <button
+                      onClick={() => { setIsQuickJob(true); setExtraAmount(""); setVendorNote(""); setShowCompleteModal(true); }}
+                      className="w-full py-2.5 bg-[#facc15] text-black text-[9px] font-black uppercase hover:bg-yellow-300 transition-all"
+                    >
+                      ✓ Mark Work Complete
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+        </>
+        )}
       </div>
-    </>
+
+      {/* ── Mark Complete Modal ── */}
+      {showCompleteModal && activeBooking && (
+        <div className="fixed inset-0 z-[99999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={(e) => e.target === e.currentTarget && setShowCompleteModal(false)}>
+          <div className={`w-full max-w-sm border shadow-2xl ${isDark ? "bg-zinc-950 border-zinc-800 text-white" : "bg-white border-zinc-200 text-zinc-900"}`}>
+            <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? "border-zinc-800" : "border-zinc-100"}`}>
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#facc15]">Mark Complete</p>
+                <h3 className="text-base font-black uppercase">{activeBooking.label}</h3>
+              </div>
+              <button onClick={() => setShowCompleteModal(false)}
+                className={`w-8 h-8 border flex items-center justify-center font-black text-sm transition-all ${isDark ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]" : "border-zinc-300 text-zinc-400 hover:border-zinc-900"}`}>
+                ✕
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              {/* Customer info */}
+              <div className={`px-4 py-3 border ${isDark ? "border-zinc-800 bg-zinc-900" : "border-zinc-100 bg-zinc-50"}`}>
+                <p className={`text-[9px] uppercase font-black tracking-widest ${muted}`}>Customer</p>
+                <p className={`font-bold text-sm ${isDark ? "text-white" : "text-zinc-900"}`}>{activeBooking.user_name}</p>
+                <p className={`text-[10px] ${muted}`}>{activeBooking.booking_reference} · Base: ₹{activeBooking.base_amount}</p>
+              </div>
+
+              {/* Job type toggle */}
+              <div>
+                <label className={`block text-[9px] font-black uppercase tracking-widest mb-2 ${muted}`}>Job Duration</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button type="button" onClick={() => setIsQuickJob(true)}
+                    className={`py-3 text-[10px] font-black uppercase border transition-all ${isQuickJob ? "bg-[#facc15] border-[#facc15] text-black" : isDark ? "border-zinc-700 text-zinc-400" : "border-zinc-300 text-zinc-500"}`}>
+                    ⚡ Within 30 Mins
+                  </button>
+                  <button type="button" onClick={() => setIsQuickJob(false)}
+                    className={`py-3 text-[10px] font-black uppercase border transition-all ${!isQuickJob ? "bg-[#facc15] border-[#facc15] text-black" : isDark ? "border-zinc-700 text-zinc-400" : "border-zinc-300 text-zinc-500"}`}>
+                    🕐 More than 30 Mins
+                  </button>
+                </div>
+              </div>
+
+              {/* Earnings preview */}
+              {isQuickJob ? (
+                <div className={`px-4 py-3 border border-green-500/30 ${isDark ? "bg-green-500/10" : "bg-green-50"}`}>
+                  <p className="text-[9px] font-black uppercase text-green-500 mb-2">Earnings Preview</p>
+                  <div className="flex justify-between text-xs">
+                    <span className={muted}>Total charged</span>
+                    <span className="font-bold">₹{activeBooking.base_amount}</span>
+                  </div>
+                  <div className="flex justify-between text-xs mt-1">
+                    <span className={muted}>Admin (50%)</span>
+                    <span className="text-red-400">₹{Math.round(activeBooking.base_amount * 0.5)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs mt-1 font-black">
+                    <span>Your earning (50%)</span>
+                    <span className="text-green-500">₹{Math.round(activeBooking.base_amount * 0.5)}</span>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>Extra Amount Beyond Base (₹) *</label>
+                    <input type="number" min="0"
+                      className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${isDark ? "bg-zinc-900 border-zinc-700 text-white" : "bg-zinc-50 border-zinc-300 text-zinc-900"}`}
+                      placeholder="Amount charged above ₹150 base"
+                      value={extraAmount}
+                      onChange={(e) => setExtraAmount(e.target.value)}
+                    />
+                  </div>
+                  {extraAmount > 0 && (
+                    <div className={`px-4 py-3 border border-yellow-500/30 ${isDark ? "bg-yellow-500/10" : "bg-yellow-50"}`}>
+                      <p className="text-[9px] font-black uppercase text-[#facc15] mb-2">Earnings Preview</p>
+                      <div className="flex justify-between text-xs"><span className={muted}>Base (admin)</span><span className="text-red-400">₹{activeBooking.base_amount}</span></div>
+                      <div className="flex justify-between text-xs mt-1"><span className={muted}>Extra charged</span><span>₹{extraAmount}</span></div>
+                      <div className="flex justify-between text-xs mt-1"><span className={muted}>GST on extra (18%)</span><span className="text-red-400">−₹{Math.round(extraAmount * 0.18)}</span></div>
+                      <div className="flex justify-between text-xs mt-1"><span className={muted}>Commission on extra (15%)</span><span className="text-red-400">−₹{Math.round(extraAmount * 0.15)}</span></div>
+                      <div className="flex justify-between text-xs mt-1 font-black border-t pt-1" style={{ borderColor: isDark ? '#3f3f46' : '#e4e4e7' }}>
+                        <span>Your earning (67% of extra)</span>
+                        <span className="text-green-500">₹{Math.round(extraAmount * 0.67)}</span>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* Note */}
+              <div>
+                <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>Note for Customer (optional)</label>
+                <textarea rows={2}
+                  className={`w-full px-3 py-2.5 text-sm border outline-none resize-none transition-all ${isDark ? "bg-zinc-900 border-zinc-700 text-white" : "bg-zinc-50 border-zinc-300 text-zinc-900"}`}
+                  placeholder="Any work notes..."
+                  value={vendorNote}
+                  onChange={(e) => setVendorNote(e.target.value)}
+                />
+              </div>
+
+              <button onClick={markComplete} disabled={completeLoading || (!isQuickJob && !extraAmount)}
+                className="w-full py-3 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-[0.3em] hover:bg-yellow-300 transition-all disabled:opacity-50">
+                {completeLoading ? "Submitting..." : "Confirm Completion →"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
   );
 }
+ 

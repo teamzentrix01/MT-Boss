@@ -1,11 +1,11 @@
-
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Navbar({ isDarkMode, toggleTheme }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [propertyOpen, setPropertyOpen] = useState(false);
   const [partnerOpen, setPartnerOpen] = useState(false);
@@ -13,43 +13,83 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Detect logged in user
+  // Detect logged in user - UPDATED TO LISTEN FOR CHANGES
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const vendorToken = localStorage.getItem('vendor-token');
-    const adminToken = localStorage.getItem('admin-token');
+    const checkUser = () => {
+      const token = localStorage.getItem('token');
+      const vendorToken = localStorage.getItem('vendor-token');
+      const adminToken = localStorage.getItem('admin-token');
 
-    if (token) {
-      const userData = localStorage.getItem('user');
-      if (userData) setUser({ ...JSON.parse(userData), role: 'user' });
-    } else if (vendorToken) {
-      const vendorData = localStorage.getItem('vendor');
-      if (vendorData) setUser({ ...JSON.parse(vendorData), role: 'vendor' });
-    } else if (adminToken) {
-      const adminData = localStorage.getItem('admin');
-      if (adminData) setUser({ ...JSON.parse(adminData), role: 'admin' });
-    }
-    setLoading(false);
-  }, []);
+      if (token) {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          try {
+            setUser({ ...JSON.parse(userData), role: 'user' });
+          } catch (e) {
+            console.error('Error parsing user data:', e);
+          }
+        }
+      } else if (vendorToken) {
+        const vendorData = localStorage.getItem('vendor');
+        if (vendorData) {
+          try {
+            setUser({ ...JSON.parse(vendorData), role: 'vendor' });
+          } catch (e) {
+            console.error('Error parsing vendor data:', e);
+          }
+        }
+      } else if (adminToken) {
+        const adminData = localStorage.getItem('admin');
+        if (adminData) {
+          try {
+            setUser({ ...JSON.parse(adminData), role: 'admin' });
+          } catch (e) {
+            console.error('Error parsing admin data:', e);
+          }
+        }
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    };
+
+    checkUser();
+
+    window.addEventListener('storage', checkUser);
+    window.addEventListener('userLoggedIn', checkUser);
+
+    return () => {
+      window.removeEventListener('storage', checkUser);
+      window.removeEventListener('userLoggedIn', checkUser);
+    };
+  }, [pathname]); // re-check on every route change too
 
   const handleLogout = () => {
     if (user?.role === 'vendor') {
       localStorage.removeItem('vendor-token');
       localStorage.removeItem('vendor');
       document.cookie = 'vendor-auth-token=; path=/; max-age=0';
-      router.push('/vendor/login');
     } else if (user?.role === 'admin') {
       localStorage.removeItem('admin-token');
       localStorage.removeItem('admin');
       document.cookie = 'admin-auth-token=; path=/; max-age=0';
-      router.push('/admin/login');
     } else {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       document.cookie = 'auth-token=; path=/; max-age=0';
-      router.push('/login');
     }
     setUser(null);
+    router.push('/login');
+  };
+
+  const handleDashboard = () => {
+    if (user?.role === 'vendor') {
+      router.push('/vendor/dashboard');
+    } else if (user?.role === 'admin') {
+      router.push('/dashboard');
+    } else {
+      router.push('/userdashboard');
+    }
   };
 
   const serviceDropdown = [
@@ -236,43 +276,55 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             {/* User Info / Auth Buttons */}
             {!loading ? (
               user ? (
-                // Logged In User
-                <div className="flex items-center gap-3 border-l border-gray-300 pl-3">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                        user.role === 'admin'
-                          ? 'bg-red-500'
-                          : user.role === 'vendor'
-                          ? 'bg-green-500'
-                          : 'bg-blue-500'
-                      } text-white`}
+                // Logged In User - IMPROVED
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
+                  isDarkMode 
+                    ? 'border-zinc-700 bg-zinc-900/50' 
+                    : 'border-gray-200 bg-gray-50'
+                }`}>
+                  <div
+                    className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                      user.role === 'admin'
+                        ? 'bg-red-500'
+                        : user.role === 'vendor'
+                        ? 'bg-green-500'
+                        : 'bg-blue-500'
+                    } text-white`}
+                  >
+                    {(user.name || user.email || user.shop_name || 'U')[0].toUpperCase()}
+                  </div>
+                  <div className="flex flex-col text-xs min-w-max">
+                    <span className="font-semibold text-sm">
+                      {user.name || user.shop_name || user.email}
+                    </span>
+                    <span
+                      className={`text-[10px] ${
+                        isDarkMode ? 'text-zinc-500' : 'text-gray-500'
+                      }`}
                     >
-                      {(user.name || user.email || user.shop_name || 'U')[0].toUpperCase()}
-                    </div>
-                    <div className="flex flex-col text-xs">
-                      <span className="font-semibold">
-                        {user.name || user.shop_name || user.email}
-                      </span>
-                      <span
-                        className={`text-[10px] ${
-                          isDarkMode ? 'text-zinc-500' : 'text-gray-500'
-                        }`}
-                      >
-                        {user.role === 'admin'
-                          ? '👨‍💼 Admin'
-                          : user.role === 'vendor'
-                          ? '🏪 Vendor'
-                          : '👤 User'}
-                      </span>
-                    </div>
+                      {user.role === 'admin'
+                        ? '👨‍💼 Admin'
+                        : user.role === 'vendor'
+                        ? '🏪 Vendor'
+                        : '👤 User'}
+                    </span>
                   </div>
                   <button
-                    onClick={handleLogout}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                    onClick={handleDashboard}
+                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all whitespace-nowrap ml-2 ${
                       isDarkMode
-                        ? 'border border-zinc-600 text-zinc-300 hover:bg-zinc-800'
-                        : 'border border-gray-300 text-gray-600 hover:bg-gray-100'
+                        ? 'border border-zinc-500 text-zinc-300 hover:bg-zinc-700'
+                        : 'border border-gray-400 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Dashboard
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
+                      isDarkMode
+                        ? 'bg-red-600 text-white hover:bg-red-700'
+                        : 'bg-red-500 text-white hover:bg-red-600'
                     }`}
                   >
                     Logout
@@ -531,11 +583,21 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   Logged in as {user.role.toUpperCase()}
                 </div>
                 <button
-                  onClick={handleLogout}
+                  onClick={handleDashboard}
                   className={`w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
                     isDarkMode
                       ? 'border border-zinc-600 text-zinc-300 hover:bg-zinc-800'
                       : 'border border-gray-300 text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className={`w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
+                    isDarkMode
+                      ? 'bg-red-600 text-white hover:bg-red-700'
+                      : 'bg-red-500 text-white hover:bg-red-600'
                   }`}
                 >
                   Logout

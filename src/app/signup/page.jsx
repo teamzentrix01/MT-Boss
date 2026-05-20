@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -10,363 +10,202 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [dark, setDark] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const update = () => setDark(html.classList.contains('dark-mode'));
+    update();
+    const observer = new MutationObserver(update);
+    observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
     if (error) setError('');
-  };
-
-  const validateForm = () => {
-    if (!formData.name.trim()) {
-      setError('Name is required');
-      return false;
-    }
-    if (!formData.email.trim()) {
-      setError('Email is required');
-      return false;
-    }
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return false;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return false;
-    }
-    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
+    if (!formData.name.trim()) return setError('Name is required');
+    if (formData.password.length < 6) return setError('Password must be at least 6 characters');
+    if (formData.password !== formData.confirmPassword) return setError('Passwords do not match');
 
     setLoading(true);
     setError('');
-
     try {
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password
-        })
+        body: JSON.stringify({ name: formData.name, email: formData.email, password: formData.password }),
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Signup failed');
-        return;
-      }
-
-      setSuccess('Account created successfully! Redirecting to login...');
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
-    } catch (err) {
+      if (!res.ok) return setError(data.error || 'Signup failed');
+      setSuccess('Account created! Redirecting to login...');
+      setTimeout(() => router.push('/login'), 1800);
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  const bg = dark ? '#000' : '#f5f5f7';
+  const surface = dark ? '#0a0a0a' : '#fff';
+  const border = dark ? '#27272a' : '#e2e2e7';
+  const text = dark ? '#fff' : '#111113';
+  const muted = dark ? '#71717a' : '#6b6b76';
+  const inputBg = dark ? '#111' : '#f9f9fb';
+
+  const inputStyle = {
+    width: '100%', padding: '0.48rem 0.75rem 0.48rem 2.25rem',
+    border: `1px solid ${border}`, borderRadius: 7, background: inputBg,
+    color: text, fontSize: '0.8125rem', outline: 'none', boxSizing: 'border-box',
+    transition: 'border-color 0.15s',
+  };
+
+  const labelStyle = { display: 'block', fontSize: '0.75rem', fontWeight: 600, color: muted, marginBottom: '0.3rem' };
+
+  const EyeOpen = () => (
+    <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+    </svg>
+  );
+  const EyeClosed = () => (
+    <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20">
+      <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
+      <path d="M15.171 13.576l1.474 1.474a1 1 0 001.414-1.414l-14-14a1 1 0 00-1.414 1.414l1.473 1.473A10.014 10.014 0 00.458 10C1.732 14.057 5.522 17 10 17a9.958 9.958 0 004.512-1.074l1.78 1.781a1 1 0 001.414-1.414l-1.474-1.474z" />
+    </svg>
+  );
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-      <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-      <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+    <div style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', fontFamily: "'DM Sans', system-ui, sans-serif", transition: 'background 0.3s' }}>
+      <div style={{ display: 'flex', width: '100%', maxWidth: 820, background: surface, border: `1px solid ${border}`, borderRadius: 12, overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,.08)', transition: 'background 0.3s, border-color 0.3s' }}>
 
-      {/* Signup Container */}
-      <div className="relative z-10 w-full max-w-md mx-4">
-        {/* Card with glassmorphism */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">
-              Get Started
-            </h1>
-            <p className="text-purple-200 text-sm">
-              Create your account to access all features
+        {/* Brand Panel */}
+        <div style={{ flex: '0 0 300px', background: dark ? '#111' : '#111113', padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} className="hidden sm:flex flex-col">
+          <div>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: '2.5rem' }}>
+              MT<span style={{ color: '#facc15' }}>BOSS</span>
+            </div>
+            <div style={{ fontSize: '1.375rem', fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: '0.75rem' }}>
+              Join thousands of happy customers.
+            </div>
+            <p style={{ fontSize: '0.8125rem', color: '#9ca3af', lineHeight: 1.7, marginBottom: '1.5rem' }}>
+              Book home services, track orders, manage properties — your MT-BOSS account gives you access to everything.
             </p>
+            {['Free to create', 'Instant booking', 'Verified vendors', 'Secure payments'].map(f => (
+              <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                <span style={{ color: '#facc15', fontWeight: 700, fontSize: '0.75rem' }}>✓</span>
+                <span style={{ fontSize: '0.8125rem', color: '#d1d5db' }}>{f}</span>
+              </div>
+            ))}
           </div>
+          <div style={{ fontSize: '0.7rem', color: '#4b5563' }}>© {new Date().getFullYear()} MT-BOSS. All rights reserved.</div>
+        </div>
 
-          {/* Error Alert */}
+        {/* Form Panel */}
+        <div style={{ flex: 1, padding: '2rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: surface, transition: 'background 0.3s' }}>
+          <div style={{ fontSize: '1.125rem', fontWeight: 700, color: text, marginBottom: '0.2rem' }}>Create Account</div>
+          <div style={{ fontSize: '0.8125rem', color: muted, marginBottom: '1.25rem' }}>Sign up to get started with MT-BOSS</div>
+
           {error && (
-            <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-xl backdrop-blur-sm animate-slide-in">
-              <p className="text-red-200 text-sm font-medium flex items-center gap-2">
-                <span className="inline-block w-2 h-2 bg-red-400 rounded-full"></span>
-                {error}
-              </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem 0.875rem', background: dark ? '#3f1515' : '#fff1f2', border: `1px solid ${dark ? '#dc2626' : '#fca5a5'}`, borderRadius: 6, fontSize: '0.8125rem', color: dark ? '#fca5a5' : '#9f1239', marginBottom: '0.875rem' }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: dark ? '#fca5a5' : '#9f1239', flexShrink: 0 }} />
+              {error}
             </div>
           )}
 
-          {/* Success Alert */}
           {success && (
-            <div className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-xl backdrop-blur-sm animate-slide-in">
-              <p className="text-green-200 text-sm font-medium flex items-center gap-2">
-                <span className="inline-block w-2 h-2 bg-green-400 rounded-full"></span>
-                {success}
-              </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem 0.875rem', background: dark ? '#14532d33' : '#f0fdf4', border: `1px solid ${dark ? '#16a34a' : '#86efac'}`, borderRadius: 6, fontSize: '0.8125rem', color: dark ? '#86efac' : '#166534', marginBottom: '0.875rem' }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: dark ? '#86efac' : '#166534', flexShrink: 0 }} />
+              {success}
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name Input */}
-            <div className="group">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-200 mb-2">
-                Full Name
-              </label>
-              <div className="relative">
-                <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-purple-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+          <form onSubmit={handleSubmit}>
+            {/* Name */}
+            <div style={{ marginBottom: '0.75rem' }}>
+              <label style={labelStyle}>Full Name</label>
+              <div style={{ position: 'relative' }}>
+                <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 15, height: 15, color: muted, pointerEvents: 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="John Doe"
-                  required
-                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition duration-200 group-hover:border-white/20"
-                />
+                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Your full name" required style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = '#facc15'} onBlur={e => e.target.style.borderColor = border} />
               </div>
             </div>
 
-            {/* Email Input */}
-            <div className="group">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-purple-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+            {/* Email */}
+            <div style={{ marginBottom: '0.75rem' }}>
+              <label style={labelStyle}>Email Address</label>
+              <div style={{ position: 'relative' }}>
+                <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 15, height: 15, color: muted, pointerEvents: 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="you@example.com"
-                  required
-                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition duration-200 group-hover:border-white/20"
-                />
+                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="you@example.com" required style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = '#facc15'} onBlur={e => e.target.style.borderColor = border} />
               </div>
             </div>
 
-            {/* Password Input */}
-            <div className="group">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-purple-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+            {/* Password */}
+            <div style={{ marginBottom: '0.75rem' }}>
+              <label style={labelStyle}>Password</label>
+              <div style={{ position: 'relative' }}>
+                <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 15, height: 15, color: muted, pointerEvents: 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  required
-                  className="w-full pl-10 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition duration-200 group-hover:border-white/20"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 transition"
-                >
-                  {showPassword ? (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
-                      <path d="M15.171 13.576l1.474 1.474a1 1 0 001.414-1.414l-14-14a1 1 0 00-1.414 1.414l1.473 1.473A10.014 10.014 0 00.458 10C1.732 14.057 5.522 17 10 17a9.958 9.958 0 004.512-1.074l1.78 1.781a1 1 0 001.414-1.414l-1.474-1.474z" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-              <p className="text-xs text-gray-400 mt-1">
-                At least 6 characters
-              </p>
-            </div>
-
-            {/* Confirm Password Input */}
-            <div className="group">
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-200 mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-purple-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  required
-                  className="w-full pl-10 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition duration-200 group-hover:border-white/20"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 transition"
-                >
-                  {showConfirmPassword ? (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
-                      <path d="M15.171 13.576l1.474 1.474a1 1 0 001.414-1.414l-14-14a1 1 0 00-1.414 1.414l1.473 1.473A10.014 10.014 0 00.458 10C1.732 14.057 5.522 17 10 17a9.958 9.958 0 004.512-1.074l1.78 1.781a1 1 0 001.414-1.414l-1.474-1.474z" />
-                    </svg>
-                  )}
+                <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} placeholder="Min. 6 characters" required
+                  style={{ ...inputStyle, paddingRight: '2.5rem' }}
+                  onFocus={e => e.target.style.borderColor = '#facc15'} onBlur={e => e.target.style.borderColor = border} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: muted, padding: 0, display: 'flex' }}>
+                  {showPassword ? <EyeOpen /> : <EyeClosed />}
                 </button>
               </div>
             </div>
 
-            {/* Terms & Conditions */}
-            <label className="flex items-start gap-3 pt-2 cursor-pointer group">
-              <input
-                type="checkbox"
-                required
-                className="w-5 h-5 rounded bg-white/10 border-white/20 text-purple-500 focus:ring-purple-500 mt-0.5 flex-shrink-0"
-              />
-              <span className="text-sm text-gray-300 group-hover:text-gray-200 transition">
-                I agree to the{' '}
-                <Link href="#" className="text-purple-400 hover:text-purple-300">Terms of Service</Link>
-                {' '}and{' '}
-                <Link href="#" className="text-purple-400 hover:text-purple-300">Privacy Policy</Link>
-              </span>
-            </label>
+            {/* Confirm Password */}
+            <div style={{ marginBottom: '1.25rem' }}>
+              <label style={labelStyle}>Confirm Password</label>
+              <div style={{ position: 'relative' }}>
+                <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 15, height: 15, color: muted, pointerEvents: 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <input type={showConfirm ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Re-enter password" required
+                  style={{ ...inputStyle, paddingRight: '2.5rem' }}
+                  onFocus={e => e.target.style.borderColor = '#facc15'} onBlur={e => e.target.style.borderColor = border} />
+                <button type="button" onClick={() => setShowConfirm(!showConfirm)}
+                  style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: muted, padding: 0, display: 'flex' }}>
+                  {showConfirm ? <EyeOpen /> : <EyeClosed />}
+                </button>
+              </div>
+            </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 px-4 mt-6 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
-            >
-              {loading ? (
-                <>
-                  <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  Creating account...
-                </>
-              ) : (
-                <>
-                  <span>Create Account</span>
-                  <svg className="w-5 h-5 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </>
-              )}
+            <button type="submit" disabled={loading || !!success}
+              style={{ width: '100%', padding: '0.6rem 1rem', background: '#facc15', color: '#000', border: 'none', borderRadius: 7, fontSize: '0.875rem', fontWeight: 700, cursor: (loading || success) ? 'not-allowed' : 'pointer', opacity: (loading || success) ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: '1.25rem', transition: 'opacity 0.15s' }}>
+              {loading ? 'Creating account…' : <>Create Account <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></>}
             </button>
           </form>
 
-          {/* Sign In Link */}
-          <div className="text-center mt-8">
-            <p className="text-gray-300 text-sm">
-              Already have an account?{' '}
-              <Link
-                href="/login"
-                className="text-purple-400 hover:text-purple-300 font-semibold transition underline underline-offset-2"
-              >
-                Sign in
-              </Link>
-            </p>
+          <div style={{ textAlign: 'center', fontSize: '0.8rem', color: muted }}>
+            Already have an account? <Link href="/login" style={{ color: '#facc15', fontWeight: 600, textDecoration: 'none' }}>Sign in</Link>
+          </div>
+
+          <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: `1px solid ${border}`, textAlign: 'center' }}>
+            <Link href="/vendor/signup" style={{ fontSize: '0.78rem', color: muted, textDecoration: 'none', transition: 'color 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.color = text}
+              onMouseLeave={e => e.currentTarget.style.color = muted}>
+              Register as a Vendor instead →
+            </Link>
           </div>
         </div>
       </div>
-
-      {/* Styles */}
-      <style jsx>{`
-        @keyframes blob {
-          0%, 100% {
-            transform: translate(0, 0) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-        }
-
-        @keyframes slide-in {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-
-        .animate-slide-in {
-          animation: slide-in 0.3s ease-out;
-        }
-      `}</style>
     </div>
   );
 }

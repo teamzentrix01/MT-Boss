@@ -12,7 +12,6 @@ export default function VendorLoginPage() {
   const [dark, setDark] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
 
-  // Monitor dark mode changes
   useEffect(() => {
     const html = document.documentElement;
     const update = () => setDark(html.classList.contains('dark-mode'));
@@ -43,6 +42,7 @@ export default function VendorLoginPage() {
         localStorage.setItem('vendor-token', data.token);
         localStorage.setItem('vendor', JSON.stringify(data.vendor));
         document.cookie = `vendor-auth-token=${data.token}; path=/; max-age=604800`;
+        window.dispatchEvent(new Event('userLoggedIn'));
         router.push('/vendor/dashboard');
       } else {
         setError(data.error || data.message || 'Invalid credentials.');
@@ -54,355 +54,106 @@ export default function VendorLoginPage() {
     }
   };
 
+  const bg = dark ? '#000' : '#f5f5f7';
+  const surface = dark ? '#0a0a0a' : '#fff';
+  const border = dark ? '#27272a' : '#e2e2e7';
+  const text = dark ? '#fff' : '#111113';
+  const muted = dark ? '#71717a' : '#6b6b76';
+  const inputBg = dark ? '#111' : '#f9f9fb';
+
   return (
-    <>
-      <style>{`
-        .vlp-root {
-          --vlp-bg:      ${dark ? '#000000' : '#f5f5f7'};
-          --vlp-surface: ${dark ? '#000000' : '#ffffff'};
-          --vlp-border:  ${dark ? '#10b981' : '#e2e2e7'};
-          --vlp-text:    ${dark ? '#ffffff' : '#111113'};
-          --vlp-muted:   ${dark ? '#9ca3af' : '#6b6b76'};
-          --vlp-accent:  ${dark ? '#10b981' : '#059669'};
-          --vlp-err-bg:  ${dark ? '#7f1d1d' : '#fff1f2'};
-          --vlp-err-tx:  ${dark ? '#fca5a5' : '#9f1239'};
-          --vlp-err-br:  ${dark ? '#dc2626' : '#fca5a5'};
-        }
+    <div style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', fontFamily: "'DM Sans', system-ui, sans-serif", transition: 'background 0.3s' }}>
+      <div style={{ display: 'flex', width: '100%', maxWidth: 820, background: surface, border: `1px solid ${border}`, borderRadius: 12, overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,.08)', transition: 'background 0.3s, border-color 0.3s' }}>
 
-        .vlp-root {
-          min-height: 100vh;
-          background: var(--vlp-bg);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 1.5rem;
-          font-family: 'DM Sans', system-ui, sans-serif;
-          transition: background-color 0.5s ease, color 0.5s ease;
-        }
-
-        .vlp-wrap {
-          display: flex;
-          width: 100%;
-          max-width: 860px;
-          background: var(--vlp-surface);
-          border: 1px solid var(--vlp-border);
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 8px 40px rgba(0,0,0,.07);
-          transition: background-color 0.5s ease, border-color 0.5s ease;
-        }
-
-        .vlp-brand {
-          flex: 0 0 320px;
-          background: ${dark ? '#1a1a1a' : '#111113'};
-          padding: 2.5rem 2rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          transition: background-color 0.5s ease;
-        }
-        @media(max-width:640px){ .vlp-brand { display: none; } }
-
-        .vlp-brand-logo {
-          font-size: 1.125rem;
-          font-weight: 800;
-          color: #fff;
-          letter-spacing: -0.02em;
-        }
-        .vlp-brand-logo span { color: #10b981; }
-
-        .vlp-brand-heading {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #fff;
-          line-height: 1.3;
-          margin-bottom: 0.75rem;
-        }
-        .vlp-brand-sub {
-          font-size: 0.8125rem;
-          color: #9ca3af;
-          line-height: 1.6;
-        }
-
-        .vlp-brand-footer {
-          font-size: 0.7rem;
-          color: #6b7280;
-        }
-
-        .vlp-form-panel {
-          flex: 1;
-          padding: 2.5rem 2rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          background: var(--vlp-surface);
-          transition: background-color 0.5s ease;
-        }
-
-        .vlp-form-title {
-          font-size: 1.125rem;
-          font-weight: 700;
-          color: var(--vlp-text);
-          margin-bottom: 0.25rem;
-          transition: color 0.5s ease;
-        }
-        .vlp-form-sub {
-          font-size: 0.8125rem;
-          color: var(--vlp-muted);
-          margin-bottom: 1.5rem;
-          transition: color 0.5s ease;
-        }
-
-        .vlp-error {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.5rem 0.875rem;
-          background: var(--vlp-err-bg);
-          border: 1px solid var(--vlp-err-br);
-          border-radius: 6px;
-          font-size: 0.8125rem;
-          color: var(--vlp-err-tx);
-          margin-bottom: 1rem;
-          transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-        }
-        .vlp-error-dot {
-          width: 6px; height: 6px;
-          border-radius: 50%;
-          background: var(--vlp-err-tx);
-          flex-shrink: 0;
-        }
-
-        .vlp-field { margin-bottom: 0.875rem; }
-        .vlp-label {
-          display: block;
-          font-size: 0.75rem;
-          font-weight: 600;
-          color: var(--vlp-muted);
-          margin-bottom: 0.3rem;
-          transition: color 0.5s ease;
-        }
-        .vlp-input-wrap { position: relative; }
-        .vlp-input-icon {
-          position: absolute;
-          left: 0.75rem;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 15px; height: 15px;
-          color: var(--vlp-muted);
-          pointer-events: none;
-          transition: color 0.5s ease;
-        }
-        .vlp-input {
-          width: 100%;
-          padding: 0.45rem 0.75rem 0.45rem 2.25rem;
-          border: 1px solid var(--vlp-border);
-          border-radius: 7px;
-          background: var(--vlp-bg);
-          color: var(--vlp-text);
-          font-size: 0.8125rem;
-          outline: none;
-          transition: border-color .15s, background-color 0.5s ease, color 0.5s ease;
-          box-sizing: border-box;
-        }
-        .vlp-input::placeholder { color: ${dark ? '#6b7280' : '#b0b0ba'}; }
-        .vlp-input:focus { border-color: var(--vlp-accent); background: ${dark ? '#1a1a1a' : '#fff'}; }
-
-        .vlp-pw-toggle {
-          position: absolute;
-          right: 0.75rem;
-          top: 50%;
-          transform: translateY(-50%);
-          background: none; border: none; cursor: pointer;
-          color: var(--vlp-muted);
-          padding: 0; display: flex;
-          transition: color .15s;
-        }
-        .vlp-pw-toggle:hover { color: var(--vlp-text); }
-
-        .vlp-options {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 1.25rem;
-        }
-        .vlp-remember {
-          display: flex; align-items: center; gap: 0.375rem;
-          font-size: 0.75rem; color: var(--vlp-muted);
-          cursor: pointer;
-          transition: color 0.5s ease;
-        }
-        .vlp-remember input { accent-color: var(--vlp-accent); cursor: pointer; }
-        .vlp-forgot {
-          font-size: 0.75rem;
-          color: var(--vlp-accent);
-          text-decoration: none;
-          font-weight: 600;
-          transition: opacity .15s, color 0.5s ease;
-        }
-        .vlp-forgot:hover { opacity: .75; }
-
-        .vlp-submit {
-          width: 100%;
-          padding: 0.55rem 1rem;
-          background: var(--vlp-accent);
-          color: #fff;
-          border: none;
-          border-radius: 7px;
-          font-size: 0.875rem;
-          font-weight: 600;
-          cursor: pointer;
-          display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-          transition: opacity .15s, background-color 0.5s ease, color 0.5s ease;
-          margin-bottom: 1.25rem;
-        }
-        .vlp-submit:hover:not(:disabled) { opacity: .88; }
-        .vlp-submit:disabled { opacity: .5; cursor: not-allowed; }
-
-        @keyframes vlp-spin { to { transform: rotate(360deg); } }
-        .vlp-spinner {
-          width: 15px; height: 15px;
-          border: 2px solid rgba(255,255,255,.3);
-          border-top-color: #fff;
-          border-radius: 50%;
-          animation: vlp-spin .7s linear infinite;
-        }
-
-        .vlp-signup {
-          text-align: center;
-          font-size: 0.8rem;
-          color: var(--vlp-muted);
-          transition: color 0.5s ease;
-        }
-        .vlp-signup a {
-          color: var(--vlp-accent);
-          font-weight: 600;
-          text-decoration: none;
-          transition: color 0.5s ease;
-        }
-        .vlp-signup a:hover { text-decoration: underline; }
-
-        .vlp-tos {
-          text-align: center;
-          font-size: 0.7rem;
-          color: var(--vlp-muted);
-          margin-top: 1.25rem;
-          transition: color 0.5s ease;
-        }
-        .vlp-tos a { color: var(--vlp-accent); text-decoration: none; transition: color 0.5s ease; }
-        .vlp-tos a:hover { text-decoration: underline; }
-      `}</style>
-
-      <div className="vlp-root">
-        <div className="vlp-wrap">
-
-          {/* Brand side */}
-          <div className="vlp-brand">
-            <div className="vlp-brand-logo">VENDOR<span>HUB</span></div>
-            <div className="vlp-brand-mid">
-              <div className="vlp-brand-heading">Grow your business with us.</div>
-              <p className="vlp-brand-sub">Sign in to your vendor dashboard — manage products, orders, analytics and more, all in one place.</p>
+        {/* Brand Panel */}
+        <div style={{ flex: '0 0 300px', background: dark ? '#111' : '#111113', padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} className="hidden sm:flex">
+          <div>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: '2rem' }}>
+              MT<span style={{ color: '#facc15' }}>BOSS</span>
+              <span style={{ marginLeft: 8, fontSize: '0.65rem', fontWeight: 600, color: '#facc15', background: 'rgba(250,204,21,0.15)', padding: '2px 8px', borderRadius: 99, letterSpacing: '0.08em' }}>VENDOR</span>
             </div>
-            <div className="vlp-brand-footer">© {new Date().getFullYear()} Vendor Hub. All rights reserved.</div>
+            <div style={{ fontSize: '1.375rem', fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: '0.75rem' }}>
+              Grow your business with us.
+            </div>
+            <p style={{ fontSize: '0.8125rem', color: '#9ca3af', lineHeight: 1.7 }}>
+              Manage bookings, track earnings, and serve customers — all from your vendor dashboard.
+            </p>
           </div>
+          <div style={{ fontSize: '0.7rem', color: '#4b5563' }}>© {new Date().getFullYear()} MT-BOSS. All rights reserved.</div>
+        </div>
 
-          {/* Form side */}
-          <div className="vlp-form-panel">
-            <div className="vlp-form-title">Welcome back, Vendor</div>
-            <div className="vlp-form-sub">Sign in to your vendor account to continue</div>
+        {/* Form Panel */}
+        <div style={{ flex: 1, padding: '2.25rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: surface, transition: 'background 0.3s' }}>
 
-            {error && (
-              <div className="vlp-error">
-                <span className="vlp-error-dot" />
-                {error}
+          {/* Back to user login */}
+          <Link href="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.75rem', fontWeight: 600, color: muted, textDecoration: 'none', marginBottom: '1.5rem', transition: 'color 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.color = text}
+            onMouseLeave={e => e.currentTarget.style.color = muted}>
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to User Login
+          </Link>
+
+          <div style={{ fontSize: '1.125rem', fontWeight: 700, color: text, marginBottom: '0.2rem' }}>Vendor Sign In</div>
+          <div style={{ fontSize: '0.8125rem', color: muted, marginBottom: '1.5rem' }}>Access your vendor dashboard</div>
+
+          {error && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem 0.875rem', background: dark ? '#3f1515' : '#fff1f2', border: `1px solid ${dark ? '#dc2626' : '#fca5a5'}`, borderRadius: 6, fontSize: '0.8125rem', color: dark ? '#fca5a5' : '#9f1239', marginBottom: '1rem' }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: dark ? '#fca5a5' : '#9f1239', flexShrink: 0 }} />
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            {/* Email */}
+            <div style={{ marginBottom: '0.875rem' }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: muted, marginBottom: '0.3rem' }}>Email address</label>
+              <div style={{ position: 'relative' }}>
+                <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 15, height: 15, color: muted, pointerEvents: 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="vendor@example.com" required
+                  style={{ width: '100%', padding: '0.5rem 0.75rem 0.5rem 2.25rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: '0.8125rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.15s' }}
+                  onFocus={e => e.target.style.borderColor = '#facc15'}
+                  onBlur={e => e.target.style.borderColor = border}
+                />
               </div>
-            )}
-
-            <form onSubmit={handleSubmit}>
-              {/* Email */}
-              <div className="vlp-field">
-                <label className="vlp-label" htmlFor="email">Email address</label>
-                <div className="vlp-input-wrap">
-                  <svg className="vlp-input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <input
-                    className="vlp-input" type="email" id="email" name="email"
-                    value={formData.email} onChange={handleChange}
-                    placeholder="vendor@example.com" required
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="vlp-field">
-                <label className="vlp-label" htmlFor="password">Password</label>
-                <div className="vlp-input-wrap">
-                  <svg className="vlp-input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                  <input
-                    className="vlp-input" style={{ paddingRight: '2.5rem' }}
-                    type={showPassword ? 'text' : 'password'}
-                    id="password" name="password"
-                    value={formData.password} onChange={handleChange}
-                    placeholder="••••••••" required
-                  />
-                  <button type="button" className="vlp-pw-toggle" onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? (
-                      <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                        <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                      </svg>
-                    ) : (
-                      <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
-                        <path d="M15.171 13.576l1.474 1.474a1 1 0 001.414-1.414l-14-14a1 1 0 00-1.414 1.414l1.473 1.473A10.014 10.014 0 00.458 10C1.732 14.057 5.522 17 10 17a9.958 9.958 0 004.512-1.074l1.78 1.781a1 1 0 001.414-1.414l-1.474-1.474z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Remember / Forgot */}
-              <div className="vlp-options">
-                <label className="vlp-remember">
-                  <input type="checkbox" />
-                  Remember me
-                </label>
-                <Link href="/vendor/forgot-password" className="vlp-forgot">Forgot password?</Link>
-              </div>
-
-              {/* Submit */}
-              <button type="submit" className="vlp-submit" disabled={loading}>
-                {loading ? (
-                  <><span className="vlp-spinner" /> Signing in…</>
-                ) : (
-                  <>
-                    Sign In
-                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </>
-                )}
-              </button>
-            </form>
-
-            {/* Sign up */}
-            <div className="vlp-signup">
-              Don't have a vendor account? <Link href="/vendor/signup">Register here</Link>
             </div>
 
-            <div className="vlp-tos">
-              By signing in, you agree to our{' '}
-              <Link href="#">Terms of Service</Link> and{' '}
-              <Link href="#">Privacy Policy</Link>
+            {/* Password */}
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: muted, marginBottom: '0.3rem' }}>Password</label>
+              <div style={{ position: 'relative' }}>
+                <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 15, height: 15, color: muted, pointerEvents: 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} placeholder="••••••••" required
+                  style={{ width: '100%', padding: '0.5rem 2.5rem 0.5rem 2.25rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: '0.8125rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.15s' }}
+                  onFocus={e => e.target.style.borderColor = '#facc15'}
+                  onBlur={e => e.target.style.borderColor = border}
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: muted, padding: 0, display: 'flex' }}>
+                  {showPassword
+                    ? <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" /></svg>
+                    : <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" /><path d="M15.171 13.576l1.474 1.474a1 1 0 001.414-1.414l-14-14a1 1 0 00-1.414 1.414l1.473 1.473A10.014 10.014 0 00.458 10C1.732 14.057 5.522 17 10 17a9.958 9.958 0 004.512-1.074l1.78 1.781a1 1 0 001.414-1.414l-1.474-1.474z" /></svg>
+                  }
+                </button>
+              </div>
             </div>
+
+            <button type="submit" disabled={loading}
+              style={{ width: '100%', padding: '0.6rem 1rem', background: '#facc15', color: '#000', border: 'none', borderRadius: 7, fontSize: '0.875rem', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: '1.25rem', transition: 'opacity 0.15s' }}>
+              {loading ? 'Signing in…' : <>Sign In <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></>}
+            </button>
+          </form>
+
+          <div style={{ textAlign: 'center', fontSize: '0.8rem', color: muted }}>
+            No vendor account? <Link href="/vendor/signup" style={{ color: '#facc15', fontWeight: 600, textDecoration: 'none' }}>Register here</Link>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

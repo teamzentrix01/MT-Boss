@@ -1,0 +1,77 @@
+import { NextResponse } from 'next/server';
+import pool from '@/lib/db';
+
+// GET — user mode: city + service_id; admin mode: no params
+export async function GET(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const city      = searchParams.get('city');
+    const serviceId = searchParams.get('service_id');
+    const date      = searchParams.get('date');
+    const today     = date || new Date().toISOString().split('T')[0];
+
+    // Common SELECT with service label join
+    const baseSelect = `
+      SELECT fts.id, fts.quick_service_id, qs.label AS service_label, qs.icon AS service_icon,
+             fts.slot_start, fts.slot_end,
+             fts.slot_date::DATE AS slot_date,
+             fts.city, fts.is_available, fts.max_bookings,
+             COALESCE(fts.current_bookings, 0) AS current_bookings
+      FROM free_time_slots fts
+      LEFT JOIN quick_services qs ON qs.id = fts.quick_service_id`;
+
+    let query, params;
+
+    if (city && serviceId) {
+      // User mode: exact match + only available slots from today onward
+      query = `${baseSelect}
+        WHERE LOWER(fts.city) = LOWER($1)
+          AND fts.quick_service_id = $2
+          AND fts.is_available = TRUE
+          AND COALESCE(fts.current_bookings, 0) < COALESCE(fts.max_bookings, 1)
+          AND fts.slot_date::DATE >= $3::DATE
+        ORDER BY fts.slot_date ASC, fts.slot_start ASC
+        LIMIT 10`;
+      params = [city, serviceId, today];
+    } else if (city && city !== 'all') {
+      query = `${baseSelect}
+        WHERE LOWER(fts.city) = LOWER($1)
+        ORDER BY fts.slot_date DESC, fts.slot_start ASC`;
+      params = [city];
+    } else {
+      query = `${baseSelect}
+        ORDER BY fts.slot_date DESC, fts.slot_start ASC`;
+      params = [];
+    }
+
+    const result = await pool.query(query, params);
+    return NextResponse.json({ success: true, data: result.rows });
+  } catch (error) {
+    console.error('Free slots GET error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// POST — admin creates a new free slot
+export async function POST(req) {
+  try {
+    const { quick_service_id, slot_date, slot_start, slot_end, city, max_bookings = 1 } = await req.json();
+
+    if (!quick_service_id || !slot_date || !slot_start || !slot_end || !city) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO free_time_slots
+         (quick_service_id, slot_date, slot_start, slot_end, city, max_bookings, is_available, created_at)
+       VALUES ($1, $2::DATE, $3, $4, $5, $6, TRUE, NOW())
+       RETURNING *, slot_date::DATE AS slot_date`,
+      [quick_service_id, slot_date, slot_start, slot_end, city, max_bookings]
+    );
+
+    return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
+  } catch (error) {
+    console.error('Free slots POST error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

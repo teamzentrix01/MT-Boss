@@ -42,6 +42,7 @@ export default function LoginPage() {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         document.cookie = `auth-token=${data.token}; path=/; max-age=604800`;
+        window.dispatchEvent(new Event('userLoggedIn'));
         router.push(data.redirectTo || '/userdashboard');
       } else {
         setError(data.error || data.message || 'Invalid credentials.');
@@ -487,17 +488,15 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* Divider */}
+            {/* Google */}
             <div className="lp-divider">
               <div className="lp-divider-line" />
               <span className="lp-divider-text">or</span>
               <div className="lp-divider-line" />
             </div>
-
-            {/* Google */}
             <div className="lp-social">
               <button className="lp-social-btn" onClick={handleGoogleLogin}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="15" height="15" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                   <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -507,36 +506,19 @@ export default function LoginPage() {
               </button>
             </div>
 
-            {/* Sign up */}
             <div className="lp-signup">
               Don't have an account? <Link href="/signup">Create one</Link>
             </div>
 
-            <div className="lp-tos">
-              By signing in, you agree to our{' '}
-              <Link href="#">Terms of Service</Link> and{' '}
-              <Link href="#">Privacy Policy</Link>
-            </div>
-
-            {/* ── Vendor CTA ── */}
-            <div className="lp-vendor-cta">
-              <div className="lp-vendor-cta-text">Are you a vendor?</div>
-              <Link href="/vendor/login" className="lp-vendor-cta-btn">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-                Continue as Vendor
+            {/* Vendor + Supplier links — compact */}
+            <div style={{ marginTop: '1rem', paddingTop: '0.875rem', borderTop: '1px solid var(--lp-border)', display: 'flex', gap: '0.5rem' }}>
+              <Link href="/vendor/login" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, padding: '0.45rem', border: '1px solid #10b981', color: '#10b981', borderRadius: 7, fontSize: '0.75rem', fontWeight: 600, textDecoration: 'none', transition: 'opacity 0.15s' }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '0.8'} onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+                🏪 Vendor Login
               </Link>
-            </div>
-
-            {/* ── Supplier CTA ── */}
-            <div className="lp-supplier-cta">
-              {/* <div className="lp-supplier-cta-text">Are you a supplier?</div> */}
-              <Link href="/supplier/login" className="lp-supplier-cta-btn">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-                Continue as Supplier
+              <Link href="/supplier/login" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, padding: '0.45rem', border: '1px solid #6366f1', color: '#6366f1', borderRadius: 7, fontSize: '0.75rem', fontWeight: 600, textDecoration: 'none', transition: 'opacity 0.15s' }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '0.8'} onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+                📦 Supplier Login
               </Link>
             </div>
 

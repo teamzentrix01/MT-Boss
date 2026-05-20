@@ -11,35 +11,59 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    // ✅ FIXED: Changed "password" to "password_hash" on this line
     const result = await pool.query(
-      'SELECT id, email, password_hash, shop_name, business_name, phone, city, state, country, postal_code, status, verification_status, is_approved, created_at FROM vendors WHERE email = $1',
+      `SELECT 
+        id, email, password_hash, shop_name, business_name, 
+        phone, city, state, country, postal_code, 
+        status, verification_status, is_approved, created_at 
+       FROM vendors 
+       WHERE email = $1`,
       [email]
     );
 
     if (result.rows.length === 0) {
-      return NextResponse.json({ error: 'Vendor not found or incorrect credentials' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Vendor not found or incorrect credentials' }, 
+        { status: 401 }
+      );
     }
 
     const vendor = result.rows[0];
     
-    // ✅ FIXED: Changed "vendor.password" to "vendor.password_hash" on this line
+    // Verify password
     const isPasswordValid = await bcrypt.compare(password, vendor.password_hash);
     if (!isPasswordValid) {
-      return NextResponse.json({ error: 'Vendor not found or incorrect credentials' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Vendor not found or incorrect credentials' }, 
+        { status: 401 }
+      );
     }
 
-    // ── Check vendor status (optional) ──
-    if (vendor.status === 'inactive') {
-      return NextResponse.json({ error: 'Your vendor account is inactive. Contact support.' }, { status: 403 });
-    }
-
-    // ── Check if vendor is approved ──
+    // ✅ CHECK 1: Account pending approval
     if (!vendor.is_approved) {
-      return NextResponse.json({ error: 'Your account is pending admin approval. Please wait.' }, { status: 403 });
+      return NextResponse.json(
+        { 
+          error: 'Your vendor account is pending admin approval.',
+          code: 'PENDING_APPROVAL',
+          message: 'Your registration is under review. You will receive an email once approved. This usually takes 24-48 hours.'
+        }, 
+        { status: 403 }
+      );
     }
 
-    // ── Generate JWT token ──
+    // ✅ CHECK 2: Account inactive (rejected or deactivated)
+    if (vendor.status === 'inactive') {
+      return NextResponse.json(
+        { 
+          error: 'Your vendor account is inactive.',
+          code: 'ACCOUNT_INACTIVE',
+          message: 'Your account has been deactivated. Please contact support.'
+        }, 
+        { status: 403 }
+      );
+    }
+
+    // ✅ Account is approved and active - generate token
     const token = jwt.sign(
       { id: vendor.id, email: vendor.email, role: 'vendor' },
       process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret',
