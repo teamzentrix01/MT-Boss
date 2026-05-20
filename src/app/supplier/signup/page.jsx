@@ -9,8 +9,6 @@ export default function SupplierSignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [dark, setDark] = useState(false);
-  const [services, setServices] = useState([]);
-  const [loadingServices, setLoadingServices] = useState(true);
   const [step, setStep] = useState(1);
 
   const [formData, setFormData] = useState({
@@ -33,20 +31,6 @@ export default function SupplierSignupPage() {
     // Step 4: Business Details
     business_type: '',
     description: '',
-
-    // Step 5: Documents
-    gst_number: '',
-    pan_number: '',
-    business_registration_number: '',
-
-    // Step 6: Bank Details
-    bank_account_holder: '',
-    bank_account_number: '',
-    bank_name: '',
-    bank_ifsc_code: '',
-
-    // Step 7: Services
-    services: [],
   });
 
   // Monitor dark mode
@@ -59,38 +43,12 @@ export default function SupplierSignupPage() {
     return () => obs.disconnect();
   }, []);
 
-  // Fetch available services from API
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const res = await fetch('/api/quick-services');
-        const data = await res.json();
-        if (data.success) setServices(data.data);
-      } catch (err) {
-        console.error('Error fetching services:', err);
-      } finally {
-        setLoadingServices(false);
-      }
-    };
-    fetchServices();
-  }, []);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (error) setError('');
   };
 
-  const handleServiceToggle = (serviceId) => {
-    setFormData(prev => {
-      const updated = prev.services.includes(serviceId)
-        ? prev.services.filter(id => id !== serviceId)
-        : [...prev.services, serviceId];
-      return { ...prev, services: updated };
-    });
-  };
-
-  // Validate each step before proceeding
   const validateStep = (currentStep) => {
     switch (currentStep) {
       case 1:
@@ -134,25 +92,6 @@ export default function SupplierSignupPage() {
         }
         return true;
 
-      case 6:
-        if (
-          !formData.bank_account_holder ||
-          !formData.bank_account_number ||
-          !formData.bank_name ||
-          !formData.bank_ifsc_code
-        ) {
-          setError('All bank details are required');
-          return false;
-        }
-        return true;
-
-      case 7:
-        if (formData.services.length === 0) {
-          setError('Please select at least one service');
-          return false;
-        }
-        return true;
-
       default:
         return true;
     }
@@ -170,10 +109,9 @@ export default function SupplierSignupPage() {
     setStep(step - 1);
   };
 
-  // Final form submission on step 7
+  // Final submission on step 5
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateStep(7)) return;
 
     setLoading(true);
     setError('');
@@ -188,10 +126,7 @@ export default function SupplierSignupPage() {
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem('supplier-token', data.token);
-        localStorage.setItem('supplier', JSON.stringify(data.supplier));
-        document.cookie = `supplier-auth-token=${data.token}; path=/; max-age=604800`;
-        router.push('/supplier/dashboard');
+        router.push('/supplier/pending-approval');
       } else {
         setError(data.error || 'Registration failed. Please try again.');
       }
@@ -208,10 +143,9 @@ export default function SupplierSignupPage() {
     'Shop Information',
     'Address Details',
     'Business Details',
-    'Documents',
-    'Bank Details',
-    'Select Services',
   ];
+
+  const TOTAL_STEPS = 4;
 
   return (
     <>
@@ -253,9 +187,7 @@ export default function SupplierSignupPage() {
           overflow-y: auto;
         }
 
-        .ss-header {
-          margin-bottom: 2rem;
-        }
+        .ss-header { margin-bottom: 2rem; }
 
         .ss-logo {
           font-size: 1.25rem;
@@ -264,10 +196,7 @@ export default function SupplierSignupPage() {
           margin-bottom: 1rem;
           letter-spacing: -0.02em;
         }
-
-        .ss-logo span {
-          color: var(--accent);
-        }
+        .ss-logo span { color: var(--accent); }
 
         .ss-title {
           font-size: 1.5rem;
@@ -282,7 +211,6 @@ export default function SupplierSignupPage() {
           color: var(--muted);
         }
 
-        /* Step progress bars */
         .ss-progress {
           display: flex;
           gap: 0.5rem;
@@ -297,10 +225,7 @@ export default function SupplierSignupPage() {
           border-radius: 3px;
           transition: background 0.3s;
         }
-
-        .ss-progress-bar.active {
-          background: var(--accent);
-        }
+        .ss-progress-bar.active { background: var(--accent); }
 
         .ss-step-info {
           font-size: 0.75rem;
@@ -311,7 +236,6 @@ export default function SupplierSignupPage() {
           margin-bottom: 1.5rem;
         }
 
-        /* Error banner */
         .ss-error {
           padding: 1rem;
           background: var(--error-bg);
@@ -325,10 +249,7 @@ export default function SupplierSignupPage() {
           gap: 0.75rem;
         }
 
-        /* Form fields */
-        .ss-field {
-          margin-bottom: 1rem;
-        }
+        .ss-field { margin-bottom: 1rem; }
 
         .ss-label {
           display: block;
@@ -355,24 +276,13 @@ export default function SupplierSignupPage() {
           transition: border-color 0.2s;
           box-sizing: border-box;
         }
-
         .ss-input:focus,
         .ss-textarea:focus,
-        .ss-select:focus {
-          border-color: var(--accent);
-        }
-
+        .ss-select:focus { border-color: var(--accent); }
         .ss-input::placeholder,
-        .ss-textarea::placeholder {
-          color: ${dark ? '#444' : '#c0c0c0'};
-        }
+        .ss-textarea::placeholder { color: ${dark ? '#444' : '#c0c0c0'}; }
+        .ss-textarea { resize: vertical; min-height: 100px; }
 
-        .ss-textarea {
-          resize: vertical;
-          min-height: 100px;
-        }
-
-        /* Two-column grid row */
         .ss-row {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -380,74 +290,11 @@ export default function SupplierSignupPage() {
         }
 
         @media (max-width: 640px) {
-          .ss-row {
-            grid-template-columns: 1fr;
-          }
-          .ss-container {
-            padding: 1.5rem;
-          }
-          .ss-title {
-            font-size: 1.25rem;
-          }
+          .ss-row { grid-template-columns: 1fr; }
+          .ss-container { padding: 1.5rem; }
+          .ss-title { font-size: 1.25rem; }
         }
 
-        /* Service selection grid */
-        .ss-services {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 0.75rem;
-          margin-top: 0.75rem;
-        }
-
-        .ss-service-card {
-          padding: 1rem;
-          border: 2px solid var(--border);
-          border-radius: 8px;
-          background: var(--bg);
-          cursor: pointer;
-          transition: all 0.2s;
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        .ss-service-card:hover {
-          border-color: var(--accent);
-          background: ${dark ? '#0f2a18' : '#ecfdf5'};
-        }
-
-        .ss-service-card.selected {
-          border-color: var(--accent);
-          background: ${dark ? '#064e3b' : '#d1fae5'};
-        }
-
-        .ss-service-card input[type="checkbox"] {
-          width: 18px;
-          height: 18px;
-          cursor: pointer;
-          accent-color: var(--accent);
-          flex-shrink: 0;
-        }
-
-        .ss-service-info {
-          display: flex;
-          flex-direction: column;
-          gap: 0.2rem;
-          flex: 1;
-        }
-
-        .ss-service-name {
-          font-weight: 600;
-          color: var(--text);
-          font-size: 0.875rem;
-        }
-
-        .ss-service-price {
-          font-size: 0.75rem;
-          color: var(--muted);
-        }
-
-        /* Navigation buttons */
         .ss-buttons {
           display: flex;
           gap: 1rem;
@@ -469,85 +316,96 @@ export default function SupplierSignupPage() {
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
-
         .ss-btn:hover:not(:disabled) {
           border-color: var(--text);
           background: var(--border);
         }
-
         .ss-btn-primary {
           background: var(--accent);
           color: #fff;
           border-color: var(--accent);
         }
-
         .ss-btn-primary:hover:not(:disabled) {
           opacity: 0.9;
           background: var(--accent);
         }
+        .ss-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .ss-btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        /* Login link at bottom */
         .ss-login {
           text-align: center;
           font-size: 0.875rem;
           color: var(--muted);
           margin-top: 1.5rem;
         }
-
         .ss-login a {
           color: var(--accent);
           text-decoration: none;
           font-weight: 600;
         }
+        .ss-login a:hover { text-decoration: underline; }
 
-        .ss-login a:hover {
-          text-decoration: underline;
+        .ss-notice {
+          background: ${dark ? '#0a1f14' : '#ecfdf5'};
+          border: 1px solid ${dark ? '#065f46' : '#6ee7b7'};
+          border-radius: 8px;
+          padding: 1rem 1.25rem;
+          margin-bottom: 1.5rem;
+          display: flex;
+          gap: 0.75rem;
+          align-items: flex-start;
+        }
+        .ss-notice-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.05rem; }
+        .ss-notice-text {
+          font-size: 0.85rem;
+          color: ${dark ? '#6ee7b7' : '#065f46'};
+          line-height: 1.6;
+        }
+        .ss-notice-text strong {
+          display: block;
+          margin-bottom: 0.2rem;
+          font-size: 0.9rem;
         }
 
-        /* Empty state for services */
-        .ss-empty {
-          text-align: center;
-          padding: 2rem;
-          color: var(--muted);
-          font-size: 0.875rem;
-        }
       `}</style>
 
       <div className="ss-root">
         <div className="ss-container">
 
-          {/* Header */}
           <div className="ss-header">
             <div className="ss-logo">SUPPLIER<span>HUB</span></div>
             <div className="ss-title">Create Your Store</div>
             <div className="ss-subtitle">Join our marketplace and start serving customers</div>
           </div>
 
-          {/* Step progress indicators */}
+          {/* 4-step progress */}
           <div className="ss-progress">
-            {[1, 2, 3, 4, 5, 6, 7].map(s => (
+            {[1, 2, 3, 4].map(s => (
               <div key={s} className={`ss-progress-bar ${s <= step ? 'active' : ''}`} />
             ))}
           </div>
 
-          {/* Current step label */}
           <div className="ss-step-info">
-            Step {step} of 7 • {stepTitles[step - 1]}
+            Step {step} of {TOTAL_STEPS} • {stepTitles[step - 1]}
           </div>
 
-          {/* Error message */}
           {error && (
             <div className="ss-error">
               <span>⚠️</span> {error}
             </div>
           )}
 
-          <form onSubmit={step === 7 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
+          {/* Notice on last step */}
+          {step === TOTAL_STEPS && (
+            <div className="ss-notice">
+              <span className="ss-notice-icon">🔔</span>
+              <div className="ss-notice-text">
+                <strong>Admin Approval Required</strong>
+                After submitting, your account will be reviewed by our admin team. You will be able to log in only after your account has been approved.
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={step === TOTAL_STEPS ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
 
             {/* ── STEP 1: Login Credentials ── */}
             {step === 1 && (
@@ -564,7 +422,6 @@ export default function SupplierSignupPage() {
                     required
                   />
                 </div>
-
                 <div className="ss-field">
                   <label className="ss-label">Password *</label>
                   <input
@@ -577,7 +434,6 @@ export default function SupplierSignupPage() {
                     required
                   />
                 </div>
-
                 <div className="ss-field">
                   <label className="ss-label">Confirm Password *</label>
                   <input
@@ -608,7 +464,6 @@ export default function SupplierSignupPage() {
                     required
                   />
                 </div>
-
                 <div className="ss-field">
                   <label className="ss-label">Business Name *</label>
                   <input
@@ -621,7 +476,6 @@ export default function SupplierSignupPage() {
                     required
                   />
                 </div>
-
                 <div className="ss-field">
                   <label className="ss-label">Phone Number *</label>
                   <input
@@ -666,7 +520,6 @@ export default function SupplierSignupPage() {
                     />
                   </div>
                 </div>
-
                 <div className="ss-row">
                   <div className="ss-field">
                     <label className="ss-label">Country *</label>
@@ -710,7 +563,6 @@ export default function SupplierSignupPage() {
                     placeholder="e.g., Retail, Service, Manufacturing"
                   />
                 </div>
-
                 <div className="ss-field">
                   <label className="ss-label">Business Description</label>
                   <textarea
@@ -724,161 +576,25 @@ export default function SupplierSignupPage() {
               </>
             )}
 
-            {/* ── STEP 5: Documents ── */}
-            {step === 5 && (
-              <>
-                <div className="ss-field">
-                  <label className="ss-label">GST Number</label>
-                  <input
-                    className="ss-input"
-                    type="text"
-                    name="gst_number"
-                    value={formData.gst_number}
-                    onChange={handleChange}
-                    placeholder="22AABCT1234H1Z0"
-                  />
-                </div>
-
-                <div className="ss-row">
-                  <div className="ss-field">
-                    <label className="ss-label">PAN Number</label>
-                    <input
-                      className="ss-input"
-                      type="text"
-                      name="pan_number"
-                      value={formData.pan_number}
-                      onChange={handleChange}
-                      placeholder="ABCDE1234F"
-                    />
-                  </div>
-                  <div className="ss-field">
-                    <label className="ss-label">Business Registration</label>
-                    <input
-                      className="ss-input"
-                      type="text"
-                      name="business_registration_number"
-                      value={formData.business_registration_number}
-                      onChange={handleChange}
-                      placeholder="Registration Number"
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* ── STEP 6: Bank Details ── */}
-            {step === 6 && (
-              <>
-                <div className="ss-field">
-                  <label className="ss-label">Account Holder Name *</label>
-                  <input
-                    className="ss-input"
-                    type="text"
-                    name="bank_account_holder"
-                    value={formData.bank_account_holder}
-                    onChange={handleChange}
-                    placeholder="Full Name"
-                    required
-                  />
-                </div>
-
-                <div className="ss-field">
-                  <label className="ss-label">Account Number *</label>
-                  <input
-                    className="ss-input"
-                    type="text"
-                    name="bank_account_number"
-                    value={formData.bank_account_number}
-                    onChange={handleChange}
-                    placeholder="Your Account Number"
-                    required
-                  />
-                </div>
-
-                <div className="ss-row">
-                  <div className="ss-field">
-                    <label className="ss-label">Bank Name *</label>
-                    <input
-                      className="ss-input"
-                      type="text"
-                      name="bank_name"
-                      value={formData.bank_name}
-                      onChange={handleChange}
-                      placeholder="HDFC / ICICI / SBI"
-                      required
-                    />
-                  </div>
-                  <div className="ss-field">
-                    <label className="ss-label">IFSC Code *</label>
-                    <input
-                      className="ss-input"
-                      type="text"
-                      name="bank_ifsc_code"
-                      value={formData.bank_ifsc_code}
-                      onChange={handleChange}
-                      placeholder="HDFC0000001"
-                      required
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* ── STEP 7: Select Services ── */}
-            {step === 7 && (
-              <>
-                <label className="ss-label">Services You Provide *</label>
-                {loadingServices ? (
-                  <div className="ss-empty">Loading services...</div>
-                ) : services.length > 0 ? (
-                  <div className="ss-services">
-                    {services.map(service => (
-                      <label
-                        key={service.id}
-                        className={`ss-service-card ${formData.services.includes(service.id) ? 'selected' : ''}`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={formData.services.includes(service.id)}
-                          onChange={() => handleServiceToggle(service.id)}
-                        />
-                        <div className="ss-service-info">
-                          <div className="ss-service-name">{service.label}</div>
-                          <div className="ss-service-price">₹{service.base_price}/30 min</div>
-                        </div>
-                      </label>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="ss-empty">No services available</div>
-                )}
-              </>
-            )}
-
             {/* Navigation buttons */}
             <div className="ss-buttons">
               {step > 1 && (
-                <button
-                  type="button"
-                  onClick={handlePrevious}
-                  className="ss-btn"
-                >
+                <button type="button" onClick={handlePrevious} className="ss-btn">
                   ← Previous
                 </button>
               )}
               <button
                 type="submit"
                 className="ss-btn ss-btn-primary"
-                disabled={loading || (step === 7 && loadingServices)}
+                disabled={loading}
               >
-                {step === 7
-                  ? loading ? 'Creating Account...' : 'Create Account'
+                {step === TOTAL_STEPS
+                  ? loading ? 'Submitting...' : 'Submit for Approval'
                   : 'Next →'}
               </button>
             </div>
           </form>
 
-          {/* Login link */}
           <div className="ss-login">
             Already have an account? <Link href="/supplier/login">Sign in</Link>
           </div>

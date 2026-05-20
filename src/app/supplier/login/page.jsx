@@ -11,6 +11,9 @@ export default function SupplierLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [dark, setDark] = useState(false);
 
+  // 'idle' | 'pending' | 'rejected'
+  const [approvalStatus, setApprovalStatus] = useState('idle');
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -34,6 +37,7 @@ export default function SupplierLoginPage() {
       [name]: type === 'checkbox' ? checked : value,
     }));
     if (error) setError('');
+    if (approvalStatus !== 'idle') setApprovalStatus('idle');
   };
 
   const handleSubmit = async (e) => {
@@ -46,6 +50,7 @@ export default function SupplierLoginPage() {
 
     setLoading(true);
     setError('');
+    setApprovalStatus('idle');
 
     try {
       const res = await fetch('/api/supplier/login', {
@@ -66,7 +71,14 @@ export default function SupplierLoginPage() {
         document.cookie = `supplier-auth-token=${data.token}; path=/; max-age=${formData.rememberMe ? 2592000 : 604800}`;
         router.push('/supplier/dashboard');
       } else {
-        setError(data.error || 'Invalid email or password');
+        // Check if blocked due to pending/rejected approval
+        if (data.status === 'pending') {
+          setApprovalStatus('pending');
+        } else if (data.status === 'rejected') {
+          setApprovalStatus('rejected');
+        } else {
+          setError(data.error || 'Invalid email or password');
+        }
       }
     } catch (err) {
       console.error('Login error:', err);
@@ -114,7 +126,6 @@ export default function SupplierLoginPage() {
           overflow: hidden;
         }
 
-        /* Subtle background pattern on left panel */
         .sl-left::before {
           content: '';
           position: absolute;
@@ -202,7 +213,7 @@ export default function SupplierLoginPage() {
           margin-bottom: 2rem;
         }
 
-        /* Error message */
+        /* Generic error message */
         .sl-error {
           padding: 0.875rem 1rem;
           background: ${dark ? '#2d0a0a' : '#fff0f0'};
@@ -215,6 +226,54 @@ export default function SupplierLoginPage() {
           align-items: center;
           gap: 0.6rem;
         }
+
+        /* ── Approval status banners ── */
+        .sl-approval-banner {
+          border-radius: 10px;
+          padding: 1.1rem 1.25rem;
+          margin-bottom: 1.25rem;
+          display: flex;
+          gap: 0.85rem;
+          align-items: flex-start;
+        }
+
+        .sl-approval-banner.pending {
+          background: ${dark ? '#0d1f14' : '#ecfdf5'};
+          border: 1px solid ${dark ? '#065f46' : '#6ee7b7'};
+        }
+
+        .sl-approval-banner.rejected {
+          background: ${dark ? '#2d0a0a' : '#fff0f0'};
+          border: 1px solid ${dark ? '#7f1d1d' : '#fca5a5'};
+        }
+
+        .sl-banner-icon {
+          font-size: 1.4rem;
+          flex-shrink: 0;
+          margin-top: 0.05rem;
+        }
+
+        .sl-banner-body {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+
+        .sl-banner-title {
+          font-size: 0.9rem;
+          font-weight: 700;
+        }
+
+        .pending .sl-banner-title  { color: ${dark ? '#34d399' : '#065f46'}; }
+        .rejected .sl-banner-title { color: ${dark ? '#f87171' : '#dc2626'}; }
+
+        .sl-banner-msg {
+          font-size: 0.82rem;
+          line-height: 1.55;
+        }
+
+        .pending .sl-banner-msg  { color: ${dark ? '#6ee7b7' : '#047857'}; }
+        .rejected .sl-banner-msg { color: ${dark ? '#fca5a5' : '#b91c1c'}; }
 
         /* Form fields */
         .sl-field {
@@ -230,7 +289,6 @@ export default function SupplierLoginPage() {
           letter-spacing: 0.02em;
         }
 
-        /* Input wrapper for icon prefix */
         .sl-input-wrap {
           position: relative;
           display: flex;
@@ -269,7 +327,6 @@ export default function SupplierLoginPage() {
           color: ${dark ? '#444' : '#c0c0c0'};
         }
 
-        /* Password toggle button */
         .sl-pwd-toggle {
           position: absolute;
           right: 0.85rem;
@@ -288,7 +345,6 @@ export default function SupplierLoginPage() {
           color: ${dark ? '#aaa' : '#666'};
         }
 
-        /* Remember me + forgot password row */
         .sl-options {
           display: flex;
           align-items: center;
@@ -325,7 +381,6 @@ export default function SupplierLoginPage() {
           text-decoration: underline;
         }
 
-        /* Sign in button */
         .sl-btn {
           width: 100%;
           padding: 0.875rem;
@@ -358,7 +413,6 @@ export default function SupplierLoginPage() {
           cursor: not-allowed;
         }
 
-        /* Register link */
         .sl-register {
           text-align: center;
           font-size: 0.875rem;
@@ -376,7 +430,6 @@ export default function SupplierLoginPage() {
           text-decoration: underline;
         }
 
-        /* Terms text */
         .sl-terms {
           text-align: center;
           font-size: 0.75rem;
@@ -394,7 +447,6 @@ export default function SupplierLoginPage() {
           text-decoration: underline;
         }
 
-        /* Responsive: stack on mobile */
         @media (max-width: 700px) {
           .sl-card {
             grid-template-columns: 1fr;
@@ -414,7 +466,6 @@ export default function SupplierLoginPage() {
           }
         }
 
-        /* Spinner animation */
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
@@ -456,10 +507,36 @@ export default function SupplierLoginPage() {
             <div className="sl-form-title">Welcome back, Supplier</div>
             <div className="sl-form-subtitle">Sign in to your supplier account to continue</div>
 
-            {/* Error message */}
+            {/* Generic error */}
             {error && (
               <div className="sl-error">
                 <span>⚠️</span> {error}
+              </div>
+            )}
+
+            {/* Pending approval banner */}
+            {approvalStatus === 'pending' && (
+              <div className="sl-approval-banner pending">
+                <span className="sl-banner-icon">⏳</span>
+                <div className="sl-banner-body">
+                  <div className="sl-banner-title">Account Pending Approval</div>
+                  <div className="sl-banner-msg">
+                    Your account is under review by our admin team. You will be notified once approved. Please check back later.
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Rejected banner */}
+            {approvalStatus === 'rejected' && (
+              <div className="sl-approval-banner rejected">
+                <span className="sl-banner-icon">🚫</span>
+                <div className="sl-banner-body">
+                  <div className="sl-banner-title">Account Not Approved</div>
+                  <div className="sl-banner-msg">
+                    Your supplier account was not approved. Please contact support for more information.
+                  </div>
+                </div>
               </div>
             )}
 
