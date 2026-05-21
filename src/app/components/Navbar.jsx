@@ -19,33 +19,31 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
       const token = localStorage.getItem('token');
       const vendorToken = localStorage.getItem('vendor-token');
       const adminToken = localStorage.getItem('admin-token');
+      const supplierToken = localStorage.getItem('supplier-token');
 
-      if (token) {
-        const userData = localStorage.getItem('user');
-        if (userData) {
-          try {
-            setUser({ ...JSON.parse(userData), role: 'user' });
-          } catch (e) {
-            console.error('Error parsing user data:', e);
-          }
+      if (adminToken) {
+        const adminData = localStorage.getItem('admin');
+        if (adminData) {
+          try { setUser({ ...JSON.parse(adminData), role: 'admin' }); }
+          catch (e) { console.error('Error parsing admin data:', e); }
+        }
+      } else if (supplierToken) {
+        const supplierData = localStorage.getItem('supplier');
+        if (supplierData) {
+          try { setUser({ ...JSON.parse(supplierData), role: 'supplier' }); }
+          catch (e) { console.error('Error parsing supplier data:', e); }
         }
       } else if (vendorToken) {
         const vendorData = localStorage.getItem('vendor');
         if (vendorData) {
-          try {
-            setUser({ ...JSON.parse(vendorData), role: 'vendor' });
-          } catch (e) {
-            console.error('Error parsing vendor data:', e);
-          }
+          try { setUser({ ...JSON.parse(vendorData), role: 'vendor' }); }
+          catch (e) { console.error('Error parsing vendor data:', e); }
         }
-      } else if (adminToken) {
-        const adminData = localStorage.getItem('admin');
-        if (adminData) {
-          try {
-            setUser({ ...JSON.parse(adminData), role: 'admin' });
-          } catch (e) {
-            console.error('Error parsing admin data:', e);
-          }
+      } else if (token) {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          try { setUser({ ...JSON.parse(userData), role: 'user' }); }
+          catch (e) { console.error('Error parsing user data:', e); }
         }
       } else {
         setUser(null);
@@ -73,23 +71,23 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
       localStorage.removeItem('admin-token');
       localStorage.removeItem('admin');
       document.cookie = 'admin-auth-token=; path=/; max-age=0';
+    } else if (user?.role === 'supplier') {
+      localStorage.removeItem('supplier-token');
+      localStorage.removeItem('supplier');
     } else {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       document.cookie = 'auth-token=; path=/; max-age=0';
     }
     setUser(null);
-    router.push('/login');
+    router.push(user?.role === 'supplier' ? '/supplier/login' : '/login');
   };
 
   const handleDashboard = () => {
-    if (user?.role === 'vendor') {
-      router.push('/vendor/dashboard');
-    } else if (user?.role === 'admin') {
-      router.push('/dashboard');
-    } else {
-      router.push('/userdashboard');
-    }
+    if (user?.role === 'vendor') router.push('/vendor/dashboard');
+    else if (user?.role === 'admin') router.push('/dashboard');
+    else if (user?.role === 'supplier') router.push('/supplier/dashboard');
+    else router.push('/userdashboard');
   };
 
   const serviceDropdown = [
@@ -284,28 +282,22 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 }`}>
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                      user.role === 'admin'
-                        ? 'bg-red-500'
-                        : user.role === 'vendor'
-                        ? 'bg-green-500'
-                        : 'bg-blue-500'
+                      user.role === 'admin' ? 'bg-red-500'
+                      : user.role === 'vendor' ? 'bg-green-500'
+                      : user.role === 'supplier' ? 'bg-yellow-500'
+                      : 'bg-blue-500'
                     } text-white`}
                   >
-                    {(user.name || user.email || user.shop_name || 'U')[0].toUpperCase()}
+                    {(user.name || user.shop_name || user.email || 'U')[0].toUpperCase()}
                   </div>
                   <div className="flex flex-col text-xs min-w-max">
                     <span className="font-semibold text-sm">
                       {user.name || user.shop_name || user.email}
                     </span>
-                    <span
-                      className={`text-[10px] ${
-                        isDarkMode ? 'text-zinc-500' : 'text-gray-500'
-                      }`}
-                    >
-                      {user.role === 'admin'
-                        ? '👨‍💼 Admin'
-                        : user.role === 'vendor'
-                        ? '🏪 Vendor'
+                    <span className={`text-[10px] ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>
+                      {user.role === 'admin' ? '👨‍💼 Admin'
+                        : user.role === 'vendor' ? '🏪 Vendor'
+                        : user.role === 'supplier' ? '📦 Supplier'
                         : '👤 User'}
                     </span>
                   </div>

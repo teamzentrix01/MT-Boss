@@ -7,6 +7,7 @@ import PrimaryServicesManager from '../components/PrimaryServicesManager';
 import PropertiesManager from '../components/PropertiesManager';
 import ProjectsManager from '../components/ProjectsManager';
 import VendorManagementAdmin from '../components/VendorManagementAdmin';
+import SupplierManagementAdmin from '../components/SupplierManagementAdmin';
 import FranchisesManager from './franchises/page';
 import AgentsManager from './agents/page';
 import BookingsManager from '../components/BookingsManager';
@@ -22,12 +23,14 @@ function AdminDashboard() {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [pendingProperties, setPendingProperties] = useState(0);
   const [pendingVendors, setPendingVendors] = useState(0);
+  const [pendingSuppliers, setPendingSuppliers] = useState(0);
   const [pendingBookings, setPendingBookings] = useState(0);
   const [completedBookings, setCompletedBookings] = useState(0);
   const [activeVendorBookings, setActiveVendorBookings] = useState(0);
   const [totalCommission, setTotalCommission] = useState(0);
   const [todayCommission, setTodayCommission] = useState(0);
   const [totalGST, setTotalGST] = useState(0);
+  const [supplierCommission, setSupplierCommission] = useState({ total: 0, today: 0, fulfilled: 0, open: 0 });
   const router = useRouter();
 
   // Sync tab from URL when navigating via sidebar
@@ -73,6 +76,32 @@ function AdminDashboard() {
         const vendorsRes = await fetch('/api/admin/vendors', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        // Fetch suppliers + commission summary
+        const suppliersRes = await fetch('/api/admin/suppliers', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const suppliersData = await suppliersRes.json();
+        if (suppliersData.success) {
+          setPendingSuppliers(suppliersData.data.filter(s => s.status === 'pending').length);
+        }
+
+        // Fetch supplier commission summary via PATCH
+        try {
+          const commRes = await fetch('/api/admin/suppliers', {
+            method: 'PATCH',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const commData = await commRes.json();
+          if (commData.success) {
+            setSupplierCommission({
+              total: parseFloat(commData.data.total_commission || 0),
+              today: parseFloat(commData.data.today_commission || 0),
+              fulfilled: parseInt(commData.data.total_fulfilled || 0),
+              open: parseInt(commData.data.open_enquiries || 0),
+            });
+          }
+        } catch { /* non-critical */ }
 
         // Fetch bookings
         const bookingsRes = await fetch('/api/admin/bookings', {
@@ -136,6 +165,7 @@ function AdminDashboard() {
     { id: 'quick-services-pricing', label: 'Service Pricing', icon: '💰' },
     { id: 'submissions', label: 'Contact Forms', icon: '✉' },
     { id: 'vendors', label: 'Vendors', icon: '🏪' },
+    { id: 'suppliers', label: 'Suppliers', icon: '📦' },
     { id: 'properties', label: 'Properties', icon: '⌂' },
     { id: 'quick-services', label: 'Quick Services', icon: '⚡' },
     { id: 'primary-services', label: 'Primary Services', icon: '⊞' },
@@ -527,6 +557,26 @@ function AdminDashboard() {
                 </div>
               </div>
 
+              {/* Supplier Marketplace Commission */}
+              <div className="panel" style={{ marginBottom: '1rem' }}>
+                <div className="panel-header">
+                  <span className="panel-title">📦 Supplier Marketplace Commission (15%)</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem', padding: '1rem' }}>
+                  {[
+                    { label: "Today's Commission", value: `₹${supplierCommission.today.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: '#facc15' },
+                    { label: 'Total Commission', value: `₹${supplierCommission.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: '#4ade80' },
+                    { label: 'Orders Fulfilled', value: supplierCommission.fulfilled, color: '#60a5fa' },
+                    { label: 'Open Enquiries', value: supplierCommission.open, color: '#f97316' },
+                  ].map(({ label, value, color }) => (
+                    <div key={label} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '1rem' }}>
+                      <p style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)', marginBottom: '0.5rem' }}>{label}</p>
+                      <p style={{ fontSize: '1.5rem', fontWeight: 900, color }}>{value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="panel">
                 <div className="panel-header">
                   <span className="panel-title">Recent Contact Submissions</span>
@@ -570,6 +620,18 @@ function AdminDashboard() {
                   </div>
                   <button onClick={() => setActiveTab('vendors')} className="review-btn">
                     Review Vendors →
+                  </button>
+                </div>
+              )}
+
+              {pendingSuppliers > 0 && (
+                <div className="pending-alert">
+                  <div className="pending-alert-title">📦 Pending Supplier Applications</div>
+                  <div className="pending-alert-body">
+                    <strong>{pendingSuppliers}</strong> {pendingSuppliers === 1 ? 'supplier' : 'suppliers'} awaiting approval.
+                  </div>
+                  <button onClick={() => setActiveTab('suppliers')} className="review-btn">
+                    Review Suppliers →
                   </button>
                 </div>
               )}
@@ -639,6 +701,7 @@ function AdminDashboard() {
           )}
 
           {activeTab === 'vendors' && <VendorManagementAdmin isDarkMode={isDarkMode} />}
+          {activeTab === 'suppliers' && <SupplierManagementAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'properties' && <PropertiesManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services' && <QuickServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'primary-services' && <PrimaryServicesManager isDarkMode={isDarkMode} />}

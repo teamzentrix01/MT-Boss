@@ -484,7 +484,14 @@ export default function SupplierLoginPage() {
 
           {/* ── Left branding panel ── */}
           <div className="sl-left">
-            <div className="sl-logo">SUPPLIER<span>HUB</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div className="sl-logo">SUPPLIER<span>HUB</span></div>
+              <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', fontWeight: 600, color: '#666', textDecoration: 'none', padding: '0.35rem 0.75rem', border: '1px solid #333', borderRadius: 6, transition: 'all 0.2s', position: 'relative', zIndex: 1 }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#10b981'; e.currentTarget.style.borderColor = '#10b981'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = '#666'; e.currentTarget.style.borderColor = '#333'; }}>
+                ← Home
+              </Link>
+            </div>
 
             <div className="sl-left-content">
               <div className="sl-left-heading">

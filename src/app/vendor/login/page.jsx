@@ -143,6 +143,13 @@ export default function VendorLoginPage() {
               </div>
             </div>
 
+            {/* Forgot password */}
+            <div style={{ textAlign: 'right', marginBottom: '1rem', marginTop: '-0.25rem' }}>
+              <Link href="/vendor/forgot-password" style={{ fontSize: '0.78rem', fontWeight: 600, color: '#facc15', textDecoration: 'none' }}>
+                Forgot password?
+              </Link>
+            </div>
+
             <button type="submit" disabled={loading}
               style={{ width: '100%', padding: '0.6rem 1rem', background: '#facc15', color: '#000', border: 'none', borderRadius: 7, fontSize: '0.875rem', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: '1.25rem', transition: 'opacity 0.15s' }}>
               {loading ? 'Signing in…' : <>Sign In <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></>}

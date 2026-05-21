@@ -58,6 +58,8 @@ export default function ShopPage() {
   const [locationStatus, setLocationStatus] = useState('idle'); // idle | loading | success | error
   const [locationCoords, setLocationCoords] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const categories = [
     {
@@ -185,11 +187,36 @@ export default function ShopPage() {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Enquiry submitted:", { ...formData, category: selectedCategory, locationCoords });
-    setSubmitted(true);
-    setTimeout(() => setIsModalOpen(false), 2000);
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      const res = await fetch('/api/material-enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_name: formData.name,
+          user_phone: formData.phone,
+          user_email: formData.email,
+          category_name: selectedCategory?.name,
+          category_emoji: selectedCategory?.emoji,
+          quantity_text: formData.quantity,
+          delivery_address: formData.address,
+          latitude: locationCoords?.latitude || null,
+          longitude: locationCoords?.longitude || null,
+          message: formData.message,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Failed to submit enquiry');
+      setSubmitted(true);
+      setTimeout(() => setIsModalOpen(false), 3000);
+    } catch (err) {
+      setSubmitError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -324,10 +351,15 @@ export default function ShopPage() {
             </div>
 
             {submitted ? (
-              <div className="py-8 text-center">
-                <div className="text-4xl mb-3">🎉</div>
-                <h3 className={`text-lg font-bold ${headText} mb-1`}>Enquiry Submitted!</h3>
-                <p className={`text-sm ${subText}`}>We'll reach out to you shortly.</p>
+              <div className="py-8 text-center px-6">
+                <div className="text-5xl mb-3">🎉</div>
+                <h3 className={`text-lg font-bold ${headText} mb-2`}>Enquiry Submitted!</h3>
+                <p className={`text-sm ${subText} mb-3`}>
+                  Your request for <strong>{selectedCategory?.name}</strong> has been received.
+                </p>
+                <p className={`text-xs ${subText}`}>
+                  Verified suppliers will review your enquiry. You will receive an email and a call once a supplier accepts your order.
+                </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="p-4 space-y-3">
@@ -453,11 +485,17 @@ export default function ShopPage() {
                   <span className={`text-xs font-extrabold ${isDarkMode ? "text-yellow-300" : "text-yellow-600"}`}>{selectedCategory?.priceRange}</span>
                 </div>
 
+                {submitError && (
+                  <div className="text-xs text-red-500 font-semibold bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                    ⚠️ {submitError}
+                  </div>
+                )}
                 <button
                   type="submit"
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-extrabold py-3 px-4 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 text-sm tracking-wide"
+                  disabled={submitting}
+                  className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:opacity-60 text-gray-900 font-extrabold py-3 px-4 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 text-sm tracking-wide"
                 >
-                  Submit Enquiry →
+                  {submitting ? 'Submitting…' : 'Submit Enquiry →'}
                 </button>
                 <button
                   type="button"

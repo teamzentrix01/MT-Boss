@@ -21,8 +21,10 @@ export async function POST(request) {
     // Verify email + password + get status — ek hi query mein
     const result = await pool.query(
       `SELECT
-        id, email, shop_name, business_name, phone,
+        id, email, shop_name, phone,
         city, state, status, rejection_reason,
+        is_active,
+        COALESCE(product_categories, '{}') AS product_categories,
         (password_hash = crypt($2, password_hash)) AS password_match
       FROM suppliers
       WHERE email = $1`,
@@ -98,11 +100,12 @@ export async function POST(request) {
         id: supplier.id,
         email: supplier.email,
         shop_name: supplier.shop_name,
-        business_name: supplier.business_name,
         phone: supplier.phone,
         city: supplier.city,
         state: supplier.state,
         status: supplier.status,
+        is_active: supplier.is_active,
+        product_categories: supplier.product_categories || [],
       },
     });
 

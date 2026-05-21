@@ -625,100 +625,100 @@ export default function VendorManagementAdmin({ isDarkMode }) {
       {selectedVendor && (
         <div className="modal-backdrop" onClick={() => setSelectedVendor(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
+
+            {/* Header */}
             <div className="modal-header">
-              <div className="modal-title">{selectedVendor.shop_name} - Verification</div>
+              <div style={{ display:'flex', alignItems:'center', gap:'0.875rem' }}>
+                {/* Profile Photo */}
+                {selectedVendor.profile_photo ? (
+                  <img src={`/api/vendor/image/${selectedVendor.id}?type=profile`} alt="Profile"
+                    style={{ width:52, height:52, borderRadius:'50%', objectFit:'cover', border:`2px solid ${isDarkMode?'#333':'#e2e2e7'}` }} />
+                ) : (
+                  <div style={{ width:52, height:52, borderRadius:'50%', background: isDarkMode?'#2a2a30':'#e5e7eb', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.4rem', flexShrink:0 }}>
+                    👤
+                  </div>
+                )}
+                <div>
+                  <div className="modal-title">{selectedVendor.shop_name || selectedVendor.email}</div>
+                  <div style={{ fontSize:'0.8rem', color: isDarkMode?'#999':'#666', marginTop:'0.1rem' }}>{selectedVendor.email}</div>
+                </div>
+              </div>
               <button className="modal-close" onClick={() => setSelectedVendor(null)}>✕</button>
             </div>
 
-            {/* Shop Info */}
+            {/* Basic Info */}
             <div className="modal-section">
-              <div className="modal-section-title">Shop Information</div>
+              <div className="modal-section-title">Contact & Location</div>
               <div className="modal-grid">
-                <div className="modal-field">
-                  <div className="modal-label">Shop Name</div>
-                  <div className="modal-value">{selectedVendor.shop_name}</div>
-                </div>
-                <div className="modal-field">
-                  <div className="modal-label">Business Name</div>
-                  <div className="modal-value">{selectedVendor.business_name}</div>
-                </div>
-                <div className="modal-field">
-                  <div className="modal-label">Email</div>
-                  <div className="modal-value">{selectedVendor.email}</div>
-                </div>
                 <div className="modal-field">
                   <div className="modal-label">Phone</div>
-                  <div className="modal-value">{selectedVendor.phone}</div>
+                  <div className="modal-value">{selectedVendor.phone || '—'}</div>
                 </div>
-              </div>
-            </div>
-
-            {/* Address */}
-            <div className="modal-section">
-              <div className="modal-section-title">Address</div>
-              <div className="modal-grid">
                 <div className="modal-field">
                   <div className="modal-label">City</div>
-                  <div className="modal-value">{selectedVendor.city}</div>
+                  <div className="modal-value">{selectedVendor.city || '—'}</div>
                 </div>
                 <div className="modal-field">
                   <div className="modal-label">State</div>
-                  <div className="modal-value">{selectedVendor.state}</div>
-                </div>
-                <div className="modal-field">
-                  <div className="modal-label">Country</div>
-                  <div className="modal-value">{selectedVendor.country || 'N/A'}</div>
+                  <div className="modal-value">{selectedVendor.state || '—'}</div>
                 </div>
                 <div className="modal-field">
                   <div className="modal-label">Postal Code</div>
-                  <div className="modal-value">{selectedVendor.postal_code || 'N/A'}</div>
+                  <div className="modal-value">{selectedVendor.postal_code || '—'}</div>
                 </div>
               </div>
             </div>
 
-            {/* Documents */}
+            {/* Aadhaar */}
             <div className="modal-section">
-              <div className="modal-section-title">Documents</div>
-              <div className="modal-grid">
-                <div className="modal-field">
-                  <div className="modal-label">GST Number</div>
-                  <div className="modal-value">{selectedVendor.gst_number || 'N/A'}</div>
-                </div>
-                <div className="modal-field">
-                  <div className="modal-label">PAN Number</div>
-                  <div className="modal-value">{selectedVendor.pan_number || 'N/A'}</div>
-                </div>
-                <div className="modal-field">
-                  <div className="modal-label">Business Reg.</div>
-                  <div className="modal-value">{selectedVendor.business_registration_number || 'N/A'}</div>
+              <div className="modal-section-title">Identity Verification</div>
+
+              {/* Aadhaar Number */}
+              <div style={{ background: isDarkMode?'#0a1f0a':'#f0fdf4', border:`1px solid ${isDarkMode?'#16a34a44':'#86efac'}`, borderRadius:10, padding:'0.875rem 1rem', marginBottom:'1rem', display:'flex', alignItems:'center', gap:'0.875rem' }}>
+                <span style={{ fontSize:'1.5rem' }}>🪪</span>
+                <div>
+                  <div style={{ fontSize:'0.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color: isDarkMode?'#4ade80':'#15803d', marginBottom:'0.2rem' }}>
+                    Aadhaar Number
+                  </div>
+                  <div style={{ fontSize:'1.1rem', fontWeight:800, letterSpacing:'0.15em', fontFamily:'monospace', color: isDarkMode?'#fff':'#111' }}>
+                    {selectedVendor.aadhar_number
+                      ? selectedVendor.aadhar_number.replace(/(\d{4})(\d{4})(\d{4})/, '$1 $2 $3')
+                      : 'Not provided'}
+                  </div>
                 </div>
               </div>
+
+              {/* Aadhaar Card Image */}
+              {selectedVendor.aadhar_image ? (
+                <div>
+                  <div className="modal-label" style={{ marginBottom:'0.5rem' }}>Aadhaar Card Image</div>
+                  <a href={`/api/vendor/image/${selectedVendor.id}?type=aadhaar`} target="_blank" rel="noopener noreferrer">
+                    <img src={`/api/vendor/image/${selectedVendor.id}?type=aadhaar`} alt="Aadhaar Card"
+                      style={{ width:'100%', maxHeight:220, objectFit:'contain', borderRadius:8, border:`1px solid ${isDarkMode?'#333':'#e2e2e7'}`, cursor:'pointer', background: isDarkMode?'#1a1a1a':'#f5f5f5' }} />
+                  </a>
+                  <div style={{ fontSize:'0.72rem', color: isDarkMode?'#666':'#aaa', marginTop:'0.3rem' }}>
+                    Click image to open in full size
+                  </div>
+                </div>
+              ) : (
+                <div style={{ padding:'0.75rem', background: isDarkMode?'#2a1a0a':'#fff7ed', borderRadius:8, fontSize:'0.8125rem', color:'#f97316' }}>
+                  ⚠️ No Aadhaar image uploaded
+                </div>
+              )}
             </div>
 
-            {/* Bank Details */}
+            {/* Status */}
             <div className="modal-section">
-              <div className="modal-section-title">Bank Details</div>
-              <div className="modal-grid">
-                <div className="modal-field">
-                  <div className="modal-label">Account Holder</div>
-                  <div className="modal-value">{selectedVendor.bank_account_holder || 'N/A'}</div>
-                </div>
-                <div className="modal-field">
-                  <div className="modal-label">Bank Name</div>
-                  <div className="modal-value">{selectedVendor.bank_name || 'N/A'}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Status & Actions */}
-            <div className="modal-section">
-              <div className="modal-section-title">Current Status</div>
-              <div style={{ marginBottom: '1rem' }}>
+              <div className="modal-section-title">Status</div>
+              <div style={{ display:'flex', gap:'0.5rem', flexWrap:'wrap' }}>
                 <span className={`badge badge-${selectedVendor.verification_status}`}>
                   Verification: {selectedVendor.verification_status}
                 </span>
-                <span className={`badge badge-${selectedVendor.status}`} style={{ marginLeft: '0.5rem' }}>
+                <span className={`badge badge-${selectedVendor.status}`}>
                   Status: {selectedVendor.status}
+                </span>
+                <span style={{ fontSize:'0.72rem', color: isDarkMode?'#666':'#aaa', alignSelf:'center', marginLeft:'auto' }}>
+                  Registered: {selectedVendor.created_at ? new Date(selectedVendor.created_at).toLocaleDateString() : '—'}
                 </span>
               </div>
             </div>
@@ -726,19 +726,14 @@ export default function VendorManagementAdmin({ isDarkMode }) {
             {/* Actions */}
             {selectedVendor.verification_status === 'pending' && (
               <div className="modal-actions">
-                <button
-                  className="modal-btn modal-btn-approve"
-                  onClick={() => handleApproveVendor(selectedVendor.id)}
-                >
+                <button className="modal-btn modal-btn-approve" onClick={() => handleApproveVendor(selectedVendor.id)}>
                   ✓ Approve Vendor
                 </button>
-                <button
-                  className="modal-btn modal-btn-reject"
+                <button className="modal-btn modal-btn-reject"
                   onClick={() => {
                     const reason = prompt('Enter reason for rejection:');
                     if (reason) handleRejectVendor(selectedVendor.id, reason);
-                  }}
-                >
+                  }}>
                   ✕ Reject
                 </button>
               </div>
@@ -748,20 +743,14 @@ export default function VendorManagementAdmin({ isDarkMode }) {
               <div className="modal-actions">
                 <button
                   className={`modal-btn ${selectedVendor.status === 'active' ? 'modal-btn-reject' : 'modal-btn-approve'}`}
-                  onClick={() => handleToggleStatus(selectedVendor.id, selectedVendor.status === 'active' ? 'inactive' : 'active')}
-                >
+                  onClick={() => handleToggleStatus(selectedVendor.id, selectedVendor.status === 'active' ? 'inactive' : 'active')}>
                   {selectedVendor.status === 'active' ? '⚠ Deactivate' : '✓ Activate'}
                 </button>
               </div>
             )}
 
-            <div className="modal-actions" style={{ marginTop: '0.5rem' }}>
-              <button
-                className="modal-btn modal-btn-cancel"
-                onClick={() => setSelectedVendor(null)}
-              >
-                Close
-              </button>
+            <div className="modal-actions" style={{ marginTop:'0.5rem' }}>
+              <button className="modal-btn modal-btn-cancel" onClick={() => setSelectedVendor(null)}>Close</button>
             </div>
           </div>
         </div>

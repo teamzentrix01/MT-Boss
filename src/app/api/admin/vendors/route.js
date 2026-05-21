@@ -39,11 +39,12 @@ export async function GET(req) {
     }
 
     const result = await pool.query(
-      `SELECT 
-        id, email, shop_name, business_name, phone,
-        city, state, country, postal_code, business_type, description,
-        bank_account_holder, bank_name, bank_ifsc_code,
-        gst_number, pan_number, business_registration_number,
+      `SELECT
+        id, email, shop_name, phone,
+        city, state, country, postal_code,
+        aadhar_number,
+        (profile_photo IS NOT NULL) AS profile_photo,
+        (aadhar_image  IS NOT NULL) AS aadhar_image,
         status, verification_status, is_approved, created_at, updated_at
        FROM vendors
        ORDER BY created_at DESC`

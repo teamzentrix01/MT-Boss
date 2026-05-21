@@ -192,7 +192,7 @@ const handleSubmit = async (e) => {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .vs-root *, .vs-root *::before, .vs-root *::after { box-sizing: border-box; }
 
         .vs-root {
           min-height: 100vh;
