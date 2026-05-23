@@ -17,7 +17,6 @@ export async function POST(req) {
       booking_time,
       slot_type, // 'free' or 'paid'
       time_slot_id,
-      urgency,
       service_description,
       user_latitude,
       user_longitude,
@@ -46,7 +45,7 @@ export async function POST(req) {
     }
 
     const base_price = serviceResult.rows[0].base_price;
-    const visit_fee = urgency === 'urgent' ? 149 : 0;
+    const visit_fee = 0;
     const total_amount = base_price + visit_fee;
 
     // Begin transaction
@@ -71,7 +70,7 @@ export async function POST(req) {
           user_name, user_phone, user_email,
           service_address, service_city, service_pincode, property_type,
           booking_date, booking_time, slot_type, time_slot_id,
-          urgency, visit_fee, service_description,
+          'normal', visit_fee, service_description,
           user_latitude, user_longitude, location_map_url,
           base_price, visit_fee, total_amount, 'pending', null, 'pending'
         ]

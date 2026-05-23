@@ -458,7 +458,7 @@ export default function SupplierDashboard() {
           border-radius: 6px;
           font-weight: 600;
           color: #f59e0b;
-          width: fit-content;
+          width: fit-content; 
         }
 
         .sd-empty { padding: 3rem; text-align: center; color: ${dark ? '#444' : '#bbb'}; font-size: 0.875rem; }

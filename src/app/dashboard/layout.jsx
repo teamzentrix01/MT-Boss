@@ -29,6 +29,8 @@ export default function DashboardLayout({ children }) {
     { label: 'Free Time Slots',   icon: '📅', tab: 'free-slots' },
     { label: 'Service Pricing',   icon: '💰', tab: 'quick-services-pricing' },
     { label: 'Contact Forms',     icon: '✉️', tab: 'submissions' },
+    { label: 'Primary Services Enquiry', icon: '✉️', tab: 'primary-service-enquiries' },
+    { label: 'Career Enquiry',    icon: '✉️', tab: 'career-enquiries' },
     { label: 'Vendors',           icon: '🏪', tab: 'vendors' },
     { label: 'Properties',        icon: '🏠', tab: 'properties' },
     { label: 'Quick Services',    icon: '⚡', tab: 'quick-services' },

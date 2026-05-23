@@ -19,8 +19,8 @@ export async function GET(req) {
     const type = searchParams.get('type') || 'active';
 
     // Earnings logic:
-    //   Quick job (≤30 min): base_amount split 50/50 — vendor gets 50%, admin gets 50%
-    //   Extended job (>30 min): base 100% to admin + extra follows: 18% GST, 15% commission, 67% vendor
+    //   Quick job (≤15 min): base_amount split 50/50 — vendor gets 50%, admin gets 50%
+    //   Extended job (>15 min): base 100% to admin + extra follows: 18% GST, 15% commission, 67% vendor
     const baseSelect = `
       SELECT
         sb.id, sb.booking_reference, sb.user_name, sb.user_phone,

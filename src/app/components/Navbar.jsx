@@ -3,12 +3,36 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 
+function DropdownButton({ label, children, text, textHover, dropdownBg }) {
+  return (
+    <div className="relative group">
+      <button
+        className={`flex items-center gap-1 px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
+      >
+        {label}
+        <svg
+          className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div
+        className={`absolute top-full left-0 mt-1 rounded-md border shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 group-hover:translate-y-0 z-[110] ${dropdownBg}`}
+      >
+        <div className="py-1">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 export default function Navbar({ isDarkMode, toggleTheme }) {
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [propertyOpen, setPropertyOpen] = useState(false);
-  const [partnerOpen, setPartnerOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -103,13 +127,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     { label: "🔑 Rent Property", href: "/property/rent", sub: "Find rentals near you" },
   ];
 
-  const partnerDropdown = [
-    { label: "Become an Agent", href: "/agent" },
-    { label: "Franchise", href: "/franchise" },
-    { label: "Add Vendor", href: "/contractor" },
-    { label: "Material Suppliers", href: "/material-suppliers" },
-  ];
-
   const bg = isDarkMode ? "bg-black border-zinc-800" : "bg-white border-gray-100";
   const text = isDarkMode ? "text-zinc-300" : "text-zinc-600";
   const textHover = isDarkMode ? "hover:text-[#facc15]" : "hover:text-zinc-900";
@@ -117,29 +134,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   const dropdownTxt = isDarkMode
     ? "text-zinc-400 hover:text-[#facc15] hover:bg-zinc-800"
     : "text-zinc-600 hover:text-zinc-900 hover:bg-gray-50";
-
-  const DropdownButton = ({ label, children }) => (
-    <div className="relative group">
-      <button
-        className={`flex items-center gap-1 px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
-      >
-        {label}
-        <svg
-          className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-      <div
-        className={`absolute top-full left-0 mt-1 rounded-md border shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 group-hover:translate-y-0 z-[110] ${dropdownBg}`}
-      >
-        <div className="py-1">{children}</div>
-      </div>
-    </div>
-  );
 
   return (
     <nav
@@ -164,15 +158,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             >
               Home
             </Link>
-            <Link
+            {/* <Link
               href="/About-us"
               className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
             >
               About Us
-            </Link>
+            </Link> */}
 
             {/* Services */}
-            <DropdownButton label="Services">
+            <DropdownButton label="Services" text={text} textHover={textHover} dropdownBg={dropdownBg}>
               <div className="w-48">
                 {serviceDropdown.map((item) => (
                   <Link
@@ -187,7 +181,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </DropdownButton>
 
             {/* Property */}
-            <DropdownButton label="Property">
+            <DropdownButton label="Property" text={text} textHover={textHover} dropdownBg={dropdownBg}>
               <div className="w-60">
                 {propertyDropdown.map((item) => (
                   <Link
@@ -208,20 +202,18 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               </div>
             </DropdownButton>
 
-            {/* Partner With Us */}
-            <DropdownButton label="Partner With Us">
-              <div className="w-52">
-                {partnerDropdown.map((item) => (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className={`block px-4 py-2.5 text-sm transition-colors ${dropdownTxt}`}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </DropdownButton>
+            <Link
+              href="/agent"
+              className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
+            >
+              Become an Agent
+            </Link>
+            <Link
+              href="/franchise"
+              className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
+            >
+              Franchise
+            </Link>
 
             <Link
               href="/ShopNow"
@@ -229,18 +221,18 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             >
               Shop Now
             </Link>
-            <Link
+            {/* <Link
               href="/careers"
               className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
             >
               Careers
-            </Link>
-            <Link
+            </Link> */}
+            {/* <Link
               href="/contact"
               className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
             >
               Contact
-            </Link>
+            </Link> */}
           </div>
 
           {/* Right Side */}
@@ -529,51 +521,26 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             )}
           </div>
 
-          {/* Mobile Partner */}
-          <div>
-            <button
-              onClick={() => setPartnerOpen(!partnerOpen)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:text-[#facc15] hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
-            >
-              Partner With Us
-              <svg
-                className={`w-4 h-4 transition-transform ${
-                  partnerOpen ? 'rotate-180' : ''
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            {partnerOpen && (
-              <div className="ml-4 mt-1 space-y-1">
-                {partnerDropdown.map((s) => (
-                  <Link
-                    key={s.label}
-                    href={s.href}
-                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${
-                      isDarkMode
-                        ? 'text-zinc-400 hover:text-[#facc15] hover:bg-zinc-800'
-                        : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
-                    }`}
-                  >
-                    {s.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+          <Link
+            href="/agent"
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
+              isDarkMode
+                ? 'text-zinc-300 hover:text-[#facc15] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+            }`}
+          >
+            Become an Agent
+          </Link>
+          <Link
+            href="/franchise"
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
+              isDarkMode
+                ? 'text-zinc-300 hover:text-[#facc15] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+            }`}
+          >
+            Franchise
+          </Link>
 
           {/* Mobile Auth */}
           <div className="pt-4 space-y-2 border-t" style={{ borderTopColor: isDarkMode ? '#27272a' : '#e5e7eb' }}>

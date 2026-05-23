@@ -20,6 +20,10 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [primaryServiceEnquiries, setPrimaryServiceEnquiries] = useState([]);
+  const [selectedPrimaryServiceEnquiry, setSelectedPrimaryServiceEnquiry] = useState(null);
+  const [careerEnquiries, setCareerEnquiries] = useState([]);
+  const [selectedCareerEnquiry, setSelectedCareerEnquiry] = useState(null);
   const [pendingProperties, setPendingProperties] = useState(0);
   const [pendingVendors, setPendingVendors] = useState(0);
   const [pendingBookings, setPendingBookings] = useState(0);
@@ -59,6 +63,18 @@ function AdminDashboard() {
         });
         const contactData = await contactRes.json();
         if (contactData.success) setSubmissions(contactData.data);
+
+        const primaryEnquiryRes = await fetch('/api/primary-service-enquiries', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const primaryEnquiryData = await primaryEnquiryRes.json();
+        if (primaryEnquiryData.success) setPrimaryServiceEnquiries(primaryEnquiryData.data);
+
+        const careerEnquiryRes = await fetch('/api/career-enquiries', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const careerEnquiryData = await careerEnquiryRes.json();
+        if (careerEnquiryData.success) setCareerEnquiries(careerEnquiryData.data);
 
         // Fetch properties
         const propsRes = await fetch('/api/properties?status=all', {
@@ -135,6 +151,8 @@ function AdminDashboard() {
     { id: 'free-slots', label: 'Free Time Slots', icon: '📅' },
     { id: 'quick-services-pricing', label: 'Service Pricing', icon: '💰' },
     { id: 'submissions', label: 'Contact Forms', icon: '✉' },
+    { id: 'primary-service-enquiries', label: 'Primary Services Enquiry', icon: '✉' },
+    { id: 'career-enquiries', label: 'Career Enquiry', icon: '✉' },
     { id: 'vendors', label: 'Vendors', icon: '🏪' },
     { id: 'properties', label: 'Properties', icon: '⌂' },
     { id: 'quick-services', label: 'Quick Services', icon: '⚡' },
@@ -638,6 +656,83 @@ function AdminDashboard() {
             </div>
           )}
 
+          {activeTab === 'primary-service-enquiries' && (
+            <div>
+              <div className="section-head">
+                <span className="section-head-title">Primary Services Enquiry</span>
+                <input type="text" placeholder="Search..." className="search-input" />
+              </div>
+              <div className="panel">
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+                    <thead>
+                      <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+                        {['Name', 'Email', 'Phone', 'Service', 'Status', 'Date', 'Action'].map(col => (
+                          <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {primaryServiceEnquiries.map((item) => (
+                        <tr key={item.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                          <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>{item.name}</td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.email || '-'}</td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.phone}</td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.service_title}</td>
+                          <td style={{ padding: '0.6rem 0.875rem' }}><span className={`badge ${getStatusColor(item.status)}`}>{item.status}</span></td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.created_at).toLocaleDateString()}</td>
+                          <td style={{ padding: '0.6rem 0.875rem' }}>
+                            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '600', padding: 0 }} onClick={() => setSelectedPrimaryServiceEnquiry(item)}>View</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {primaryServiceEnquiries.length === 0 && <p className="empty-state">No primary services enquiries yet.</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'career-enquiries' && (
+            <div>
+              <div className="section-head">
+                <span className="section-head-title">Career Enquiry</span>
+                <input type="text" placeholder="Search..." className="search-input" />
+              </div>
+              <div className="panel">
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+                    <thead>
+                      <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+                        {['Name', 'Email', 'Phone', 'Position', 'Experience', 'Status', 'Date', 'Action'].map(col => (
+                          <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {careerEnquiries.map((item) => (
+                        <tr key={item.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                          <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>{item.name}</td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.email}</td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.phone}</td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.position}</td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.experience}</td>
+                          <td style={{ padding: '0.6rem 0.875rem' }}><span className={`badge ${getStatusColor(item.status)}`}>{item.status}</span></td>
+                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.created_at).toLocaleDateString()}</td>
+                          <td style={{ padding: '0.6rem 0.875rem' }}>
+                            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '600', padding: 0 }} onClick={() => setSelectedCareerEnquiry(item)}>View</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {careerEnquiries.length === 0 && <p className="empty-state">No career enquiries yet.</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
           {activeTab === 'vendors' && <VendorManagementAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'properties' && <PropertiesManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services' && <QuickServicesManager isDarkMode={isDarkMode} />}
@@ -683,6 +778,197 @@ function AdminDashboard() {
               <div className="modal-message">{selectedSubmission.message}</div>
 
               <button className="modal-close-btn" onClick={() => setSelectedSubmission(null)}>Close</button>
+            </div>
+          </div>
+        )}
+
+        {selectedPrimaryServiceEnquiry && (
+          <div className="modal-backdrop" onClick={() => setSelectedPrimaryServiceEnquiry(null)}>
+            <div className="modal" onClick={e => e.stopPropagation()}>
+              <div className="modal-head">
+                <span className="modal-title">Primary Services Enquiry Details</span>
+                <button className="modal-close" onClick={() => setSelectedPrimaryServiceEnquiry(null)}>x</button>
+              </div>
+
+              <div className="modal-grid">
+                {[
+                  ['Name', selectedPrimaryServiceEnquiry.name],
+                  ['Email', selectedPrimaryServiceEnquiry.email || '-'],
+                  ['Phone', selectedPrimaryServiceEnquiry.phone],
+                  ['Service', selectedPrimaryServiceEnquiry.service_title],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="modal-field-label">{label}</div>
+                    <div className="modal-field-value">{value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="modal-field-label" style={{ marginBottom: '0.375rem' }}>Project Details</div>
+              <div className="modal-message">{selectedPrimaryServiceEnquiry.message || 'No project details provided.'}</div>
+
+              <div style={{ marginBottom: '1rem' }}>
+                <div className="modal-field-label">Property Images</div>
+                {(() => {
+                  const urls = Array.isArray(selectedPrimaryServiceEnquiry.property_image_urls)
+                    ? selectedPrimaryServiceEnquiry.property_image_urls
+                    : selectedPrimaryServiceEnquiry.property_image_url
+                      ? [selectedPrimaryServiceEnquiry.property_image_url]
+                      : [];
+                  const names = Array.isArray(selectedPrimaryServiceEnquiry.property_image_names)
+                    ? selectedPrimaryServiceEnquiry.property_image_names
+                    : selectedPrimaryServiceEnquiry.property_image_name
+                      ? [selectedPrimaryServiceEnquiry.property_image_name]
+                      : [];
+
+                  if (urls.length === 0) {
+                    return (
+                      <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--muted)' }}>
+                        No property images uploaded.
+                      </p>
+                    );
+                  }
+
+                  return (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem', marginTop: '0.625rem' }}>
+                      {urls.map((url, index) => (
+                        <div key={`${url}-${index}`} style={{ border: '1px solid var(--border)', borderRadius: '6px', padding: '0.5rem', background: 'var(--bg)' }}>
+                          <a href={url} target="_blank" rel="noreferrer" style={{ display: 'block' }}>
+                            <img
+                              src={url}
+                              alt={names[index] || `Property image ${index + 1}`}
+                              style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }}
+                            />
+                          </a>
+                          <p style={{ marginTop: '0.5rem', fontSize: '0.7rem', color: 'var(--muted)', overflowWrap: 'anywhere' }}>
+                            {names[index] || `Image ${index + 1}`}
+                          </p>
+                          <div style={{ display: 'flex', gap: '0.375rem', marginTop: '0.5rem' }}>
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="modal-close-btn"
+                              style={{ width: 'auto', flex: 1, textDecoration: 'none', padding: '0.4rem 0.5rem', fontSize: '0.75rem' }}
+                            >
+                              View
+                            </a>
+                            <a
+                              href={url}
+                              download={names[index] || true}
+                              className="modal-close-btn"
+                              style={{ width: 'auto', flex: 1, textDecoration: 'none', padding: '0.4rem 0.5rem', fontSize: '0.75rem', background: 'var(--surface)', color: 'var(--text)', border: '1px solid var(--border)' }}
+                            >
+                              Download
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+
+              <button className="modal-close-btn" onClick={() => setSelectedPrimaryServiceEnquiry(null)}>Close</button>
+            </div>
+          </div>
+        )}
+
+        {selectedCareerEnquiry && (
+          <div className="modal-backdrop" onClick={() => setSelectedCareerEnquiry(null)}>
+            <div className="modal" onClick={e => e.stopPropagation()}>
+              <div className="modal-head">
+                <span className="modal-title">Career Enquiry Details</span>
+                <button className="modal-close" onClick={() => setSelectedCareerEnquiry(null)}>x</button>
+              </div>
+
+              <div className="modal-grid">
+                {[
+                  ['Name', selectedCareerEnquiry.name],
+                  ['Email', selectedCareerEnquiry.email],
+                  ['Phone', selectedCareerEnquiry.phone],
+                  ['Position', selectedCareerEnquiry.position],
+                  ['Department', selectedCareerEnquiry.department || '-'],
+                  ['Location', selectedCareerEnquiry.job_location || '-'],
+                  ['Experience', selectedCareerEnquiry.experience],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="modal-field-label">{label}</div>
+                    <div className="modal-field-value">{value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ marginBottom: '1rem' }}>
+                <div className="modal-field-label">Resume</div>
+                <div className="modal-field-value">{selectedCareerEnquiry.resume_name || 'Not Uploaded'}</div>
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.625rem' }}>
+                  {selectedCareerEnquiry.resume_url ? (
+                    <>
+                    <a
+                      href={selectedCareerEnquiry.resume_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="modal-close-btn"
+                      style={{ width: 'auto', textDecoration: 'none', padding: '0.45rem 0.875rem' }}
+                    >
+                      View Resume
+                    </a>
+                    <a
+                      href={selectedCareerEnquiry.resume_url}
+                      download={selectedCareerEnquiry.resume_name || true}
+                      className="modal-close-btn"
+                      style={{ width: 'auto', textDecoration: 'none', padding: '0.45rem 0.875rem', background: 'var(--bg)', color: 'var(--text)', border: '1px solid var(--border)' }}
+                    >
+                      Download
+                    </a>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        disabled
+                        className="modal-close-btn"
+                        style={{ width: 'auto', padding: '0.45rem 0.875rem', opacity: 0.45, cursor: 'not-allowed' }}
+                      >
+                        View Resume
+                      </button>
+                      <button
+                        type="button"
+                        disabled
+                        className="modal-close-btn"
+                        style={{ width: 'auto', padding: '0.45rem 0.875rem', background: 'var(--bg)', color: 'var(--text)', border: '1px solid var(--border)', opacity: 0.45, cursor: 'not-allowed' }}
+                      >
+                        Download
+                      </button>
+                    </>
+                  )}
+                </div>
+                {!selectedCareerEnquiry.resume_url && selectedCareerEnquiry.resume_name && selectedCareerEnquiry.resume_name !== 'Not Uploaded' && (
+                  <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--muted)' }}>
+                    Resume file is not available for this older submission. View and download will appear for new applications.
+                  </p>
+                )}
+              </div>
+
+              <div className="modal-grid">
+                {[
+                  ['Current Company', selectedCareerEnquiry.current_company || '-'],
+                  ['Notice Period', selectedCareerEnquiry.notice_period || '-'],
+                  ['Current Salary', selectedCareerEnquiry.current_salary || '-'],
+                  ['Expected Salary', selectedCareerEnquiry.expected_salary || '-'],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="modal-field-label">{label}</div>
+                    <div className="modal-field-value">{value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="modal-field-label" style={{ marginBottom: '0.375rem' }}>Cover Letter</div>
+              <div className="modal-message">{selectedCareerEnquiry.cover_letter || 'No cover letter provided.'}</div>
+
+              <button className="modal-close-btn" onClick={() => setSelectedCareerEnquiry(null)}>Close</button>
             </div>
           </div>
         )}

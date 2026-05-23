@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import emailjs from "@emailjs/browser";
 import { jobs } from "../data/jobs";
 
 function useDarkMode() {
@@ -33,11 +32,6 @@ const departmentColorsLight = {
   "Human Resources": "bg-pink-50 text-pink-600 border-pink-100",
   Sales: "bg-orange-50 text-orange-600 border-orange-100",
 };
-
-// ⚠️ REPLACE THESE WITH YOUR EMAILJS CREDENTIALS
-const EMAILJS_SERVICE_ID = "service_gst97yf";
-const EMAILJS_TEMPLATE_ID = "template_zlvx3al";
-const EMAILJS_PUBLIC_KEY = "oNwbKEmNd0lRB10Kn";
 
 export default function JobDetailPage() {
   const { id } = useParams();
@@ -110,31 +104,37 @@ export default function JobDetailPage() {
   setLoading(true);
 
   try {
-    await emailjs.send(
-      EMAILJS_SERVICE_ID,
-      EMAILJS_TEMPLATE_ID,
-      {
-        to_name: "HR Team",
-        from_name: form.name,
-        from_email: form.email,
-        phone: form.phone,
-        experience: form.experience,
-        current_company: form.currentCompany || "Not Provided",
-        notice_period: form.noticePeriod || "Not Specified",
-        current_salary: form.currentSalary || "Not Provided",
-        expected_salary: form.expectedSalary || "Not Provided",
-        cover_letter: form.coverLetter,
-        position: job.title,
-        department: job.department,
-        job_location: job.location,
-        resume_name: resumeName || "Not Uploaded",
-      },
-      EMAILJS_PUBLIC_KEY
-    );
+    const payload = new FormData();
+    payload.append("job_id", id);
+    payload.append("position", job.title);
+    payload.append("department", job.department);
+    payload.append("job_location", job.location);
+    payload.append("name", form.name);
+    payload.append("email", form.email);
+    payload.append("phone", form.phone);
+    payload.append("experience", form.experience);
+    payload.append("current_company", form.currentCompany);
+    payload.append("notice_period", form.noticePeriod);
+    payload.append("current_salary", form.currentSalary);
+    payload.append("expected_salary", form.expectedSalary);
+    payload.append("cover_letter", form.coverLetter);
+    payload.append("resume_name", resumeName || "Not Uploaded");
+    if (form.resume) payload.append("resume", form.resume);
+
+    const res = await fetch("/api/career-enquiries", {
+      method: "POST",
+      body: payload,
+    });
+    const data = await res.json();
+
+    if (!data.success) {
+      setError(data.error || "Failed to send. Please try again.");
+      return;
+    }
 
     setSubmitted(true);
   } catch (err) {
-    console.error("EmailJS error:", err);
+    console.error("Career enquiry error:", err);
     setError("Failed to send. Please try again.");
   } finally {
     setLoading(false);
