@@ -38,7 +38,6 @@ export async function POST(req) {
       user_latitude,
       user_longitude,
       location_map_url,
-      urgency, // 'normal' or 'urgent'
       service_description,
     } = await req.json();
  
@@ -62,7 +61,7 @@ export async function POST(req) {
     }
  
     const basePrice = serviceResult.rows[0].admin_base_price || serviceResult.rows[0].base_price || 199;
-    const visitFee = urgency === 'urgent' ? 149 : 0;
+    const visitFee = 0;
     const taxAmount = Math.round((basePrice * 18) / 100);
     const totalAmount = basePrice + visitFee + taxAmount;
  
@@ -76,7 +75,7 @@ export async function POST(req) {
         service_address, service_city, service_pincode, property_type,
         booking_date, booking_time, slot_type, time_slot_id,
         user_latitude, user_longitude, location_map_url,
-        urgency, service_description,
+        'normal', service_description,
         base_amount, visit_fee, tax_amount, total_amount,
         status, vendor_status, user_status, payment_status,
         created_at

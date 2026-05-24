@@ -247,7 +247,7 @@ export default function QuickServicesPricing({ isDarkMode }) {
         </h3>
 
         <div className="info-box">
-          💡 <strong>Base Price:</strong> This is the minimum charge for 30 minutes of service. Users can be charged additional for urgency (₹149) and taxes (18%).
+          💡 <strong>Base Price:</strong> This is the minimum charge for 15 minutes of service. Users are charged additional taxes (18%).
         </div>
 
         {loading ? (
@@ -260,7 +260,7 @@ export default function QuickServicesPricing({ isDarkMode }) {
               <thead>
                 <tr>
                   <th>Service Name</th>
-                  <th>Base Price (30 mins)</th>
+                  <th>Base Price (15 mins)</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
@@ -341,10 +341,10 @@ export default function QuickServicesPricing({ isDarkMode }) {
 
         <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--bg)', borderRadius: '6px', fontSize: '0.8125rem', color: 'var(--muted)' }}>
           <p style={{ marginBottom: '0.5rem' }}>
-            <strong>Note:</strong> Default base price is ₹199 for 30 minutes. You can customize per service.
+            <strong>Note:</strong> Default base price is ₹199 for 15 minutes. You can customize per service.
           </p>
           <p>
-            <strong>Formula:</strong> Base Price + Urgency Fee (₹0 or ₹149) + Tax (18%) = Total Charge
+            <strong>Formula:</strong> Base Price + Tax (18%) = Total Charge
           </p>
         </div>
       </div>

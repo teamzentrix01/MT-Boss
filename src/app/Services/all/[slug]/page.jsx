@@ -37,6 +37,9 @@ export default function ServiceDetailPage() {
   const [isDark,    setIsDark]    = useState(false);
   const [form,      setForm]      = useState({ name: "", phone: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [propertyImages, setPropertyImages] = useState([]);
 
   useEffect(() => {
     const check = () => setIsDark(document.documentElement.classList.contains("dark-mode"));
@@ -76,7 +79,7 @@ export default function ServiceDetailPage() {
     <main className={`min-h-screen flex flex-col items-center justify-center font-serif ${bg}`}>
       <p className="text-6xl mb-4">🏗️</p>
       <h1 className="text-2xl font-black uppercase tracking-tight mb-2">Service Not Found</h1>
-      <p className={`text-sm mb-6 ${muted}`}>This service doesn't exist or has been removed.</p>
+      <p className={`text-sm mb-6 ${muted}`}>This service doesn&apos;t exist or has been removed.</p>
       <button onClick={() => router.push("/Services/all")}
         className="px-6 py-3 bg-[#facc15] text-black font-black uppercase text-[9px] tracking-widest hover:bg-black hover:text-[#facc15] transition-all">
         ← Back to Services
@@ -110,6 +113,69 @@ export default function ServiceDetailPage() {
   const ctaHeading    = service.cta_heading    || `Start Your ${service.title} Project`;
   const phone         = service.contact_phone  || "+91 98765 43210";
   const email         = service.contact_email  || "hello@mtboss.in";
+
+  const handlePropertyImages = (files) => {
+    const selected = Array.from(files || []);
+    if (selected.length === 0) {
+      setPropertyImages([]);
+      setSubmitError("");
+      return;
+    }
+
+    if (selected.length > 10) {
+      setSubmitError("You can upload a maximum of 10 property images.");
+      setPropertyImages([]);
+      return;
+    }
+
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (selected.some(file => !allowed.includes(file.type))) {
+      setSubmitError("Please upload a JPG, PNG, or WEBP image.");
+      return;
+    }
+
+    if (selected.some(file => file.size > 5 * 1024 * 1024)) {
+      setSubmitError("Each property image must be under 5MB.");
+      return;
+    }
+
+    setSubmitError("");
+    setPropertyImages(selected);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitError("");
+    setSubmitting(true);
+
+    try {
+      const payload = new FormData();
+      payload.append("service_slug", slug);
+      payload.append("service_title", service.title);
+      payload.append("name", form.name);
+      payload.append("phone", form.phone);
+      payload.append("email", form.email);
+      payload.append("message", form.message);
+      propertyImages.forEach(file => payload.append("property_images", file));
+
+      const res = await fetch("/api/primary-service-enquiries", {
+        method: "POST",
+        body: payload,
+      });
+      const data = await res.json();
+
+      if (!data.success) {
+        setSubmitError(data.error || "Something went wrong. Please try again.");
+        return;
+      }
+
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <main className={`min-h-screen font-serif transition-colors duration-500 ${bg}`}>
@@ -235,7 +301,7 @@ export default function ServiceDetailPage() {
               <p className={`mt-2 text-xs ${muted}`}>Our team will contact you within 24 hours.</p>
             </div>
           ) : (
-            <form onSubmit={e => { e.preventDefault(); setSubmitted(true); }} className={`border p-6 space-y-4 ${card}`}>
+            <form onSubmit={handleSubmit} className={`border p-6 space-y-4 ${card}`}>
               {[
                 ["Full Name *",    "text",  "John Sharma",        "name"],
                 ["Phone Number *", "tel",   "+91 9876543210",     "phone"],
@@ -253,8 +319,27 @@ export default function ServiceDetailPage() {
                   placeholder={`Tell us about your ${service.title} project — location, scope, budget, timeline...`}
                   value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
               </div>
-              <button type="submit"
-                className="w-full py-3 bg-[#facc15] text-black font-black uppercase text-[9px] tracking-widest hover:bg-black hover:text-[#facc15] transition-all duration-300">
+              <div>
+                <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Property Images</label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/jpeg,image/png,image/webp"
+                  className={inp}
+                  onChange={e => handlePropertyImages(e.target.files)}
+                />
+                <p className={`mt-1.5 text-[10px] font-bold ${muted}`}>Optional. Upload 0 to 10 images, max 5MB each.</p>
+                {propertyImages.length > 0 && (
+                  <div className={`mt-2 text-[10px] font-bold ${muted}`}>
+                    {propertyImages.map(file => (
+                      <p key={`${file.name}-${file.size}`}>{file.name}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {submitError && <p className="text-xs font-bold text-red-500">{submitError}</p>}
+              <button type="submit" disabled={submitting}
+                className="w-full py-3 bg-[#facc15] text-black font-black uppercase text-[9px] tracking-widest hover:bg-black hover:text-[#facc15] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed">
                 Submit Enquiry →
               </button>
             </form>

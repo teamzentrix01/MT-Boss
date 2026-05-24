@@ -741,7 +741,7 @@ const handleSubmit = async (e) => {
                           />
                           <div>
                             <div className="vs-service-name">{service.label}</div>
-                            <div className="vs-service-price">₹{service.base_price}/30 min</div>
+                            <div className="vs-service-price">₹{service.base_price}/15 min</div>
                           </div>
                         </label>
                       ))}

@@ -22,11 +22,6 @@ function getTodayStr() {
 function BookingModal({ service, isDark, onClose, onSuccess }) {
   const router = useRouter();
 
-  // ✅ CRITICAL FIX: Null check for service
-  if (!service) {
-    return null;
-  }
-
   const [step, setStep] = useState(1); // 1 = details, 2 = confirm, 3 = success
   const [form, setForm] = useState({
     name: '',
@@ -39,7 +34,6 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
     date: '',
     timeSlot: '',
     description: '',
-    urgency: 'normal',
     latitude: null,
     longitude: null,
     locationUrl: '',
@@ -55,9 +49,8 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
 
   // ✅ FIX: Use admin_base_price or fallback to base_price
   const basePrice = service.admin_base_price || service.base_price || 199;
-  const visitFee = form.urgency === 'urgent' ? 149 : 0;
   const taxAmount = Math.round((basePrice * 18) / 100);
-  const totalAmount = basePrice + visitFee + taxAmount;
+  const totalAmount = basePrice + taxAmount;
 
   const overlay = isDark ? 'bg-black/80' : 'bg-zinc-900/60';
   const modal = isDark ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-white border-zinc-200 text-zinc-900';
@@ -156,7 +149,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
         user_latitude: form.latitude,
         user_longitude: form.longitude,
         location_map_url: form.locationUrl,
-        urgency: slotType === 'free' ? 'normal' : form.urgency,
+        urgency: 'normal',
         service_description: form.description,
       };
 
@@ -271,11 +264,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                 </div>
                 <div className="text-center">
                   <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Duration</p>
-                  <p className={`text-sm font-black ${isDark ? 'text-white' : 'text-zinc-900'}`}>30 mins</p>
-                </div>
-                <div className="text-right">
-                  <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Urgency</p>
-                  <p className={`text-sm font-black ${isDark ? 'text-white' : 'text-zinc-900'}`}>+₹{visitFee}</p>
+                  <p className={`text-sm font-black ${isDark ? 'text-white' : 'text-zinc-900'}`}>15 mins</p>
                 </div>
               </div>
 
@@ -470,32 +459,6 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                 </div>
               )}
 
-              {slotType === 'paid' && (
-                <Field label="Service Priority" isDark={isDark}>
-                  <div className="flex gap-3 mt-1">
-                    {[
-                      { val: 'normal', label: 'Normal', sub: 'Within 24 hrs • Free visit' },
-                      { val: 'urgent', label: 'Urgent', sub: 'Within 4 hrs • ₹149 extra' },
-                    ].map(({ val, label, sub }) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => set('urgency', val)}
-                        className={`flex-1 p-3 border text-left transition-all ${
-                          form.urgency === val
-                            ? isDark ? 'border-[#facc15] bg-[#facc15]/10' : 'border-zinc-900 bg-zinc-50'
-                            : isDark ? 'border-zinc-800' : 'border-zinc-200'
-                        }`}
-                      >
-                        <p className={`text-[10px] font-black uppercase tracking-widest ${
-                          form.urgency === val ? (isDark ? 'text-[#facc15]' : 'text-zinc-900') : muted
-                        }`}>{label}</p>
-                        <p className={`text-[10px] mt-0.5 ${muted}`}>{sub}</p>
-                      </button>
-                    ))}
-                  </div>
-                </Field>
-              )}
 
               <Field label="Describe the Problem (optional)" isDark={isDark}>
                 <textarea
@@ -531,7 +494,6 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
                   ['Property', form.propertyType],
                   ['Date', form.date],
                   ['Time Slot', form.timeSlot],
-                  ['Priority', form.urgency === 'urgent' ? '⚡ Urgent (within 4 hrs)' : 'Normal (within 24 hrs)'],
                   ['Issue', form.description || '—'],
                 ].map(([k, v]) => (
                   <div key={k} className="flex gap-4 px-4 py-2.5">
@@ -545,12 +507,11 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
               <div className={`border ${divider}`}>
                 {[
                   ['Service Charge', `₹${basePrice}`],
-                  ['Urgency Fee', form.urgency === 'urgent' ? `₹${visitFee}` : 'FREE'],
                   ['Tax (18%)', `₹${taxAmount}`],
                   ['Total Amount', `₹${totalAmount}`],
                 ].map(([k, v], i) => (
                   <div key={i} className={`flex justify-between px-4 py-2.5 border-b last:border-0 ${isDark ? 'border-zinc-800' : 'border-zinc-100'}`}>
-                    <p className={`text-xs ${i === 3 ? 'font-black' : 'font-medium'} ${muted}`}>{k}</p>
+                    <p className={`text-xs ${i === 2 ? 'font-black' : 'font-medium'} ${muted}`}>{k}</p>
                     <p className={`text-xs font-black ${v === 'FREE' ? 'text-green-500' : isDark ? 'text-white' : 'text-zinc-900'}`}>{v}</p>
                   </div>
                 ))}
@@ -559,7 +520,7 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
               {errors.submit && <p className="text-[10px] text-red-500 font-bold p-3 bg-red-50 border border-red-200">{errors.submit}</p>}
 
               <p className={`text-[10px] leading-relaxed ${muted}`}>
-                * Final charges will be confirmed after inspection. You only pay after the job is done & you're satisfied.
+                * Final charges will be confirmed after inspection. You only pay after the job is done &amp; you&apos;re satisfied.
               </p>
 
               <div className="flex gap-3">
@@ -586,10 +547,10 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
               <div className="text-6xl animate-bounce">✅</div>
               <p className="text-[#facc15] text-[9px] font-black uppercase tracking-[0.5em]">Booking Confirmed</p>
               <h3 className={`text-2xl font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-                We're on our way!
+                We&apos;re on our way!
               </h3>
               <p className={`text-xs leading-relaxed max-w-xs mx-auto ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                Your <strong>{service.label}</strong> booking has been placed successfully. Our team will call you at <strong>{form.phone}</strong> within 30 minutes to confirm.
+                Your <strong>{service.label}</strong> booking has been placed successfully. Our team will call you at <strong>{form.phone}</strong> within 15 minutes to confirm.
               </p>
 
               <div className={`border px-5 py-4 text-left space-y-1 ${isDark ? 'border-zinc-800' : 'border-zinc-100'}`}>
@@ -704,7 +665,7 @@ export default function AllQuickServicesPage() {
             Quick <span className="text-[#facc15]">Home</span> Services
           </h1>
           <p className={`text-sm max-w-xl mx-auto leading-relaxed ${muted}`}>
-            Hassle-free home maintenance with India's most trusted professionals. Select a service to book an appointment.
+            Hassle-free home maintenance with India&apos;s most trusted professionals. Select a service to book an appointment.
           </p>
         </div>
       </section>

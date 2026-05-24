@@ -738,11 +738,11 @@ export default function VendorDashboard() {
                 <div className="grid grid-cols-2 gap-2">
                   <button type="button" onClick={() => setIsQuickJob(true)}
                     className={`py-3 text-[10px] font-black uppercase border transition-all ${isQuickJob ? "bg-[#facc15] border-[#facc15] text-black" : isDark ? "border-zinc-700 text-zinc-400" : "border-zinc-300 text-zinc-500"}`}>
-                    ⚡ Within 30 Mins
+                    ⚡ Within 15 mins
                   </button>
                   <button type="button" onClick={() => setIsQuickJob(false)}
                     className={`py-3 text-[10px] font-black uppercase border transition-all ${!isQuickJob ? "bg-[#facc15] border-[#facc15] text-black" : isDark ? "border-zinc-700 text-zinc-400" : "border-zinc-300 text-zinc-500"}`}>
-                    🕐 More than 30 Mins
+                    🕐 More than 15 mins
                   </button>
                 </div>
               </div>
