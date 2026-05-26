@@ -35,9 +35,12 @@ export default function DashboardLayout({ children }) {
     { label: 'Properties',        icon: '🏠', tab: 'properties' },
     { label: 'Quick Services',    icon: '⚡', tab: 'quick-services' },
     { label: 'Primary Services',  icon: '⊞', tab: 'primary-services' },
+    { label: 'Professional Services', icon: '👔', tab: 'professionals' },
+    { label: 'Professional Enquiries', icon: '💬', tab: 'professional-enquiries' },
     { label: 'Agents',            icon: '👤', tab: 'agents' },
     { label: 'Franchises',        icon: '🏢', tab: 'franchises' },
     { label: 'Projects',          icon: '🏗️', tab: 'projects' },
+    { label: 'Shop Categories',   icon: '🛒', tab: 'shop-categories' },
   ];
 
   const handleLogout = () => {

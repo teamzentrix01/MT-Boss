@@ -4,6 +4,9 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import QuickServicesManager from '../components/QuickServicesManager';
 import PrimaryServicesManager from '../components/PrimaryServicesManager';
+import ProfessionalServicesManager from '../components/ProfessionalServicesManager';
+import ProfessionalEnquiriesManager from '../components/ProfessionalEnquiriesManager';
+import ShopCategoriesManager from '../components/ShopCategoriesManager';
 import PropertiesManager from '../components/PropertiesManager';
 import ProjectsManager from '../components/ProjectsManager';
 import VendorManagementAdmin from '../components/VendorManagementAdmin';
@@ -187,9 +190,12 @@ function AdminDashboard() {
     { id: 'properties', label: 'Properties', icon: '⌂' },
     { id: 'quick-services', label: 'Quick Services', icon: '⚡' },
     { id: 'primary-services', label: 'Primary Services', icon: '⊞' },
+    { id: 'professionals', label: 'Professional Services', icon: '👔' },
+    { id: 'professional-enquiries', label: 'Professional Enquiries', icon: '💬' },
     { id: 'agents', label: 'Agents', icon: '👤' },
     { id: 'franchises', label: 'Franchises', icon: '🏢' },
-    { id: 'projects', label: 'Projects', icon: '🏗️' },
+    { id: 'projects',         label: 'Projects',         icon: '🏗️' },
+    { id: 'shop-categories',  label: 'Shop Categories',  icon: '🛒' },
   ];
 
   if (loading) {
@@ -800,9 +806,12 @@ function AdminDashboard() {
           {activeTab === 'properties' && <PropertiesManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services' && <QuickServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'primary-services' && <PrimaryServicesManager isDarkMode={isDarkMode} />}
+          {activeTab === 'professionals' && <ProfessionalServicesManager isDarkMode={isDarkMode} />}
+          {activeTab === 'professional-enquiries' && <ProfessionalEnquiriesManager isDarkMode={isDarkMode} />}
           {activeTab === 'agents' && <AgentsManager />}
           {activeTab === 'franchises' && <FranchisesManager />}
           {activeTab === 'projects' && <ProjectsManager />}
+          {activeTab === 'shop-categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'free-slots' && <FreeTimeSlotsManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services-pricing' && <QuickServicesPricing isDarkMode={isDarkMode} />}

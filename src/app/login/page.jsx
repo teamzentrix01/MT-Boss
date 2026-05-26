@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [dark, setDark] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [redirectParam, setRedirectParam] = useState('');
 
   useEffect(() => {
     const html = document.documentElement;
@@ -18,6 +19,9 @@ export default function LoginPage() {
     update();
     const observer = new MutationObserver(update);
     observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+    // Read redirect param from URL
+    const params = new URLSearchParams(window.location.search);
+    setRedirectParam(params.get('redirect') || '');
     return () => observer.disconnect();
   }, []);
 
@@ -43,7 +47,12 @@ export default function LoginPage() {
         localStorage.setItem('user', JSON.stringify(data.user));
         document.cookie = `auth-token=${data.token}; path=/; max-age=604800`;
         window.dispatchEvent(new Event('userLoggedIn'));
-        router.push(data.redirectTo || '/userdashboard');
+        // Admin always goes to admin dashboard; regular users honour the redirect param
+        const destination =
+          data.user?.role === 'admin'
+            ? (data.redirectTo || '/dashboard')
+            : (redirectParam || data.redirectTo || '/userdashboard');
+        router.push(destination);
       } else {
         setError(data.error || data.message || 'Invalid credentials.');
       }
@@ -507,7 +516,10 @@ export default function LoginPage() {
             </div>
 
             <div className="lp-signup">
-              Don't have an account? <Link href="/signup">Create one</Link>
+              Don't have an account?{' '}
+              <Link href={redirectParam ? `/signup?redirect=${encodeURIComponent(redirectParam)}` : '/signup'}>
+                Create one
+              </Link>
             </div>
 
             {/* Vendor + Supplier links — compact */}

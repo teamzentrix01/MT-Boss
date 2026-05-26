@@ -66,7 +66,11 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
       } else if (token) {
         const userData = localStorage.getItem('user');
         if (userData) {
-          try { setUser({ ...JSON.parse(userData), role: 'user' }); }
+          try {
+            const parsed = JSON.parse(userData);
+            // Use the role stored in the user object (e.g. 'admin'), not a hardcoded 'user'
+            setUser({ ...parsed, role: parsed.role || 'user' });
+          }
           catch (e) { console.error('Error parsing user data:', e); }
         }
       } else {
@@ -117,6 +121,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   const serviceDropdown = [
     { label: "Quick Services", href: "/quick" },
     { label: "Primary Services", href: "/Services/all" },
+    { label: "Professional Services", href: "/Services/professionals" },
   ];
 
   const propertyDropdown = [

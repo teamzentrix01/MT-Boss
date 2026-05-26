@@ -19,11 +19,11 @@ function getTodayStr() {
 }
 
 // ─── Booking Modal ─────────────────────────────────────────────────────────────
-function BookingModal({ service, isDark, onClose, onSuccess }) {
+function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initialStep, initialSlotType, initialSelectedFreeSlot }) {
   const router = useRouter();
 
-  const [step, setStep] = useState(1); // 1 = details, 2 = confirm, 3 = success
-  const [form, setForm] = useState({
+  const [step, setStep] = useState(initialStep || 1); // 1 = details, 2 = confirm, 3 = success
+  const [form, setForm] = useState(initialForm || {
     name: '',
     phone: '',
     email: '',
@@ -42,9 +42,9 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
-  const [slotType, setSlotType] = useState('paid'); // 'free' | 'paid'
+  const [slotType, setSlotType] = useState(initialSlotType || 'paid'); // 'free' | 'paid'
   const [freeSlots, setFreeSlots] = useState([]);
-  const [selectedFreeSlot, setSelectedFreeSlot] = useState(null);
+  const [selectedFreeSlot, setSelectedFreeSlot] = useState(initialSelectedFreeSlot || null);
   const [slotsLoading, setSlotsLoading] = useState(false);
 
   // ✅ FIX: Use admin_base_price or fallback to base_price
@@ -124,6 +124,16 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
+        // Save the entire booking form before redirecting so it can be restored after login
+        try {
+          localStorage.setItem('pendingBooking', JSON.stringify({
+            service,
+            form,
+            slotType,
+            selectedFreeSlot,
+            step: 2,
+          }));
+        } catch (e) { /* localStorage might be full — proceed to login anyway */ }
         router.push('/login?redirect=/quick');
         return;
       }
@@ -149,7 +159,6 @@ function BookingModal({ service, isDark, onClose, onSuccess }) {
         user_latitude: form.latitude,
         user_longitude: form.longitude,
         location_map_url: form.locationUrl,
-        urgency: 'normal',
         service_description: form.description,
       };
 
@@ -605,6 +614,8 @@ export default function AllQuickServicesPage() {
   const [selectedService, setSelectedService] = useState(null);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Stores saved form data that was pending before the user logged in
+  const [pendingInitialData, setPendingInitialData] = useState(null);
 
   // Dark mode detection
   useEffect(() => {
@@ -632,6 +643,23 @@ export default function AllQuickServicesPage() {
     };
     fetchServices();
   }, []);
+
+  // After services load, check if there's a pending booking saved before login
+  useEffect(() => {
+    if (loading) return; // wait until services are ready
+    const token = localStorage.getItem('token');
+    const pendingStr = localStorage.getItem('pendingBooking');
+    if (pendingStr && token) {
+      try {
+        const pending = JSON.parse(pendingStr);
+        localStorage.removeItem('pendingBooking'); // consume it
+        setPendingInitialData(pending);
+        setSelectedService(pending.service); // re-open the modal with the saved service
+      } catch (e) {
+        localStorage.removeItem('pendingBooking');
+      }
+    }
+  }, [loading]);
 
   const bg = isDark ? 'bg-black text-white' : 'bg-white text-zinc-900';
   const border = isDark ? 'border-zinc-900' : 'border-zinc-100';
@@ -713,8 +741,12 @@ export default function AllQuickServicesPage() {
         <BookingModal
           service={selectedService}
           isDark={isDark}
-          onClose={() => setSelectedService(null)}
-          onSuccess={() => setSelectedService(null)}
+          onClose={() => { setSelectedService(null); setPendingInitialData(null); }}
+          onSuccess={() => { setSelectedService(null); setPendingInitialData(null); }}
+          initialForm={pendingInitialData?.form}
+          initialStep={pendingInitialData?.step}
+          initialSlotType={pendingInitialData?.slotType}
+          initialSelectedFreeSlot={pendingInitialData?.selectedFreeSlot}
         />
       )}
     </main>

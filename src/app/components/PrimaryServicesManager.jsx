@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 
-const emptyProcess  = { step: '', title: '', desc: '' };
-const emptyBenefit  = { icon: '', title: '', desc: '' };
-const emptyProject  = { name: '', type: '', area: '', status: 'Delivered', img: '' };
+const emptyProcess = { step: '', title: '', desc: '' };
+const emptyBenefit = { icon: '', title: '', desc: '' };
+const emptyProject = { name: '', type: '', area: '', status: 'Delivered', img: '' };
 
 const defaultForm = {
   slug: '', title: '', description: '', image: '',
@@ -27,6 +27,11 @@ export default function PrimaryServicesManager({ isDarkMode }) {
   const [success,   setSuccess]   = useState('');
   const [formData,  setFormData]  = useState(defaultForm);
 
+  // ── Drag & Drop state ──────────────────────────────────────────────────────
+  const [dragIndex,     setDragIndex]     = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+  const [orderSaving,   setOrderSaving]   = useState(false);
+
   useEffect(() => { fetchServices(); }, []);
 
   const fetchServices = async () => {
@@ -39,12 +44,66 @@ export default function PrimaryServicesManager({ isDarkMode }) {
     finally  { setLoading(false); }
   };
 
+  // ── Save reordered list to backend ─────────────────────────────────────────
+  const saveOrder = async (ordered) => {
+    setOrderSaving(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('token');
+      const items = ordered.map((s, i) => ({ id: s.id, sort_order: i + 1 }));
+      const res = await fetch('/api/primary-services', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ items }),
+      });
+      const data = await res.json();
+      if (data.success) setSuccess('Order saved — frontend updated!');
+      else setError('Failed to save order');
+    } catch { setError('Error saving order'); }
+    finally { setOrderSaving(false); }
+  };
+
+  // ── Drag handlers ──────────────────────────────────────────────────────────
+  const onDragStart = (e, index) => {
+    setDragIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => {
+      const el = e.currentTarget;
+      if (el) el.style.opacity = '0.4';
+    }, 0);
+  };
+  const onDragOver = (e, index) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (index !== dragIndex) setDragOverIndex(index);
+  };
+  const onDrop = async (e, dropIndex) => {
+    e.preventDefault();
+    if (dragIndex === null || dragIndex === dropIndex) {
+      setDragIndex(null); setDragOverIndex(null); return;
+    }
+    const arr = [...services];
+    const [dragged] = arr.splice(dragIndex, 1);
+    arr.splice(dropIndex, 0, dragged);
+    setServices(arr);
+    setDragIndex(null);
+    setDragOverIndex(null);
+    await saveOrder(arr);
+  };
+  const onDragEnd = (e) => {
+    if (e.currentTarget) e.currentTarget.style.opacity = '';
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+
+  // ── Form helpers ───────────────────────────────────────────────────────────
   const set       = (key, val) => setFormData(f => ({ ...f, [key]: val }));
   const addRow    = (field, tpl) => setFormData(f => ({ ...f, [field]: [...f[field], { ...tpl }] }));
   const removeRow = (field, idx) => setFormData(f => ({ ...f, [field]: f[field].filter((_, i) => i !== idx) }));
   const updateRow = (field, idx, key, val) =>
     setFormData(f => ({ ...f, [field]: f[field].map((r, i) => i === idx ? { ...r, [key]: val } : r) }));
 
+  // ── CRUD ───────────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); setSuccess('');
@@ -125,53 +184,36 @@ export default function PrimaryServicesManager({ isDarkMode }) {
         }
         .ps-root { color: var(--ps-text); }
 
-        /* Header */
         .ps-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.875rem; }
         .ps-title  { font-size:0.875rem; font-weight:700; }
         .ps-add-btn {
-          padding:0.35rem 0.875rem;
-          background:var(--ps-accent); color:#fff;
-          border:none; border-radius:6px;
-          font-size:0.8125rem; font-weight:600;
+          padding:0.35rem 0.875rem; background:var(--ps-accent); color:#fff;
+          border:none; border-radius:6px; font-size:0.8125rem; font-weight:600;
           cursor:pointer; transition:opacity .15s;
         }
-        .ps-add-btn.cancel {
-          background:none; color:var(--ps-muted);
-          border:1px solid var(--ps-border);
-        }
+        .ps-add-btn.cancel { background:none; color:var(--ps-muted); border:1px solid var(--ps-border); }
         .ps-add-btn:hover { opacity:.85; }
 
-        /* Alerts */
         .ps-alert { padding:0.5rem 0.875rem; border-radius:6px; border:1px solid; font-size:0.8125rem; margin-bottom:0.75rem; }
         .ps-alert-err { background:var(--ps-err-bg); color:var(--ps-err-tx); border-color:var(--ps-err-br); }
         .ps-alert-ok  { background:var(--ps-ok-bg);  color:var(--ps-ok-tx);  border-color:var(--ps-ok-br); }
 
-        /* Form panel */
         .ps-form-panel {
-          background:var(--ps-surface);
-          border:1px solid var(--ps-border);
-          border-radius:8px; overflow:hidden;
-          margin-bottom:0.875rem;
+          background:var(--ps-surface); border:1px solid var(--ps-border);
+          border-radius:8px; overflow:hidden; margin-bottom:0.875rem;
         }
         .ps-form-head { padding:0.875rem 1.25rem; border-bottom:1px solid var(--ps-border); }
         .ps-form-title { font-size:0.8125rem; font-weight:700; margin-bottom:0.625rem; }
-
-        /* Tabs inside form */
         .ps-tabs { display:flex; overflow-x:auto; gap:0; scrollbar-width:none; border-bottom:1px solid var(--ps-border); }
         .ps-tabs::-webkit-scrollbar { display:none; }
         .ps-tab {
-          padding:0.5rem 0.875rem;
-          font-size:0.75rem; font-weight:600;
-          border:none; background:none; cursor:pointer;
-          color:var(--ps-muted); white-space:nowrap;
-          border-bottom:2px solid transparent;
-          transition:color .15s, border-color .15s;
-          margin-bottom:-1px;
+          padding:0.5rem 0.875rem; font-size:0.75rem; font-weight:600;
+          border:none; background:none; cursor:pointer; color:var(--ps-muted); white-space:nowrap;
+          border-bottom:2px solid transparent; transition:color .15s, border-color .15s; margin-bottom:-1px;
         }
         .ps-tab:hover  { color:var(--ps-text); }
         .ps-tab.active { color:var(--ps-accent); border-bottom-color:var(--ps-accent); }
 
-        /* Form body */
         .ps-form-body { padding:1.25rem; }
         .ps-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
         .ps-grid-4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:0.625rem; }
@@ -179,140 +221,139 @@ export default function PrimaryServicesManager({ isDarkMode }) {
 
         .ps-field { margin-bottom:0.625rem; }
         .ps-field-label {
-          display:block; margin-bottom:0.3rem;
-          font-size:0.65rem; font-weight:700;
-          text-transform:uppercase; letter-spacing:.06em;
-          color:var(--ps-muted);
+          display:block; margin-bottom:0.3rem; font-size:0.65rem; font-weight:700;
+          text-transform:uppercase; letter-spacing:.06em; color:var(--ps-muted);
         }
         .ps-input, .ps-textarea, .ps-select {
-          width:100%; padding:0.4rem 0.75rem;
-          background:var(--ps-input-bg);
-          border:1px solid var(--ps-border);
-          border-radius:6px; color:var(--ps-text);
-          font-size:0.8125rem; outline:none;
-          transition:border-color .15s;
-          box-sizing:border-box;
+          width:100%; padding:0.4rem 0.75rem; background:var(--ps-input-bg);
+          border:1px solid var(--ps-border); border-radius:6px; color:var(--ps-text);
+          font-size:0.8125rem; outline:none; transition:border-color .15s; box-sizing:border-box;
         }
         .ps-input::placeholder, .ps-textarea::placeholder { color:var(--ps-muted); }
         .ps-input:focus, .ps-textarea:focus, .ps-select:focus { border-color:var(--ps-accent); }
         .ps-textarea { resize:none; }
 
-        /* Sub-card (process/benefit/project row) */
         .ps-sub-card {
-          background:var(--ps-sub-bg);
-          border:1px solid var(--ps-border);
-          border-radius:6px; padding:0.875rem;
-          margin-bottom:0.5rem;
+          background:var(--ps-sub-bg); border:1px solid var(--ps-border);
+          border-radius:6px; padding:0.875rem; margin-bottom:0.5rem;
         }
         .ps-sub-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem; }
         .ps-sub-label { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--ps-muted); }
         .ps-remove-btn { font-size:0.7rem; font-weight:700; color:var(--ps-del-tx); background:none; border:none; cursor:pointer; }
         .ps-remove-btn:hover { opacity:.7; }
 
-        /* Add row button */
         .ps-add-row-btn {
-          width:100%; padding:0.4rem;
-          background:none;
-          border:1px dashed var(--ps-border);
-          border-radius:6px; color:var(--ps-muted);
-          font-size:0.75rem; font-weight:600;
-          cursor:pointer; transition:all .15s;
-          margin-top:0.25rem;
+          width:100%; padding:0.4rem; background:none;
+          border:1px dashed var(--ps-border); border-radius:6px; color:var(--ps-muted);
+          font-size:0.75rem; font-weight:600; cursor:pointer; transition:all .15s; margin-top:0.25rem;
         }
         .ps-add-row-btn:hover { border-color:var(--ps-accent); color:var(--ps-accent); }
 
-        /* Image preview */
         .ps-img-preview {
           width:100%; height:120px; border-radius:6px; overflow:hidden;
           border:1px solid var(--ps-border); margin-top:0.5rem;
         }
         .ps-img-preview img { width:100%; height:100%; object-fit:cover; }
 
-        /* Form actions */
         .ps-form-actions {
-          display:flex; gap:0.5rem;
-          padding:0.875rem 1.25rem;
-          border-top:1px solid var(--ps-border);
-          background:var(--ps-surface);
+          display:flex; gap:0.5rem; padding:0.875rem 1.25rem;
+          border-top:1px solid var(--ps-border); background:var(--ps-surface);
         }
         .ps-submit-btn {
-          flex:1; padding:0.45rem 0.75rem;
-          background:var(--ps-accent); color:#fff;
-          border:none; border-radius:6px;
-          font-size:0.8125rem; font-weight:600;
+          flex:1; padding:0.45rem 0.75rem; background:var(--ps-accent); color:#fff;
+          border:none; border-radius:6px; font-size:0.8125rem; font-weight:600;
           cursor:pointer; transition:opacity .15s;
         }
         .ps-submit-btn:hover { opacity:.85; }
         .ps-cancel-btn {
-          flex:1; padding:0.45rem 0.75rem;
-          background:none; border:1px solid var(--ps-border);
-          color:var(--ps-muted); border-radius:6px;
-          font-size:0.8125rem; font-weight:600;
+          flex:1; padding:0.45rem 0.75rem; background:none; border:1px solid var(--ps-border);
+          color:var(--ps-muted); border-radius:6px; font-size:0.8125rem; font-weight:600;
           cursor:pointer; transition:all .15s;
         }
         .ps-cancel-btn:hover { border-color:var(--ps-text); color:var(--ps-text); }
 
-        /* Stat cards grid */
         .ps-stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; }
         .ps-stat-card {
-          background:var(--ps-sub-bg);
-          border:1px solid var(--ps-border);
-          border-radius:6px; padding:0.625rem;
+          background:var(--ps-sub-bg); border:1px solid var(--ps-border); border-radius:6px; padding:0.625rem;
         }
         .ps-stat-n { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--ps-muted); margin-bottom:0.375rem; }
 
-        /* Section divider label */
         .ps-section-label {
-          font-size:0.65rem; font-weight:700;
-          text-transform:uppercase; letter-spacing:.06em;
-          color:var(--ps-muted); margin:0.875rem 0 0.5rem;
-          padding-top:0.875rem;
-          border-top:1px solid var(--ps-border);
+          font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+          color:var(--ps-muted); margin:0.875rem 0 0.5rem; padding-top:0.875rem; border-top:1px solid var(--ps-border);
         }
         .ps-hint { font-size:0.75rem; color:var(--ps-muted); margin-bottom:0.625rem; }
 
-        /* Service cards grid */
+        /* ── Cards grid ──────────────────────────────────────────────────────── */
         .ps-cards-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:0.75rem; }
         @media(max-width:640px){ .ps-cards-grid { grid-template-columns:1fr; } }
 
         .ps-card {
-          background:var(--ps-surface);
-          border:1px solid var(--ps-border);
-          border-radius:8px; overflow:hidden;
-          transition:box-shadow .2s;
+          background:var(--ps-surface); border:1px solid var(--ps-border);
+          border-radius:8px; overflow:hidden; transition:box-shadow .2s, border-color .2s;
+          cursor: grab;
         }
-        .ps-card:hover { box-shadow:0 4px 20px rgba(0,0,0,.1); }
-        .ps-card-img { width:100%; height:140px; object-fit:cover; display:block; transition:transform .3s; }
+        .ps-card:active { cursor: grabbing; }
+        .ps-card:hover  { box-shadow:0 4px 20px rgba(0,0,0,.1); }
+
+        .ps-card-img      { width:100%; height:140px; object-fit:cover; display:block; transition:transform .3s; }
         .ps-card:hover .ps-card-img { transform:scale(1.03); }
-        .ps-card-img-wrap { overflow:hidden; background:var(--ps-bg); }
-        .ps-card-body { padding:0.875rem 1rem; }
-        .ps-card-slug { font-size:0.65rem; font-weight:700; color:var(--ps-muted); margin-bottom:0.25rem; }
-        .ps-card-title { font-size:0.875rem; font-weight:700; margin-bottom:0.25rem; }
-        .ps-card-desc { font-size:0.75rem; color:var(--ps-muted); line-height:1.5; margin-bottom:0.5rem;
-          display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-        .ps-card-tags { display:flex; flex-wrap:wrap; gap:0.25rem; margin-bottom:0.625rem; }
+        .ps-card-img-wrap { overflow:hidden; background:var(--ps-bg); position:relative; }
+
+        /* Drag handle overlay on the image */
+        .ps-card-drag-handle {
+          position: absolute; top: 0.5rem; right: 0.5rem;
+          width: 1.75rem; height: 1.75rem;
+          display: flex; align-items: center; justify-content: center;
+          background: rgba(0,0,0,0.55); border-radius: 4px;
+          color: #fff; font-size: 1rem;
+          opacity: 0; transition: opacity .2s;
+          cursor: grab; user-select: none;
+        }
+        .ps-card:hover .ps-card-drag-handle { opacity: 1; }
+        .ps-card-drag-handle:active { cursor: grabbing; }
+
+        .ps-card-body   { padding:0.875rem 1rem; }
+        .ps-card-slug   { font-size:0.65rem; font-weight:700; color:var(--ps-muted); margin-bottom:0.25rem; }
+        .ps-card-title  { font-size:0.875rem; font-weight:700; margin-bottom:0.25rem; }
+        .ps-card-desc   {
+          font-size:0.75rem; color:var(--ps-muted); line-height:1.5; margin-bottom:0.5rem;
+          display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+        }
+        .ps-card-tags   { display:flex; flex-wrap:wrap; gap:0.25rem; margin-bottom:0.625rem; }
         .ps-tag {
           padding:0.1rem 0.4rem; border-radius:4px;
           font-size:0.65rem; font-weight:700;
           background:var(--ps-tag-bg); color:var(--ps-tag-tx);
         }
         .ps-card-actions {
-          display:flex; gap:0.375rem;
-          padding-top:0.625rem; border-top:1px solid var(--ps-border);
+          display:flex; gap:0.375rem; padding-top:0.625rem; border-top:1px solid var(--ps-border);
         }
         .ps-card-btn {
-          flex:1; padding:0.3rem 0.5rem;
-          font-size:0.7rem; font-weight:700;
-          border-radius:5px; border:none; cursor:pointer;
-          transition:opacity .15s;
+          flex:1; padding:0.3rem 0.5rem; font-size:0.7rem; font-weight:700;
+          border-radius:5px; border:none; cursor:pointer; transition:opacity .15s;
         }
         .ps-card-btn:hover { opacity:.75; }
         .ps-card-btn-edit   { background:var(--ps-tag-bg); color:var(--ps-tag-tx); }
         .ps-card-btn-delete { background:var(--ps-del-bg); color:var(--ps-del-tx); }
 
-        .ps-empty { text-align:center; padding:2.5rem; font-size:0.8125rem; color:var(--ps-muted); grid-column:1/-1; }
+        .ps-empty  { text-align:center; padding:2.5rem; font-size:0.8125rem; color:var(--ps-muted); grid-column:1/-1; }
         .ps-footer { font-size:0.75rem; color:var(--ps-muted); margin-top:0.5rem; }
         .ps-footer strong { color:var(--ps-text); }
+
+        /* ── Drag & Drop states ─────────────────────────────────────────────── */
+        .ps-order-hint {
+          display:flex; align-items:center; gap:0.375rem;
+          font-size:0.72rem; color:var(--ps-muted);
+          margin-bottom:0.625rem; padding:0.3rem 0.5rem;
+          border:1px dashed var(--ps-border); border-radius:6px;
+          background:var(--ps-bg);
+        }
+        /* Card being dragged: handled via inline style in onDragStart */
+        .ps-card-drag-over {
+          outline: 2px solid var(--ps-accent);
+          outline-offset: -2px;
+        }
       `}</style>
 
       <div className="ps-root">
@@ -393,7 +434,6 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                       <textarea className="ps-textarea" rows={3} placeholder="Detailed paragraph shown in the About section…"
                         value={formData.about_body} onChange={e => set('about_body', e.target.value)} />
                     </div>
-
                     <div className="ps-section-label">4 Stat Cards</div>
                     <div className="ps-stat-grid">
                       {[1,2,3,4].map(n => (
@@ -406,7 +446,6 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                         </div>
                       ))}
                     </div>
-
                     <div className="ps-section-label">CTA &amp; Contact</div>
                     <div className="ps-field">
                       <label className="ps-field-label">CTA Heading</label>
@@ -519,7 +558,6 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                 )}
               </div>
 
-              {/* Form actions */}
               <div className="ps-form-actions">
                 <button type="submit" className="ps-submit-btn">
                   {editingId ? '💾 Update Service' : '✅ Add Service'}
@@ -530,12 +568,38 @@ export default function PrimaryServicesManager({ isDarkMode }) {
           </div>
         )}
 
-        {/* Service cards */}
+        {/* Drag hint */}
+        {services.length > 1 && !showForm && (
+          <div className="ps-order-hint">
+            <span style={{ fontSize: '1rem' }}>⠿</span>
+            Drag cards to reorder • order is saved instantly and reflects on the frontend
+            {orderSaving && (
+              <span style={{ marginLeft: 'auto', color: 'var(--ps-accent)', fontStyle: 'italic' }}>
+                saving…
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Service cards — draggable */}
         <div className="ps-cards-grid">
-          {services.length > 0 ? services.map(s => (
-            <div key={s.id} className="ps-card">
+          {services.length > 0 ? services.map((s, index) => (
+            <div
+              key={s.id}
+              className={[
+                'ps-card',
+                dragOverIndex === index && dragIndex !== index ? 'ps-card-drag-over' : '',
+              ].filter(Boolean).join(' ')}
+              draggable
+              onDragStart={e => onDragStart(e, index)}
+              onDragOver={e => onDragOver(e, index)}
+              onDrop={e => onDrop(e, index)}
+              onDragEnd={onDragEnd}
+            >
               <div className="ps-card-img-wrap">
                 <img className="ps-card-img" src={s.image} alt={s.title} />
+                {/* Drag handle visible on hover */}
+                <div className="ps-card-drag-handle" title="Drag to reorder">⠿</div>
               </div>
               <div className="ps-card-body">
                 <div className="ps-card-slug">/{s.slug}</div>
@@ -547,8 +611,10 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                   {Array.isArray(s.projects) && s.projects.length > 0 && <span className="ps-tag">{s.projects.length} Projects</span>}
                 </div>
                 <div className="ps-card-actions">
-                  <button className="ps-card-btn ps-card-btn-edit" onClick={() => handleEdit(s)}>✏ Edit</button>
-                  <button className="ps-card-btn ps-card-btn-delete" onClick={() => handleDelete(s.id)}>🗑 Delete</button>
+                  <button className="ps-card-btn ps-card-btn-edit"
+                    onClick={e => { e.stopPropagation(); handleEdit(s); }}>✏ Edit</button>
+                  <button className="ps-card-btn ps-card-btn-delete"
+                    onClick={e => { e.stopPropagation(); handleDelete(s.id); }}>🗑 Delete</button>
                 </div>
               </div>
             </div>

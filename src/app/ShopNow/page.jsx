@@ -55,86 +55,23 @@ export default function ShopPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", quantity: "", address: "", message: "" });
-  const [locationStatus, setLocationStatus] = useState('idle'); // idle | loading | success | error
+  const [locationStatus, setLocationStatus] = useState('idle');
   const [locationCoords, setLocationCoords] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
-  const categories = [
-    {
-      id: 1,
-      name: "CEMENT & CONCRETE",
-      emoji: "🧱",
-      label: "HIGH VOLUME",
-      labelColor: "blue",
-      priceRange: "₹380–450 / bag",
-      unit: "per 50kg bag",
-    },
-    {
-      id: 2,
-      name: "STEEL & IRON",
-      emoji: "⚙️",
-      label: "ALWAYS NEEDED",
-      labelColor: "yellow",
-      priceRange: "₹55–65 / kg",
-      unit: "per kilogram",
-    },
-    {
-      id: 3,
-      name: "WOOD & TIMBER",
-      emoji: "🪵",
-      label: "GROWING",
-      labelColor: "green",
-      priceRange: "₹400–800 / sheet",
-      unit: "per sheet",
-    },
-    {
-      id: 4,
-      name: "HARDWARE & FIXTURES",
-      emoji: "🔧",
-      label: "STEADY DEMAND",
-      labelColor: "purple",
-      priceRange: "₹50–500 / unit",
-      unit: "per unit",
-    },
-    {
-      id: 5,
-      name: "GLASS & ALUMINIUM",
-      emoji: "🪟",
-      label: "SPECIALIZED",
-      labelColor: "pink",
-      priceRange: "₹150–400 / SFT",
-      unit: "per sq. ft.",
-    },
-    {
-      id: 6,
-      name: "PAINTS & CHEMICALS",
-      emoji: "🎨",
-      label: "REGULAR SUPPLY",
-      labelColor: "orange",
-      priceRange: "₹800–1500 / ltr",
-      unit: "per litre",
-    },
-    {
-      id: 7,
-      name: "AGGREGATES & SAND",
-      emoji: "🪨",
-      label: "BULK SUPPLY",
-      labelColor: "amber",
-      priceRange: "₹35–80 / CFT",
-      unit: "per cu. ft.",
-    },
-    {
-      id: 8,
-      name: "ELECTRICAL MATERIALS",
-      emoji: "💡",
-      label: "HIGH DEMAND",
-      labelColor: "cyan",
-      priceRange: "₹10–250 / unit",
-      unit: "per unit",
-    },
-  ];
+  // ── fetch categories from DB ──────────────────────────────────────────────
+  const [categories, setCategories] = useState([]);
+  const [catsLoading, setCatsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/shop-categories')
+      .then(r => r.json())
+      .then(d => { if (d.success) setCategories(d.data); })
+      .catch(console.error)
+      .finally(() => setCatsLoading(false));
+  }, []);
 
   const labelStyles = {
     blue:   { bg: isDarkMode ? "bg-blue-900/40"   : "bg-blue-50",   text: isDarkMode ? "text-blue-300"   : "text-blue-600",   border: isDarkMode ? "border-blue-700"   : "border-blue-200"   },
@@ -200,7 +137,7 @@ export default function ShopPage() {
           user_phone: formData.phone,
           user_email: formData.email,
           category_name: selectedCategory?.name,
-          category_emoji: selectedCategory?.emoji,
+          category_emoji: selectedCategory?.image || selectedCategory?.emoji,
           quantity_text: formData.quantity,
           delivery_address: formData.address,
           latitude: locationCoords?.latitude || null,
@@ -237,7 +174,7 @@ export default function ShopPage() {
 
   const stats = [
     { icon: <Package size={18} />, value: "500+", label: "Products" },
-    { icon: <TrendingUp size={18} />, value: "8", label: "Categories" },
+    { icon: <TrendingUp size={18} />, value: catsLoading ? "…" : `${categories.length}`, label: "Categories" },
     { icon: <Zap size={18} />, value: "24hr", label: "Response" },
     { icon: <Star size={18} />, value: "4.9★", label: "Rated" },
   ];
@@ -280,44 +217,92 @@ export default function ShopPage() {
           <p className={`mt-2 text-sm ${subText}`}>Click any category to get a quote</p>
         </div>
 
+        {catsLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="flex flex-col items-center gap-3">
+              <svg className="w-8 h-8 animate-spin text-yellow-400" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+              </svg>
+              <p className={`text-sm font-semibold ${subText} uppercase tracking-widest`}>Loading categories…</p>
+            </div>
+          </div>
+        ) : categories.length === 0 ? (
+          <div className={`text-center py-20 border ${cardBorder} rounded-xl`}>
+            <div className="text-5xl mb-4">🛒</div>
+            <p className={`text-base font-bold ${headText} mb-2`}>No categories available yet</p>
+            <p className={`text-sm ${subText}`}>Check back soon — categories are being configured.</p>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {categories.map((cat) => {
-            const style = labelStyles[cat.labelColor];
+            const style = labelStyles[cat.label_color] || labelStyles['yellow'];
             return (
               <div
                 key={cat.id}
-                className={`group relative ${cardBg} border ${cardBorder} rounded-xl p-5 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer`}
+                className={`group relative ${cardBg} border ${cardBorder} rounded-xl flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden`}
                 onClick={() => handleEnquiry(cat)}
               >
-                {/* Label */}
-                <span className={`inline-block self-start text-[10px] font-extrabold tracking-widest uppercase px-2.5 py-1 rounded-md mb-4 border ${style.bg} ${style.text} ${style.border}`}>
-                  {cat.label}
-                </span>
+                {/* Image / Emoji hero */}
+                {cat.image ? (
+                  <div className="relative w-full overflow-hidden" style={{ height: '160px' }}>
+                    <img
+                      src={cat.image}
+                      alt={cat.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {/* overlay gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    {/* label on image */}
+                    {cat.label && (
+                      <span className={`absolute top-3 left-3 text-[9px] font-extrabold tracking-widest uppercase px-2 py-1 rounded border ${style.bg} ${style.text} ${style.border}`}>
+                        {cat.label}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className={`relative flex flex-col items-start justify-end p-4 ${isDarkMode ? 'bg-zinc-800' : 'bg-gray-100'}`} style={{ height: '120px' }}>
+                    <div className="text-6xl mb-1 group-hover:scale-110 transition-transform duration-300">
+                      {cat.emoji}
+                    </div>
+                    {cat.label && (
+                      <span className={`text-[9px] font-extrabold tracking-widest uppercase px-2 py-1 rounded border ${style.bg} ${style.text} ${style.border}`}>
+                        {cat.label}
+                      </span>
+                    )}
+                  </div>
+                )}
 
-                {/* Emoji — larger size to fill space left by removed description */}
-                <div className="text-7xl mb-5 group-hover:scale-110 transition-transform duration-300 w-fit">
-                  {cat.emoji}
+                {/* Card body */}
+                <div className="flex flex-col flex-1 p-4">
+                  {/* label below image (only if image present, label shown inline above) */}
+                  {cat.image && cat.label && (
+                    <span className={`inline-block self-start text-[9px] font-extrabold tracking-widest uppercase px-2 py-1 rounded border mb-3 ${style.bg} ${style.text} ${style.border}`} style={{ display: 'none' }} />
+                  )}
+
+                  {/* Name */}
+                  <h3 className={`text-sm font-extrabold ${headText} mb-3 leading-snug tracking-wide flex-1`}>
+                    {cat.name}
+                  </h3>
+
+                  {/* Price */}
+                  {(cat.price_range || cat.unit) && (
+                    <div className={`border-t ${divider} pt-3 mb-3`}>
+                      {cat.price_range && <p className={`text-sm font-bold ${headText}`}>{cat.price_range}</p>}
+                      {cat.unit && <p className={`text-[11px] ${subText}`}>{cat.unit}</p>}
+                    </div>
+                  )}
+
+                  {/* CTA */}
+                  <button className="w-full flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 text-xs font-bold py-2.5 px-4 rounded-lg transition-all duration-200 group-hover:shadow-md">
+                    Get Quote <ArrowRight size={13} />
+                  </button>
                 </div>
-
-                {/* Name */}
-                <h3 className={`text-sm font-extrabold ${headText} mb-4 leading-snug tracking-wide flex-1`}>
-                  {cat.name}
-                </h3>
-
-                {/* Price */}
-                <div className={`border-t ${divider} pt-3 mb-4`}>
-                  <p className={`text-sm font-bold ${headText}`}>{cat.priceRange}</p>
-                  <p className={`text-[11px] ${subText}`}>{cat.unit}</p>
-                </div>
-
-                {/* CTA */}
-                <button className="w-full flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 text-xs font-bold py-2.5 px-4 rounded-lg transition-all duration-200 group-hover:shadow-md">
-                  Get Quote <ArrowRight size={13} />
-                </button>
               </div>
             );
           })}
         </div>
+        )}
       </div>
 
       {/* Trust Bar */}
@@ -339,7 +324,10 @@ export default function ShopPage() {
               <div>
                 <p className={`text-xs font-bold tracking-widest uppercase text-yellow-500 mb-0.5`}>Request Quote</p>
                 <h2 className={`text-lg font-extrabold ${headText} flex items-center gap-2`}>
-                  {selectedCategory?.emoji} {selectedCategory?.name}
+                  {selectedCategory?.image
+                    ? <img src={selectedCategory.image} alt="" style={{ width: 28, height: 28, objectFit: 'cover', borderRadius: 4 }} />
+                    : selectedCategory?.emoji}
+                  {selectedCategory?.name}
                 </h2>
               </div>
               <button
@@ -480,10 +468,12 @@ export default function ShopPage() {
                 </div>
 
                 {/* Category Info */}
-                <div className={`rounded-lg px-3 py-2 border flex items-center justify-between ${isDarkMode ? "bg-zinc-800 border-zinc-700" : "bg-yellow-50 border-yellow-100"}`}>
-                  <span className={`text-[10px] font-bold ${subText}`}>Price Range</span>
-                  <span className={`text-xs font-extrabold ${isDarkMode ? "text-yellow-300" : "text-yellow-600"}`}>{selectedCategory?.priceRange}</span>
-                </div>
+                {selectedCategory?.price_range && (
+                  <div className={`rounded-lg px-3 py-2 border flex items-center justify-between ${isDarkMode ? "bg-zinc-800 border-zinc-700" : "bg-yellow-50 border-yellow-100"}`}>
+                    <span className={`text-[10px] font-bold ${subText}`}>Price Range</span>
+                    <span className={`text-xs font-extrabold ${isDarkMode ? "text-yellow-300" : "text-yellow-600"}`}>{selectedCategory.price_range}</span>
+                  </div>
+                )}
 
                 {submitError && (
                   <div className="text-xs text-red-500 font-semibold bg-red-50 border border-red-200 rounded-lg px-3 py-2">

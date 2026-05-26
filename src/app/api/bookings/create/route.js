@@ -75,19 +75,19 @@ export async function POST(req) {
         service_address, service_city, service_pincode, property_type,
         booking_date, booking_time, slot_type, time_slot_id,
         user_latitude, user_longitude, location_map_url,
-        'normal', service_description,
+        service_description,
         base_amount, visit_fee, tax_amount, total_amount,
         status, vendor_status, user_status, payment_status,
         created_at
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, NOW()
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, NOW()
       ) RETURNING id, booking_reference, total_amount`,
       [
         bookingReference, userId, quick_service_id, user_name, user_phone, user_email,
         service_address, service_city, service_pincode, property_type,
         booking_date, booking_time, slot_type, time_slot_id,
         user_latitude, user_longitude, location_map_url,
-        urgency, service_description,
+        service_description,
         basePrice, visitFee, taxAmount, totalAmount,
         'WAITING_FOR_VENDOR_ACCEPTANCE', null, 'PENDING', 'PENDING'
       ]

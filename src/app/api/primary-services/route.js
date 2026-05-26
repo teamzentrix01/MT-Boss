@@ -18,9 +18,15 @@ export async function GET(req) {
       return NextResponse.json({ success: true, data: result.rows[0] });
     }
 
-    const result = await pool.query(
-      `SELECT * FROM primary_services ORDER BY id ASC`
-    );
+    // Order by sort_order if the column exists, fall back to id
+    let result;
+    try {
+      result = await pool.query(
+        `SELECT * FROM primary_services ORDER BY COALESCE(sort_order, 0) ASC, id ASC`
+      );
+    } catch {
+      result = await pool.query(`SELECT * FROM primary_services ORDER BY id ASC`);
+    }
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('Error fetching primary services:', error);
@@ -129,6 +135,46 @@ export async function PUT(req) {
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
     console.error('Error updating primary service:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
+}
+
+// PATCH - Bulk reorder primary services
+export async function PATCH(req) {
+  try {
+    const token = req.headers.get('Authorization')?.split(' ')[1];
+    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const { items } = await req.json(); // [{ id, sort_order }, ...]
+    if (!Array.isArray(items) || items.length === 0) {
+      return NextResponse.json({ error: 'items array required' }, { status: 400 });
+    }
+
+    // Ensure sort_order column exists (safe to run repeatedly)
+    await pool.query(
+      `ALTER TABLE primary_services ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0`
+    );
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      for (const { id, sort_order } of items) {
+        await client.query(
+          `UPDATE primary_services SET sort_order = $1 WHERE id = $2`,
+          [sort_order, id]
+        );
+      }
+      await client.query('COMMIT');
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error reordering primary services:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

@@ -13,6 +13,7 @@ export default function SignupPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [dark, setDark] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [redirectParam, setRedirectParam] = useState('');
 
   useEffect(() => {
     const html = document.documentElement;
@@ -20,6 +21,9 @@ export default function SignupPage() {
     update();
     const observer = new MutationObserver(update);
     observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+    // Read redirect param from URL so we can pass it through after signup
+    const params = new URLSearchParams(window.location.search);
+    setRedirectParam(params.get('redirect') || '');
     return () => observer.disconnect();
   }, []);
 
@@ -46,7 +50,10 @@ export default function SignupPage() {
       const data = await res.json();
       if (!res.ok) return setError(data.error || 'Signup failed');
       setSuccess('Account created! Redirecting to login...');
-      setTimeout(() => router.push('/login'), 1800);
+      const loginUrl = redirectParam
+        ? `/login?redirect=${encodeURIComponent(redirectParam)}`
+        : '/login';
+      setTimeout(() => router.push(loginUrl), 1800);
     } catch {
       setError('An error occurred. Please try again.');
     } finally {
@@ -194,7 +201,13 @@ export default function SignupPage() {
           </form>
 
           <div style={{ textAlign: 'center', fontSize: '0.8rem', color: muted }}>
-            Already have an account? <Link href="/login" style={{ color: '#facc15', fontWeight: 600, textDecoration: 'none' }}>Sign in</Link>
+            Already have an account?{' '}
+            <Link
+              href={redirectParam ? `/login?redirect=${encodeURIComponent(redirectParam)}` : '/login'}
+              style={{ color: '#facc15', fontWeight: 600, textDecoration: 'none' }}
+            >
+              Sign in
+            </Link>
           </div>
 
           <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: `1px solid ${border}`, textAlign: 'center' }}>
