@@ -91,24 +91,31 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   }, [pathname]); // re-check on every route change too
 
   const handleLogout = () => {
-    if (user?.role === 'vendor') {
-      localStorage.removeItem('vendor-token');
-      localStorage.removeItem('vendor');
-      document.cookie = 'vendor-auth-token=; path=/; max-age=0';
-    } else if (user?.role === 'admin') {
-      localStorage.removeItem('admin-token');
-      localStorage.removeItem('admin');
-      document.cookie = 'admin-auth-token=; path=/; max-age=0';
-    } else if (user?.role === 'supplier') {
-      localStorage.removeItem('supplier-token');
-      localStorage.removeItem('supplier');
-    } else {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      document.cookie = 'auth-token=; path=/; max-age=0';
-    }
+    const logoutRole = user?.role;
+
+    [
+      'token',
+      'user',
+      'admin-token',
+      'admin',
+      'vendor-token',
+      'vendor',
+      'supplier-token',
+      'supplier',
+    ].forEach((key) => localStorage.removeItem(key));
+
+    [
+      'auth-token',
+      'admin-auth-token',
+      'vendor-auth-token',
+      'supplier-auth-token',
+    ].forEach((cookieName) => {
+      document.cookie = `${cookieName}=; path=/; max-age=0`;
+    });
+
     setUser(null);
-    router.push(user?.role === 'supplier' ? '/supplier/login' : '/login');
+    window.dispatchEvent(new Event('userLoggedIn'));
+    router.push(logoutRole === 'supplier' ? '/supplier/login' : '/login');
   };
 
   const handleDashboard = () => {
@@ -122,6 +129,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     { label: "Quick Services", href: "/quick" },
     { label: "Primary Services", href: "/Services/all" },
     { label: "Professional Services", href: "/Services/professionals" },
+    { label: "Cost Calculator", href: "/calculator" },
   ];
 
   const propertyDropdown = [

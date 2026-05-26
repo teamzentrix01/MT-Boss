@@ -16,6 +16,7 @@ import AgentsManager from './agents/page';
 import BookingsManager from '../components/BookingsManager';
 import FreeTimeSlotsManager from '../components/FreeTimeSlotsManager';
 import QuickServicesPricing from '../components/QuickServicesPricing';
+import CalculatorManager from '../components/CalculatorManager';
 
 function AdminDashboard() {
   const searchParams = useSearchParams();
@@ -182,6 +183,7 @@ function AdminDashboard() {
     { id: 'bookings', label: 'Service Bookings', icon: '📝' },
     { id: 'free-slots', label: 'Free Time Slots', icon: '📅' },
     { id: 'quick-services-pricing', label: 'Service Pricing', icon: '💰' },
+    { id: 'calculator', label: 'Calculator', icon: '🧮' },
     { id: 'submissions', label: 'Contact Forms', icon: '✉' },
     { id: 'primary-service-enquiries', label: 'Primary Services Enquiry', icon: '✉' },
     { id: 'career-enquiries', label: 'Career Enquiry', icon: '✉' },
@@ -815,6 +817,7 @@ function AdminDashboard() {
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'free-slots' && <FreeTimeSlotsManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services-pricing' && <QuickServicesPricing isDarkMode={isDarkMode} />}
+          {activeTab === 'calculator' && <CalculatorManager isDarkMode={isDarkMode} />}
 
         </div>
 

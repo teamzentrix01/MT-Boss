@@ -120,10 +120,75 @@ export default function QuickServices() {
           animation: qs-pulse 1.5s ease infinite;
           background: ${isDark ? '#27272a' : '#f3f4f6'};
         }
+        .qs-calculator-strip {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          margin-bottom: 2rem;
+          padding: 1rem 1.25rem;
+          border: 1px solid ${isDark ? '#3f3f46' : '#f3f4f6'};
+          background: ${isDark ? '#18181b' : '#fafafa'};
+          border-radius: 8px;
+        }
+        .qs-calculator-title {
+          margin: 0;
+          font-size: 0.95rem;
+          font-weight: 900;
+          color: ${isDark ? '#ffffff' : '#18181b'};
+        }
+        .qs-calculator-text {
+          margin: 0.2rem 0 0;
+          font-size: 0.78rem;
+          color: ${isDark ? '#a1a1aa' : '#52525b'};
+          line-height: 1.45;
+        }
+        .qs-calculator-btn {
+          flex-shrink: 0;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          padding: 0.7rem 1rem;
+          border-radius: 999px;
+          background: #facc15;
+          color: #000;
+          font-size: 0.75rem;
+          font-weight: 900;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          text-decoration: none;
+          transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .qs-calculator-btn:hover {
+          background: #eab308;
+          transform: translateY(-1px);
+        }
+        @media(max-width: 640px) {
+          .qs-calculator-strip {
+            align-items: flex-start;
+            flex-direction: column;
+          }
+          .qs-calculator-btn {
+            width: 100%;
+            justify-content: center;
+          }
+        }
       `}</style>
 
       <section className={`transition-colors duration-500 py-12 px-4 sm:px-6 ${isDark ? 'bg-black' : 'bg-white'}`}>
         <div className="max-w-6xl mx-auto">
+          <div className="qs-calculator-strip">
+            <div>
+              <h3 className="qs-calculator-title">Construction Cost Calculator</h3>
+              <p className="qs-calculator-text">Select products and get an instant quotation before booking home services.</p>
+            </div>
+            <a href="/calculator" className="qs-calculator-btn">
+              Calculate Now
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+          </div>
 
           {/* Header */}
           <div

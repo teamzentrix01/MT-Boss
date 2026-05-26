@@ -7,15 +7,22 @@ import { useRouter } from 'next/navigation';
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() =>
+    typeof document !== 'undefined' && document.documentElement.classList.contains('dark-mode')
+  );
+  const [user] = useState(() => {
+    if (typeof localStorage === 'undefined') return {};
+    try {
+      return JSON.parse(localStorage.getItem('user') || '{}');
+    } catch {
+      return {};
+    }
+  });
   const router = useRouter();
 
   // Detect dark mode from navbar
   useEffect(() => {
     const html = document.documentElement;
-    const isDark = html.classList.contains('dark-mode');
-    setIsDarkMode(isDark);
-
     const observer = new MutationObserver(() => {
       setIsDarkMode(html.classList.contains('dark-mode'));
     });
@@ -28,6 +35,7 @@ export default function DashboardLayout({ children }) {
     { label: 'Service Bookings',  icon: '📝', tab: 'bookings' },
     { label: 'Free Time Slots',   icon: '📅', tab: 'free-slots' },
     { label: 'Service Pricing',   icon: '💰', tab: 'quick-services-pricing' },
+    { label: 'Calculator',        icon: '🧮', tab: 'calculator' },
     { label: 'Contact Forms',     icon: '✉️', tab: 'submissions' },
     { label: 'Primary Services Enquiry', icon: '✉️', tab: 'primary-service-enquiries' },
     { label: 'Career Enquiry',    icon: '✉️', tab: 'career-enquiries' },
@@ -48,13 +56,6 @@ export default function DashboardLayout({ children }) {
     localStorage.removeItem('user');
     router.push('/login');
   };
-
-  const [user, setUser] = useState({});
-  useEffect(() => {
-    try {
-      setUser(JSON.parse(localStorage.getItem('user') || '{}'));
-    } catch { setUser({}); }
-  }, []);
 
   const bgClass = isDarkMode ? 'bg-black' : 'bg-white';
   const textPrimary = isDarkMode ? 'text-white' : 'text-black';
