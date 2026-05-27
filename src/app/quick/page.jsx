@@ -268,7 +268,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
               {/* Service Info Bar */}
               <div className={`flex items-center justify-between px-4 py-3 border ${isDark ? 'border-zinc-800 bg-zinc-900' : 'border-zinc-100 bg-zinc-50'}`}>
                 <div>
-                  <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Base Price</p>
+                  <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Visit Charge</p>
                   <p className="text-sm font-black text-[#facc15]">₹{basePrice}</p>
                 </div>
                 <div className="text-center">
@@ -515,7 +515,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
               <SectionTitle isDark={isDark}>Charges Breakdown</SectionTitle>
               <div className={`border ${divider}`}>
                 {[
-                  ['Service Charge', `₹${basePrice}`],
+                  ['Visit Charge', `₹${basePrice}`],
                   ['Tax (18%)', `₹${taxAmount}`],
                   ['Total Amount', `₹${totalAmount}`],
                 ].map(([k, v], i) => (
