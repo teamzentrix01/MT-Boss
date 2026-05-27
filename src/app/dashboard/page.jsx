@@ -17,6 +17,7 @@ import BookingsManager from '../components/BookingsManager';
 import FreeTimeSlotsManager from '../components/FreeTimeSlotsManager';
 import QuickServicesPricing from '../components/QuickServicesPricing';
 import CalculatorManager from '../components/CalculatorManager';
+import RevenueManager from '../components/RevenueManager';
 
 function AdminDashboard() {
   const searchParams = useSearchParams();
@@ -181,6 +182,7 @@ function AdminDashboard() {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: '▦' },
     { id: 'bookings', label: 'Service Bookings', icon: '📝' },
+    { id: 'revenue',  label: 'Revenue & Earnings', icon: '💸' },
     { id: 'free-slots', label: 'Free Time Slots', icon: '📅' },
     { id: 'quick-services-pricing', label: 'Service Pricing', icon: '💰' },
     { id: 'calculator', label: 'Calculator', icon: '🧮' },
@@ -815,6 +817,7 @@ function AdminDashboard() {
           {activeTab === 'projects' && <ProjectsManager />}
           {activeTab === 'shop-categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
+          {activeTab === 'revenue' && <RevenueManager isDarkMode={isDarkMode} />}
           {activeTab === 'free-slots' && <FreeTimeSlotsManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services-pricing' && <QuickServicesPricing isDarkMode={isDarkMode} />}
           {activeTab === 'calculator' && <CalculatorManager isDarkMode={isDarkMode} />}

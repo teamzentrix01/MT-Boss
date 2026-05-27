@@ -33,6 +33,7 @@ export default function DashboardLayout({ children }) {
   const menuItems = [
     { label: 'Overview',          icon: '📊', tab: '' },
     { label: 'Service Bookings',  icon: '📝', tab: 'bookings' },
+    { label: 'Revenue & Earnings',icon: '💸', tab: 'revenue' },
     { label: 'Free Time Slots',   icon: '📅', tab: 'free-slots' },
     { label: 'Service Pricing',   icon: '💰', tab: 'quick-services-pricing' },
     { label: 'Calculator',        icon: '🧮', tab: 'calculator' },
