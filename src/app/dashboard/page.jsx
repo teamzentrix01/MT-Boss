@@ -10,7 +10,7 @@ import ShopCategoriesManager from '../components/ShopCategoriesManager';
 import PropertiesManager from '../components/PropertiesManager';
 import ProjectsManager from '../components/ProjectsManager';
 import VendorManagementAdmin from '../components/VendorManagementAdmin';
-import SupplierManagementAdmin from '../components/SupplierManagementAdmin';
+import SupplierHubAdmin from '../components/SupplierHubAdmin';
 import FranchisesManager from './franchises/page';
 import AgentsManager from './agents/page';
 import BookingsManager from '../components/BookingsManager';
@@ -180,26 +180,26 @@ function AdminDashboard() {
     return map[status] || 'status-new';
   };
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: '▦' },
-    { id: 'bookings', label: 'Service Bookings', icon: '📝' },
-    { id: 'revenue',  label: 'Revenue & Earnings', icon: '💸' },
-    { id: 'free-slots', label: 'Free Time Slots', icon: '📅' },
-    { id: 'quick-services-pricing', label: 'Service Pricing', icon: '💰' },
-    { id: 'calculator', label: 'Calculator', icon: '🧮' },
-    { id: 'submissions', label: 'Contact Forms', icon: '✉' },
-    { id: 'primary-service-enquiries', label: 'Primary Services Enquiry', icon: '✉' },
-    { id: 'career-enquiries', label: 'Career Enquiry', icon: '✉' },
-    { id: 'vendors', label: 'Vendors', icon: '🏪' },
-    { id: 'suppliers', label: 'Suppliers', icon: '📦' },
-    { id: 'properties', label: 'Properties', icon: '⌂' },
-    { id: 'quick-services', label: 'Quick Services', icon: '⚡' },
-    { id: 'primary-services', label: 'Primary Services', icon: '⊞' },
-    { id: 'professionals', label: 'Professional Services', icon: '👔' },
-    { id: 'professional-enquiries', label: 'Professional Enquiries', icon: '💬' },
-    { id: 'agents', label: 'Agents', icon: '👤' },
-    { id: 'franchises', label: 'Franchises', icon: '🏢' },
-    { id: 'projects',         label: 'Projects',         icon: '🏗️' },
-    { id: 'shop-categories',  label: 'Shop Categories',  icon: '🛒' },
+    { id: 'overview',                   label: 'Overview',                  icon: '▦'  },
+    { id: 'agents',                     label: 'Agents',                    icon: '👤' },
+    { id: 'calculator',                 label: 'Calculator',                icon: '🧮' },
+    { id: 'career-enquiries',           label: 'Career Enquiry',            icon: '✉'  },
+    { id: 'submissions',                label: 'Contact Forms',             icon: '✉'  },
+    { id: 'franchises',                 label: 'Franchises',                icon: '🏢' },
+    { id: 'free-slots',                 label: 'Free Time Slots',           icon: '📅' },
+    { id: 'primary-services',           label: 'Primary Services',          icon: '⊞'  },
+    { id: 'primary-service-enquiries',  label: 'Primary Services Enquiry',  icon: '✉'  },
+    { id: 'professional-enquiries',     label: 'Professional Enquiries',    icon: '💬' },
+    { id: 'professionals',              label: 'Professional Services',     icon: '👔' },
+    { id: 'projects',                   label: 'Projects',                  icon: '🏗️' },
+    { id: 'properties',                 label: 'Properties',                icon: '⌂'  },
+    { id: 'quick-services',             label: 'Quick Services',            icon: '⚡' },
+    { id: 'revenue',                    label: 'Revenue & Earnings',        icon: '💸' },
+    { id: 'bookings',                   label: 'Service Bookings',          icon: '📝' },
+    { id: 'quick-services-pricing',     label: 'Service Pricing',           icon: '💰' },
+    { id: 'shop-categories',            label: 'Shop Categories',           icon: '🛒' },
+    { id: 'suppliers',                  label: 'Suppliers',                 icon: '📦' },
+    { id: 'vendors',                    label: 'Vendors',                   icon: '🏪' },
   ];
 
   if (loading) {
@@ -806,7 +806,7 @@ function AdminDashboard() {
           )}
 
           {activeTab === 'vendors' && <VendorManagementAdmin isDarkMode={isDarkMode} />}
-          {activeTab === 'suppliers' && <SupplierManagementAdmin isDarkMode={isDarkMode} />}
+          {activeTab === 'suppliers' && <SupplierHubAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'properties' && <PropertiesManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services' && <QuickServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'primary-services' && <PrimaryServicesManager isDarkMode={isDarkMode} />}

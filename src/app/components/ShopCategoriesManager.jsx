@@ -74,6 +74,71 @@ function ImageUpload({ value, onChange, t }) {
   );
 }
 
+/* ── Dynamic tag-list editor (for types / subcategories) ─────────────────── */
+function TagListEditor({ label, helpText, items, onChange, placeholder, t }) {
+  const [inputVal, setInputVal] = useState('');
+
+  const addItem = () => {
+    const val = inputVal.trim();
+    if (!val) return;
+    if (items.includes(val)) { setInputVal(''); return; }
+    onChange([...items, val]);
+    setInputVal('');
+  };
+
+  const removeItem = (idx) => onChange(items.filter((_, i) => i !== idx));
+
+  const inp = {
+    border: `1px solid ${t.border}`, borderRadius: '4px', padding: '8px 10px',
+    background: t.inputBg, color: t.text, fontSize: '12px', outline: 'none',
+    fontFamily: 'inherit', flex: 1,
+  };
+
+  return (
+    <div style={{ marginBottom: '4px' }}>
+      <label style={{ fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '4px' }}>
+        {label}
+      </label>
+      {helpText && <p style={{ fontSize: '11px', color: t.muted, marginBottom: '8px' }}>{helpText}</p>}
+
+      {/* existing items */}
+      {items.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+          {items.map((item, idx) => (
+            <span key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '3px 8px', fontSize: '11px', color: t.text, fontWeight: 600 }}>
+              {item}
+              <button type="button" onClick={() => removeItem(idx)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', fontSize: '11px', padding: 0, lineHeight: 1 }}>
+                ✕
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* add new */}
+      <div style={{ display: 'flex', gap: '6px' }}>
+        <input
+          style={inp}
+          value={inputVal}
+          onChange={(e) => setInputVal(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addItem(); } }}
+          placeholder={placeholder || 'Type and press Add or Enter'}
+        />
+        <button
+          type="button"
+          onClick={addItem}
+          style={{ padding: '8px 14px', background: t.accent, color: t.accentFg, border: 'none', borderRadius: '4px', fontSize: '11px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+          + Add
+        </button>
+      </div>
+      <p style={{ fontSize: '10px', color: t.muted, marginTop: '4px' }}>
+        &quot;Others&quot; option is added automatically for customers.
+      </p>
+    </div>
+  );
+}
+
 /* ── colour options ──────────────────────────────────────────────────────── */
 const COLOR_OPTIONS = [
   { value: 'yellow', label: 'Yellow',  dot: '#ca8a04' },
@@ -102,12 +167,14 @@ export default function ShopCategoriesManager({ isDarkMode }) {
   const [editCat, setEditCat]       = useState(null);
   const [form, setForm]             = useState(EMPTY);
   const [image, setImage]           = useState('');
+  const [types, setTypes]           = useState([]);           // array of strings
+  const [subcategories, setSubs]    = useState([]);           // array of strings
   const [saving, setSaving]         = useState(false);
   const [msg, setMsg]               = useState({ text: '', type: '' });
   const [orderSaving, setOrderSaving] = useState(false);
 
   /* drag */
-  const dragIdx = useRef(null);
+  const dragIdx  = useRef(null);
   const dragOver = useRef(null);
 
   const token = () => localStorage.getItem('admin-token') || localStorage.getItem('token');
@@ -136,6 +203,8 @@ export default function ShopCategoriesManager({ isDarkMode }) {
     setEditCat(null);
     setForm(EMPTY);
     setImage('');
+    setTypes([]);
+    setSubs([]);
   }
 
   function openAdd() { resetForm(); setView('form'); }
@@ -148,6 +217,9 @@ export default function ShopCategoriesManager({ isDarkMode }) {
       price_range: cat.price_range || '', unit: cat.unit || '',
     });
     setImage(cat.image || '');
+    // types / subcategories may be JSONB arrays from postgres
+    setTypes(Array.isArray(cat.types) ? cat.types : []);
+    setSubs(Array.isArray(cat.subcategories) ? cat.subcategories : []);
     setView('form');
   }
 
@@ -157,7 +229,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
     if (!form.name.trim()) { flash('Name is required.', 'error'); return; }
     setSaving(true);
     try {
-      const payload = { ...form, image: image || null };
+      const payload = { ...form, image: image || null, types, subcategories };
       let res;
       if (editCat) {
         res = await fetch('/api/shop-categories', {
@@ -187,7 +259,10 @@ export default function ShopCategoriesManager({ isDarkMode }) {
     const res = await fetch('/api/shop-categories', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
-      body: JSON.stringify({ ...cat, id: cat.id, is_active: !cat.is_active }),
+      body: JSON.stringify({
+        ...cat, id: cat.id, is_active: !cat.is_active,
+        types: cat.types || [], subcategories: cat.subcategories || [],
+      }),
     });
     const d = await res.json();
     if (d.success) {
@@ -285,28 +360,32 @@ export default function ShopCategoriesManager({ isDarkMode }) {
             </div>
           </div>
 
-          <div style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '32px', maxWidth: '660px' }}>
+          <div style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '32px', maxWidth: '700px' }}>
             <form onSubmit={handleSave}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
 
+                {/* Name */}
                 <div style={{ gridColumn: 'span 2' }}>
                   <label style={lbl}>Category Name *</label>
                   <input className="sc-inp" style={inp} value={form.name}
                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Cement & Concrete" />
                 </div>
 
+                {/* Emoji */}
                 <div>
                   <label style={lbl}>Emoji (fallback icon)</label>
                   <input className="sc-inp" style={inp} value={form.emoji}
                     onChange={e => setForm(f => ({ ...f, emoji: e.target.value }))} placeholder="🧱" maxLength={4} />
                 </div>
 
+                {/* Badge Label */}
                 <div>
                   <label style={lbl}>Badge Label</label>
                   <input className="sc-inp" style={inp} value={form.label}
                     onChange={e => setForm(f => ({ ...f, label: e.target.value }))} placeholder="e.g. HIGH VOLUME" />
                 </div>
 
+                {/* Badge Colour */}
                 <div>
                   <label style={lbl}>Badge Colour</label>
                   <select className="sc-inp" style={inp} value={form.label_color}
@@ -317,19 +396,21 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                   </select>
                 </div>
 
+                {/* Price Range */}
                 <div>
                   <label style={lbl}>Price Range</label>
                   <input className="sc-inp" style={inp} value={form.price_range}
                     onChange={e => setForm(f => ({ ...f, price_range: e.target.value }))} placeholder="₹380–450 / bag" />
                 </div>
 
+                {/* Unit */}
                 <div style={{ gridColumn: 'span 2' }}>
                   <label style={lbl}>Unit</label>
                   <input className="sc-inp" style={inp} value={form.unit}
                     onChange={e => setForm(f => ({ ...f, unit: e.target.value }))} placeholder="per 50 kg bag" />
                 </div>
 
-                {/* Preview badge */}
+                {/* Preview */}
                 {(form.label || form.emoji) && (
                   <div style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px' }}>
                     <span style={{ fontSize: '32px' }}>{form.emoji}</span>
@@ -345,10 +426,53 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                   </div>
                 )}
 
+                {/* Image */}
                 <div style={{ gridColumn: 'span 2' }}>
                   <ImageUpload value={image} onChange={setImage} t={t} />
                 </div>
+
+                {/* ── Types ─────────────────────────────────────────── */}
+                <div style={{ gridColumn: 'span 2', borderTop: `1px solid ${t.border}`, paddingTop: '20px', marginTop: '4px' }}>
+                  <TagListEditor
+                    label="Product Types"
+                    helpText="These appear as dropdown options when a customer requests a quote for this category."
+                    items={types}
+                    onChange={setTypes}
+                    placeholder='e.g. "OPC 43 Grade", "PPC", "White Cement"'
+                    t={t}
+                  />
+                </div>
+
+                {/* ── Subcategories ──────────────────────────────────── */}
+                <div style={{ gridColumn: 'span 2' }}>
+                  <TagListEditor
+                    label="Sub-categories (Optional)"
+                    helpText="Optional secondary classification shown after the type selection."
+                    items={subcategories}
+                    onChange={setSubs}
+                    placeholder='e.g. "Rapid Setting", "Sulphate Resistant"'
+                    t={t}
+                  />
+                </div>
+
               </div>
+
+              {/* Summary of types entered */}
+              {(types.length > 0 || subcategories.length > 0) && (
+                <div style={{ background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '12px 16px', marginBottom: '16px', fontSize: '11px', color: t.sub }}>
+                  <strong style={{ color: t.text }}>Quick summary</strong>
+                  {types.length > 0 && (
+                    <div style={{ marginTop: '6px' }}>
+                      📋 Types ({types.length}): {types.join(', ')} + <em>Others</em>
+                    </div>
+                  )}
+                  {subcategories.length > 0 && (
+                    <div style={{ marginTop: '4px' }}>
+                      🗂 Sub-cats ({subcategories.length}): {subcategories.join(', ')} + <em>Others</em>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button type="submit" disabled={saving}
@@ -376,7 +500,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                 Shop Categories
               </h2>
               <p style={{ color: t.sub, margin: 0, fontSize: '12px' }}>
-                Manage the categories shown on the ShopNow page. Drag rows to reorder.
+                Manage categories shown on the ShopNow page. Set types &amp; sub-categories for each. Drag rows to reorder.
               </p>
             </div>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -395,9 +519,10 @@ export default function ShopCategoriesManager({ isDarkMode }) {
           {/* Stat cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(130px,1fr))', gap: '12px', marginBottom: '24px' }}>
             {[
-              { label: 'Total',  val: cats.length,                          color: t.sub    },
-              { label: 'Active', val: cats.filter(c => c.is_active).length, color: '#22c55e' },
-              { label: 'Hidden', val: cats.filter(c => !c.is_active).length,color: '#ef4444' },
+              { label: 'Total',           val: cats.length,                           color: t.sub     },
+              { label: 'Active',          val: cats.filter(c => c.is_active).length,  color: '#22c55e' },
+              { label: 'Hidden',          val: cats.filter(c => !c.is_active).length, color: '#ef4444' },
+              { label: 'With Types',      val: cats.filter(c => (c.types||[]).length > 0).length, color: '#f59e0b' },
             ].map(s => (
               <div key={s.label} style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '16px', textAlign: 'center' }}>
                 <div style={{ fontSize: '22px', fontWeight: 800, color: s.color }}>{s.val}</div>
@@ -423,7 +548,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    {['⠿', 'Image', 'Name', 'Badge', 'Price Range', 'Status', 'Actions'].map((h, i) => (
+                    {['⠿', 'Image', 'Name', 'Types', 'Badge', 'Price Range', 'Status', 'Actions'].map((h, i) => (
                       <th key={i} style={{ padding: '10px 14px', textAlign: 'left', color: t.sub, fontWeight: 700, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: t.tHead, whiteSpace: 'nowrap', borderBottom: `1px solid ${t.border}` }}>{h}</th>
                     ))}
                   </tr>
@@ -453,6 +578,24 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                       <td style={{ padding: '10px 14px' }}>
                         <div style={{ fontWeight: 700, color: t.text }}>{cat.name}</div>
                         <div style={{ color: t.muted, fontSize: '11px', marginTop: '2px' }}>{cat.unit}</div>
+                      </td>
+
+                      {/* types count */}
+                      <td style={{ padding: '10px 14px' }}>
+                        {(cat.types || []).length > 0 ? (
+                          <div>
+                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#f59e0b' }}>
+                              {(cat.types || []).length} type{(cat.types || []).length !== 1 ? 's' : ''}
+                            </span>
+                            {(cat.subcategories || []).length > 0 && (
+                              <div style={{ fontSize: '10px', color: t.muted, marginTop: '2px' }}>
+                                +{(cat.subcategories || []).length} sub
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: '10px', color: t.muted }}>None</span>
+                        )}
                       </td>
 
                       {/* badge */}
@@ -497,7 +640,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
 
           {cats.length > 0 && (
             <p style={{ color: t.muted, fontSize: '11px', marginTop: '10px', fontWeight: 600 }}>
-              💡 Drag any row to reorder — order is saved automatically and reflected live on the ShopNow page.
+              💡 Drag any row to reorder. Order is saved automatically and reflected live on the ShopNow page.
             </p>
           )}
         </div>

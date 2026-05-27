@@ -4,26 +4,25 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-const PRODUCT_CATEGORIES = [
-  { id: 'cement',    name: 'Cement & Concrete',     emoji: '🧱' },
-  { id: 'steel',     name: 'Steel & Iron',           emoji: '⚙️' },
-  { id: 'wood',      name: 'Wood & Timber',          emoji: '🪵' },
-  { id: 'hardware',  name: 'Hardware & Fixtures',    emoji: '🔧' },
-  { id: 'glass',     name: 'Glass & Aluminium',      emoji: '🪟' },
-  { id: 'paints',    name: 'Paints & Chemicals',     emoji: '🎨' },
-  { id: 'sand',      name: 'Aggregates & Sand',      emoji: '🪨' },
-  { id: 'electrical',name: 'Electrical Materials',   emoji: '💡' },
-  { id: 'tiles',     name: 'Tiles & Flooring',       emoji: '🏗️' },
-  { id: 'plumbing',  name: 'Plumbing & Sanitary',    emoji: '🔩' },
-];
-
 export default function SupplierSignupPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [dark, setDark] = useState(false);
   const [step, setStep] = useState(1);
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]); // stores category names
+
+  // ── Fetch shop categories from DB (same source as ShopNow page) ────────────
+  const [productCategories, setProductCategories] = useState([]);
+  const [catsLoading, setCatsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/shop-categories')
+      .then(r => r.json())
+      .then(d => { if (d.success) setProductCategories(d.data); })
+      .catch(console.error)
+      .finally(() => setCatsLoading(false));
+  }, []);
 
   const [formData, setFormData] = useState({
     email: '', password: '', confirmPassword: '',
@@ -47,9 +46,10 @@ export default function SupplierSignupPage() {
     if (error) setError('');
   };
 
-  const toggleCategory = (id) => {
+  // Toggle by category name (what gets stored & matched in enquiries)
+  const toggleCategory = (name) => {
     setSelectedCategories(prev =>
-      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+      prev.includes(name) ? prev.filter(c => c !== name) : [...prev, name]
     );
     if (error) setError('');
   };
@@ -94,7 +94,7 @@ export default function SupplierSignupPage() {
         body: JSON.stringify({
           ...formData,
           aadhaar_number: formData.aadhaar_number.replace(/\s/g, ''),
-          product_categories: selectedCategories.map(id => PRODUCT_CATEGORIES.find(c => c.id === id)?.name).filter(Boolean),
+          product_categories: selectedCategories, // already names from DB
         }),
       });
       const data = await res.json();
@@ -152,11 +152,12 @@ export default function SupplierSignupPage() {
         .cat-chip { display:flex; align-items:center; gap:.625rem; padding:.75rem 1rem; border:2px solid ${c.border}; border-radius:10px; cursor:pointer; transition:all .2s; background:${c.inputBg}; user-select:none; }
         .cat-chip:hover { border-color:#10b981; background:${dark?'#0a2a1a':'#f0fdf4'}; }
         .cat-chip.selected { border-color:#10b981; background:${dark?'#0a2a1a':'#f0fdf4'}; }
-        .cat-emoji { font-size:1.4rem; }
-        .cat-name { font-size:.8rem; font-weight:700; color:${c.text}; line-height:1.3; }
+        .cat-emoji { font-size:1.4rem; flex-shrink:0; }
+        .cat-name { font-size:.8rem; font-weight:700; color:${c.text}; line-height:1.3; flex:1; }
         .cat-check { margin-left:auto; width:18px; height:18px; border-radius:50%; border:2px solid ${c.border}; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .2s; }
         .cat-check.on { background:#10b981; border-color:#10b981; color:#fff; font-size:.65rem; font-weight:800; }
         .ss-notice { background:${dark?'#0a1f14':'#ecfdf5'}; border:1px solid ${dark?'#065f46':'#6ee7b7'}; border-radius:8px; padding:1rem 1.25rem; margin-bottom:1.5rem; display:flex; gap:.75rem; align-items:flex-start; font-size:.85rem; color:${dark?'#6ee7b7':'#065f46'}; line-height:1.6; }
+        .cats-loading { text-align:center; padding:2rem; color:${c.muted}; font-size:.85rem; }
       `}</style>
 
       <div className="ss-root">
@@ -243,7 +244,7 @@ export default function SupplierSignupPage() {
               </>
             )}
 
-            {/* STEP 4 — Product Categories */}
+            {/* STEP 4 — Product Categories (fetched from DB) */}
             {step === 4 && (
               <>
                 <div style={{ marginBottom: '1rem' }}>
@@ -254,18 +255,34 @@ export default function SupplierSignupPage() {
                     Select all that apply — you will only receive enquiries for your selected categories.
                   </div>
                 </div>
-                <div className="cat-grid">
-                  {PRODUCT_CATEGORIES.map(cat => {
-                    const on = selectedCategories.includes(cat.id);
-                    return (
-                      <div key={cat.id} className={`cat-chip ${on ? 'selected' : ''}`} onClick={() => toggleCategory(cat.id)}>
-                        <span className="cat-emoji">{cat.emoji}</span>
-                        <span className="cat-name">{cat.name}</span>
-                        <span className={`cat-check ${on ? 'on' : ''}`}>{on ? '✓' : ''}</span>
-                      </div>
-                    );
-                  })}
-                </div>
+
+                {catsLoading ? (
+                  <div className="cats-loading">
+                    <div style={{ fontSize: '1.5rem', marginBottom: '.5rem' }}>⏳</div>
+                    Loading categories…
+                  </div>
+                ) : productCategories.length === 0 ? (
+                  <div style={{ padding: '1.5rem', textAlign: 'center', color: c.muted, fontSize: '.85rem', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '8px' }}>
+                    No categories configured yet. Please contact the admin.
+                  </div>
+                ) : (
+                  <div className="cat-grid">
+                    {productCategories.map(cat => {
+                      const on = selectedCategories.includes(cat.name);
+                      return (
+                        <div key={cat.id} className={`cat-chip ${on ? 'selected' : ''}`} onClick={() => toggleCategory(cat.name)}>
+                          {cat.image
+                            ? <img src={cat.image} alt={cat.name} className="cat-emoji" style={{ width: '1.4rem', height: '1.4rem', objectFit: 'cover', borderRadius: '3px' }} />
+                            : <span className="cat-emoji">{cat.emoji || '🛒'}</span>
+                          }
+                          <span className="cat-name">{cat.name}</span>
+                          <span className={`cat-check ${on ? 'on' : ''}`}>{on ? '✓' : ''}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
                 {selectedCategories.length > 0 && (
                   <div style={{ marginTop: '1rem', fontSize: '.8rem', color: '#10b981', fontWeight: 600 }}>
                     ✓ {selectedCategories.length} categor{selectedCategories.length > 1 ? 'ies' : 'y'} selected
@@ -314,9 +331,13 @@ export default function SupplierSignupPage() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
                       <span style={{ color: c.muted, flexShrink: 0 }}>Products</span>
                       <div style={{ textAlign: 'right' }}>
-                        {selectedCategories.map(id => {
-                          const cat = PRODUCT_CATEGORIES.find(c => c.id === id);
-                          return <span key={id} style={{ display: 'inline-block', background: dark ? '#1a2a1a' : '#dcfce7', color: '#16a34a', padding: '.15rem .5rem', borderRadius: 6, fontSize: '.72rem', fontWeight: 700, margin: '.1rem .1rem' }}>{cat?.emoji} {cat?.name}</span>;
+                        {selectedCategories.map(name => {
+                          const cat = productCategories.find(c => c.name === name);
+                          return (
+                            <span key={name} style={{ display: 'inline-block', background: dark ? '#1a2a1a' : '#dcfce7', color: '#16a34a', padding: '.15rem .5rem', borderRadius: 6, fontSize: '.72rem', fontWeight: 700, margin: '.1rem .1rem' }}>
+                              {cat?.emoji} {name}
+                            </span>
+                          );
                         })}
                       </div>
                     </div>

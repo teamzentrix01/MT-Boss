@@ -1,9 +1,9 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 
-let ready = false;
+// No `ready` flag — all DDL statements are idempotent (IF NOT EXISTS).
+// This makes the route resilient to dev hot-reloads and out-of-band DB resets.
 async function ensureTable() {
-  if (ready) return;
   await pool.query(`
     CREATE TABLE IF NOT EXISTS shop_categories (
       id          SERIAL PRIMARY KEY,
@@ -20,7 +20,9 @@ async function ensureTable() {
       updated_at  TIMESTAMP    DEFAULT NOW()
     )
   `);
-  ready = true;
+  // Column migrations — idempotent
+  await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS types         JSONB DEFAULT '[]'`);
+  await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS subcategories JSONB DEFAULT '[]'`);
 }
 
 // ── GET ──────────────────────────────────────────────────────────────────────
@@ -48,17 +50,23 @@ export async function POST(req) {
     const token = req.headers.get('Authorization')?.split(' ')[1];
     if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { name, image, emoji, label, label_color, price_range, unit } = await req.json();
+    const { name, image, emoji, label, label_color, price_range, unit, types, subcategories } = await req.json();
     if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 });
 
-    // place at the end of existing list
     const { rows: [{ max }] } = await pool.query(`SELECT COALESCE(MAX(sort_order),0) AS max FROM shop_categories`);
 
     const result = await pool.query(
-      `INSERT INTO shop_categories (name, image, emoji, label, label_color, price_range, unit, sort_order, is_active, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,TRUE,NOW(),NOW()) RETURNING *`,
-      [name, image || null, emoji || '🛒', label || '', label_color || 'yellow',
-       price_range || '', unit || '', parseInt(max) + 1]
+      `INSERT INTO shop_categories
+         (name, image, emoji, label, label_color, price_range, unit, sort_order,
+          is_active, types, subcategories, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,TRUE,$9::jsonb,$10::jsonb,NOW(),NOW())
+       RETURNING *`,
+      [
+        name, image || null, emoji || '🛒', label || '', label_color || 'yellow',
+        price_range || '', unit || '', parseInt(max) + 1,
+        JSON.stringify(Array.isArray(types) ? types : []),
+        JSON.stringify(Array.isArray(subcategories) ? subcategories : []),
+      ]
     );
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (e) {
@@ -74,16 +82,25 @@ export async function PUT(req) {
     const token = req.headers.get('Authorization')?.split(' ')[1];
     if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { id, name, image, emoji, label, label_color, price_range, unit, is_active } = await req.json();
+    const {
+      id, name, image, emoji, label, label_color,
+      price_range, unit, is_active, types, subcategories,
+    } = await req.json();
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
 
     const result = await pool.query(
       `UPDATE shop_categories
-       SET name=$1, image=$2, emoji=$3, label=$4, label_color=$5, price_range=$6, unit=$7,
-           is_active=$8, updated_at=NOW()
-       WHERE id=$9 RETURNING *`,
-      [name, image || null, emoji || '🛒', label || '', label_color || 'yellow',
-       price_range || '', unit || '', is_active ?? true, id]
+       SET name=$1, image=$2, emoji=$3, label=$4, label_color=$5,
+           price_range=$6, unit=$7, is_active=$8,
+           types=$9::jsonb, subcategories=$10::jsonb, updated_at=NOW()
+       WHERE id=$11 RETURNING *`,
+      [
+        name, image || null, emoji || '🛒', label || '', label_color || 'yellow',
+        price_range || '', unit || '', is_active ?? true,
+        JSON.stringify(Array.isArray(types) ? types : []),
+        JSON.stringify(Array.isArray(subcategories) ? subcategories : []),
+        id,
+      ]
     );
     if (result.rows.length === 0)
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
