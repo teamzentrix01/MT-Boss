@@ -318,11 +318,14 @@ function AdminDashboard() {
         }
         .dash-tabs-inner {
           max-width: 1280px; margin: 0 auto;
-          padding: 0 1.5rem;
+          padding: 0 1.5rem 4px;
           display: flex; overflow-x: auto;
-          scrollbar-width: none;
+          scrollbar-width: thin;
+          scrollbar-color: var(--border) transparent;
         }
-        .dash-tabs-inner::-webkit-scrollbar { display: none; }
+        .dash-tabs-inner::-webkit-scrollbar { height: 4px; }
+        .dash-tabs-inner::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .dash-tabs-inner::-webkit-scrollbar-track { background: transparent; }
         .dash-tab {
           display: flex; align-items: center; gap: 0.375rem;
           padding: 0.6rem 1rem;
