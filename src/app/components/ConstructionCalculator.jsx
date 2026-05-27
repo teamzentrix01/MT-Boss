@@ -23,6 +23,8 @@ const categoryIcons = {
 const formatCurrency = (value) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value || 0);
 
+const foundationTypes = ['Isolated (valid upto G+3)', 'Pile', 'Matt', 'Basement'];
+
 export default function ConstructionCalculator() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,7 @@ export default function ConstructionCalculator() {
     city: 'Noida',
     slabArea: '1000',
     floors: '1',
-    foundation: 'Standard',
+    foundation: '',
   });
 
   useEffect(() => {
@@ -71,7 +73,7 @@ export default function ConstructionCalculator() {
   const subtotal = selectedItems.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
   const slabMultiplier = Math.max(parseInt(options.slabArea, 10) || 0, 1) / 1000;
   const floorMultiplier = Math.max(parseInt(options.floors, 10) || 1, 1);
-  const foundationMultiplier = options.foundation === 'Raft' ? 1.18 : options.foundation === 'Pile' ? 1.32 : 1;
+  const foundationMultiplier = options.foundation === 'Matt' ? 1.18 : options.foundation === 'Pile' ? 1.32 : 1;
   const estimate = Math.round(subtotal * slabMultiplier * floorMultiplier * foundationMultiplier);
 
   const addToCart = (product) => {
@@ -182,7 +184,8 @@ export default function ConstructionCalculator() {
               <option value="4">No of Floors: 4</option>
             </select>
             <select className="calc-select" value={options.foundation} onChange={(e) => setOptions({ ...options, foundation: e.target.value })}>
-              {['Standard', 'Raft', 'Pile'].map((item) => <option key={item} value={item}>{item} foundation</option>)}
+              <option value="">Foundation type</option>
+              {foundationTypes.map((item) => <option key={item} value={item}>{item}</option>)}
             </select>
           </div>
 
