@@ -1,8 +1,9 @@
 'use client';
-import { useEffect } from 'react';
+
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function AuthSuccess() {
+function AuthSuccessContent() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -13,11 +14,28 @@ export default function AuthSuccess() {
 
     if (token) {
       localStorage.setItem('token', token);
-      localStorage.setItem('user', user);
+
+      if (user) {
+        localStorage.setItem('user', user);
+      }
+
       document.cookie = `auth-token=${token}; path=/; max-age=604800`;
     }
-    router.replace(redirect);
-  }, []);
 
-  return <p style={{ padding: '2rem', textAlign: 'center' }}>Signing you in…</p>;
+    router.replace(redirect);
+  }, [params, router]);
+
+  return (
+    <p style={{ padding: '2rem', textAlign: 'center' }}>
+      Signing you in…
+    </p>
+  );
+}
+
+export default function AuthSuccess() {
+  return (
+    <Suspense fallback={<p style={{ padding: '2rem', textAlign: 'center' }}>Loading...</p>}>
+      <AuthSuccessContent />
+    </Suspense>
+  );
 }
