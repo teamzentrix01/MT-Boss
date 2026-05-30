@@ -240,7 +240,7 @@ export default function SupplierSignupPage() {
                     <label className="ss-label">Postal Code *</label>
                     <input className="ss-input" type="text" name="postal_code" value={formData.postal_code} onChange={handleChange} placeholder="110001" required />
                   </div>
-                </div>
+                </div> 
               </>
             )}
 

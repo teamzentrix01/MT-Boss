@@ -30,11 +30,23 @@ const emptyForm = {
   is_active: true,
 };
 
+const emptyCategoryForm = {
+  name: '',
+  badge: 'Recommended',
+  image_url: '',
+  is_active: true,
+};
+
 export default function CalculatorManager({ isDarkMode }) {
   const [products,   setProducts]   = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [formData,   setFormData]   = useState(emptyForm);
+  const [categoryForm, setCategoryForm] = useState(emptyCategoryForm);
   const [showForm,   setShowForm]   = useState(false);
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [editingId,  setEditingId]  = useState(null);
+  const [editingCategoryId, setEditingCategoryId] = useState(null);
   const [loading,    setLoading]    = useState(true);
   const [message,    setMessage]    = useState('');
   const [error,      setError]      = useState('');
@@ -45,15 +57,27 @@ export default function CalculatorManager({ isDarkMode }) {
   const [uploadErr,    setUploadErr]    = useState('');
   const fileRef = useRef(null);
 
-  const fetchProducts = async () => {
+  const fetchData = async () => {
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
-      const res  = await fetch('/api/calculator-products?admin=true', {
+      const productRes = await fetch('/api/calculator-products?admin=true', {
         headers: { Authorization: `Bearer ${token}` },
         cache: 'no-store',
       });
-      const data = await res.json();
-      if (data.success) setProducts(data.data || []);
+      const categoryRes = await fetch('/api/calculator-categories', {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store',
+      });
+      const productData = await productRes.json();
+      const categoryData = await categoryRes.json();
+      const nextProducts = productData.success ? productData.data || [] : [];
+      const nextCategories = categoryData.success ? categoryData.data || [] : [];
+      setProducts(nextProducts);
+      setCategories(nextCategories);
+      setSelectedCategory((current) => {
+        if (current && nextCategories.some(category => category.name === current)) return current;
+        return nextCategories[0]?.name || '';
+      });
     } catch {
       setError('Unable to load calculator products');
     } finally {
@@ -61,7 +85,7 @@ export default function CalculatorManager({ isDarkMode }) {
     }
   };
 
-  useEffect(() => { fetchProducts(); }, []);
+  useEffect(() => { fetchData(); }, []);
 
   const resetForm = () => {
     setFormData(emptyForm);
@@ -70,6 +94,12 @@ export default function CalculatorManager({ isDarkMode }) {
     setImageMode('url');
     setUploadErr('');
     if (fileRef.current) fileRef.current.value = '';
+  };
+
+  const resetCategoryForm = () => {
+    setCategoryForm(emptyCategoryForm);
+    setEditingCategoryId(null);
+    setShowCategoryForm(false);
   };
 
   /* ── file → Cloudinary ── */
@@ -102,9 +132,30 @@ export default function CalculatorManager({ isDarkMode }) {
       if (!data.success) { setError(data.error || 'Unable to save product'); return; }
       setMessage(editingId ? 'Product updated ✓' : 'Product added ✓');
       resetForm();
-      fetchProducts();
+      fetchData();
     } catch {
       setError('Unable to save product');
+    }
+  };
+
+  const handleCategorySubmit = async (e) => {
+    e.preventDefault();
+    setMessage(''); setError('');
+    try {
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const res = await fetch('/api/calculator-categories', {
+        method: editingCategoryId ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(editingCategoryId ? { id: editingCategoryId, ...categoryForm } : categoryForm),
+      });
+      const data = await res.json();
+      if (!data.success) { setError(data.error || 'Unable to save category'); return; }
+      setMessage(editingCategoryId ? 'Category updated' : 'Category added');
+      setSelectedCategory(data.data?.name || categoryForm.name);
+      resetCategoryForm();
+      fetchData();
+    } catch {
+      setError('Unable to save category');
     }
   };
 
@@ -125,6 +176,17 @@ export default function CalculatorManager({ isDarkMode }) {
     setShowForm(true);
   };
 
+  const handleCategoryEdit = (category) => {
+    setCategoryForm({
+      name: category.name || '',
+      badge: category.badge || 'Recommended',
+      image_url: category.image_url || '',
+      is_active: category.is_active ?? true,
+    });
+    setEditingCategoryId(category.id);
+    setShowCategoryForm(true);
+  };
+
   const handleDelete = async (id) => {
     if (!confirm('Delete this calculator product?')) return;
     try {
@@ -133,12 +195,44 @@ export default function CalculatorManager({ isDarkMode }) {
         method: 'DELETE', headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (data.success) { setMessage('Product deleted'); fetchProducts(); }
+      if (data.success) { setMessage('Product deleted'); fetchData(); }
       else setError(data.error || 'Delete failed');
     } catch { setError('Delete failed'); }
   };
 
   if (loading) return <p style={{ color: 'var(--muted)' }}>Loading calculator products…</p>;
+
+  const handleCategoryDelete = async (category) => {
+    if (!confirm(`Delete category "${category.name}"?`)) return;
+    try {
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const res = await fetch(`/api/calculator-categories?id=${category.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) { setMessage('Category deleted'); fetchData(); }
+      else setError(data.error || 'Delete failed');
+    } catch { setError('Delete failed'); }
+  };
+
+  const openAddProduct = () => {
+    const category = categories.find(item => item.name === selectedCategory);
+    setFormData({
+      ...emptyForm,
+      category: selectedCategory || categories[0]?.name || '',
+      badge: category?.badge || 'Recommended',
+    });
+    setEditingId(null);
+    setImageMode('url');
+    setUploadErr('');
+    setShowForm(true);
+  };
+
+  const selectedCategoryMeta = categories.find(category => category.name === selectedCategory);
+  const visibleProducts = selectedCategory
+    ? products.filter(product => product.category === selectedCategory)
+    : products;
 
   return (
     <>
@@ -185,6 +279,15 @@ export default function CalculatorManager({ isDarkMode }) {
         .cm-input,.cm-textarea,.cm-select { width:100%; box-sizing:border-box; border:1px solid var(--cm-border); border-radius:7px; background:var(--cm-bg); color:var(--cm-text); padding:.48rem .65rem; font-size:.8rem; outline:none; }
         .cm-textarea { resize:vertical; min-height:70px; }
         .cm-actions { display:flex; gap:.55rem; margin-top:.85rem; }
+        .cm-section-head { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:.8rem; }
+        .cm-category-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:.75rem; }
+        .cm-category-card { width:100%; text-align:left; border:1px solid var(--cm-border); background:var(--cm-bg); color:var(--cm-text); border-radius:8px; padding:.8rem; cursor:pointer; transition:border-color .15s, transform .15s; }
+        .cm-category-card:hover { transform:translateY(-1px); border-color:var(--cm-accent); }
+        .cm-category-card.active { border-color:var(--cm-accent); box-shadow:0 0 0 1px var(--cm-accent) inset; }
+        .cm-category-top { display:flex; align-items:center; justify-content:space-between; gap:.65rem; }
+        .cm-category-name { font-weight:900; font-size:.85rem; }
+        .cm-category-meta { color:var(--cm-muted); font-size:.7rem; margin-top:.35rem; }
+        .cm-category-actions { display:flex; gap:.35rem; margin-top:.65rem; }
         .cm-table   { width:100%; border-collapse:collapse; font-size:.8rem; }
         .cm-table th { text-align:left; color:var(--cm-muted); background:var(--cm-bg); padding:.55rem .75rem; font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; }
         .cm-table td { border-top:1px solid var(--cm-border); padding:.62rem .75rem; vertical-align:middle; }
@@ -215,14 +318,14 @@ export default function CalculatorManager({ isDarkMode }) {
         {/* ── Header ── */}
         <div className="cm-head">
           <div>
-            <div className="cm-title">Calculator Products</div>
+            <div className="cm-title">Calculator Categories</div>
             <div style={{ color:'var(--cm-muted)', fontSize:'.75rem', marginTop:2 }}>
-              Add products and control prices shown in the public quotation calculator.
+              Manage categories first, then select a category to manage its products.
             </div>
           </div>
-          <button className={`cm-btn${showForm ? ' secondary' : ''}`}
-            onClick={() => showForm ? resetForm() : setShowForm(true)}>
-            {showForm ? 'Cancel' : '+ Add Product'}
+          <button className={`cm-btn${showCategoryForm ? ' secondary' : ''}`}
+            onClick={() => showCategoryForm ? resetCategoryForm() : setShowCategoryForm(true)}>
+            {showCategoryForm ? 'Cancel' : '+ Add Category'}
           </button>
         </div>
 
@@ -230,6 +333,86 @@ export default function CalculatorManager({ isDarkMode }) {
         {error   && <div className="cm-alert cm-err">{error}</div>}
 
         {/* ── Modal Form ── */}
+        <div className="cm-panel">
+          <div className="cm-category-grid">
+            {categories.map(category => (
+              <div key={category.id} className={`cm-category-card${selectedCategory === category.name ? ' active' : ''}`}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedCategory(category.name)}
+                  style={{ all:'unset', display:'block', width:'100%', cursor:'pointer' }}
+                >
+                  <div className="cm-category-top">
+                    <div>
+                      <div className="cm-category-name">{category.name}</div>
+                      <div className="cm-category-meta">{category.product_count || 0} products</div>
+                    </div>
+                    <span className="cm-chip">{category.is_active ? 'Active' : 'Hidden'}</span>
+                  </div>
+                  <div className="cm-category-meta">Badge: {category.badge || 'Recommended'}</div>
+                </button>
+                <div className="cm-category-actions">
+                  <button className="cm-act" type="button" onClick={() => handleCategoryEdit(category)}>Edit</button>
+                  <button className="cm-act delete" type="button" onClick={() => handleCategoryDelete(category)}>Delete</button>
+                </div>
+              </div>
+            ))}
+            {categories.length === 0 && (
+              <div style={{ color:'var(--cm-muted)', fontSize:'.8rem' }}>No categories yet.</div>
+            )}
+          </div>
+        </div>
+
+        {showCategoryForm && (
+          <div className="cm-modal-backdrop" onClick={resetCategoryForm}>
+            <div className="cm-modal" onClick={e => e.stopPropagation()}>
+              <div className="cm-modal-head">
+                <h3 className="cm-modal-title">
+                  {editingCategoryId ? 'Edit Calculator Category' : 'Add Calculator Category'}
+                </h3>
+                <button className="cm-modal-close" type="button" onClick={resetCategoryForm} aria-label="Close">X</button>
+              </div>
+              <form className="cm-panel cm-form" onSubmit={handleCategorySubmit}>
+                <div className="cm-grid">
+                  <div>
+                    <label className="cm-label">Category Name</label>
+                    <input className="cm-input" value={categoryForm.name}
+                      onChange={e => setCategoryForm({ ...categoryForm, name: e.target.value })}
+                      placeholder="Steel, Bricks, Cement" required />
+                  </div>
+                  <div>
+                    <label className="cm-label">Badge</label>
+                    <select className="cm-select" value={categoryForm.badge}
+                      onChange={e => setCategoryForm({ ...categoryForm, badge: e.target.value })}>
+                      {['Mandatory','Recommended','Putty','Paint','Window','Door'].map(b =>
+                        <option key={b}>{b}</option>)}
+                    </select>
+                  </div>
+                  <div style={{ display:'flex', alignItems:'center', paddingTop:'1.2rem' }}>
+                    <label style={{ display:'flex', alignItems:'center', gap:8, color:'var(--cm-muted)', fontSize:'.8rem', fontWeight:700, cursor:'pointer' }}>
+                      <input type="checkbox" checked={categoryForm.is_active}
+                        onChange={e => setCategoryForm({ ...categoryForm, is_active: e.target.checked })} />
+                      Active category
+                    </label>
+                  </div>
+                  <div className="cm-full">
+                    <label className="cm-label">Category Image URL</label>
+                    <input className="cm-input" value={categoryForm.image_url}
+                      onChange={e => setCategoryForm({ ...categoryForm, image_url: e.target.value })}
+                      placeholder="Optional image URL for this category" />
+                  </div>
+                </div>
+                <div className="cm-actions">
+                  <button className="cm-btn" type="submit">
+                    {editingCategoryId ? 'Update Category' : 'Add Category'}
+                  </button>
+                  <button className="cm-btn secondary" type="button" onClick={resetCategoryForm}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         {showForm && (
           <div className="cm-modal-backdrop" onClick={resetForm}>
             <div className="cm-modal" onClick={e => e.stopPropagation()}>
@@ -246,9 +429,17 @@ export default function CalculatorManager({ isDarkMode }) {
                   {/* Row 1 */}
                   <div>
                     <label className="cm-label">Category</label>
-                    <input className="cm-input" value={formData.category}
-                      onChange={e => setFormData({ ...formData, category: e.target.value })}
-                      placeholder="Steel, Bricks, Paints…" required />
+                    <select className="cm-select" value={formData.category}
+                      onChange={e => {
+                        const category = categories.find(item => item.name === e.target.value);
+                        setFormData({ ...formData, category: e.target.value, badge: category?.badge || formData.badge });
+                      }}
+                      required>
+                      <option value="">Select category</option>
+                      {categories.map(category => (
+                        <option key={category.id} value={category.name}>{category.name}</option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="cm-label">Badge</label>
@@ -380,6 +571,20 @@ export default function CalculatorManager({ isDarkMode }) {
         )}
 
         {/* ── Product Table ── */}
+        <div className="cm-section-head">
+          <div>
+            <div className="cm-title">
+              {selectedCategoryMeta ? `${selectedCategoryMeta.name} Products` : 'Calculator Products'}
+            </div>
+            <div style={{ color:'var(--cm-muted)', fontSize:'.75rem', marginTop:2 }}>
+              Select a category above before adding or updating products.
+            </div>
+          </div>
+          <button className="cm-btn" type="button" onClick={openAddProduct} disabled={categories.length === 0}>
+            + Add Product
+          </button>
+        </div>
+
         <div className="cm-panel" style={{ padding:0, overflow:'hidden' }}>
           <div style={{ overflowX:'auto' }}>
             <table className="cm-table">
@@ -390,7 +595,7 @@ export default function CalculatorManager({ isDarkMode }) {
                 </tr>
               </thead>
               <tbody>
-                {products.map(product => (
+                {visibleProducts.map(product => (
                   <tr key={product.id}>
                     <td>
                       {product.image_url
@@ -427,7 +632,7 @@ export default function CalculatorManager({ isDarkMode }) {
                     </td>
                   </tr>
                 ))}
-                {products.length === 0 && (
+                {visibleProducts.length === 0 && (
                   <tr>
                     <td colSpan={7} style={{ textAlign:'center', color:'var(--cm-muted)', padding:'2rem' }}>
                       No calculator products yet.
