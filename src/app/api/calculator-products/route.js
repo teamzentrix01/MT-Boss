@@ -51,6 +51,19 @@ async function ensureTable() {
     )
   `);
 
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS calculator_categories (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) UNIQUE NOT NULL,
+      badge VARCHAR(50) DEFAULT 'Recommended',
+      image_url TEXT DEFAULT '',
+      sort_order INTEGER DEFAULT 0,
+      is_active BOOLEAN DEFAULT TRUE,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+
   await pool.query(
     `DELETE FROM calculator_products
      WHERE category = 'Cement'
@@ -93,6 +106,22 @@ async function ensureTable() {
       );
     }
   }
+
+  await pool.query(`
+    INSERT INTO calculator_categories (name, badge, image_url, sort_order, is_active)
+    SELECT
+      category,
+      COALESCE(NULLIF((ARRAY_AGG(badge ORDER BY sort_order ASC, id ASC))[1], ''), 'Recommended') AS badge,
+      COALESCE(NULLIF((ARRAY_AGG(image_url ORDER BY sort_order ASC, id ASC))[1], ''), '') AS image_url,
+      MIN(sort_order) AS sort_order,
+      TRUE
+    FROM calculator_products
+    GROUP BY category
+    ON CONFLICT (name) DO UPDATE
+      SET badge = COALESCE(NULLIF(calculator_categories.badge, ''), EXCLUDED.badge),
+          image_url = COALESCE(NULLIF(calculator_categories.image_url, ''), EXCLUDED.image_url),
+          updated_at = NOW()
+  `);
 
   ready = true;
 }

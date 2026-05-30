@@ -31,6 +31,7 @@ export default function ConstructionCalculator() {
   const [activeCategory, setActiveCategory] = useState('');
   const [cart, setCart] = useState({});
   const [cartOpen, setCartOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false);
   const [options, setOptions] = useState({
     city: 'Noida',
     slabArea: '1000',
@@ -52,6 +53,21 @@ export default function ConstructionCalculator() {
       }
     };
     fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const checkTheme = () => {
+      setIsDark(
+        document.documentElement.classList.contains('dark-mode') ||
+        localStorage.getItem('theme') === 'dark'
+      );
+    };
+
+    checkTheme();
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    return () => observer.disconnect();
   }, []);
 
   const categories = useMemo(() => {
@@ -110,7 +126,39 @@ export default function ConstructionCalculator() {
   return (
     <>
       <style>{`
-        .calc-page { min-height: 100vh; background: #ffffff; color: #242830; font-family: 'DM Sans', system-ui, sans-serif; }
+        .calc-page {
+          --calc-bg: #ffffff;
+          --calc-surface: #ffffff;
+          --calc-card: #f7f7f8;
+          --calc-card-soft: #fafafa;
+          --calc-muted-surface: #f8f8f8;
+          --calc-border: #e5e7eb;
+          --calc-border-soft: #f0f0f0;
+          --calc-text: #242830;
+          --calc-heading: #111827;
+          --calc-muted: #59606b;
+          --calc-muted-strong: #6b7280;
+          --calc-accent: #f6b400;
+          min-height: 100vh;
+          background: var(--calc-bg);
+          color: var(--calc-text);
+          font-family: 'DM Sans', system-ui, sans-serif;
+          transition: background .2s ease, color .2s ease;
+        }
+        .dark-mode .calc-page,
+        .calc-page.dark {
+          --calc-bg: #000000;
+          --calc-surface: #0f0f10;
+          --calc-card: #141416;
+          --calc-card-soft: #111113;
+          --calc-muted-surface: #18181b;
+          --calc-border: #2a2a2d;
+          --calc-border-soft: #27272a;
+          --calc-text: #f4f4f5;
+          --calc-heading: #ffffff;
+          --calc-muted: #a1a1aa;
+          --calc-muted-strong: #8b8b94;
+        }
         .calc-hero { height: 138px; background-image: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.58)), url(https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1600&q=80); background-size: cover; background-position: center; display: flex; align-items: flex-start; justify-content: center; padding-top: 18px; color: #fff; }
         .calc-hero h1 { margin: 0; font-size: 1.35rem; font-weight: 900; }
         .calc-hero p { margin: .25rem auto 0; max-width: 520px; font-size: .75rem; color: rgba(255,255,255,.82); text-align: center; }
@@ -154,11 +202,85 @@ export default function ConstructionCalculator() {
         .calc-cart-total strong { color: #f6b400; font-size: 1.35rem; }
         .calc-clear { width: 100%; margin-top: 14px; border: none; background: #111827; color: #fff; border-radius: 999px; padding: 11px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; font-weight: 900; cursor: pointer; }
         .calc-empty { padding: 2rem; color: #6b7280; text-align: center; background: #f7f7f8; border-radius: 12px; }
+        .dark-mode .calc-page .calc-filter,
+        .dark-mode .calc-page .calc-select,
+        .dark-mode .calc-page .calc-category,
+        .dark-mode .calc-page .calc-icon-btn,
+        .dark-mode .calc-page .calc-modal,
+        .dark-mode .calc-page .calc-close,
+        .dark-mode .calc-page .calc-qty button,
+        .calc-page.dark .calc-filter,
+        .calc-page.dark .calc-select,
+        .calc-page.dark .calc-category,
+        .calc-page.dark .calc-icon-btn,
+        .calc-page.dark .calc-modal,
+        .calc-page.dark .calc-close,
+        .calc-page.dark .calc-qty button {
+          background: var(--calc-surface);
+          border-color: var(--calc-border);
+          color: var(--calc-heading);
+        }
+        .dark-mode .calc-page .calc-filter,
+        .calc-page.dark .calc-filter { box-shadow: 0 18px 50px rgba(0,0,0,.45); }
+        .dark-mode .calc-page .calc-category-badge,
+        .calc-page.dark .calc-category-badge {
+          background: var(--calc-muted-surface);
+          color: var(--calc-heading);
+        }
+        .dark-mode .calc-page .calc-category.active,
+        .calc-page.dark .calc-category.active {
+          border-color: var(--calc-accent);
+        }
+        .dark-mode .calc-page .calc-card,
+        .dark-mode .calc-page .calc-empty,
+        .calc-page.dark .calc-card,
+        .calc-page.dark .calc-empty {
+          background: var(--calc-card);
+          border: 1px solid var(--calc-border-soft);
+          color: var(--calc-text);
+        }
+        .dark-mode .calc-page .calc-card h3,
+        .dark-mode .calc-page .calc-title,
+        .dark-mode .calc-page .calc-price,
+        .dark-mode .calc-page .calc-modal-title,
+        .dark-mode .calc-page .calc-cart-name,
+        .calc-page.dark .calc-card h3,
+        .calc-page.dark .calc-title,
+        .calc-page.dark .calc-price,
+        .calc-page.dark .calc-modal-title,
+        .calc-page.dark .calc-cart-name {
+          color: var(--calc-heading);
+        }
+        .dark-mode .calc-page .calc-card p,
+        .dark-mode .calc-page .calc-cart-empty,
+        .dark-mode .calc-page .calc-cart-meta,
+        .dark-mode .calc-page .calc-empty,
+        .calc-page.dark .calc-card p,
+        .calc-page.dark .calc-cart-empty,
+        .calc-page.dark .calc-cart-meta,
+        .calc-page.dark .calc-empty {
+          color: var(--calc-muted);
+        }
+        .dark-mode .calc-page .calc-cart-row,
+        .calc-page.dark .calc-cart-row {
+          background: var(--calc-card-soft);
+          border-color: var(--calc-border);
+        }
+        .dark-mode .calc-page .calc-modal-head,
+        .dark-mode .calc-page .calc-cart-total,
+        .calc-page.dark .calc-modal-head,
+        .calc-page.dark .calc-cart-total {
+          border-color: var(--calc-border);
+        }
+        .dark-mode .calc-page .calc-modal,
+        .calc-page.dark .calc-modal { box-shadow: 0 24px 80px rgba(0,0,0,.65); }
+        .dark-mode .calc-page .calc-clear,
+        .calc-page.dark .calc-clear { background: #27272a; }
         @media (max-width: 980px) { .calc-products { grid-template-columns: repeat(3, minmax(170px, 1fr)); } }
         @media (max-width: 760px) { .calc-filter { grid-template-columns: 1fr; } .calc-category-row, .calc-products { grid-template-columns: repeat(2, 1fr); } .calc-shell { margin-top: -28px; } }
         @media (max-width: 520px) { .calc-category-row, .calc-products { grid-template-columns: 1fr; } .calc-controls { align-items: flex-start; flex-direction: column; } }
       `}</style>
-      <main className="calc-page">
+      <main className={`calc-page${isDark ? ' dark' : ''}`}>
         <section className="calc-hero">
           <div>
             <h1>Cost Estimator Tool</h1>
