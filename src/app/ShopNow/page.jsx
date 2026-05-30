@@ -62,6 +62,18 @@ function SectionLabel({ children, isDark }) {
   );
 }
 
+const CITIES = [
+  'Agra','Ahmedabad','Ajmer','Aligarh','Allahabad','Amritsar','Aurangabad',
+  'Bangalore','Bareilly','Bhopal','Bhubaneswar','Chandigarh','Chennai',
+  'Coimbatore','Dehradun','Delhi','Dhanbad','Faridabad','Ghaziabad',
+  'Guwahati','Gwalior','Howrah','Hubli-Dharwad','Hyderabad','Indore',
+  'Jabalpur','Jaipur','Jalandhar','Jodhpur','Kanpur','Kochi','Kolkata',
+  'Kota','Lucknow','Ludhiana','Madurai','Mangalore','Meerut','Moradabad',
+  'Mumbai','Mysore','Nagpur','Nashik','Noida','Patna','Pune','Raipur',
+  'Rajkot','Ranchi','Srinagar','Surat','Thane','Thiruvananthapuram',
+  'Varanasi','Vijayawada','Visakhapatnam','Vadodara',
+];
+
 export default function ShopPage() {
   const isDarkMode = useDarkMode();
 
@@ -97,6 +109,9 @@ export default function ShopPage() {
   const [brandCompany, setBrandCompany]         = useState("");
   const [deliveryDate, setDeliveryDate]         = useState("");
 
+  // City selection
+  const [selectedCity, setSelectedCity] = useState("");
+
   // GPS
   const [locationStatus, setLocationStatus] = useState("idle");
   const [locationCoords, setLocationCoords] = useState(null);
@@ -111,6 +126,7 @@ export default function ShopPage() {
     setSelectedCategory(category);
     setSubmitted(false);
     setSubmitError("");
+    setSelectedCity("");
     setFormData({ name: "", email: "", phone: "", quantity: "", address: "", message: "" });
     setMaterialType("");
     setCustomType("");
@@ -163,6 +179,12 @@ export default function ShopPage() {
     const finalType     = materialType     === "Others" ? customType.trim()        : materialType;
     const finalSubcat   = subcategoryVal   === "Others" ? customSubcategory.trim() : subcategoryVal;
 
+    if (!selectedCity) {
+      setSubmitError("Please select your city first.");
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/material-enquiries", {
         method: "POST",
@@ -172,7 +194,7 @@ export default function ShopPage() {
           user_phone:      formData.phone,
           user_email:      formData.email,
           category_name:   selectedCategory?.name,
-          category_emoji:  selectedCategory?.emoji || '',   // emoji only — never an image URL
+          category_emoji:  selectedCategory?.emoji || '',
           material_type:   finalType   || null,
           subcategory_name: finalSubcat || null,
           brand_company:   brandCompany.trim() || null,
@@ -182,6 +204,7 @@ export default function ShopPage() {
           latitude:        locationCoords?.latitude  || null,
           longitude:       locationCoords?.longitude || null,
           message:         formData.message || null,
+          selected_city:   selectedCity,
         }),
       });
       const data = await res.json();
@@ -340,13 +363,6 @@ export default function ShopPage() {
                       </div>
                     )}
 
-                    {(cat.price_range || cat.unit) && (
-                      <div className={`border-t ${divider} pt-3 mb-3`}>
-                        {cat.price_range && <p className={`text-sm font-bold ${headText}`}>{cat.price_range}</p>}
-                        {cat.unit && <p className={`text-[11px] ${subText}`}>{cat.unit}</p>}
-                      </div>
-                    )}
-
                     <button className="w-full flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 text-xs font-bold py-2.5 px-4 rounded-lg transition-all duration-200 group-hover:shadow-md">
                       Get Quote <ArrowRight size={13} />
                     </button>
@@ -408,6 +424,82 @@ export default function ShopPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="p-5 space-y-0 max-h-[80vh] overflow-y-auto">
+
+                {/* ── CITY SELECTOR ───────────────────────────────────── */}
+                <div className="mb-4">
+                  <label className={lbl}>
+                    📍 Select Your City <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value)}
+                    required
+                    className={sel}
+                  >
+                    <option value="">— Choose your city to see prices —</option>
+                    {CITIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                    <option value="Other">Other City</option>
+                  </select>
+                  <p className={`text-[9px] mt-0.5 ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>
+                    Required — used to match the right supplier and show local pricing.
+                  </p>
+                </div>
+
+                {/* ── CITY-SPECIFIC PRICE DISPLAY ─────────────────────── */}
+                {selectedCity && (() => {
+                  // city_prices may be a JSONB object, a JSON string, null, or {}
+                  let rawCp = selectedCategory?.city_prices;
+                  if (typeof rawCp === 'string') { try { rawCp = JSON.parse(rawCp); } catch { rawCp = {}; } }
+                  const cityPricesMap = (rawCp && typeof rawCp === 'object' && !Array.isArray(rawCp)) ? rawCp : {};
+                  const cityData = cityPricesMap[selectedCity];
+                  const hasCityPrice = cityData?.price_range && cityData.price_range.trim() !== '';
+                  if (hasCityPrice) {
+                    return (
+                      <div className={`rounded-xl border-2 px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-yellow-500 bg-yellow-900/20" : "border-yellow-400 bg-yellow-50"}`}>
+                        <div>
+                          <p className={`text-[9px] font-extrabold uppercase tracking-widest mb-0.5 ${isDarkMode ? "text-yellow-400" : "text-yellow-600"}`}>
+                            📍 {selectedCity} — Local Price
+                          </p>
+                          <p className={`text-base font-black ${isDarkMode ? "text-yellow-300" : "text-yellow-700"}`}>
+                            {cityData.price_range}
+                          </p>
+                          {cityData.unit && (
+                            <p className={`text-[10px] ${isDarkMode ? "text-yellow-500" : "text-yellow-600"}`}>{cityData.unit}</p>
+                          )}
+                        </div>
+                        <span className="text-2xl">🏷️</span>
+                      </div>
+                    );
+                  } else if (selectedCategory?.price_range) {
+                    return (
+                      <div className={`rounded-xl border px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
+                        <div>
+                          <p className={`text-[9px] font-bold uppercase tracking-widest mb-0.5 ${isDarkMode ? "text-zinc-400" : "text-gray-500"}`}>
+                            Indicative Price Range
+                          </p>
+                          <p className={`text-sm font-bold ${isDarkMode ? "text-zinc-200" : "text-gray-800"}`}>
+                            {selectedCategory.price_range}
+                          </p>
+                          {selectedCategory.unit && (
+                            <p className={`text-[10px] ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>{selectedCategory.unit}</p>
+                          )}
+                        </div>
+                        <span className={`text-[9px] font-bold px-2 py-1 rounded ${isDarkMode ? "bg-zinc-700 text-zinc-400" : "bg-gray-200 text-gray-500"}`}>
+                          General
+                        </span>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className={`rounded-xl border px-4 py-2.5 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
+                      <p className={`text-[10px] font-semibold ${isDarkMode ? "text-zinc-400" : "text-gray-500"}`}>
+                        Price will be quoted by a verified supplier in <strong>{selectedCity}</strong>.
+                      </p>
+                    </div>
+                  );
+                })()}
 
                 {/* ── SECTION 1 — Material Details ───────────────────── */}
                 <SectionLabel isDark={isDarkMode}>📦 Material Details</SectionLabel>
@@ -621,14 +713,6 @@ export default function ShopPage() {
                     className={`${inp} resize-none`}
                   />
                 </div>
-
-                {/* Price range hint */}
-                {selectedCategory?.price_range && (
-                  <div className={`rounded-lg px-3 py-2 border flex items-center justify-between mb-3 ${isDarkMode ? "bg-zinc-800 border-zinc-700" : "bg-yellow-50 border-yellow-100"}`}>
-                    <span className={`text-[10px] font-bold ${subText}`}>Indicative Price Range</span>
-                    <span className={`text-xs font-extrabold ${isDarkMode ? "text-yellow-300" : "text-yellow-600"}`}>{selectedCategory.price_range}</span>
-                  </div>
-                )}
 
                 {/* Error */}
                 {submitError && (

@@ -155,6 +155,18 @@ const COLOR_OPTIONS = [
 
 const EMPTY = { name: '', emoji: '🛒', label: '', label_color: 'yellow', price_range: '', unit: '' };
 
+const INDIAN_CITIES = [
+  'Agra','Ahmedabad','Ajmer','Aligarh','Allahabad','Amritsar','Aurangabad',
+  'Bangalore','Bareilly','Bhopal','Bhubaneswar','Chandigarh','Chennai',
+  'Coimbatore','Dehradun','Delhi','Dhanbad','Faridabad','Ghaziabad',
+  'Guwahati','Gwalior','Howrah','Hubli-Dharwad','Hyderabad','Indore',
+  'Jabalpur','Jaipur','Jalandhar','Jodhpur','Kanpur','Kochi','Kolkata',
+  'Kota','Lucknow','Ludhiana','Madurai','Mangalore','Meerut','Moradabad',
+  'Mumbai','Mysore','Nagpur','Nashik','Noida','Patna','Pune','Raipur',
+  'Rajkot','Ranchi','Srinagar','Surat','Thane','Thiruvananthapuram',
+  'Varanasi','Vijayawada','Visakhapatnam','Vadodara',
+];
+
 /* ══════════════════════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════════════════════ */
@@ -169,6 +181,8 @@ export default function ShopCategoriesManager({ isDarkMode }) {
   const [image, setImage]           = useState('');
   const [types, setTypes]           = useState([]);           // array of strings
   const [subcategories, setSubs]    = useState([]);           // array of strings
+  const [cityPrices, setCityPrices] = useState({});          // { "Delhi": { price_range, unit } }
+  const [pendingCity, setPendingCity] = useState('');       // city selected in the "Add City" dropdown
   const [saving, setSaving]         = useState(false);
   const [msg, setMsg]               = useState({ text: '', type: '' });
   const [orderSaving, setOrderSaving] = useState(false);
@@ -205,6 +219,8 @@ export default function ShopCategoriesManager({ isDarkMode }) {
     setImage('');
     setTypes([]);
     setSubs([]);
+    setCityPrices({});
+    setPendingCity('');
   }
 
   function openAdd() { resetForm(); setView('form'); }
@@ -217,9 +233,13 @@ export default function ShopCategoriesManager({ isDarkMode }) {
       price_range: cat.price_range || '', unit: cat.unit || '',
     });
     setImage(cat.image || '');
-    // types / subcategories may be JSONB arrays from postgres
     setTypes(Array.isArray(cat.types) ? cat.types : []);
     setSubs(Array.isArray(cat.subcategories) ? cat.subcategories : []);
+    // city_prices may arrive as JSONB object, string, or null
+    let cp = cat.city_prices;
+    if (typeof cp === 'string') { try { cp = JSON.parse(cp); } catch { cp = {}; } }
+    setCityPrices(cp && typeof cp === 'object' && !Array.isArray(cp) ? cp : {});
+    setPendingCity('');
     setView('form');
   }
 
@@ -229,7 +249,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
     if (!form.name.trim()) { flash('Name is required.', 'error'); return; }
     setSaving(true);
     try {
-      const payload = { ...form, image: image || null, types, subcategories };
+      const payload = { ...form, image: image || null, types, subcategories, city_prices: cityPrices };
       let res;
       if (editCat) {
         res = await fetch('/api/shop-categories', {
@@ -396,20 +416,6 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                   </select>
                 </div>
 
-                {/* Price Range */}
-                <div>
-                  <label style={lbl}>Price Range</label>
-                  <input className="sc-inp" style={inp} value={form.price_range}
-                    onChange={e => setForm(f => ({ ...f, price_range: e.target.value }))} placeholder="₹380–450 / bag" />
-                </div>
-
-                {/* Unit */}
-                <div style={{ gridColumn: 'span 2' }}>
-                  <label style={lbl}>Unit</label>
-                  <input className="sc-inp" style={inp} value={form.unit}
-                    onChange={e => setForm(f => ({ ...f, unit: e.target.value }))} placeholder="per 50 kg bag" />
-                </div>
-
                 {/* Preview */}
                 {(form.label || form.emoji) && (
                   <div style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px' }}>
@@ -453,6 +459,94 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                     placeholder='e.g. "Rapid Setting", "Sulphate Resistant"'
                     t={t}
                   />
+                </div>
+
+                {/* ── City-wise Pricing ──────────────────────────────── */}
+                <div style={{ gridColumn: 'span 2', borderTop: `1px solid ${t.border}`, paddingTop: '20px', marginTop: '4px' }}>
+                  <label style={{ ...lbl, display: 'block', marginBottom: '4px' }}>City-wise Pricing</label>
+                  <p style={{ fontSize: '11px', color: t.muted, marginBottom: '12px' }}>
+                    Set separate prices per city. Users see their city's price when they request a quote. If no city price is set, users are told the price will be quoted by a verified supplier.
+                  </p>
+
+                  {/* Add city row */}
+                  {(() => {
+                    const available = INDIAN_CITIES.filter(c => !Object.prototype.hasOwnProperty.call(cityPrices, c));
+                    return (
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
+                        <select
+                          value={pendingCity}
+                          onChange={e => setPendingCity(e.target.value)}
+                          style={{ ...inp, flex: 1 }}
+                        >
+                          <option value="">— Select city to add —</option>
+                          {available.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!pendingCity) return;
+                            setCityPrices(prev => ({ ...prev, [pendingCity]: { price_range: '', unit: '' } }));
+                            setPendingCity('');
+                          }}
+                          style={{ padding: '9px 16px', background: t.accent, color: t.accentFg, border: 'none', borderRadius: '4px', fontSize: '11px', fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                        >
+                          + Add City
+                        </button>
+                      </div>
+                    );
+                  })()}
+
+                  {/* City price rows */}
+                  {Object.keys(cityPrices).length === 0 ? (
+                    <p style={{ fontSize: '11px', color: t.muted, fontStyle: 'italic' }}>No cities added yet. Add cities above to set location-specific prices.</p>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {Object.entries(cityPrices).map(([city, vals]) => (
+                        <div key={city} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: '8px', alignItems: 'center', background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '10px 12px' }}>
+                          <div style={{ fontWeight: 700, fontSize: '12px', color: t.text }}>
+                            📍 {city}
+                          </div>
+                          <div>
+                            <label style={{ ...lbl, marginBottom: '3px' }}>Price Range</label>
+                            <input
+                              className="sc-inp"
+                              style={{ ...inp, fontSize: '12px', padding: '6px 8px' }}
+                              placeholder="e.g. ₹380–450 / bag"
+                              value={vals.price_range || ''}
+                              onChange={e => setCityPrices(prev => ({ ...prev, [city]: { ...prev[city], price_range: e.target.value } }))}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ ...lbl, marginBottom: '3px' }}>Unit</label>
+                            <input
+                              className="sc-inp"
+                              style={{ ...inp, fontSize: '12px', padding: '6px 8px' }}
+                              placeholder="e.g. per 50 kg bag"
+                              value={vals.unit || ''}
+                              onChange={e => setCityPrices(prev => ({ ...prev, [city]: { ...prev[city], unit: e.target.value } }))}
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setCityPrices(prev => {
+                              const next = { ...prev };
+                              delete next[city];
+                              return next;
+                            })}
+                            style={{ padding: '6px 10px', background: 'none', border: '1px solid #ef4444', borderRadius: '4px', color: '#ef4444', cursor: 'pointer', fontSize: '11px', fontWeight: 700, alignSelf: 'flex-end' }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {Object.keys(cityPrices).length > 0 && (
+                    <p style={{ fontSize: '10px', color: t.muted, marginTop: '8px' }}>
+                      {Object.keys(cityPrices).length} {Object.keys(cityPrices).length === 1 ? 'city' : 'cities'} configured with custom pricing.
+                    </p>
+                  )}
                 </div>
 
               </div>

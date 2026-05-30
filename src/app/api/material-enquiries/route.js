@@ -35,12 +35,12 @@ async function ensureTable() {
   `);
   // Safe column migrations — run every time, all idempotent
   const migrations = [
-    // widen the emoji column in case the table already existed with VARCHAR(10)
     `ALTER TABLE material_enquiries ALTER COLUMN category_emoji TYPE TEXT USING category_emoji::TEXT`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS material_type    VARCHAR(255)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS subcategory_name VARCHAR(255)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS brand_company    VARCHAR(255)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS delivery_date    DATE`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS selected_city    VARCHAR(100)`,
   ];
   for (const sql of migrations) {
     try { await pool.query(sql); } catch { /* already correct type or column exists */ }
@@ -58,7 +58,7 @@ export async function POST(req) {
       material_type, subcategory_name, brand_company,
       quantity_text, delivery_date,
       delivery_address, latitude, longitude,
-      message,
+      message, selected_city,
     } = await req.json();
 
     if (!user_name || !user_phone || !category_name) {
@@ -74,8 +74,8 @@ export async function POST(req) {
           category_name, category_emoji,
           material_type, subcategory_name, brand_company,
           quantity_text, delivery_date,
-          delivery_address, latitude, longitude, message)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+          delivery_address, latitude, longitude, message, selected_city)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
        RETURNING id, status, created_at`,
       [
         user_name, user_phone, user_email || null,
@@ -83,7 +83,7 @@ export async function POST(req) {
         material_type || null, subcategory_name || null, brand_company || null,
         quantity_text || null, delivery_date || null,
         delivery_address || null, latitude || null, longitude || null,
-        message || null,
+        message || null, selected_city || null,
       ]
     );
 

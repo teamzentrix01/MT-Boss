@@ -23,6 +23,7 @@ async function ensureTable() {
   // Column migrations — idempotent
   await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS types         JSONB DEFAULT '[]'`);
   await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS subcategories JSONB DEFAULT '[]'`);
+  await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS city_prices   JSONB DEFAULT '{}'`);
 }
 
 // ── GET ──────────────────────────────────────────────────────────────────────
@@ -50,7 +51,7 @@ export async function POST(req) {
     const token = req.headers.get('Authorization')?.split(' ')[1];
     if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { name, image, emoji, label, label_color, price_range, unit, types, subcategories } = await req.json();
+    const { name, image, emoji, label, label_color, price_range, unit, types, subcategories, city_prices } = await req.json();
     if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 });
 
     const { rows: [{ max }] } = await pool.query(`SELECT COALESCE(MAX(sort_order),0) AS max FROM shop_categories`);
@@ -58,14 +59,15 @@ export async function POST(req) {
     const result = await pool.query(
       `INSERT INTO shop_categories
          (name, image, emoji, label, label_color, price_range, unit, sort_order,
-          is_active, types, subcategories, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,TRUE,$9::jsonb,$10::jsonb,NOW(),NOW())
+          is_active, types, subcategories, city_prices, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,TRUE,$9::jsonb,$10::jsonb,$11::jsonb,NOW(),NOW())
        RETURNING *`,
       [
         name, image || null, emoji || '🛒', label || '', label_color || 'yellow',
         price_range || '', unit || '', parseInt(max) + 1,
         JSON.stringify(Array.isArray(types) ? types : []),
         JSON.stringify(Array.isArray(subcategories) ? subcategories : []),
+        JSON.stringify(city_prices && typeof city_prices === 'object' ? city_prices : {}),
       ]
     );
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
@@ -84,7 +86,7 @@ export async function PUT(req) {
 
     const {
       id, name, image, emoji, label, label_color,
-      price_range, unit, is_active, types, subcategories,
+      price_range, unit, is_active, types, subcategories, city_prices,
     } = await req.json();
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
 
@@ -92,13 +94,15 @@ export async function PUT(req) {
       `UPDATE shop_categories
        SET name=$1, image=$2, emoji=$3, label=$4, label_color=$5,
            price_range=$6, unit=$7, is_active=$8,
-           types=$9::jsonb, subcategories=$10::jsonb, updated_at=NOW()
-       WHERE id=$11 RETURNING *`,
+           types=$9::jsonb, subcategories=$10::jsonb,
+           city_prices=$11::jsonb, updated_at=NOW()
+       WHERE id=$12 RETURNING *`,
       [
         name, image || null, emoji || '🛒', label || '', label_color || 'yellow',
         price_range || '', unit || '', is_active ?? true,
         JSON.stringify(Array.isArray(types) ? types : []),
         JSON.stringify(Array.isArray(subcategories) ? subcategories : []),
+        JSON.stringify(city_prices && typeof city_prices === 'object' ? city_prices : {}),
         id,
       ]
     );
