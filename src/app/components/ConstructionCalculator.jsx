@@ -3,13 +3,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart, Trash2, X } from 'lucide-react';
 
+const CITIES = ['Moradabad', 'Noida', 'Delhi', 'Gurgaon', 'Ghaziabad', 'Lucknow', 'Agra', 'Mumbai'];
+
+const steelIcon =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 180'%3E%3Crect width='240' height='180' fill='%23f0f2f5'/%3E%3Crect x='18' y='28' width='204' height='22' rx='5' fill='%23b0b8c4'/%3E%3Crect x='18' y='28' width='204' height='8' rx='5' fill='%23cdd4de'/%3E%3Crect x='18' y='60' width='204' height='22' rx='5' fill='%23a0a8b4'/%3E%3Crect x='18' y='60' width='204' height='8' rx='5' fill='%23bdc4ce'/%3E%3Crect x='18' y='92' width='204' height='22' rx='5' fill='%239098a4'/%3E%3Crect x='18' y='92' width='204' height='8' rx='5' fill='%23adb4be'/%3E%3Crect x='18' y='124' width='204' height='22' rx='5' fill='%238890a0'/%3E%3Crect x='18' y='124' width='204' height='8' rx='5' fill='%23a0a8b8'/%3E%3Ctext x='120' y='170' text-anchor='middle' font-family='Arial,sans-serif' font-size='13' font-weight='900' fill='%23555e6b'%3ESTEEL BARS%3C/text%3E%3C/svg%3E";
+
 const cementBagIcon =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 180'%3E%3Crect width='240' height='180' fill='%23f8f8f8'/%3E%3Cg transform='translate(72 24)'%3E%3Cpath d='M16 6h66l14 118H2L16 6Z' fill='%23f7c948' stroke='%23242830' stroke-width='5'/%3E%3Cpath d='M18 6h62l-8 20H26L18 6Z' fill='%23fff4b8'/%3E%3Cpath d='M10 82h82l5 42H4l6-42Z' fill='%23fff' opacity='.72'/%3E%3Ctext x='48' y='62' text-anchor='middle' font-family='Arial,sans-serif' font-size='20' font-weight='900' fill='%23242830'%3ECEMENT%3C/text%3E%3Ctext x='48' y='105' text-anchor='middle' font-family='Arial,sans-serif' font-size='17' font-weight='900' fill='%23242830'%3E50 KG%3C/text%3E%3C/g%3E%3C/svg%3E";
 const bricksIcon =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 180'%3E%3Crect width='240' height='180' fill='%23f8f8f8'/%3E%3Cg transform='translate(78 58)'%3E%3Crect x='22' y='34' width='48' height='26' rx='3' fill='%23e85d2a'/%3E%3Crect x='66' y='34' width='48' height='26' rx='3' fill='%23f47a37'/%3E%3Crect x='44' y='10' width='48' height='26' rx='3' fill='%23f17a36'/%3E%3Cpath d='M22 60h92L94 82H2l20-22Z' fill='%23c94723'/%3E%3Cpath d='M114 34 94 10v26l20 24V34Z' fill='%23d95b2c'/%3E%3C/g%3E%3Cg transform='translate(38 28) rotate(-20 35 60)'%3E%3Cpath d='M32 8c20 18 33 43 24 67-9 24-34 37-50 32 5-19 8-38 6-58C10 30 16 16 32 8Z' fill='%23d7d7d7' stroke='%23787878' stroke-width='4'/%3E%3Crect x='47' y='80' width='13' height='56' rx='6' fill='%23944a26'/%3E%3Crect x='43' y='70' width='22' height='18' rx='7' fill='%23b85b2d'/%3E%3C/g%3E%3C/svg%3E";
 
 const categoryIcons = {
-  Steel: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=500&q=80',
+  Steel: steelIcon,
   Bricks: bricksIcon,
   Cement: cementBagIcon,
   Wiring: 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=500&q=80',
@@ -25,15 +30,24 @@ const formatCurrency = (value) =>
 
 const foundationTypes = ['Isolated (valid upto G+3)', 'Pile', 'Matt', 'Basement'];
 
+function getProductPrice(product, city) {
+  if (city && product.city_prices && typeof product.city_prices === 'object') {
+    const p = product.city_prices[city];
+    if (p !== undefined && p !== null && p !== '') return Number(p);
+  }
+  return Number(product.price);
+}
+
 export default function ConstructionCalculator() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('');
   const [cart, setCart] = useState({});
   const [cartOpen, setCartOpen] = useState(false);
+  const [justAdded, setJustAdded] = useState(null);
   const [isDark, setIsDark] = useState(false);
   const [options, setOptions] = useState({
-    city: 'Noida',
+    city: '',
     slabArea: '1000',
     floors: '1',
     foundation: '',
@@ -62,11 +76,9 @@ export default function ConstructionCalculator() {
         localStorage.getItem('theme') === 'dark'
       );
     };
-
     checkTheme();
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
     return () => observer.disconnect();
   }, []);
 
@@ -84,7 +96,7 @@ export default function ConstructionCalculator() {
     return Array.from(map.values());
   }, [products]);
 
-  const visibleProducts = products.filter((product) => product.category === activeCategory);
+  const visibleProducts = products.filter((p) => p.category === activeCategory);
   const selectedItems = Object.values(cart);
   const subtotal = selectedItems.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
   const slabMultiplier = Math.max(parseInt(options.slabArea, 10) || 0, 1) / 1000;
@@ -93,13 +105,17 @@ export default function ConstructionCalculator() {
   const estimate = Math.round(subtotal * slabMultiplier * floorMultiplier * foundationMultiplier);
 
   const addToCart = (product) => {
+    const effectivePrice = getProductPrice(product, options.city);
     setCart((current) => ({
       ...current,
       [product.id]: {
         ...product,
+        price: effectivePrice,
         quantity: (current[product.id]?.quantity || 0) + 1,
       },
     }));
+    setJustAdded(product.id);
+    setTimeout(() => setJustAdded(id => id === product.id ? null : id), 1500);
   };
 
   const changeQty = (productId, delta) => {
@@ -117,7 +133,7 @@ export default function ConstructionCalculator() {
   };
 
   const categoryShift = (direction) => {
-    const index = categories.findIndex((category) => category.name === activeCategory);
+    const index = categories.findIndex((c) => c.name === activeCategory);
     if (index === -1) return;
     const nextIndex = (index + direction + categories.length) % categories.length;
     setActiveCategory(categories[nextIndex].name);
@@ -165,6 +181,12 @@ export default function ConstructionCalculator() {
         .calc-shell { max-width: 1120px; margin: -46px auto 0; padding: 0 18px 48px; }
         .calc-filter { background: #fff; border-radius: 14px; padding: 18px; box-shadow: 0 18px 50px rgba(15,23,42,.08); display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
         .calc-select { width: 100%; height: 38px; border: 1px solid #dfe3ea; border-radius: 8px; background: #fff; color: #111827; padding: 0 14px; font-size: .78rem; font-weight: 700; }
+        .calc-city-gate { text-align: center; padding: 4rem 1rem 3rem; }
+        .calc-city-gate-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+        .calc-city-gate h2 { margin: 0 0 .5rem; font-size: 1.5rem; font-weight: 900; color: var(--calc-heading); }
+        .calc-city-gate p { color: var(--calc-muted); font-size: .92rem; max-width: 400px; margin: 0 auto 1.75rem; line-height: 1.6; }
+        .calc-city-picker { display: inline-block; }
+        .calc-city-picker select { height: 46px; font-size: .95rem; font-weight: 800; border: 2px solid var(--calc-accent); border-radius: 10px; background: #fff; color: #111827; padding: 0 18px; min-width: 220px; cursor: pointer; }
         .calc-workspace { margin-top: 46px; }
         .calc-category-row { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 16px; }
         .calc-category { height: 164px; border: 1px solid #f0f0f0; border-radius: 14px; overflow: hidden; background: #fff; cursor: pointer; position: relative; transition: border .15s, transform .15s; }
@@ -176,6 +198,7 @@ export default function ConstructionCalculator() {
         .calc-arrows { display: flex; gap: 8px; }
         .calc-icon-btn { width: 42px; height: 42px; border: 2px solid #f6b400; color: #f6b400; background: #fff; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
         .calc-cart-btn { border: none; background: #f6b400; color: #111; border-radius: 999px; padding: 10px 16px; display: inline-flex; gap: 6px; align-items: center; font-size: .8rem; font-weight: 900; cursor: pointer; }
+        .calc-city-badge { display: inline-flex; align-items: center; gap: 5px; background: #fff8e1; color: #92400e; border: 1px solid #fcd34d; border-radius: 999px; padding: 4px 12px; font-size: .74rem; font-weight: 800; margin-bottom: 8px; }
         .calc-title { font-size: 2rem; margin: 0 0 14px; font-weight: 900; letter-spacing: 0; }
         .calc-products { display: grid; grid-template-columns: repeat(4, minmax(170px, 1fr)); gap: 20px; }
         .calc-card { background: #f7f7f8; border-radius: 12px; padding: 18px 16px 16px; min-height: 292px; display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -183,7 +206,12 @@ export default function ConstructionCalculator() {
         .calc-card h3 { margin: 0 0 6px; font-size: .96rem; font-weight: 900; }
         .calc-card p { margin: 0; min-height: 38px; color: #59606b; font-size: .74rem; line-height: 1.4; }
         .calc-price { margin: 10px 0 14px; font-weight: 900; color: #111827; }
-        .calc-add { margin-top: auto; border: none; background: #f6b400; color: #111; border-radius: 999px; padding: 9px 13px; display: inline-flex; align-items: center; gap: 5px; font-size: .75rem; font-weight: 900; cursor: pointer; }
+        .calc-add { margin-top: auto; border: none; background: #f6b400; color: #111; border-radius: 999px; padding: 9px 13px; display: inline-flex; align-items: center; gap: 5px; font-size: .75rem; font-weight: 900; cursor: pointer; transition: background .15s; }
+        .calc-add.added { background: #22c55e; color: #fff; }
+        .calc-card-qty { margin-top: auto; display: inline-flex; align-items: center; gap: 0; border: 2px solid #f6b400; border-radius: 999px; overflow: hidden; }
+        .calc-card-qty button { width: 34px; height: 34px; border: none; background: transparent; color: #f6b400; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; font-weight: 900; transition: background .12s; }
+        .calc-card-qty button:hover { background: #f6b40018; }
+        .calc-card-qty span { min-width: 32px; text-align: center; font-weight: 900; font-size: .9rem; color: var(--calc-heading, #111); }
         .calc-inline-total { color: #111; font-size: .84rem; font-weight: 900; }
         .calc-modal-backdrop { position: fixed; inset: 0; z-index: 220; background: rgba(0,0,0,.48); display: flex; align-items: center; justify-content: center; padding: 18px; }
         .calc-modal { width: min(560px, 100%); max-height: 86vh; overflow: auto; background: #fff; border-radius: 12px; box-shadow: 0 24px 80px rgba(15,23,42,.28); }
@@ -223,22 +251,13 @@ export default function ConstructionCalculator() {
         .dark-mode .calc-page .calc-filter,
         .calc-page.dark .calc-filter { box-shadow: 0 18px 50px rgba(0,0,0,.45); }
         .dark-mode .calc-page .calc-category-badge,
-        .calc-page.dark .calc-category-badge {
-          background: var(--calc-muted-surface);
-          color: var(--calc-heading);
-        }
+        .calc-page.dark .calc-category-badge { background: var(--calc-muted-surface); color: var(--calc-heading); }
         .dark-mode .calc-page .calc-category.active,
-        .calc-page.dark .calc-category.active {
-          border-color: var(--calc-accent);
-        }
+        .calc-page.dark .calc-category.active { border-color: var(--calc-accent); }
         .dark-mode .calc-page .calc-card,
         .dark-mode .calc-page .calc-empty,
         .calc-page.dark .calc-card,
-        .calc-page.dark .calc-empty {
-          background: var(--calc-card);
-          border: 1px solid var(--calc-border-soft);
-          color: var(--calc-text);
-        }
+        .calc-page.dark .calc-empty { background: var(--calc-card); border: 1px solid var(--calc-border-soft); color: var(--calc-text); }
         .dark-mode .calc-page .calc-card h3,
         .dark-mode .calc-page .calc-title,
         .dark-mode .calc-page .calc-price,
@@ -248,9 +267,7 @@ export default function ConstructionCalculator() {
         .calc-page.dark .calc-title,
         .calc-page.dark .calc-price,
         .calc-page.dark .calc-modal-title,
-        .calc-page.dark .calc-cart-name {
-          color: var(--calc-heading);
-        }
+        .calc-page.dark .calc-cart-name { color: var(--calc-heading); }
         .dark-mode .calc-page .calc-card p,
         .dark-mode .calc-page .calc-cart-empty,
         .dark-mode .calc-page .calc-cart-meta,
@@ -258,40 +275,43 @@ export default function ConstructionCalculator() {
         .calc-page.dark .calc-card p,
         .calc-page.dark .calc-cart-empty,
         .calc-page.dark .calc-cart-meta,
-        .calc-page.dark .calc-empty {
-          color: var(--calc-muted);
-        }
+        .calc-page.dark .calc-empty { color: var(--calc-muted); }
         .dark-mode .calc-page .calc-cart-row,
-        .calc-page.dark .calc-cart-row {
-          background: var(--calc-card-soft);
-          border-color: var(--calc-border);
-        }
+        .calc-page.dark .calc-cart-row { background: var(--calc-card-soft); border-color: var(--calc-border); }
         .dark-mode .calc-page .calc-modal-head,
         .dark-mode .calc-page .calc-cart-total,
         .calc-page.dark .calc-modal-head,
-        .calc-page.dark .calc-cart-total {
-          border-color: var(--calc-border);
-        }
+        .calc-page.dark .calc-cart-total { border-color: var(--calc-border); }
         .dark-mode .calc-page .calc-modal,
         .calc-page.dark .calc-modal { box-shadow: 0 24px 80px rgba(0,0,0,.65); }
         .dark-mode .calc-page .calc-clear,
         .calc-page.dark .calc-clear { background: #27272a; }
+        .dark-mode .calc-page .calc-city-picker select,
+        .calc-page.dark .calc-city-picker select { background: var(--calc-surface); color: var(--calc-heading); }
         @media (max-width: 980px) { .calc-products { grid-template-columns: repeat(3, minmax(170px, 1fr)); } }
         @media (max-width: 760px) { .calc-filter { grid-template-columns: 1fr; } .calc-category-row, .calc-products { grid-template-columns: repeat(2, 1fr); } .calc-shell { margin-top: -28px; } }
         @media (max-width: 520px) { .calc-category-row, .calc-products { grid-template-columns: 1fr; } .calc-controls { align-items: flex-start; flex-direction: column; } }
       `}</style>
+
       <main className={`calc-page${isDark ? ' dark' : ''}`}>
         <section className="calc-hero">
           <div>
             <h1>Cost Estimator Tool</h1>
-            <p>Select construction products, update quantities and get an instant material quotation.</p>
+            <p>Select your city, choose construction products, and get an instant material quotation.</p>
           </div>
         </section>
 
         <div className="calc-shell">
+          {/* Filter bar — city is first and required */}
           <div className="calc-filter">
-            <select className="calc-select" value={options.city} onChange={(e) => setOptions({ ...options, city: e.target.value })}>
-              {['Noida', 'Delhi', 'Gurgaon', 'Ghaziabad', 'Mumbai'].map((item) => <option key={item}>{item}</option>)}
+            <select
+              className="calc-select"
+              value={options.city}
+              onChange={(e) => { setOptions({ ...options, city: e.target.value }); setCart({}); }}
+              style={!options.city ? { borderColor: '#f6b400', color: '#92400e' } : {}}
+            >
+              <option value="">📍 Select your city</option>
+              {CITIES.map((c) => <option key={c}>{c}</option>)}
             </select>
             <select className="calc-select" value={options.slabArea} onChange={(e) => setOptions({ ...options, slabArea: e.target.value })}>
               <option value="750">Slab area: 750 sqft</option>
@@ -313,9 +333,33 @@ export default function ConstructionCalculator() {
 
           {loading ? (
             <div className="calc-empty" style={{ marginTop: 48 }}>Loading calculator...</div>
+          ) : !options.city ? (
+            /* ── City gate ── */
+            <div className="calc-city-gate">
+              <div className="calc-city-gate-icon">📍</div>
+              <h2>Select Your City to View Prices</h2>
+              <p>
+                Construction material prices vary by location. Choose your city to see accurate,
+                city-specific pricing for all products.
+              </p>
+              <div className="calc-city-picker">
+                <select
+                  value={options.city}
+                  onChange={(e) => setOptions({ ...options, city: e.target.value })}
+                >
+                  <option value="">-- Select City --</option>
+                  {CITIES.map((c) => <option key={c}>{c}</option>)}
+                </select>
+              </div>
+            </div>
           ) : (
+            /* ── Main workspace ── */
             <div className="calc-workspace">
               <section>
+                <div style={{ marginBottom: 16 }}>
+                  <span className="calc-city-badge">📍 {options.city} — prices shown for your city</span>
+                </div>
+
                 <div className="calc-category-row">
                   {categories.map((category) => (
                     <button key={category.name} className={`calc-category${activeCategory === category.name ? ' active' : ''}`} onClick={() => setActiveCategory(category.name)}>
@@ -339,18 +383,32 @@ export default function ConstructionCalculator() {
                 </div>
 
                 <div className="calc-products">
-                  {visibleProducts.map((product) => (
-                    <article className="calc-card" key={product.id}>
-                      <img src={product.image_url || categoryIcons[product.category] || categoryIcons.Cement} alt={product.name} />
-                      <h3>{product.name}</h3>
-                      <p>{product.description}</p>
-                      <div className="calc-price">{formatCurrency(Number(product.price))} / {product.unit}</div>
-                      <button className="calc-add" onClick={() => addToCart(product)}><ShoppingCart size={14} /> Add To My Cart</button>
-                    </article>
-                  ))}
+                  {visibleProducts.map((product) => {
+                    const displayPrice = getProductPrice(product, options.city);
+                    const cartItem = cart[product.id];
+                    const added = justAdded === product.id;
+                    return (
+                      <article className="calc-card" key={product.id}>
+                        <img src={product.image_url || categoryIcons[product.category] || categoryIcons.Cement} alt={product.name} />
+                        <h3>{product.name}</h3>
+                        <p>{product.description}</p>
+                        <div className="calc-price">{formatCurrency(displayPrice)} / {product.unit}</div>
+                        {cartItem ? (
+                          <div className="calc-card-qty">
+                            <button onClick={() => changeQty(product.id, -1)} aria-label="Remove one"><Minus size={14} /></button>
+                            <span>{cartItem.quantity}</span>
+                            <button onClick={() => changeQty(product.id, 1)} aria-label="Add one"><Plus size={14} /></button>
+                          </div>
+                        ) : (
+                          <button className={`calc-add${added ? ' added' : ''}`} onClick={() => addToCart(product)}>
+                            {added ? <>✓ Added!</> : <><ShoppingCart size={14} /> Add To My Cart</>}
+                          </button>
+                        )}
+                      </article>
+                    );
+                  })}
                 </div>
               </section>
-
             </div>
           )}
         </div>
@@ -359,7 +417,7 @@ export default function ConstructionCalculator() {
           <div className="calc-modal-backdrop" onClick={() => setCartOpen(false)}>
             <div className="calc-modal" onClick={(e) => e.stopPropagation()}>
               <div className="calc-modal-head">
-                <h3 className="calc-modal-title">My Quotation Cart</h3>
+                <h3 className="calc-modal-title">My Quotation Cart {options.city && <span style={{ fontSize: '.75rem', color: '#6b7280', fontWeight: 600 }}>· {options.city}</span>}</h3>
                 <button className="calc-close" onClick={() => setCartOpen(false)} aria-label="Close cart">
                   <X size={17} />
                 </button>

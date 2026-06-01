@@ -123,6 +123,8 @@ async function ensureTable() {
           updated_at = NOW()
   `);
 
+  await pool.query(`ALTER TABLE calculator_products ADD COLUMN IF NOT EXISTS city_prices JSONB DEFAULT '{}'`);
+
   ready = true;
 }
 
@@ -152,7 +154,7 @@ export async function POST(req) {
     if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
-    const { category, badge, name, description, image_url, unit, price, is_active } = body;
+    const { category, badge, name, description, image_url, unit, price, city_prices, is_active } = body;
     if (!category || !name || price === undefined || price === '') {
       return NextResponse.json({ error: 'Category, name and price are required' }, { status: 400 });
     }
@@ -160,8 +162,8 @@ export async function POST(req) {
     const { rows: [{ max }] } = await pool.query('SELECT COALESCE(MAX(sort_order),0) AS max FROM calculator_products');
     const result = await pool.query(
       `INSERT INTO calculator_products
-        (category, badge, name, description, image_url, unit, price, sort_order, is_active, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,NOW(),NOW()) RETURNING *`,
+        (category, badge, name, description, image_url, unit, price, city_prices, sort_order, is_active, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW(),NOW()) RETURNING *`,
       [
         category,
         badge || 'Recommended',
@@ -170,6 +172,7 @@ export async function POST(req) {
         image_url || '',
         unit || 'unit',
         parseFloat(price),
+        JSON.stringify(city_prices || {}),
         parseInt(max) + 1,
         is_active ?? true,
       ]
@@ -189,7 +192,7 @@ export async function PUT(req) {
     if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
-    const { id, category, badge, name, description, image_url, unit, price, is_active } = body;
+    const { id, category, badge, name, description, image_url, unit, price, city_prices, is_active } = body;
     if (!id || !category || !name || price === undefined || price === '') {
       return NextResponse.json({ error: 'ID, category, name and price are required' }, { status: 400 });
     }
@@ -197,8 +200,8 @@ export async function PUT(req) {
     const result = await pool.query(
       `UPDATE calculator_products
        SET category=$1, badge=$2, name=$3, description=$4, image_url=$5, unit=$6,
-           price=$7, is_active=$8, updated_at=NOW()
-       WHERE id=$9 RETURNING *`,
+           price=$7, city_prices=$8, is_active=$9, updated_at=NOW()
+       WHERE id=$10 RETURNING *`,
       [
         category,
         badge || 'Recommended',
@@ -207,6 +210,7 @@ export async function PUT(req) {
         image_url || '',
         unit || 'unit',
         parseFloat(price),
+        JSON.stringify(city_prices || {}),
         is_active ?? true,
         id,
       ]

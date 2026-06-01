@@ -25,21 +25,27 @@ function categoryMatches(enquiryCat, supplierCategories) {
   return supplierCategories.some(sc => keywords(sc).some(k => eKw.has(k)));
 }
 
+// True only when both cities are present and match (case-insensitive)
+function cityMatches(enquiryCity, supplierCity) {
+  if (!enquiryCity || !supplierCity) return false;
+  return enquiryCity.trim().toLowerCase() === supplierCity.trim().toLowerCase();
+}
+
 export async function GET(req) {
   try {
     const decoded = getSupplier(req);
     if (!decoded) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 
-    // Fetch this supplier's registered product categories from DB
+    // Fetch this supplier's registered product categories and city from DB
     const supplierRes = await pool.query(
-      `SELECT product_categories, is_active FROM suppliers WHERE id = $1`,
+      `SELECT product_categories, is_active, city FROM suppliers WHERE id = $1`,
       [decoded.id]
     );
     if (supplierRes.rows.length === 0) {
       return NextResponse.json({ success: false, error: 'Supplier not found' }, { status: 404 });
     }
 
-    const { product_categories, is_active } = supplierRes.rows[0];
+    const { product_categories, is_active, city: supplierCity } = supplierRes.rows[0];
 
     // Inactive suppliers see no new enquiries
     if (!is_active) {
@@ -73,11 +79,16 @@ export async function GET(req) {
     const all = allRes.rows;
 
     const mine  = all.filter(e => e.accepted_by_supplier_id === decoded.id);
-    const open  = all.filter(e => e.status === 'open'     && categoryMatches(e.category_name, myCategories));
+    const open  = all.filter(e =>
+      e.status === 'open' &&
+      categoryMatches(e.category_name, myCategories) &&
+      cityMatches(e.selected_city, supplierCity)
+    );
     const taken = all.filter(e =>
       e.status === 'accepted' &&
       e.accepted_by_supplier_id !== decoded.id &&
-      categoryMatches(e.category_name, myCategories)
+      categoryMatches(e.category_name, myCategories) &&
+      cityMatches(e.selected_city, supplierCity)
     );
 
     return NextResponse.json({ success: true, data: { open, mine, taken } });

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+const CITIES = ['Moradabad', 'Noida', 'Delhi', 'Gurgaon', 'Ghaziabad', 'Lucknow', 'Agra', 'Mumbai'];
+
 /* ── Cloudinary upload helper ────────────────────────────────────────────── */
 async function uploadToCloudinary(file) {
   const fd = new FormData();
@@ -27,6 +29,7 @@ const emptyForm = {
   image_url: '',
   unit: 'unit',
   price: '',
+  city_prices: {},
   is_active: true,
 };
 
@@ -51,31 +54,35 @@ export default function CalculatorManager({ isDarkMode }) {
   const [message,    setMessage]    = useState('');
   const [error,      setError]      = useState('');
 
-  /* image state */
-  const [imageMode,    setImageMode]    = useState('url');   // 'url' | 'upload'
-  const [uploading,    setUploading]    = useState(false);
-  const [uploadErr,    setUploadErr]    = useState('');
+  /* product image state */
+  const [imageMode,  setImageMode]  = useState('url');
+  const [uploading,  setUploading]  = useState(false);
+  const [uploadErr,  setUploadErr]  = useState('');
   const fileRef = useRef(null);
+
+  /* category image state */
+  const [catImageMode, setCatImageMode] = useState('url');
+  const [catUploading, setCatUploading] = useState(false);
+  const [catUploadErr, setCatUploadErr] = useState('');
+  const catFileRef = useRef(null);
 
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
-      const productRes = await fetch('/api/calculator-products?admin=true', {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: 'no-store',
+      const productRes  = await fetch('/api/calculator-products?admin=true', {
+        headers: { Authorization: `Bearer ${token}` }, cache: 'no-store',
       });
       const categoryRes = await fetch('/api/calculator-categories', {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: 'no-store',
+        headers: { Authorization: `Bearer ${token}` }, cache: 'no-store',
       });
-      const productData = await productRes.json();
+      const productData  = await productRes.json();
       const categoryData = await categoryRes.json();
-      const nextProducts = productData.success ? productData.data || [] : [];
+      const nextProducts   = productData.success  ? productData.data  || [] : [];
       const nextCategories = categoryData.success ? categoryData.data || [] : [];
       setProducts(nextProducts);
       setCategories(nextCategories);
       setSelectedCategory((current) => {
-        if (current && nextCategories.some(category => category.name === current)) return current;
+        if (current && nextCategories.some(c => c.name === current)) return current;
         return nextCategories[0]?.name || '';
       });
     } catch {
@@ -100,22 +107,35 @@ export default function CalculatorManager({ isDarkMode }) {
     setCategoryForm(emptyCategoryForm);
     setEditingCategoryId(null);
     setShowCategoryForm(false);
+    setCatImageMode('url');
+    setCatUploadErr('');
+    if (catFileRef.current) catFileRef.current.value = '';
   };
 
-  /* ── file → Cloudinary ── */
+  /* ── product file → Cloudinary ── */
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setUploading(true);
-    setUploadErr('');
+    setUploading(true); setUploadErr('');
     try {
       const url = await uploadToCloudinary(file);
       setFormData(f => ({ ...f, image_url: url }));
     } catch (err) {
       setUploadErr(err.message || 'Upload failed');
-    } finally {
-      setUploading(false);
-    }
+    } finally { setUploading(false); }
+  };
+
+  /* ── category file → Cloudinary ── */
+  const handleCategoryFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCatUploading(true); setCatUploadErr('');
+    try {
+      const url = await uploadToCloudinary(file);
+      setCategoryForm(f => ({ ...f, image_url: url }));
+    } catch (err) {
+      setCatUploadErr(err.message || 'Upload failed');
+    } finally { setCatUploading(false); }
   };
 
   const handleSubmit = async (e) => {
@@ -123,10 +143,16 @@ export default function CalculatorManager({ isDarkMode }) {
     setMessage(''); setError('');
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      // Clean city_prices: strip empty values, convert to numbers
+      const cleanCityPrices = {};
+      Object.entries(formData.city_prices || {}).forEach(([city, val]) => {
+        if (val !== '' && val !== undefined && val !== null) cleanCityPrices[city] = parseFloat(val);
+      });
+      const payload = { ...formData, city_prices: cleanCityPrices };
       const res = await fetch('/api/calculator-products', {
         method:  editingId ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body:    JSON.stringify(editingId ? { id: editingId, ...formData } : formData),
+        body:    JSON.stringify(editingId ? { id: editingId, ...payload } : payload),
       });
       const data = await res.json();
       if (!data.success) { setError(data.error || 'Unable to save product'); return; }
@@ -168,6 +194,7 @@ export default function CalculatorManager({ isDarkMode }) {
       image_url:   product.image_url   || '',
       unit:        product.unit        || 'unit',
       price:       product.price       || '',
+      city_prices: product.city_prices || {},
       is_active:   product.is_active   ?? true,
     });
     setEditingId(product.id);
@@ -178,12 +205,14 @@ export default function CalculatorManager({ isDarkMode }) {
 
   const handleCategoryEdit = (category) => {
     setCategoryForm({
-      name: category.name || '',
-      badge: category.badge || 'Recommended',
+      name:      category.name      || '',
+      badge:     category.badge     || 'Recommended',
       image_url: category.image_url || '',
       is_active: category.is_active ?? true,
     });
     setEditingCategoryId(category.id);
+    setCatImageMode('url');
+    setCatUploadErr('');
     setShowCategoryForm(true);
   };
 
@@ -207,8 +236,7 @@ export default function CalculatorManager({ isDarkMode }) {
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       const res = await fetch(`/api/calculator-categories?id=${category.id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
+        method: 'DELETE', headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (data.success) { setMessage('Category deleted'); fetchData(); }
@@ -229,9 +257,9 @@ export default function CalculatorManager({ isDarkMode }) {
     setShowForm(true);
   };
 
-  const selectedCategoryMeta = categories.find(category => category.name === selectedCategory);
+  const selectedCategoryMeta = categories.find(c => c.name === selectedCategory);
   const visibleProducts = selectedCategory
-    ? products.filter(product => product.category === selectedCategory)
+    ? products.filter(p => p.category === selectedCategory)
     : products;
 
   return (
@@ -261,7 +289,7 @@ export default function CalculatorManager({ isDarkMode }) {
           padding:1rem; background:rgba(0,0,0,.52);
         }
         .cm-modal {
-          width:min(800px,100%); max-height:90vh; overflow:auto;
+          width:min(860px,100%); max-height:90vh; overflow:auto;
           background:var(--cm-surface); border:1px solid var(--cm-border);
           border-radius:10px; box-shadow:0 24px 80px rgba(0,0,0,.32);
         }
@@ -296,22 +324,18 @@ export default function CalculatorManager({ isDarkMode }) {
         .cm-row-actions { display:flex; gap:.35rem; }
         .cm-act      { border:1px solid var(--cm-border); background:var(--cm-bg); color:var(--cm-text); border-radius:5px; padding:.25rem .5rem; font-size:.7rem; font-weight:800; cursor:pointer; }
         .cm-act.delete { color:#dc2626; }
-
-        /* image section */
         .cm-img-tabs  { display:flex; gap:.5rem; margin-bottom:.6rem; }
         .cm-img-tab   { padding:.3rem .75rem; border-radius:20px; border:1px solid var(--cm-border); background:var(--cm-bg); color:var(--cm-muted); font-size:.73rem; font-weight:700; cursor:pointer; transition:all .15s; }
         .cm-img-tab.active { background:var(--cm-accent); color:#111; border-color:var(--cm-accent); }
         .cm-upload-zone {
           border:2px dashed var(--cm-border); border-radius:8px;
-          padding:1.2rem; text-align:center; cursor:pointer;
-          transition:border-color .2s;
+          padding:1.2rem; text-align:center; cursor:pointer; transition:border-color .2s;
         }
         .cm-upload-zone:hover { border-color:var(--cm-accent); }
-        .cm-img-preview {
-          width:64px; height:64px; object-fit:cover;
-          border-radius:6px; border:1px solid var(--cm-border);
-        }
-        @media(max-width:760px){ .cm-grid { grid-template-columns:1fr; } .cm-half { grid-column:1/-1; } }
+        .cm-img-preview { width:64px; height:64px; object-fit:cover; border-radius:6px; border:1px solid var(--cm-border); }
+        .cm-city-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; margin-top:.4rem; }
+        .cm-city-prices-summary { font-size:.68rem; color:var(--cm-muted); line-height:1.5; }
+        @media(max-width:760px){ .cm-grid { grid-template-columns:1fr; } .cm-half { grid-column:1/-1; } .cm-city-grid { grid-template-columns:repeat(2,1fr); } }
       `}</style>
 
       <div className="cm-root">
@@ -332,16 +356,13 @@ export default function CalculatorManager({ isDarkMode }) {
         {message && <div className="cm-alert cm-ok">{message}</div>}
         {error   && <div className="cm-alert cm-err">{error}</div>}
 
-        {/* ── Modal Form ── */}
+        {/* ── Category Grid ── */}
         <div className="cm-panel">
           <div className="cm-category-grid">
             {categories.map(category => (
               <div key={category.id} className={`cm-category-card${selectedCategory === category.name ? ' active' : ''}`}>
-                <button
-                  type="button"
-                  onClick={() => setSelectedCategory(category.name)}
-                  style={{ all:'unset', display:'block', width:'100%', cursor:'pointer' }}
-                >
+                <button type="button" onClick={() => setSelectedCategory(category.name)}
+                  style={{ all:'unset', display:'block', width:'100%', cursor:'pointer' }}>
                   <div className="cm-category-top">
                     <div>
                       <div className="cm-category-name">{category.name}</div>
@@ -363,6 +384,7 @@ export default function CalculatorManager({ isDarkMode }) {
           </div>
         </div>
 
+        {/* ── Add/Edit Category Modal ── */}
         {showCategoryForm && (
           <div className="cm-modal-backdrop" onClick={resetCategoryForm}>
             <div className="cm-modal" onClick={e => e.stopPropagation()}>
@@ -395,16 +417,70 @@ export default function CalculatorManager({ isDarkMode }) {
                       Active category
                     </label>
                   </div>
+
+                  {/* Category Image — URL or Upload */}
                   <div className="cm-full">
-                    <label className="cm-label">Category Image URL</label>
-                    <input className="cm-input" value={categoryForm.image_url}
-                      onChange={e => setCategoryForm({ ...categoryForm, image_url: e.target.value })}
-                      placeholder="Optional image URL for this category" />
+                    <label className="cm-label">Category Image</label>
+                    <div className="cm-img-tabs">
+                      <button type="button"
+                        className={`cm-img-tab${catImageMode === 'url' ? ' active' : ''}`}
+                        onClick={() => { setCatImageMode('url'); setCatUploadErr(''); }}>
+                        🔗 Paste URL
+                      </button>
+                      <button type="button"
+                        className={`cm-img-tab${catImageMode === 'upload' ? ' active' : ''}`}
+                        onClick={() => { setCatImageMode('upload'); setCatUploadErr(''); }}>
+                        📁 Upload from Gallery
+                      </button>
+                    </div>
+
+                    {catImageMode === 'url' && (
+                      <input className="cm-input" value={categoryForm.image_url}
+                        onChange={e => setCategoryForm({ ...categoryForm, image_url: e.target.value })}
+                        placeholder="https://res.cloudinary.com/… or any image URL" />
+                    )}
+
+                    {catImageMode === 'upload' && (
+                      <div>
+                        <div className="cm-upload-zone"
+                          onClick={() => !catUploading && catFileRef.current?.click()}>
+                          {catUploading ? (
+                            <span style={{ color:'var(--cm-muted)', fontSize:'.82rem' }}>⏳ Uploading to Cloudinary…</span>
+                          ) : (
+                            <>
+                              <div style={{ fontSize:'2rem', marginBottom:'.4rem' }}>🖼️</div>
+                              <div style={{ color:'var(--cm-muted)', fontSize:'.8rem' }}>Click to choose an image from your device</div>
+                              <div style={{ color:'var(--cm-muted)', fontSize:'.7rem', marginTop:'.2rem' }}>JPG, PNG, WEBP — uploaded to Cloudinary automatically</div>
+                            </>
+                          )}
+                        </div>
+                        <input ref={catFileRef} type="file" accept="image/*"
+                          style={{ display:'none' }} onChange={handleCategoryFileChange} />
+                        {catUploadErr && (
+                          <div className="cm-alert cm-warn" style={{ marginTop:'.5rem' }}>⚠ {catUploadErr}</div>
+                        )}
+                      </div>
+                    )}
+
+                    {categoryForm.image_url && (
+                      <div style={{ display:'flex', alignItems:'center', gap:'.75rem', marginTop:'.6rem' }}>
+                        <img src={categoryForm.image_url} alt="preview" className="cm-img-preview"
+                          onError={e => { e.target.style.display = 'none'; }} />
+                        <div style={{ flex:1 }}>
+                          <div style={{ fontSize:'.72rem', color:'var(--cm-muted)', wordBreak:'break-all' }}>{categoryForm.image_url}</div>
+                          <button type="button"
+                            onClick={() => { setCategoryForm(f => ({ ...f, image_url:'' })); if (catFileRef.current) catFileRef.current.value = ''; }}
+                            style={{ marginTop:'.3rem', fontSize:'.72rem', color:'#dc2626', background:'none', border:'none', cursor:'pointer', padding:0 }}>
+                            ✕ Remove image
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="cm-actions">
-                  <button className="cm-btn" type="submit">
-                    {editingCategoryId ? 'Update Category' : 'Add Category'}
+                  <button className="cm-btn" type="submit" disabled={catUploading}>
+                    {catUploading ? 'Uploading…' : editingCategoryId ? 'Update Category' : 'Add Category'}
                   </button>
                   <button className="cm-btn secondary" type="button" onClick={resetCategoryForm}>Cancel</button>
                 </div>
@@ -413,6 +489,7 @@ export default function CalculatorManager({ isDarkMode }) {
           </div>
         )}
 
+        {/* ── Add/Edit Product Modal ── */}
         {showForm && (
           <div className="cm-modal-backdrop" onClick={resetForm}>
             <div className="cm-modal" onClick={e => e.stopPropagation()}>
@@ -431,13 +508,12 @@ export default function CalculatorManager({ isDarkMode }) {
                     <label className="cm-label">Category</label>
                     <select className="cm-select" value={formData.category}
                       onChange={e => {
-                        const category = categories.find(item => item.name === e.target.value);
-                        setFormData({ ...formData, category: e.target.value, badge: category?.badge || formData.badge });
-                      }}
-                      required>
+                        const cat = categories.find(item => item.name === e.target.value);
+                        setFormData({ ...formData, category: e.target.value, badge: cat?.badge || formData.badge });
+                      }} required>
                       <option value="">Select category</option>
-                      {categories.map(category => (
-                        <option key={category.id} value={category.name}>{category.name}</option>
+                      {categories.map(cat => (
+                        <option key={cat.id} value={cat.name}>{cat.name}</option>
                       ))}
                     </select>
                   </div>
@@ -457,7 +533,7 @@ export default function CalculatorManager({ isDarkMode }) {
 
                   {/* Row 2 */}
                   <div>
-                    <label className="cm-label">Price (₹)</label>
+                    <label className="cm-label">Default Price (₹)</label>
                     <input className="cm-input" type="number" min="0" step="0.01"
                       value={formData.price}
                       onChange={e => setFormData({ ...formData, price: e.target.value })} required />
@@ -476,11 +552,35 @@ export default function CalculatorManager({ isDarkMode }) {
                     </label>
                   </div>
 
+                  {/* City-Wise Prices — full width */}
+                  <div className="cm-full">
+                    <label className="cm-label">City-Wise Prices (₹) — optional, overrides default price per city</label>
+                    <div className="cm-city-grid">
+                      {CITIES.map(city => (
+                        <div key={city}>
+                          <label className="cm-label" style={{ fontSize:'.6rem' }}>{city}</label>
+                          <input
+                            className="cm-input"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={formData.city_prices?.[city] ?? ''}
+                            placeholder={formData.price ? `₹${formData.price}` : '—'}
+                            onChange={e => {
+                              const cp = { ...(formData.city_prices || {}) };
+                              if (e.target.value === '') delete cp[city];
+                              else cp[city] = e.target.value;
+                              setFormData(f => ({ ...f, city_prices: cp }));
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Image — full width */}
                   <div className="cm-full">
                     <label className="cm-label">Product Image</label>
-
-                    {/* Mode toggle */}
                     <div className="cm-img-tabs">
                       <button type="button"
                         className={`cm-img-tab${imageMode === 'url' ? ' active' : ''}`}
@@ -494,53 +594,40 @@ export default function CalculatorManager({ isDarkMode }) {
                       </button>
                     </div>
 
-                    {/* URL input */}
                     {imageMode === 'url' && (
                       <input className="cm-input" value={formData.image_url}
                         onChange={e => setFormData({ ...formData, image_url: e.target.value })}
                         placeholder="https://res.cloudinary.com/… or any image URL" />
                     )}
 
-                    {/* Gallery upload */}
                     {imageMode === 'upload' && (
                       <div>
                         <div className="cm-upload-zone"
                           onClick={() => !uploading && fileRef.current?.click()}>
                           {uploading ? (
-                            <span style={{ color:'var(--cm-muted)', fontSize:'.82rem' }}>
-                              ⏳ Uploading to Cloudinary…
-                            </span>
+                            <span style={{ color:'var(--cm-muted)', fontSize:'.82rem' }}>⏳ Uploading to Cloudinary…</span>
                           ) : (
                             <>
                               <div style={{ fontSize:'2rem', marginBottom:'.4rem' }}>🖼️</div>
-                              <div style={{ color:'var(--cm-muted)', fontSize:'.8rem' }}>
-                                Click to choose an image from your device
-                              </div>
-                              <div style={{ color:'var(--cm-muted)', fontSize:'.7rem', marginTop:'.2rem' }}>
-                                JPG, PNG, WEBP — uploaded to Cloudinary automatically
-                              </div>
+                              <div style={{ color:'var(--cm-muted)', fontSize:'.8rem' }}>Click to choose an image from your device</div>
+                              <div style={{ color:'var(--cm-muted)', fontSize:'.7rem', marginTop:'.2rem' }}>JPG, PNG, WEBP — uploaded to Cloudinary automatically</div>
                             </>
                           )}
                         </div>
                         <input ref={fileRef} type="file" accept="image/*"
                           style={{ display:'none' }} onChange={handleFileChange} />
                         {uploadErr && (
-                          <div className="cm-alert cm-warn" style={{ marginTop:'.5rem' }}>
-                            ⚠ {uploadErr}
-                          </div>
+                          <div className="cm-alert cm-warn" style={{ marginTop:'.5rem' }}>⚠ {uploadErr}</div>
                         )}
                       </div>
                     )}
 
-                    {/* Preview — always shown when URL is set */}
                     {formData.image_url && (
                       <div style={{ display:'flex', alignItems:'center', gap:'.75rem', marginTop:'.6rem' }}>
                         <img src={formData.image_url} alt="preview" className="cm-img-preview"
                           onError={e => { e.target.style.display = 'none'; }} />
                         <div style={{ flex:1 }}>
-                          <div style={{ fontSize:'.72rem', color:'var(--cm-muted)', wordBreak:'break-all' }}>
-                            {formData.image_url}
-                          </div>
+                          <div style={{ fontSize:'.72rem', color:'var(--cm-muted)', wordBreak:'break-all' }}>{formData.image_url}</div>
                           <button type="button"
                             onClick={() => { setFormData(f => ({ ...f, image_url:'' })); if (fileRef.current) fileRef.current.value = ''; }}
                             style={{ marginTop:'.3rem', fontSize:'.72rem', color:'#dc2626', background:'none', border:'none', cursor:'pointer', padding:0 }}>
@@ -560,7 +647,7 @@ export default function CalculatorManager({ isDarkMode }) {
                 </div>
 
                 <div className="cm-actions">
-                  <button className="cm-btn" type="submit" disabled={uploading}>
+                  <button className="cm-btn" type="submit" disabled={uploading || catUploading}>
                     {uploading ? 'Uploading…' : editingId ? 'Update Product' : 'Add Product'}
                   </button>
                   <button className="cm-btn secondary" type="button" onClick={resetForm}>Cancel</button>
@@ -590,7 +677,7 @@ export default function CalculatorManager({ isDarkMode }) {
             <table className="cm-table">
               <thead>
                 <tr>
-                  {['Image','Category','Product','Price','Unit','Status','Actions'].map(col =>
+                  {['Image','Category','Product','Default Price','City Prices','Unit','Status','Actions'].map(col =>
                     <th key={col}>{col}</th>)}
                 </tr>
               </thead>
@@ -608,17 +695,26 @@ export default function CalculatorManager({ isDarkMode }) {
                     <td>
                       <strong>{product.name}</strong>
                       {product.description && (
-                        <div style={{ color:'var(--cm-muted)', fontSize:'.72rem', marginTop:2 }}>
-                          {product.description}
-                        </div>
+                        <div style={{ color:'var(--cm-muted)', fontSize:'.72rem', marginTop:2 }}>{product.description}</div>
                       )}
                     </td>
                     <td className="cm-price">₹{Number(product.price).toLocaleString('en-IN')}</td>
+                    <td>
+                      {product.city_prices && Object.keys(product.city_prices).length > 0 ? (
+                        <div className="cm-city-prices-summary">
+                          {Object.entries(product.city_prices).map(([city, price]) => (
+                            <div key={city}>{city}: ₹{Number(price).toLocaleString('en-IN')}</div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span style={{ color:'var(--cm-muted)', fontSize:'.72rem' }}>—</span>
+                      )}
+                    </td>
                     <td>{product.unit}</td>
                     <td>
                       <span className="cm-chip" style={{
-                        color:    product.is_active ? '#166534' : '#9f1239',
-                        background: product.is_active ? '#ecfdf5' : '#fff1f2',
+                        color:       product.is_active ? '#166534' : '#9f1239',
+                        background:  product.is_active ? '#ecfdf5' : '#fff1f2',
                         borderColor: product.is_active ? '#86efac' : '#fca5a5',
                       }}>
                         {product.is_active ? 'Active' : 'Hidden'}
@@ -634,7 +730,7 @@ export default function CalculatorManager({ isDarkMode }) {
                 ))}
                 {visibleProducts.length === 0 && (
                   <tr>
-                    <td colSpan={7} style={{ textAlign:'center', color:'var(--cm-muted)', padding:'2rem' }}>
+                    <td colSpan={8} style={{ textAlign:'center', color:'var(--cm-muted)', padding:'2rem' }}>
                       No calculator products yet.
                     </td>
                   </tr>
