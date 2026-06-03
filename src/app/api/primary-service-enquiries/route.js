@@ -28,13 +28,21 @@ async function ensureTable() {
     )
   `);
 
-  await pool.query(`
-    ALTER TABLE primary_service_enquiries
-    ADD COLUMN IF NOT EXISTS property_image_name VARCHAR(255),
-    ADD COLUMN IF NOT EXISTS property_image_url TEXT,
-    ADD COLUMN IF NOT EXISTS property_image_names JSONB,
-    ADD COLUMN IF NOT EXISTS property_image_urls JSONB
-  `);
+  const safeMigrations = [
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS property_image_name VARCHAR(255)`,
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS property_image_url TEXT`,
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS property_image_names JSONB`,
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS property_image_urls JSONB`,
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS budget VARCHAR(150)`,
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS carpet_area VARCHAR(100)`,
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS time_slot VARCHAR(100)`,
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS meeting_date DATE`,
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS gps_location VARCHAR(100)`,
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS address TEXT`,
+  ];
+  for (const sql of safeMigrations) {
+    try { await pool.query(sql); } catch { /* column already exists */ }
+  }
 }
 
 async function savePropertyImage(file) {
@@ -96,15 +104,20 @@ async function sendAdminNotification(enquiry) {
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
         Service: enquiry.service_title,
-        'Service Slug': enquiry.service_slug || 'Not Provided',
         'Full Name': enquiry.name,
         Phone: enquiry.phone,
         Email: enquiry.email || 'Not Provided',
+        Budget: enquiry.budget || 'Not Provided',
+        'Carpet Area': enquiry.carpet_area ? `${enquiry.carpet_area} sqft` : 'Not Provided',
+        'Preferred Time Slot': enquiry.time_slot || 'Not Provided',
+        'Meeting Date': enquiry.meeting_date || 'Not Provided',
+        'GPS Location': enquiry.gps_location || 'Not Provided',
+        Address: enquiry.address || 'Not Provided',
         'Project Details': enquiry.message || 'Not Provided',
         'Property Images': Array.isArray(enquiry.property_image_urls) && enquiry.property_image_urls.length > 0
           ? enquiry.property_image_urls.map(url => `${process.env.NEXT_PUBLIC_APP_URL || ''}${url}`).join(', ')
           : 'Not Uploaded',
-        _subject: `New Primary Services Enquiry - ${enquiry.service_title} - ${enquiry.name}`,
+        _subject: `New Service Enquiry - ${enquiry.service_title} - ${enquiry.name}`,
         _template: 'table',
         _captcha: 'false',
       }),
@@ -136,7 +149,10 @@ export async function POST(req) {
       body = await req.json();
     }
 
-    const { service_slug, service_title, name, phone, email, message, property_image_name } = body;
+    const {
+      service_slug, service_title, name, phone, email, message, property_image_name,
+      budget, carpet_area, time_slot, meeting_date, gps_location, address,
+    } = body;
 
     if (!service_title || !name || !phone) {
       return NextResponse.json(
@@ -150,9 +166,11 @@ export async function POST(req) {
 
     const result = await pool.query(
       `INSERT INTO primary_service_enquiries
-        (service_slug, service_title, name, phone, email, message, property_image_name, property_image_url, property_image_names, property_image_urls, status, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10::jsonb, $11, NOW())
-       RETURNING id, service_slug, service_title, name, phone, email, message, property_image_name, property_image_url, property_image_names, property_image_urls, status, created_at`,
+        (service_slug, service_title, name, phone, email, message,
+         budget, carpet_area, time_slot, meeting_date, gps_location, address,
+         property_image_name, property_image_url, property_image_names, property_image_urls, status, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16::jsonb,$17,NOW())
+       RETURNING *`,
       [
         service_slug || null,
         service_title,
@@ -160,6 +178,12 @@ export async function POST(req) {
         phone,
         email || null,
         message || null,
+        budget || null,
+        carpet_area || null,
+        time_slot || null,
+        meeting_date || null,
+        gps_location || null,
+        address || null,
         propertyImageData.names[0] || property_image_name || null,
         propertyImageData.urls[0] || null,
         JSON.stringify(propertyImageData.names),
@@ -185,6 +209,23 @@ export async function POST(req) {
       { success: false, error: 'Server error. Please try again.' },
       { status: 500 }
     );
+  }
+}
+
+export async function PATCH(req) {
+  try {
+    const token = req.headers.get('Authorization')?.split(' ')[1];
+    if (!token) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+
+    const { id, status } = await req.json();
+    if (!id || !status) return NextResponse.json({ success: false, error: 'id and status required' }, { status: 400 });
+
+    await ensureTable();
+    await pool.query(`UPDATE primary_service_enquiries SET status = $1 WHERE id = $2`, [status, id]);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('PATCH primary-service-enquiries error:', error);
+    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
 

@@ -69,39 +69,62 @@ export async function POST(req) {
       ]
     );
 
-    // Email the professional (non-blocking)
+    // Email the ADMIN (admin acts as middleman — client never contacts professional directly)
     try {
       const { sendMail } = await import('@/lib/email');
+      const adminEmail = process.env.SMTP_USER || 'team.zentrix01@gmail.com';
       await sendMail({
-        to: professional.email,
-        subject: `New Enquiry from ${enquirer_name} — MT Boss`,
+        to: adminEmail,
+        subject: `Professional Enquiry: ${enquirer_name} → ${professional.name} — MT Boss`,
         html: `
-          <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;
+          <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;
                       background:#fff;border-radius:8px;border:1px solid #e5e7eb">
-            <h2 style="color:#111;margin-bottom:4px;">New Enquiry on MT Boss</h2>
+            <h2 style="color:#111;margin-bottom:4px;">New Professional Enquiry</h2>
             <p style="color:#6b7280;font-size:13px;margin-bottom:20px;">
-              Someone is interested in your services — ${new Date().toLocaleString('en-IN')}
+              A user has enquired about a professional — ${new Date().toLocaleString('en-IN')}
             </p>
-            <table style="width:100%;border-collapse:collapse;font-size:14px;">
+
+            <h3 style="color:#f6b400;font-size:13px;font-weight:700;text-transform:uppercase;
+                       letter-spacing:0.06em;margin:0 0 8px;">Professional Requested</h3>
+            <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:20px;">
               ${[
-                ['From', enquirer_name],
-                ['Email', enquirer_email],
-                ['Phone', enquirer_phone || '—'],
+                ['Name', professional.name],
+                ['Title', professional.title || '—'],
+                ['ID', professional.id],
               ].map(([k, v]) =>
                 `<tr>
-                  <td style="padding:6px 0;color:#6b7280;width:80px;">${k}</td>
+                  <td style="padding:6px 0;color:#6b7280;width:90px;">${k}</td>
                   <td style="padding:6px 0;font-weight:600;color:#111;">${v}</td>
                 </tr>`
               ).join('')}
             </table>
-            <div style="margin-top:20px;padding:16px;background:#f9fafb;border-radius:6px;
+
+            <h3 style="color:#f6b400;font-size:13px;font-weight:700;text-transform:uppercase;
+                       letter-spacing:0.06em;margin:0 0 8px;">Enquirer Details</h3>
+            <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:20px;">
+              ${[
+                ['Name',  enquirer_name],
+                ['Email', enquirer_email],
+                ['Phone', enquirer_phone || '—'],
+              ].map(([k, v]) =>
+                `<tr>
+                  <td style="padding:6px 0;color:#6b7280;width:90px;">${k}</td>
+                  <td style="padding:6px 0;font-weight:600;color:#111;">${v}</td>
+                </tr>`
+              ).join('')}
+            </table>
+
+            <h3 style="color:#f6b400;font-size:13px;font-weight:700;text-transform:uppercase;
+                       letter-spacing:0.06em;margin:0 0 8px;">Message</h3>
+            <div style="padding:16px;background:#f9fafb;border-radius:6px;
                         font-size:14px;color:#374151;line-height:1.6;">
-              <strong style="display:block;margin-bottom:6px;color:#111;">Message:</strong>
               ${message.replace(/\n/g, '<br/>')}
             </div>
-            <p style="margin-top:20px;font-size:12px;color:#9ca3af;">
-              This enquiry was sent via MT Boss Professional Services. Reply directly to
-              <a href="mailto:${enquirer_email}" style="color:#4f46e5;">${enquirer_email}</a>.
+
+            <p style="margin-top:20px;font-size:12px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:16px;">
+              Action required: Review this enquiry in the
+              <strong>MT Boss Admin Dashboard → Professional Enquiries</strong> tab and
+              facilitate the connection between the user and professional.
             </p>
           </div>
         `,
@@ -111,7 +134,7 @@ export async function POST(req) {
     }
 
     return NextResponse.json(
-      { success: true, message: 'Enquiry sent successfully! The professional will get back to you.' },
+      { success: true, message: 'Enquiry submitted! Our team will review and connect you shortly.' },
       { status: 201 }
     );
   } catch (error) {

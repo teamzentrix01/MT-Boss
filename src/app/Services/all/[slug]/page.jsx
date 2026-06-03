@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-// Fallbacks used when admin hasn't filled optional sections yet
 const fallbackProcess = [
   { step: "01", title: "Consultation & Brief",  desc: "We analyse your goals, site conditions, budget, and timeline before anything begins." },
   { step: "02", title: "Design & Planning",      desc: "Architects and engineers finalise blueprints tailored to your vision and local regulations." },
@@ -27,6 +26,12 @@ const fallbackProjects = [
   { name: "Urban Nest, Greater Noida",       type: "Mixed-Use",         area: "240 Units",  status: "Ongoing",   img: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=600&q=80" },
 ];
 
+const TIME_SLOTS = [
+  "Morning (9AM – 12PM)",
+  "Afternoon (12PM – 4PM)",
+  "Evening (4PM – 7PM)",
+];
+
 export default function ServiceDetailPage() {
   const { slug }   = useParams();
   const router     = useRouter();
@@ -35,10 +40,19 @@ export default function ServiceDetailPage() {
   const [loading,   setLoading]   = useState(true);
   const [notFound,  setNotFound]  = useState(false);
   const [isDark,    setIsDark]    = useState(false);
-  const [form,      setForm]      = useState({ name: "", phone: "", email: "", message: "" });
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+
+  const [form, setForm] = useState({
+    name: "", phone: "", email: "", message: "",
+    budget: "", carpetArea: "", timeSlot: "", meetingDate: "", address: "",
+  });
+
+  const [gpsCoords,    setGpsCoords]    = useState(null);
+  const [fetchingGps,  setFetchingGps]  = useState(false);
+  const [gpsError,     setGpsError]     = useState("");
+
+  const [submitted,    setSubmitted]    = useState(false);
+  const [submitting,   setSubmitting]   = useState(false);
+  const [submitError,  setSubmitError]  = useState("");
   const [propertyImages, setPropertyImages] = useState([]);
 
   useEffect(() => {
@@ -69,6 +83,77 @@ export default function ServiceDetailPage() {
     ? "bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-[#facc15]"
     : "bg-white border-zinc-300 text-zinc-900 placeholder:text-zinc-400 focus:border-black"}`;
 
+  const fetchLiveLocation = () => {
+    if (!navigator.geolocation) {
+      setGpsError("Geolocation not supported by your browser. Enter address manually.");
+      return;
+    }
+    setFetchingGps(true);
+    setGpsError("");
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        setGpsCoords({ lat, lng });
+        try {
+          const r = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+            { headers: { 'Accept-Language': 'en' } }
+          );
+          const d = await r.json();
+          if (d.display_name) setForm(f => ({ ...f, address: d.display_name }));
+        } catch {}
+        setFetchingGps(false);
+      },
+      () => {
+        setGpsError("Could not fetch location. Please allow location access or enter address manually.");
+        setFetchingGps(false);
+      },
+      { timeout: 10000 }
+    );
+  };
+
+  const handlePropertyImages = (files) => {
+    const selected = Array.from(files || []);
+    if (selected.length === 0) { setPropertyImages([]); setSubmitError(""); return; }
+    if (selected.length > 10) { setSubmitError("Max 10 property images."); setPropertyImages([]); return; }
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (selected.some(f => !allowed.includes(f.type))) { setSubmitError("Only JPG, PNG or WEBP images."); return; }
+    if (selected.some(f => f.size > 5 * 1024 * 1024)) { setSubmitError("Each image must be under 5MB."); return; }
+    setSubmitError("");
+    setPropertyImages(selected);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitError("");
+    setSubmitting(true);
+    try {
+      const payload = new FormData();
+      payload.append("service_slug", slug);
+      payload.append("service_title", service.title);
+      payload.append("name", form.name);
+      payload.append("phone", form.phone);
+      payload.append("email", form.email);
+      payload.append("message", form.message);
+      payload.append("budget", form.budget);
+      payload.append("carpet_area", form.carpetArea);
+      payload.append("time_slot", form.timeSlot);
+      payload.append("meeting_date", form.meetingDate);
+      payload.append("gps_location", gpsCoords ? `${gpsCoords.lat.toFixed(6)},${gpsCoords.lng.toFixed(6)}` : "");
+      payload.append("address", form.address);
+      propertyImages.forEach(file => payload.append("property_images", file));
+
+      const res = await fetch("/api/primary-service-enquiries", { method: "POST", body: payload });
+      const data = await res.json();
+      if (!data.success) { setSubmitError(data.error || "Something went wrong. Please try again."); return; }
+      setSubmitted(true);
+    } catch {
+      setSubmitError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (loading) return (
     <main className={`min-h-screen flex items-center justify-center font-serif ${bg}`}>
       <p className="text-[#facc15] text-sm font-black uppercase tracking-widest animate-pulse">Loading...</p>
@@ -87,7 +172,6 @@ export default function ServiceDetailPage() {
     </main>
   );
 
-  // Resolve data — use DB value if present, else fallback
   const processList  = Array.isArray(service.process)  && service.process.length  > 0 ? service.process  : fallbackProcess;
   const benefitsList = Array.isArray(service.benefits) && service.benefits.length > 0 ? service.benefits : fallbackBenefits;
   const projectsList = Array.isArray(service.projects) && service.projects.length > 0 ? service.projects : fallbackProjects;
@@ -102,7 +186,6 @@ export default function ServiceDetailPage() {
   const defaultStats = [["500+","Projects Delivered"],["12+","Years Experience"],["98%","On-Time Rate"],["0","Hidden Charges"]];
   const finalStats   = stats.length > 0 ? stats : defaultStats;
 
-  // Split title — last word gets yellow highlight
   const words     = service.title.split(" ");
   const titleMain = words.slice(0, -1).join(" ");
   const titleLast = words[words.length - 1];
@@ -114,68 +197,7 @@ export default function ServiceDetailPage() {
   const phone         = service.contact_phone  || "+91 98765 43210";
   const email         = service.contact_email  || "hello@mtboss.in";
 
-  const handlePropertyImages = (files) => {
-    const selected = Array.from(files || []);
-    if (selected.length === 0) {
-      setPropertyImages([]);
-      setSubmitError("");
-      return;
-    }
-
-    if (selected.length > 10) {
-      setSubmitError("You can upload a maximum of 10 property images.");
-      setPropertyImages([]);
-      return;
-    }
-
-    const allowed = ["image/jpeg", "image/png", "image/webp"];
-    if (selected.some(file => !allowed.includes(file.type))) {
-      setSubmitError("Please upload a JPG, PNG, or WEBP image.");
-      return;
-    }
-
-    if (selected.some(file => file.size > 5 * 1024 * 1024)) {
-      setSubmitError("Each property image must be under 5MB.");
-      return;
-    }
-
-    setSubmitError("");
-    setPropertyImages(selected);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitError("");
-    setSubmitting(true);
-
-    try {
-      const payload = new FormData();
-      payload.append("service_slug", slug);
-      payload.append("service_title", service.title);
-      payload.append("name", form.name);
-      payload.append("phone", form.phone);
-      payload.append("email", form.email);
-      payload.append("message", form.message);
-      propertyImages.forEach(file => payload.append("property_images", file));
-
-      const res = await fetch("/api/primary-service-enquiries", {
-        method: "POST",
-        body: payload,
-      });
-      const data = await res.json();
-
-      if (!data.success) {
-        setSubmitError(data.error || "Something went wrong. Please try again.");
-        return;
-      }
-
-      setSubmitted(true);
-    } catch (error) {
-      setSubmitError("Network error. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <main className={`min-h-screen font-serif transition-colors duration-500 ${bg}`}>
@@ -302,45 +324,108 @@ export default function ServiceDetailPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className={`border p-6 space-y-4 ${card}`}>
-              {[
-                ["Full Name *",    "text",  "John Sharma",        "name"],
-                ["Phone Number *", "tel",   "+91 9876543210",     "phone"],
-                ["Email Address",  "email", "you@example.com",    "email"],
-              ].map(([label, type, ph, key]) => (
-                <div key={key}>
-                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>{label}</label>
-                  <input required={label.includes("*")} type={type} className={inp} placeholder={ph}
-                    value={form[key]} onChange={e => setForm({ ...form, [key]: e.target.value })} />
+
+              {/* Name & Phone */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Full Name *</label>
+                  <input required type="text" className={inp} placeholder="John Sharma"
+                    value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
                 </div>
-              ))}
+                <div>
+                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Phone Number *</label>
+                  <input required type="tel" className={inp} placeholder="+91 9876543210"
+                    value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+                </div>
+              </div>
+
+              {/* Email & Budget */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Email Address</label>
+                  <input type="email" className={inp} placeholder="you@example.com"
+                    value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                </div>
+                <div>
+                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Budget (₹)</label>
+                  <input type="text" className={inp} placeholder="e.g. ₹25,00,000"
+                    value={form.budget} onChange={e => setForm({ ...form, budget: e.target.value })} />
+                </div>
+              </div>
+
+              {/* Carpet Area & Time Slot */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Carpet Area (sqft)</label>
+                  <input type="number" min="0" className={inp} placeholder="e.g. 1200"
+                    value={form.carpetArea} onChange={e => setForm({ ...form, carpetArea: e.target.value })} />
+                </div>
+                <div>
+                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Preferred Time Slot</label>
+                  <select className={inp} value={form.timeSlot} onChange={e => setForm({ ...form, timeSlot: e.target.value })}>
+                    <option value="">Select time slot</option>
+                    {TIME_SLOTS.map(slot => <option key={slot} value={slot}>{slot}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              {/* Meeting Date */}
+              <div>
+                <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Preferred Meeting Date</label>
+                <input type="date" className={inp} min={today}
+                  value={form.meetingDate} onChange={e => setForm({ ...form, meetingDate: e.target.value })} />
+              </div>
+
+              {/* Live Location */}
+              <div>
+                <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Your Location</label>
+                <button type="button" onClick={fetchLiveLocation} disabled={fetchingGps}
+                  className={`w-full py-2.5 text-xs font-black uppercase tracking-widest border transition-all ${
+                    gpsCoords
+                      ? "bg-green-600 text-white border-green-600"
+                      : isDark
+                        ? "bg-zinc-800 text-zinc-300 border-zinc-600 hover:border-[#facc15] hover:text-[#facc15]"
+                        : "bg-white text-zinc-700 border-zinc-300 hover:border-black"
+                  } disabled:opacity-60 disabled:cursor-not-allowed`}>
+                  {fetchingGps ? "📡 Fetching location…" : gpsCoords ? `✓ Location Fetched (${gpsCoords.lat.toFixed(4)}, ${gpsCoords.lng.toFixed(4)})` : "📍 Use My Live Location"}
+                </button>
+                {gpsError && <p className="mt-1.5 text-[10px] font-bold text-red-500">{gpsError}</p>}
+              </div>
+
+              {/* Address */}
+              <div>
+                <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Full Address</label>
+                <textarea rows={2} className={inp}
+                  placeholder="Street, City, State, PIN — auto-filled if you use live location"
+                  value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} />
+              </div>
+
+              {/* Project Details */}
               <div>
                 <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Project Details</label>
                 <textarea rows={3} className={inp}
-                  placeholder={`Tell us about your ${service.title} project — location, scope, budget, timeline...`}
+                  placeholder={`Tell us about your ${service.title} project — scope, timeline, special requirements...`}
                   value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
               </div>
+
+              {/* Property Images */}
               <div>
                 <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Property Images</label>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/jpeg,image/png,image/webp"
-                  className={inp}
-                  onChange={e => handlePropertyImages(e.target.files)}
-                />
+                <input type="file" multiple accept="image/jpeg,image/png,image/webp" className={inp}
+                  onChange={e => handlePropertyImages(e.target.files)} />
                 <p className={`mt-1.5 text-[10px] font-bold ${muted}`}>Optional. Upload 0 to 10 images, max 5MB each.</p>
                 {propertyImages.length > 0 && (
                   <div className={`mt-2 text-[10px] font-bold ${muted}`}>
-                    {propertyImages.map(file => (
-                      <p key={`${file.name}-${file.size}`}>{file.name}</p>
-                    ))}
+                    {propertyImages.map(file => <p key={`${file.name}-${file.size}`}>{file.name}</p>)}
                   </div>
                 )}
               </div>
+
               {submitError && <p className="text-xs font-bold text-red-500">{submitError}</p>}
+
               <button type="submit" disabled={submitting}
                 className="w-full py-3 bg-[#facc15] text-black font-black uppercase text-[9px] tracking-widest hover:bg-black hover:text-[#facc15] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed">
-                Submit Enquiry →
+                {submitting ? "Submitting…" : "Submit Enquiry →"}
               </button>
             </form>
           )}

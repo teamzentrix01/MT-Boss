@@ -210,12 +210,6 @@ export default function ProfessionalProfilePage() {
               style={{ background: t.accent, color: t.accentFg, border: 'none', padding: '13px 24px', cursor: 'pointer', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}>
               ✉ Send Enquiry
             </button>
-            {pro.phone && (
-              <a href={`tel:${pro.phone}`}
-                style={{ display: 'block', textAlign: 'center', border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.7)', padding: '10px 24px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', textDecoration: 'none', transition: 'all 0.15s', whiteSpace: 'nowrap' }}>
-                📞 Call Now
-              </a>
-            )}
           </div>
         </div>
       </div>
@@ -245,26 +239,15 @@ export default function ProfessionalProfilePage() {
           {/* ──────────────────── SIDEBAR ──────────────────────────────────── */}
           <aside className="pro-aside" style={{ width: '292px', flexShrink: 0, position: 'sticky', top: '24px' }}>
 
-            {/* Contact Card */}
+            {/* Contact via MT Boss — no direct contact info shown */}
             <div style={{ background: t.card, border: `1px solid ${t.border}`, marginBottom: '16px', overflow: 'hidden' }}>
               <div style={{ background: isDark ? '#0d0d0d' : '#f9fafb', padding: '14px 20px', borderBottom: `1px solid ${t.border}` }}>
                 <p style={{ margin: 0, fontSize: '9px', fontWeight: 800, color: t.accent, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Contact</p>
               </div>
-              <div style={{ padding: '8px 0' }}>
-                {pro.email && (
-                  <a href={`mailto:${pro.email}`} className="contact-row"
-                    style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 20px', color: t.text, textDecoration: 'none', fontSize: '12px', fontWeight: 600, transition: 'background 0.12s' }}>
-                    <span style={{ width: '34px', height: '34px', background: isDark ? '#1c1c1c' : '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', flexShrink: 0, border: `1px solid ${t.border}` }}>✉️</span>
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pro.email}</span>
-                  </a>
-                )}
-                {pro.phone && (
-                  <a href={`tel:${pro.phone}`} className="contact-row"
-                    style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 20px', color: t.text, textDecoration: 'none', fontSize: '12px', fontWeight: 600, transition: 'background 0.12s' }}>
-                    <span style={{ width: '34px', height: '34px', background: isDark ? '#1c1c1c' : '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', flexShrink: 0, border: `1px solid ${t.border}` }}>📞</span>
-                    {pro.phone}
-                  </a>
-                )}
+              <div style={{ padding: '16px 20px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: t.sub, lineHeight: '1.7' }}>
+                  To contact this professional, use the <strong style={{ color: t.text }}>Send Enquiry</strong> form below. Our team will review your request and facilitate the connection.
+                </p>
               </div>
             </div>
 
@@ -387,9 +370,9 @@ export default function ProfessionalProfilePage() {
         {/* ═══════════════════════════ ENQUIRY FORM ═══════════════════════════ */}
         <section ref={enquiryRef} style={{ background: t.card, border: `1px solid ${t.border}`, marginTop: '28px', overflow: 'hidden' }}>
           <div style={{ background: isDark ? '#0d0d0d' : '#f9fafb', padding: '20px 32px', borderBottom: `1px solid ${t.border}` }}>
-            <p style={{ margin: '0 0 4px', fontSize: '9px', fontWeight: 800, color: t.accent, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Get in Touch</p>
+            <p style={{ margin: '0 0 4px', fontSize: '9px', fontWeight: 800, color: t.accent, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Send Enquiry</p>
             <h2 style={{ margin: '0', color: t.text, fontSize: '20px', fontWeight: 800 }}>
-              Send an Enquiry to {pro.name}
+              Enquire About {pro.name}
             </h2>
           </div>
 
@@ -397,9 +380,9 @@ export default function ProfessionalProfilePage() {
             {sent ? (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <div style={{ width: '72px', height: '72px', background: t.accent, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '30px', color: t.accentFg }}>✓</div>
-                <h3 style={{ color: t.text, margin: '0 0 10px', fontSize: '22px', fontWeight: 800, textTransform: 'uppercase' }}>Enquiry Sent!</h3>
-                <p style={{ color: t.sub, fontSize: '14px', margin: '0 0 28px', maxWidth: '360px', marginLeft: 'auto', marginRight: 'auto', lineHeight: '1.7' }}>
-                  {pro.name} will receive your message and reach out to you on <strong style={{ color: t.text }}>{form.email}</strong>.
+                <h3 style={{ color: t.text, margin: '0 0 10px', fontSize: '22px', fontWeight: 800, textTransform: 'uppercase' }}>Enquiry Received!</h3>
+                <p style={{ color: t.sub, fontSize: '14px', margin: '0 0 28px', maxWidth: '400px', marginLeft: 'auto', marginRight: 'auto', lineHeight: '1.7' }}>
+                  Our team has received your enquiry for <strong style={{ color: t.text }}>{pro.name}</strong>. We will review your request and get in touch with you on <strong style={{ color: t.text }}>{form.email}</strong> to facilitate the connection.
                 </p>
                 <button onClick={() => { setSent(false); setForm({ name: '', email: '', phone: '', message: '' }); }}
                   style={{ background: t.accent, color: t.accentFg, border: 'none', padding: '12px 32px', cursor: 'pointer', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
@@ -409,7 +392,7 @@ export default function ProfessionalProfilePage() {
             ) : (
               <>
                 <p style={{ color: t.sub, fontSize: '13px', margin: '0 0 24px', lineHeight: '1.6' }}>
-                  Fill in your details below. {firstName} will respond directly to your email address.
+                  Fill in your details below. Our admin team will review your enquiry and connect you with {firstName}.
                 </p>
                 {err && (
                   <div style={{ background: isDark ? '#2d1515' : '#fee2e2', color: '#ef4444', padding: '10px 16px', fontSize: '13px', marginBottom: '16px', border: '1px solid rgba(239,68,68,0.3)' }}>
@@ -440,7 +423,7 @@ export default function ProfessionalProfilePage() {
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <button className="cta-btn" type="submit" disabled={sending}
                       style={{ background: t.accent, color: t.accentFg, border: 'none', padding: '14px 40px', cursor: sending ? 'wait' : 'pointer', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', opacity: sending ? 0.7 : 1, transition: 'opacity 0.15s' }}>
-                      {sending ? 'Sending…' : `Send Enquiry to ${firstName} →`}
+                      {sending ? 'Submitting…' : `Submit Enquiry →`}
                     </button>
                   </div>
                 </form>

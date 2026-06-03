@@ -28,6 +28,7 @@ function AdminDashboard() {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [primaryServiceEnquiries, setPrimaryServiceEnquiries] = useState([]);
   const [selectedPrimaryServiceEnquiry, setSelectedPrimaryServiceEnquiry] = useState(null);
+  const [pseSearch, setPseSearch] = useState('');
   const [careerEnquiries, setCareerEnquiries] = useState([]);
   const [selectedCareerEnquiry, setSelectedCareerEnquiry] = useState(null);
   const [pendingProperties, setPendingProperties] = useState(0);
@@ -735,32 +736,104 @@ function AdminDashboard() {
             <div>
               <div className="section-head">
                 <span className="section-head-title">Primary Services Enquiry</span>
-                <input type="text" placeholder="Search..." className="search-input" />
+                <input
+                  type="text"
+                  placeholder="Search name, phone, service, email…"
+                  className="search-input"
+                  value={pseSearch}
+                  onChange={e => setPseSearch(e.target.value)}
+                />
               </div>
-              <div className="panel">
+              <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
                     <thead>
                       <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-                        {['Name', 'Email', 'Phone', 'Service', 'Status', 'Date', 'Action'].map(col => (
-                          <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
+                        {['Enquirer', 'Service & Location', 'Budget', 'Carpet Area', 'Meeting Date', 'Time Slot', 'Images', 'Status', 'Submitted', 'Action'].map(col => (
+                          <th key={col} style={{ padding: '0.55rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)', whiteSpace: 'nowrap' }}>{col}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      {primaryServiceEnquiries.map((item) => (
-                        <tr key={item.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                          <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>{item.name}</td>
-                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.email || '-'}</td>
-                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.phone}</td>
-                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.service_title}</td>
-                          <td style={{ padding: '0.6rem 0.875rem' }}><span className={`badge ${getStatusColor(item.status)}`}>{item.status}</span></td>
-                          <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.created_at).toLocaleDateString()}</td>
-                          <td style={{ padding: '0.6rem 0.875rem' }}>
-                            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '600', padding: 0 }} onClick={() => setSelectedPrimaryServiceEnquiry(item)}>View</button>
-                          </td>
-                        </tr>
-                      ))}
+                      {primaryServiceEnquiries
+                        .filter(item => {
+                          const q = pseSearch.toLowerCase();
+                          return !q ||
+                            item.name?.toLowerCase().includes(q) ||
+                            item.phone?.includes(q) ||
+                            item.email?.toLowerCase().includes(q) ||
+                            item.service_title?.toLowerCase().includes(q) ||
+                            item.address?.toLowerCase().includes(q);
+                        })
+                        .map((item) => {
+                          const imgUrls = Array.isArray(item.property_image_urls)
+                            ? item.property_image_urls
+                            : item.property_image_url ? [item.property_image_url] : [];
+                          return (
+                            <tr key={item.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                              <td style={{ padding: '0.6rem 0.875rem', minWidth: '150px' }}>
+                                <div style={{ fontWeight: 700 }}>{item.name}</div>
+                                <div style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{item.phone}</div>
+                                {item.email && <div style={{ color: 'var(--muted)', fontSize: '0.7rem' }}>{item.email}</div>}
+                              </td>
+                              <td style={{ padding: '0.6rem 0.875rem', minWidth: '160px' }}>
+                                <div style={{ fontWeight: 600 }}>{item.service_title}</div>
+                                {item.address && (
+                                  <div style={{ color: 'var(--muted)', fontSize: '0.7rem', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    📍 {item.address}
+                                  </div>
+                                )}
+                              </td>
+                              <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>{item.budget || '—'}</td>
+                              <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>{item.carpet_area ? `${item.carpet_area} sqft` : '—'}</td>
+                              <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                                {item.meeting_date ? new Date(item.meeting_date).toLocaleDateString('en-IN') : '—'}
+                              </td>
+                              <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)', fontSize: '0.72rem', whiteSpace: 'nowrap' }}>{item.time_slot || '—'}</td>
+                              <td style={{ padding: '0.6rem 0.875rem' }}>
+                                {imgUrls.length > 0 ? (
+                                  <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                                    {imgUrls.slice(0, 3).map((url, i) => (
+                                      <img key={i} src={url} alt="" style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)' }}
+                                        onError={ev => { ev.target.style.display = 'none'; }} />
+                                    ))}
+                                    {imgUrls.length > 3 && <span style={{ fontSize: '0.72rem', color: 'var(--muted)', fontWeight: 700 }}>+{imgUrls.length - 3}</span>}
+                                  </div>
+                                ) : <span style={{ color: 'var(--muted)', fontSize: '0.72rem' }}>—</span>}
+                              </td>
+                              <td style={{ padding: '0.6rem 0.875rem' }}>
+                                <select
+                                  value={item.status}
+                                  onChange={async (e) => {
+                                    const newStatus = e.target.value;
+                                    const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+                                    await fetch('/api/primary-service-enquiries', {
+                                      method: 'PATCH',
+                                      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                                      body: JSON.stringify({ id: item.id, status: newStatus }),
+                                    });
+                                    setPrimaryServiceEnquiries(prev => prev.map(x => x.id === item.id ? { ...x, status: newStatus } : x));
+                                  }}
+                                  style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', borderRadius: '4px', padding: '3px 6px', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
+                                >
+                                  {['New', 'Reviewing', 'In Progress', 'Completed', 'Cancelled'].map(s => (
+                                    <option key={s} value={s}>{s}</option>
+                                  ))}
+                                </select>
+                              </td>
+                              <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)', whiteSpace: 'nowrap', fontSize: '0.75rem' }}>
+                                {new Date(item.created_at).toLocaleDateString('en-IN')}
+                                <div style={{ fontSize: '0.68rem' }}>{new Date(item.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</div>
+                              </td>
+                              <td style={{ padding: '0.6rem 0.875rem' }}>
+                                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '700', padding: 0, whiteSpace: 'nowrap' }}
+                                  onClick={() => setSelectedPrimaryServiceEnquiry(item)}>
+                                  View All
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
                     </tbody>
                   </table>
                   {primaryServiceEnquiries.length === 0 && <p className="empty-state">No primary services enquiries yet.</p>}
@@ -863,97 +936,169 @@ function AdminDashboard() {
           </div>
         )}
 
-        {selectedPrimaryServiceEnquiry && (
-          <div className="modal-backdrop" onClick={() => setSelectedPrimaryServiceEnquiry(null)}>
-            <div className="modal" onClick={e => e.stopPropagation()}>
-              <div className="modal-head">
-                <span className="modal-title">Primary Services Enquiry Details</span>
-                <button className="modal-close" onClick={() => setSelectedPrimaryServiceEnquiry(null)}>x</button>
-              </div>
+        {selectedPrimaryServiceEnquiry && (() => {
+          const enq = selectedPrimaryServiceEnquiry;
+          const imgUrls = Array.isArray(enq.property_image_urls)
+            ? enq.property_image_urls
+            : enq.property_image_url ? [enq.property_image_url] : [];
+          const imgNames = Array.isArray(enq.property_image_names)
+            ? enq.property_image_names
+            : enq.property_image_name ? [enq.property_image_name] : [];
 
-              <div className="modal-grid">
-                {[
-                  ['Name', selectedPrimaryServiceEnquiry.name],
-                  ['Email', selectedPrimaryServiceEnquiry.email || '-'],
-                  ['Phone', selectedPrimaryServiceEnquiry.phone],
-                  ['Service', selectedPrimaryServiceEnquiry.service_title],
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <div className="modal-field-label">{label}</div>
-                    <div className="modal-field-value">{value}</div>
+          const updateStatus = async (status) => {
+            const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+            await fetch('/api/primary-service-enquiries', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+              body: JSON.stringify({ id: enq.id, status }),
+            });
+            const updated = { ...enq, status };
+            setSelectedPrimaryServiceEnquiry(updated);
+            setPrimaryServiceEnquiries(prev => prev.map(x => x.id === enq.id ? updated : x));
+          };
+
+          return (
+            <div className="modal-backdrop" onClick={() => setSelectedPrimaryServiceEnquiry(null)}>
+              <div className="modal" onClick={e => e.stopPropagation()}
+                style={{ maxWidth: '700px', maxHeight: '90vh', overflowY: 'auto', padding: 0 }}>
+
+                {/* Header */}
+                <div className="modal-head" style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--surface)' }}>
+                  <div>
+                    <span className="modal-title">{enq.service_title} Enquiry</span>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: 2 }}>
+                      {new Date(enq.created_at).toLocaleString('en-IN')}
+                    </div>
                   </div>
-                ))}
-              </div>
+                  <button className="modal-close" onClick={() => setSelectedPrimaryServiceEnquiry(null)}>✕</button>
+                </div>
 
-              <div className="modal-field-label" style={{ marginBottom: '0.375rem' }}>Project Details</div>
-              <div className="modal-message">{selectedPrimaryServiceEnquiry.message || 'No project details provided.'}</div>
+                {/* ── Section 1: Enquirer ── */}
+                <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.6rem' }}>Enquirer Details</div>
+                  <div className="modal-grid">
+                    {[
+                      ['Name', enq.name],
+                      ['Phone', enq.phone],
+                      ['Email', enq.email || '—'],
+                      ['Service', enq.service_title],
+                      ['Status', enq.status],
+                      ['Submitted', new Date(enq.created_at).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })],
+                    ].map(([label, value]) => (
+                      <div key={label}>
+                        <div className="modal-field-label">{label}</div>
+                        <div className="modal-field-value">{value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-              <div style={{ marginBottom: '1rem' }}>
-                <div className="modal-field-label">Property Images</div>
-                {(() => {
-                  const urls = Array.isArray(selectedPrimaryServiceEnquiry.property_image_urls)
-                    ? selectedPrimaryServiceEnquiry.property_image_urls
-                    : selectedPrimaryServiceEnquiry.property_image_url
-                      ? [selectedPrimaryServiceEnquiry.property_image_url]
-                      : [];
-                  const names = Array.isArray(selectedPrimaryServiceEnquiry.property_image_names)
-                    ? selectedPrimaryServiceEnquiry.property_image_names
-                    : selectedPrimaryServiceEnquiry.property_image_name
-                      ? [selectedPrimaryServiceEnquiry.property_image_name]
-                      : [];
+                {/* ── Section 2: Project Details ── */}
+                <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.6rem' }}>Project Details</div>
+                  <div className="modal-grid">
+                    {[
+                      ['Budget', enq.budget || '—'],
+                      ['Carpet Area', enq.carpet_area ? `${enq.carpet_area} sqft` : '—'],
+                      ['Time Slot', enq.time_slot || '—'],
+                      ['Meeting Date', enq.meeting_date ? new Date(enq.meeting_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : '—'],
+                    ].map(([label, value]) => (
+                      <div key={label}>
+                        <div className="modal-field-label">{label}</div>
+                        <div className="modal-field-value">{value}</div>
+                      </div>
+                    ))}
+                  </div>
 
-                  if (urls.length === 0) {
-                    return (
-                      <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--muted)' }}>
-                        No property images uploaded.
-                      </p>
-                    );
-                  }
+                  {enq.gps_location && (
+                    <div style={{ marginTop: '0.875rem' }}>
+                      <div className="modal-field-label">GPS Location</div>
+                      <a href={`https://maps.google.com/?q=${enq.gps_location}`} target="_blank" rel="noreferrer"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--accent)', fontSize: '0.8rem', fontWeight: 700, textDecoration: 'none', marginTop: 4 }}>
+                        📍 {enq.gps_location} — Open in Google Maps ↗
+                      </a>
+                    </div>
+                  )}
 
-                  return (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem', marginTop: '0.625rem' }}>
-                      {urls.map((url, index) => (
-                        <div key={`${url}-${index}`} style={{ border: '1px solid var(--border)', borderRadius: '6px', padding: '0.5rem', background: 'var(--bg)' }}>
+                  {enq.address && (
+                    <div style={{ marginTop: '0.875rem' }}>
+                      <div className="modal-field-label">Full Address</div>
+                      <div style={{ fontSize: '0.8125rem', color: 'var(--text)', marginTop: 4, lineHeight: 1.6 }}>{enq.address}</div>
+                    </div>
+                  )}
+
+                  {enq.message && (
+                    <div style={{ marginTop: '0.875rem' }}>
+                      <div className="modal-field-label" style={{ marginBottom: '0.375rem' }}>Project Description</div>
+                      <div className="modal-message">{enq.message}</div>
+                    </div>
+                  )}
+                </div>
+
+                {/* ── Section 3: Property Images ── */}
+                <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>
+                    Property Images {imgUrls.length > 0 && <span style={{ fontWeight: 600, color: 'var(--muted)' }}>({imgUrls.length} file{imgUrls.length !== 1 ? 's' : ''})</span>}
+                  </div>
+                  {imgUrls.length === 0 ? (
+                    <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: 0 }}>No property images uploaded.</p>
+                  ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: '0.75rem' }}>
+                      {imgUrls.map((url, idx) => (
+                        <div key={idx} style={{ border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', background: 'var(--bg)' }}>
                           <a href={url} target="_blank" rel="noreferrer" style={{ display: 'block' }}>
-                            <img
-                              src={url}
-                              alt={names[index] || `Property image ${index + 1}`}
-                              style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }}
-                            />
+                            <img src={url} alt={imgNames[idx] || `Image ${idx + 1}`}
+                              style={{ width: '100%', height: '140px', objectFit: 'cover', display: 'block' }}
+                              onError={ev => { ev.target.parentElement.parentElement.style.display = 'none'; }} />
                           </a>
-                          <p style={{ marginTop: '0.5rem', fontSize: '0.7rem', color: 'var(--muted)', overflowWrap: 'anywhere' }}>
-                            {names[index] || `Image ${index + 1}`}
-                          </p>
-                          <div style={{ display: 'flex', gap: '0.375rem', marginTop: '0.5rem' }}>
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="modal-close-btn"
-                              style={{ width: 'auto', flex: 1, textDecoration: 'none', padding: '0.4rem 0.5rem', fontSize: '0.75rem' }}
-                            >
-                              View
+                          <div style={{ padding: '0.45rem 0.6rem', display: 'flex', gap: '0.3rem' }}>
+                            <a href={url} target="_blank" rel="noreferrer"
+                              style={{ flex: 1, textAlign: 'center', padding: '0.35rem 0', fontSize: '0.7rem', fontWeight: 800, background: 'var(--accent)', color: '#111', textDecoration: 'none', borderRadius: '3px' }}>
+                              🔍 View
                             </a>
-                            <a
-                              href={url}
-                              download={names[index] || true}
-                              className="modal-close-btn"
-                              style={{ width: 'auto', flex: 1, textDecoration: 'none', padding: '0.4rem 0.5rem', fontSize: '0.75rem', background: 'var(--surface)', color: 'var(--text)', border: '1px solid var(--border)' }}
-                            >
-                              Download
+                            <a href={url} download={imgNames[idx] || `property-image-${idx + 1}`}
+                              style={{ flex: 1, textAlign: 'center', padding: '0.35rem 0', fontSize: '0.7rem', fontWeight: 700, background: 'var(--surface)', color: 'var(--text)', border: '1px solid var(--border)', textDecoration: 'none', borderRadius: '3px' }}>
+                              ⬇ Save
                             </a>
                           </div>
+                          {imgNames[idx] && (
+                            <div style={{ padding: '0 0.6rem 0.5rem', fontSize: '0.65rem', color: 'var(--muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {imgNames[idx]}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
-                  );
-                })()}
-              </div>
+                  )}
+                </div>
 
-              <button className="modal-close-btn" onClick={() => setSelectedPrimaryServiceEnquiry(null)}>Close</button>
+                {/* ── Section 4: Admin Actions ── */}
+                <div style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--muted)', fontWeight: 700, alignSelf: 'center' }}>Mark as:</span>
+                    {['Reviewing', 'In Progress', 'Completed', 'Cancelled'].map(status => (
+                      <button key={status}
+                        onClick={() => updateStatus(status)}
+                        style={{
+                          padding: '0.35rem 0.75rem', fontSize: '0.72rem', fontWeight: 700,
+                          border: '1px solid var(--border)',
+                          background: enq.status === status ? 'var(--accent)' : 'var(--bg)',
+                          color: enq.status === status ? '#111' : 'var(--text)',
+                          borderRadius: '4px', cursor: 'pointer', whiteSpace: 'nowrap',
+                        }}>
+                        {status}
+                      </button>
+                    ))}
+                  </div>
+                  <button className="modal-close-btn" style={{ margin: 0 }}
+                    onClick={() => setSelectedPrimaryServiceEnquiry(null)}>
+                    Close
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {selectedCareerEnquiry && (
           <div className="modal-backdrop" onClick={() => setSelectedCareerEnquiry(null)}>
