@@ -129,7 +129,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     { label: "Quick Services", href: "/quick" },
     { label: "Primary Services", href: "/Services/all" },
     { label: "Professional Services", href: "/Services/professionals" },
-    { label: "Cost Calculator", href: "/calculator" },
   ];
 
   const propertyDropdown = [
@@ -224,6 +223,13 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
             >
               Franchise
+            </Link>
+
+            <Link
+              href="/calculator"
+              className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
+            >
+              Budget Calculator
             </Link>
 
             <Link
@@ -417,6 +423,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           {[
             { label: 'Home', href: '/' },
             { label: 'About Us', href: '/About-us' },
+            { label: 'Budget Calculator', href: '/calculator' },
             { label: 'Shop Now', href: '/shop' },
             { label: 'Careers', href: '/careers' },
             { label: 'Contact', href: '/contact' },
