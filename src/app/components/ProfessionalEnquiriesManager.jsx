@@ -25,6 +25,7 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
   const [enquiries, setEnquiries]     = useState([]);
   const [loading, setLoading]         = useState(true);
   const [selected, setSelected]       = useState(null); // detail modal
+  const [selectedApp, setSelectedApp] = useState(null); // application detail modal
   const [filterPro, setFilterPro]     = useState('all');
   const [search, setSearch]           = useState('');
   const [pros, setPros]               = useState([]);   // for filter dropdown
@@ -59,7 +60,8 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
     return matchPro && matchSearch;
   });
 
-  const unread = enquiries.filter(e => !e.is_read).length;
+  const unread      = enquiries.filter(e => !e.is_read).length;
+  const pendingApps = pros.filter(p => p.status === 'pending');
 
   function fmtDate(ts) {
     if (!ts) return '—';
@@ -98,6 +100,47 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
         </button>
       </div>
 
+      {/* ── Pending Applications Banner ─────────────────────────────────── */}
+      {pendingApps.length > 0 && (
+        <div style={{ border:`1px solid #854d0e`, borderRadius:'6px', background: isDarkMode ? '#1a1000' : '#fffbeb', marginBottom:'24px', overflow:'hidden' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'12px 16px', borderBottom:`1px solid #854d0e` }}>
+            <span style={{ fontSize:'18px' }}>🔔</span>
+            <div style={{ flex:1 }}>
+              <span style={{ fontWeight:800, fontSize:'13px', color: isDarkMode ? '#fbbf24' : '#92400e' }}>
+                {pendingApps.length} New Professional Application{pendingApps.length > 1 ? 's' : ''} Awaiting Review
+              </span>
+              <span style={{ fontSize:'11px', color: isDarkMode ? '#a16207' : '#b45309', marginLeft:'10px' }}>
+                Go to Professional Services tab to approve or reject
+              </span>
+            </div>
+            <a href="?tab=professionals"
+              style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', color: isDarkMode ? '#fbbf24' : '#92400e', textDecoration:'none', border:`1px solid #854d0e`, borderRadius:'4px', padding:'5px 10px', whiteSpace:'nowrap' }}>
+              Review →
+            </a>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap:'0' }}>
+            {pendingApps.map((p, i) => (
+              <div key={p.id}
+                style={{ padding:'12px 16px', borderBottom: i < pendingApps.length - 1 ? `1px solid ${isDarkMode ? '#2a1800' : '#fde68a'}` : 'none', cursor:'pointer', transition:'background 0.1s' }}
+                onClick={() => setSelectedApp(p)}>
+                <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                  {p.profile_picture
+                    ? <img src={p.profile_picture} alt="" style={{ width:38, height:38, borderRadius:'50%', objectFit:'cover', border:`1px solid #854d0e`, flexShrink:0 }} />
+                    : <div style={{ width:38, height:38, borderRadius:'50%', background: isDarkMode ? '#2a1800' : '#fde68a', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'18px', flexShrink:0 }}>👤</div>
+                  }
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontWeight:800, fontSize:'13px', color: isDarkMode ? '#f0f0f5' : '#111', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.name}</div>
+                    <div style={{ fontSize:'11px', color: isDarkMode ? '#a16207' : '#b45309', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.title} · {p.city}</div>
+                    <div style={{ fontSize:'10px', color: isDarkMode ? '#6b7280' : '#9ca3af', marginTop:'1px' }}>{fmtDate(p.created_at)}</div>
+                  </div>
+                  <span style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', color:'#f59e0b', background: isDarkMode ? '#2a1800' : '#fef3c7', padding:'2px 8px', borderRadius:'20px', whiteSpace:'nowrap' }}>Pending</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Stat cards */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))', gap:'12px', marginBottom:'24px' }}>
         {[
@@ -105,6 +148,7 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
           { label:'New',     val:unread,                              color:'#facc15' },
           { label:'Read',    val:enquiries.length - unread,           color:'#22c55e' },
           { label:'Professionals', val:new Set(enquiries.map(e=>e.professional_id)).size, color:t.accent },
+          { label:'Pending Apps',  val:pendingApps.length,            color:'#f59e0b' },
         ].map(s=>(
           <div key={s.label} style={{ background:t.card, border:`1px solid ${t.border}`, borderRadius:'4px', padding:'16px', textAlign:'center' }}>
             <div style={{ fontSize:'22px', fontWeight:800, color:s.color, fontVariantNumeric:'tabular-nums' }}>{s.val}</div>
@@ -195,7 +239,57 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
         </div>
       )}
 
-      {/* ── Detail Modal ── */}
+      {/* ── Application Detail Modal ── */}
+      {selectedApp && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center', padding:'16px' }}
+          onClick={() => setSelectedApp(null)}>
+          <div style={{ background:t.card, border:`1px solid ${t.border}`, borderRadius:'6px', width:'100%', maxWidth:'540px', padding:'28px', position:'relative', maxHeight:'90vh', overflowY:'auto' }}
+            onClick={e => e.stopPropagation()}>
+            <button onClick={() => setSelectedApp(null)}
+              style={{ position:'absolute', top:'12px', right:'12px', background:'none', border:`1px solid ${t.border}`, borderRadius:'2px', width:'28px', height:'28px', cursor:'pointer', color:t.sub, fontSize:'14px', display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
+
+            <p style={{ color:'#f59e0b', fontSize:'10px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', margin:'0 0 4px' }}>Professional Application</p>
+            <h3 style={{ color:t.text, margin:'0 0 16px', fontSize:'18px', fontWeight:800 }}>{selectedApp.name}</h3>
+
+            {selectedApp.profile_picture && (
+              <img src={selectedApp.profile_picture} alt="" style={{ width:64, height:64, borderRadius:'50%', objectFit:'cover', border:`2px solid #f59e0b`, marginBottom:'16px' }} />
+            )}
+
+            <div style={{ background:t.inputBg, border:`1px solid ${t.border}`, borderRadius:'4px', padding:'16px', marginBottom:'16px' }}>
+              {[
+                ['Title',      selectedApp.title],
+                ['Category',   selectedApp.category],
+                ['City',       selectedApp.city || '—'],
+                ['Phone',      selectedApp.phone || '—'],
+                ['Email',      selectedApp.email],
+                ['Experience', selectedApp.experience ? `${selectedApp.experience} yrs` : '—'],
+                ['Applied',    fmtDate(selectedApp.created_at)],
+              ].map(([k,v]) => (
+                <div key={k} style={{ display:'flex', gap:'12px', padding:'5px 0', borderBottom:`1px solid ${t.border}` }}>
+                  <span style={{ fontSize:'11px', fontWeight:700, color:t.sub, textTransform:'uppercase', letterSpacing:'0.06em', minWidth:'90px', flexShrink:0 }}>{k}</span>
+                  <span style={{ fontSize:'12px', color:t.text, fontWeight:600 }}>{v}</span>
+                </div>
+              ))}
+            </div>
+
+            {selectedApp.description && (
+              <>
+                <p style={{ color:t.sub, fontSize:'10px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', margin:'0 0 6px' }}>Bio / Description</p>
+                <div style={{ background:t.inputBg, border:`1px solid ${t.border}`, borderRadius:'4px', padding:'12px', fontSize:'12px', color:t.text, lineHeight:'1.7', whiteSpace:'pre-wrap', marginBottom:'16px' }}>
+                  {selectedApp.description}
+                </div>
+              </>
+            )}
+
+            <a href="?tab=professionals"
+              style={{ display:'block', textAlign:'center', background:'#f59e0b', color:'#000', borderRadius:'4px', padding:'11px', textDecoration:'none', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em' }}>
+              Go to Professional Services to Approve / Reject →
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* ── Enquiry Detail Modal ── */}
       {selected && (
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center', padding:'16px' }}
           onClick={()=>setSelected(null)}>
