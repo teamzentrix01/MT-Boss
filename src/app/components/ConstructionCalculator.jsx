@@ -1,79 +1,342 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart, Trash2, X } from 'lucide-react';
+import {
+  Building2,
+  Check,
+  ChevronDown,
+  Download,
+  Hammer,
+  Home,
+  IndianRupee,
+  Layers,
+  MapPin,
+  PackageCheck,
+  PhoneCall,
+  Ruler,
+  Settings2,
+} from 'lucide-react';
 
 const CITIES = ['Moradabad', 'Noida', 'Delhi', 'Gurgaon', 'Ghaziabad', 'Lucknow', 'Agra', 'Mumbai'];
 
-const steelIcon =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 180'%3E%3Crect width='240' height='180' fill='%23f0f2f5'/%3E%3Crect x='18' y='28' width='204' height='22' rx='5' fill='%23b0b8c4'/%3E%3Crect x='18' y='28' width='204' height='8' rx='5' fill='%23cdd4de'/%3E%3Crect x='18' y='60' width='204' height='22' rx='5' fill='%23a0a8b4'/%3E%3Crect x='18' y='60' width='204' height='8' rx='5' fill='%23bdc4ce'/%3E%3Crect x='18' y='92' width='204' height='22' rx='5' fill='%239098a4'/%3E%3Crect x='18' y='92' width='204' height='8' rx='5' fill='%23adb4be'/%3E%3Crect x='18' y='124' width='204' height='22' rx='5' fill='%238890a0'/%3E%3Crect x='18' y='124' width='204' height='8' rx='5' fill='%23a0a8b8'/%3E%3Ctext x='120' y='170' text-anchor='middle' font-family='Arial,sans-serif' font-size='13' font-weight='900' fill='%23555e6b'%3ESTEEL BARS%3C/text%3E%3C/svg%3E";
-
-const cementBagIcon =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 180'%3E%3Crect width='240' height='180' fill='%23f8f8f8'/%3E%3Cg transform='translate(72 24)'%3E%3Cpath d='M16 6h66l14 118H2L16 6Z' fill='%23f7c948' stroke='%23242830' stroke-width='5'/%3E%3Cpath d='M18 6h62l-8 20H26L18 6Z' fill='%23fff4b8'/%3E%3Cpath d='M10 82h82l5 42H4l6-42Z' fill='%23fff' opacity='.72'/%3E%3Ctext x='48' y='62' text-anchor='middle' font-family='Arial,sans-serif' font-size='20' font-weight='900' fill='%23242830'%3ECEMENT%3C/text%3E%3Ctext x='48' y='105' text-anchor='middle' font-family='Arial,sans-serif' font-size='17' font-weight='900' fill='%23242830'%3E50 KG%3C/text%3E%3C/g%3E%3C/svg%3E";
-const bricksIcon =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 180'%3E%3Crect width='240' height='180' fill='%23f8f8f8'/%3E%3Cg transform='translate(78 58)'%3E%3Crect x='22' y='34' width='48' height='26' rx='3' fill='%23e85d2a'/%3E%3Crect x='66' y='34' width='48' height='26' rx='3' fill='%23f47a37'/%3E%3Crect x='44' y='10' width='48' height='26' rx='3' fill='%23f17a36'/%3E%3Cpath d='M22 60h92L94 82H2l20-22Z' fill='%23c94723'/%3E%3Cpath d='M114 34 94 10v26l20 24V34Z' fill='%23d95b2c'/%3E%3C/g%3E%3Cg transform='translate(38 28) rotate(-20 35 60)'%3E%3Cpath d='M32 8c20 18 33 43 24 67-9 24-34 37-50 32 5-19 8-38 6-58C10 30 16 16 32 8Z' fill='%23d7d7d7' stroke='%23787878' stroke-width='4'/%3E%3Crect x='47' y='80' width='13' height='56' rx='6' fill='%23944a26'/%3E%3Crect x='43' y='70' width='22' height='18' rx='7' fill='%23b85b2d'/%3E%3C/g%3E%3C/svg%3E";
-
-const categoryIcons = {
-  Steel: steelIcon,
-  Bricks: bricksIcon,
-  Cement: cementBagIcon,
-  Wiring: 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=500&q=80',
-  Plumbing: 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=500&q=80',
-  Putty: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=500&q=80',
-  Paints: 'https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=500&q=80',
-  Window: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500&q=80',
-  Door: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=500&q=80',
+const CITY_RATES = {
+  Moradabad: { labour: 310, transport: 18, multiplier: 0.94 },
+  Noida: { labour: 380, transport: 24, multiplier: 1.08 },
+  Delhi: { labour: 410, transport: 28, multiplier: 1.14 },
+  Gurgaon: { labour: 430, transport: 30, multiplier: 1.18 },
+  Ghaziabad: { labour: 360, transport: 22, multiplier: 1.02 },
+  Lucknow: { labour: 340, transport: 20, multiplier: 0.98 },
+  Agra: { labour: 330, transport: 19, multiplier: 0.96 },
+  Mumbai: { labour: 520, transport: 42, multiplier: 1.35 },
 };
 
-const formatCurrency = (value) =>
-  new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value || 0);
+const QUALITY_LEVELS = {
+  Basic: {
+    label: 'Basic',
+    costMultiplier: 0.92,
+    labourMultiplier: 0.9,
+    finishMultiplier: 0.82,
+    note: 'Rental-friendly structure with budget finishes',
+  },
+  Standard: {
+    label: 'Standard',
+    costMultiplier: 1,
+    labourMultiplier: 1,
+    finishMultiplier: 1,
+    note: 'Balanced home construction package',
+  },
+  Premium: {
+    label: 'Premium',
+    costMultiplier: 1.16,
+    labourMultiplier: 1.14,
+    finishMultiplier: 1.28,
+    note: 'Branded materials and better finishing',
+  },
+  Luxury: {
+    label: 'Luxury',
+    costMultiplier: 1.34,
+    labourMultiplier: 1.28,
+    finishMultiplier: 1.65,
+    note: 'High-end brands, richer fixtures and details',
+  },
+};
 
-const foundationTypes = ['Isolated (valid upto G+3)', 'Pile', 'Matt', 'Basement'];
+const FOUNDATION_TYPES = {
+  Normal: { label: 'Normal foundation', materialMultiplier: 1, labourMultiplier: 1 },
+  Raft: { label: 'Raft foundation', materialMultiplier: 1.14, labourMultiplier: 1.08 },
+  Basement: { label: 'Basement', materialMultiplier: 1.32, labourMultiplier: 1.22 },
+  Pile: { label: 'Pile foundation', materialMultiplier: 1.28, labourMultiplier: 1.18 },
+};
+
+const FLOOR_OPTIONS = [
+  { label: 'Ground only', value: 1 },
+  { label: 'G + 1', value: 2 },
+  { label: 'G + 2', value: 3 },
+  { label: 'G + 3', value: 4 },
+];
+
+const CATEGORY_SPECS = [
+  {
+    key: 'Steel',
+    title: 'Steel',
+    type: 'Mandatory',
+    unit: 'kg',
+    factor: 3.8,
+    phase: 'Structure',
+    fallbackPrice: 66,
+    fallbackProducts: [
+      { name: 'TATA Steel', price: 68, unit: 'kg' },
+      { name: 'SAIL', price: 65, unit: 'kg' },
+      { name: 'Rathi', price: 64, unit: 'kg' },
+    ],
+  },
+  {
+    key: 'Cement',
+    title: 'Cement',
+    type: 'Mandatory',
+    unit: 'bag',
+    factor: 0.42,
+    phase: 'Structure',
+    fallbackPrice: 410,
+    fallbackProducts: [
+      { name: 'UltraTech PPC', price: 420, unit: 'bag' },
+      { name: 'ACC Cement', price: 405, unit: 'bag' },
+      { name: 'Ambuja Cement', price: 430, unit: 'bag' },
+    ],
+  },
+  {
+    key: 'Bricks',
+    title: 'Bricks / Blocks',
+    type: 'Mandatory',
+    unit: 'piece',
+    factor: 8.2,
+    phase: 'Masonry',
+    fallbackPrice: 10,
+    fallbackProducts: [
+      { name: 'Red Brick', price: 9, unit: 'piece' },
+      { name: 'Fly Ash Brick', price: 11, unit: 'piece' },
+      { name: 'AAC Block Equivalent', price: 64, unit: 'piece', factorOverride: 1.45 },
+    ],
+  },
+  {
+    key: 'Sand',
+    title: 'Reta / Sand',
+    type: 'Mandatory',
+    unit: 'cft',
+    factor: 1.35,
+    phase: 'Masonry',
+    fallbackPrice: 48,
+    fallbackProducts: [
+      { name: 'River Sand', price: 54, unit: 'cft' },
+      { name: 'M-Sand', price: 42, unit: 'cft' },
+    ],
+  },
+  {
+    key: 'Aggregate',
+    title: 'Aggregate / Bajri',
+    type: 'Mandatory',
+    unit: 'cft',
+    factor: 0.9,
+    phase: 'Structure',
+    fallbackPrice: 46,
+    fallbackProducts: [
+      { name: '20mm Aggregate', price: 46, unit: 'cft' },
+      { name: '10mm Aggregate', price: 50, unit: 'cft' },
+    ],
+  },
+  {
+    key: 'Plumbing',
+    title: 'Plumbing',
+    type: 'Recommended',
+    unit: 'set',
+    factor: 0.012,
+    phase: 'Services',
+    fallbackPrice: 4600,
+    fallbackProducts: [
+      { name: 'Ashirvad CPVC Pipes', price: 5200, unit: 'set' },
+      { name: 'Standard CPVC Pipes', price: 3800, unit: 'set' },
+    ],
+  },
+  {
+    key: 'Wiring',
+    title: 'Electrical Wiring',
+    type: 'Recommended',
+    unit: 'bundle',
+    factor: 0.018,
+    phase: 'Services',
+    fallbackPrice: 2300,
+    fallbackProducts: [
+      { name: 'Havells Wiring Kit', price: 2400, unit: 'bundle' },
+      { name: 'Anchor Wiring Kit', price: 2100, unit: 'bundle' },
+    ],
+  },
+  {
+    key: 'Putty',
+    title: 'Wall Putty',
+    type: 'Recommended',
+    unit: 'bag',
+    factor: 0.08,
+    phase: 'Finishing',
+    fallbackPrice: 790,
+    fallbackProducts: [
+      { name: 'JK Wall Putty', price: 780, unit: 'bag' },
+      { name: 'Birla Wall Putty', price: 820, unit: 'bag' },
+    ],
+  },
+  {
+    key: 'Paints',
+    title: 'Paint',
+    type: 'Recommended',
+    unit: 'bucket',
+    factor: 0.035,
+    phase: 'Finishing',
+    fallbackPrice: 2750,
+    fallbackProducts: [
+      { name: 'Asian Paints', price: 2850, unit: 'bucket' },
+      { name: 'Nerolac', price: 2750, unit: 'bucket' },
+      { name: 'Dulux', price: 2600, unit: 'bucket' },
+    ],
+  },
+  {
+    key: 'Window',
+    title: 'Windows',
+    type: 'Recommended',
+    unit: 'piece',
+    factor: 0.012,
+    phase: 'Finishing',
+    fallbackPrice: 6500,
+    fallbackProducts: [{ name: 'UPVC Window', price: 6500, unit: 'piece' }],
+  },
+  {
+    key: 'Door',
+    title: 'Doors',
+    type: 'Recommended',
+    unit: 'piece',
+    factor: 0.01,
+    phase: 'Finishing',
+    fallbackPrice: 7200,
+    fallbackProducts: [{ name: 'Flush Door', price: 7200, unit: 'piece' }],
+  },
+];
+
+const DEFAULT_SETTINGS = {
+  cityRates: CITY_RATES,
+  qualityLevels: Object.fromEntries(
+    Object.entries(QUALITY_LEVELS).map(([key, value]) => [
+      key,
+      {
+        costMultiplier: value.costMultiplier,
+        labourMultiplier: value.labourMultiplier,
+        finishMultiplier: value.finishMultiplier,
+      },
+    ])
+  ),
+  foundationTypes: Object.fromEntries(
+    Object.entries(FOUNDATION_TYPES).map(([key, value]) => [
+      key,
+      {
+        materialMultiplier: value.materialMultiplier,
+        labourMultiplier: value.labourMultiplier,
+      },
+    ])
+  ),
+  materialFactors: Object.fromEntries(CATEGORY_SPECS.map((spec) => [spec.key, spec.factor])),
+};
+
+function mergeCalculatorSettings(settings = {}) {
+  return {
+    cityRates: {
+      ...DEFAULT_SETTINGS.cityRates,
+      ...(settings.cityRates || {}),
+    },
+    qualityLevels: Object.fromEntries(
+      Object.entries(QUALITY_LEVELS).map(([key, value]) => [
+        key,
+        { ...value, ...(settings.qualityLevels?.[key] || {}) },
+      ])
+    ),
+    foundationTypes: Object.fromEntries(
+      Object.entries(FOUNDATION_TYPES).map(([key, value]) => [
+        key,
+        { ...value, ...(settings.foundationTypes?.[key] || {}) },
+      ])
+    ),
+    materialFactors: {
+      ...DEFAULT_SETTINGS.materialFactors,
+      ...(settings.materialFactors || {}),
+    },
+  };
+}
+
+const formatCurrency = (value) =>
+  new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(Number.isFinite(value) ? value : 0);
+
+const formatNumber = (value) =>
+  new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Number.isFinite(value) ? value : 0);
 
 function getProductPrice(product, city) {
   if (city && product.city_prices && typeof product.city_prices === 'object') {
-    const p = product.city_prices[city];
-    if (p !== undefined && p !== null && p !== '') return Number(p);
+    const price = product.city_prices[city];
+    if (price !== undefined && price !== null && price !== '') return Number(price);
   }
-  return Number(product.price);
+  return Number(product.price || 0);
+}
+
+function normalizeProduct(product, spec, index) {
+  return {
+    ...product,
+    id: product.id || `${spec.key}-fallback-${index}`,
+    category: product.category || spec.key,
+    unit: product.unit || spec.unit,
+    badge: product.badge || spec.type,
+    isFallback: !product.id,
+  };
 }
 
 export default function ConstructionCalculator() {
   const [products, setProducts] = useState([]);
+  const [settings, setSettings] = useState(() => mergeCalculatorSettings());
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState('');
-  const [cart, setCart] = useState({});
-  const [cartOpen, setCartOpen] = useState(false);
-  const [justAdded, setJustAdded] = useState(null);
   const [isDark, setIsDark] = useState(false);
-  const [options, setOptions] = useState({
-    city: '',
-    slabArea: '1000',
-    floors: '1',
-    foundation: '',
+  const [project, setProject] = useState({
+    city: 'Moradabad',
+    area: 1000,
+    floors: 2,
+    quality: 'Standard',
+    foundation: 'Normal',
   });
+  const [selectedProducts, setSelectedProducts] = useState({});
+  const [included, setIncluded] = useState(() =>
+    CATEGORY_SPECS.reduce((acc, spec) => ({ ...acc, [spec.key]: spec.type === 'Mandatory' || spec.phase !== 'Finishing' }), {})
+  );
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchCalculatorData = async () => {
       try {
-        const res = await fetch('/api/calculator-products', { cache: 'no-store' });
-        const data = await res.json();
-        if (data.success) {
-          setProducts(data.data || []);
-          setActiveCategory(data.data?.[0]?.category || '');
-        }
+        const [productRes, settingsRes] = await Promise.all([
+          fetch('/api/calculator-products', { cache: 'no-store' }),
+          fetch('/api/calculator-settings', { cache: 'no-store' }),
+        ]);
+        const productData = await productRes.json();
+        const settingsData = await settingsRes.json();
+        if (productData.success) setProducts(productData.data || []);
+        if (settingsData.success) setSettings(mergeCalculatorSettings(settingsData.data || {}));
       } finally {
         setLoading(false);
       }
     };
-    fetchProducts();
+    fetchCalculatorData();
   }, []);
 
   useEffect(() => {
     const checkTheme = () => {
       setIsDark(
         document.documentElement.classList.contains('dark-mode') ||
-        localStorage.getItem('theme') === 'dark'
+          localStorage.getItem('theme') === 'dark'
       );
     };
     checkTheme();
@@ -82,379 +345,543 @@ export default function ConstructionCalculator() {
     return () => observer.disconnect();
   }, []);
 
-  const categories = useMemo(() => {
+  const productsByCategory = useMemo(() => {
     const map = new Map();
-    products.forEach((product) => {
-      if (!map.has(product.category)) {
-        map.set(product.category, {
-          name: product.category,
-          badge: product.badge || 'Recommended',
-          image: product.image_url || categoryIcons[product.category],
-        });
-      }
+    CATEGORY_SPECS.forEach((spec) => {
+      const fromApi = products
+        .filter((product) => product.category?.toLowerCase() === spec.key.toLowerCase())
+        .map((product, index) => normalizeProduct(product, spec, index));
+      const fallback = spec.fallbackProducts.map((product, index) => normalizeProduct(product, spec, index));
+      map.set(spec.key, fromApi.length > 0 ? fromApi : fallback);
     });
-    return Array.from(map.values());
+    return map;
   }, [products]);
 
-  const visibleProducts = products.filter((p) => p.category === activeCategory);
-  const selectedItems = Object.values(cart);
-  const subtotal = selectedItems.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
-  const slabMultiplier = Math.max(parseInt(options.slabArea, 10) || 0, 1) / 1000;
-  const floorMultiplier = Math.max(parseInt(options.floors, 10) || 1, 1);
-  const foundationMultiplier = options.foundation === 'Matt' ? 1.18 : options.foundation === 'Pile' ? 1.32 : 1;
-  const estimate = Math.round(subtotal * slabMultiplier * floorMultiplier * foundationMultiplier);
-
-  const addToCart = (product) => {
-    const effectivePrice = getProductPrice(product, options.city);
-    setCart((current) => ({
-      ...current,
-      [product.id]: {
-        ...product,
-        price: effectivePrice,
-        quantity: (current[product.id]?.quantity || 0) + 1,
-      },
-    }));
-    setJustAdded(product.id);
-    setTimeout(() => setJustAdded(id => id === product.id ? null : id), 1500);
-  };
-
-  const changeQty = (productId, delta) => {
-    setCart((current) => {
-      const item = current[productId];
-      if (!item) return current;
-      const nextQty = item.quantity + delta;
-      if (nextQty <= 0) {
-        const next = { ...current };
-        delete next[productId];
-        return next;
-      }
-      return { ...current, [productId]: { ...item, quantity: nextQty } };
+  useEffect(() => {
+    setSelectedProducts((current) => {
+      const next = { ...current };
+      CATEGORY_SPECS.forEach((spec) => {
+        const options = productsByCategory.get(spec.key) || [];
+        if (!next[spec.key] || !options.some((product) => String(product.id) === String(next[spec.key]))) {
+          next[spec.key] = options[0]?.id;
+        }
+      });
+      return next;
     });
+  }, [productsByCategory]);
+
+  const estimate = useMemo(() => {
+    const cityRate = settings.cityRates[project.city] || settings.cityRates.Moradabad;
+    const quality = settings.qualityLevels[project.quality] || settings.qualityLevels.Standard;
+    const foundation = settings.foundationTypes[project.foundation] || settings.foundationTypes.Normal;
+    const area = Math.max(Number(project.area) || 0, 1);
+    const floors = Math.max(Number(project.floors) || 1, 1);
+    const builtUpArea = area * floors;
+    const floorWastage = 1 + Math.max(floors - 1, 0) * 0.035;
+
+    const lineItems = CATEGORY_SPECS.filter((spec) => included[spec.key]).map((spec) => {
+      const options = productsByCategory.get(spec.key) || [];
+      const selected =
+        options.find((product) => String(product.id) === String(selectedProducts[spec.key])) || options[0];
+      const baseFactor = selected?.factorOverride || settings.materialFactors[spec.key] || spec.factor;
+      const structureMultiplier = spec.phase === 'Structure' ? foundation.materialMultiplier : 1;
+      const finishMultiplier = spec.phase === 'Finishing' ? quality.finishMultiplier : 1;
+      const factor = baseFactor * structureMultiplier * floorWastage * finishMultiplier;
+      const rawQuantity = builtUpArea * factor;
+      const quantity = Math.max(Math.ceil(rawQuantity), 1);
+      const basePrice = selected ? getProductPrice(selected, project.city) : spec.fallbackPrice;
+      const price = Math.round(basePrice * cityRate.multiplier * quality.costMultiplier);
+      const amount = quantity * price;
+
+      return {
+        spec,
+        product: selected,
+        quantity,
+        price,
+        amount,
+      };
+    });
+
+    const materialTotal = lineItems.reduce((sum, item) => sum + item.amount, 0);
+    const labourBase = builtUpArea * cityRate.labour * quality.labourMultiplier * foundation.labourMultiplier;
+    const labourTotal = Math.round(labourBase);
+    const transportTotal = Math.round(builtUpArea * cityRate.transport);
+    const supervisionTotal = Math.round((materialTotal + labourTotal) * 0.035);
+    const contingencyTotal = Math.round((materialTotal + labourTotal + transportTotal) * 0.025);
+    const grandTotal = materialTotal + labourTotal + transportTotal + supervisionTotal + contingencyTotal;
+
+    return {
+      area,
+      floors,
+      builtUpArea,
+      lineItems,
+      materialTotal,
+      labourTotal,
+      transportTotal,
+      supervisionTotal,
+      contingencyTotal,
+      grandTotal,
+      perSqft: grandTotal / builtUpArea,
+      cityRate,
+      quality,
+      foundation,
+    };
+  }, [included, productsByCategory, project, selectedProducts, settings]);
+
+  const phaseTotals = estimate.lineItems.reduce((acc, item) => {
+    acc[item.spec.phase] = (acc[item.spec.phase] || 0) + item.amount;
+    return acc;
+  }, {});
+
+  const updateProject = (key, value) => {
+    setProject((current) => ({ ...current, [key]: value }));
   };
 
-  const categoryShift = (direction) => {
-    const index = categories.findIndex((c) => c.name === activeCategory);
-    if (index === -1) return;
-    const nextIndex = (index + direction + categories.length) % categories.length;
-    setActiveCategory(categories[nextIndex].name);
+  const selectProduct = (categoryKey, productId) => {
+    setSelectedProducts((current) => ({ ...current, [categoryKey]: productId }));
+  };
+
+  const toggleIncluded = (spec) => {
+    if (spec.type === 'Mandatory') return;
+    setIncluded((current) => ({ ...current, [spec.key]: !current[spec.key] }));
   };
 
   return (
     <>
       <style>{`
-        .calc-page {
-          --calc-bg: #ffffff;
-          --calc-surface: #ffffff;
-          --calc-card: #f7f7f8;
-          --calc-card-soft: #fafafa;
-          --calc-muted-surface: #f8f8f8;
-          --calc-border: #e5e7eb;
-          --calc-border-soft: #f0f0f0;
-          --calc-text: #242830;
-          --calc-heading: #111827;
-          --calc-muted: #59606b;
-          --calc-muted-strong: #6b7280;
-          --calc-accent: #f6b400;
+        .boq-page {
+          --boq-bg: #f4f5f2;
+          --boq-surface: #ffffff;
+          --boq-soft: #eef0ec;
+          --boq-line: #dfe3da;
+          --boq-text: #1b1f1d;
+          --boq-muted: #687069;
+          --boq-accent: #d7a923;
+          --boq-green: #1f7a4d;
+          --boq-blue: #315f8c;
           min-height: 100vh;
-          background: var(--calc-bg);
-          color: var(--calc-text);
-          font-family: 'DM Sans', system-ui, sans-serif;
-          transition: background .2s ease, color .2s ease;
+          background: var(--boq-bg);
+          color: var(--boq-text);
+          font-family: Arial, sans-serif;
         }
-        .dark-mode .calc-page,
-        .calc-page.dark {
-          --calc-bg: #000000;
-          --calc-surface: #0f0f10;
-          --calc-card: #141416;
-          --calc-card-soft: #111113;
-          --calc-muted-surface: #18181b;
-          --calc-border: #2a2a2d;
-          --calc-border-soft: #27272a;
-          --calc-text: #f4f4f5;
-          --calc-heading: #ffffff;
-          --calc-muted: #a1a1aa;
-          --calc-muted-strong: #8b8b94;
+        .dark-mode .boq-page,
+        .boq-page.dark {
+          --boq-bg: #0d0f0f;
+          --boq-surface: #151817;
+          --boq-soft: #202522;
+          --boq-line: #2f3631;
+          --boq-text: #f3f5f2;
+          --boq-muted: #a7aea8;
         }
-        .calc-hero { height: 138px; background-image: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.58)), url(https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1600&q=80); background-size: cover; background-position: center; display: flex; align-items: flex-start; justify-content: center; padding-top: 18px; color: #fff; }
-        .calc-hero h1 { margin: 0; font-size: 1.35rem; font-weight: 900; }
-        .calc-hero p { margin: .25rem auto 0; max-width: 520px; font-size: .75rem; color: rgba(255,255,255,.82); text-align: center; }
-        .calc-shell { max-width: 1120px; margin: -46px auto 0; padding: 0 18px 48px; }
-        .calc-filter { background: #fff; border-radius: 14px; padding: 18px; box-shadow: 0 18px 50px rgba(15,23,42,.08); display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-        .calc-select { width: 100%; height: 38px; border: 1px solid #dfe3ea; border-radius: 8px; background: #fff; color: #111827; padding: 0 14px; font-size: .78rem; font-weight: 700; }
-        .calc-city-gate { text-align: center; padding: 4rem 1rem 3rem; }
-        .calc-city-gate-icon { font-size: 3.5rem; margin-bottom: 1rem; }
-        .calc-city-gate h2 { margin: 0 0 .5rem; font-size: 1.5rem; font-weight: 900; color: var(--calc-heading); }
-        .calc-city-gate p { color: var(--calc-muted); font-size: .92rem; max-width: 400px; margin: 0 auto 1.75rem; line-height: 1.6; }
-        .calc-city-picker { display: inline-block; }
-        .calc-city-picker select { height: 46px; font-size: .95rem; font-weight: 800; border: 2px solid var(--calc-accent); border-radius: 10px; background: #fff; color: #111827; padding: 0 18px; min-width: 220px; cursor: pointer; }
-        .calc-workspace { margin-top: 46px; }
-        .calc-category-row { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 16px; }
-        .calc-category { height: 164px; border: 1px solid #f0f0f0; border-radius: 14px; overflow: hidden; background: #fff; cursor: pointer; position: relative; transition: border .15s, transform .15s; }
-        .calc-category.active { border: 4px solid #f6b400; }
-        .calc-category:hover { transform: translateY(-2px); }
-        .calc-category-badge { height: 22px; background: #f8f8f8; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 900; }
-        .calc-category img { width: 100%; height: 134px; object-fit: cover; display: block; }
-        .calc-controls { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 24px 0 12px; }
-        .calc-arrows { display: flex; gap: 8px; }
-        .calc-icon-btn { width: 42px; height: 42px; border: 2px solid #f6b400; color: #f6b400; background: #fff; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
-        .calc-cart-btn { border: none; background: #f6b400; color: #111; border-radius: 999px; padding: 10px 16px; display: inline-flex; gap: 6px; align-items: center; font-size: .8rem; font-weight: 900; cursor: pointer; }
-        .calc-city-badge { display: inline-flex; align-items: center; gap: 5px; background: #fff8e1; color: #92400e; border: 1px solid #fcd34d; border-radius: 999px; padding: 4px 12px; font-size: .74rem; font-weight: 800; margin-bottom: 8px; }
-        .calc-title { font-size: 2rem; margin: 0 0 14px; font-weight: 900; letter-spacing: 0; }
-        .calc-products { display: grid; grid-template-columns: repeat(4, minmax(170px, 1fr)); gap: 20px; }
-        .calc-card { background: #f7f7f8; border-radius: 12px; padding: 18px 16px 16px; min-height: 292px; display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .calc-card img { width: 132px; height: 100px; object-fit: contain; border-radius: 8px; margin: 8px 0 18px; }
-        .calc-card h3 { margin: 0 0 6px; font-size: .96rem; font-weight: 900; }
-        .calc-card p { margin: 0; min-height: 38px; color: #59606b; font-size: .74rem; line-height: 1.4; }
-        .calc-price { margin: 10px 0 14px; font-weight: 900; color: #111827; }
-        .calc-add { margin-top: auto; border: none; background: #f6b400; color: #111; border-radius: 999px; padding: 9px 13px; display: inline-flex; align-items: center; gap: 5px; font-size: .75rem; font-weight: 900; cursor: pointer; transition: background .15s; }
-        .calc-add.added { background: #22c55e; color: #fff; }
-        .calc-card-qty { margin-top: auto; display: inline-flex; align-items: center; gap: 0; border: 2px solid #f6b400; border-radius: 999px; overflow: hidden; }
-        .calc-card-qty button { width: 34px; height: 34px; border: none; background: transparent; color: #f6b400; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; font-weight: 900; transition: background .12s; }
-        .calc-card-qty button:hover { background: #f6b40018; }
-        .calc-card-qty span { min-width: 32px; text-align: center; font-weight: 900; font-size: .9rem; color: var(--calc-heading, #111); }
-        .calc-inline-total { color: #111; font-size: .84rem; font-weight: 900; }
-        .calc-modal-backdrop { position: fixed; inset: 0; z-index: 220; background: rgba(0,0,0,.48); display: flex; align-items: center; justify-content: center; padding: 18px; }
-        .calc-modal { width: min(560px, 100%); max-height: 86vh; overflow: auto; background: #fff; border-radius: 12px; box-shadow: 0 24px 80px rgba(15,23,42,.28); }
-        .calc-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 16px 18px; border-bottom: 1px solid #e8e8e8; }
-        .calc-modal-title { margin: 0; font-size: 1rem; font-weight: 900; }
-        .calc-close { width: 34px; height: 34px; border: 1px solid #e5e7eb; border-radius: 999px; background: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
-        .calc-modal-body { padding: 16px 18px 18px; }
-        .calc-cart-empty { color: #6b7280; text-align: center; padding: 28px 10px; font-size: .9rem; }
-        .calc-cart-list { display: grid; gap: 10px; }
-        .calc-cart-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 12px; border: 1px solid #ececec; border-radius: 9px; background: #fafafa; }
-        .calc-cart-name { font-weight: 900; font-size: .86rem; }
-        .calc-cart-meta { color: #6b7280; font-size: .76rem; margin-top: 3px; }
-        .calc-qty { display: inline-flex; align-items: center; gap: 7px; }
-        .calc-qty button { width: 27px; height: 27px; border-radius: 999px; border: 1px solid #ddd; background: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
-        .calc-cart-total { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e8e8e8; font-weight: 900; }
-        .calc-cart-total strong { color: #f6b400; font-size: 1.35rem; }
-        .calc-clear { width: 100%; margin-top: 14px; border: none; background: #111827; color: #fff; border-radius: 999px; padding: 11px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; font-weight: 900; cursor: pointer; }
-        .calc-empty { padding: 2rem; color: #6b7280; text-align: center; background: #f7f7f8; border-radius: 12px; }
-        .dark-mode .calc-page .calc-filter,
-        .dark-mode .calc-page .calc-select,
-        .dark-mode .calc-page .calc-category,
-        .dark-mode .calc-page .calc-icon-btn,
-        .dark-mode .calc-page .calc-modal,
-        .dark-mode .calc-page .calc-close,
-        .dark-mode .calc-page .calc-qty button,
-        .calc-page.dark .calc-filter,
-        .calc-page.dark .calc-select,
-        .calc-page.dark .calc-category,
-        .calc-page.dark .calc-icon-btn,
-        .calc-page.dark .calc-modal,
-        .calc-page.dark .calc-close,
-        .calc-page.dark .calc-qty button {
-          background: var(--calc-surface);
-          border-color: var(--calc-border);
-          color: var(--calc-heading);
+        .boq-hero {
+          min-height: 260px;
+          background-image: linear-gradient(90deg, rgba(10,14,13,.9), rgba(10,14,13,.62)), url(https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1800&q=80);
+          background-size: cover;
+          background-position: center;
+          color: #fff;
+          display: flex;
+          align-items: flex-end;
+          padding: 34px 20px 70px;
         }
-        .dark-mode .calc-page .calc-filter,
-        .calc-page.dark .calc-filter { box-shadow: 0 18px 50px rgba(0,0,0,.45); }
-        .dark-mode .calc-page .calc-category-badge,
-        .calc-page.dark .calc-category-badge { background: var(--calc-muted-surface); color: var(--calc-heading); }
-        .dark-mode .calc-page .calc-category.active,
-        .calc-page.dark .calc-category.active { border-color: var(--calc-accent); }
-        .dark-mode .calc-page .calc-card,
-        .dark-mode .calc-page .calc-empty,
-        .calc-page.dark .calc-card,
-        .calc-page.dark .calc-empty { background: var(--calc-card); border: 1px solid var(--calc-border-soft); color: var(--calc-text); }
-        .dark-mode .calc-page .calc-card h3,
-        .dark-mode .calc-page .calc-title,
-        .dark-mode .calc-page .calc-price,
-        .dark-mode .calc-page .calc-modal-title,
-        .dark-mode .calc-page .calc-cart-name,
-        .calc-page.dark .calc-card h3,
-        .calc-page.dark .calc-title,
-        .calc-page.dark .calc-price,
-        .calc-page.dark .calc-modal-title,
-        .calc-page.dark .calc-cart-name { color: var(--calc-heading); }
-        .dark-mode .calc-page .calc-card p,
-        .dark-mode .calc-page .calc-cart-empty,
-        .dark-mode .calc-page .calc-cart-meta,
-        .dark-mode .calc-page .calc-empty,
-        .calc-page.dark .calc-card p,
-        .calc-page.dark .calc-cart-empty,
-        .calc-page.dark .calc-cart-meta,
-        .calc-page.dark .calc-empty { color: var(--calc-muted); }
-        .dark-mode .calc-page .calc-cart-row,
-        .calc-page.dark .calc-cart-row { background: var(--calc-card-soft); border-color: var(--calc-border); }
-        .dark-mode .calc-page .calc-modal-head,
-        .dark-mode .calc-page .calc-cart-total,
-        .calc-page.dark .calc-modal-head,
-        .calc-page.dark .calc-cart-total { border-color: var(--calc-border); }
-        .dark-mode .calc-page .calc-modal,
-        .calc-page.dark .calc-modal { box-shadow: 0 24px 80px rgba(0,0,0,.65); }
-        .dark-mode .calc-page .calc-clear,
-        .calc-page.dark .calc-clear { background: #27272a; }
-        .dark-mode .calc-page .calc-city-picker select,
-        .calc-page.dark .calc-city-picker select { background: var(--calc-surface); color: var(--calc-heading); }
-        @media (max-width: 980px) { .calc-products { grid-template-columns: repeat(3, minmax(170px, 1fr)); } }
-        @media (max-width: 760px) { .calc-filter { grid-template-columns: 1fr; } .calc-category-row, .calc-products { grid-template-columns: repeat(2, 1fr); } .calc-shell { margin-top: -28px; } }
-        @media (max-width: 520px) { .calc-category-row, .calc-products { grid-template-columns: 1fr; } .calc-controls { align-items: flex-start; flex-direction: column; } }
+        .boq-hero-inner { width: min(1180px, 100%); margin: 0 auto; }
+        .boq-kicker { display: inline-flex; align-items: center; gap: 8px; color: #f8dc7e; font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+        .boq-hero h1 { margin: 12px 0 8px; max-width: 760px; font-size: clamp(2rem, 5vw, 4.4rem); line-height: .95; letter-spacing: 0; font-weight: 900; }
+        .boq-hero p { max-width: 680px; margin: 0; color: rgba(255,255,255,.84); font-size: .98rem; line-height: 1.6; }
+        .boq-shell { width: min(1180px, 100%); margin: -44px auto 0; padding: 0 20px 54px; }
+        .boq-config {
+          background: var(--boq-surface);
+          border: 1px solid var(--boq-line);
+          display: grid;
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+          gap: 1px;
+          box-shadow: 0 22px 70px rgba(25,31,28,.14);
+        }
+        .boq-field { background: var(--boq-surface); padding: 16px; min-width: 0; }
+        .boq-label { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; color: var(--boq-muted); font-size: .68rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; }
+        .boq-select-wrap { position: relative; }
+        .boq-input,
+        .boq-select {
+          width: 100%;
+          height: 42px;
+          border: 1px solid var(--boq-line);
+          border-radius: 7px;
+          background: var(--boq-soft);
+          color: var(--boq-text);
+          padding: 0 12px;
+          font-size: .86rem;
+          font-weight: 800;
+          outline: none;
+        }
+        .boq-select { appearance: none; padding-right: 34px; }
+        .boq-select-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--boq-muted); pointer-events: none; }
+        .boq-layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 22px; margin-top: 24px; align-items: start; }
+        .boq-panel { background: var(--boq-surface); border: 1px solid var(--boq-line); }
+        .boq-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px; border-bottom: 1px solid var(--boq-line); }
+        .boq-panel-title { margin: 0; font-size: 1.05rem; font-weight: 900; letter-spacing: 0; }
+        .boq-panel-sub { margin: 4px 0 0; color: var(--boq-muted); font-size: .78rem; line-height: 1.45; }
+        .boq-chip { display: inline-flex; align-items: center; gap: 5px; height: 28px; border: 1px solid var(--boq-line); border-radius: 999px; padding: 0 10px; color: var(--boq-muted); background: var(--boq-soft); font-size: .72rem; font-weight: 900; white-space: nowrap; }
+        .boq-quality-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: 18px; }
+        .boq-quality {
+          min-height: 112px;
+          border: 1px solid var(--boq-line);
+          border-radius: 8px;
+          background: var(--boq-soft);
+          color: var(--boq-text);
+          padding: 14px;
+          cursor: pointer;
+          text-align: left;
+        }
+        .boq-quality.active { border-color: var(--boq-accent); box-shadow: 0 0 0 2px rgba(215,169,35,.28) inset; background: color-mix(in srgb, var(--boq-accent) 12%, var(--boq-surface)); }
+        .boq-quality strong { display: block; font-size: .95rem; margin-bottom: 6px; }
+        .boq-quality span { display: block; color: var(--boq-muted); font-size: .74rem; line-height: 1.42; }
+        .boq-items { display: grid; gap: 12px; padding: 18px; }
+        .boq-item {
+          display: grid;
+          grid-template-columns: 44px minmax(0, 1fr) 190px 150px;
+          gap: 14px;
+          align-items: center;
+          border: 1px solid var(--boq-line);
+          border-radius: 8px;
+          padding: 14px;
+          background: var(--boq-surface);
+        }
+        .boq-item.disabled { opacity: .56; }
+        .boq-icon { width: 44px; height: 44px; border-radius: 8px; display: grid; place-items: center; background: var(--boq-soft); color: var(--boq-blue); border: 1px solid var(--boq-line); }
+        .boq-item h3 { margin: 0 0 5px; font-size: .92rem; font-weight: 900; letter-spacing: 0; }
+        .boq-meta { display: flex; flex-wrap: wrap; gap: 7px; color: var(--boq-muted); font-size: .72rem; font-weight: 800; }
+        .boq-toggle {
+          width: 38px;
+          height: 22px;
+          border: 0;
+          border-radius: 999px;
+          background: #b8beb8;
+          padding: 3px;
+          cursor: pointer;
+        }
+        .boq-toggle span { display: block; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .16s; }
+        .boq-toggle.active { background: var(--boq-green); }
+        .boq-toggle.active span { transform: translateX(16px); }
+        .boq-toggle:disabled { cursor: not-allowed; }
+        .boq-amount { text-align: right; }
+        .boq-amount strong { display: block; font-size: .96rem; color: var(--boq-text); }
+        .boq-amount span { display: block; color: var(--boq-muted); font-size: .72rem; margin-top: 3px; }
+        .boq-summary { position: sticky; top: 18px; overflow: hidden; }
+        .boq-total-band { background: #17211c; color: #fff; padding: 20px; }
+        .boq-total-band span { display: block; color: rgba(255,255,255,.7); font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+        .boq-total-band strong { display: block; margin-top: 8px; font-size: 2.05rem; line-height: 1; }
+        .boq-total-band small { display: block; margin-top: 8px; color: #f8dc7e; font-size: .82rem; font-weight: 900; }
+        .boq-summary-body { padding: 18px; display: grid; gap: 12px; }
+        .boq-line-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; color: var(--boq-muted); font-size: .82rem; }
+        .boq-line-row strong { color: var(--boq-text); font-size: .88rem; }
+        .boq-divider { height: 1px; background: var(--boq-line); margin: 4px 0; }
+        .boq-stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .boq-stat { border: 1px solid var(--boq-line); background: var(--boq-soft); border-radius: 8px; padding: 12px; }
+        .boq-stat span { display: block; color: var(--boq-muted); font-size: .68rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; }
+        .boq-stat strong { display: block; margin-top: 6px; font-size: .95rem; }
+        .boq-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .boq-action {
+          min-height: 42px;
+          border: 1px solid var(--boq-line);
+          border-radius: 7px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          background: var(--boq-soft);
+          color: var(--boq-text);
+          text-decoration: none;
+          font-size: .78rem;
+          font-weight: 900;
+          cursor: pointer;
+        }
+        .boq-action.primary { border-color: var(--boq-accent); background: var(--boq-accent); color: #16130a; }
+        .boq-empty { padding: 28px; color: var(--boq-muted); text-align: center; }
+        @media print {
+          .boq-hero, .boq-config, .boq-actions, .boq-quality-grid { display: none; }
+          .boq-shell { margin: 0; padding: 0; width: 100%; }
+          .boq-layout { display: block; }
+          .boq-summary { position: static; margin-top: 18px; }
+        }
+        @media (max-width: 1080px) {
+          .boq-config { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+          .boq-layout { grid-template-columns: 1fr; }
+          .boq-summary { position: static; }
+        }
+        @media (max-width: 820px) {
+          .boq-hero { min-height: 230px; padding-bottom: 58px; }
+          .boq-config { grid-template-columns: 1fr; }
+          .boq-quality-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .boq-item { grid-template-columns: 40px minmax(0, 1fr); }
+          .boq-item .boq-select-wrap, .boq-amount { grid-column: 2; text-align: left; }
+        }
+        @media (max-width: 520px) {
+          .boq-shell { padding: 0 14px 44px; }
+          .boq-quality-grid { grid-template-columns: 1fr; }
+          .boq-stat-grid, .boq-actions { grid-template-columns: 1fr; }
+          .boq-hero h1 { font-size: 2.1rem; }
+        }
       `}</style>
 
-      <main className={`calc-page${isDark ? ' dark' : ''}`}>
-        <section className="calc-hero">
-          <div>
-            <h1>Cost Estimator Tool</h1>
-            <p>Select your city, choose construction products, and get an instant material quotation.</p>
+      <main className={`boq-page${isDark ? ' dark' : ''}`}>
+        <section className="boq-hero">
+          <div className="boq-hero-inner">
+            <div className="boq-kicker">
+              <Building2 size={16} /> Real Estate BOQ Calculator
+            </div>
+            <h1>Construction Budget Calculator</h1>
+            <p>
+              Select location, property size, floors and brands. Materials, labour, transport and
+              finishing cost update instantly as a live house-construction estimate.
+            </p>
           </div>
         </section>
 
-        <div className="calc-shell">
-          {/* Filter bar — city is first and required */}
-          <div className="calc-filter">
-            <select
-              className="calc-select"
-              value={options.city}
-              onChange={(e) => { setOptions({ ...options, city: e.target.value }); setCart({}); }}
-              style={!options.city ? { borderColor: '#f6b400', color: '#92400e' } : {}}
-            >
-              <option value="">📍 Select your city</option>
-              {CITIES.map((c) => <option key={c}>{c}</option>)}
-            </select>
-            <select className="calc-select" value={options.slabArea} onChange={(e) => setOptions({ ...options, slabArea: e.target.value })}>
-              <option value="750">Slab area: 750 sqft</option>
-              <option value="1000">Slab area: 1000 sqft</option>
-              <option value="1500">Slab area: 1500 sqft</option>
-              <option value="2000">Slab area: 2000 sqft</option>
-            </select>
-            <select className="calc-select" value={options.floors} onChange={(e) => setOptions({ ...options, floors: e.target.value })}>
-              <option value="1">No of Floors: 1</option>
-              <option value="2">No of Floors: 2</option>
-              <option value="3">No of Floors: 3</option>
-              <option value="4">No of Floors: 4</option>
-            </select>
-            <select className="calc-select" value={options.foundation} onChange={(e) => setOptions({ ...options, foundation: e.target.value })}>
-              <option value="">Foundation type</option>
-              {foundationTypes.map((item) => <option key={item} value={item}>{item}</option>)}
-            </select>
-          </div>
-
-          {loading ? (
-            <div className="calc-empty" style={{ marginTop: 48 }}>Loading calculator...</div>
-          ) : !options.city ? (
-            /* ── City gate ── */
-            <div className="calc-city-gate">
-              <div className="calc-city-gate-icon">📍</div>
-              <h2>Select Your City to View Prices</h2>
-              <p>
-                Construction material prices vary by location. Choose your city to see accurate,
-                city-specific pricing for all products.
-              </p>
-              <div className="calc-city-picker">
-                <select
-                  value={options.city}
-                  onChange={(e) => setOptions({ ...options, city: e.target.value })}
-                >
-                  <option value="">-- Select City --</option>
-                  {CITIES.map((c) => <option key={c}>{c}</option>)}
+        <div className="boq-shell">
+          <section className="boq-config" aria-label="Project configuration">
+            <div className="boq-field">
+              <label className="boq-label">
+                <MapPin size={14} /> Location
+              </label>
+              <div className="boq-select-wrap">
+                <select className="boq-select" value={project.city} onChange={(e) => updateProject('city', e.target.value)}>
+                  {CITIES.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
                 </select>
+                <ChevronDown className="boq-select-icon" size={16} />
               </div>
             </div>
-          ) : (
-            /* ── Main workspace ── */
-            <div className="calc-workspace">
-              <section>
-                <div style={{ marginBottom: 16 }}>
-                  <span className="calc-city-badge">📍 {options.city} — prices shown for your city</span>
-                </div>
+            <div className="boq-field">
+              <label className="boq-label">
+                <Ruler size={14} /> Property Size
+              </label>
+              <input
+                className="boq-input"
+                type="number"
+                min="100"
+                step="50"
+                value={project.area}
+                onChange={(e) => updateProject('area', e.target.value)}
+              />
+            </div>
+            <div className="boq-field">
+              <label className="boq-label">
+                <Layers size={14} /> Floors
+              </label>
+              <div className="boq-select-wrap">
+                <select className="boq-select" value={project.floors} onChange={(e) => updateProject('floors', Number(e.target.value))}>
+                  {FLOOR_OPTIONS.map((floor) => (
+                    <option key={floor.value} value={floor.value}>
+                      {floor.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="boq-select-icon" size={16} />
+              </div>
+            </div>
+            <div className="boq-field">
+              <label className="boq-label">
+                <Home size={14} /> Foundation
+              </label>
+              <div className="boq-select-wrap">
+                <select className="boq-select" value={project.foundation} onChange={(e) => updateProject('foundation', e.target.value)}>
+                  {Object.entries(FOUNDATION_TYPES).map(([key, item]) => (
+                    <option key={key} value={key}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="boq-select-icon" size={16} />
+              </div>
+            </div>
+            <div className="boq-field">
+              <label className="boq-label">
+                <Settings2 size={14} /> Built-up Area
+              </label>
+              <div className="boq-input" style={{ display: 'flex', alignItems: 'center' }}>
+                {formatNumber(estimate.builtUpArea)} sqft
+              </div>
+            </div>
+          </section>
 
-                <div className="calc-category-row">
-                  {categories.map((category) => (
-                    <button key={category.name} className={`calc-category${activeCategory === category.name ? ' active' : ''}`} onClick={() => setActiveCategory(category.name)}>
-                      <div className="calc-category-badge">{category.name}</div>
-                      <img src={category.image} alt={category.name} />
+          <div className="boq-layout">
+            <div>
+              <section className="boq-panel">
+                <div className="boq-panel-head">
+                  <div>
+                    <h2 className="boq-panel-title">Quality Package</h2>
+                    <p className="boq-panel-sub">Package selection changes material grade, finishing and labour intensity.</p>
+                  </div>
+                  <span className="boq-chip">
+                    <Check size={14} /> {project.quality}
+                  </span>
+                </div>
+                <div className="boq-quality-grid">
+                  {Object.entries(settings.qualityLevels).map(([key, item]) => (
+                    <button
+                      key={key}
+                      className={`boq-quality${project.quality === key ? ' active' : ''}`}
+                      type="button"
+                      onClick={() => updateProject('quality', key)}
+                    >
+                      <strong>{item.label}</strong>
+                      <span>{item.note}</span>
                     </button>
                   ))}
                 </div>
+              </section>
 
-                <div className="calc-controls">
+              <section className="boq-panel" style={{ marginTop: 22 }}>
+                <div className="boq-panel-head">
                   <div>
-                    <div className="calc-arrows">
-                      <button className="calc-icon-btn" onClick={() => categoryShift(-1)} aria-label="Previous category"><ChevronLeft size={28} /></button>
-                      <button className="calc-icon-btn" onClick={() => categoryShift(1)} aria-label="Next category"><ChevronRight size={28} /></button>
-                    </div>
-                    <h2 className="calc-title">{activeCategory || 'Products'}</h2>
+                    <h2 className="boq-panel-title">Material BOQ</h2>
+                    <p className="boq-panel-sub">
+                      Mandatory items stay included. Recommended items can be toggled and brand-switched.
+                    </p>
                   </div>
-                  <button className="calc-cart-btn" onClick={() => setCartOpen(true)}>
-                    <ShoppingCart size={15} /> Check My Cart <span className="calc-inline-total">{formatCurrency(estimate)}</span>
-                  </button>
+                  <span className="boq-chip">
+                    <PackageCheck size={14} /> {estimate.lineItems.length} active items
+                  </span>
                 </div>
 
-                <div className="calc-products">
-                  {visibleProducts.map((product) => {
-                    const displayPrice = getProductPrice(product, options.city);
-                    const cartItem = cart[product.id];
-                    const added = justAdded === product.id;
-                    return (
-                      <article className="calc-card" key={product.id}>
-                        <img src={product.image_url || categoryIcons[product.category] || categoryIcons.Cement} alt={product.name} />
-                        <h3>{product.name}</h3>
-                        <p>{product.description}</p>
-                        <div className="calc-price">{formatCurrency(displayPrice)} / {product.unit}</div>
-                        {cartItem ? (
-                          <div className="calc-card-qty">
-                            <button onClick={() => changeQty(product.id, -1)} aria-label="Remove one"><Minus size={14} /></button>
-                            <span>{cartItem.quantity}</span>
-                            <button onClick={() => changeQty(product.id, 1)} aria-label="Add one"><Plus size={14} /></button>
+                {loading ? (
+                  <div className="boq-empty">Loading calculator rates...</div>
+                ) : (
+                  <div className="boq-items">
+                    {CATEGORY_SPECS.map((spec) => {
+                      const options = productsByCategory.get(spec.key) || [];
+                      const item = estimate.lineItems.find((line) => line.spec.key === spec.key);
+                      const isIncluded = included[spec.key];
+
+                      return (
+                        <article className={`boq-item${!isIncluded ? ' disabled' : ''}`} key={spec.key}>
+                          <div className="boq-icon">
+                            {spec.phase === 'Structure' ? <Building2 size={20} /> : spec.phase === 'Masonry' ? <Hammer size={20} /> : <PackageCheck size={20} />}
                           </div>
-                        ) : (
-                          <button className={`calc-add${added ? ' added' : ''}`} onClick={() => addToCart(product)}>
-                            {added ? <>✓ Added!</> : <><ShoppingCart size={14} /> Add To My Cart</>}
-                          </button>
-                        )}
-                      </article>
-                    );
-                  })}
-                </div>
+                          <div>
+                            <h3>{spec.title}</h3>
+                            <div className="boq-meta">
+                              <span>{spec.type}</span>
+                              <span>{spec.phase}</span>
+                              {item && <span>{formatNumber(item.quantity)} {item.product?.unit || spec.unit}</span>}
+                            </div>
+                          </div>
+                          <div className="boq-select-wrap">
+                            {spec.type === 'Mandatory' ? null : (
+                              <button
+                                className={`boq-toggle${isIncluded ? ' active' : ''}`}
+                                type="button"
+                                onClick={() => toggleIncluded(spec)}
+                                aria-label={`Toggle ${spec.title}`}
+                              >
+                                <span />
+                              </button>
+                            )}
+                            <select
+                              className="boq-select"
+                              value={selectedProducts[spec.key] || options[0]?.id || ''}
+                              onChange={(e) => selectProduct(spec.key, e.target.value)}
+                              disabled={!isIncluded}
+                              style={{ marginTop: spec.type === 'Mandatory' ? 0 : 8 }}
+                            >
+                              {options.map((product) => (
+                                <option key={product.id} value={product.id}>
+                                  {product.name}
+                                </option>
+                              ))}
+                            </select>
+                            <ChevronDown className="boq-select-icon" size={16} style={{ top: spec.type === 'Mandatory' ? '50%' : '68%' }} />
+                          </div>
+                          <div className="boq-amount">
+                            <strong>{item ? formatCurrency(item.amount) : formatCurrency(0)}</strong>
+                            <span>{item ? `${formatCurrency(item.price)} / ${item.product?.unit || spec.unit}` : 'Not included'}</span>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                )}
               </section>
             </div>
-          )}
-        </div>
 
-        {cartOpen && (
-          <div className="calc-modal-backdrop" onClick={() => setCartOpen(false)}>
-            <div className="calc-modal" onClick={(e) => e.stopPropagation()}>
-              <div className="calc-modal-head">
-                <h3 className="calc-modal-title">My Quotation Cart {options.city && <span style={{ fontSize: '.75rem', color: '#6b7280', fontWeight: 600 }}>· {options.city}</span>}</h3>
-                <button className="calc-close" onClick={() => setCartOpen(false)} aria-label="Close cart">
-                  <X size={17} />
-                </button>
+            <aside className="boq-panel boq-summary">
+              <div className="boq-total-band">
+                <span>Total Estimate</span>
+                <strong>{formatCurrency(estimate.grandTotal)}</strong>
+                <small>{formatCurrency(estimate.perSqft)} per sqft</small>
               </div>
-              <div className="calc-modal-body">
-                {selectedItems.length === 0 ? (
-                  <div className="calc-cart-empty">No products selected yet.</div>
-                ) : (
-                  <>
-                    <div className="calc-cart-list">
-                      {selectedItems.map((item) => (
-                        <div className="calc-cart-row" key={item.id}>
-                          <div>
-                            <div className="calc-cart-name">{item.name}</div>
-                            <div className="calc-cart-meta">{formatCurrency(Number(item.price))} / {item.unit} · {formatCurrency(Number(item.price) * item.quantity)}</div>
-                          </div>
-                          <div className="calc-qty">
-                            <button onClick={() => changeQty(item.id, -1)} aria-label="Decrease quantity"><Minus size={13} /></button>
-                            <strong>{item.quantity}</strong>
-                            <button onClick={() => changeQty(item.id, 1)} aria-label="Increase quantity"><Plus size={13} /></button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="calc-cart-total">
-                      <span>Total quotation</span>
-                      <strong>{formatCurrency(estimate)}</strong>
-                    </div>
-                    <button className="calc-clear" onClick={() => setCart({})}>
-                      <Trash2 size={15} /> Clear Cart
-                    </button>
-                  </>
-                )}
+              <div className="boq-summary-body">
+                <div className="boq-stat-grid">
+                  <div className="boq-stat">
+                    <span>Location</span>
+                    <strong>{project.city}</strong>
+                  </div>
+                  <div className="boq-stat">
+                    <span>Built-up</span>
+                    <strong>{formatNumber(estimate.builtUpArea)} sqft</strong>
+                  </div>
+                  <div className="boq-stat">
+                    <span>Floors</span>
+                    <strong>{estimate.floors}</strong>
+                  </div>
+                  <div className="boq-stat">
+                    <span>Package</span>
+                    <strong>{project.quality}</strong>
+                  </div>
+                </div>
+
+                <div className="boq-divider" />
+                {['Structure', 'Masonry', 'Services', 'Finishing'].map((phase) => (
+                  <div className="boq-line-row" key={phase}>
+                    <span>{phase}</span>
+                    <strong>{formatCurrency(phaseTotals[phase] || 0)}</strong>
+                  </div>
+                ))}
+                <div className="boq-divider" />
+                <div className="boq-line-row">
+                  <span>Material total</span>
+                  <strong>{formatCurrency(estimate.materialTotal)}</strong>
+                </div>
+                <div className="boq-line-row">
+                  <span>Labour cost</span>
+                  <strong>{formatCurrency(estimate.labourTotal)}</strong>
+                </div>
+                <div className="boq-line-row">
+                  <span>Transport</span>
+                  <strong>{formatCurrency(estimate.transportTotal)}</strong>
+                </div>
+                <div className="boq-line-row">
+                  <span>Supervision</span>
+                  <strong>{formatCurrency(estimate.supervisionTotal)}</strong>
+                </div>
+                <div className="boq-line-row">
+                  <span>Contingency</span>
+                  <strong>{formatCurrency(estimate.contingencyTotal)}</strong>
+                </div>
+                <div className="boq-divider" />
+                <div className="boq-line-row">
+                  <span>Labour base rate</span>
+                  <strong>{formatCurrency(estimate.cityRate.labour)} / sqft</strong>
+                </div>
+                <div className="boq-line-row">
+                  <span>Foundation</span>
+                  <strong>{estimate.foundation.label}</strong>
+                </div>
+
+                <div className="boq-actions">
+                  <button className="boq-action primary" type="button" onClick={() => window.print()}>
+                    <Download size={16} /> Download
+                  </button>
+                  <a className="boq-action" href="/CTASection/get-quote">
+                    <PhoneCall size={16} /> Get Quote
+                  </a>
+                </div>
               </div>
-            </div>
+            </aside>
           </div>
-        )}
+        </div>
       </main>
     </>
   );
