@@ -34,7 +34,6 @@ export default function DashboardLayout({ children }) {
     { label: 'Overview',                  icon: '📊', tab: '' },
     { label: 'Agents',                    icon: '👤', tab: 'agents' },
     { label: 'Calculator',               icon: '🧮', tab: 'calculator' },
-    
     { label: 'Career Enquiry',           icon: '✉️', tab: 'career-enquiries' },
     { label: 'Contact Forms',            icon: '✉️', tab: 'submissions' },
     { label: 'Franchises',               icon: '🏢', tab: 'franchises' },

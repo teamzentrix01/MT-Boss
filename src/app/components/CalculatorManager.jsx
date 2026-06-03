@@ -4,6 +4,63 @@ import { useEffect, useRef, useState } from 'react';
 
 const CITIES = ['Moradabad', 'Noida', 'Delhi', 'Gurgaon', 'Ghaziabad', 'Lucknow', 'Agra', 'Mumbai'];
 
+const DEFAULT_RATE_SETTINGS = {
+  cityRates: {
+    Moradabad: { labour: 310, transport: 18, multiplier: 0.94 },
+    Noida: { labour: 380, transport: 24, multiplier: 1.08 },
+    Delhi: { labour: 410, transport: 28, multiplier: 1.14 },
+    Gurgaon: { labour: 430, transport: 30, multiplier: 1.18 },
+    Ghaziabad: { labour: 360, transport: 22, multiplier: 1.02 },
+    Lucknow: { labour: 340, transport: 20, multiplier: 0.98 },
+    Agra: { labour: 330, transport: 19, multiplier: 0.96 },
+    Mumbai: { labour: 520, transport: 42, multiplier: 1.35 },
+  },
+  qualityLevels: {
+    Basic: { costMultiplier: 0.92, labourMultiplier: 0.9, finishMultiplier: 0.82 },
+    Standard: { costMultiplier: 1, labourMultiplier: 1, finishMultiplier: 1 },
+    Premium: { costMultiplier: 1.16, labourMultiplier: 1.14, finishMultiplier: 1.28 },
+    Luxury: { costMultiplier: 1.34, labourMultiplier: 1.28, finishMultiplier: 1.65 },
+  },
+  foundationTypes: {
+    Normal: { materialMultiplier: 1, labourMultiplier: 1 },
+    Raft: { materialMultiplier: 1.14, labourMultiplier: 1.08 },
+    Basement: { materialMultiplier: 1.32, labourMultiplier: 1.22 },
+    Pile: { materialMultiplier: 1.28, labourMultiplier: 1.18 },
+  },
+  materialFactors: {
+    Steel: 3.8,
+    Cement: 0.42,
+    Bricks: 8.2,
+    Sand: 1.35,
+    Aggregate: 0.9,
+    Plumbing: 0.012,
+    Wiring: 0.018,
+    Putty: 0.08,
+    Paints: 0.035,
+    Window: 0.012,
+    Door: 0.01,
+  },
+};
+
+function mergeRateSettings(settings = {}) {
+  return {
+    cityRates: { ...DEFAULT_RATE_SETTINGS.cityRates, ...(settings.cityRates || {}) },
+    qualityLevels: Object.fromEntries(
+      Object.entries(DEFAULT_RATE_SETTINGS.qualityLevels).map(([key, value]) => [
+        key,
+        { ...value, ...(settings.qualityLevels?.[key] || {}) },
+      ])
+    ),
+    foundationTypes: Object.fromEntries(
+      Object.entries(DEFAULT_RATE_SETTINGS.foundationTypes).map(([key, value]) => [
+        key,
+        { ...value, ...(settings.foundationTypes?.[key] || {}) },
+      ])
+    ),
+    materialFactors: { ...DEFAULT_RATE_SETTINGS.materialFactors, ...(settings.materialFactors || {}) },
+  };
+}
+
 /* ── Cloudinary upload helper ────────────────────────────────────────────── */
 async function uploadToCloudinary(file) {
   const fd = new FormData();
@@ -53,6 +110,8 @@ export default function CalculatorManager({ isDarkMode }) {
   const [loading,    setLoading]    = useState(true);
   const [message,    setMessage]    = useState('');
   const [error,      setError]      = useState('');
+  const [rateSettings, setRateSettings] = useState(() => mergeRateSettings());
+  const [savingRates, setSavingRates] = useState(false);
 
   /* product image state */
   const [imageMode,  setImageMode]  = useState('url');
@@ -75,12 +134,17 @@ export default function CalculatorManager({ isDarkMode }) {
       const categoryRes = await fetch('/api/calculator-categories', {
         headers: { Authorization: `Bearer ${token}` }, cache: 'no-store',
       });
+      const settingsRes = await fetch('/api/calculator-settings', {
+        headers: { Authorization: `Bearer ${token}` }, cache: 'no-store',
+      });
       const productData  = await productRes.json();
       const categoryData = await categoryRes.json();
+      const settingsData = await settingsRes.json();
       const nextProducts   = productData.success  ? productData.data  || [] : [];
       const nextCategories = categoryData.success ? categoryData.data || [] : [];
       setProducts(nextProducts);
       setCategories(nextCategories);
+      if (settingsData.success) setRateSettings(mergeRateSettings(settingsData.data || {}));
       setSelectedCategory((current) => {
         if (current && nextCategories.some(c => c.name === current)) return current;
         return nextCategories[0]?.name || '';
@@ -93,6 +157,63 @@ export default function CalculatorManager({ isDarkMode }) {
   };
 
   useEffect(() => { fetchData(); }, []);
+
+  const updateCityRate = (city, key, value) => {
+    setRateSettings(current => ({
+      ...current,
+      cityRates: {
+        ...current.cityRates,
+        [city]: { ...current.cityRates[city], [key]: value },
+      },
+    }));
+  };
+
+  const updateQualityRate = (quality, key, value) => {
+    setRateSettings(current => ({
+      ...current,
+      qualityLevels: {
+        ...current.qualityLevels,
+        [quality]: { ...current.qualityLevels[quality], [key]: value },
+      },
+    }));
+  };
+
+  const updateFoundationRate = (foundation, key, value) => {
+    setRateSettings(current => ({
+      ...current,
+      foundationTypes: {
+        ...current.foundationTypes,
+        [foundation]: { ...current.foundationTypes[foundation], [key]: value },
+      },
+    }));
+  };
+
+  const updateMaterialFactor = (material, value) => {
+    setRateSettings(current => ({
+      ...current,
+      materialFactors: { ...current.materialFactors, [material]: value },
+    }));
+  };
+
+  const saveRateSettings = async () => {
+    setMessage(''); setError(''); setSavingRates(true);
+    try {
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const res = await fetch('/api/calculator-settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ settings: rateSettings }),
+      });
+      const data = await res.json();
+      if (!data.success) { setError(data.error || 'Unable to save calculator settings'); return; }
+      setRateSettings(mergeRateSettings(data.data || {}));
+      setMessage('Calculator rate settings updated');
+    } catch {
+      setError('Unable to save calculator settings');
+    } finally {
+      setSavingRates(false);
+    }
+  };
 
   const resetForm = () => {
     setFormData(emptyForm);
@@ -335,7 +456,15 @@ export default function CalculatorManager({ isDarkMode }) {
         .cm-img-preview { width:64px; height:64px; object-fit:cover; border-radius:6px; border:1px solid var(--cm-border); }
         .cm-city-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; margin-top:.4rem; }
         .cm-city-prices-summary { font-size:.68rem; color:var(--cm-muted); line-height:1.5; }
-        @media(max-width:760px){ .cm-grid { grid-template-columns:1fr; } .cm-half { grid-column:1/-1; } .cm-city-grid { grid-template-columns:repeat(2,1fr); } }
+        .cm-rate-section { margin-top:1.1rem; }
+        .cm-rate-title { margin:.2rem 0 .65rem; font-size:.82rem; font-weight:900; }
+        .cm-rate-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:.7rem; }
+        .cm-rate-card { border:1px solid var(--cm-border); background:var(--cm-bg); border-radius:8px; padding:.75rem; }
+        .cm-rate-name { font-size:.8rem; font-weight:900; margin-bottom:.6rem; }
+        .cm-rate-fields { display:grid; grid-template-columns:repeat(3,1fr); gap:.45rem; }
+        .cm-rate-fields.two { grid-template-columns:repeat(2,1fr); }
+        .cm-factor-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.55rem; }
+        @media(max-width:760px){ .cm-grid { grid-template-columns:1fr; } .cm-half { grid-column:1/-1; } .cm-city-grid { grid-template-columns:repeat(2,1fr); } .cm-rate-fields { grid-template-columns:1fr; } }
       `}</style>
 
       <div className="cm-root">
@@ -381,6 +510,121 @@ export default function CalculatorManager({ isDarkMode }) {
             {categories.length === 0 && (
               <div style={{ color:'var(--cm-muted)', fontSize:'.8rem' }}>No categories yet.</div>
             )}
+          </div>
+        </div>
+
+        <div className="cm-panel">
+          <div className="cm-section-head">
+            <div>
+              <div className="cm-title">Calculator Rate Settings</div>
+              <div style={{ color:'var(--cm-muted)', fontSize:'.75rem', marginTop:2 }}>
+                Change location labour, transport, formula multipliers and material quantity factors used by the public calculator.
+              </div>
+            </div>
+            <button className="cm-btn" type="button" onClick={saveRateSettings} disabled={savingRates}>
+              {savingRates ? 'Saving...' : 'Save Rate Settings'}
+            </button>
+          </div>
+
+          <div className="cm-rate-section">
+            <div className="cm-rate-title">Location-wise prices</div>
+            <div className="cm-rate-grid">
+              {CITIES.map(city => (
+                <div className="cm-rate-card" key={city}>
+                  <div className="cm-rate-name">{city}</div>
+                  <div className="cm-rate-fields">
+                    <div>
+                      <label className="cm-label">Labour / sqft</label>
+                      <input className="cm-input" type="number" min="0" step="1"
+                        value={rateSettings.cityRates[city]?.labour ?? ''}
+                        onChange={e => updateCityRate(city, 'labour', e.target.value)} />
+                    </div>
+                    <div>
+                      <label className="cm-label">Transport / sqft</label>
+                      <input className="cm-input" type="number" min="0" step="1"
+                        value={rateSettings.cityRates[city]?.transport ?? ''}
+                        onChange={e => updateCityRate(city, 'transport', e.target.value)} />
+                    </div>
+                    <div>
+                      <label className="cm-label">Price Multiplier</label>
+                      <input className="cm-input" type="number" min="0" step="0.01"
+                        value={rateSettings.cityRates[city]?.multiplier ?? ''}
+                        onChange={e => updateCityRate(city, 'multiplier', e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="cm-rate-section">
+            <div className="cm-rate-title">Quality package multipliers</div>
+            <div className="cm-rate-grid">
+              {Object.entries(rateSettings.qualityLevels).map(([quality, values]) => (
+                <div className="cm-rate-card" key={quality}>
+                  <div className="cm-rate-name">{quality}</div>
+                  <div className="cm-rate-fields">
+                    <div>
+                      <label className="cm-label">Material</label>
+                      <input className="cm-input" type="number" min="0" step="0.01"
+                        value={values.costMultiplier}
+                        onChange={e => updateQualityRate(quality, 'costMultiplier', e.target.value)} />
+                    </div>
+                    <div>
+                      <label className="cm-label">Labour</label>
+                      <input className="cm-input" type="number" min="0" step="0.01"
+                        value={values.labourMultiplier}
+                        onChange={e => updateQualityRate(quality, 'labourMultiplier', e.target.value)} />
+                    </div>
+                    <div>
+                      <label className="cm-label">Finishing</label>
+                      <input className="cm-input" type="number" min="0" step="0.01"
+                        value={values.finishMultiplier}
+                        onChange={e => updateQualityRate(quality, 'finishMultiplier', e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="cm-rate-section">
+            <div className="cm-rate-title">Foundation multipliers</div>
+            <div className="cm-rate-grid">
+              {Object.entries(rateSettings.foundationTypes).map(([foundation, values]) => (
+                <div className="cm-rate-card" key={foundation}>
+                  <div className="cm-rate-name">{foundation}</div>
+                  <div className="cm-rate-fields two">
+                    <div>
+                      <label className="cm-label">Material</label>
+                      <input className="cm-input" type="number" min="0" step="0.01"
+                        value={values.materialMultiplier}
+                        onChange={e => updateFoundationRate(foundation, 'materialMultiplier', e.target.value)} />
+                    </div>
+                    <div>
+                      <label className="cm-label">Labour</label>
+                      <input className="cm-input" type="number" min="0" step="0.01"
+                        value={values.labourMultiplier}
+                        onChange={e => updateFoundationRate(foundation, 'labourMultiplier', e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="cm-rate-section">
+            <div className="cm-rate-title">Material quantity factors per sqft</div>
+            <div className="cm-factor-grid">
+              {Object.entries(rateSettings.materialFactors).map(([material, factor]) => (
+                <div key={material}>
+                  <label className="cm-label">{material}</label>
+                  <input className="cm-input" type="number" min="0" step="0.001"
+                    value={factor}
+                    onChange={e => updateMaterialFactor(material, e.target.value)} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
