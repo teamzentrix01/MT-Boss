@@ -219,19 +219,20 @@ function Achievements({ dark }) {
 }
 
 // ── Projects ───────────────────────────────────────────────────
-const featuredProjects = [
-  { id: 1, title: "The Sky Atrium", category: "Commercial", location: "Mumbai, MH", image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80" },
-  { id: 2, title: "Golden Sands Resort", category: "Hospitality", location: "Goa, IN", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80" },
-  { id: 3, title: "Eco-Tech Park", category: "Industrial", location: "Bangalore, KA", image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80" },
-  { id: 4, title: "Urban Heights", category: "Residential", location: "Delhi, IN", image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80" },
-  { id: 5, title: "Heritage Resort", category: "Hospitality", location: "Rajasthan, IN", image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80" },
-  { id: 6, title: "Tech Park Phase II", category: "IT Infrastructure", location: "Bangalore, KA", image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80" },
-];
-
 function OurProjects({ dark }) {
   const [filter, setFilter] = useState("All");
-  const categories = ["All", "Commercial", "Residential", "Hospitality", "Industrial"];
-  const filtered = filter === "All" ? featuredProjects : featuredProjects.filter((p) => p.category === filter);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/projects")
+      .then((r) => r.json())
+      .then((res) => { if (res.success) setProjects(res.data); })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const categories = ["All", ...Array.from(new Set(projects.map((p) => p.category)))];
+  const filtered = filter === "All" ? projects : projects.filter((p) => p.category === filter);
 
   return (
     <section className={`py-10 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-zinc-50"}`}>
@@ -275,11 +276,21 @@ function OurProjects({ dark }) {
         </div>
 
         {/* Grid */}
+        {loading && (
+          <div className={`text-center py-16 text-sm font-black uppercase tracking-widest ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
+            Loading projects…
+          </div>
+        )}
+        {!loading && filtered.length === 0 && (
+          <div className={`text-center py-16 text-sm font-black uppercase tracking-widest ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
+            No projects found
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
           {filtered.map((project, idx) => (
             <div key={project.id} className="group relative h-64 overflow-hidden bg-zinc-800">
               <img
-                src={project.image}
+                src={project.image_url}
                 alt={project.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-40"
               />
@@ -411,7 +422,7 @@ export default function AboutPage() {
         {/* Breadcrumb back bar */}
         <div
           className={`flex items-center gap-3 px-6 py-3 border-b text-[10px] font-black uppercase tracking-widest ${dark ? "bg-zinc-950 border-zinc-800" : "bg-white border-zinc-100"}`}
-          style={{ position: "sticky", top: 0, zIndex: 99998 }}
+          style={{ position: "sticky", top: 0, zIndex: 99 }}
         >
           <button
             onClick={handleBack}
