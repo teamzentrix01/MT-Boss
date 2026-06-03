@@ -243,7 +243,10 @@ export async function GET(req) {
     await ensureTable();
 
     const result = await pool.query(
-      `SELECT id, service_slug, service_title, name, phone, email, message, property_image_name, property_image_url, property_image_names, property_image_urls, status, created_at
+      `SELECT id, service_slug, service_title, name, phone, email, message,
+              budget, carpet_area, time_slot, meeting_date, gps_location, address,
+              property_image_name, property_image_url, property_image_names, property_image_urls,
+              status, created_at
        FROM primary_service_enquiries
        ORDER BY created_at DESC
        LIMIT 100`

@@ -18,6 +18,7 @@ import FreeTimeSlotsManager from '../components/FreeTimeSlotsManager';
 import QuickServicesPricing from '../components/QuickServicesPricing';
 import CalculatorManager from '../components/CalculatorManager';
 import RevenueManager from '../components/RevenueManager';
+import HeroBannersManager from '../components/HeroBannersManager';
 
 function AdminDashboard() {
   const searchParams = useSearchParams();
@@ -184,6 +185,7 @@ function AdminDashboard() {
     { id: 'overview',                   label: 'Overview',                  icon: '▦'  },
     { id: 'agents',                     label: 'Agents',                    icon: '👤' },
     { id: 'calculator',                 label: 'Calculator',                icon: '🧮' },
+    { id: 'hero-banners',              label: 'Hero Banners',              icon: '🖼️' },
     { id: 'career-enquiries',           label: 'Career Enquiry',            icon: '✉'  },
     { id: 'submissions',                label: 'Contact Forms',             icon: '✉'  },
     { id: 'franchises',                 label: 'Franchises',                icon: '🏢' },
@@ -897,6 +899,7 @@ function AdminDashboard() {
           {activeTab === 'free-slots' && <FreeTimeSlotsManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services-pricing' && <QuickServicesPricing isDarkMode={isDarkMode} />}
           {activeTab === 'calculator' && <CalculatorManager isDarkMode={isDarkMode} />}
+          {activeTab === 'hero-banners' && <HeroBannersManager isDarkMode={isDarkMode} />}
 
         </div>
 

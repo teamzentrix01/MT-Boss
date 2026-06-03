@@ -34,10 +34,12 @@ export default function DashboardLayout({ children }) {
     { label: 'Overview',                  icon: '📊', tab: '' },
     { label: 'Agents',                    icon: '👤', tab: 'agents' },
     { label: 'Calculator',               icon: '🧮', tab: 'calculator' },
+    
     { label: 'Career Enquiry',           icon: '✉️', tab: 'career-enquiries' },
     { label: 'Contact Forms',            icon: '✉️', tab: 'submissions' },
     { label: 'Franchises',               icon: '🏢', tab: 'franchises' },
     { label: 'Free Time Slots',          icon: '📅', tab: 'free-slots' },
+    { label: 'Hero Banners',             icon: '🖼️', tab: 'hero-banners' },
     { label: 'Primary Services',         icon: '⊞',  tab: 'primary-services' },
     { label: 'Primary Services Enquiry', icon: '✉️', tab: 'primary-service-enquiries' },
     { label: 'Professional Enquiries',   icon: '💬', tab: 'professional-enquiries' },

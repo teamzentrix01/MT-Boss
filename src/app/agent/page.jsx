@@ -114,53 +114,75 @@ export default function AgentPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const openWhatsApp = (f) => {
+    const num = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '919999999999';
+    const msg = [
+      `🤝 *New Agent Registration – MTBOSS*`,
+      ``,
+      `👤 *Name:* ${f.name}`,
+      `📧 *Email:* ${f.email}`,
+      `📱 *Phone:* ${f.phone}`,
+      `💼 *Occupation:* ${f.occupation}`,
+      `📍 *Location:* ${f.city}, ${f.state}`,
+      `🏷️ *Agent Type:* ${f.agentType}`,
+      `🎯 *Experience:* ${f.experience || 'Not provided'}`,
+      `👥 *Network Size:* ${f.network || 'Not provided'}`,
+      f.message ? `📝 *Message:* ${f.message}` : null,
+    ].filter(Boolean).join('\n');
+
+    window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank');
+  };
+
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  try {
-    // Save to your DB
-    const dbRes = await fetch("/api/agents", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    const dbData = await dbRes.json();
-    if (!dbData.success) {
-      setError(dbData.error || "Something went wrong. Please try again.");
+    try {
+      // Save to DB → shows on admin dashboard
+      const dbRes = await fetch("/api/agents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const dbData = await dbRes.json();
+      if (!dbData.success) {
+        setError(dbData.error || "Something went wrong. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      // Email notification
+      await fetch("https://formsubmit.co/ajax/team.zentrix01@gmail.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          "Full Name": form.name,
+          "Email": form.email,
+          "Phone": form.phone,
+          "City": form.city,
+          "State": form.state,
+          "Current Occupation": form.occupation,
+          "Agent Type": form.agentType,
+          "Prior Experience": form.experience || "Not Provided",
+          "Network Size": form.network || "Not Provided",
+          "Message": form.message || "Not Provided",
+          "_subject": `New Agent Application - ${form.agentType} - ${form.name}`,
+          "_template": "table",
+          "_captcha": "false",
+        }),
+      });
+
+      // Open WhatsApp with all details pre-filled
+      openWhatsApp(form);
+
+      setSubmitted(true);
+    } catch (err) {
+      setError("Network error. Please try again.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Also send email notification via formsubmit
-    await fetch("https://formsubmit.co/ajax/team.zentrix01@gmail.com", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({
-        "Full Name": form.name,
-        "Email": form.email,
-        "Phone": form.phone,
-        "City": form.city,
-        "State": form.state,
-        "Current Occupation": form.occupation,
-        "Agent Type": form.agentType,
-        "Prior Experience": form.experience || "Not Provided",
-        "Network Size": form.network || "Not Provided",
-        "Message": form.message || "Not Provided",
-        "_subject": `New Agent Application - ${form.agentType} - ${form.name}`,
-        "_template": "table",
-        "_captcha": "false",
-      }),
-    });
-
-    setSubmitted(true);
-  } catch (err) {
-    setError("Network error. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${
     dark

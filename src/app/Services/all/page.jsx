@@ -78,7 +78,7 @@ export default function AllServicesPage() {
                   <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2">{s.title}</h3>
                   <p className="text-zinc-300 text-xs leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-400 mb-5">{s.description}</p>
                   <Link href={`/Services/all/${s.slug}`} className="w-fit px-6 py-2 bg-[#facc15] text-black font-black uppercase text-[9px] tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-400 hover:bg-white">
-                    Learn More
+                    Book a visit
                   </Link>
                 </div>
               </div>
