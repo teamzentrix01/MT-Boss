@@ -11,13 +11,30 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === 'phone') {
+      const digits = value.replace(/\D/g, '').slice(0, 10);
+      setForm({ ...form, phone: digits });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[6-9]\d{9}$/;
+    const newErrors = {};
+    if (!form.name.trim()) newErrors.name = 'Full name is required.';
+    if (!form.phone) newErrors.phone = 'Phone number is required.';
+    else if (!phoneRegex.test(form.phone)) newErrors.phone = 'Enter a valid 10-digit Indian mobile number (starts with 6-9).';
+    if (form.email && !emailRegex.test(form.email)) newErrors.email = 'Please enter a valid email address.';
+    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
+    setErrors({});
     setLoading(true);
 
     try {
@@ -109,12 +126,12 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
           <input
             type="text"
             name="name"
-            required
             placeholder="Your full name"
             value={form.name}
             onChange={handleChange}
             className={inputClass}
           />
+          {errors.name && <p className="text-red-500 text-[10px] mt-1 font-bold">{errors.name}</p>}
         </div>
 
         <div>
@@ -122,12 +139,14 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
           <input
             type="tel"
             name="phone"
-            required
-            placeholder="+91 XXXXX XXXXX"
+            placeholder="10-digit mobile number"
             value={form.phone}
             onChange={handleChange}
+            maxLength={10}
+            inputMode="numeric"
             className={inputClass}
           />
+          {errors.phone && <p className="text-red-500 text-[10px] mt-1 font-bold">{errors.phone}</p>}
         </div>
 
         <div>
@@ -140,6 +159,7 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
             onChange={handleChange}
             className={inputClass}
           />
+          {errors.email && <p className="text-red-500 text-[10px] mt-1 font-bold">{errors.email}</p>}
         </div>
 
         <div>

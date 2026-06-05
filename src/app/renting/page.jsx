@@ -177,11 +177,19 @@ export default function RentingPage() {
   };
 
   const handleEnquiryChange = (e) => {
-    setEnquiryForm({ ...enquiryForm, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === 'phone') {
+      setEnquiryForm(prev => ({ ...prev, phone: value.replace(/\D/g, '').slice(0, 10) }));
+    } else {
+      setEnquiryForm({ ...enquiryForm, [name]: value });
+    }
   };
 
   const handleEnquirySubmit = async (e) => {
     e.preventDefault();
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!enquiryForm.phone) { alert('Phone number is required.'); return; }
+    if (!phoneRegex.test(enquiryForm.phone)) { alert('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
     setEnquiryLoading(true);
     try {
       const res = await fetch("https://formsubmit.co/ajax/team.zentrix01@gmail.com", {
@@ -656,7 +664,7 @@ export default function RentingPage() {
                       />
                     </div>
                     <div>
-                      <input type="tel" name="phone" required placeholder="Phone number *" value={enquiryForm.phone} onChange={handleEnquiryChange}
+                      <input type="tel" name="phone" placeholder="10-digit mobile number *" value={enquiryForm.phone} onChange={handleEnquiryChange} maxLength={10} inputMode="numeric"
                         className={`w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all ${dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]" : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"}`}
                       />
                     </div>

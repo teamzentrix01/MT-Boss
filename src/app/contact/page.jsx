@@ -81,6 +81,7 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const [form, setForm] = useState({
     name: '',
@@ -95,12 +96,32 @@ export default function ContactPage() {
   const [infoRef, infoVisible] = useInView(0.1);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === 'phone') {
+      const digits = value.replace(/\D/g, '').slice(0, 10);
+      setForm({ ...form, phone: digits });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
+    if (fieldErrors[name]) setFieldErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[6-9]\d{9}$/;
+    const newErrors = {};
+    if (!form.name.trim()) newErrors.name = 'Full name is required.';
+    if (!form.email) newErrors.email = 'Email address is required.';
+    else if (!emailRegex.test(form.email)) newErrors.email = 'Please enter a valid email address.';
+    if (!form.phone) newErrors.phone = 'Phone number is required.';
+    else if (!phoneRegex.test(form.phone)) newErrors.phone = 'Enter a valid 10-digit Indian mobile number (starts with 6-9).';
+    if (!form.subject.trim()) newErrors.subject = 'Subject is required.';
+    if (!form.department) newErrors.department = 'Please select a department.';
+    if (!form.message.trim()) newErrors.message = 'Message is required.';
+    if (Object.keys(newErrors).length > 0) { setFieldErrors(newErrors); return; }
+    setFieldErrors({});
     setLoading(true);
 
     try {
@@ -251,7 +272,7 @@ export default function ContactPage() {
                       <button
                         key={dept.value}
                         type="button"
-                        onClick={() => setForm({ ...form, department: dept.label })}
+                        onClick={() => { setForm({ ...form, department: dept.label }); setFieldErrors(prev => ({ ...prev, department: '' })); }}
                         className={`p-3 rounded-lg border-2 text-left transition-all duration-200 ${
                           form.department === dept.label
                             ? dark ? 'border-yellow-400 bg-yellow-400/10' : 'border-yellow-500 bg-yellow-50'
@@ -269,6 +290,7 @@ export default function ContactPage() {
                       </button>
                     ))}
                   </div>
+                  {fieldErrors.department && <p className="text-red-500 text-xs mt-1 font-bold">{fieldErrors.department}</p>}
                 </div>
 
                 {/* Error */}
@@ -301,24 +323,24 @@ export default function ContactPage() {
                         <input
                           type="text"
                           name="name"
-                          required
                           placeholder="Your full name"
                           value={form.name}
                           onChange={handleChange}
                           className={inputClass}
                         />
+                        {fieldErrors.name && <p className="text-red-500 text-xs mt-1 font-bold">{fieldErrors.name}</p>}
                       </div>
                       <div>
                         <label className={labelClass}>Email Address *</label>
                         <input
                           type="email"
                           name="email"
-                          required
                           placeholder="your@email.com"
                           value={form.email}
                           onChange={handleChange}
                           className={inputClass}
                         />
+                        {fieldErrors.email && <p className="text-red-500 text-xs mt-1 font-bold">{fieldErrors.email}</p>}
                       </div>
                     </div>
 
@@ -329,24 +351,26 @@ export default function ContactPage() {
                         <input
                           type="tel"
                           name="phone"
-                          required
-                          placeholder="+91 XXXXX XXXXX"
+                          placeholder="10-digit mobile number"
                           value={form.phone}
                           onChange={handleChange}
+                          maxLength={10}
+                          inputMode="numeric"
                           className={inputClass}
                         />
+                        {fieldErrors.phone && <p className="text-red-500 text-xs mt-1 font-bold">{fieldErrors.phone}</p>}
                       </div>
                       <div>
                         <label className={labelClass}>Subject *</label>
                         <input
                           type="text"
                           name="subject"
-                          required
                           placeholder="Brief subject"
                           value={form.subject}
                           onChange={handleChange}
                           className={inputClass}
                         />
+                        {fieldErrors.subject && <p className="text-red-500 text-xs mt-1 font-bold">{fieldErrors.subject}</p>}
                       </div>
                     </div>
 
@@ -355,13 +379,13 @@ export default function ContactPage() {
                       <label className={labelClass}>Message *</label>
                       <textarea
                         name="message"
-                        required
                         rows={5}
                         placeholder="Tell us more about your requirement..."
                         value={form.message}
                         onChange={handleChange}
                         className={`${inputClass} resize-none`}
                       />
+                      {fieldErrors.message && <p className="text-red-500 text-xs mt-1 font-bold">{fieldErrors.message}</p>}
                     </div>
 
                     {/* Submit */}

@@ -12,7 +12,7 @@ const TIME_SLOTS = [
   '06:00 PM – 08:00 PM',
 ];
 
-const PROPERTY_TYPES = ['Apartment', 'Independent House', 'Villa', 'Office / Commercial', 'Shop / Showroom'];
+const PROPERTY_TYPES = ['Apartment', 'Independent House', 'Villa', 'Office / Commercial', 'Shop / Showroom', 'Other'];
 
 function getTodayStr() {
   return new Date().toISOString().split('T')[0];
@@ -31,6 +31,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
     city: '',
     pincode: '',
     propertyType: '',
+    propertyTypeOther: '',
     date: '',
     timeSlot: '',
     description: '',
@@ -151,7 +152,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
         service_address: form.address,
         service_city: form.city,
         service_pincode: form.pincode,
-        property_type: form.propertyType,
+        property_type: form.propertyType === 'Other' ? (form.propertyTypeOther.trim() || 'Other') : form.propertyType,
         booking_date: bookingDate,
         booking_time: bookingTime,
         slot_type: slotType,
@@ -266,14 +267,29 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
             <div className="p-6 space-y-5">
 
               {/* Service Info Bar */}
-              <div className={`flex items-center justify-between px-4 py-3 border ${isDark ? 'border-zinc-800 bg-zinc-900' : 'border-zinc-100 bg-zinc-50'}`}>
-                <div>
-                  <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Visit Charge</p>
-                  <p className="text-sm font-black text-[#facc15]">₹{basePrice}</p>
+              <div className={`border overflow-hidden ${isDark ? 'border-zinc-800' : 'border-amber-200'}`}>
+                {/* Top: price + duration */}
+                <div className={`flex items-center justify-between px-4 py-3 ${isDark ? 'bg-zinc-900' : 'bg-amber-50'}`}>
+                  <div>
+                    <p className={`text-[8px] uppercase tracking-widest font-black mb-0.5 ${muted}`}>Visit / Inspection Charge</p>
+                    <p className="text-xl font-black text-[#facc15]">₹{basePrice} <span className={`text-[10px] font-bold ${muted}`}>only</span></p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-[8px] uppercase tracking-widest font-black mb-0.5 ${muted}`}>Duration</p>
+                    <p className={`text-sm font-black ${isDark ? 'text-white' : 'text-zinc-800'}`}>15 mins</p>
+                  </div>
                 </div>
-                <div className="text-center">
-                  <p className={`text-[9px] uppercase tracking-widest font-black ${muted}`}>Duration</p>
-                  <p className={`text-sm font-black ${isDark ? 'text-white' : 'text-zinc-900'}`}>15 mins</p>
+                {/* Bottom: clarification banner */}
+                <div className={`flex items-start gap-2.5 px-4 py-2.5 border-t ${isDark ? 'border-zinc-800 bg-black' : 'border-amber-200 bg-amber-100/60'}`}>
+                  <span className="text-base shrink-0 mt-0.5">⚠️</span>
+                  <div>
+                    <p className={`text-[10px] font-black uppercase tracking-wide mb-0.5 ${isDark ? 'text-yellow-400' : 'text-amber-700'}`}>
+                      ₹{basePrice} is the visit/inspection fee only
+                    </p>
+                    <p className={`text-[10px] leading-relaxed ${isDark ? 'text-zinc-400' : 'text-amber-800'}`}>
+                      Actual repair &amp; work charges are <strong>separate</strong> and will be quoted by the technician <strong>after on-site inspection</strong>. You decide before any work begins.
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -353,6 +369,14 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                     </button>
                   ))}
                 </div>
+                {form.propertyType === 'Other' && (
+                  <input
+                    className={`w-full mt-2 px-3 py-2.5 text-sm border outline-none transition-all ${input}`}
+                    placeholder="Please specify your property type…"
+                    value={form.propertyTypeOther || ''}
+                    onChange={(e) => set('propertyTypeOther', e.target.value)}
+                  />
+                )}
               </Field>
 
               <SectionTitle isDark={isDark}>Location</SectionTitle>
@@ -410,7 +434,14 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                   ) : slotsLoading ? (
                     <p className={`text-[10px] animate-pulse ${muted}`}>Loading slots...</p>
                   ) : freeSlots.length === 0 ? (
-                    <p className={`text-[10px] font-bold text-yellow-500`}>No free slots available in {form.city} right now. Choose your own time instead.</p>
+                    <div className={`p-3 border ${isDark ? 'border-zinc-700 bg-zinc-900' : 'border-amber-200 bg-amber-50'}`}>
+                      <p className={`text-[10px] font-black uppercase tracking-wide mb-1 ${isDark ? 'text-yellow-400' : 'text-amber-700'}`}>
+                        No upcoming slots in {form.city}
+                      </p>
+                      <p className={`text-[10px] leading-relaxed ${isDark ? 'text-zinc-400' : 'text-amber-800'}`}>
+                        The admin hasn&apos;t scheduled a free slot for your city yet — or existing slots may have expired. Please choose <strong>your own time</strong> instead, or check back later.
+                      </p>
+                    </div>
                   ) : (
                     <div className="grid grid-cols-1 gap-2 mt-1">
                       {freeSlots.map((slot) => (
@@ -500,7 +531,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                   ['Phone', form.phone],
                   ['Email', form.email || '—'],
                   ['Address', `${form.address}, ${form.city} – ${form.pincode}`],
-                  ['Property', form.propertyType],
+                  ['Property', form.propertyType === 'Other' ? (form.propertyTypeOther.trim() || 'Other') : form.propertyType],
                   ['Date', form.date],
                   ['Time Slot', form.timeSlot],
                   ['Issue', form.description || '—'],
@@ -513,15 +544,32 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
               </div>
 
               <SectionTitle isDark={isDark}>Charges Breakdown</SectionTitle>
+
+              {/* Visit fee clarification box */}
+              <div className={`flex items-start gap-2.5 p-3 border ${isDark ? 'border-zinc-700 bg-zinc-900' : 'border-amber-200 bg-amber-50'}`}>
+                <span className="text-base shrink-0">⚠️</span>
+                <div>
+                  <p className={`text-[10px] font-black uppercase tracking-wide mb-0.5 ${isDark ? 'text-yellow-400' : 'text-amber-700'}`}>
+                    Visit fee — ₹{basePrice} only
+                  </p>
+                  <p className={`text-[10px] leading-relaxed ${isDark ? 'text-zinc-400' : 'text-amber-800'}`}>
+                    This covers the technician&apos;s visit &amp; inspection. <strong>Repair / work charges are separate</strong> and will be communicated on-site before any work starts.
+                  </p>
+                </div>
+              </div>
+
               <div className={`border ${divider}`}>
                 {[
-                  ['Visit Charge', `₹${basePrice}`],
-                  ['Tax (18%)', `₹${taxAmount}`],
-                  ['Total Amount', `₹${totalAmount}`],
+                  ['Visit / Inspection Fee', `₹${basePrice}`],
+                  ['GST (18%)', `₹${taxAmount}`],
+                  ['Amount Due Now', `₹${totalAmount}`],
                 ].map(([k, v], i) => (
                   <div key={i} className={`flex justify-between px-4 py-2.5 border-b last:border-0 ${isDark ? 'border-zinc-800' : 'border-zinc-100'}`}>
-                    <p className={`text-xs ${i === 2 ? 'font-black' : 'font-medium'} ${muted}`}>{k}</p>
-                    <p className={`text-xs font-black ${v === 'FREE' ? 'text-green-500' : isDark ? 'text-white' : 'text-zinc-900'}`}>{v}</p>
+                    <div>
+                      <p className={`text-xs ${i === 2 ? 'font-black' : 'font-medium'} ${isDark ? 'text-zinc-300' : 'text-zinc-700'}`}>{k}</p>
+                      {i === 2 && <p className={`text-[8px] mt-0.5 ${muted}`}>Repair charges billed separately after inspection</p>}
+                    </div>
+                    <p className={`text-xs font-black ${i === 2 ? 'text-[#facc15]' : isDark ? 'text-white' : 'text-zinc-900'}`}>{v}</p>
                   </div>
                 ))}
               </div>
@@ -529,7 +577,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
               {errors.submit && <p className="text-[10px] text-red-500 font-bold p-3 bg-red-50 border border-red-200">{errors.submit}</p>}
 
               <p className={`text-[10px] leading-relaxed ${muted}`}>
-                * Final charges will be confirmed after inspection. You only pay after the job is done &amp; you&apos;re satisfied.
+                ✅ You only pay after the technician visits &amp; you approve the repair quote. Zero hidden charges.
               </p>
 
               <div className="flex gap-3">

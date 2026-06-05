@@ -229,6 +229,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
         }
         .status-available { background: #dcfce7; color: #166534; }
         .status-booked { background: #fee2e2; color: #991b1b; }
+        .status-expired { background: #fef3c7; color: #92400e; }
         
         .action-buttons {
           display: flex;
@@ -391,11 +392,19 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
                       <td>{slot.max_bookings}</td>
                       <td>{slot.current_bookings || 0}</td>
                       <td>
-                        <span
-                          className={`status-badge ${slot.is_available ? 'status-available' : 'status-booked'}`}
-                        >
-                          {slot.is_available ? 'Available' : 'Unavailable'}
-                        </span>
+                        {(() => {
+                          const slotDay = slot.slot_date ? new Date(String(slot.slot_date).split('T')[0]) : null;
+                          const today = new Date(); today.setHours(0,0,0,0);
+                          const isExpired = slotDay && slotDay < today;
+                          if (isExpired) {
+                            return <span className="status-badge status-expired">⏰ Expired — not shown to users</span>;
+                          }
+                          return (
+                            <span className={`status-badge ${slot.is_available ? 'status-available' : 'status-booked'}`}>
+                              {slot.is_available ? 'Available' : 'Unavailable'}
+                            </span>
+                          );
+                        })()}
                       </td>
                       <td>
                         <div className="action-buttons">

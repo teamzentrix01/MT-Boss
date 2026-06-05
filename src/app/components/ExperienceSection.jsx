@@ -1,141 +1,115 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 
-const stats = [
-  { label: "Years of Excellence", value: "22+", suffix: "" },
-  { label: "Projects Completed", value: "450", suffix: "+" },
-  { label: "Square Feet Built", value: "12", suffix: "M+" },
-  { label: "Expert Professionals", value: "150", suffix: "+" },
+const STATS = [
+  { label: "Years of Excellence", value: "22+" },
+  { label: "Projects Completed",  value: "450+" },
+  { label: "Square Feet Built",   value: "12M+" },
+  { label: "Expert Professionals",value: "150+" },
 ];
 
-const milestones = [
-  {
-    year: "2002",
-    title: "The Foundation",
-    description: "Started as a small contracting firm in Noida with a vision to redefine infrastructure."
-  },
-  {
-    year: "2010",
-    title: "Industrial Expansion",
-    description: "Successfully delivered our first 1-lakh sq. ft. warehousing complex."
-  },
-  {
-    year: "2018",
-    title: "Tech-Led Engineering",
-    description: "Integrated AI and sustainable BIM technology into our core construction process."
-  },
-  {
-    year: "2024",
-    title: "National Recognition",
-    description: "Awarded as the 'Most Sustainable Infrastructure Company' in the Northern Region."
-  }
+const MILESTONES = [
+  { year: "2002", title: "The Foundation",       desc: "Started as a small contracting firm in Noida with a vision to redefine infrastructure." },
+  { year: "2010", title: "Industrial Expansion", desc: "Successfully delivered our first 1-lakh sq. ft. warehousing complex." },
+  { year: "2018", title: "Tech-Led Engineering", desc: "Integrated AI and BIM technology into our core construction process." },
+  { year: "2024", title: "National Recognition", desc: "Awarded 'Most Sustainable Infrastructure Company' in the Northern Region." },
 ];
 
 export default function ExperienceSection() {
   const [isDark, setIsDark] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const ref = useRef(null);
 
   useEffect(() => {
-    // UPDATED: Ab ye documentElement (html) ko check karega
-    const checkTheme = () => {
-      setIsDark(document.documentElement.classList.contains("dark-mode"));
-    };
-
+    const checkTheme = () => setIsDark(document.documentElement.classList.contains("dark-mode"));
     checkTheme();
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, { 
-      attributes: true, 
-      attributeFilter: ["class"] 
-    });
+    const themeObs = new MutationObserver(checkTheme);
+    themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
-    const scrollObserver = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-      { threshold: 0.1 }
-    );
-    if (sectionRef.current) scrollObserver.observe(sectionRef.current);
+    const scrollObs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.08 });
+    if (ref.current) scrollObs.observe(ref.current);
 
-    return () => {
-      observer.disconnect();
-      scrollObserver.disconnect();
-    };
+    return () => { themeObs.disconnect(); scrollObs.disconnect(); };
   }, []);
 
   return (
-    <section 
-      ref={sectionRef}
-      className={`py-5 px-6 transition-colors duration-500 overflow-hidden ${isDark ? 'bg-black' : 'bg-white'}`}
+    <section
+      ref={ref}
+      className={`py-12 px-6 transition-colors duration-500 ${isDark ? "bg-black" : "bg-white"}`}
     >
-      <div className="max-w-7xl mx-auto">
-        
-        {/* TOP SECTION: COUNTERS */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
-          {stats.map((stat, idx) => (
-            <div 
-              key={idx} 
-              className={`text-center p-8 border-l-2 transition-all duration-700 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-              }`}
-              style={{ 
-                transitionDelay: `${idx * 100}ms`,
-                borderColor: "#facc15" 
+      <div className="max-w-6xl mx-auto">
+
+        {/* Stats row */}
+        <div className={`grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 border mb-8 ${isDark ? "border-zinc-800 divide-zinc-800" : "border-zinc-100 divide-zinc-100"}`}>
+          {STATS.map((s, i) => (
+            <div
+              key={i}
+              className="py-5 px-6 text-center"
+              style={{
+                opacity: visible ? 1 : 0,
+                transform: visible ? "translateY(0)" : "translateY(14px)",
+                transition: `opacity 0.5s ease ${i * 80}ms, transform 0.5s ease ${i * 80}ms`,
               }}
             >
-              <h3 className={`text-4xl sm:text-6xl font-black mb-2 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-                {stat.value}<span className="text-[#facc15]">{stat.suffix}</span>
-              </h3>
-              <p className={`text-[10px] uppercase font-black tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                {stat.label}
+              <p className={`text-2xl sm:text-3xl font-black leading-none mb-1 ${isDark ? "text-white" : "text-zinc-900"}`}>
+                {s.value.replace(/[+M]/g, "")}<span className="text-[#facc15]">{s.value.match(/[+M]+$/)?.[0]}</span>
               </p>
+              <p className={`text-[8px] uppercase font-black tracking-widest ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>{s.label}</p>
             </div>
           ))}
         </div>
 
-        {/* BOTTOM SECTION: TIMELINE & EXPERIENCE */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          
-          <div className={`${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'} transition-all duration-1000`}>
-            <p className="text-xs font-black uppercase tracking-[0.3em] mb-4" style={{ color: "#facc15" }}>
-              Our Journey
-            </p>
-            <h2 className={`text-4xl sm:text-6xl font-black tracking-tighter uppercase leading-[0.9] mb-8 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-              Two Decades of <br /> <span className="text-[#facc15]">Unmatched</span> <br /> Achievements
+        {/* Journey + Timeline */}
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-0 border ${isDark ? "border-zinc-800" : "border-zinc-100"}`}
+          style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(16px)", transition: "opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s" }}
+        >
+          {/* Left */}
+          <div className={`p-7 border-b lg:border-b-0 lg:border-r ${isDark ? "border-zinc-800 bg-zinc-950" : "border-zinc-100 bg-zinc-50"}`}>
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-2 text-[#facc15]">Our Journey</p>
+            <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-tight mb-3 ${isDark ? "text-white" : "text-zinc-900"}`}>
+              Two Decades of <span className="text-[#facc15]">Unmatched</span> Achievements
             </h2>
-            <p className={`text-lg mb-10 leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
-              MTBOSS has evolved from a local contractor to a national engineering powerhouse. Our experience spans across sectors, ensuring that every brick laid is a testament to our commitment to quality.
+            <p className={`text-[11px] leading-relaxed mb-5 ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
+              From a local contractor to a national engineering powerhouse — every project a testament to our commitment to quality.
             </p>
-            <button className={`px-10 py-4 font-black uppercase text-xs tracking-widest transition-all ${
-              isDark ? 'bg-[#facc15] text-black' : 'bg-black text-white hover:bg-[#facc15] hover:text-black'
+            <button className={`px-6 py-2.5 text-[9px] font-black uppercase tracking-widest transition-all ${
+              isDark ? "bg-[#facc15] text-black hover:bg-yellow-300" : "bg-zinc-900 text-white hover:bg-[#facc15] hover:text-black"
             }`}>
               Download Portfolio
             </button>
           </div>
 
-          <div className="space-y-12 relative">
-            <div className={`absolute left-0 top-0 w-px h-full ${isDark ? 'bg-zinc-800' : 'bg-zinc-100'}`} />
-
-            {milestones.map((m, idx) => (
-              <div 
-                key={idx} 
-                className={`relative pl-10 group transition-all duration-1000 ${
-                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
-                }`}
-                style={{ transitionDelay: `${idx * 200}ms` }}
-              >
-                <div className="absolute left-[-4.5px] top-2 w-2.5 h-2.5 rounded-full bg-zinc-300 group-hover:bg-[#facc15] group-hover:scale-150 transition-all duration-300" />
-                
-                <span className="text-sm font-black text-[#facc15] mb-2 block">{m.year}</span>
-                <h4 className={`text-xl font-black uppercase mb-3 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-                  {m.title}
-                </h4>
-                <p className={`text-sm leading-relaxed ${isDark ? 'text-zinc-500' : 'text-zinc-500'}`}>
-                  {m.description}
-                </p>
-              </div>
-            ))}
+          {/* Right — compact timeline */}
+          <div className={`p-7 ${isDark ? "bg-zinc-950" : "bg-white"}`}>
+            <div className="relative space-y-0">
+              <div className={`absolute left-[22px] top-3 bottom-3 w-px ${isDark ? "bg-zinc-800" : "bg-zinc-100"}`} />
+              {MILESTONES.map((m, i) => (
+                <div
+                  key={i}
+                  className="relative flex gap-4 pb-5 last:pb-0"
+                  style={{
+                    opacity: visible ? 1 : 0,
+                    transform: visible ? "translateY(0)" : "translateY(10px)",
+                    transition: `opacity 0.4s ease ${i * 100 + 400}ms, transform 0.4s ease ${i * 100 + 400}ms`,
+                  }}
+                >
+                  {/* Dot */}
+                  <div className="shrink-0 w-11 flex flex-col items-center pt-0.5 z-10">
+                    <div className={`w-2.5 h-2.5 rounded-full border-2 border-[#facc15] ${isDark ? "bg-zinc-950" : "bg-white"}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-[#facc15] text-[9px] font-black uppercase tracking-widest">{m.year}</span>
+                      <span className={`text-[10px] font-black uppercase tracking-tight ${isDark ? "text-white" : "text-zinc-900"}`}>{m.title}</span>
+                    </div>
+                    <p className={`text-[10px] leading-relaxed ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>{m.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-
         </div>
+
       </div>
     </section>
   );

@@ -16,112 +16,105 @@ export default function FeaturedProjects() {
   }, []);
 
   useEffect(() => {
-    const checkTheme = () => {
-      setIsDark(document.documentElement.classList.contains("dark-mode"));
-    };
+    const checkTheme = () => setIsDark(document.documentElement.classList.contains("dark-mode"));
     checkTheme();
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"]
-    });
+    const themeObs = new MutationObserver(checkTheme);
+    themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
-    const scrollObserver = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-      { threshold: 0.1 }
+    const scrollObs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setIsVisible(true); },
+      { threshold: 0.08 }
     );
-    if (sectionRef.current) scrollObserver.observe(sectionRef.current);
+    if (sectionRef.current) scrollObs.observe(sectionRef.current);
 
-    return () => {
-      observer.disconnect();
-      scrollObserver.disconnect();
-    };
+    return () => { themeObs.disconnect(); scrollObs.disconnect(); };
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className={`py-24 px-6 transition-colors duration-500 ${isDark ? 'bg-black' : 'bg-zinc-50'}`}
+      className={`py-12 px-6 transition-colors duration-500 ${isDark ? "bg-black" : "bg-zinc-50"}`}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div className={`transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-            <p className="text-xs font-black uppercase tracking-[0.3em] mb-3" style={{ color: "#facc15" }}>
-              Our Masterpieces
-            </p>
-            <h2 className={`text-4xl sm:text-6xl font-black tracking-tighter uppercase ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-              Featured <br />
-              <span style={{ color: isDark ? '#facc15' : 'inherit' }}>Projects</span>
+        <div
+          className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7"
+          style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? "translateY(0)" : "translateY(16px)", transition: "opacity 0.6s ease, transform 0.6s ease" }}
+        >
+          <div>
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 text-[#facc15]">Our Masterpieces</p>
+            <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-none ${isDark ? "text-white" : "text-zinc-900"}`}>
+              Featured <span className="text-[#facc15]">Projects</span>
             </h2>
           </div>
-
-          {/* ── FIX 1: was <button>, now <Link> ── */}
           <Link
             href="/FeaturedProjects/ProjectGallery"
-            className={`group flex items-center gap-3 px-8 py-4 border-2 font-black uppercase text-xs tracking-widest transition-all ${
+            className={`group self-start flex items-center gap-2 px-5 py-2.5 border font-black uppercase text-[9px] tracking-widest transition-all ${
               isDark
-                ? 'border-zinc-800 text-white hover:bg-[#facc15] hover:text-black hover:border-[#facc15]'
-                : 'border-zinc-200 text-zinc-900 hover:bg-black hover:text-white hover:border-black'
+                ? "border-zinc-700 text-white hover:bg-[#facc15] hover:text-black hover:border-[#facc15]"
+                : "border-zinc-300 text-zinc-800 hover:bg-zinc-900 hover:text-white hover:border-zinc-900"
             }`}
           >
             View All Projects
-            <svg className="w-4 h-4 transition-transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </Link>
         </div>
 
-        {/* Projects Grid */}
+        {/* Empty state */}
+        {projects.length === 0 && (
+          <div className={`text-center py-16 border text-[10px] font-black uppercase tracking-widest ${isDark ? "border-zinc-800 text-zinc-700" : "border-zinc-100 text-zinc-300"}`}>
+            No projects added yet
+          </div>
+        )}
+
+        {/* Projects grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
           {projects.map((project, idx) => (
             <div
               key={project.id}
-              className="group relative h-[500px] overflow-hidden bg-zinc-800 transition-all duration-700"
+              className="group relative overflow-hidden bg-zinc-800"
               style={{
-                transitionDelay: `${idx * 150}ms`,
+                height: 240,
                 opacity: isVisible ? 1 : 0,
-                transform: isVisible ? 'translateY(0)' : 'translateY(40px)'
+                transform: isVisible ? "translateY(0)" : "translateY(24px)",
+                transition: `opacity 0.55s ease ${idx * 120}ms, transform 0.55s ease ${idx * 120}ms`,
               }}
             >
-              {/* ── FIX 2: was project.image, now project.image_url ── */}
               <img
                 src={project.image_url}
                 alt={project.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-1 opacity-70 group-hover:opacity-40"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-40"
               />
 
               {/* Overlay */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-8 group-hover:translate-y-0 transition-transform duration-500">
-                <p className="text-[#facc15] text-xs font-black uppercase tracking-widest mb-2 opacity-0 group-hover:opacity-100 transition-opacity delay-100">
-                  {project.category}{project.location ? ` — ${project.location}` : ''}
+              <div className="absolute inset-0 p-4 flex flex-col justify-end">
+                <p className="text-[#facc15] text-[8px] font-black uppercase tracking-widest mb-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {project.category}{project.location ? ` — ${project.location}` : ""}
                 </p>
-                <h3 className="text-white text-3xl font-black uppercase leading-none mb-6">
-                  {project.title}
-                </h3>
-
-                {/* ── FIX 3: was plain <button>, now <Link> ── */}
-                <div className="h-0 group-hover:h-12 overflow-hidden transition-all duration-500">
+                <h3 className="text-white text-sm font-black uppercase leading-tight mb-2">{project.title}</h3>
+                <div className="h-0 group-hover:h-8 overflow-hidden transition-all duration-500">
                   <Link
                     href="/FeaturedProjects/ProjectGallery"
-                    className="inline-block bg-[#facc15] text-black px-6 py-3 text-[10px] font-black uppercase tracking-tighter hover:bg-white transition-colors"
+                    className="inline-block bg-[#facc15] text-black px-4 py-1.5 text-[8px] font-black uppercase tracking-widest hover:bg-white transition-colors"
                   >
                     Explore Details
                   </Link>
                 </div>
               </div>
 
-              {/* Decorative number */}
-              <span className="absolute top-8 right-8 text-white/10 text-6xl font-black italic group-hover:text-[#facc15]/20 transition-colors">
+              {/* Number watermark */}
+              <span className="absolute top-3 right-3 text-white/10 text-3xl font-black italic group-hover:text-[#facc15]/20 transition-colors">
                 0{idx + 1}
               </span>
             </div>
           ))}
         </div>
 
-        {/* Bottom line */}
-        <div className={`mt-16 h-px w-full transition-colors duration-500 ${isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
+        {/* Bottom divider */}
+        <div className={`mt-8 h-px w-full ${isDark ? "bg-zinc-800" : "bg-zinc-200"}`} />
       </div>
     </section>
   );

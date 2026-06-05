@@ -32,6 +32,8 @@ export default function SellPage() {
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
+  const handlePhone = (v) => set('seller_phone', v.replace(/\D/g, '').slice(0, 10));
+
   const handleImages = (e) => {
     const files = Array.from(e.target.files).slice(0, 10);
     setImageFiles(files);
@@ -105,8 +107,12 @@ export default function SellPage() {
         return "Please fill all required fields.";
     }
     if (step === 2) {
-      if (!form.seller_name || !form.seller_phone)
-        return "Name and phone are required.";
+      const phoneRegex = /^[6-9]\d{9}$/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!form.seller_name.trim()) return "Full name is required.";
+      if (!form.seller_phone) return "Phone number is required.";
+      if (!phoneRegex.test(form.seller_phone)) return "Enter a valid 10-digit Indian mobile number (starts with 6-9).";
+      if (form.seller_email && !emailRegex.test(form.seller_email)) return "Please enter a valid email address.";
     }
     if (step === 3) {
       if (imageFiles.length === 0)
@@ -286,7 +292,7 @@ export default function SellPage() {
           <div className={`border rounded-sm p-6 space-y-5 ${card}`}>
             <h2 className="text-lg font-black uppercase tracking-tight">Your Information</h2>
             <div><label className={lbl}>Full Name *</label><input className={inp} placeholder="Your name" value={form.seller_name} onChange={e=>set("seller_name",e.target.value)} /></div>
-            <div><label className={lbl}>Phone Number *</label><input type="tel" className={inp} placeholder="+91 98765 43210" value={form.seller_phone} onChange={e=>set("seller_phone",e.target.value)} /></div>
+            <div><label className={lbl}>Phone Number *</label><input type="tel" className={inp} placeholder="10-digit mobile number" value={form.seller_phone} onChange={e=>handlePhone(e.target.value)} maxLength={10} inputMode="numeric" /></div>
             <div><label className={lbl}>Email Address</label><input type="email" className={inp} placeholder="you@example.com" value={form.seller_email} onChange={e=>set("seller_email",e.target.value)} /></div>
             <p className={`text-[11px] leading-relaxed ${muted}`}>⚠️ Your contact details are only shared with verified buyers after admin approval.</p>
             <div className="flex gap-3">

@@ -154,12 +154,20 @@ export default function FranchisePage() {
   const [processRef, processVisible] = useInView(0.1);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === 'phone') {
+      setForm(prev => ({ ...prev, phone: value.replace(/\D/g, '').slice(0, 10) }));
+    } else {
+      setForm(prev => ({ ...prev, [name]: value }));
+    }
   };
 
 const handleSubmit = async (e) => {
   e.preventDefault();
   setError("");
+  const phoneRegex = /^[6-9]\d{9}$/;
+  if (!form.phone) { setError('Phone number is required.'); return; }
+  if (!phoneRegex.test(form.phone)) { setError('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
   setLoading(true);
 
   try {
@@ -612,7 +620,7 @@ const handleSubmit = async (e) => {
             </div>
             <div>
               <label className={labelClass}>Mobile Number *</label>
-              <input type="tel" name="phone" required placeholder="+91 XXXXX XXXXX" value={form.phone} onChange={handleChange} className={inputClass} />
+              <input type="tel" name="phone" placeholder="10-digit mobile number" value={form.phone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} />
             </div>
             <div>
               <label className={labelClass}>Email Address *</label>

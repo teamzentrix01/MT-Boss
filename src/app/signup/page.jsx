@@ -35,7 +35,10 @@ export default function SignupPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.name.trim()) return setError('Name is required');
+    if (!formData.email) return setError('Email address is required');
+    if (!emailRegex.test(formData.email)) return setError('Please enter a valid email address');
     if (formData.password.length < 6) return setError('Password must be at least 6 characters');
     if (formData.password !== formData.confirmPassword) return setError('Passwords do not match');
 

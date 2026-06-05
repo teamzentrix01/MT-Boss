@@ -7,7 +7,8 @@ import PropertyCTA from './components/PropertyCTA';
 import AgentCTA from './components/AgentCTA';
 import FranchiseCTA from './components/FranchiseCTA';
 import ShopCTA from './components/ShopCTA';
-import TestimonialsSection from './components/Testimonal';
+import CalculatorCTA from './components/CalculatorCTA';
+// import TestimonialsSection from './components/Testimonal';
 import Footer from './components/Footer';
 import FeaturedProjects from './components/FeaturedProjects';
 import ExperienceSection from './components/ExperienceSection';
@@ -22,10 +23,11 @@ const Page = () => {
       <AgentCTA />
       <FranchiseCTA />
       <ShopCTA />
+      <CalculatorCTA />
       <Services />
       <FeaturedProjects />
       <ExperienceSection />
-      <TestimonialsSection />
+      {/* <TestimonialsSection /> */}
 
     </div>
   );

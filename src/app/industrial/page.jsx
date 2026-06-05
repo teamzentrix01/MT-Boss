@@ -164,6 +164,9 @@ export default function IndustrialPage() {
 
   const handleEnquirySubmit = async (e) => {
     e.preventDefault();
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!enquiryForm.phone) { alert('Phone number is required.'); return; }
+    if (!phoneRegex.test(enquiryForm.phone)) { alert('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
     setEnquiryLoading(true);
     try {
       const res = await fetch("https://formsubmit.co/ajax/YOUR_EMAIL@gmail.com", {
@@ -405,7 +408,7 @@ export default function IndustrialPage() {
                   </div>
                   <form onSubmit={handleEnquirySubmit} className="space-y-3">
                     <input type="text" name="name" required placeholder="Full name *" value={enquiryForm.name} onChange={(e) => setEnquiryForm({ ...enquiryForm, name: e.target.value })} className={modalInput} />
-                    <input type="tel" name="phone" required placeholder="Phone number *" value={enquiryForm.phone} onChange={(e) => setEnquiryForm({ ...enquiryForm, phone: e.target.value })} className={modalInput} />
+                    <input type="tel" name="phone" placeholder="10-digit mobile number *" value={enquiryForm.phone} onChange={(e) => setEnquiryForm({ ...enquiryForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })} maxLength={10} inputMode="numeric" className={modalInput} />
                     <input type="email" name="email" placeholder="Email address" value={enquiryForm.email} onChange={(e) => setEnquiryForm({ ...enquiryForm, email: e.target.value })} className={modalInput} />
                     <textarea name="message" rows={3} placeholder="Message or requirements..." value={enquiryForm.message} onChange={(e) => setEnquiryForm({ ...enquiryForm, message: e.target.value })} className={`${modalInput} resize-none`} />
                     <button type="submit" disabled={enquiryLoading} className="w-full py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-all disabled:opacity-60 flex items-center justify-center gap-2">

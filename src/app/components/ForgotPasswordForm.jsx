@@ -38,7 +38,9 @@ export default function ForgotPasswordForm({ userType, loginHref, accentColor })
   }, [resendCooldown]);
 
   const sendOtp = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) { setError('Please enter your email address'); return; }
+    if (!emailRegex.test(email)) { setError('Please enter a valid email address'); return; }
     setLoading(true); setError(''); setInfo('');
     try {
       const res = await fetch('/api/forgot-password', {

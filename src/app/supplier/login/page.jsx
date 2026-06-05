@@ -43,10 +43,10 @@ export default function SupplierLoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.password) {
-      setError('Please enter your email and password');
-      return;
-    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email) { setError('Email address is required.'); return; }
+    if (!emailRegex.test(formData.email)) { setError('Please enter a valid email address.'); return; }
+    if (!formData.password) { setError('Password is required.'); return; }
 
     setLoading(true);
     setError('');
