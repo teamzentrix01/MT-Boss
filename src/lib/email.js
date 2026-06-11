@@ -49,7 +49,7 @@ export async function sendEnquiryAcceptedEmail({ to, userName, shopName, categor
           </ol>
         </div>
         <p style="color:#999;font-size:12px;margin-top:24px;">
-          — MT Boss Material Marketplace
+          — MTbossMaterial Marketplace
         </p>
       </div>
     `,

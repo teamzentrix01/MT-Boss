@@ -192,7 +192,7 @@ export default function PropertyCTA() {
         >
           <div>
             <p className={`text-[10px] font-black uppercase tracking-[0.4em] mb-2 ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>
-              MT Boss Property
+              MTbossProperty
             </p>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tighter leading-none ${dark ? "text-white" : "text-zinc-900"}`}>
               Buy, Sell &amp; <span className="text-[#facc15]">Rent</span>

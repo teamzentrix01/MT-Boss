@@ -45,7 +45,7 @@ function FadeIn({ children, className = "", delay = 0 }) {
 // ── Hardcoded Admin ─────────────────────────────────────────────
 const ADMIN = {
   id: "admin",
-  name: "MT Boss Admin",
+  name: "MTbossAdmin",
   title: "Chairman & Managing Director",
   category: "Executive Leadership",
   profile_picture: null,

@@ -171,7 +171,7 @@ export default function FranchiseCTA() {
               Own a Business
             </p>
             <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-none ${dark ? "text-white" : "text-zinc-900"}`}>
-              MT Boss <span className="text-[#facc15]">Franchise</span>
+              MTboss<span className="text-[#facc15]">Franchise</span>
             </h2>
             <div className={`w-8 h-0.5 mt-2 ${dark ? "bg-[#facc15]" : "bg-zinc-900"}`} />
           </div>

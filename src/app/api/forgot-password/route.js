@@ -59,7 +59,7 @@ export async function POST(req) {
       try {
         await sendMail({
           to: email,
-          subject: 'Your MT Boss password reset OTP',
+          subject: 'Your MTbosspassword reset OTP',
           html: `
             <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;">
               <h2 style="color:#111;margin-bottom:8px;">Password Reset OTP</h2>

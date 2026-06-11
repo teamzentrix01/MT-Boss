@@ -987,13 +987,13 @@ const handleSubmit = async (e) => {
             <label className="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" required className="mt-0.5 accent-[#facc15] flex-shrink-0" />
               <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                I have read and understood all information available about MT BOSS Construction franchise opportunity, including the investment requirements, terms, and fee structure involved.
+                I have read and understood all information available about MTbossConstruction franchise opportunity, including the investment requirements, terms, and fee structure involved.
               </span>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" required className="mt-0.5 accent-[#facc15] flex-shrink-0" />
               <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                I agree that MT BOSS Construction may contact me regarding this franchise inquiry. I understand that submitting this form does not guarantee a franchise agreement.
+                I agree that MTbossConstruction may contact me regarding this franchise inquiry. I understand that submitting this form does not guarantee a franchise agreement.
               </span>
             </label>
           </div>

@@ -239,7 +239,7 @@ export default function ProfessionalProfilePage() {
           {/* ──────────────────── SIDEBAR ──────────────────────────────────── */}
           <aside className="pro-aside" style={{ width: '292px', flexShrink: 0, position: 'sticky', top: '24px' }}>
 
-            {/* Contact via MT Boss — no direct contact info shown */}
+            {/* Contact via MTboss— no direct contact info shown */}
             <div style={{ background: t.card, border: `1px solid ${t.border}`, marginBottom: '16px', overflow: 'hidden' }}>
               <div style={{ background: isDark ? '#0d0d0d' : '#f9fafb', padding: '14px 20px', borderBottom: `1px solid ${t.border}` }}>
                 <p style={{ margin: 0, fontSize: '9px', fontWeight: 800, color: t.accent, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Contact</p>

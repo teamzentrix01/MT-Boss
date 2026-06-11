@@ -477,7 +477,7 @@ export default function ProfessionalsPage() {
       {/* Hero */}
       <div style={{ background:t.heroBg,padding:'72px 24px 80px',textAlign:'center',position:'relative',overflow:'hidden',borderBottom:`2px solid ${t.accent}` }}>
         <div style={{ position:'absolute',inset:0,backgroundImage:`linear-gradient(${isDark?'rgba(250,204,21,0.03)':'rgba(255,255,255,0.03)'} 1px,transparent 1px),linear-gradient(90deg,${isDark?'rgba(250,204,21,0.03)':'rgba(255,255,255,0.03)'} 1px,transparent 1px)`,backgroundSize:'40px 40px',pointerEvents:'none' }} />
-        <p style={{ color:t.accent,fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.15em',margin:'0 0 14px' }}>MT Boss Professional Services</p>
+        <p style={{ color:t.accent,fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.15em',margin:'0 0 14px' }}>MTbossProfessional Services</p>
         <h1 style={{ color:'#fff',fontSize:'clamp(28px,5vw,52px)',fontWeight:800,margin:'0 0 16px',lineHeight:1.1,textTransform:'uppercase',letterSpacing:'-0.02em' }}>Meet Our Professionals</h1>
         <p style={{ color:'rgba(255,255,255,0.55)',fontSize:'15px',maxWidth:'480px',margin:'0 auto 40px',lineHeight:1.7 }}>
           Verified interior designers, architects and home experts — handpicked for quality and excellence.

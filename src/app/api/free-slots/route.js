@@ -14,7 +14,7 @@ export async function GET(req) {
     const baseSelect = `
       SELECT fts.id, fts.quick_service_id, qs.label AS service_label, qs.icon AS service_icon,
              fts.slot_start, fts.slot_end,
-             fts.slot_date::DATE AS slot_date,
+             TO_CHAR(fts.slot_date::DATE, 'YYYY-MM-DD') AS slot_date,
              fts.city, fts.is_available, fts.max_bookings,
              COALESCE(fts.current_bookings, 0) AS current_bookings
       FROM free_time_slots fts
@@ -23,19 +23,19 @@ export async function GET(req) {
     let query, params;
 
     if (city && serviceId) {
-      // User mode: exact match + only available slots from today onward
+      // User mode: city-based slots, with matching-service slots shown first.
       query = `${baseSelect}
-        WHERE LOWER(fts.city) = LOWER($1)
-          AND fts.quick_service_id = $2
+        WHERE LOWER(TRIM(fts.city)) = LOWER(TRIM($1))
           AND fts.is_available = TRUE
           AND COALESCE(fts.current_bookings, 0) < COALESCE(fts.max_bookings, 1)
           AND fts.slot_date::DATE >= $3::DATE
-        ORDER BY fts.slot_date ASC, fts.slot_start ASC
+        ORDER BY CASE WHEN fts.quick_service_id = $2 THEN 0 ELSE 1 END,
+                 fts.slot_date ASC, fts.slot_start ASC
         LIMIT 10`;
       params = [city, serviceId, today];
     } else if (city && city !== 'all') {
       query = `${baseSelect}
-        WHERE LOWER(fts.city) = LOWER($1)
+        WHERE LOWER(TRIM(fts.city)) = LOWER(TRIM($1))
         ORDER BY fts.slot_date DESC, fts.slot_start ASC`;
       params = [city];
     } else {
@@ -65,8 +65,8 @@ export async function POST(req) {
       `INSERT INTO free_time_slots
          (quick_service_id, slot_date, slot_start, slot_end, city, max_bookings, is_available, created_at)
        VALUES ($1, $2::DATE, $3, $4, $5, $6, TRUE, NOW())
-       RETURNING *, slot_date::DATE AS slot_date`,
-      [quick_service_id, slot_date, slot_start, slot_end, city, max_bookings]
+       RETURNING *, TO_CHAR(slot_date::DATE, 'YYYY-MM-DD') AS slot_date`,
+      [quick_service_id, slot_date, slot_start, slot_end, city.trim(), max_bookings]
     );
 
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });

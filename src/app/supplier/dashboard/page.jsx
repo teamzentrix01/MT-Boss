@@ -503,7 +503,7 @@ export default function SupplierDashboard() {
                     ))}
                   </div>
                   <div style={{ background: surface, border: `1px solid ${border}`, borderRadius: 12, padding: '1.25rem', fontSize: '0.85rem', color: muted, lineHeight: 1.7 }}>
-                    <strong style={{ color: text }}>Commission:</strong> MT Boss deducts <strong style={{ color: '#f59e0b' }}>15%</strong> of the amount received on every fulfilled order.
+                    <strong style={{ color: text }}>Commission:</strong> MTbossdeducts <strong style={{ color: '#f59e0b' }}>15%</strong> of the amount received on every fulfilled order.
                   </div>
                 </>
               ) : <div className="sd-empty">Could not load earnings.</div>}

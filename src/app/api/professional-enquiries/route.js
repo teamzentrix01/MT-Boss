@@ -123,7 +123,7 @@ export async function POST(req) {
 
             <p style="margin-top:20px;font-size:12px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:16px;">
               Action required: Review this enquiry in the
-              <strong>MT Boss Admin Dashboard → Professional Enquiries</strong> tab and
+              <strong>MTbossAdmin Dashboard → Professional Enquiries</strong> tab and
               facilitate the connection between the user and professional.
             </p>
           </div>
