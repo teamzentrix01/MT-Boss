@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { jobs } from "../data/jobs";
+import { jobs as fallbackJobs } from "../data/jobs";
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -36,7 +36,9 @@ const departmentColorsLight = {
 export default function JobDetailPage() {
   const { id } = useParams();
   const dark = useDarkMode();
-  const job = jobs.find((j) => j.id === id);
+  const fallbackJob = fallbackJobs.find((j) => j.id === id);
+  const [job, setJob] = useState(fallbackJob || null);
+  const [jobs, setJobs] = useState(fallbackJobs);
 
   const [form, setForm] = useState({
     name: "",
@@ -57,6 +59,38 @@ export default function JobDetailPage() {
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState("");
   const fileRef = useRef(null);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const [jobRes, jobsRes] = await Promise.all([
+          fetch(`/api/jobs?id=${encodeURIComponent(id)}`),
+          fetch("/api/jobs"),
+        ]);
+        const jobData = await jobRes.json();
+        const jobsData = await jobsRes.json();
+
+        if (jobData.success) setJob(jobData.data);
+        if (jobsData.success && jobsData.data.length > 0) setJobs(jobsData.data);
+      } catch (fetchError) {
+        console.error("Job detail fetch failed:", fetchError);
+      }
+    };
+
+    if (id) fetchJobs();
+  }, [id]);
+
+  const getPostedLabel = (item) => {
+    if (item.posted) return item.posted;
+    if (!item.created_at) return "Recently posted";
+
+    const days = Math.max(0, Math.floor((Date.now() - new Date(item.created_at).getTime()) / 86400000));
+    if (days === 0) return "Today";
+    if (days === 1) return "1 day ago";
+    if (days < 7) return `${days} days ago`;
+    if (days < 14) return "1 week ago";
+    return `${Math.floor(days / 7)} weeks ago`;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -259,7 +293,7 @@ export default function JobDetailPage() {
                   { icon: "📍", text: job.location },
                   { icon: "💼", text: job.type },
                   { icon: "⏱️", text: job.experience },
-                  { icon: "🕐", text: `Posted ${job.posted}` },
+                  { icon: "🕐", text: `Posted ${getPostedLabel(job)}` },
                 ].map((item) => (
                   <span key={item.text} className={`flex items-center gap-1 text-[10px] font-bold ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
                     {item.icon} {item.text}
@@ -358,7 +392,7 @@ export default function JobDetailPage() {
                   { label: "Job Type", value: job.type },
                   { label: "Experience", value: job.experience },
                   { label: "Salary", value: job.salary },
-                  { label: "Posted", value: job.posted },
+                  { label: "Posted", value: getPostedLabel(job) },
                 ].map((item) => (
                   <div key={item.label} className={`flex justify-between py-2.5 border-b text-[11px] last:border-0 ${dark ? "border-zinc-800" : "border-gray-50"}`}>
                     <span className={`font-bold ${dark ? "text-zinc-500" : "text-zinc-400"}`}>{item.label}</span>

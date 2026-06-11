@@ -1,6 +1,6 @@
 import React from 'react';
 import Hero from './components/Hero';
-import AboutSection from './components/About';
+// import AboutSection from './components/About';
 import Services from './components/Services';
 import QuickServices from './components/QuickServices';
 import PropertyCTA from './components/PropertyCTA';
@@ -17,7 +17,7 @@ const Page = () => {
   return (
     <div className="transition-colors duration-500">
       <Hero />
-      <AboutSection />
+      {/* <AboutSection /> */}
       <QuickServices />
       <PropertyCTA />
       <AgentCTA />

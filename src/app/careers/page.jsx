@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { jobs } from "./data/jobs";
+import { jobs as fallbackJobs } from "./data/jobs";
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -37,9 +37,10 @@ export default function CareersPage() {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [visible, setVisible] = useState(false);
+  const [jobs, setJobs] = useState(fallbackJobs);
   const ref = useRef(null);
 
-  const departments = ["All", "Engineering", "Management", "Design", "Human Resources", "Sales"];
+  const departments = ["All", ...Array.from(new Set(jobs.map(job => job.department).filter(Boolean)))];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -49,6 +50,24 @@ export default function CareersPage() {
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await fetch("/api/jobs");
+        const data = await res.json();
+        if (data.success && data.data.length > 0) setJobs(data.data);
+      } catch (error) {
+        console.error("Jobs fetch failed:", error);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  const getPostedLabel = (job) => {
+    return job.posted || "Recently posted";
+  };
 
   const filtered = jobs.filter((job) => {
     const matchDept = filter === "All" || job.department === filter;
@@ -81,14 +100,14 @@ export default function CareersPage() {
             <span className="block text-[#facc15]">Career With Us</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-            Join a team of 500+ engineers, architects, and professionals building India's future. We offer growth, challenges, and the chance to work on landmark projects.
+            Join a team of 500+ engineers, architects, and professionals building India&apos;s future. We offer growth, challenges, and the chance to work on landmark projects.
           </p>
 
           {/* Stats Row */}
           <div className="flex items-center justify-center gap-8 mt-6">
             {[
               { value: "500+", label: "Team Members" },
-              { value: "6+", label: "Open Positions" },
+              { value: `${jobs.length}+`, label: "Open Positions" },
               { value: "20+", label: "Years Legacy" },
             ].map((s) => (
               <div key={s.label} className="text-center">
@@ -250,7 +269,7 @@ export default function CareersPage() {
                           {job.department}
                         </span>
                         <span className={`text-[10px] font-bold ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
-                          • {job.posted}
+                          • {getPostedLabel(job)}
                         </span>
                       </div>
                     </div>
