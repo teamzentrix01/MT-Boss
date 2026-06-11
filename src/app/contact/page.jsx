@@ -29,32 +29,25 @@ function useInView(threshold = 0.1) {
   return [ref, inView];
 }
 
-const offices = [
-  {
-    city: 'Delhi (HQ)',
-    address: '123, MTBOSS Tower, Connaught Place, New Delhi - 110001',
-    phone: '+91 99999 99999',
-    email: 'delhi@mtboss.com',
-    hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
-    mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501.9!2d77.2167!3d28.6289!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDM3JzQ0LjAiTiA3N8KwMTMnMDAuMCJF!5e0!3m2!1sen!2sin!4v1',
-  },
-  {
-    city: 'Noida',
-    address: '456, Sector 62, MTBOSS Office, Noida - 201309',
-    phone: '+91 88888 88888',
-    email: 'noida@mtboss.com',
-    hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
-    mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.9!2d77.3667!3d28.6189!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDM3JzA4LjAiTiA3N8KwMjInMDAuMCJF!5e0!3m2!1sen!2sin!4v1',
-  },
-  {
-    city: 'Gurgaon',
-    address: '789, DLF Cyber City, MTBOSS Office, Gurgaon - 122002',
-    phone: '+91 77777 77777',
-    email: 'gurgaon@mtboss.com',
-    hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
-    mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3507.9!2d77.0867!3d28.4689!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDI4JzA4LjAiTiA3N8KwMDUnMTIuMCJF!5e0!3m2!1sen!2sin!4v1',
-  },
+const officeCities = [
+  'Moradabad',
+  'Bareilly',
+  'Meerut',
+  'Noida',
+  'Delhi',
+  'Gurgaon',
+  'Haldwani',
+  'Dehradun',
 ];
+
+const offices = officeCities.map((city) => ({
+  city,
+  address: `MTBOSS Office, ${city}, India`,
+  phone: '+91 99999 99999',
+  email: `${city.toLowerCase()}@mtboss.com`,
+  hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
+  mapUrl: `https://www.google.com/maps?q=${encodeURIComponent(`${city}, India`)}&output=embed`,
+}));
 
 const departments = [
   { icon: '🏗️', label: 'Construction Projects', value: 'projects' },
@@ -223,7 +216,7 @@ export default function ContactPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { value: '< 24hrs', label: 'Response Time' },
-              { value: '3', label: 'Office Locations' },
+              { value: '8', label: 'Office Locations' },
               { value: '50+', label: 'Cities Served' },
               { value: 'Mon-Sat', label: 'Working Hours' },
             ].map((s) => (

@@ -20,6 +20,35 @@ import CalculatorManager from '../components/CalculatorManager';
 import RevenueManager from '../components/RevenueManager';
 import HeroBannersManager from '../components/HeroBannersManager';
 
+function getResumeActionUrl(resumeUrl, mode) {
+  if (!resumeUrl) return '';
+
+  try {
+    if (typeof window === 'undefined') return resumeUrl;
+    const { pathname } = new URL(resumeUrl, window.location.origin);
+    const marker = '/uploads/resumes/';
+
+    if (!pathname.startsWith(marker)) return resumeUrl;
+
+    const filename = pathname.slice(marker.length);
+    return `/api/career-enquiries/resume/${encodeURIComponent(filename)}?mode=${mode}`;
+  } catch {
+    return resumeUrl;
+  }
+}
+
+function getResumeViewerUrl(resumeUrl, resumeName) {
+  const viewUrl = getResumeActionUrl(resumeUrl, 'view');
+  if (!viewUrl) return '';
+
+  const params = new URLSearchParams({
+    url: viewUrl,
+    name: resumeName || 'Resume',
+  });
+
+  return `/dashboard/resume-viewer?${params.toString()}`;
+}
+
 function AdminDashboard() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(() => searchParams.get('tab') || 'overview');
@@ -1135,7 +1164,7 @@ function AdminDashboard() {
                   {selectedCareerEnquiry.resume_url ? (
                     <>
                     <a
-                      href={selectedCareerEnquiry.resume_url}
+                      href={getResumeViewerUrl(selectedCareerEnquiry.resume_url, selectedCareerEnquiry.resume_name)}
                       target="_blank"
                       rel="noreferrer"
                       className="modal-close-btn"
@@ -1144,7 +1173,7 @@ function AdminDashboard() {
                       View Resume
                     </a>
                     <a
-                      href={selectedCareerEnquiry.resume_url}
+                      href={getResumeActionUrl(selectedCareerEnquiry.resume_url, 'download')}
                       download={selectedCareerEnquiry.resume_name || true}
                       className="modal-close-btn"
                       style={{ width: 'auto', textDecoration: 'none', padding: '0.45rem 0.875rem', background: 'var(--bg)', color: 'var(--text)', border: '1px solid var(--border)' }}
