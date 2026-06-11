@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 const DEFAULT_IMAGES = [
   "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=80",
@@ -156,7 +157,7 @@ export default function AboutSection({
           {paragraph}
         </p>
 
-        <a
+        <Link
           href={aboutLink}
           className="inline-flex items-center gap-2 px-8 py-3 text-black text-xs font-black uppercase tracking-widest rounded shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95"
           style={{ backgroundColor: themeColor }}
@@ -165,7 +166,7 @@ export default function AboutSection({
           <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
-        </a>
+        </Link>
 
       </div>
     </section>

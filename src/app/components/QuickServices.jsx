@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 
 function useInView(threshold = 0.1) {
   const ref = useRef(null);
@@ -182,12 +183,12 @@ export default function QuickServices() {
               <h3 className="qs-calculator-title">Construction Cost Calculator</h3>
               <p className="qs-calculator-text">Select products and get an instant quotation before booking home services.</p>
             </div>
-            <a href="/calculator" className="qs-calculator-btn">
+            <Link href="/calculator" className="qs-calculator-btn">
               Calculate Now
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </a>
+            </Link>
           </div>
 
           {/* Header */}
@@ -231,7 +232,7 @@ export default function QuickServices() {
                   </div>
                 ))
               : services.map((service, i) => (
-                  <a
+                  <Link
                     key={service.id}
                     href="/quick"
                     className="qs-card qs-grid-item flex flex-col items-center justify-center gap-1.5 py-4 px-2"
@@ -243,7 +244,7 @@ export default function QuickServices() {
                   >
                     <span className="qs-icon">{service.icon}</span>
                     <span className="qs-label">{service.label}</span>
-                  </a>
+                  </Link>
                 ))
             }
           </div>
@@ -257,7 +258,7 @@ export default function QuickServices() {
               transition: "opacity 0.7s ease 0.4s, transform 0.7s ease 0.4s",
             }}
           >
-            <a
+            <Link
               href="/quick"
               className="inline-flex items-center gap-2 px-8 py-3 text-xs font-black uppercase tracking-widest rounded transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 bg-[#facc15] text-black hover:bg-[#eab308]"
             >
@@ -268,7 +269,7 @@ export default function QuickServices() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </a>
+            </Link>
           </div>
 
         </div>
