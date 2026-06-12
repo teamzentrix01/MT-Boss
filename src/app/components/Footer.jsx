@@ -108,7 +108,7 @@ export default function Footer() {
               <div className="flex items-start gap-4">
                 <div className="w-1 h-10 rounded-full shrink-0" style={{ backgroundColor: themeYellow }} />
                 <p className={`text-sm font-medium leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
-                  MTBOSS CONSTRUCTION PVT. LTD.,<br />Uttar Pradesh, India
+                  Harthala Kanth Road Behind Kr Collection, near Domino's,<br />Uttar Pradesh, India
                 </p>
               </div>
               <a href="mailto:info@mtboss.in" className={`block text-sm font-black hover:text-[#facc15] transition-colors ${isDark ? 'text-white' : 'text-zinc-900'}`}>
