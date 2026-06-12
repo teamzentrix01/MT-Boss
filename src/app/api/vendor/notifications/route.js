@@ -22,7 +22,7 @@ export async function GET(req) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
  
-    // Get pending notifications with booking details
+    // Get pending notifications that still match this vendor's city and services.
     const result = await pool.query(
       `SELECT 
         sn.id, sn.booking_id, sn.notification_type, sn.title, sn.message, sn.is_read, sn.created_at,
@@ -32,9 +32,19 @@ export async function GET(req) {
        FROM service_notifications sn
        JOIN service_bookings sb ON sn.booking_id = sb.id
        JOIN quick_services qs ON sb.quick_service_id = qs.id
+       JOIN vendors v ON v.id = sn.vendor_id
+       JOIN vendor_services vs
+         ON vs.vendor_id = v.id
+        AND vs.quick_service_id = sb.quick_service_id
+        AND vs.is_active = TRUE
        WHERE sn.vendor_id = $1
        AND sn.is_read = FALSE
        AND (sn.expires_at IS NULL OR sn.expires_at > NOW())
+       AND sb.status = 'WAITING_FOR_VENDOR_ACCEPTANCE'
+       AND LOWER(TRIM(v.city)) = LOWER(TRIM(sb.service_city))
+       AND v.is_approved = TRUE
+       AND v.status = 'active'
+       AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
        ORDER BY sn.created_at DESC`,
       [vendorId]
     );
