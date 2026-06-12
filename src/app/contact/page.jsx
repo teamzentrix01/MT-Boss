@@ -29,7 +29,7 @@ function useInView(threshold = 0.1) {
   return [ref, inView];
 }
 
-const officeCities = [
+const DEFAULT_OFFICES = [
   'Moradabad',
   'Bareilly',
   'Meerut',
@@ -38,12 +38,11 @@ const officeCities = [
   'Gurgaon',
   'Haldwani',
   'Dehradun',
-];
-
-const offices = officeCities.map((city) => ({
+].map((city, index) => ({
+  id: `default-${index}`,
   city,
   address: `MTBOSS Office, ${city}, India`,
-  phone: '+91 99999 99999',
+  phone: '+91 94584 10866',
   email: `${city.toLowerCase()}@mtboss.com`,
   hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
   mapUrl: `https://www.google.com/maps?q=${encodeURIComponent(`${city}, India`)}&output=embed`,
@@ -75,6 +74,7 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
+  const [offices, setOffices] = useState(DEFAULT_OFFICES);
 
   const [form, setForm] = useState({
     name: '',
@@ -87,6 +87,29 @@ export default function ContactPage() {
 
   const [formRef, formVisible] = useInView(0.1);
   const [infoRef, infoVisible] = useInView(0.1);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const loadOffices = async () => {
+      try {
+        const res = await fetch('/api/office-locations');
+        const data = await res.json();
+        if (!ignore && data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setOffices(data.data.map((office) => ({
+            ...office,
+            mapUrl: office.map_url || office.mapUrl || `https://www.google.com/maps?q=${encodeURIComponent(`${office.city}, India`)}&output=embed`,
+          })));
+          setActiveOffice(0);
+        }
+      } catch (err) {
+        console.error('Office locations load error:', err);
+      }
+    };
+
+    loadOffices();
+    return () => { ignore = true; };
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -187,7 +210,7 @@ export default function ContactPage() {
           {/* Quick Contact Pills */}
           <div className="flex flex-wrap justify-center gap-3 mt-8">
             <a
-              href="tel:+919999999999"
+              href="tel:+9194584 10866"
               className="flex items-center gap-2 px-5 py-2.5 bg-yellow-400 text-black text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-yellow-300 transition-all"
             >
               📞 Call Us
@@ -199,7 +222,7 @@ export default function ContactPage() {
               ✉️ Email Us
             </a>
             <a
-              href="https://wa.me/919999999999"
+              href="https://wa.me/9194584 10866"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-green-400 transition-all"
@@ -216,7 +239,7 @@ export default function ContactPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { value: '< 24hrs', label: 'Response Time' },
-              { value: '8', label: 'Office Locations' },
+              { value: offices.length, label: 'Office Locations' },
               { value: '50+', label: 'Cities Served' },
               { value: 'Mon-Sat', label: 'Working Hours' },
             ].map((s) => (
@@ -431,13 +454,13 @@ export default function ContactPage() {
                     Quick Contact
                   </h3>
                   <div className="space-y-4">
-                    <a href="tel:+919999999999" className="flex items-start gap-3 group">
+                    <a href="tel:+9194584 10866" className="flex items-start gap-3 group">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${dark ? 'bg-yellow-400/20 group-hover:bg-yellow-400' : 'bg-yellow-100 group-hover:bg-yellow-400'}`}>
                         <span className={`text-lg transition-all ${dark ? 'group-hover:text-black' : 'group-hover:text-white'}`}>📞</span>
                       </div>
                       <div>
                         <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${dark ? 'text-gray-500' : 'text-gray-600'}`}>Helpline</p>
-                        <p className={`font-bold group-hover:${textSecondaryClass} transition-colors ${textPrimaryClass}`}>+91 99999 99999</p>
+                        <p className={`font-bold group-hover:${textSecondaryClass} transition-colors ${textPrimaryClass}`}>+91 94584 10866</p>
                       </div>
                     </a>
 
@@ -451,13 +474,13 @@ export default function ContactPage() {
                       </div>
                     </a>
 
-                    <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 group">
+                    <a href="https://wa.me/9194584 10866" target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 group">
                       <div className="w-10 h-10 rounded-lg bg-green-500/20 group-hover:bg-green-500 flex items-center justify-center flex-shrink-0 transition-all">
                         <span className="text-lg group-hover:text-white transition-all">💬</span>
                       </div>
                       <div>
                         <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${dark ? 'text-gray-500' : 'text-gray-600'}`}>WhatsApp</p>
-                        <p className={`font-bold transition-colors ${textPrimaryClass}`}>+91 99999 99999</p>
+                        <p className={`font-bold transition-colors ${textPrimaryClass}`}>+91 94584 10866</p>
                       </div>
                     </a>
                   </div>
@@ -503,7 +526,7 @@ export default function ContactPage() {
           <div className="flex flex-wrap gap-3 mb-8 justify-center">
             {offices.map((office, i) => (
               <button
-                key={i}
+                key={office.id || office.city}
                 onClick={() => setActiveOffice(i)}
                 className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest border-2 rounded-lg transition-all duration-200 ${
                   activeOffice === i

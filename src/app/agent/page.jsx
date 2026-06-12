@@ -184,6 +184,7 @@ export default function AgentPage() {
       // Open WhatsApp with all details pre-filled
       openWhatsApp(form);
 
+      window.dispatchEvent(new Event("agentsUpdated"));
       setSubmitted(true);
     } catch (err) {
       setError("Network error. Please try again.");

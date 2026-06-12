@@ -1,0 +1,120 @@
+import jwt from 'jsonwebtoken';
+import pool from '@/lib/db';
+
+const JWT_SECRET =
+  process.env.NEXT_PUBLIC_JWT_SECRET ||
+  process.env.JWT_SECRET ||
+  'fallback-secret';
+
+export function signAgentToken(agent) {
+  return jwt.sign(
+    { id: agent.id, email: agent.email, role: 'agent', city: agent.city },
+    JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRY || '7d' }
+  );
+}
+
+export function verifyBearerToken(req, expectedRole) {
+  const header = req.headers.get('authorization') || '';
+  const cookieName =
+    expectedRole === 'agent' ? 'agent-auth-token' : 'auth-token';
+  const cookieToken = req.cookies?.get?.(cookieName)?.value || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : cookieToken;
+
+  if (!token) return null;
+
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    if (expectedRole && payload.role !== expectedRole) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+export async function requireAgent(req) {
+  const payload = verifyBearerToken(req, 'agent');
+  if (!payload?.id) return null;
+
+  const result = await pool.query(
+    `SELECT id, name, email, phone, city, state, occupation, agent_type,
+            status, login_enabled, must_change_password, last_login_at, created_at
+       FROM agents
+      WHERE id = $1 AND login_enabled = TRUE AND status = 'Approved'`,
+    [payload.id]
+  );
+
+  return result.rows[0] || null;
+}
+
+export function requireAdmin(req) {
+  return verifyBearerToken(req, 'admin');
+}
+
+export async function ensureAgentSchema() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS agents (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(150) NOT NULL,
+      email VARCHAR(255) NOT NULL,
+      phone VARCHAR(30) NOT NULL,
+      city VARCHAR(100),
+      state VARCHAR(100),
+      occupation VARCHAR(150),
+      agent_type VARCHAR(100),
+      experience VARCHAR(100),
+      network VARCHAR(100),
+      message TEXT,
+      status VARCHAR(30) DEFAULT 'Pending',
+      created_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+
+  const alters = [
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS login_enabled BOOLEAN DEFAULT FALSE`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS password_hash TEXT`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS must_change_password BOOLEAN DEFAULT FALSE`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS approved_at TIMESTAMP`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS approved_by VARCHAR(255)`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW()`,
+  ];
+
+  for (const sql of alters) {
+    await pool.query(sql);
+  }
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS agent_leads (
+      id SERIAL PRIMARY KEY,
+      agent_id INTEGER NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
+      city VARCHAR(100) NOT NULL,
+      client_name VARCHAR(150) NOT NULL,
+      client_phone VARCHAR(30) NOT NULL,
+      client_email VARCHAR(255),
+      service_type VARCHAR(120),
+      lead_type VARCHAR(120),
+      status VARCHAR(30) DEFAULT 'New',
+      follow_up_date DATE,
+      notes TEXT,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS agent_schedule (
+      id SERIAL PRIMARY KEY,
+      agent_id INTEGER NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
+      city VARCHAR(100) NOT NULL,
+      title VARCHAR(180) NOT NULL,
+      schedule_date DATE NOT NULL,
+      schedule_time VARCHAR(30),
+      type VARCHAR(80),
+      status VARCHAR(30) DEFAULT 'Planned',
+      notes TEXT,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+}
