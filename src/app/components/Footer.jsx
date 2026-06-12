@@ -108,14 +108,14 @@ export default function Footer() {
               <div className="flex items-start gap-4">
                 <div className="w-1 h-10 rounded-full shrink-0" style={{ backgroundColor: themeYellow }} />
                 <p className={`text-sm font-medium leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
-                  Sector 18, Noida,<br />Uttar Pradesh, India
+                  MTBOSS CONSTRUCTION PVT. LTD.,<br />Uttar Pradesh, India
                 </p>
               </div>
               <a href="mailto:info@mtboss.in" className={`block text-sm font-black hover:text-[#facc15] transition-colors ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                 info@mtboss.in
               </a>
               <a href="tel:+911234567890" className={`block text-sm font-black hover:text-[#facc15] transition-colors ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-                +91 12345 67890
+                +91 94584 10866
               </a>
             </div>
           </div>

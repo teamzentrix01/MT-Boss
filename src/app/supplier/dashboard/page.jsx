@@ -432,7 +432,7 @@ export default function SupplierDashboard() {
                   {openEnquiries.length > 0 && (
                     <div style={{ marginBottom: '2rem' }}>
                       <h3 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted, marginBottom: '1rem' }}>
-                        🟡 Open Enquiries ({openEnquiries.length})
+                        🟡 Open Enquiries ({openEnquiries.length}) 
                       </h3>
                       <div className="sd-grid">
                         {openEnquiries.map(e => <EnquiryCard key={e.id} e={e} mode="open" />)}
