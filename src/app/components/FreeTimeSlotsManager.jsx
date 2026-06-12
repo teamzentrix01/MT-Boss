@@ -13,6 +13,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [filterCity, setFilterCity] = useState('all');
+  const [editingSlot, setEditingSlot] = useState(null);
 
   const [formData, setFormData] = useState({
     quick_service_id: '',
@@ -30,7 +31,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
   async function fetchData() {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       
       // Fetch free slots
       const slotsRes = await fetch(`/api/free-slots${filterCity !== 'all' ? `?city=${filterCity}` : ''}`, {
@@ -63,9 +64,9 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/free-slots', {
-        method: 'POST',
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const res = await fetch(editingSlot ? `/api/free-slots/${editingSlot.id}` : '/api/free-slots', {
+        method: editingSlot ? 'PATCH' : 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -75,8 +76,9 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
 
       const data = await res.json();
       if (data.success) {
-        alert('Free slot created successfully!');
+        alert(editingSlot ? 'Free slot updated successfully!' : 'Free slot created successfully!');
         setShowForm(false);
+        setEditingSlot(null);
         setFormData({
           quick_service_id: '',
           slot_date: '',
@@ -97,7 +99,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
 
   async function handleToggleAvailability(slotId, currentStatus) {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       const res = await fetch(`/api/free-slots/${slotId}`, {
         method: 'PATCH',
         headers: {
@@ -121,7 +123,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
     if (!confirm('Are you sure you want to delete this slot?')) return;
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       const res = await fetch(`/api/free-slots/${slotId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
@@ -135,7 +137,34 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
     }
   }
 
+  function handleEditSlot(slot) {
+    setEditingSlot(slot);
+    setFormData({
+      quick_service_id: String(slot.quick_service_id || ''),
+      slot_date: slot.slot_date ? String(slot.slot_date).split('T')[0] : '',
+      slot_start: String(slot.slot_start || '08:00').slice(0, 5),
+      slot_end: String(slot.slot_end || '10:00').slice(0, 5),
+      city: slot.city || '',
+      max_bookings: slot.max_bookings || 1,
+    });
+    setShowForm(true);
+  }
+
+  function resetForm() {
+    setEditingSlot(null);
+    setShowForm(false);
+    setFormData({
+      quick_service_id: '',
+      slot_date: '',
+      slot_start: '08:00',
+      slot_end: '10:00',
+      city: '',
+      max_bookings: 1,
+    });
+  }
+
   const getTodayStr = () => new Date().toISOString().split('T')[0];
+  const cityOptions = [...new Set(slots.map((slot) => slot.city).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
   return (
     <>
@@ -259,14 +288,16 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
       <div>
         <div className="section-header">
           <h3 style={{ fontSize: '0.875rem', fontWeight: '700' }}>Free Time Slots Management</h3>
-          <button onClick={() => setShowForm(!showForm)} className="btn-primary">
+          <button onClick={() => showForm ? resetForm() : setShowForm(true)} className="btn-primary">
             {showForm ? '✕ Cancel' : '+ Create Slot'}
           </button>
         </div>
 
         {showForm && (
           <div className="form-container">
-            <h4 style={{ fontSize: '0.8125rem', fontWeight: '700', marginBottom: '1rem' }}>Create New Free Slot</h4>
+            <h4 style={{ fontSize: '0.8125rem', fontWeight: '700', marginBottom: '1rem' }}>
+              {editingSlot ? 'Edit Free Slot' : 'Create New Free Slot'}
+            </h4>
             
             <div className="form-grid">
               <div className="form-group">
@@ -290,7 +321,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
                 <input
                   type="text"
                   className="form-input"
-                  placeholder="e.g., Delhi"
+                  placeholder="e.g., Moradabad"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                 />
@@ -340,7 +371,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
             </div>
 
             <button onClick={handleCreateSlot} className="btn-primary" style={{ width: '100%' }}>
-              Create Slot
+              {editingSlot ? 'Save Slot' : 'Create Slot'}
             </button>
           </div>
         )}
@@ -355,11 +386,9 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
               style={{ width: '200px' }}
             >
               <option value="all">All Cities</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Mumbai">Mumbai</option>
-              <option value="Bangalore">Bangalore</option>
-              <option value="Hyderabad">Hyderabad</option>
-              <option value="Chennai">Chennai</option>
+              {cityOptions.map((city) => (
+                <option key={city} value={city}>{city}</option>
+              ))}
             </select>
           </div>
 
@@ -401,7 +430,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
                           }
                           return (
                             <span className={`status-badge ${slot.is_available ? 'status-available' : 'status-booked'}`}>
-                              {slot.is_available ? 'Available' : 'Unavailable'}
+                              {slot.is_available ? 'Open' : 'Closed'}
                             </span>
                           );
                         })()}
@@ -412,7 +441,13 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
                             onClick={() => handleToggleAvailability(slot.id, slot.is_available)}
                             className="btn-small btn-toggle"
                           >
-                            {slot.is_available ? 'Disable' : 'Enable'}
+                            {slot.is_available ? 'Close' : 'Open'}
+                          </button>
+                          <button
+                            onClick={() => handleEditSlot(slot)}
+                            className="btn-small btn-toggle"
+                          >
+                            Edit
                           </button>
                           <button
                             onClick={() => handleDeleteSlot(slot.id)}
