@@ -17,7 +17,13 @@ export async function POST(req, { params }) {
     let userId;
     try {
       const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret');
-      userId = decoded.id;
+      const rawId = decoded.id;
+      if (!rawId || rawId === 0) {
+        userId = null;
+      } else {
+        const userCheck = await pool.query('SELECT id FROM users WHERE id = $1', [rawId]);
+        userId = userCheck.rows.length > 0 ? rawId : null;
+      }
     } catch (err) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
@@ -25,12 +31,12 @@ export async function POST(req, { params }) {
     const { id: bookingId } = await params;
     const { user_paid_amount, user_note } = await req.json();
  
-    // Update booking
+    // Update booking — if user_id is NULL (e.g., admin/guest), match by booking id only
     const result = await pool.query(
       `UPDATE service_bookings 
        SET status = 'COMPLETED', user_status = 'COMPLETED', payment_status = 'CONFIRMED',
            user_paid_amount = $1, user_notes = $2, completed_at = NOW()
-       WHERE id = $3 AND user_id = $4
+       WHERE id = $3 AND (user_id = $4 OR ($4::INTEGER IS NULL AND user_id IS NULL))
        RETURNING id, vendor_id, total_amount`,
       [user_paid_amount, user_note, bookingId, userId]
     );
