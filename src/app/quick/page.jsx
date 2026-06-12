@@ -196,7 +196,14 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
     setSlotsLoading(true);
     fetch(`/api/free-slots?city=${encodeURIComponent(form.city)}&service_id=${service.id}&date=${getTodayStr()}`)
       .then((r) => r.json())
-      .then((d) => { if (d.success) setFreeSlots(d.data); })
+      .then((d) => {
+        if (d.success) {
+          setFreeSlots(d.data);
+          setSelectedFreeSlot((current) => (
+            current && d.data.some((slot) => slot.id === current.id) ? current : null
+          ));
+        }
+      })
       .catch(() => {})
       .finally(() => setSlotsLoading(false));
   }, [slotType, form.city, service.id]);
