@@ -20,6 +20,7 @@ import CalculatorManager from '../components/CalculatorManager';
 import RevenueManager from '../components/RevenueManager';
 import HeroBannersManager from '../components/HeroBannersManager';
 import JobsManager from '../components/JobsManager';
+import OfficeLocationsManager from '../components/OfficeLocationsManager';
 
 function getResumeActionUrl(resumeUrl, mode) {
   if (!resumeUrl) return '';
@@ -218,6 +219,7 @@ function AdminDashboard() {
     { id: 'hero-banners',              label: 'Hero Banners',              icon: '🖼️' },
     { id: 'career-enquiries',           label: 'Career Enquiry',            icon: '✉'  },
     { id: 'jobs',                       label: 'New Jobs',                  icon: '💼' },
+    { id: 'office-locations',           label: 'Office Locations',          icon: 'LOC' },
     { id: 'submissions',                label: 'Contact Forms',             icon: '✉'  },
     { id: 'franchises',                 label: 'Franchises',                icon: '🏢' },
     { id: 'free-slots',                 label: 'Free Time Slots',           icon: '📅' },
@@ -932,6 +934,7 @@ function AdminDashboard() {
           {activeTab === 'calculator' && <CalculatorManager isDarkMode={isDarkMode} />}
           {activeTab === 'hero-banners' && <HeroBannersManager isDarkMode={isDarkMode} />}
           {activeTab === 'jobs' && <JobsManager isDarkMode={isDarkMode} />}
+          {activeTab === 'office-locations' && <OfficeLocationsManager isDarkMode={isDarkMode} />}
 
         </div>
 

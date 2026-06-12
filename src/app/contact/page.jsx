@@ -29,7 +29,7 @@ function useInView(threshold = 0.1) {
   return [ref, inView];
 }
 
-const officeCities = [
+const DEFAULT_OFFICES = [
   'Moradabad',
   'Bareilly',
   'Meerut',
@@ -38,9 +38,8 @@ const officeCities = [
   'Gurgaon',
   'Haldwani',
   'Dehradun',
-];
-
-const offices = officeCities.map((city) => ({
+].map((city, index) => ({
+  id: `default-${index}`,
   city,
   address: `MTBOSS Office, ${city}, India`,
   phone: '+91 94584 10866',
@@ -75,6 +74,7 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
+  const [offices, setOffices] = useState(DEFAULT_OFFICES);
 
   const [form, setForm] = useState({
     name: '',
@@ -87,6 +87,29 @@ export default function ContactPage() {
 
   const [formRef, formVisible] = useInView(0.1);
   const [infoRef, infoVisible] = useInView(0.1);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const loadOffices = async () => {
+      try {
+        const res = await fetch('/api/office-locations');
+        const data = await res.json();
+        if (!ignore && data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setOffices(data.data.map((office) => ({
+            ...office,
+            mapUrl: office.map_url || office.mapUrl || `https://www.google.com/maps?q=${encodeURIComponent(`${office.city}, India`)}&output=embed`,
+          })));
+          setActiveOffice(0);
+        }
+      } catch (err) {
+        console.error('Office locations load error:', err);
+      }
+    };
+
+    loadOffices();
+    return () => { ignore = true; };
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -216,7 +239,7 @@ export default function ContactPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { value: '< 24hrs', label: 'Response Time' },
-              { value: '8', label: 'Office Locations' },
+              { value: offices.length, label: 'Office Locations' },
               { value: '50+', label: 'Cities Served' },
               { value: 'Mon-Sat', label: 'Working Hours' },
             ].map((s) => (
@@ -503,7 +526,7 @@ export default function ContactPage() {
           <div className="flex flex-wrap gap-3 mb-8 justify-center">
             {offices.map((office, i) => (
               <button
-                key={i}
+                key={office.id || office.city}
                 onClick={() => setActiveOffice(i)}
                 className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest border-2 rounded-lg transition-all duration-200 ${
                   activeOffice === i
