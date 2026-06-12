@@ -23,21 +23,24 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
   const router = useRouter();
 
   const [step, setStep] = useState(initialStep || 1); // 1 = details, 2 = confirm, 3 = success
-  const [form, setForm] = useState(initialForm || {
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
-    city: '',
-    pincode: '',
-    propertyType: '',
-    propertyTypeOther: '',
-    date: '',
-    timeSlot: '',
-    description: '',
-    latitude: null,
-    longitude: null,
-    locationUrl: '',
+  const [form, setForm] = useState(() => {
+    const defaultFields = {
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      city: '',
+      pincode: '',
+      propertyType: '',
+      propertyTypeOther: '',
+      date: '',
+      timeSlot: '',
+      description: '',
+      latitude: null,
+      longitude: null,
+      locationUrl: '',
+    };
+    return initialForm ? { ...defaultFields, ...initialForm } : defaultFields;
   });
 
   const [errors, setErrors] = useState({});
@@ -48,8 +51,8 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
   const [selectedFreeSlot, setSelectedFreeSlot] = useState(initialSelectedFreeSlot || null);
   const [slotsLoading, setSlotsLoading] = useState(false);
 
-  // ✅ FIX: Use admin_base_price or fallback to base_price
-  const basePrice = service.admin_base_price || service.base_price || 199;
+  // ✅ FIX: Use admin_base_price or fallback to base_price — force number to avoid string concat
+  const basePrice = parseFloat(service.admin_base_price || service.base_price || 199);
   const taxAmount = Math.round((basePrice * 18) / 100);
   const totalAmount = basePrice + taxAmount;
 
@@ -346,10 +349,10 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
               <div className="grid grid-cols-2 gap-3">
                 <Field label="City *" error={errors.city} isDark={isDark}>
                   <input
-                    className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${input}`}
+                    className={`w-full px-3 py-2.5 text-sm border outline-none transition-all opacity-70 cursor-not-allowed ${input}`}
                     placeholder="e.g. Delhi"
                     value={form.city}
-                    onChange={(e) => set('city', e.target.value)}
+                    readOnly
                   />
                 </Field>
                 <Field label="Pincode *" error={errors.pincode} isDark={isDark}>
@@ -639,6 +642,146 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
   );
 }
 
+// ─── Location Check Modal ──────────────────────────────────────────────────────
+function LocationCheckModal({ service, isDark, onClose, onProceed }) {
+  const [cities, setCities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCity, setSelectedCity] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    async function fetchCities() {
+      try {
+        const res = await fetch(`/api/quick-services/${service.id}/cities`);
+        const data = await res.json();
+        if (active) {
+          if (data.success) {
+            setCities(data.cities);
+            if (data.cities.length > 0) {
+              setSelectedCity(data.cities[0]);
+            }
+          } else {
+            setError(data.error || 'Failed to check service availability.');
+          }
+        }
+      } catch (err) {
+        if (active) {
+          setError('Could not connect to service. Please try again.');
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    fetchCities();
+    return () => { active = false; };
+  }, [service.id]);
+
+  const overlay = isDark ? 'bg-black/80' : 'bg-zinc-900/60';
+  const modal = isDark ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-white border-zinc-200 text-zinc-900';
+  const select = isDark
+    ? 'bg-zinc-900 border-zinc-700 text-white focus:border-[#facc15]'
+    : 'bg-zinc-50 border-zinc-300 text-zinc-900 focus:border-zinc-900';
+  const divider = isDark ? 'border-zinc-800' : 'border-zinc-100';
+
+  return (
+    <div
+      className={`backdrop-blur-sm ${overlay}`}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 99999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        className={`relative w-full border shadow-2xl flex flex-col ${modal}`}
+        style={{ maxWidth: '440px', width: '100%', zIndex: 100000 }}
+      >
+        <div className={`flex items-center justify-between px-6 py-4 border-b ${divider}`}>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">{service.icon}</span>
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#facc15]">Availability Check</p>
+              <h2 className="text-lg font-black uppercase tracking-tight">{service.label}</h2>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className={`w-8 h-8 flex items-center justify-center border transition-all font-black text-sm ${
+              isDark ? 'border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]' : 'border-zinc-300 text-zinc-400 hover:border-zinc-900 hover:text-zinc-900'
+            }`}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="p-6 space-y-4 text-center">
+          {loading ? (
+            <p className="text-sm font-black uppercase tracking-widest animate-pulse text-[#facc15] py-4">Checking Availability...</p>
+          ) : error ? (
+            <div className="space-y-4">
+              <p className="text-sm text-red-500 font-bold">{error}</p>
+              <button
+                onClick={onClose}
+                className="w-full py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-yellow-300 transition-all"
+              >
+                Close
+              </button>
+            </div>
+          ) : cities.length === 0 ? (
+            <div className="space-y-4 py-2">
+              <p className="text-3xl">⚠️</p>
+              <h3 className="text-base font-black uppercase text-[#facc15] tracking-wide">Service Not Available</h3>
+              <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                We are sorry! This service is currently not available in any location because there are no active technicians registered. Please try again later.
+              </p>
+              <button
+                onClick={onClose}
+                className="w-full py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-yellow-300 transition-all"
+              >
+                Close
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4 text-left">
+              <div>
+                <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                  Choose Your City *
+                </label>
+                <select
+                  className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${select}`}
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                >
+                  {cities.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                onClick={() => onProceed(selectedCity)}
+                className="w-full py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-yellow-300 transition-all"
+              >
+                Proceed to Book →
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 function SectionTitle({ children, isDark }) {
   return (
@@ -671,6 +814,8 @@ export default function AllQuickServicesPage() {
   const [loading, setLoading] = useState(true);
   // Stores saved form data that was pending before the user logged in
   const [pendingInitialData, setPendingInitialData] = useState(null);
+  const [checkLocationService, setCheckLocationService] = useState(null);
+  const [selectedCity, setSelectedCity] = useState('');
 
   // Dark mode detection
   useEffect(() => {
@@ -776,7 +921,7 @@ export default function AllQuickServicesPage() {
                 </p>
 
                 <button
-                  onClick={() => setSelectedService(s)}
+                  onClick={() => setCheckLocationService(s)}
                   className={`w-full py-2.5 text-[9px] font-black uppercase tracking-[0.2em] border transition-all ${btn}`}
                 >
                   Book Service
@@ -791,6 +936,20 @@ export default function AllQuickServicesPage() {
         </div>
       </section>
 
+      {/* ✅ Location Check Modal */}
+      {checkLocationService && (
+        <LocationCheckModal
+          service={checkLocationService}
+          isDark={isDark}
+          onClose={() => setCheckLocationService(null)}
+          onProceed={(city) => {
+            setSelectedCity(city);
+            setSelectedService(checkLocationService);
+            setCheckLocationService(null);
+          }}
+        />
+      )}
+
       {/* ✅ Modal - INTEGRATED IN SAME FILE */}
       {selectedService && (
         <BookingModal
@@ -798,7 +957,7 @@ export default function AllQuickServicesPage() {
           isDark={isDark}
           onClose={() => { setSelectedService(null); setPendingInitialData(null); }}
           onSuccess={() => { setSelectedService(null); setPendingInitialData(null); }}
-          initialForm={pendingInitialData?.form}
+          initialForm={pendingInitialData?.form || { city: selectedCity }}
           initialStep={pendingInitialData?.step}
           initialSlotType={pendingInitialData?.slotType}
           initialSelectedFreeSlot={pendingInitialData?.selectedFreeSlot}

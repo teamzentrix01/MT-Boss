@@ -17,7 +17,16 @@ export async function POST(req) {
     let userId;
     try {
       const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret');
-      userId = decoded.id;
+      const rawId = decoded.id;
+
+      // id = 0 means admin hardcoded login — not a real users table row
+      if (!rawId || rawId === 0) {
+        userId = null;
+      } else {
+        // Verify user actually exists in users table to avoid FK violation
+        const userCheck = await pool.query('SELECT id FROM users WHERE id = $1', [rawId]);
+        userId = userCheck.rows.length > 0 ? rawId : null;
+      }
     } catch (err) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
@@ -50,24 +59,35 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid phone number' }, { status: 400 });
     }
  
+    // ── Ensure user_id is nullable (safe to run repeatedly, idempotent) ──
+    try {
+      await pool.query(
+        `ALTER TABLE service_bookings ALTER COLUMN user_id DROP NOT NULL`
+      );
+    } catch (_) {
+      // Already nullable — ignore
+    }
+
     // Get service base price
     const serviceResult = await pool.query(
       'SELECT admin_base_price, base_price FROM quick_services WHERE id = $1',
       [quick_service_id]
     );
- 
+
     if (serviceResult.rows.length === 0) {
       return NextResponse.json({ error: 'Service not found' }, { status: 404 });
     }
- 
+
     const basePrice = serviceResult.rows[0].admin_base_price || serviceResult.rows[0].base_price || 199;
     const visitFee = 0;
     const taxAmount = Math.round((basePrice * 18) / 100);
     const totalAmount = basePrice + visitFee + taxAmount;
- 
+
     // Generate booking reference
     const bookingReference = `BK${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
 
+<<<<<<< HEAD
+=======
     if (slot_type === 'free') {
       if (!time_slot_id) {
         return NextResponse.json({ error: 'Please select a free admin slot' }, { status: 400 });
@@ -94,6 +114,7 @@ export async function POST(req) {
       }
     }
  
+>>>>>>> a78b05f5d2903e841e020c73959b2068df78f401
     // Create booking
     const bookingResult = await pool.query(
       `INSERT INTO service_bookings (
@@ -109,7 +130,7 @@ export async function POST(req) {
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, NOW()
       ) RETURNING id, booking_reference, total_amount`,
       [
-        bookingReference, userId, quick_service_id, user_name, user_phone, user_email,
+        bookingReference, userId || null, quick_service_id, user_name, user_phone, user_email,
         service_address, service_city, service_pincode, property_type,
         booking_date, booking_time, slot_type, time_slot_id,
         user_latitude, user_longitude, location_map_url,

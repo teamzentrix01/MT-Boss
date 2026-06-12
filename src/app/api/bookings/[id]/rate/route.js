@@ -17,7 +17,13 @@ export async function POST(req, { params }) {
     let userId;
     try {
       const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret');
-      userId = decoded.id;
+      const rawId = decoded.id;
+      if (!rawId || rawId === 0) {
+        userId = null;
+      } else {
+        const userCheck = await pool.query('SELECT id FROM users WHERE id = $1', [rawId]);
+        userId = userCheck.rows.length > 0 ? rawId : null;
+      }
     } catch (err) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
@@ -29,9 +35,9 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: 'Invalid rating (1-5)' }, { status: 400 });
     }
  
-    // Get booking details
+    // Get booking details — handle nullable user_id
     const bookingResult = await pool.query(
-      'SELECT vendor_id FROM service_bookings WHERE id = $1 AND user_id = $2',
+      'SELECT vendor_id FROM service_bookings WHERE id = $1 AND (user_id = $2 OR ($2::INTEGER IS NULL AND user_id IS NULL))',
       [bookingId, userId]
     );
  
