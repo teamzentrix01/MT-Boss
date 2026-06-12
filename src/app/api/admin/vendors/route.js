@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import jwt from 'jsonwebtoken';
+import { requireAdmin } from '@/lib/agent-auth';
 
 // ═══════════════════════════════════════════════════════════════════════
 // VERIFY ADMIN TOKEN
@@ -30,7 +31,7 @@ function verifyAdminToken(req) {
 
 export async function GET(req) {
   try {
-    const admin = verifyAdminToken(req);
+    const admin = await requireAdmin(req);
     if (!admin) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -70,7 +71,7 @@ export async function GET(req) {
 
 export async function PUT(req) {
   try {
-    const admin = verifyAdminToken(req);
+    const admin = await requireAdmin(req);
     if (!admin) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -262,7 +263,7 @@ try {
 
 export async function POST(req) {
   try {
-    const admin = verifyAdminToken(req);
+    const admin = await requireAdmin(req);
     if (!admin) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -315,7 +316,7 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   try {
-    const admin = verifyAdminToken(req);
+    const admin = await requireAdmin(req);
     if (!admin) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -368,7 +369,7 @@ export async function PATCH(req) {
 
 export async function DELETE(req) {
   try {
-    const admin = verifyAdminToken(req);
+    const admin = await requireAdmin(req);
     if (!admin) {
       return NextResponse.json(
         { error: 'Unauthorized' },

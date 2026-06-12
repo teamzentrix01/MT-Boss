@@ -5,6 +5,10 @@ import jwt from 'jsonwebtoken';
 
 const ADMIN_EMAIL = 'admin@gmail.com';
 const ADMIN_PASSWORD = '123456';
+const JWT_SECRET =
+  process.env.NEXT_PUBLIC_JWT_SECRET ||
+  process.env.JWT_SECRET ||
+  'fallback-secret';
 
 export async function POST(req) {
   try {
@@ -18,7 +22,7 @@ export async function POST(req) {
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       const token = jwt.sign(
         { id: 0, email: ADMIN_EMAIL, role: 'admin' },
-        process.env.NEXT_PUBLIC_JWT_SECRET,
+        JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRY || '7d' }
       );
       return NextResponse.json({
@@ -59,7 +63,7 @@ export async function POST(req) {
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: 'user' },
-      process.env.NEXT_PUBLIC_JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRY || '7d' }
     );
 

@@ -18,8 +18,22 @@ export default function AgentsPage() {
   const [search, setSearch]       = useState('');
   const [filter, setFilter]       = useState('All');
   const [updating, setUpdating]   = useState(false);
+  const [tempLogin, setTempLogin] = useState(null);
+  const [workspace, setWorkspace] = useState(null);
+  const [workspaceLoading, setWorkspaceLoading] = useState(false);
+  const [showLeads, setShowLeads] = useState(false);
+  const [selectedLead, setSelectedLead] = useState(null);
 
-  useEffect(() => { fetchAgents(); }, []);
+  useEffect(() => {
+    fetchAgents();
+    const onAgentsUpdated = () => fetchAgents();
+    window.addEventListener('agentsUpdated', onAgentsUpdated);
+    const interval = setInterval(fetchAgents, 15000);
+    return () => {
+      window.removeEventListener('agentsUpdated', onAgentsUpdated);
+      clearInterval(interval);
+    };
+  }, []);
 
   const fetchAgents = async () => {
     try {
@@ -38,19 +52,71 @@ export default function AgentsPage() {
 
   const updateStatus = async (id, status) => {
     setUpdating(true);
+    setTempLogin(null);
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch('/api/agents', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status }),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          id,
+          status,
+          createLogin: status === 'Approved' && !agents.find(a => a.id === id)?.login_enabled,
+        }),
       });
       const data = await res.json();
       if (data.success) {
-        setAgents(prev => prev.map(a => a.id === id ? { ...a, status } : a));
-        if (selected?.id === id) setSelected({ ...selected, status });
+        setAgents(prev => prev.map(a => a.id === id ? { ...a, ...data.data } : a));
+        if (selected?.id === id) setSelected({ ...selected, ...data.data });
+        if (data.temporaryPassword) {
+          setTempLogin({
+            email: data.data.email,
+            password: data.temporaryPassword,
+            city: data.data.city,
+          });
+        }
       }
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const openAgent = async (agent) => {
+    setSelected(agent);
+    setWorkspace(null);
+    setWorkspaceLoading(true);
+    setShowLeads(false);
+    setSelectedLead(null);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/admin/agents/${agent.id}/workspace`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) setWorkspace(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setWorkspaceLoading(false);
+    }
+  };
+
+  const updateAdminLead = async (agentId, leadId, payload) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`/api/admin/agents/${agentId}/leads/${leadId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setWorkspace(prev => prev ? {
+        ...prev,
+        leads: prev.leads.map(lead => lead.id === leadId ? data.data : lead),
+      } : prev);
     }
   };
 
@@ -339,7 +405,7 @@ export default function AgentsPage() {
                   {filtered.map(agent => {
                     const st = statusStyle[agent.status] || statusStyle.Pending;
                     return (
-                      <tr key={agent.id} onClick={() => setSelected(agent)}>
+                      <tr key={agent.id} onClick={() => openAgent(agent)}>
                         <td>
                           <div className="ag-name">{agent.name}</div>
                           <div className="ag-muted">{agent.occupation}</div>
@@ -365,7 +431,7 @@ export default function AgentsPage() {
                         <td>
                           <button
                             className="ag-view-btn"
-                            onClick={e => { e.stopPropagation(); setSelected(agent); }}
+                            onClick={e => { e.stopPropagation(); openAgent(agent); }}
                           >
                             View
                           </button>
@@ -382,11 +448,11 @@ export default function AgentsPage() {
 
       {/* Detail Modal */}
       {selected && (
-        <div className="ag-backdrop" onClick={() => setSelected(null)}>
+        <div className="ag-backdrop" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setSelectedLead(null); }}>
           <div className="ag-modal" onClick={e => e.stopPropagation()}>
             <div className="ag-modal-head">
               <span className="ag-modal-title">Agent Application</span>
-              <button className="ag-modal-close" onClick={() => setSelected(null)}>✕</button>
+              <button className="ag-modal-close" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setSelectedLead(null); }}>x</button>
             </div>
 
             <div className="ag-modal-grid">
@@ -398,6 +464,7 @@ export default function AgentsPage() {
                 ['City',        selected.city],
                 ['State',       selected.state],
                 ['Agent Type',  selected.agent_type],
+                ['Login',       selected.login_enabled ? 'Enabled' : 'Not enabled'],
                 ['Experience',  selected.experience || '—'],
                 ['Network',     selected.network || '—'],
                 ['Applied On',  new Date(selected.created_at).toLocaleDateString()],
@@ -416,16 +483,33 @@ export default function AgentsPage() {
               </>
             )}
 
+            {tempLogin && (
+              <div style={{ marginBottom: '1rem', padding: '0.875rem', border: '1px solid #facc15', borderRadius: 6, background: 'rgba(250,204,21,0.08)' }}>
+                <div className="ag-field-label" style={{ color: '#ca8a04' }}>Agent Login Created</div>
+                <div className="ag-field-value" style={{ marginTop: 4 }}>Email: {tempLogin.email}</div>
+                <div className="ag-field-value">Temporary Password: {tempLogin.password}</div>
+                <div className="ag-muted" style={{ marginTop: 6 }}>
+                  City locked to {tempLogin.city}. Email is sent when SMTP is configured.
+                </div>
+              </div>
+            )}
+
             {/* Status Changer */}
             <div className="ag-status-row">
               <span className="ag-status-label">Status:</span>
+              {selected.status === 'Approved' && (
+                <span className="ag-status-label" style={{ color: '#22c55e', fontWeight: 700 }}>
+                  Approved agents are locked
+                </span>
+              )}
               {STATUS_OPTIONS.map(s => {
                 const st = statusStyle[s];
                 const isSelected = selected.status === s;
+                const locked = selected.status === 'Approved' && s !== 'Approved';
                 return (
                   <button
                     key={s}
-                    disabled={updating}
+                    disabled={updating || locked}
                     className={`ag-status-opt${isSelected ? ' sel' : ''}`}
                     style={isSelected ? { background: st.tx, borderColor: st.tx } : {}}
                     onClick={() => updateStatus(selected.id, s)}
@@ -436,8 +520,145 @@ export default function AgentsPage() {
               })}
             </div>
 
+            {workspaceLoading ? (
+              <div className="ag-modal-msg">Loading agent workspace...</div>
+            ) : workspace && (
+              <div style={{ marginTop: '1rem' }}>
+                <div className="ag-field-label" style={{ marginBottom: '0.5rem' }}>Agent Workspace Preview</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.875rem' }}>
+                  <div className="ag-stat">
+                    <div className="ag-stat-label">Leads</div>
+                    <div className="ag-stat-value">{workspace.leads?.length || 0}</div>
+                  </div>
+                  <div className="ag-stat">
+                    <div className="ag-stat-label">Schedule</div>
+                    <div className="ag-stat-value">{workspace.schedule?.length || 0}</div>
+                  </div>
+                </div>
+
+                {(workspace.leads?.length || 0) > 0 && (
+                  <div className="ag-modal-msg">
+                    <strong>Latest Leads:</strong>
+                    {workspace.leads.slice(0, 4).map(lead => (
+                      <div key={lead.id} style={{ marginTop: 6 }}>
+                        {lead.client_name} - {lead.client_phone} - {lead.status} - {lead.city}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', marginBottom: '0.75rem' }}>
+                  <button
+                    type="button"
+                    className="ag-close-btn"
+                    onClick={() => setShowLeads(v => !v)}
+                  >
+                    {showLeads ? 'Hide Leads' : 'View Leads'}
+                  </button>
+                </div>
+
+                {showLeads && (
+                  <div className="ag-modal-msg">
+                    <strong>All Leads</strong>
+                    <div style={{ marginTop: '0.75rem', display: 'grid', gap: '0.5rem' }}>
+                      {(workspace.leads || []).length === 0 ? (
+                        <div>No leads yet.</div>
+                      ) : workspace.leads.map((lead) => (
+                      <div key={lead.id} style={{ padding: '0.6rem 0.75rem', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--surface)' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'start' }}>
+                            <div>
+                              <div style={{ fontWeight: 700, color: 'var(--text)' }}>{lead.client_name}</div>
+                              <div style={{ marginTop: 2 }}>{lead.client_phone}{lead.client_email ? ` · ${lead.client_email}` : ''}</div>
+                              <div style={{ marginTop: 2 }}>{lead.service_type || 'Service not set'}{lead.lead_type ? ` · ${lead.lead_type}` : ''}</div>
+                              <div style={{ marginTop: 2 }}>City: {lead.city}</div>
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                              <select
+                                value={lead.status}
+                                onChange={(e) => updateAdminLead(selected.id, lead.id, { status: e.target.value })}
+                                className="ag-close-btn"
+                                style={{ padding: '0.35rem 0.6rem', minWidth: 120 }}
+                              >
+                                {['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'].map((status) => (
+                                  <option key={status} value={status}>{status}</option>
+                                ))}
+                              </select>
+                              <button
+                                type="button"
+                                className="ag-close-btn"
+                                onClick={() => setSelectedLead(lead)}
+                              >
+                                View Details
+                              </button>
+                            </div>
+                          </div>
+                          {lead.follow_up_date && (
+                            <div style={{ marginTop: 2 }}>Follow-up: {new Date(lead.follow_up_date).toLocaleDateString('en-IN')}</div>
+                          )}
+                          {lead.notes && (
+                            <div style={{ marginTop: 4 }}>{lead.notes}</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {(workspace.schedule?.length || 0) > 0 && (
+                  <div className="ag-modal-msg">
+                    <strong>Upcoming Schedule:</strong>
+                    {workspace.schedule.slice(0, 4).map(item => (
+                      <div key={item.id} style={{ marginTop: 6 }}>
+                        {item.title} - {new Date(item.schedule_date).toLocaleDateString()} {item.schedule_time || ''} - {item.status}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="ag-modal-footer">
-              <button className="ag-close-btn" onClick={() => setSelected(null)}>Close</button>
+              <button className="ag-close-btn" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setSelectedLead(null); }}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedLead && (
+        <div className="ag-backdrop" style={{ zIndex: 60 }} onClick={() => setSelectedLead(null)}>
+          <div className="ag-modal" style={{ maxWidth: 460 }} onClick={e => e.stopPropagation()}>
+            <div className="ag-modal-head">
+              <span className="ag-modal-title">Lead Details</span>
+              <button className="ag-modal-close" onClick={() => setSelectedLead(null)}>x</button>
+            </div>
+
+            <div className="ag-modal-grid">
+              {[
+                ['Name', selectedLead.client_name],
+                ['Phone', selectedLead.client_phone],
+                ['Email', selectedLead.client_email || '—'],
+                ['Service', selectedLead.service_type || '—'],
+                ['Lead Type', selectedLead.lead_type || '—'],
+                ['Status', selectedLead.status],
+                ['City', selectedLead.city],
+                ['Follow Up', selectedLead.follow_up_date ? new Date(selectedLead.follow_up_date).toLocaleDateString('en-IN') : '—'],
+              ].map(([label, value]) => (
+                <div key={label}>
+                  <div className="ag-field-label">{label}</div>
+                  <div className="ag-field-value">{value}</div>
+                </div>
+              ))}
+            </div>
+
+            {selectedLead.notes && (
+              <>
+                <div className="ag-field-label" style={{ marginBottom: '0.375rem' }}>Notes</div>
+                <div className="ag-modal-msg" style={{ marginBottom: 0 }}>{selectedLead.notes}</div>
+              </>
+            )}
+
+            <div className="ag-modal-footer" style={{ marginTop: '1rem' }}>
+              <button className="ag-close-btn" onClick={() => setSelectedLead(null)}>Close</button>
             </div>
           </div>
         </div>

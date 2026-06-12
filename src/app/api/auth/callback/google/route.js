@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import jwt from 'jsonwebtoken';
 
+const JWT_SECRET =
+  process.env.NEXT_PUBLIC_JWT_SECRET ||
+  process.env.JWT_SECRET ||
+  'fallback-secret';
+
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get('code');
@@ -47,7 +52,7 @@ export async function GET(req) {
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role },
-      process.env.NEXT_PUBLIC_JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: '7d' }
     );
 

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import jwt from 'jsonwebtoken';
+import { requireAdmin } from '@/lib/agent-auth';
 
 function verifyAdminToken(req) {
   const authHeader = req.headers.get('Authorization');
@@ -22,7 +23,7 @@ async function ensureIsActiveColumn() {
 // GET — list all suppliers with earnings summary
 export async function GET(req) {
   try {
-    const admin = verifyAdminToken(req);
+    const admin = await requireAdmin(req);
     if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     await ensureIsActiveColumn();
@@ -63,7 +64,7 @@ export async function GET(req) {
 // PUT — approve / reject / activate / deactivate
 export async function PUT(req) {
   try {
-    const admin = verifyAdminToken(req);
+    const admin = await requireAdmin(req);
     if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     await ensureIsActiveColumn();
@@ -104,7 +105,7 @@ export async function PUT(req) {
 // GET commission summary for admin overview
 export async function PATCH(req) {
   try {
-    const admin = verifyAdminToken(req);
+    const admin = await requireAdmin(req);
     if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const today = new Date().toISOString().split('T')[0];
