@@ -1,9 +1,23 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
+async function ensureFreeSlotsColumns() {
+  await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS current_bookings INTEGER DEFAULT 0`);
+  await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS max_bookings INTEGER DEFAULT 1`);
+  await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS is_available BOOLEAN DEFAULT TRUE`);
+  await pool.query(`UPDATE free_time_slots SET current_bookings = 0 WHERE current_bookings IS NULL`);
+  await pool.query(`UPDATE free_time_slots SET max_bookings = 1 WHERE max_bookings IS NULL`);
+}
+
+function hasToken(req) {
+  return Boolean(req.headers.get('Authorization')?.split(' ')[1]);
+}
+
 // GET — user mode: city + service_id; admin mode: no params
 export async function GET(req) {
   try {
+    await ensureFreeSlotsColumns();
+
     const { searchParams } = new URL(req.url);
     const city      = searchParams.get('city');
     const serviceId = searchParams.get('service_id');
@@ -23,22 +37,28 @@ export async function GET(req) {
     let query, params;
 
     if (city && serviceId) {
-      // User mode: city-based slots, with matching-service slots shown first.
+      // User mode: only admin-open, upcoming, same-city, same-service slots.
       query = `${baseSelect}
         WHERE LOWER(TRIM(fts.city)) = LOWER(TRIM($1))
+          AND fts.quick_service_id = $2
           AND fts.is_available = TRUE
           AND COALESCE(fts.current_bookings, 0) < COALESCE(fts.max_bookings, 1)
           AND fts.slot_date::DATE >= $3::DATE
-        ORDER BY CASE WHEN fts.quick_service_id = $2 THEN 0 ELSE 1 END,
-                 fts.slot_date ASC, fts.slot_start ASC
+        ORDER BY fts.slot_date ASC, fts.slot_start ASC
         LIMIT 10`;
       params = [city, serviceId, today];
     } else if (city && city !== 'all') {
+      if (!hasToken(req)) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
       query = `${baseSelect}
         WHERE LOWER(TRIM(fts.city)) = LOWER(TRIM($1))
         ORDER BY fts.slot_date DESC, fts.slot_start ASC`;
       params = [city];
     } else {
+      if (!hasToken(req)) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
       query = `${baseSelect}
         ORDER BY fts.slot_date DESC, fts.slot_start ASC`;
       params = [];
@@ -55,6 +75,11 @@ export async function GET(req) {
 // POST — admin creates a new free slot
 export async function POST(req) {
   try {
+    if (!hasToken(req)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    await ensureFreeSlotsColumns();
+
     const { quick_service_id, slot_date, slot_start, slot_end, city, max_bookings = 1 } = await req.json();
 
     if (!quick_service_id || !slot_date || !slot_start || !slot_end || !city) {
@@ -63,10 +88,10 @@ export async function POST(req) {
 
     const result = await pool.query(
       `INSERT INTO free_time_slots
-         (quick_service_id, slot_date, slot_start, slot_end, city, max_bookings, is_available, created_at)
-       VALUES ($1, $2::DATE, $3, $4, $5, $6, TRUE, NOW())
+         (quick_service_id, slot_date, slot_start, slot_end, city, max_bookings, current_bookings, is_available, created_at)
+       VALUES ($1, $2::DATE, $3, $4, $5, $6, 0, TRUE, NOW())
        RETURNING *, TO_CHAR(slot_date::DATE, 'YYYY-MM-DD') AS slot_date`,
-      [quick_service_id, slot_date, slot_start, slot_end, city.trim(), max_bookings]
+      [quick_service_id, slot_date, slot_start, slot_end, city.trim(), Math.max(Number(max_bookings) || 1, 1)]
     );
 
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });

@@ -27,14 +27,14 @@ export async function GET(req) {
         city,
         is_available,
         max_bookings,
-        current_bookings,
+        COALESCE(current_bookings, 0) AS current_bookings,
         CONCAT(TO_CHAR(slot_start, 'HH12:MI AM'), ' – ', TO_CHAR(slot_end, 'HH12:MI AM')) as slot_display
        FROM free_time_slots
        WHERE quick_service_id = $1 
        AND slot_date = $2 
        AND city = $3 
        AND is_available = TRUE
-       AND current_bookings < max_bookings
+       AND COALESCE(current_bookings, 0) < COALESCE(max_bookings, 1)
        ORDER BY slot_start ASC`,
       [service_id, date, city]
     );
@@ -75,8 +75,8 @@ export async function POST(req) {
 
     const result = await pool.query(
       `INSERT INTO free_time_slots (
-        quick_service_id, slot_start, slot_end, slot_date, city, max_bookings, is_available
-      ) VALUES ($1, $2, $3, $4, $5, $6, TRUE)
+        quick_service_id, slot_start, slot_end, slot_date, city, max_bookings, current_bookings, is_available
+      ) VALUES ($1, $2, $3, $4, $5, $6, 0, TRUE)
       RETURNING 
         id,
         quick_service_id,

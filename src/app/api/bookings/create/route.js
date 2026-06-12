@@ -67,6 +67,32 @@ export async function POST(req) {
  
     // Generate booking reference
     const bookingReference = `BK${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+
+    if (slot_type === 'free') {
+      if (!time_slot_id) {
+        return NextResponse.json({ error: 'Please select a free admin slot' }, { status: 400 });
+      }
+
+      const slotCheck = await pool.query(
+        `SELECT id
+         FROM free_time_slots
+         WHERE id = $1
+           AND quick_service_id = $2
+           AND LOWER(TRIM(city)) = LOWER(TRIM($3))
+           AND slot_date::DATE = $4::DATE
+           AND slot_date::DATE >= CURRENT_DATE
+           AND is_available = TRUE
+           AND COALESCE(current_bookings, 0) < COALESCE(max_bookings, 1)`,
+        [time_slot_id, quick_service_id, service_city, booking_date]
+      );
+
+      if (slotCheck.rows.length === 0) {
+        return NextResponse.json(
+          { error: 'This free admin slot is closed, full, expired, or no longer matches your city/service.' },
+          { status: 409 }
+        );
+      }
+    }
  
     // Create booking
     const bookingResult = await pool.query(
@@ -96,15 +122,29 @@ export async function POST(req) {
     const booking = bookingResult.rows[0];
     const bookingId = booking.id;
  
-    // Update free slot if used
+    // Update free slot if used. The conditions prevent booking admin-closed,
+    // full, expired, wrong-city, or wrong-service slots.
     if (slot_type === 'free' && time_slot_id) {
-      await pool.query(
+      const slotResult = await pool.query(
         `UPDATE free_time_slots
          SET current_bookings = COALESCE(current_bookings, 0) + 1,
              is_available = CASE WHEN COALESCE(current_bookings, 0) + 1 >= COALESCE(max_bookings, 1) THEN FALSE ELSE TRUE END
-         WHERE id = $1`,
-        [time_slot_id]
+         WHERE id = $1
+           AND quick_service_id = $2
+           AND LOWER(TRIM(city)) = LOWER(TRIM($3))
+           AND slot_date::DATE = $4::DATE
+           AND is_available = TRUE
+           AND COALESCE(current_bookings, 0) < COALESCE(max_bookings, 1)
+         RETURNING id`,
+        [time_slot_id, quick_service_id, service_city, booking_date]
       );
+
+      if (slotResult.rows.length === 0) {
+        return NextResponse.json(
+          { error: 'This free admin slot is closed, full, expired, or no longer matches your city/service.' },
+          { status: 409 }
+        );
+      }
     }
  
     // Notify all active vendors in the same city

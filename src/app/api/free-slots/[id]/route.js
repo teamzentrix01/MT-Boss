@@ -1,16 +1,41 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
-// PATCH — toggle availability
+function hasToken(req) {
+  return Boolean(req.headers.get('Authorization')?.split(' ')[1]);
+}
+
+// PATCH - admin edits slot details and opens/closes availability.
 export async function PATCH(req, { params }) {
   try {
+    if (!hasToken(req)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
-    const { is_available } = await req.json();
+    const body = await req.json();
 
     const result = await pool.query(
-      `UPDATE free_time_slots SET is_available = $1
-       WHERE id = $2 RETURNING *`,
-      [is_available, id]
+      `UPDATE free_time_slots
+       SET quick_service_id = COALESCE($1, quick_service_id),
+           slot_date = COALESCE($2::DATE, slot_date),
+           slot_start = COALESCE($3, slot_start),
+           slot_end = COALESCE($4, slot_end),
+           city = COALESCE(NULLIF(TRIM($5), ''), city),
+           max_bookings = GREATEST(COALESCE($6, max_bookings), 1),
+           is_available = COALESCE($7, is_available)
+       WHERE id = $8
+       RETURNING *, TO_CHAR(slot_date::DATE, 'YYYY-MM-DD') AS slot_date`,
+      [
+        body.quick_service_id || null,
+        body.slot_date || null,
+        body.slot_start || null,
+        body.slot_end || null,
+        body.city || null,
+        body.max_bookings === undefined ? null : Number(body.max_bookings),
+        body.is_available,
+        id,
+      ]
     );
 
     if (result.rows.length === 0) {
@@ -24,9 +49,13 @@ export async function PATCH(req, { params }) {
   }
 }
 
-// DELETE — remove slot
+// DELETE - admin removes slot.
 export async function DELETE(req, { params }) {
   try {
+    if (!hasToken(req)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
 
     const result = await pool.query(
