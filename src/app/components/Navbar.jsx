@@ -44,6 +44,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
       const vendorToken = localStorage.getItem('vendor-token');
       const adminToken = localStorage.getItem('admin-token');
       const supplierToken = localStorage.getItem('supplier-token');
+      const franchiseToken = localStorage.getItem('franchise-token');
 
       if (adminToken) {
         const adminData = localStorage.getItem('admin');
@@ -56,6 +57,12 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
         if (supplierData) {
           try { setUser({ ...JSON.parse(supplierData), role: 'supplier' }); }
           catch (e) { console.error('Error parsing supplier data:', e); }
+        }
+      } else if (franchiseToken) {
+        const franchiseData = localStorage.getItem('franchise');
+        if (franchiseData) {
+          try { setUser({ ...JSON.parse(franchiseData), role: 'franchise' }); }
+          catch (e) { console.error('Error parsing franchise data:', e); }
         }
       } else if (vendorToken) {
         const vendorData = localStorage.getItem('vendor');
@@ -102,6 +109,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
       'vendor',
       'supplier-token',
       'supplier',
+      'franchise-token',
+      'franchise',
     ].forEach((key) => localStorage.removeItem(key));
 
     [
@@ -109,19 +118,21 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
       'admin-auth-token',
       'vendor-auth-token',
       'supplier-auth-token',
+      'franchise-auth-token',
     ].forEach((cookieName) => {
       document.cookie = `${cookieName}=; path=/; max-age=0`;
     });
 
     setUser(null);
     window.dispatchEvent(new Event('userLoggedIn'));
-    router.push(logoutRole === 'supplier' ? '/supplier/login' : '/login');
+    router.push(logoutRole === 'supplier' ? '/supplier/login' : logoutRole === 'franchise' ? '/franchise/login' : '/login');
   };
 
   const handleDashboard = () => {
     if (user?.role === 'vendor') router.push('/vendor/dashboard');
     else if (user?.role === 'admin') router.push('/dashboard');
     else if (user?.role === 'supplier') router.push('/supplier/dashboard');
+    else if (user?.role === 'franchise') router.push('/franchise/dashboard');
     else router.push('/userdashboard');
   };
 
@@ -296,6 +307,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                       user.role === 'admin' ? 'bg-red-500'
                       : user.role === 'vendor' ? 'bg-green-500'
                       : user.role === 'supplier' ? 'bg-yellow-500'
+                      : user.role === 'franchise' ? 'bg-amber-600'
                       : 'bg-blue-500'
                     } text-white`}
                   >

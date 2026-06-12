@@ -131,7 +131,7 @@ export default function FranchisePage() {
  const [form, setForm] = useState({
   // Personal
   name: "", fatherName: "", dob: "", gender: "", maritalStatus: "",
-  phone: "", email: "", occupation: "", qualification: "", annualIncome: "",
+  phone: "", email: "", password: "", confirmPassword: "", occupation: "", qualification: "", annualIncome: "",
   idType: "", idNumber: "", pan: "",
   // Address
   address: "", district: "", state: "", pinCode: "", city: "",
@@ -168,6 +168,8 @@ const handleSubmit = async (e) => {
   const phoneRegex = /^[6-9]\d{9}$/;
   if (!form.phone) { setError('Phone number is required.'); return; }
   if (!phoneRegex.test(form.phone)) { setError('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
+  if (!form.password || form.password.length < 8) { setError('Create a password with at least 8 characters.'); return; }
+  if (form.password !== form.confirmPassword) { setError('Password and confirm password do not match.'); return; }
   setLoading(true);
 
   try {
@@ -250,7 +252,16 @@ const handleSubmit = async (e) => {
               Go Home
             </Link>
             <button
-              onClick={() => { setSubmitted(false); setForm({ name: "", email: "", phone: "", city: "", state: "", occupation: "", investment: "", model: "", experience: "", message: "" }); }}
+              onClick={() => { setSubmitted(false); setForm({
+                name: "", fatherName: "", dob: "", gender: "", maritalStatus: "",
+                phone: "", email: "", password: "", confirmPassword: "", occupation: "", qualification: "", annualIncome: "",
+                idType: "", idNumber: "", pan: "", address: "", district: "", state: "", pinCode: "", city: "",
+                currentBusiness: "", experience: "", constructionExp: "", employees: "", network: "",
+                bankName: "", branchName: "", accountNumber: "", ifscCode: "",
+                model: "", investment: "", territory: "", referralSource: "", startDate: "", serviceCategory: "",
+                officeArea: "", officeDistrict: "", premisesOwnership: "", leaseDuration: "", officeArea_sqft: "", officeType: "",
+                message: "", otherFranchise: "", trainingWilling: "",
+              }); }}
               className="px-6 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all"
             >
               New Inquiry
@@ -308,7 +319,7 @@ const handleSubmit = async (e) => {
               </div>
             ))}
           </div>
-<a
+          <a
           
             href="#franchise-form"
             className="mt-10 inline-flex items-center gap-3 px-10 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all"
@@ -318,6 +329,12 @@ const handleSubmit = async (e) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </a>
+          <Link
+            href="/franchise/login"
+            className="mt-4 ml-0 sm:ml-3 inline-flex items-center gap-3 px-8 py-4 border-2 border-white text-white font-black uppercase text-xs tracking-widest hover:bg-white hover:text-black transition-all"
+          >
+            Franchise Owner Login
+          </Link>
         </div>
       </section>
 
@@ -625,6 +642,14 @@ const handleSubmit = async (e) => {
             <div>
               <label className={labelClass}>Email Address *</label>
               <input type="email" name="email" required placeholder="your@email.com" value={form.email} onChange={handleChange} className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Create Password *</label>
+              <input type="password" name="password" required minLength={8} placeholder="Minimum 8 characters" value={form.password || ""} onChange={handleChange} className={inputClass} autoComplete="new-password" />
+            </div>
+            <div>
+              <label className={labelClass}>Confirm Password *</label>
+              <input type="password" name="confirmPassword" required minLength={8} placeholder="Re-enter password" value={form.confirmPassword || ""} onChange={handleChange} className={inputClass} autoComplete="new-password" />
             </div>
             <div>
               <label className={labelClass}>Current Occupation *</label>

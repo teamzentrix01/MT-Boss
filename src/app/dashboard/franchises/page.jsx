@@ -33,6 +33,7 @@ export default function FranchisesPage() {
   const [modelFilter, setModelFilter] = useState('All');
   const [updating, setUpdating]     = useState(false);
   const [section, setSection]       = useState('personal');
+  const [notice, setNotice]         = useState({ type: '', text: '' });
 
   useEffect(() => { fetchFranchises(); }, []);
 
@@ -53,17 +54,51 @@ export default function FranchisesPage() {
 
   const updateStatus = async (id, status) => {
     setUpdating(true);
+    setNotice({ type: '', text: '' });
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch('/api/franchises', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ id, status }),
       });
       const data = await res.json();
       if (data.success) {
-        setFranchises(prev => prev.map(f => f.id === id ? { ...f, status } : f));
-        if (selected?.id === id) setSelected({ ...selected, status });
+        setFranchises(prev => prev.map(f => f.id === id ? data.data : f));
+        if (selected?.id === id) setSelected(data.data);
+        setNotice(data.warning
+          ? { type: 'error', text: data.warning }
+          : { type: 'success', text: data.message || (status === 'Approved' ? 'Franchise approved.' : `Franchise status updated to ${status}.`) });
+      } else {
+        setNotice({ type: 'error', text: data.error || 'Could not update franchise status.' });
       }
+    } catch {
+      setNotice({ type: 'error', text: 'Could not update franchise status. Please try again.' });
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const resendCredentials = async (id) => {
+    setUpdating(true);
+    setNotice({ type: '', text: '' });
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/franchises', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id, action: 'resendCredentials' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setFranchises(prev => prev.map(f => f.id === id ? data.data : f));
+        if (selected?.id === id) setSelected(data.data);
+        setNotice({ type: 'success', text: data.message || 'Fresh credentials sent.' });
+      } else {
+        setNotice({ type: 'error', text: data.error || 'Could not resend credentials.' });
+      }
+    } catch {
+      setNotice({ type: 'error', text: 'Could not resend credentials. Please try again.' });
     } finally {
       setUpdating(false);
     }
@@ -302,6 +337,15 @@ export default function FranchisesPage() {
           padding-bottom: 0.5rem;
           border-bottom: 1px solid var(--border);
         }
+        .fr-notice {
+          margin: 0 1.5rem 1rem;
+          padding: 0.7rem 0.85rem;
+          border-radius: 6px;
+          font-size: 0.78rem;
+          font-weight: 600;
+        }
+        .fr-notice.success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .fr-notice.error { background: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; }
       `}</style>
 
       <div className="fr-wrap">
@@ -567,7 +611,21 @@ export default function FranchisesPage() {
                   </button>
                 );
               })}
+              {selected.status === 'Approved' && (
+                <button
+                  disabled={updating}
+                  className="fr-status-opt"
+                  onClick={() => resendCredentials(selected.id)}
+                >
+                  Resend Credentials
+                </button>
+              )}
             </div>
+            {notice.text && (
+              <div className={`fr-notice ${notice.type}`}>
+                {notice.text}
+              </div>
+            )}
           </div>
         </div>
       )}

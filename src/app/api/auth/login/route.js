@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 
 const ADMIN_EMAIL = 'admin@gmail.com';
 const ADMIN_PASSWORD = '123456';
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || process.env.JWT_SECRET || 'fallback-secret';
 
 export async function POST(req) {
   try {
@@ -14,11 +15,10 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    // ── Admin hardcoded check ──
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       const token = jwt.sign(
         { id: 0, email: ADMIN_EMAIL, role: 'admin' },
-        process.env.NEXT_PUBLIC_JWT_SECRET,
+        JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRY || '7d' }
       );
       return NextResponse.json({
@@ -28,7 +28,6 @@ export async function POST(req) {
       }, { status: 200 });
     }
 
-    // ── Check if vendor exists with this email ──
     const vendorResult = await pool.query(
       'SELECT id FROM vendors WHERE email = $1',
       [email]
@@ -41,7 +40,6 @@ export async function POST(req) {
       );
     }
 
-    // ── Regular users from DB ──
     const result = await pool.query(
       'SELECT id, email, password, name FROM users WHERE email = $1',
       [email]
@@ -59,7 +57,7 @@ export async function POST(req) {
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: 'user' },
-      process.env.NEXT_PUBLIC_JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRY || '7d' }
     );
 
@@ -68,7 +66,6 @@ export async function POST(req) {
       user: { id: user.id, email: user.email, name: user.name, role: 'user' },
       redirectTo: '/userdashboard',
     }, { status: 200 });
-
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json({ error: 'Server error occurred.' }, { status: 500 });
