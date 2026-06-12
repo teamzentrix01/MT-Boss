@@ -7,27 +7,27 @@ import { useRouter } from 'next/navigation';
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(() =>
-    typeof document !== 'undefined' && document.documentElement.classList.contains('dark-mode')
-  );
-  const [user] = useState(() => {
-    if (typeof localStorage === 'undefined') return {};
-    try {
-      return JSON.parse(localStorage.getItem('user') || '{}');
-    } catch {
-      return {};
-    }
-  });
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [user, setUser] = useState({});
   const router = useRouter();
 
   // Detect dark mode from navbar
   useEffect(() => {
     const html = document.documentElement;
-    const observer = new MutationObserver(() => {
-      setIsDarkMode(html.classList.contains('dark-mode'));
-    });
+    const updateDarkMode = () => setIsDarkMode(html.classList.contains('dark-mode'));
+    updateDarkMode();
+
+    const observer = new MutationObserver(updateDarkMode);
     observer.observe(html, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    try {
+      setUser(JSON.parse(localStorage.getItem('user') || '{}'));
+    } catch {
+      setUser({});
+    }
   }, []);
 
   const menuItems = [
@@ -58,6 +58,7 @@ export default function DashboardLayout({ children }) {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    document.cookie = 'auth-token=; path=/; max-age=0';
     router.push('/login');
   };
 
