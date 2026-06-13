@@ -409,7 +409,7 @@ export default function AgentDashboardPage() {
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <form onSubmit={createLead} className={`border ${card} p-5 h-fit`}>
               <div className="flex items-center justify-between mb-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#facc15]">{editLead ? 'Edit Lead' : 'Add Lead'} in {agent?.city}</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">{editLead ? 'Edit Lead' : 'Add Lead'} in {agent?.city}</p>
                 {editLead && <button type="button" onClick={() => { setEditLead(null); setLeadForm(resetLeadForm()); }} className={`text-[10px] font-black uppercase ${muted}`}>Cancel</button>}
               </div>
               {[
@@ -440,10 +440,10 @@ export default function AgentDashboardPage() {
               </div>
               <div className="grid grid-cols-2 gap-3 mb-3">
                 <label className={`flex items-center gap-2 text-[10px] font-black uppercase ${muted}`}>
-                  <input type="checkbox" checked={leadForm.meeting_done} onChange={(e) => setLeadForm((f) => ({ ...f, meeting_done: e.target.checked }))} className="accent-[#facc15]" /> Meeting Done
+                  <input type="checkbox" checked={leadForm.meeting_done} onChange={(e) => setLeadForm((f) => ({ ...f, meeting_done: e.target.checked }))} className="accent-[var(--brand-blue)]" /> Meeting Done
                 </label>
                 <label className={`flex items-center gap-2 text-[10px] font-black uppercase ${muted}`}>
-                  <input type="checkbox" checked={leadForm.estimate_sent} onChange={(e) => setLeadForm((f) => ({ ...f, estimate_sent: e.target.checked }))} className="accent-[#facc15]" /> Estimate Sent
+                  <input type="checkbox" checked={leadForm.estimate_sent} onChange={(e) => setLeadForm((f) => ({ ...f, estimate_sent: e.target.checked }))} className="accent-[var(--brand-blue)]" /> Estimate Sent
                 </label>
               </div>
               <div className="mb-3">
@@ -463,7 +463,7 @@ export default function AgentDashboardPage() {
                 <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={2} placeholder="Today's visit notes" value={leadForm.daily_visit_notes} onChange={(e) => setLeadForm((f) => ({ ...f, daily_visit_notes: e.target.value }))} />
               </div>
               <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={2} placeholder="General notes" value={leadForm.notes} onChange={(e) => setLeadForm((f) => ({ ...f, notes: e.target.value }))} />
-              <button className="w-full mt-4 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest">{editLead ? 'Update Lead' : 'Save Lead'}</button>
+              <button className="w-full mt-4 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">{editLead ? 'Update Lead' : 'Save Lead'}</button>
             </form>
 
             <div className="lg:col-span-2 space-y-3">
@@ -475,14 +475,14 @@ export default function AgentDashboardPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="font-black">{lead.client_name}</p>
-                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-sm ${lead.lead_stage === 'Final' ? 'bg-green-500/20 text-green-400' : lead.lead_stage === 'Lost' ? 'bg-red-500/20 text-red-400' : 'bg-[#facc15]/20 text-[#facc15]'}`}>{lead.lead_stage || 'New'}</span>
+                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-sm ${lead.lead_stage === 'Final' ? 'bg-green-500/20 text-green-400' : lead.lead_stage === 'Lost' ? 'bg-red-500/20 text-red-400' : 'bg-[var(--brand-blue)]/20 text-[var(--brand-blue)]'}`}>{lead.lead_stage || 'New'}</span>
                         {lead.meeting_done && <span className="text-[9px] font-bold px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-sm">Meeting ✓</span>}
                         {lead.estimate_sent && <span className="text-[9px] font-bold px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded-sm">Estimate ✓</span>}
                       </div>
                       <p className={`text-xs ${muted} mt-1`}>{lead.client_phone} - {lead.city} {lead.lead_source ? `(${lead.lead_source})` : ''}</p>
                       <p className={`text-xs ${muted}`}>{lead.service_type || 'Service not set'} {lead.lead_type ? `- ${lead.lead_type}` : ''}</p>
                       {lead.client_requirement && <p className={`text-xs mt-1 ${muted}`}><strong>Need:</strong> {lead.client_requirement}</p>}
-                      {Number(lead.final_amount || 0) > 0 && <p className="text-xs font-black text-[#facc15] mt-1">Deal: ₹{Number(lead.final_amount).toLocaleString('en-IN')}</p>}
+                      {Number(lead.final_amount || 0) > 0 && <p className="text-xs font-black text-[var(--brand-blue)] mt-1">Deal: ₹{Number(lead.final_amount).toLocaleString('en-IN')}</p>}
                       {lead.daily_visit_notes && <p className={`text-xs mt-1 ${muted}`}><strong>Visit:</strong> {lead.daily_visit_notes}</p>}
                       {lead.notes && <p className="text-sm mt-2">{lead.notes}</p>}
                     </div>
@@ -510,7 +510,7 @@ export default function AgentDashboardPage() {
                   key={project.id}
                   type="button"
                   onClick={() => openProject(project)}
-                  className={`w-full text-left border ${card} p-4 ${selectedProject?.id === project.id ? 'border-[#facc15]' : ''}`}
+                  className={`w-full text-left border ${card} p-4 ${selectedProject?.id === project.id ? 'border-[var(--brand-blue)]' : ''}`}
                 >
                   <p className="font-black">{project.title}</p>
                   <p className={`text-xs ${muted}`}>{project.client_name || 'Client not set'} - {project.location || project.service_city || agent?.city}</p>
@@ -520,7 +520,7 @@ export default function AgentDashboardPage() {
                     <span>Costs: <strong>Rs {Number((Number(project.labour_cost || 0) + Number(project.material_cost || 0) + Number(project.extra_expense || 0))).toLocaleString('en-IN')}</strong></span>
                     <span>P/L: <strong>Rs {Number(project.profit_loss || 0).toLocaleString('en-IN')}</strong></span>
                   </div>
-                  <p className="text-[10px] text-[#facc15] font-black uppercase mt-3">{project.project_status || 'lead'}</p>
+                  <p className="text-[10px] text-[var(--brand-blue)] font-black uppercase mt-3">{project.project_status || 'lead'}</p>
                 </button>
               ))}
             </div>
@@ -531,7 +531,7 @@ export default function AgentDashboardPage() {
               ) : (
                 <div className="space-y-5">
                   <form onSubmit={updateProject} className={`border ${card} p-5`}>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-[#facc15] mb-4">Project Control</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] mb-4">Project Control</p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div>
                         <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Status</label>
@@ -553,12 +553,12 @@ export default function AgentDashboardPage() {
                       <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Client email" value={projectForm.client_email} onChange={(e) => setProjectForm((f) => ({ ...f, client_email: e.target.value }))} />
                     </div>
                     <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none mt-3 ${input}`} rows={2} placeholder="Project notes" value={projectForm.project_notes} onChange={(e) => setProjectForm((f) => ({ ...f, project_notes: e.target.value }))} />
-                    <button className="mt-3 px-5 py-2.5 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest">Save Project</button>
+                    <button className="mt-3 px-5 py-2.5 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">Save Project</button>
                   </form>
 
                   <form onSubmit={addProjectEntry} className={`border ${card} p-5`}>
                     <div className="flex items-center justify-between gap-3 mb-4">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#facc15]">Daily Site Entry</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">Daily Site Entry</p>
                       <select className={`border px-3 py-2 text-xs font-bold ${input}`} value={entryType} onChange={(e) => { setEntryType(e.target.value); setEntryForm({}); }}>
                         {['payment', 'labour', 'material', 'expense', 'media'].map((type) => <option key={type} value={type}>{type}</option>)}
                       </select>
@@ -614,7 +614,7 @@ export default function AgentDashboardPage() {
                       </div>
                     )}
 
-                    <button className="mt-3 px-5 py-2.5 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest">Add Entry</button>
+                    <button className="mt-3 px-5 py-2.5 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">Add Entry</button>
                   </form>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -626,7 +626,7 @@ export default function AgentDashboardPage() {
                       ['Media', projectOps.media, (x) => `${x.media_date?.slice?.(0, 10) || ''} - ${x.media_type} - ${x.caption || x.media_url}`],
                     ].map(([title, rows, render]) => (
                       <div key={title} className={`border ${card} p-4`}>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[#facc15] mb-3">{title}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] mb-3">{title}</p>
                         {rows.length === 0 ? <p className={`text-xs ${muted}`}>No entries yet.</p> : rows.slice(0, 6).map((row) => (
                           <p key={row.id} className={`text-xs border-b py-2 ${dark ? 'border-zinc-800' : 'border-zinc-200'}`}>{render(row)}</p>
                         ))}

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import { hashOtp, verifyOtp, PASSWORD_RESET_OTP_MAX_ATTEMPTS } from '@/lib/otp';
 
 // POST — verify OTP + reset password in one step
 export async function POST(req) {
@@ -14,16 +15,38 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Password must be at least 6 characters' }, { status: 400 });
     }
 
-    // Find valid, unused OTP
     const otpRes = await pool.query(
-      `SELECT id FROM password_reset_otps
-       WHERE email = $1 AND user_type = $2 AND otp = $3
-         AND used = FALSE AND expires_at > NOW()`,
-      [email, user_type, otp.trim()]
+      `SELECT id, otp, otp_hash, COALESCE(attempts, 0) AS attempts
+       FROM password_reset_otps
+       WHERE email = $1 AND user_type = $2
+         AND used = FALSE AND expires_at > NOW()
+       ORDER BY created_at DESC
+       LIMIT 1`,
+      [email, user_type]
     );
 
     if (otpRes.rows.length === 0) {
       return NextResponse.json({ success: false, error: 'Invalid or expired OTP. Please request a new one.' }, { status: 400 });
+    }
+
+    const otpRow = otpRes.rows[0];
+    if (Number(otpRow.attempts) >= PASSWORD_RESET_OTP_MAX_ATTEMPTS) {
+      await pool.query(`UPDATE password_reset_otps SET used = TRUE WHERE id = $1`, [otpRow.id]);
+      return NextResponse.json({ success: false, error: 'Too many invalid attempts. Please request a new OTP.' }, { status: 429 });
+    }
+
+    const submittedOtp = otp.trim();
+    const matchesHashedOtp = otpRow.otp_hash ? verifyOtp(submittedOtp, otpRow.otp_hash) : false;
+    const matchesLegacyOtp = otpRow.otp ? hashOtp(submittedOtp) === hashOtp(otpRow.otp) : false;
+
+    if (!matchesHashedOtp && !matchesLegacyOtp) {
+      const attempts = Number(otpRow.attempts) + 1;
+      await pool.query(`UPDATE password_reset_otps SET attempts = $1 WHERE id = $2`, [attempts, otpRow.id]);
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid or expired OTP. Please request a new one.',
+        attempts_remaining: Math.max(PASSWORD_RESET_OTP_MAX_ATTEMPTS - attempts, 0),
+      }, { status: 400 });
     }
 
     // Update password based on user type
@@ -51,8 +74,8 @@ export async function POST(req) {
 
     // Mark OTP as used
     await pool.query(
-      `UPDATE password_reset_otps SET used = TRUE WHERE email = $1 AND user_type = $2`,
-      [email, user_type]
+      `UPDATE password_reset_otps SET used = TRUE WHERE id = $1`,
+      [otpRow.id]
     );
 
     return NextResponse.json({ success: true, message: 'Password reset successfully. You can now log in.' });

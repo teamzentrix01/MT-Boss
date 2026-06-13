@@ -18,20 +18,24 @@ export async function POST(req, { params }) {
     const { id: bookingId } = await params;
     const { is_quick_job, extra_amount, vendor_note } = await req.json();
 
-    // Get booking base_amount
     const bookingRow = await pool.query(
-      `SELECT base_amount FROM service_bookings WHERE id = $1 AND vendor_id = $2`,
+      `SELECT base_amount, status, finish_otp_verified
+       FROM service_bookings
+       WHERE id = $1 AND vendor_id = $2`,
       [bookingId, vendorId]
     );
     if (bookingRow.rows.length === 0) {
       return NextResponse.json({ error: 'Booking not found or unauthorized' }, { status: 404 });
     }
 
-    const base = parseFloat(bookingRow.rows[0].base_amount);
+    if (bookingRow.rows[0].status !== 'AWAITING_PAYMENT' || bookingRow.rows[0].finish_otp_verified !== true) {
+      return NextResponse.json(
+        { error: 'Finish OTP verification is required before completing this booking.' },
+        { status: 400 }
+      );
+    }
 
-    // Calculate final_amount
-    // Quick job: just base price
-    // Extended: base + extra
+    const base = parseFloat(bookingRow.rows[0].base_amount);
     const finalAmount = is_quick_job ? base : base + parseFloat(extra_amount || 0);
 
     const result = await pool.query(
@@ -41,8 +45,7 @@ export async function POST(req, { params }) {
            is_quick_job   = $3,
            vendor_notes   = $4,
            status         = 'AWAITING_PAYMENT',
-           vendor_status  = 'COMPLETED',
-           started_at     = NOW()
+           vendor_status  = 'COMPLETED'
        WHERE id = $5 AND vendor_id = $6
        RETURNING id, user_id, base_amount, final_amount, is_quick_job`,
       [finalAmount, is_quick_job ? 0 : parseFloat(extra_amount || 0), is_quick_job, vendor_note, bookingId, vendorId]

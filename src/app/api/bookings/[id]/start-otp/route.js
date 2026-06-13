@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import jwt from 'jsonwebtoken';
-import { ensureOtpSchema, generateOtp } from '@/lib/otp';
+import { ensureOtpSchema, generateOtp, hashOtp } from '@/lib/otp';
 
 const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || process.env.JWT_SECRET || 'fallback-secret';
 
@@ -24,9 +24,8 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
-    // Check booking exists and is in correct state
     const booking = await pool.query(
-      `SELECT id, user_id, user_email, status, start_otp
+      `SELECT id, user_id, user_email, status, start_otp, start_otp_generated_at, start_otp_verified
        FROM service_bookings
        WHERE id = $1
          AND status IN ('VENDOR_ACCEPTED', 'VENDOR_ON_WAY')
@@ -42,15 +41,25 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: 'Booking not found or not ready for start OTP' }, { status: 404 });
     }
 
+    const row = booking.rows[0];
+    const generatedAt = row.start_otp_generated_at ? new Date(row.start_otp_generated_at).getTime() : 0;
+    if (row.start_otp && !row.start_otp_verified && Date.now() - generatedAt < 60 * 1000) {
+      return NextResponse.json(
+        { error: 'Please wait a minute before regenerating the start OTP.' },
+        { status: 429 }
+      );
+    }
+
     const otp = generateOtp();
 
     await pool.query(
       `UPDATE service_bookings
        SET start_otp = $1,
            start_otp_verified = FALSE,
-           start_otp_generated_at = NOW()
+           start_otp_generated_at = NOW(),
+           start_otp_attempts = 0
        WHERE id = $2`,
-      [otp, bookingId]
+      [hashOtp(otp), bookingId]
     );
 
     return NextResponse.json({

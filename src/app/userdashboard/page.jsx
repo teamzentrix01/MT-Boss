@@ -223,8 +223,11 @@ function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
   const [loadingOtp, setLoadingOtp] = useState(false);
   const [errorOtp, setErrorOtp] = useState('');
   const [copied, setCopied] = useState(false);
+  const [issuedOtp, setIssuedOtp] = useState(null);
 
   const displayAmount = booking.final_amount || booking.total_amount;
+  const startOtp = issuedOtp?.type === 'start' ? issuedOtp.value : '';
+  const finishOtp = issuedOtp?.type === 'finish' ? issuedOtp.value : '';
 
   const handleCopy = (otp) => {
     navigator.clipboard.writeText(otp);
@@ -246,6 +249,7 @@ function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
       });
       const data = await res.json();
       if (data.success) {
+        setIssuedOtp({ type, value: data.otp });
         if (onRefresh) onRefresh();
       } else {
         setErrorOtp(data.error || `Failed to generate ${type} OTP`);
@@ -307,7 +311,7 @@ function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
         <div className={`my-4 p-4 border ${isDark ? 'border-zinc-800 bg-zinc-900/40' : 'border-zinc-100 bg-zinc-50/50'} flex flex-col gap-3 transition-all`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[#facc15]">
+              <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--brand-blue)]">
                 {booking.status === 'IN_PROGRESS' ? 'Completion Verification' : 'Start Verification'}
               </p>
               <p className={`text-[10px] mt-0.5 ${muted}`}>
@@ -317,16 +321,16 @@ function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
               </p>
             </div>
             {booking.status === 'IN_PROGRESS' ? (
-              booking.finish_otp ? (
-                <div className="flex items-center gap-1.5 text-[9px] font-black text-yellow-500 bg-yellow-500/10 px-2 py-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+              (finishOtp || booking.finish_otp_pending) ? (
+                <div className="flex items-center gap-1.5 text-[9px] font-black text-[var(--brand-blue)] bg-[var(--brand-blue)]/10 px-2 py-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--brand-blue)] animate-pulse" />
                   AWAITING VERIFICATION
                 </div>
               ) : null
             ) : (
-              booking.start_otp ? (
-                <div className="flex items-center gap-1.5 text-[9px] font-black text-yellow-500 bg-yellow-500/10 px-2 py-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+              (startOtp || booking.start_otp_pending) ? (
+                <div className="flex items-center gap-1.5 text-[9px] font-black text-[var(--brand-blue)] bg-[var(--brand-blue)]/10 px-2 py-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--brand-blue)] animate-pulse" />
                   AWAITING VERIFICATION
                 </div>
               ) : null
@@ -334,14 +338,14 @@ function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
           </div>
 
           {booking.status === 'IN_PROGRESS' ? (
-            booking.finish_otp ? (
+            finishOtp ? (
               <div className="flex items-center justify-between bg-black/10 dark:bg-black/40 p-3 border border-dashed border-zinc-700/50">
                 <div>
                   <span className={`text-[9px] font-bold uppercase tracking-widest ${muted}`}>Finish OTP</span>
-                  <p className="text-xl font-black font-mono tracking-[0.2em] text-[#facc15]">{booking.finish_otp}</p>
+                  <p className="text-xl font-black font-mono tracking-[0.2em] text-[var(--brand-blue)]">{finishOtp}</p>
                 </div>
                 <button 
-                  onClick={() => handleCopy(booking.finish_otp)}
+                  onClick={() => handleCopy(finishOtp)}
                   className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1.5 border transition-all min-w-[65px] text-center ${
                     isDark 
                       ? 'border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white' 
@@ -351,24 +355,32 @@ function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
                   {copied ? 'Copied!' : 'Copy'}
                 </button>
               </div>
+            ) : booking.finish_otp_pending ? (
+              <button
+                disabled={loadingOtp}
+                onClick={() => handleGenerateOtp('finish')}
+                className="w-full py-2.5 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-[0.25em] hover:bg-[var(--brand-blue)]/10 transition-all disabled:opacity-50"
+              >
+                {loadingOtp ? 'Regenerating OTP...' : 'Regenerate Finish OTP'}
+              </button>
             ) : (
               <button
                 disabled={loadingOtp}
                 onClick={() => handleGenerateOtp('finish')}
-                className="w-full py-2.5 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-[0.25em] hover:bg-yellow-300 transition-all disabled:opacity-50"
+                className="w-full py-2.5 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-[0.25em] hover:bg-[var(--brand-blue-light)] transition-all disabled:opacity-50"
               >
                 {loadingOtp ? 'Generating OTP...' : 'Generate Finish OTP'}
               </button>
             )
           ) : (
-            booking.start_otp ? (
+            startOtp ? (
               <div className="flex items-center justify-between bg-black/10 dark:bg-black/40 p-3 border border-dashed border-zinc-700/50">
                 <div>
                   <span className={`text-[9px] font-bold uppercase tracking-widest ${muted}`}>Start OTP</span>
-                  <p className="text-xl font-black font-mono tracking-[0.2em] text-[#facc15]">{booking.start_otp}</p>
+                  <p className="text-xl font-black font-mono tracking-[0.2em] text-[var(--brand-blue)]">{startOtp}</p>
                 </div>
                 <button 
-                  onClick={() => handleCopy(booking.start_otp)}
+                  onClick={() => handleCopy(startOtp)}
                   className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1.5 border transition-all min-w-[65px] text-center ${
                     isDark 
                       ? 'border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white' 
@@ -378,11 +390,19 @@ function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
                   {copied ? 'Copied!' : 'Copy'}
                 </button>
               </div>
+            ) : booking.start_otp_pending ? (
+              <button
+                disabled={loadingOtp}
+                onClick={() => handleGenerateOtp('start')}
+                className="w-full py-2.5 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-[0.25em] hover:bg-[var(--brand-blue)]/10 transition-all disabled:opacity-50"
+              >
+                {loadingOtp ? 'Regenerating OTP...' : 'Regenerate Start OTP'}
+              </button>
             ) : (
               <button
                 disabled={loadingOtp}
                 onClick={() => handleGenerateOtp('start')}
-                className="w-full py-2.5 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-[0.25em] hover:bg-yellow-300 transition-all disabled:opacity-50"
+                className="w-full py-2.5 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-[0.25em] hover:bg-[var(--brand-blue-light)] transition-all disabled:opacity-50"
               >
                 {loadingOtp ? 'Generating OTP...' : 'Generate Start OTP'}
               </button>

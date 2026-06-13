@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import jwt from 'jsonwebtoken';
-import { ensureOtpSchema, generateOtp } from '@/lib/otp';
+import { ensureOtpSchema, generateOtp, hashOtp } from '@/lib/otp';
 
 const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || process.env.JWT_SECRET || 'fallback-secret';
 
@@ -24,7 +24,7 @@ export async function POST(req, { params }) {
     }
 
     const booking = await pool.query(
-      `SELECT id, user_id, user_email, status, start_otp_verified
+      `SELECT id, user_id, user_email, status, start_otp_verified, finish_otp, finish_otp_generated_at, finish_otp_verified
        FROM service_bookings
        WHERE id = $1
          AND status = 'IN_PROGRESS'
@@ -41,15 +41,25 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: 'Booking not found or service not in progress' }, { status: 404 });
     }
 
+    const row = booking.rows[0];
+    const generatedAt = row.finish_otp_generated_at ? new Date(row.finish_otp_generated_at).getTime() : 0;
+    if (row.finish_otp && !row.finish_otp_verified && Date.now() - generatedAt < 60 * 1000) {
+      return NextResponse.json(
+        { error: 'Please wait a minute before regenerating the finish OTP.' },
+        { status: 429 }
+      );
+    }
+
     const otp = generateOtp();
 
     await pool.query(
       `UPDATE service_bookings
        SET finish_otp = $1,
            finish_otp_verified = FALSE,
-           finish_otp_generated_at = NOW()
+           finish_otp_generated_at = NOW(),
+           finish_otp_attempts = 0
        WHERE id = $2`,
-      [otp, bookingId]
+      [hashOtp(otp), bookingId]
     );
 
     return NextResponse.json({

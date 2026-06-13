@@ -47,7 +47,7 @@ export default function QuickServiceSlugPage() {
     return (
       <main className={`min-h-screen flex items-center justify-center ${dark ? 'bg-black text-white' : 'bg-gray-50 text-zinc-900'}`}>
         <div className="text-center">
-          <div className="w-10 h-10 border-4 border-[#facc15] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-10 h-10 border-4 border-[var(--brand-blue)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-sm font-bold">Loading service...</p>
         </div>
       </main>
@@ -61,7 +61,7 @@ export default function QuickServiceSlugPage() {
           <p className="text-6xl mb-4">🔍</p>
           <h1 className="text-2xl font-black uppercase mb-2">Service Not Found</h1>
           <p className={`text-sm mb-6 ${dark ? 'text-zinc-400' : 'text-zinc-500'}`}>{error || 'The requested service does not exist.'}</p>
-          <Link href="/quick" className="px-6 py-3 bg-[#facc15] text-black text-xs font-black uppercase tracking-widest">
+          <Link href="/quick" className="px-6 py-3 bg-[var(--brand-blue)] text-black text-xs font-black uppercase tracking-widest">
             Browse All Services
           </Link>
         </div>
@@ -89,7 +89,7 @@ export default function QuickServiceSlugPage() {
         <section className="relative py-20 px-6" style={{ background: dark ? 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)' : 'linear-gradient(135deg, #fefce8 0%, #fef9c3 50%, #fefce8 100%)' }}>
           <div className="max-w-4xl mx-auto text-center">
             <span className="text-6xl block mb-6">{service.icon || '🔧'}</span>
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-3">Quick Service</span>
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-3">Quick Service</span>
             <h1 className={`text-4xl sm:text-5xl font-black uppercase tracking-tight mb-4 ${dark ? 'text-white' : 'text-zinc-800'}`}>
               {service.label}
             </h1>
@@ -98,7 +98,7 @@ export default function QuickServiceSlugPage() {
             </p>
             <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
               <div className="text-center">
-                <p className="text-[#facc15] text-2xl font-black">₹{service.base_price || service.admin_base_price || 199}</p>
+                <p className="text-[var(--brand-blue)] text-2xl font-black">₹{service.base_price || service.admin_base_price || 199}</p>
                 <p className={`text-[10px] uppercase tracking-widest font-bold ${muted}`}>Starting Price</p>
               </div>
               {service.duration && (
@@ -110,7 +110,7 @@ export default function QuickServiceSlugPage() {
             </div>
             <Link
               href={`/quick?service=${service.id}`}
-              className="inline-flex items-center gap-3 px-10 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all"
+              className="inline-flex items-center gap-3 px-10 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-light)] transition-all"
             >
               Book Now
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,12 +124,12 @@ export default function QuickServiceSlugPage() {
         {service.coverage_details && (
           <section className={`py-16 px-6 ${dark ? 'bg-zinc-900' : 'bg-white'}`}>
             <div className="max-w-4xl mx-auto">
-              <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">What We Cover</span>
+              <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">What We Cover</span>
               <h2 className={`text-2xl font-black uppercase tracking-tight mb-6 ${dark ? 'text-white' : 'text-zinc-800'}`}>Service Coverage</h2>
               <div className={`border ${card} p-6 rounded-sm`}>
                 {service.coverage_details.split('\n').map((line, i) => (
                   <div key={i} className="flex items-start gap-3 mb-3 last:mb-0">
-                    <svg className="w-4 h-4 text-[#facc15] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 text-[var(--brand-blue)] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     <p className={`text-sm ${muted}`}>{line.trim()}</p>
@@ -144,12 +144,12 @@ export default function QuickServiceSlugPage() {
         {service.how_to_use && (
           <section className={`py-16 px-6 ${dark ? 'bg-black' : 'bg-gray-50'}`}>
             <div className="max-w-4xl mx-auto">
-              <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Simple Process</span>
+              <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Simple Process</span>
               <h2 className={`text-2xl font-black uppercase tracking-tight mb-6 ${dark ? 'text-white' : 'text-zinc-800'}`}>How to Use This Service</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {service.how_to_use.split('\n').filter(Boolean).map((step, i) => (
                   <div key={i} className={`border ${card} p-5 rounded-sm`}>
-                    <div className="w-8 h-8 bg-[#facc15] rounded-sm flex items-center justify-center mb-3">
+                    <div className="w-8 h-8 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center mb-3">
                       <span className="text-black text-xs font-black">{String(i + 1).padStart(2, '0')}</span>
                     </div>
                     <p className={`text-sm ${muted}`}>{step.trim()}</p>
@@ -164,7 +164,7 @@ export default function QuickServiceSlugPage() {
         {service.video_url && (
           <section className={`py-16 px-6 ${dark ? 'bg-zinc-900' : 'bg-white'}`}>
             <div className="max-w-4xl mx-auto text-center">
-              <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Watch</span>
+              <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Watch</span>
               <h2 className={`text-2xl font-black uppercase tracking-tight mb-6 ${dark ? 'text-white' : 'text-zinc-800'}`}>Service Overview</h2>
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                 <iframe
@@ -181,7 +181,7 @@ export default function QuickServiceSlugPage() {
         {/* Pricing + CTA */}
         <section className={`py-16 px-6 ${dark ? 'bg-black' : 'bg-zinc-800'}`}>
           <div className="max-w-3xl mx-auto text-center">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-3">Ready to Book?</span>
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-3">Ready to Book?</span>
             <h2 className="text-3xl font-black uppercase text-white mb-4 tracking-tight">
               Get {service.label} Service Today
             </h2>
@@ -191,7 +191,7 @@ export default function QuickServiceSlugPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href={`/quick?service=${service.id}`}
-                className="inline-flex items-center justify-center gap-3 px-10 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all"
+                className="inline-flex items-center justify-center gap-3 px-10 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-light)] transition-all"
               >
                 Book This Service
               </Link>

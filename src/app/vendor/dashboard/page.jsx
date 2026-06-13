@@ -73,12 +73,17 @@ export default function VendorDashboard() {
       if (notData.success) setNotifications(notData.notifications);
 
       const bookData = await bookRes.json();
-      if (bookData.success && bookData.bookings.length > 0) setActiveBooking(bookData.bookings[0]);
-      else setActiveBooking(null);
+      let awaitingPaymentCount = 0;
+      if (bookData.success && bookData.bookings.length > 0) {
+        setActiveBooking(bookData.bookings[0]);
+        awaitingPaymentCount = bookData.bookings.filter((b) => b.status === 'AWAITING_PAYMENT').length;
+      } else {
+        setActiveBooking(null);
+      }
 
       const compData = await compRes.json();
       if (compData.success) {
-        setCompletedCount(compData.bookings.length);
+        setCompletedCount(compData.bookings.length + awaitingPaymentCount);
         setCompletedBookings(compData.bookings);
         const earned = compData.bookings.reduce((sum, b) => sum + parseFloat(b.vendor_earning || 0), 0);
         setTotalEarning(Math.round(earned));
@@ -464,8 +469,8 @@ export default function VendorDashboard() {
         ) : activeTab === "packages" ? (
           /* ── Packages Tab ── */
           <div className={`border ${card} p-6 max-w-2xl`}>
-            <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest mb-4">Subscription Packages</p>
-            {pkgMsg && <p className="text-xs text-[#facc15] font-bold mb-4">{pkgMsg}</p>}
+            <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest mb-4">Subscription Packages</p>
+            {pkgMsg && <p className="text-xs text-[var(--brand-blue)] font-bold mb-4">{pkgMsg}</p>}
             
             {/* Current Package Status */}
             {pkgStatus && (
@@ -503,11 +508,11 @@ export default function VendorDashboard() {
                     <p className={`text-xs ${muted} mt-1`}>{pkg.label} · Complete booking lead access</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-black text-sm text-[#facc15] mb-2">₹{pkg.price}</p>
+                    <p className="font-black text-sm text-[var(--brand-blue)] mb-2">₹{pkg.price}</p>
                     <button
                       onClick={() => selectPackage(pkg.id)}
                       disabled={pkgLoading || pkgStatus?.package_id === pkg.id}
-                      className="px-4 py-2 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed hover:bg-yellow-300"
+                      className="px-4 py-2 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--brand-blue-light)]"
                     >
                       {pkgStatus?.package_id === pkg.id ? 'Current' : 'Select Plan'}
                     </button>
@@ -880,12 +885,6 @@ export default function VendorDashboard() {
                       className="w-full py-2.5 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase hover:bg-[var(--brand-blue)]/10 transition-all"
                     >
                       📍 Update My Location
-                    </button>
-                    <button
-                      onClick={() => { setIsQuickJob(true); setExtraAmount(""); setVendorNote(""); setShowCompleteModal(true); }}
-                      className="w-full py-2.5 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase hover:bg-[var(--brand-blue-light)] transition-all"
-                    >
-                      ✓ Mark Work Complete
                     </button>
                   </>
                 ) : null}

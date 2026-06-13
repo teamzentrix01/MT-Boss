@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import jwt from 'jsonwebtoken';
-import { ensureOtpSchema } from '@/lib/otp';
+import { ensureOtpSchema, SERVICE_OTP_EXPIRY_MINUTES, SERVICE_OTP_MAX_ATTEMPTS, verifyOtp } from '@/lib/otp';
 
 const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || process.env.JWT_SECRET || 'fallback-secret';
 
@@ -29,7 +29,7 @@ export async function POST(req, { params }) {
 
     // Check booking exists, vendor matches, and OTP is correct
     const booking = await pool.query(
-      `SELECT id, start_otp, start_otp_verified, status
+      `SELECT id, start_otp, start_otp_verified, start_otp_generated_at, COALESCE(start_otp_attempts, 0) AS start_otp_attempts, status
        FROM service_bookings
        WHERE id = $1
          AND vendor_id = $2
@@ -47,14 +47,34 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: 'Start OTP not yet generated. Ask customer to generate it.' }, { status: 400 });
     }
 
-    if (row.start_otp !== String(otp).trim()) {
-      return NextResponse.json({ error: 'Invalid OTP. Please check with customer.' }, { status: 400 });
+    if (!row.start_otp_generated_at || new Date(row.start_otp_generated_at).getTime() < Date.now() - SERVICE_OTP_EXPIRY_MINUTES * 60 * 1000) {
+      await pool.query(
+        `UPDATE service_bookings SET start_otp = NULL, start_otp_attempts = 0 WHERE id = $1`,
+        [bookingId]
+      );
+      return NextResponse.json({ error: 'Start OTP expired. Ask customer to generate a new OTP.' }, { status: 400 });
     }
 
-    // Verify OTP and start service
+    if (Number(row.start_otp_attempts) >= SERVICE_OTP_MAX_ATTEMPTS) {
+      return NextResponse.json({ error: 'Too many incorrect attempts. Ask customer to generate a new OTP.' }, { status: 429 });
+    }
+
+    if (!verifyOtp(String(otp).trim(), row.start_otp)) {
+      const attempts = Number(row.start_otp_attempts) + 1;
+      await pool.query(
+        `UPDATE service_bookings SET start_otp_attempts = $1 WHERE id = $2`,
+        [attempts, bookingId]
+      );
+      return NextResponse.json({
+        error: 'Invalid OTP. Please check with customer.',
+        attempts_remaining: Math.max(SERVICE_OTP_MAX_ATTEMPTS - attempts, 0),
+      }, { status: 400 });
+    }
+
     const result = await pool.query(
       `UPDATE service_bookings
        SET start_otp_verified = TRUE,
+           start_otp = NULL,
            service_started_at = NOW(),
            status = 'IN_PROGRESS',
            vendor_status = 'IN_PROGRESS'
