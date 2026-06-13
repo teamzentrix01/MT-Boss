@@ -30,6 +30,7 @@ export default function VendorSignupPage() {
     aadhar_image: null,
     profile_photo: null,
     services: [],
+    package_id: 'pkg_6m',
   });
 
   useEffect(() => {
@@ -128,6 +129,12 @@ export default function VendorSignupPage() {
         }
         return true;
 
+      case 4:
+        if (!formData.package_id) {
+          setError('Select a subscription plan'); return false;
+        }
+        return true;
+
       default: return true;
     }
   };
@@ -140,7 +147,7 @@ export default function VendorSignupPage() {
 
 const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateStep(3)) return;
+    if (!validateStep(4)) return;
     setLoading(true);
     setError('');
 
@@ -156,6 +163,7 @@ const handleSubmit = async (e) => {
       payload.append('postal_code', formData.postal_code);
       payload.append('aadhar_number', formData.aadhar_number);
       payload.append('services', JSON.stringify(formData.services));
+      payload.append('package_id', formData.package_id);
       if (formData.profile_photo) payload.append('profile_photo', formData.profile_photo);
       if (formData.aadhar_image) payload.append('aadhar_image', formData.aadhar_image);
 
@@ -184,8 +192,8 @@ const handleSubmit = async (e) => {
     }
   };
 
-  const stepTitles = ['Account Setup', 'Address & Identity', 'Services'];
-  const stepIcons = ['🔐', '🏠', '⚡'];
+  const stepTitles = ['Account Setup', 'Address & Identity', 'Services', 'Subscription Plan'];
+  const stepIcons = ['🔐', '🏠', '⚡', '📦'];
 
   return (
     <>
@@ -759,6 +767,37 @@ const handleSubmit = async (e) => {
                 </>
               )}
 
+              {/* STEP 4 */}
+              {step === 4 && (
+                <>
+                  <label className="vs-label">Select a subscription plan *</label>
+                  <div className="grid grid-cols-1 gap-3 mt-2">
+                    {[
+                      { id: 'pkg_6m', name: '6 Months Plan', duration: '6 Months', price: '₹2,999', desc: 'Perfect for getting started. Complete booking access.' },
+                      { id: 'pkg_1y', name: '1 Year Plan', duration: '12 Months', price: '₹4,999', desc: 'Most popular. Great value with a full year of leads.' },
+                      { id: 'pkg_2y', name: '2 Years Plan', duration: '24 Months', price: '₹7,999', desc: 'Best deal. Long-term peace of mind and maximum savings.' },
+                    ].map(pkg => (
+                      <div
+                        key={pkg.id}
+                        onClick={() => setFormData(prev => ({ ...prev, package_id: pkg.id }))}
+                        style={{ border: formData.package_id === pkg.id ? '2px solid #22c55e' : dark ? '1px solid #2a2a2a' : '1px solid #e0dbd2' }}
+                        className={`p-4 rounded-xl cursor-pointer transition-all ${
+                          formData.package_id === pkg.id
+                            ? 'bg-green-500/10'
+                            : dark ? 'bg-zinc-900/40 hover:border-zinc-700' : 'bg-zinc-50 hover:border-zinc-300'
+                        }`}
+                      >
+                        <div className="flex justify-between items-center mb-1">
+                          <span className={`text-sm font-bold ${dark ? 'text-white' : 'text-zinc-800'}`}>{pkg.name}</span>
+                          <span className="text-green-500 font-extrabold text-sm">{pkg.price}</span>
+                        </div>
+                        <p className={`text-xs ${dark ? 'text-zinc-500' : 'text-zinc-500'}`}>{pkg.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
               <div className="vs-buttons">
                 {step > 1 && (
                   <button type="button" onClick={handlePrevious} className="vs-btn">
@@ -770,7 +809,7 @@ const handleSubmit = async (e) => {
                   className="vs-btn vs-btn-primary"
                   disabled={loading || (step === 3 && loadingServices)}
                 >
-                  {step === 3
+                  {step === 4
                     ? loading ? 'Creating account...' : 'Create Account →'
                     : 'Continue →'}
                 </button>

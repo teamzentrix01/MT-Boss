@@ -13,6 +13,7 @@ export async function GET(req, { params }) {
          AND vs.is_active = TRUE
          AND v.is_approved = TRUE
          AND v.status = 'active'
+         AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
        ORDER BY v.city ASC`,
       [id]
     );

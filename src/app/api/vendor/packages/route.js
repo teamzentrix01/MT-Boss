@@ -1,0 +1,95 @@
+import { NextResponse } from 'next/server';
+import pool from '@/lib/db';
+import jwt from 'jsonwebtoken';
+import { PACKAGES, ensurePackageSchema, getPackageById, getPackageInfo } from '@/lib/packages';
+
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || process.env.JWT_SECRET || 'fallback-secret';
+
+// GET - list available packages OR get vendor's package status
+export async function GET(req) {
+  try {
+    await ensurePackageSchema();
+    const { searchParams } = new URL(req.url);
+    const action = searchParams.get('action');
+
+    if (action === 'status') {
+      const token = req.headers.get('Authorization')?.split(' ')[1];
+      if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+      let vendorId;
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        vendorId = decoded.id;
+      } catch {
+        return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+      }
+
+      const result = await pool.query(
+        `SELECT package_id, package_name, package_price, package_duration_months,
+                package_purchased_at, package_starts_at, package_expires_at, package_status
+         FROM vendors WHERE id = $1`,
+        [vendorId]
+      );
+
+      if (result.rows.length === 0) {
+        return NextResponse.json({ error: 'Vendor not found' }, { status: 404 });
+      }
+
+      return NextResponse.json({ success: true, package: getPackageInfo(result.rows[0]) });
+    }
+
+    return NextResponse.json({ success: true, packages: PACKAGES });
+  } catch (error) {
+    console.error('Package fetch error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
+}
+
+// POST - vendor selects a package (pending admin approval to activate)
+export async function POST(req) {
+  try {
+    await ensurePackageSchema();
+    const token = req.headers.get('Authorization')?.split(' ')[1];
+    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    let vendorId;
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      vendorId = decoded.id;
+    } catch {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    }
+
+    const { package_id } = await req.json();
+    const pkg = getPackageById(package_id);
+    if (!pkg) {
+      return NextResponse.json({ error: 'Invalid package selected' }, { status: 400 });
+    }
+
+    const result = await pool.query(
+      `UPDATE vendors
+       SET package_id = $1,
+           package_name = $2,
+           package_price = $3,
+           package_duration_months = $4,
+           package_purchased_at = NOW(),
+           package_status = 'pending'
+       WHERE id = $5
+       RETURNING id, package_id, package_name, package_price, package_status`,
+      [pkg.id, pkg.name, pkg.price, pkg.duration_months, vendorId]
+    );
+
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'Vendor not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `${pkg.label} selected! Your package will be activated once approved by admin.`,
+      data: result.rows[0],
+    });
+  } catch (error) {
+    console.error('Package selection error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
+}

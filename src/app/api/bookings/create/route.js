@@ -165,7 +165,7 @@ export async function POST(req) {
       }
     }
  
-    // Notify active vendors who serve this quick service in the same city.
+    // Notify every active approved vendor who serves this quick service in the same city.
     const vendorsResult = await pool.query(
       `SELECT DISTINCT v.id
        FROM vendors v
@@ -175,13 +175,7 @@ export async function POST(req) {
          AND LOWER(TRIM(v.city)) = LOWER(TRIM($2))
          AND v.is_approved = TRUE
          AND v.status = 'active'
-         AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
-         AND v.id NOT IN (
-           SELECT vendor_id
-           FROM service_bookings
-           WHERE status IN ('VENDOR_ACCEPTED', 'VENDOR_ON_WAY', 'IN_PROGRESS', 'AWAITING_PAYMENT')
-             AND vendor_id IS NOT NULL
-         )`,
+         AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')`,
       [quick_service_id, service_city]
     );
  
@@ -190,7 +184,7 @@ export async function POST(req) {
       await pool.query(
         `INSERT INTO service_notifications (
           booking_id, vendor_id, notification_type, title, message, is_read, created_at
-        ) VALUES ($1, $2, 'NEW_BOOKING', 'New Service Request', $3, FALSE, NOW())`,
+        ) VALUES ($1, $2, 'new_booking', 'New Service Request', $3, FALSE, NOW())`,
         [bookingId, vendor.id, `New ${user_name} booking in ${service_city}. Base: ₹${basePrice}`]
       );
     }
@@ -202,6 +196,7 @@ export async function POST(req) {
         id: bookingId,
         booking_reference: bookingReference,
         total_amount: totalAmount,
+        vendors_notified: vendorsResult.rows.length,
       }
     }, { status: 201 });
  

@@ -32,6 +32,12 @@ export default function SupplierDashboard() {
   const [earnings, setEarnings] = useState(null);
   const [loadingEarnings, setLoadingEarnings] = useState(false);
 
+  // Packages
+  const [pkgList, setPkgList] = useState([]);
+  const [pkgStatus, setPkgStatus] = useState(null);
+  const [pkgLoading, setPkgLoading] = useState(false);
+  const [pkgMsg, setPkgMsg] = useState('');
+
   // Expanded detail view for an order card
   const [expandedId, setExpandedId] = useState(null);
 
@@ -146,6 +152,41 @@ export default function SupplierDashboard() {
       if (data.success) setEarnings(data.data);
     } catch (err) { console.error(err); }
     finally { setLoadingEarnings(false); }
+  };
+
+  // ── Packages ─────────────────────────────────────────────────────────────
+  const loadPackages = async () => {
+    const tok = token();
+    try {
+      const [listRes, statusRes] = await Promise.all([
+        fetch('/api/supplier/packages', { headers: { Authorization: `Bearer ${tok}` } }),
+        fetch('/api/supplier/packages?action=status', { headers: { Authorization: `Bearer ${tok}` } }),
+      ]);
+      const listData = await listRes.json();
+      const statusData = await statusRes.json();
+      if (listData.success) setPkgList(listData.packages || []);
+      if (statusData.success) setPkgStatus(statusData.package || null);
+    } catch { /* ignore */ }
+  };
+
+  const selectPackage = async (pkgId) => {
+    setPkgLoading(true);
+    setPkgMsg('');
+    const tok = token();
+    try {
+      const res = await fetch('/api/supplier/packages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok}` },
+        body: JSON.stringify({ package_id: pkgId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPkgMsg(data.message || 'Package selected!');
+        await loadPackages();
+      } else {
+        setPkgMsg(data.error || 'Failed to select package');
+      }
+    } catch { setPkgMsg('Network error'); } finally { setPkgLoading(false); }
   };
 
   const handleLogout = () => {
@@ -386,6 +427,7 @@ export default function SupplierDashboard() {
             {[
               { id: 'orders',   label: '📋 Orders'   },
               { id: 'earnings', label: '💰 Earnings'  },
+              { id: 'packages', label: '📦 Package'   },
               { id: 'profile',  label: '👤 Profile'   },
             ].map(t => (
               <button key={t.id} className={`sd-tab${activeTab === t.id ? ' active' : ''}`}
@@ -393,6 +435,7 @@ export default function SupplierDashboard() {
                   setActiveTab(t.id);
                   if (t.id === 'earnings') fetchEarnings();
                   if (t.id === 'orders')   fetchOrders();
+                  if (t.id === 'packages') loadPackages();
                 }}>
                 {t.label}
               </button>
@@ -508,6 +551,90 @@ export default function SupplierDashboard() {
                 </>
               ) : <div className="sd-empty">Could not load earnings.</div>}
             </>
+          )}
+
+          {/* ══════════════════════ PACKAGES ══════════════════════ */}
+          {activeTab === 'packages' && (
+            <div style={{ maxWidth: 600 }}>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>Subscription Plan 📦</div>
+                <div style={{ fontSize: '0.85rem', color: muted }}>Manage your vendor package and track validity</div>
+              </div>
+
+              {pkgMsg && (
+                <div style={{ padding: '0.75rem 1rem', borderRadius: 8, fontSize: '0.82rem', marginBottom: '1rem', background: dark ? '#0a2a1a' : '#f0fdf4', color: '#10b981', border: '1px solid #10b98144' }}>
+                  {pkgMsg}
+                </div>
+              )}
+
+              {/* Current Plan Card */}
+              {pkgStatus && (
+                <div style={{ background: dark ? '#0f2a18' : '#ecfdf5', border: '1px solid #10b98133', borderRadius: 12, padding: '1.25rem', marginBottom: '1.5rem' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#10b981', marginBottom: '0.5rem' }}>Active Package</div>
+                  <div style={{ display: 'flex', justifycontent: 'space-between', alignitems: 'center' }}>
+                    <div>
+                      <strong style={{ fontSize: '1.2rem', color: text }}>{pkgStatus.package_name || 'No Plan Selected'}</strong>
+                      <div style={{ fontSize: '0.82rem', color: muted, marginTop: '0.25rem' }}>
+                        {pkgStatus.is_active
+                          ? `Expires in ${pkgStatus.days_remaining} days (${new Date(pkgStatus.package_expires_at).toLocaleDateString('en-IN')})`
+                          : pkgStatus.package_status === 'pending'
+                            ? '⏳ Pending Admin Approval'
+                            : 'No active plan'
+                        }
+                      </div>
+                    </div>
+                    <span className="sd-badge" style={{ background: pkgStatus.is_active ? '#dcfce7' : '#fee2e2', color: pkgStatus.is_active ? '#15803d' : '#991b1b' }}>
+                      {pkgStatus.package_status}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Package options list */}
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem' }}>Available Plans</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {pkgList.map(pkg => (
+                  <div
+                    key={pkg.id}
+                    style={{
+                      background: surface,
+                      border: `1px solid ${border}`,
+                      borderRadius: 12,
+                      padding: '1.25rem',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div>
+                      <strong style={{ fontSize: '0.9rem', color: text }}>{pkg.name} Plan</strong>
+                      <div style={{ fontSize: '0.75rem', color: muted, marginTop: '0.25rem' }}>{pkg.label} · Complete lead/enquiry access</div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <strong style={{ display: 'block', fontSize: '1rem', color: '#f59e0b', marginBottom: '0.5rem' }}>₹{pkg.price}</strong>
+                      <button
+                        onClick={() => selectPackage(pkg.id)}
+                        disabled={pkgLoading || pkgStatus?.package_id === pkg.id}
+                        style={{
+                          padding: '0.4rem 0.875rem',
+                          background: '#f59e0b',
+                          color: '#fff',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          opacity: (pkgLoading || pkgStatus?.package_id === pkg.id) ? 0.6 : 1,
+                          fontFamily: 'inherit',
+                        }}
+                      >
+                        {pkgStatus?.package_id === pkg.id ? 'Current Plan' : 'Select Plan'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* ══════════════════════ PROFILE ══════════════════════ */}

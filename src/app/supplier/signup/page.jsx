@@ -28,7 +28,7 @@ export default function SupplierSignupPage() {
     email: '', password: '', confirmPassword: '',
     shop_name: '', phone: '',
     city: '', state: '', country: 'India', postal_code: '',
-    aadhaar_number: '',
+    aadhaar_number: '', package_id: 'pkg_6m',
   });
 
   useEffect(() => {
@@ -76,6 +76,9 @@ export default function SupplierSignupPage() {
       if (!formData.aadhaar_number) { setError('Aadhaar number is required'); return false; }
       if (!/^\d{12}$/.test(formData.aadhaar_number.replace(/\s/g, ''))) { setError('Aadhaar must be exactly 12 digits'); return false; }
     }
+    if (s === 6) {
+      if (!formData.package_id) { setError('Select a subscription plan'); return false; }
+    }
     return true;
   };
 
@@ -85,7 +88,7 @@ export default function SupplierSignupPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateStep(5)) return;
+    if (!validateStep(6)) return;
     setLoading(true); setError('');
     try {
       const res = await fetch('/api/supplier/signup', {
@@ -104,8 +107,8 @@ export default function SupplierSignupPage() {
     finally { setLoading(false); }
   };
 
-  const TOTAL_STEPS = 5;
-  const stepTitles = ['Login Credentials', 'Shop Details', 'Address', 'Products You Sell', 'Identity Verification'];
+  const TOTAL_STEPS = 6;
+  const stepTitles = ['Login Credentials', 'Shop Details', 'Address', 'Products You Sell', 'Identity Verification', 'Subscription Plan'];
 
   const c = {
     bg: dark ? '#000' : '#f5f5f7',
@@ -176,7 +179,7 @@ export default function SupplierSignupPage() {
 
           {error && <div className="ss-error">⚠️ {error}</div>}
 
-          {step === TOTAL_STEPS && (
+          {step === 5 && (
             <div className="ss-notice">
               🔒 Your Aadhaar is used only for identity verification by the admin team. After approval you can log in and start receiving orders.
             </div>
@@ -342,6 +345,39 @@ export default function SupplierSignupPage() {
                       </div>
                     </div>
                   </div>
+                </div>
+              </>
+            )}
+
+            {/* STEP 6 — Subscription Plan */}
+            {step === 6 && (
+              <>
+                <label className="ss-label">Select a subscription plan *</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+                  {[
+                    { id: 'pkg_6m', name: '6 Months Plan', price: '₹2,999', desc: 'Perfect for getting started. Complete material enquiries access.' },
+                    { id: 'pkg_1y', name: '1 Year Plan', price: '₹4,999', desc: 'Most popular. Great value with a full year of enquiries.' },
+                    { id: 'pkg_2y', name: '2 Years Plan', price: '₹7,999', desc: 'Best deal. Long-term peace of mind and maximum savings.' },
+                  ].map(pkg => (
+                    <div
+                      key={pkg.id}
+                      onClick={() => setFormData(prev => ({ ...prev, package_id: pkg.id }))}
+                      style={{
+                        border: formData.package_id === pkg.id ? '2px solid #10b981' : `1px solid ${c.border}`,
+                        background: formData.package_id === pkg.id ? (dark ? '#0a2a1a' : '#f0fdf4') : c.inputBg,
+                        padding: '1rem',
+                        borderRadius: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                        <span style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>{pkg.name}</span>
+                        <span style={{ color: '#10b981', fontWeight: 800, fontSize: '0.875rem' }}>{pkg.price}</span>
+                      </div>
+                      <p style={{ fontSize: '0.75rem', color: c.muted, margin: 0 }}>{pkg.desc}</p>
+                    </div>
+                  ))}
                 </div>
               </>
             )}

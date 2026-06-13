@@ -1,15 +1,10 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
+import { ensureProjectOpsSchema, getProjectSummaries } from '@/lib/project-ops';
 
 async function ensureProjectColumns() {
-  await pool.query(`
-    ALTER TABLE projects
-      ADD COLUMN IF NOT EXISTS franchise_id INTEGER,
-      ADD COLUMN IF NOT EXISTS assigned_agent_id INTEGER,
-      ADD COLUMN IF NOT EXISTS created_by_role TEXT DEFAULT 'admin',
-      ADD COLUMN IF NOT EXISTS project_notes TEXT
-  `);
+  await ensureProjectOpsSchema();
 }
 
 async function ensureAgentIsApproved(agentId) {
@@ -28,17 +23,9 @@ export async function GET(req) {
       return NextResponse.json({ success: false, error: 'Franchise access required' }, { status: 403 });
     }
 
-    await ensureProjectColumns();
-    const result = await pool.query(
-      `SELECT p.*, a.name AS assigned_agent_name, a.email AS assigned_agent_email, a.phone AS assigned_agent_phone
-       FROM projects p
-       LEFT JOIN agents a ON a.id = p.assigned_agent_id
-       WHERE p.franchise_id = $1
-       ORDER BY p.created_at DESC`,
-      [franchise.id]
-    );
+    const data = await getProjectSummaries('WHERE p.franchise_id = $1', [franchise.id]);
 
-    return NextResponse.json({ success: true, data: result.rows });
+    return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error('Franchise projects fetch error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
@@ -64,6 +51,11 @@ export async function POST(req) {
       status,
       assigned_agent_id,
       project_notes,
+      client_name,
+      client_phone,
+      client_email,
+      deal_amount,
+      project_status,
     } = await req.json();
 
     if (!title || !category || !image_url) {
@@ -77,9 +69,10 @@ export async function POST(req) {
     const result = await pool.query(
       `INSERT INTO projects (
         title, category, location, description, image_url, cloudinary_public_id,
-        size, status, franchise_id, assigned_agent_id, created_by_role, project_notes
+        size, status, franchise_id, assigned_agent_id, created_by_role, project_notes,
+        client_name, client_phone, client_email, deal_amount, project_status
       )
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'franchise',$11)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'franchise',$11,$12,$13,$14,$15,$16)
        RETURNING *`,
       [
         title,
@@ -93,6 +86,11 @@ export async function POST(req) {
         franchise.id,
         assigned_agent_id || null,
         project_notes || '',
+        client_name || null,
+        client_phone || null,
+        client_email || null,
+        Number(deal_amount || 0),
+        project_status || 'lead',
       ]
     );
 
@@ -123,6 +121,11 @@ export async function PATCH(req) {
       status,
       assigned_agent_id,
       project_notes,
+      client_name,
+      client_phone,
+      client_email,
+      deal_amount,
+      project_status,
     } = await req.json();
 
     if (!id || !title || !category || !image_url) {
@@ -137,8 +140,10 @@ export async function PATCH(req) {
       `UPDATE projects
        SET title=$1, category=$2, location=$3, description=$4,
            image_url=$5, cloudinary_public_id=$6, size=$7, status=$8,
-           assigned_agent_id=$9, project_notes=$10
-       WHERE id=$11 AND franchise_id=$12
+           assigned_agent_id=$9, project_notes=$10,
+           client_name=$11, client_phone=$12, client_email=$13,
+           deal_amount=$14, project_status=$15
+       WHERE id=$16 AND franchise_id=$17
        RETURNING *`,
       [
         title,
@@ -151,6 +156,11 @@ export async function PATCH(req) {
         status === 'draft' ? 'draft' : 'published',
         assigned_agent_id || null,
         project_notes || '',
+        client_name || null,
+        client_phone || null,
+        client_email || null,
+        Number(deal_amount || 0),
+        project_status || 'lead',
         id,
         franchise.id,
       ]

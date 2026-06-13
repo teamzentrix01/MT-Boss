@@ -2,13 +2,14 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { ensurePackageSchema, getPackageById } from '@/lib/packages';
 
 export async function POST(req) {
   let client;
   try {
     let email, password, phone, city, state, country, postal_code,
         aadhar_number, services, profilePhotoBuffer, profilePhotoMime,
-        aadharImageBuffer, aadharImageMime;
+        aadharImageBuffer, aadharImageMime, package_id;
 
     const contentType = req.headers.get('content-type') || '';
 
@@ -32,6 +33,7 @@ export async function POST(req) {
       postal_code   = fd.get('postal_code');
       aadhar_number = (fd.get('aadhar_number') || '').replace(/\s/g, '');
       services      = JSON.parse(fd.get('services') || '[]');
+      package_id    = fd.get('package_id');
 
       const profileFile = fd.get('profile_photo');
       const aadharFile  = fd.get('aadhar_image');
@@ -58,6 +60,7 @@ export async function POST(req) {
       postal_code   = body.postal_code;
       aadhar_number = (body.aadhar_number || '').replace(/\s/g, '');
       services      = body.services || [];
+      package_id    = body.package_id;
     }
 
     console.log('✅ [SIGNUP] Data parsed:', { email, phone, city, services: services.length });
@@ -122,6 +125,8 @@ export async function POST(req) {
     // START DATABASE TRANSACTION
     // ════════════════════════════════════════════════════════════════
 
+    await ensurePackageSchema();
+
     console.log('💾 [SIGNUP] Getting database connection...');
     client = await pool.connect();
     console.log('✅ [SIGNUP] Connected to database');
@@ -149,6 +154,8 @@ export async function POST(req) {
 
     console.log('🏗️ [SIGNUP] Building insert fields...');
     
+    const pkg = getPackageById(package_id || 'pkg_6m') || getPackageById('pkg_6m');
+
     const fields = {
       email,
       password_hash: hashedPassword,
@@ -161,6 +168,15 @@ export async function POST(req) {
       verification_status: 'pending',
       is_approved: false,
     };
+
+    if (cols.has('package_id')) {
+      fields.package_id = pkg.id;
+      fields.package_name = pkg.name;
+      fields.package_price = pkg.price;
+      fields.package_duration_months = pkg.duration_months;
+      fields.package_purchased_at = new Date().toISOString();
+      fields.package_status = 'pending';
+    }
 
     if (cols.has('shop_name'))     fields.shop_name     = email.split('@')[0];
     if (cols.has('business_name')) fields.business_name = email.split('@')[0];

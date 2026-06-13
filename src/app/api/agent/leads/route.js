@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import { ensureAgentSchema, requireAgent } from '@/lib/agent-auth';
 
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
+const LEAD_STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
 
 export async function GET(req) {
   try {
@@ -34,15 +35,23 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { clientName, clientPhone, clientEmail, serviceType, leadType, status, followUpDate, notes } = await req.json();
+    const {
+      clientName, clientPhone, clientEmail, serviceType, leadType,
+      status, followUpDate, notes,
+      lead_stage, meeting_done, estimate_sent, final_amount,
+      daily_visit_notes, client_requirement, lead_source,
+    } = await req.json();
     if (!clientName || !clientPhone) {
       return NextResponse.json({ success: false, error: 'Client name and phone are required' }, { status: 400 });
     }
 
     const result = await pool.query(
       `INSERT INTO agent_leads
-        (agent_id, city, client_name, client_phone, client_email, service_type, lead_type, status, follow_up_date, notes)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+        (agent_id, city, client_name, client_phone, client_email, service_type, lead_type,
+         status, follow_up_date, notes,
+         lead_stage, meeting_done, estimate_sent, final_amount,
+         daily_visit_notes, client_requirement, lead_source)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
        RETURNING *`,
       [
         agent.id,
@@ -55,6 +64,13 @@ export async function POST(req) {
         STATUSES.has(status) ? status : 'New',
         followUpDate || null,
         notes || null,
+        LEAD_STAGES.has(lead_stage) ? lead_stage : 'New',
+        meeting_done === true || meeting_done === 'true' ? true : false,
+        estimate_sent === true || estimate_sent === 'true' ? true : false,
+        Number(final_amount || 0),
+        daily_visit_notes || null,
+        client_requirement || null,
+        lead_source || 'offline',
       ]
     );
 
@@ -73,7 +89,12 @@ export async function PATCH(req) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id, clientName, clientPhone, clientEmail, serviceType, leadType, status, followUpDate, notes } = await req.json();
+    const {
+      id, clientName, clientPhone, clientEmail, serviceType, leadType,
+      status, followUpDate, notes,
+      lead_stage, meeting_done, estimate_sent, final_amount,
+      daily_visit_notes, client_requirement, lead_source,
+    } = await req.json();
     if (!id) {
       return NextResponse.json({ success: false, error: 'Lead id is required' }, { status: 400 });
     }
@@ -89,6 +110,13 @@ export async function PATCH(req) {
               follow_up_date = COALESCE($7, follow_up_date),
               notes = COALESCE($8, notes),
               city = $9,
+              lead_stage = COALESCE($12, lead_stage),
+              meeting_done = COALESCE($13, meeting_done),
+              estimate_sent = COALESCE($14, estimate_sent),
+              final_amount = COALESCE($15, final_amount),
+              daily_visit_notes = COALESCE($16, daily_visit_notes),
+              client_requirement = COALESCE($17, client_requirement),
+              lead_source = COALESCE($18, lead_source),
               updated_at = NOW()
         WHERE id = $10 AND agent_id = $11
         RETURNING *`,
@@ -104,6 +132,13 @@ export async function PATCH(req) {
         agent.city,
         id,
         agent.id,
+        LEAD_STAGES.has(lead_stage) ? lead_stage : null,
+        meeting_done === true || meeting_done === 'true' ? true : meeting_done === false || meeting_done === 'false' ? false : null,
+        estimate_sent === true || estimate_sent === 'true' ? true : estimate_sent === false || estimate_sent === 'false' ? false : null,
+        final_amount !== undefined && final_amount !== '' ? Number(final_amount) : null,
+        daily_visit_notes || null,
+        client_requirement || null,
+        lead_source || null,
       ]
     );
 

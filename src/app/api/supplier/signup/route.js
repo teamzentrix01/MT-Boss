@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { ensurePackageSchema, getPackageById } from '@/lib/packages';
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { email, password, shop_name, phone, city, state, country, postal_code, aadhaar_number, product_categories } = body;
+    const { email, password, shop_name, phone, city, state, country, postal_code, aadhaar_number, product_categories, package_id } = body;
 
     if (!email || !password || !shop_name || !phone) {
       return NextResponse.json({ error: 'Required fields missing' }, { status: 400 });
@@ -19,6 +20,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Select at least one product category' }, { status: 400 });
     }
 
+    await ensurePackageSchema();
     await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS product_categories TEXT[] DEFAULT '{}'`);
 
     const existing = await pool.query('SELECT id FROM suppliers WHERE email = $1', [email]);
@@ -26,18 +28,24 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
     }
 
+    const pkg = getPackageById(package_id || 'pkg_6m') || getPackageById('pkg_6m');
+
     // $4 = business_name (same as shop_name — column has NOT NULL constraint)
     const result = await pool.query(
       `INSERT INTO suppliers (
         email, password_hash,
         shop_name, business_name, phone,
         city, state, country, postal_code,
-        aadhaar_number, product_categories, status
+        aadhaar_number, product_categories, status,
+        package_id, package_name, package_price, package_duration_months,
+        package_purchased_at, package_status
       ) VALUES (
         $1, crypt($2, gen_salt('bf')),
         $3, $4, $5,
         $6, $7, $8, $9,
-        $10, $11, 'pending'
+        $10, $11, 'pending',
+        $12, $13, $14, $15,
+        NOW(), 'pending'
       )
       RETURNING id, email, shop_name, phone, status, created_at`,
       [
@@ -46,6 +54,7 @@ export async function POST(request) {
         city || null, state || null, country || 'India', postal_code || null,
         aadhaar_number.replace(/\s/g, ''),
         product_categories,
+        pkg.id, pkg.name, pkg.price, pkg.duration_months
       ]
     );
 

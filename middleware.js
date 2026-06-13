@@ -27,6 +27,8 @@ export function middleware(request) {
 
   if (request.nextUrl.pathname.startsWith('/franchise/login') && franchiseToken) {
     return NextResponse.redirect(new URL('/franchise/dashboard', request.url));
+  }
+
   if (request.nextUrl.pathname.startsWith('/agent/dashboard')) {
     if (!agentToken) {
       return NextResponse.redirect(new URL('/agent/login', request.url));
@@ -43,6 +45,13 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login', '/signup', '/franchise/login', '/franchise/dashboard/:path*'],
-  matcher: ['/dashboard/:path*', '/login', '/signup', '/agent/login', '/agent/dashboard/:path*'],
+  matcher: [
+    '/dashboard/:path*',
+    '/login',
+    '/signup',
+    '/franchise/login',
+    '/franchise/dashboard/:path*',
+    '/agent/login',
+    '/agent/dashboard/:path*',
+  ],
 };

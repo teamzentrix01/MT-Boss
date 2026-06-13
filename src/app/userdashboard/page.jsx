@@ -213,14 +213,49 @@ function RatingModal({ booking, isDark, onClose, onSuccess }) {
 }
 
 // ── Booking Card ──────────────────────────────────────────────────────────────
-function BookingCard({ booking, isDark, onPayment, onRate }) {
+function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
   const st     = STATUS_CONFIG[booking.status] || STATUS_CONFIG.WAITING_FOR_VENDOR_ACCEPTANCE;
   const card   = isDark ? 'bg-zinc-950 border-zinc-800 hover:border-zinc-700' : 'bg-white border-zinc-200 hover:border-zinc-300';
   const muted  = isDark ? 'text-zinc-500' : 'text-zinc-400';
   const text   = isDark ? 'text-zinc-200' : 'text-zinc-800';
   const divider= isDark ? 'border-zinc-800' : 'border-zinc-100';
 
+  const [loadingOtp, setLoadingOtp] = useState(false);
+  const [errorOtp, setErrorOtp] = useState('');
+  const [copied, setCopied] = useState(false);
+
   const displayAmount = booking.final_amount || booking.total_amount;
+
+  const handleCopy = (otp) => {
+    navigator.clipboard.writeText(otp);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  async function handleGenerateOtp(type) {
+    setLoadingOtp(true);
+    setErrorOtp('');
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/bookings/${booking.id}/${type}-otp`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (onRefresh) onRefresh();
+      } else {
+        setErrorOtp(data.error || `Failed to generate ${type} OTP`);
+      }
+    } catch (err) {
+      setErrorOtp('Failed to connect to server');
+    } finally {
+      setLoadingOtp(false);
+    }
+  }
 
   return (
     <div className={`border p-5 transition-all duration-200 ${card}`}>
@@ -266,6 +301,99 @@ function BookingCard({ booking, isDark, onPayment, onRate }) {
           </div>
         )}
       </div>
+
+      {/* OTP Section */}
+      {(booking.status === 'VENDOR_ACCEPTED' || booking.status === 'VENDOR_ON_WAY' || booking.status === 'IN_PROGRESS') && (
+        <div className={`my-4 p-4 border ${isDark ? 'border-zinc-800 bg-zinc-900/40' : 'border-zinc-100 bg-zinc-50/50'} flex flex-col gap-3 transition-all`}>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[#facc15]">
+                {booking.status === 'IN_PROGRESS' ? 'Completion Verification' : 'Start Verification'}
+              </p>
+              <p className={`text-[10px] mt-0.5 ${muted}`}>
+                {booking.status === 'IN_PROGRESS' 
+                  ? 'Verify completion once the service is done' 
+                  : 'Verify to start the service when vendor arrives'}
+              </p>
+            </div>
+            {booking.status === 'IN_PROGRESS' ? (
+              booking.finish_otp ? (
+                <div className="flex items-center gap-1.5 text-[9px] font-black text-yellow-500 bg-yellow-500/10 px-2 py-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+                  AWAITING VERIFICATION
+                </div>
+              ) : null
+            ) : (
+              booking.start_otp ? (
+                <div className="flex items-center gap-1.5 text-[9px] font-black text-yellow-500 bg-yellow-500/10 px-2 py-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+                  AWAITING VERIFICATION
+                </div>
+              ) : null
+            )}
+          </div>
+
+          {booking.status === 'IN_PROGRESS' ? (
+            booking.finish_otp ? (
+              <div className="flex items-center justify-between bg-black/10 dark:bg-black/40 p-3 border border-dashed border-zinc-700/50">
+                <div>
+                  <span className={`text-[9px] font-bold uppercase tracking-widest ${muted}`}>Finish OTP</span>
+                  <p className="text-xl font-black font-mono tracking-[0.2em] text-[#facc15]">{booking.finish_otp}</p>
+                </div>
+                <button 
+                  onClick={() => handleCopy(booking.finish_otp)}
+                  className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1.5 border transition-all min-w-[65px] text-center ${
+                    isDark 
+                      ? 'border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white' 
+                      : 'border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900'
+                  }`}
+                >
+                  {copied ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+            ) : (
+              <button
+                disabled={loadingOtp}
+                onClick={() => handleGenerateOtp('finish')}
+                className="w-full py-2.5 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-[0.25em] hover:bg-yellow-300 transition-all disabled:opacity-50"
+              >
+                {loadingOtp ? 'Generating OTP...' : 'Generate Finish OTP'}
+              </button>
+            )
+          ) : (
+            booking.start_otp ? (
+              <div className="flex items-center justify-between bg-black/10 dark:bg-black/40 p-3 border border-dashed border-zinc-700/50">
+                <div>
+                  <span className={`text-[9px] font-bold uppercase tracking-widest ${muted}`}>Start OTP</span>
+                  <p className="text-xl font-black font-mono tracking-[0.2em] text-[#facc15]">{booking.start_otp}</p>
+                </div>
+                <button 
+                  onClick={() => handleCopy(booking.start_otp)}
+                  className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1.5 border transition-all min-w-[65px] text-center ${
+                    isDark 
+                      ? 'border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white' 
+                      : 'border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900'
+                  }`}
+                >
+                  {copied ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+            ) : (
+              <button
+                disabled={loadingOtp}
+                onClick={() => handleGenerateOtp('start')}
+                className="w-full py-2.5 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-[0.25em] hover:bg-yellow-300 transition-all disabled:opacity-50"
+              >
+                {loadingOtp ? 'Generating OTP...' : 'Generate Start OTP'}
+              </button>
+            )
+          )}
+
+          {errorOtp && (
+            <p className="text-[9px] font-black uppercase tracking-widest text-red-500 animate-pulse">{errorOtp}</p>
+          )}
+        </div>
+      )}
 
       {/* Footer row */}
       <div className={`flex items-center justify-between border-t pt-3 ${divider}`}>
@@ -449,6 +577,7 @@ export default function UserDashboard() {
                   isDark={isDark}
                   onPayment={setPaymentBooking}
                   onRate={setRateBooking}
+                  onRefresh={() => fetchBookings(localStorage.getItem('token'))}
                 />
               ))}
             </div>

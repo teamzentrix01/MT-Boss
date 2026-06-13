@@ -21,6 +21,11 @@ const emptyForm = {
   status: 'published',
   assigned_agent_id: '',
   project_notes: '',
+  client_name: '',
+  client_phone: '',
+  client_email: '',
+  deal_amount: '',
+  project_status: 'lead',
 };
 
 export default function FranchiseDashboardPage() {
@@ -102,6 +107,11 @@ export default function FranchiseDashboardPage() {
       status: project.status || 'published',
       assigned_agent_id: project.assigned_agent_id || '',
       project_notes: project.project_notes || '',
+      client_name: project.client_name || '',
+      client_phone: project.client_phone || '',
+      client_email: project.client_email || '',
+      deal_amount: project.deal_amount || '',
+      project_status: project.project_status || 'lead',
     });
     setMessage({ type: '', text: '' });
     setShowForm(true);
@@ -266,6 +276,8 @@ export default function FranchiseDashboardPage() {
         .fd-card{background:#fff;border:1px solid #e5e7eb;border-radius:9px;overflow:hidden}
         .fd-card img{width:100%;height:165px;object-fit:cover;display:block;background:#eee}
         .fd-card-body{padding:1rem}.fd-card-title{font-weight:900}.fd-muted{font-size:.78rem;color:#71717a;margin-top:.25rem;line-height:1.5}
+        .fd-money{display:grid;grid-template-columns:repeat(2,1fr);gap:.45rem;margin-top:.75rem;font-size:.74rem}
+        .fd-money div{background:#f8fafc;border:1px solid #eef2f7;border-radius:7px;padding:.45rem}.fd-money strong{display:block;color:#111;margin-top:.12rem}
         .fd-pill{display:inline-flex;padding:.18rem .55rem;border-radius:999px;background:#fef9c3;color:#854d0e;font-size:.68rem;font-weight:900;margin-top:.55rem}
         .fd-actions{display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap}
         .fd-empty{padding:3rem;text-align:center;color:#71717a}
@@ -328,7 +340,17 @@ export default function FranchiseDashboardPage() {
                   <div className="fd-muted">{project.category} | {project.location || franchise?.city}</div>
                   {project.description && <div className="fd-muted">{project.description}</div>}
                   <span className="fd-pill">{project.status}</span>
+                  <span className="fd-pill">{project.project_status || 'lead'}</span>
+                  {(project.client_name || project.client_phone) && (
+                    <div className="fd-muted">Client: <strong>{project.client_name || '-'}</strong> {project.client_phone ? `(${project.client_phone})` : ''}</div>
+                  )}
                   {project.assigned_agent_name && <div className="fd-muted">Assigned agent: <strong>{project.assigned_agent_name}</strong></div>}
+                  <div className="fd-money">
+                    <div>Received<strong>Rs {Number(project.total_received || 0).toLocaleString('en-IN')}</strong></div>
+                    <div>Agent 2%<strong>Rs {Number(project.agent_commission || 0).toLocaleString('en-IN')}</strong></div>
+                    <div>Costs<strong>Rs {Number(Number(project.labour_cost || 0) + Number(project.material_cost || 0) + Number(project.extra_expense || 0)).toLocaleString('en-IN')}</strong></div>
+                    <div>Profit/Loss<strong>Rs {Number(project.profit_loss || 0).toLocaleString('en-IN')}</strong></div>
+                  </div>
                   <div className="fd-actions">
                     <button className="fd-btn secondary" onClick={() => openEdit(project)}>Edit</button>
                     <button className="fd-btn danger" onClick={() => deleteProject(project)}>Delete</button>
@@ -361,6 +383,28 @@ export default function FranchiseDashboardPage() {
               <div>
                 <label className="fd-label">Title *</label>
                 <input className="fd-input" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+              </div>
+
+              <div className="fd-row">
+                <div>
+                  <label className="fd-label">Client name</label>
+                  <input className="fd-input" value={form.client_name} onChange={e => setForm(f => ({ ...f, client_name: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="fd-label">Client phone</label>
+                  <input className="fd-input" value={form.client_phone} onChange={e => setForm(f => ({ ...f, client_phone: e.target.value }))} />
+                </div>
+              </div>
+
+              <div className="fd-row">
+                <div>
+                  <label className="fd-label">Client email</label>
+                  <input className="fd-input" value={form.client_email} onChange={e => setForm(f => ({ ...f, client_email: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="fd-label">Deal amount</label>
+                  <input className="fd-input" type="number" value={form.deal_amount} onChange={e => setForm(f => ({ ...f, deal_amount: e.target.value }))} />
+                </div>
               </div>
 
               <div className="fd-row">
@@ -411,9 +455,16 @@ export default function FranchiseDashboardPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="fd-label">Internal notes</label>
-                  <input className="fd-input" value={form.project_notes} onChange={e => setForm(f => ({ ...f, project_notes: e.target.value }))} />
+                  <label className="fd-label">Project stage</label>
+                  <select className="fd-input" value={form.project_status} onChange={e => setForm(f => ({ ...f, project_status: e.target.value }))}>
+                    {['lead', 'estimate_sent', 'final', 'started', 'running', 'completed', 'cancelled', 'lost'].map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
                 </div>
+              </div>
+
+              <div>
+                <label className="fd-label">Internal notes</label>
+                <input className="fd-input" value={form.project_notes} onChange={e => setForm(f => ({ ...f, project_notes: e.target.value }))} />
               </div>
             </div>
 

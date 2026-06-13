@@ -94,9 +94,10 @@ export async function POST(req) {
          FROM vendors v
          JOIN vendor_services vs ON v.id = vs.vendor_id
          WHERE vs.quick_service_id = $1 
-         AND v.city = $2 
+         AND LOWER(TRIM(v.city)) = LOWER(TRIM($2))
          AND v.status = 'active'
-         AND v.verification_status = 'verified'
+         AND v.is_approved = TRUE
+         AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
          AND vs.is_active = TRUE`,
         [quick_service_id, service_city]
       );

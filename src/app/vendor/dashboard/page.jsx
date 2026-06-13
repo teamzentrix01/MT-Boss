@@ -31,6 +31,14 @@ export default function VendorDashboard() {
   const [selectedServices, setSelectedServices] = useState([]);
   const [completedBookings, setCompletedBookings] = useState([]);
   const [totalEarning, setTotalEarning] = useState(0);
+  const [startOtpInput, setStartOtpInput] = useState('');
+  const [finishOtpInput, setFinishOtpInput] = useState('');
+  const [otpMsg, setOtpMsg] = useState('');
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [pkgList, setPkgList] = useState([]);
+  const [pkgStatus, setPkgStatus] = useState(null);
+  const [pkgLoading, setPkgLoading] = useState(false);
+  const [pkgMsg, setPkgMsg] = useState('');
  
   useEffect(() => {
     const check = () => setIsDark(document.documentElement.classList.contains("dark-mode"));
@@ -95,6 +103,82 @@ export default function VendorDashboard() {
       console.error("Error fetching vendor data:", error);
       setLoading(false);
     }
+  }
+
+  async function loadPackages() {
+    const token = localStorage.getItem('vendor-token');
+    try {
+      const [listRes, statusRes] = await Promise.all([
+        fetch('/api/vendor/packages', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/vendor/packages?action=status', { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
+      const listData = await listRes.json();
+      const statusData = await statusRes.json();
+      if (listData.success) setPkgList(listData.packages || []);
+      if (statusData.success) setPkgStatus(statusData.package || null);
+    } catch { /* ignore */ }
+  }
+
+  async function selectPackage(pkgId) {
+    setPkgLoading(true);
+    setPkgMsg('');
+    const token = localStorage.getItem('vendor-token');
+    try {
+      const res = await fetch('/api/vendor/packages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ package_id: pkgId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPkgMsg(data.message || 'Package selected!');
+        await loadPackages();
+      } else {
+        setPkgMsg(data.error || 'Failed to select package');
+      }
+    } catch { setPkgMsg('Network error'); } finally { setPkgLoading(false); }
+  }
+
+  async function verifyStartOtp(bookingId) {
+    setOtpLoading(true);
+    setOtpMsg('');
+    const token = localStorage.getItem('vendor-token');
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}/verify-start-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ otp: startOtpInput }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setOtpMsg('✓ Start OTP verified! Service in progress.');
+        setStartOtpInput('');
+        fetchVendorData(token);
+      } else {
+        setOtpMsg(data.error || 'Invalid OTP');
+      }
+    } catch { setOtpMsg('Network error'); } finally { setOtpLoading(false); }
+  }
+
+  async function verifyFinishOtp(bookingId) {
+    setOtpLoading(true);
+    setOtpMsg('');
+    const token = localStorage.getItem('vendor-token');
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}/verify-finish-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ otp: finishOtpInput }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setOtpMsg('✓ Finish OTP verified! Work complete.');
+        setFinishOtpInput('');
+        fetchVendorData(token);
+      } else {
+        setOtpMsg(data.error || 'Invalid OTP');
+      }
+    } catch { setOtpMsg('Network error'); } finally { setOtpLoading(false); }
   }
 
   async function loadAllServices() {
@@ -258,15 +342,16 @@ export default function VendorDashboard() {
             <h1 className="text-4xl font-black uppercase">Vendor Dashboard</h1>
             <p className={`text-sm ${muted} mt-1`}>{vendorProfile?.shop_name || "My Shop"} · {vendorProfile?.city || ""}</p>
           </div>
-          <div className={`flex border ${isDark ? "border-zinc-800" : "border-zinc-200"}`}>
+          <div className={`flex border ${isDark ? "border-zinc-800" : "border-zinc-200"} flex-wrap`}>
             {[
               { key: "notifications", label: "📬 Bookings" },
               { key: "history", label: "📋 History" },
+              { key: "packages", label: "📦 Package" },
               { key: "profile", label: "👤 Profile" },
             ].map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => { setActiveTab(tab.key); if (tab.key === 'packages') loadPackages(); }}
                 className={`px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all ${
                   activeTab === tab.key
                     ? "bg-[#facc15] text-black"
@@ -375,6 +460,61 @@ export default function VendorDashboard() {
                 ))}
               </div>
             )}
+          </div>
+        ) : activeTab === "packages" ? (
+          /* ── Packages Tab ── */
+          <div className={`border ${card} p-6 max-w-2xl`}>
+            <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest mb-4">Subscription Packages</p>
+            {pkgMsg && <p className="text-xs text-[#facc15] font-bold mb-4">{pkgMsg}</p>}
+            
+            {/* Current Package Status */}
+            {pkgStatus && (
+              <div className={`p-4 border mb-6 ${isDark ? 'border-green-500/30 bg-green-500/10' : 'border-green-200 bg-green-50'}`}>
+                <p className="text-[10px] font-black uppercase tracking-widest text-green-500 mb-2">Current Package</p>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-base font-black">{pkgStatus.package_name || 'No Plan Active'}</p>
+                    <p className={`text-xs ${muted} mt-1`}>
+                      {pkgStatus.is_active 
+                        ? `Expires in ${pkgStatus.days_remaining} days (${new Date(pkgStatus.package_expires_at).toLocaleDateString('en-IN')})`
+                        : pkgStatus.package_status === 'pending'
+                          ? '⏳ Pending Admin Approval'
+                          : 'No active subscription'
+                      }
+                    </p>
+                  </div>
+                  <span className={`badge ${pkgStatus.is_active ? 'badge-verified' : pkgStatus.package_status === 'pending' ? 'badge-pending' : 'badge-inactive'}`}>
+                    {pkgStatus.package_status}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Upgrade/Change Packages */}
+            <h3 className="text-lg font-black uppercase mb-3">Upgrade Your Plan</h3>
+            <div className="space-y-3">
+              {pkgList.map(pkg => (
+                <div
+                  key={pkg.id}
+                  className={`p-4 border flex items-center justify-between gap-4 ${isDark ? 'border-zinc-800 bg-zinc-900/40' : 'border-zinc-200 bg-zinc-50'}`}
+                >
+                  <div>
+                    <p className="font-black text-sm">{pkg.name} Plan</p>
+                    <p className={`text-xs ${muted} mt-1`}>{pkg.label} · Complete booking lead access</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-black text-sm text-[#facc15] mb-2">₹{pkg.price}</p>
+                    <button
+                      onClick={() => selectPackage(pkg.id)}
+                      disabled={pkgLoading || pkgStatus?.package_id === pkg.id}
+                      className="px-4 py-2 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed hover:bg-yellow-300"
+                    >
+                      {pkgStatus?.package_id === pkg.id ? 'Current' : 'Select Plan'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : activeTab === "profile" ? (
           /* ── Profile Tab ── */
@@ -670,12 +810,60 @@ export default function VendorDashboard() {
                 <div>
                   <p className="text-[10px] font-black uppercase text-[#facc15]">Status</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <div className={`w-3 h-3 rounded-full animate-pulse ${activeBooking.status === 'AWAITING_PAYMENT' ? 'bg-green-500' : 'bg-blue-500'}`}></div>
-                    <p className={`font-black uppercase ${activeBooking.status === 'AWAITING_PAYMENT' ? 'text-green-500' : 'text-blue-500'}`}>
-                      {activeBooking.status === 'AWAITING_PAYMENT' ? 'Work Done · Awaiting Payment' : activeBooking.status}
+                    <div className={`w-3 h-3 rounded-full animate-pulse ${activeBooking.status === 'AWAITING_PAYMENT' ? 'bg-green-500' : activeBooking.status === 'IN_PROGRESS' ? 'bg-orange-500' : 'bg-blue-500'}`}></div>
+                    <p className={`font-black uppercase ${activeBooking.status === 'AWAITING_PAYMENT' ? 'text-green-500' : activeBooking.status === 'IN_PROGRESS' ? 'text-orange-500' : 'text-blue-500'}`}>
+                      {activeBooking.status === 'AWAITING_PAYMENT' ? 'Work Done · Awaiting Payment' : activeBooking.status === 'IN_PROGRESS' ? 'Service In Progress' : activeBooking.status}
                     </p>
                   </div>
                 </div>
+
+                {otpMsg && <p className={`text-xs font-bold ${otpMsg.includes('✓') ? 'text-green-500' : 'text-red-400'}`}>{otpMsg}</p>}
+
+                {/* OTP Start Flow - Vendor enters start OTP to begin */}
+                {(activeBooking.status === 'VENDOR_ACCEPTED' || activeBooking.status === 'VENDOR_ON_WAY') && !activeBooking.start_otp_verified && (
+                  <div className={`p-4 border ${isDark ? 'border-blue-500/30 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}>
+                    <p className="text-[9px] font-black uppercase text-blue-400 tracking-widest mb-2">🔑 Enter Start OTP</p>
+                    <p className={`text-[10px] mb-3 ${muted}`}>Ask customer for the 4-digit Start OTP to begin service</p>
+                    <div className="flex gap-2">
+                      <input
+                        type="text" maxLength={4} placeholder="Enter 4-digit OTP"
+                        className={`flex-1 px-3 py-2.5 text-center text-lg font-black tracking-[0.3em] border outline-none ${isDark ? 'bg-zinc-900 border-zinc-700 text-white' : 'bg-white border-zinc-300 text-zinc-900'}`}
+                        value={startOtpInput}
+                        onChange={(e) => setStartOtpInput(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                      />
+                      <button
+                        onClick={() => verifyStartOtp(activeBooking.id)}
+                        disabled={startOtpInput.length !== 4 || otpLoading}
+                        className="px-6 py-2.5 bg-blue-500 text-white text-[9px] font-black uppercase tracking-widest disabled:opacity-50"
+                      >
+                        {otpLoading ? '...' : 'Verify'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Service In Progress - Vendor enters finish OTP */}
+                {activeBooking.status === 'IN_PROGRESS' && (
+                  <div className={`p-4 border ${isDark ? 'border-orange-500/30 bg-orange-500/10' : 'border-orange-200 bg-orange-50'}`}>
+                    <p className="text-[9px] font-black uppercase text-orange-400 tracking-widest mb-2">🏁 Enter Finish OTP</p>
+                    <p className={`text-[10px] mb-3 ${muted}`}>When work is done, ask customer for Finish OTP to complete service</p>
+                    <div className="flex gap-2">
+                      <input
+                        type="text" maxLength={4} placeholder="Enter 4-digit OTP"
+                        className={`flex-1 px-3 py-2.5 text-center text-lg font-black tracking-[0.3em] border outline-none ${isDark ? 'bg-zinc-900 border-zinc-700 text-white' : 'bg-white border-zinc-300 text-zinc-900'}`}
+                        value={finishOtpInput}
+                        onChange={(e) => setFinishOtpInput(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                      />
+                      <button
+                        onClick={() => verifyFinishOtp(activeBooking.id)}
+                        disabled={finishOtpInput.length !== 4 || otpLoading}
+                        className="px-6 py-2.5 bg-orange-500 text-white text-[9px] font-black uppercase tracking-widest disabled:opacity-50"
+                      >
+                        {otpLoading ? '...' : 'Verify'}
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {activeBooking.status === 'AWAITING_PAYMENT' ? (
                   <div className={`w-full py-4 text-center border border-green-500/30 ${isDark ? 'bg-green-500/10' : 'bg-green-50'}`}>
@@ -685,7 +873,7 @@ export default function VendorDashboard() {
                       <p className="text-green-500 font-black text-lg mt-2">₹{activeBooking.final_amount}</p>
                     )}
                   </div>
-                ) : (
+                ) : activeBooking.status !== 'IN_PROGRESS' ? (
                   <>
                     <button
                       onClick={updateLocation}
@@ -700,7 +888,7 @@ export default function VendorDashboard() {
                       ✓ Mark Work Complete
                     </button>
                   </>
-                )}
+                ) : null}
               </div>
             </div>
           </div>

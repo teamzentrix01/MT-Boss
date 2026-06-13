@@ -1,9 +1,42 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 
+async function ensureQuickServiceSeoColumns() {
+  await pool.query(`
+    ALTER TABLE quick_services
+      ADD COLUMN IF NOT EXISTS slug TEXT,
+      ADD COLUMN IF NOT EXISTS video_url TEXT,
+      ADD COLUMN IF NOT EXISTS seo_title TEXT,
+      ADD COLUMN IF NOT EXISTS seo_description TEXT,
+      ADD COLUMN IF NOT EXISTS coverage_details TEXT,
+      ADD COLUMN IF NOT EXISTS how_to_use TEXT
+  `);
+
+  await pool.query(`
+    UPDATE quick_services
+       SET slug = LOWER(REGEXP_REPLACE(TRIM(label), '[^a-zA-Z0-9]+', '-', 'g'))
+     WHERE slug IS NULL OR TRIM(slug) = ''
+  `);
+}
+
 // GET all quick services — public, no auth required
 export async function GET(req) {
   try {
+    await ensureQuickServiceSeoColumns();
+    const { searchParams } = new URL(req.url);
+    const slug = searchParams.get('slug');
+
+    if (slug) {
+      const result = await pool.query(
+        `SELECT * FROM quick_services WHERE LOWER(slug) = LOWER($1) LIMIT 1`,
+        [slug]
+      );
+      if (result.rows.length === 0) {
+        return NextResponse.json({ success: false, error: 'Service not found' }, { status: 404 });
+      }
+      return NextResponse.json({ success: true, data: result.rows[0] });
+    }
+
     // Order by sort_order if the column exists, fall back to id
     let result;
     try {
@@ -28,7 +61,20 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { icon, label, desc, basePrice, duration } = await req.json();
+    await ensureQuickServiceSeoColumns();
+    const {
+      icon,
+      label,
+      desc,
+      basePrice,
+      duration,
+      slug,
+      video_url,
+      seo_title,
+      seo_description,
+      coverage_details,
+      how_to_use,
+    } = await req.json();
 
     if (!icon || !label || !desc || !basePrice || !duration) {
       return NextResponse.json(
@@ -38,10 +84,25 @@ export async function POST(req) {
     }
 
     const result = await pool.query(
-      `INSERT INTO quick_services (icon, label, description, base_price, duration)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO quick_services (
+        icon, label, description, base_price, duration,
+        slug, video_url, seo_title, seo_description, coverage_details, how_to_use
+      )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        RETURNING *`,
-      [icon, label, desc, parseFloat(basePrice), duration]
+      [
+        icon,
+        label,
+        desc,
+        parseFloat(basePrice),
+        duration,
+        slug || label.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        video_url || null,
+        seo_title || null,
+        seo_description || null,
+        coverage_details || null,
+        how_to_use || null,
+      ]
     );
 
     return NextResponse.json(
@@ -62,7 +123,21 @@ export async function PUT(req) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id, icon, label, desc, basePrice, duration } = await req.json();
+    await ensureQuickServiceSeoColumns();
+    const {
+      id,
+      icon,
+      label,
+      desc,
+      basePrice,
+      duration,
+      slug,
+      video_url,
+      seo_title,
+      seo_description,
+      coverage_details,
+      how_to_use,
+    } = await req.json();
 
     if (!id || !icon || !label || !desc || !basePrice || !duration) {
       return NextResponse.json(
@@ -73,10 +148,25 @@ export async function PUT(req) {
 
     const result = await pool.query(
       `UPDATE quick_services
-       SET icon=$1, label=$2, description=$3, base_price=$4, duration=$5
-       WHERE id=$6
+       SET icon=$1, label=$2, description=$3, base_price=$4, duration=$5,
+           slug=$6, video_url=$7, seo_title=$8, seo_description=$9,
+           coverage_details=$10, how_to_use=$11
+       WHERE id=$12
        RETURNING *`,
-      [icon, label, desc, parseFloat(basePrice), duration, id]
+      [
+        icon,
+        label,
+        desc,
+        parseFloat(basePrice),
+        duration,
+        slug || label.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        video_url || null,
+        seo_title || null,
+        seo_description || null,
+        coverage_details || null,
+        how_to_use || null,
+        id,
+      ]
     );
 
     if (result.rows.length === 0) {

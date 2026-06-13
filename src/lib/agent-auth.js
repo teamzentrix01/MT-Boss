@@ -102,6 +102,20 @@ export async function ensureAgentSchema() {
     )
   `);
 
+  // CRM expansion columns
+  const leadAlters = [
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS lead_stage VARCHAR(50) DEFAULT 'New'`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS meeting_done BOOLEAN DEFAULT FALSE`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS estimate_sent BOOLEAN DEFAULT FALSE`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS final_amount NUMERIC DEFAULT 0`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS daily_visit_notes TEXT`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS client_requirement TEXT`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS lead_source VARCHAR(120) DEFAULT 'offline'`,
+  ];
+  for (const sql of leadAlters) {
+    await pool.query(sql);
+  }
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS agent_schedule (
       id SERIAL PRIMARY KEY,

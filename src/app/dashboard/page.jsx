@@ -73,6 +73,9 @@ function AdminDashboard() {
   const [todayCommission, setTodayCommission] = useState(0);
   const [totalGST, setTotalGST] = useState(0);
   const [supplierCommission, setSupplierCommission] = useState({ total: 0, today: 0, fulfilled: 0, open: 0 });
+  const [pkgVendors, setPkgVendors] = useState([]);
+  const [pkgSuppliers, setPkgSuppliers] = useState([]);
+  const [pkgMsg, setPkgMsg] = useState('');
   const router = useRouter();
 
   // Sync tab from URL when navigating via sidebar
@@ -80,6 +83,57 @@ function AdminDashboard() {
     const tab = searchParams.get('tab') || 'overview';
     setActiveTab(tab);
   }, [searchParams]);
+
+  const fetchPackageRequests = async () => {
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch('/api/admin/packages', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPkgVendors(data.vendors || []);
+        setPkgSuppliers(data.suppliers || []);
+      }
+    } catch (err) {
+      console.error('Error fetching package requests:', err);
+    }
+  };
+
+  const handlePackageAction = async (entityType, entityId, action) => {
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch('/api/admin/packages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          entity_type: entityType,
+          entity_id: entityId,
+          action: action
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPkgMsg(data.message || 'Action completed successfully');
+        fetchPackageRequests();
+        setTimeout(() => setPkgMsg(''), 4000);
+      } else {
+        alert(data.error || 'Failed to complete action');
+      }
+    } catch (err) {
+      console.error('Package action error:', err);
+      alert('Error updating package');
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'packages') {
+      fetchPackageRequests();
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -236,6 +290,7 @@ function AdminDashboard() {
     { id: 'shop-categories',            label: 'Shop Categories',           icon: '🛒' },
     { id: 'suppliers',                  label: 'Suppliers',                 icon: '📦' },
     { id: 'vendors',                    label: 'Vendors',                   icon: '🏪' },
+    { id: 'packages',                   label: 'Package Approvals',         icon: '📦' },
   ];
 
   if (loading) {
@@ -918,6 +973,127 @@ function AdminDashboard() {
 
           {activeTab === 'vendors' && <VendorManagementAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'suppliers' && <SupplierHubAdmin isDarkMode={isDarkMode} />}
+
+          {activeTab === 'packages' && (
+            <div>
+              <div className="section-head">
+                <span className="section-head-title">Package Approvals</span>
+                {pkgMsg && <span style={{ color: 'var(--accent)', fontWeight: 700, fontSize: '0.8125rem' }}>{pkgMsg}</span>}
+              </div>
+
+              {/* PENDING REQUESTS PANEL */}
+              <div className="panel" style={{ marginBottom: '1.5rem' }}>
+                <div className="panel-header">
+                  <span className="panel-title">⏳ Pending Package Requests</span>
+                </div>
+                <div className="panel-body" style={{ padding: 0 }}>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+                      <thead>
+                        <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+                          {['Type', 'Entity Info', 'City', 'Plan Name', 'Price', 'Requested At', 'Actions'].map(col => (
+                            <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          ...pkgVendors.filter(v => v.package_status === 'pending').map(v => ({ ...v, type: 'vendor' })),
+                          ...pkgSuppliers.filter(s => s.package_status === 'pending').map(s => ({ ...s, type: 'supplier' }))
+                        ].map((item) => (
+                          <tr key={`${item.type}-${item.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
+                            <td style={{ padding: '0.6rem 0.875rem' }}>
+                              <span className={`badge ${item.type === 'vendor' ? 'status-contacted' : 'status-pending'}`}>{item.type}</span>
+                            </td>
+                            <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>
+                              {item.email}
+                              <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{item.phone || 'No phone'}</div>
+                            </td>
+                            <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.city}</td>
+                            <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700', color: 'var(--accent)' }}>{item.package_name}</td>
+                            <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700' }}>₹{Number(item.package_price).toLocaleString('en-IN')}</td>
+                            <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_purchased_at).toLocaleString('en-IN')}</td>
+                            <td style={{ padding: '0.6rem 0.875rem', display: 'flex', gap: '0.5rem' }}>
+                              <button
+                                onClick={() => handlePackageAction(item.type, item.id, 'approve')}
+                                style={{ padding: '0.35rem 0.65rem', border: 'none', background: '#10b981', color: '#fff', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => handlePackageAction(item.type, item.id, 'reject')}
+                                style={{ padding: '0.35rem 0.65rem', border: 'none', background: '#ef4444', color: '#fff', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
+                              >
+                                Reject
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                        {pkgVendors.filter(v => v.package_status === 'pending').length === 0 && pkgSuppliers.filter(s => s.package_status === 'pending').length === 0 && (
+                          <tr>
+                            <td colSpan={7} className="empty-state" style={{ textAlign: 'center', padding: '2rem' }}>No pending package requests.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* ACTIVE SUBSCRIPTIONS PANEL */}
+              <div className="panel">
+                <div className="panel-header">
+                  <span className="panel-title">✅ Active Packages & Subscriptions</span>
+                </div>
+                <div className="panel-body" style={{ padding: 0 }}>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+                      <thead>
+                        <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+                          {['Type', 'Entity Info', 'Plan Name', 'Price', 'Starts At', 'Expires At', 'Days Left'].map(col => (
+                            <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          ...pkgVendors.filter(v => v.package_status === 'active').map(v => ({ ...v, type: 'vendor' })),
+                          ...pkgSuppliers.filter(s => s.package_status === 'active').map(s => ({ ...s, type: 'supplier' }))
+                        ].map((item) => {
+                          const daysLeft = Math.max(0, Math.ceil((new Date(item.package_expires_at) - new Date()) / (1000 * 60 * 60 * 24)));
+                          return (
+                            <tr key={`${item.type}-${item.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
+                              <td style={{ padding: '0.6rem 0.875rem' }}>
+                                <span className={`badge ${item.type === 'vendor' ? 'status-contacted' : 'status-pending'}`}>{item.type}</span>
+                              </td>
+                              <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>
+                                {item.email}
+                                <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{item.city} · {item.phone || 'No phone'}</div>
+                              </td>
+                              <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700', color: 'var(--accent)' }}>{item.package_name}</td>
+                              <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700' }}>₹{Number(item.package_price).toLocaleString('en-IN')}</td>
+                              <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_starts_at).toLocaleDateString('en-IN')}</td>
+                              <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_expires_at).toLocaleDateString('en-IN')}</td>
+                              <td style={{ padding: '0.6rem 0.875rem' }}>
+                                <span className={`badge ${daysLeft > 15 ? 'status-resolved' : 'status-pending'}`} style={{ fontWeight: 700 }}>
+                                  {daysLeft} days
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {pkgVendors.filter(v => v.package_status === 'active').length === 0 && pkgSuppliers.filter(s => s.package_status === 'active').length === 0 && (
+                          <tr>
+                            <td colSpan={7} className="empty-state" style={{ textAlign: 'center', padding: '2rem' }}>No active package subscriptions.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           {activeTab === 'properties' && <PropertiesManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services' && <QuickServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'primary-services' && <PrimaryServicesManager isDarkMode={isDarkMode} />}
