@@ -86,8 +86,6 @@ export async function POST(req) {
     // Generate booking reference
     const bookingReference = `BK${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
 
-<<<<<<< HEAD
-=======
     if (slot_type === 'free') {
       if (!time_slot_id) {
         return NextResponse.json({ error: 'Please select a free admin slot' }, { status: 400 });
@@ -114,7 +112,6 @@ export async function POST(req) {
       }
     }
  
->>>>>>> a78b05f5d2903e841e020c73959b2068df78f401
     // Create booking
     const bookingResult = await pool.query(
       `INSERT INTO service_bookings (
@@ -168,18 +165,24 @@ export async function POST(req) {
       }
     }
  
-    // Notify all active vendors in the same city
+    // Notify active vendors who serve this quick service in the same city.
     const vendorsResult = await pool.query(
-      `SELECT DISTINCT v.id FROM vendors v
-       WHERE LOWER(v.city) = LOWER($1)
-       AND v.is_approved = TRUE
-       AND v.status = 'active'
-       AND v.id NOT IN (
-         SELECT vendor_id FROM service_bookings
-         WHERE status IN ('VENDOR_ACCEPTED', 'IN_PROGRESS')
-         AND vendor_id IS NOT NULL
-       )`,
-      [service_city]
+      `SELECT DISTINCT v.id
+       FROM vendors v
+       JOIN vendor_services vs ON vs.vendor_id = v.id
+       WHERE vs.quick_service_id = $1
+         AND vs.is_active = TRUE
+         AND LOWER(TRIM(v.city)) = LOWER(TRIM($2))
+         AND v.is_approved = TRUE
+         AND v.status = 'active'
+         AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
+         AND v.id NOT IN (
+           SELECT vendor_id
+           FROM service_bookings
+           WHERE status IN ('VENDOR_ACCEPTED', 'VENDOR_ON_WAY', 'IN_PROGRESS', 'AWAITING_PAYMENT')
+             AND vendor_id IS NOT NULL
+         )`,
+      [quick_service_id, service_city]
     );
  
     // Create notifications for each vendor
