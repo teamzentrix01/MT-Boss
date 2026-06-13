@@ -1,14 +1,10 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
+import { requireRole } from '@/lib/auth';
 const ADMIN_COMMISSION_RATE = 0.15;
 
 function getSupplier(req) {
-  const auth = req.headers.get('Authorization');
-  if (!auth?.startsWith('Bearer ')) return null;
-  try { return jwt.verify(auth.slice(7), JWT_SECRET); } catch { return null; }
+  return requireRole(req, 'supplier');
 }
 
 // PUT — mark enquiry as fulfilled and record amount received

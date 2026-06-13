@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 function hasToken(req) {
-  return Boolean(req.headers.get('Authorization')?.split(' ')[1]);
+  return Boolean(requireRole(req, 'admin'));
 }
 
 // PATCH - admin edits slot details and opens/closes availability.
 export async function PATCH(req, { params }) {
   try {
     if (!hasToken(req)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return unauthorized();
     }
 
     const { id } = await params;
@@ -53,7 +54,7 @@ export async function PATCH(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     if (!hasToken(req)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return unauthorized();
     }
 
     const { id } = await params;

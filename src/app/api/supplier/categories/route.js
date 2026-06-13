@@ -1,16 +1,17 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 // ── GET /api/supplier/categories?supplierId=X ──
 export async function GET(request) {
   try {
-    const token = request.headers.get('authorization')?.split(' ')[1];
-    if (!token) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    }
+    const supplier = requireRole(request, 'supplier');
+    const admin = requireRole(request, 'admin');
+    if (!supplier && !admin) return unauthorized();
 
     const { searchParams } = new URL(request.url);
-    const supplierId = searchParams.get('supplierId');
+    const requestedSupplierId = searchParams.get('supplierId');
+    const supplierId = admin && requestedSupplierId ? requestedSupplierId : supplier?.id;
 
     let result;
     if (supplierId) {
@@ -27,6 +28,7 @@ export async function GET(request) {
         [parseInt(supplierId)]
       );
     } else {
+      if (!admin) return unauthorized();
       result = await pool.query(
         `SELECT
           id, supplier_id,
@@ -54,17 +56,15 @@ export async function GET(request) {
 // ── POST /api/supplier/categories ──
 export async function POST(request) {
   try {
-    const token = request.headers.get('authorization')?.split(' ')[1];
-    if (!token) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    }
+    const supplier = requireRole(request, 'supplier');
+    if (!supplier) return unauthorized();
 
     const body = await request.json();
-    const { name, emoji, label, labelColor, priceRange, unit, supplierId } = body;
+    const { name, emoji, label, labelColor, priceRange, unit } = body;
 
-    if (!name || !label || !supplierId) {
+    if (!name || !label) {
       return NextResponse.json(
-        { success: false, error: 'name, label and supplierId are required' },
+        { success: false, error: 'name and label are required' },
         { status: 400 }
       );
     }
@@ -80,7 +80,7 @@ export async function POST(request) {
          price_range  AS "priceRange",
          unit, created_at`,
       [
-        parseInt(supplierId),
+        supplier.id,
         name,
         emoji || '🧱',
         label,

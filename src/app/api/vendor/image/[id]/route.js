@@ -1,9 +1,16 @@
 import pool from '@/lib/db';
+import { requireRole } from '@/lib/auth';
 
 // GET /api/vendor/image/[id]?type=profile|aadhaar
 export async function GET(req, { params }) {
   try {
     const { id } = await params;
+    const admin = requireRole(req, 'admin');
+    const vendor = requireRole(req, 'vendor');
+    if (!admin && String(vendor?.id || '') !== String(id)) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const type = searchParams.get('type') || 'profile';
 

@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 async function ensureQuickServiceSeoColumns() {
   await pool.query(`
@@ -56,10 +57,7 @@ export async function GET(req) {
 // POST - Create new quick service
 export async function POST(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     await ensureQuickServiceSeoColumns();
     const {
@@ -118,10 +116,7 @@ export async function POST(req) {
 // PUT - Update quick service
 export async function PUT(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     await ensureQuickServiceSeoColumns();
     const {
@@ -183,8 +178,7 @@ export async function PUT(req) {
 // PATCH - Bulk reorder quick services
 export async function PATCH(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { items } = await req.json(); // [{ id, sort_order }, ...]
     if (!Array.isArray(items) || items.length === 0) {
@@ -224,10 +218,7 @@ export async function PATCH(req) {
 // DELETE - Remove quick service
 export async function DELETE(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');

@@ -2,18 +2,17 @@
 
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 // ── PUT /api/supplier/categories/[id] ──
 export async function PUT(request, { params }) {
   try {
-    const token = request.headers.get('authorization')?.split(' ')[1];
-    if (!token) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    }
+    const supplier = requireRole(request, 'supplier');
+    if (!supplier) return unauthorized();
 
     const id = parseInt(params.id);
     const body = await request.json();
-    const { name, emoji, label, labelColor, priceRange, unit, supplierId } = body;
+    const { name, emoji, label, labelColor, priceRange, unit } = body;
 
     const result = await pool.query(
       `UPDATE supplier_categories
@@ -31,7 +30,7 @@ export async function PUT(request, { params }) {
          label_color  AS "labelColor",
          price_range  AS "priceRange",
          unit, updated_at`,
-      [name, emoji, label, labelColor, priceRange, unit, id, parseInt(supplierId)]
+      [name, emoji, label, labelColor, priceRange, unit, id, supplier.id]
     );
 
     if (result.rows.length === 0) {
@@ -52,20 +51,16 @@ export async function PUT(request, { params }) {
 // ── DELETE /api/supplier/categories/[id] ──
 export async function DELETE(request, { params }) {
   try {
-    const token = request.headers.get('authorization')?.split(' ')[1];
-    if (!token) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    }
+    const supplier = requireRole(request, 'supplier');
+    if (!supplier) return unauthorized();
 
     const id = parseInt(params.id);
-    const { searchParams } = new URL(request.url);
-    const supplierId = searchParams.get('supplierId');
 
     const result = await pool.query(
       `DELETE FROM supplier_categories
        WHERE id = $1 AND supplier_id = $2
        RETURNING id`,
-      [id, parseInt(supplierId)]
+      [id, supplier.id]
     );
 
     if (result.rows.length === 0) {

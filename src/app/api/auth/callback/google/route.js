@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import jwt from 'jsonwebtoken';
+import { getJwtSecret, setAuthCookie } from '@/lib/auth';
 
-const JWT_SECRET =
-  process.env.NEXT_PUBLIC_JWT_SECRET ||
-  process.env.JWT_SECRET ||
-  'fallback-secret';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
@@ -47,20 +45,20 @@ export async function GET(req) {
     );
 
     const user = result.rows[0];
-    const role = user.email === 'admin@gmail.com' ? 'admin' : 'user';
+    const role = ADMIN_EMAIL && user.email === ADMIN_EMAIL ? 'admin' : 'user';
     const redirectTo = role === 'admin' ? '/dashboard' : '/userdashboard';
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: '7d' }
     );
 
-    // Redirect to a client page that stores token and redirects
     const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-    return NextResponse.redirect(
-      `${appUrl}/auth/success?token=${token}&user=${encodeURIComponent(JSON.stringify({ ...user, role }))}&redirect=${redirectTo}`
+    const response = NextResponse.redirect(
+      `${appUrl}/auth/success?user=${encodeURIComponent(JSON.stringify({ ...user, role }))}&redirect=${encodeURIComponent(redirectTo)}`
     );
+    return setAuthCookie(response, 'auth-token', token);
   } catch (err) {
     console.error('Google OAuth error:', err);
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/login?error=oauth_failed`);

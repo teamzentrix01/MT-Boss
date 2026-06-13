@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { getJwtSecret, setAuthCookie } from '@/lib/auth';
 
-const ADMIN_EMAIL = 'admin@gmail.com';
-const ADMIN_PASSWORD = '123456';
-const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || process.env.JWT_SECRET || 'fallback-secret';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 export async function POST(req) {
   try {
@@ -15,17 +15,18 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    if (ADMIN_EMAIL && ADMIN_PASSWORD && email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       const token = jwt.sign(
         { id: 0, email: ADMIN_EMAIL, role: 'admin' },
-        JWT_SECRET,
+        getJwtSecret(),
         { expiresIn: process.env.JWT_EXPIRY || '7d' }
       );
-      return NextResponse.json({
+      const response = NextResponse.json({
         token,
         user: { id: 0, email: ADMIN_EMAIL, name: 'Admin', role: 'admin' },
         redirectTo: '/dashboard',
       }, { status: 200 });
+      return setAuthCookie(response, 'auth-token', token);
     }
 
     const vendorResult = await pool.query(
@@ -57,15 +58,16 @@ export async function POST(req) {
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: 'user' },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: process.env.JWT_EXPIRY || '7d' }
     );
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       token,
       user: { id: user.id, email: user.email, name: user.name, role: 'user' },
       redirectTo: '/userdashboard',
     }, { status: 200 });
+    return setAuthCookie(response, 'auth-token', token);
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json({ error: 'Server error occurred.' }, { status: 500 });

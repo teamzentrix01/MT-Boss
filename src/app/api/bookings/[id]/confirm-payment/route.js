@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import jwt from 'jsonwebtoken';
+import { requireRole } from '@/lib/auth';
 
 export async function POST(req, { params }) {
   try {
@@ -12,7 +12,8 @@ export async function POST(req, { params }) {
     let userId = null;
     let userEmail = null;
     try {
-      const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret');
+      const decoded = requireRole(req, 'user');
+      if (!decoded) throw new Error('Invalid role');
       const rawId = decoded.id;
       userEmail = decoded.email || null;
 

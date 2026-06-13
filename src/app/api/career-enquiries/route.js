@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
@@ -199,14 +200,7 @@ export async function POST(req) {
 
 export async function GET(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-
-    if (!token) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     await ensureTable();
 

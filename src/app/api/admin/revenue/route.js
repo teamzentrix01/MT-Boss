@@ -5,9 +5,12 @@
 
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 export async function GET(req) {
   try {
+    if (!requireRole(req, 'admin')) return unauthorized();
+
     const { searchParams } = new URL(req.url);
     const from_date  = searchParams.get('from_date');   // YYYY-MM-DD
     const to_date    = searchParams.get('to_date');     // YYYY-MM-DD

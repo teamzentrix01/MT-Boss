@@ -46,7 +46,6 @@ export default function FranchiseLoginPage() {
 
       localStorage.setItem('franchise-token', data.token);
       localStorage.setItem('franchise', JSON.stringify(data.franchise));
-      document.cookie = `franchise-auth-token=${data.token}; path=/; max-age=${form.rememberMe ? 2592000 : 604800}`;
       window.dispatchEvent(new Event('userLoggedIn'));
       router.push('/franchise/dashboard');
     } catch {

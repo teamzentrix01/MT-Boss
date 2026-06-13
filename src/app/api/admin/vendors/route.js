@@ -1,29 +1,10 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import jwt from 'jsonwebtoken';
 import { requireAdmin } from '@/lib/agent-auth';
 
 // ═══════════════════════════════════════════════════════════════════════
 // VERIFY ADMIN TOKEN
 // ═══════════════════════════════════════════════════════════════════════
-
-function verifyAdminToken(req) {
-  const authHeader = req.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) return null;
-  
-  const token = authHeader.slice(7);
-  try {
-    const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret');
-    // Check if it's admin
-    if (decoded.role === 'admin' || decoded.email === 'admin@gmail.com') {
-      return decoded;
-    }
-    return null;
-  } catch (err) {
-    console.error('Token verification failed:', err);
-    return null;
-  }
-}
 
 // ═══════════════════════════════════════════════════════════════════════
 // GET - FETCH ALL VENDORS

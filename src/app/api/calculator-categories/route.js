@@ -1,8 +1,9 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 function hasAuth(req) {
-  return Boolean(req.headers.get('Authorization')?.split(' ')[1]);
+  return Boolean(requireRole(req, 'admin'));
 }
 
 async function ensureCategoryTables() {
@@ -72,7 +73,7 @@ export async function GET() {
 export async function POST(req) {
   try {
     await ensureCategoryTables();
-    if (!hasAuth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!hasAuth(req)) return unauthorized();
 
     const body = await req.json();
     const { name, badge, image_url, is_active } = body;
@@ -108,7 +109,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     await ensureCategoryTables();
-    if (!hasAuth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!hasAuth(req)) return unauthorized();
 
     const body = await req.json();
     const { id, name, badge, image_url, is_active } = body;
@@ -156,7 +157,7 @@ export async function PUT(req) {
 export async function DELETE(req) {
   try {
     await ensureCategoryTables();
-    if (!hasAuth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!hasAuth(req)) return unauthorized();
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');

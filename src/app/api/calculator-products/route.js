@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 let ready = false;
 
@@ -133,6 +134,7 @@ export async function GET(req) {
     await ensureTable();
     const { searchParams } = new URL(req.url);
     const isAdmin = searchParams.get('admin') === 'true';
+    if (isAdmin && !requireRole(req, 'admin')) return unauthorized();
 
     const result = await pool.query(
       `SELECT * FROM calculator_products
@@ -150,8 +152,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     await ensureTable();
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const body = await req.json();
     const { category, badge, name, description, image_url, unit, price, city_prices, is_active } = body;
@@ -188,8 +189,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     await ensureTable();
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const body = await req.json();
     const { id, category, badge, name, description, image_url, unit, price, city_prices, is_active } = body;
@@ -227,8 +227,7 @@ export async function PUT(req) {
 export async function DELETE(req) {
   try {
     await ensureTable();
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');

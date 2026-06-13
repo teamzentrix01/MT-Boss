@@ -1,9 +1,12 @@
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 export async function POST(req) {
   try {
+    if (!requireRole(req, 'admin')) return unauthorized();
+
     const formData = await req.formData();
     const file = formData.get('file');
 

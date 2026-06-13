@@ -1,16 +1,9 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import jwt from 'jsonwebtoken';
+import { requireRole } from '@/lib/auth';
 
 function getVendorId(req) {
-  const token = req.headers.get('Authorization')?.split(' ')[1];
-  if (!token) return null;
-  try {
-    const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret');
-    return decoded.id;
-  } catch {
-    return null;
-  }
+  return requireRole(req, 'vendor')?.id || null;
 }
 
 export async function GET(req) {

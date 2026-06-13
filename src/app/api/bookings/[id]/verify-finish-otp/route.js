@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import jwt from 'jsonwebtoken';
 import { ensureOtpSchema, SERVICE_OTP_EXPIRY_MINUTES, SERVICE_OTP_MAX_ATTEMPTS, verifyOtp } from '@/lib/otp';
-
-const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || process.env.JWT_SECRET || 'fallback-secret';
+import { requireRole } from '@/lib/auth';
 
 // POST - Vendor enters finish OTP to mark service as complete → goes to AWAITING_PAYMENT
 export async function POST(req, { params }) {
@@ -16,7 +14,8 @@ export async function POST(req, { params }) {
 
     let vendorId;
     try {
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = requireRole(req, 'vendor');
+      if (!decoded) throw new Error('Invalid role');
       vendorId = decoded.id;
     } catch {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });

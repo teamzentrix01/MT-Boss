@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 // No `ready` flag — all DDL statements are idempotent (IF NOT EXISTS).
 // This makes the route resilient to dev hot-reloads and out-of-band DB resets.
@@ -32,6 +33,7 @@ export async function GET(req) {
     await ensureTable();
     const { searchParams } = new URL(req.url);
     const isAdmin = searchParams.get('admin') === 'true';
+    if (isAdmin && !requireRole(req, 'admin')) return unauthorized();
 
     const result = isAdmin
       ? await pool.query(`SELECT * FROM shop_categories ORDER BY sort_order ASC, id ASC`)
@@ -48,8 +50,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     await ensureTable();
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { name, image, emoji, label, label_color, price_range, unit, types, subcategories, city_prices } = await req.json();
     if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 });
@@ -81,8 +82,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     await ensureTable();
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const {
       id, name, image, emoji, label, label_color,
@@ -119,8 +119,7 @@ export async function PUT(req) {
 export async function PATCH(req) {
   try {
     await ensureTable();
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { items } = await req.json();
     if (!Array.isArray(items) || items.length === 0)
@@ -147,8 +146,7 @@ export async function PATCH(req) {
 export async function DELETE(req) {
   try {
     await ensureTable();
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');

@@ -1,19 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import jwt from 'jsonwebtoken';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 export async function GET(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    let vendorId;
-    try {
-      const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret');
-      vendorId = decoded.id;
-    } catch {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
+    const vendor = requireRole(req, 'vendor');
+    if (!vendor) return unauthorized();
 
     const { searchParams } = new URL(req.url);
     const type = searchParams.get('type') || 'active';
@@ -53,7 +45,7 @@ export async function GET(req) {
       WHERE sb.vendor_id = $1`;
 
     let query = baseSelect;
-    const params = [vendorId];
+    const params = [vendor.id];
 
     if (type === 'active') {
       query += ` AND sb.status IN ('VENDOR_ACCEPTED', 'VENDOR_ON_WAY', 'IN_PROGRESS', 'AWAITING_PAYMENT')`;

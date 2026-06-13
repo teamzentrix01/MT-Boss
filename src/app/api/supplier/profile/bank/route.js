@@ -2,18 +2,17 @@
 
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 export async function PUT(request) {
   try {
-    const token = request.headers.get('authorization')?.split(' ')[1];
-    if (!token) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    }
+    const supplier = requireRole(request, 'supplier');
+    if (!supplier) return unauthorized();
 
     const body = await request.json();
-    const { bank_account_holder, bank_account_number, bank_name, bank_ifsc_code, supplierId } = body;
+    const { bank_account_holder, bank_account_number, bank_name, bank_ifsc_code } = body;
 
-    if (!bank_account_holder || !bank_account_number || !bank_name || !bank_ifsc_code || !supplierId) {
+    if (!bank_account_holder || !bank_account_number || !bank_name || !bank_ifsc_code) {
       return NextResponse.json({ success: false, error: 'All bank fields are required.' }, { status: 400 });
     }
 
@@ -26,7 +25,7 @@ export async function PUT(request) {
            updated_at          = NOW()
        WHERE id = $5
        RETURNING id, bank_account_holder, bank_account_number, bank_name, bank_ifsc_code`,
-      [bank_account_holder, bank_account_number, bank_name, bank_ifsc_code, parseInt(supplierId)]
+      [bank_account_holder, bank_account_number, bank_name, bank_ifsc_code, supplier.id]
     );
 
     if (result.rows.length === 0) {

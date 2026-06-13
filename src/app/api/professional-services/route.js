@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 // ── Auto-create tables on first request ─────────────────────────────────────
 let tablesReady = false;
@@ -67,6 +68,7 @@ export async function GET(req) {
     }
 
     if (isAdmin) {
+      if (!requireRole(req, 'admin')) return unauthorized();
       const result = await pool.query(`
         SELECT * FROM professional_services
         ORDER BY
@@ -169,8 +171,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     await ensureTables();
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { id, status, ...fields } = await req.json();
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
@@ -220,8 +221,7 @@ export async function PUT(req) {
 export async function PATCH(req) {
   try {
     await ensureTables();
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { items } = await req.json();
     if (!Array.isArray(items) || items.length === 0)
@@ -254,8 +254,7 @@ export async function PATCH(req) {
 export async function DELETE(req) {
   try {
     await ensureTables();
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');

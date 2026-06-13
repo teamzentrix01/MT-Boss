@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
 import pool from '@/lib/db';
 import { verifyOtp } from '@/lib/otp';
-
-const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret';
+import { requireRole } from '@/lib/auth';
 const AADHAAR_OTP_MAX_ATTEMPTS = 5;
 
 async function ensureAadhaarOtpSchema() {
@@ -23,15 +21,8 @@ async function ensureAadhaarOtpSchema() {
 }
 
 function verifySupplierToken(request, supplierId) {
-  const token = request.headers.get('authorization')?.split(' ')[1];
-  if (!token) return null;
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    return Number(decoded.id) === Number(supplierId) && decoded.role === 'supplier' ? decoded : null;
-  } catch {
-    return null;
-  }
+  const decoded = requireRole(request, 'supplier');
+  return Number(decoded?.id) === Number(supplierId) ? decoded : null;
 }
 
 export async function POST(request) {

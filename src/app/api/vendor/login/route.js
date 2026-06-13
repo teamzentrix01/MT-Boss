@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { getJwtSecret, setAuthCookie } from '@/lib/auth';
 
 export async function POST(req) {
   try {
@@ -66,11 +67,11 @@ export async function POST(req) {
     // ✅ Account is approved and active - generate token
     const token = jwt.sign(
       { id: vendor.id, email: vendor.email, role: 'vendor' },
-      process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret',
+      getJwtSecret(),
       { expiresIn: process.env.JWT_EXPIRY || '7d' }
     );
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       token,
       vendor: {
@@ -90,6 +91,7 @@ export async function POST(req) {
       },
       redirectTo: '/vendor/dashboard',
     }, { status: 200 });
+    return setAuthCookie(response, 'vendor-auth-token', token);
 
   } catch (error) {
     console.error('Vendor login error:', error);

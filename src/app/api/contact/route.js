@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 export async function POST(req) {
   try {
@@ -41,15 +42,7 @@ export async function POST(req) {
 // GET endpoint to fetch submissions (for dashboard)
 export async function GET(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-
-    // In production, verify the token here
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const result = await pool.query(
       `SELECT id, name, email, phone, department, subject, message, status, created_at

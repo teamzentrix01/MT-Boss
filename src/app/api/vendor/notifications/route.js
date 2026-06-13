@@ -5,22 +5,12 @@
  
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import jwt from 'jsonwebtoken';
+import { requireRole, unauthorized } from '@/lib/auth';
  
 export async function GET(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
- 
-    let vendorId;
-    try {
-      const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret');
-      vendorId = decoded.id;
-    } catch (err) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
+    const vendor = requireRole(req, 'vendor');
+    if (!vendor) return unauthorized();
  
     // Get pending notifications that still match this vendor's city and services.
     const result = await pool.query(
@@ -46,7 +36,7 @@ export async function GET(req) {
        AND v.status = 'active'
        AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
        ORDER BY sn.created_at DESC`,
-      [vendorId]
+      [vendor.id]
     );
  
     return NextResponse.json({

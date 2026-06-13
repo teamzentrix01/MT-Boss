@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '@/lib/auth';
+import { getJwtSecret, setAuthCookie } from '@/lib/auth';
 
 async function ensureFranchiseColumns() {
   await pool.query(`
@@ -58,13 +58,13 @@ export async function POST(req) {
         city: franchise.city,
         role: 'franchise',
       },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: rememberMe ? '30d' : '7d' }
     );
 
     await pool.query('UPDATE franchises SET last_login_at = NOW() WHERE id = $1', [franchise.id]);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       token,
       franchise: {
@@ -78,6 +78,7 @@ export async function POST(req) {
         role: 'franchise',
       },
     });
+    return setAuthCookie(response, 'franchise-auth-token', token, rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7);
   } catch (error) {
     console.error('Franchise login error:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });

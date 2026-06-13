@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 const DEFAULT_SETTINGS = {
   cityRates: {
@@ -40,7 +41,7 @@ const DEFAULT_SETTINGS = {
 };
 
 function hasAuth(req) {
-  return Boolean(req.headers.get('Authorization')?.split(' ')[1]);
+  return Boolean(requireRole(req, 'admin'));
 }
 
 function mergeSettings(saved = {}) {
@@ -158,7 +159,7 @@ export async function GET() {
 export async function PUT(req) {
   try {
     await ensureTable();
-    if (!hasAuth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!hasAuth(req)) return unauthorized();
 
     const body = await req.json();
     const settings = sanitizeSettings(body.settings || body);

@@ -1,16 +1,15 @@
 import crypto from 'crypto';
 import pool from '@/lib/db';
+import { getJwtSecret } from '@/lib/auth';
 
 export const SERVICE_OTP_EXPIRY_MINUTES = 10;
 export const SERVICE_OTP_MAX_ATTEMPTS = 5;
 export const PASSWORD_RESET_OTP_EXPIRY_MINUTES = 10;
 export const PASSWORD_RESET_OTP_MAX_ATTEMPTS = 5;
 
-const OTP_SECRET =
-  process.env.OTP_SECRET ||
-  process.env.NEXT_PUBLIC_JWT_SECRET ||
-  process.env.JWT_SECRET ||
-  'fallback-secret';
+function getOtpSecret() {
+  return process.env.OTP_SECRET || getJwtSecret();
+}
 
 export async function ensureOtpSchema() {
   const alters = [
@@ -41,7 +40,7 @@ export function generateSixDigitOtp() {
 
 export function hashOtp(otp) {
   return crypto
-    .createHmac('sha256', OTP_SECRET)
+    .createHmac('sha256', getOtpSecret())
     .update(String(otp).trim())
     .digest('hex');
 }

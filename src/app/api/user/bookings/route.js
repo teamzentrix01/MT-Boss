@@ -1,16 +1,10 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import jwt from 'jsonwebtoken';
 import { ensureOtpSchema } from '@/lib/otp';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 function verifyToken(req) {
-  const authHeader = req.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) return null;
-  try {
-    return jwt.verify(authHeader.slice(7), process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret');
-  } catch {
-    return null;
-  }
+  return requireRole(req, 'user');
 }
 
 export async function GET(req) {
@@ -19,7 +13,7 @@ export async function GET(req) {
 
     const decoded = verifyToken(req);
     if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return unauthorized();
     }
 
     const userId = decoded.id && decoded.id !== 0 ? decoded.id : null;

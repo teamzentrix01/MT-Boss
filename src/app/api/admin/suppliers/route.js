@@ -1,20 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import jwt from 'jsonwebtoken';
 import { requireAdmin } from '@/lib/agent-auth';
-
-function verifyAdminToken(req) {
-  const authHeader = req.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) return null;
-  const token = authHeader.slice(7);
-  try {
-    const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET || 'fallback-secret');
-    if (decoded.role === 'admin' || decoded.email === 'admin@gmail.com') return decoded;
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 async function ensureIsActiveColumn() {
   await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE`);

@@ -97,7 +97,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     };
   }, [pathname]); // re-check on every route change too
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     const logoutRole = user?.role;
 
     [
@@ -113,15 +113,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
       'franchise',
     ].forEach((key) => localStorage.removeItem(key));
 
-    [
-      'auth-token',
-      'admin-auth-token',
-      'vendor-auth-token',
-      'supplier-auth-token',
-      'franchise-auth-token',
-    ].forEach((cookieName) => {
-      document.cookie = `${cookieName}=; path=/; max-age=0`;
-    });
+    await fetch('/api/auth/logout', { method: 'POST' });
 
     setUser(null);
     window.dispatchEvent(new Event('userLoggedIn'));

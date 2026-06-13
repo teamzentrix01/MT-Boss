@@ -45,7 +45,6 @@ export default function VendorLoginPage() {
       if (res.ok) {
         localStorage.setItem('vendor-token', data.token);
         localStorage.setItem('vendor', JSON.stringify(data.vendor));
-        document.cookie = `vendor-auth-token=${data.token}; path=/; max-age=604800`;
         window.dispatchEvent(new Event('userLoggedIn'));
         router.push('/vendor/dashboard');
       } else {

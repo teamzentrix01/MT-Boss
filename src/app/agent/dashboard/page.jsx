@@ -202,10 +202,10 @@ export default function AgentDashboardPage() {
     }
   }
 
-  function logout() {
+  async function logout() {
     localStorage.removeItem('agent-token');
     localStorage.removeItem('agent');
-    document.cookie = 'agent-auth-token=; path=/; max-age=0';
+    await fetch('/api/auth/logout', { method: 'POST' });
     router.push('/agent/login');
   }
 

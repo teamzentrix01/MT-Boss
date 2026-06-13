@@ -301,10 +301,10 @@ function AdminDashboard() {
     );
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    document.cookie = 'auth-token=; path=/; max-age=0';
+    await fetch('/api/auth/logout', { method: 'POST' });
     router.push('/login');
   };
 

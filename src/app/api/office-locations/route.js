@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 const DEFAULT_OFFICES = [
   'Moradabad',
@@ -51,7 +52,7 @@ async function ensureTable() {
 }
 
 function hasToken(req) {
-  return Boolean(req.headers.get('Authorization')?.split(' ')[1]);
+  return Boolean(requireRole(req, 'admin'));
 }
 
 export async function GET(req) {
@@ -61,7 +62,7 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const includeAll = searchParams.get('all') === '1';
     if (includeAll && !hasToken(req)) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+      return unauthorized();
     }
 
     const result = await pool.query(
@@ -80,7 +81,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    if (!hasToken(req)) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    if (!hasToken(req)) return unauthorized();
 
     const { city, address, phone, email, hours, map_url, sort_order, is_active } = await req.json();
     if (!city?.trim() || !address?.trim()) {
@@ -117,7 +118,7 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   try {
-    if (!hasToken(req)) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    if (!hasToken(req)) return unauthorized();
 
     const { id, city, address, phone, email, hours, map_url, sort_order, is_active } = await req.json();
     if (!id) return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
@@ -162,7 +163,7 @@ export async function PATCH(req) {
 
 export async function DELETE(req) {
   try {
-    if (!hasToken(req)) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    if (!hasToken(req)) return unauthorized();
 
     const { id } = await req.json();
     if (!id) return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });

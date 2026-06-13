@@ -44,7 +44,6 @@ export default function AgentLoginPage() {
 
       localStorage.setItem('agent-token', data.token);
       localStorage.setItem('agent', JSON.stringify(data.agent));
-      document.cookie = `agent-auth-token=${data.token}; path=/; max-age=604800`;
       window.dispatchEvent(new Event('userLoggedIn'));
       router.push('/agent/dashboard');
     } catch {

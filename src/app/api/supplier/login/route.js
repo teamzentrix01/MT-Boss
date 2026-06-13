@@ -3,8 +3,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
+import { getJwtSecret, setAuthCookie } from '@/lib/auth';
 
 export async function POST(request) {
   try {
@@ -83,7 +82,7 @@ export async function POST(request) {
         shop_name: supplier.shop_name,
         role: 'supplier',
       },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: tokenExpiry }
     );
 
@@ -93,7 +92,7 @@ export async function POST(request) {
       [supplier.id]
     );
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       token,
       supplier: {
@@ -108,6 +107,7 @@ export async function POST(request) {
         product_categories: supplier.product_categories || [],
       },
     });
+    return setAuthCookie(response, 'supplier-auth-token', token, rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7);
 
   } catch (err) {
     console.error('Login error:', err);

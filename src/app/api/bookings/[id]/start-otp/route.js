@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import jwt from 'jsonwebtoken';
 import { ensureOtpSchema, generateOtp, hashOtp } from '@/lib/otp';
-
-const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || process.env.JWT_SECRET || 'fallback-secret';
+import { requireRole } from '@/lib/auth';
 
 // POST - Customer requests start OTP (booking must be VENDOR_ACCEPTED)
 // The OTP is generated and stored — customer sees it, vendor must enter it
@@ -17,7 +15,8 @@ export async function POST(req, { params }) {
 
     let userId, userEmail;
     try {
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = requireRole(req, 'user');
+      if (!decoded) throw new Error('Invalid role');
       userId = decoded.id;
       userEmail = decoded.email;
     } catch {

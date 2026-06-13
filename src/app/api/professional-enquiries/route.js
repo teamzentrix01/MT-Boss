@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 // Tables are guaranteed to exist by professional-services route (same ensureTables),
 // but guard here too so this route works standalone.
@@ -147,8 +148,7 @@ export async function POST(req) {
 export async function GET(req) {
   await ensureTable();
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { searchParams } = new URL(req.url);
     const proId = searchParams.get('professional_id');

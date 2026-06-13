@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 async function ensureFreeSlotsColumns() {
   await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS current_bookings INTEGER DEFAULT 0`);
@@ -10,7 +11,7 @@ async function ensureFreeSlotsColumns() {
 }
 
 function hasToken(req) {
-  return Boolean(req.headers.get('Authorization')?.split(' ')[1]);
+  return Boolean(requireRole(req, 'admin'));
 }
 
 // GET — user mode: city + service_id; admin mode: no params
@@ -49,7 +50,7 @@ export async function GET(req) {
       params = [city, serviceId, today];
     } else if (city && city !== 'all') {
       if (!hasToken(req)) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        return unauthorized();
       }
       query = `${baseSelect}
         WHERE LOWER(TRIM(fts.city)) = LOWER(TRIM($1))
@@ -57,7 +58,7 @@ export async function GET(req) {
       params = [city];
     } else {
       if (!hasToken(req)) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        return unauthorized();
       }
       query = `${baseSelect}
         ORDER BY fts.slot_date DESC, fts.slot_start ASC`;
@@ -76,7 +77,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     if (!hasToken(req)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return unauthorized();
     }
     await ensureFreeSlotsColumns();
 

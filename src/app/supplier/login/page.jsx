@@ -68,7 +68,6 @@ export default function SupplierLoginPage() {
       if (res.ok) {
         localStorage.setItem('supplier-token', data.token);
         localStorage.setItem('supplier', JSON.stringify(data.supplier));
-        document.cookie = `supplier-auth-token=${data.token}; path=/; max-age=${formData.rememberMe ? 2592000 : 604800}`;
         router.push('/supplier/dashboard');
       } else {
         // Check if blocked due to pending/rejected approval

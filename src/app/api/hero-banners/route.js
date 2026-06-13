@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 async function ensureTable() {
   await pool.query(`
@@ -35,8 +36,7 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { label, title, subtitle, description, image_url, cloudinary_public_id, sort_order, is_active } = await req.json();
     if (!title || !image_url)
@@ -66,8 +66,7 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { id, label, title, subtitle, description, image_url, cloudinary_public_id, sort_order, is_active } = await req.json();
     if (!id) return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
@@ -101,8 +100,7 @@ export async function PATCH(req) {
 
 export async function DELETE(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { id } = await req.json();
     if (!id) return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });

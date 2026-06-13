@@ -1,15 +1,11 @@
 import jwt from 'jsonwebtoken';
 import pool from '@/lib/db';
-
-const JWT_SECRET =
-  process.env.NEXT_PUBLIC_JWT_SECRET ||
-  process.env.JWT_SECRET ||
-  'fallback-secret';
+import { getJwtSecret, requireRole } from '@/lib/auth';
 
 export function signAgentToken(agent) {
   return jwt.sign(
     { id: agent.id, email: agent.email, role: 'agent', city: agent.city },
-    JWT_SECRET,
+    getJwtSecret(),
     { expiresIn: process.env.JWT_EXPIRY || '7d' }
   );
 }
@@ -24,7 +20,7 @@ export function verifyBearerToken(req, expectedRole) {
   if (!token) return null;
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
+    const payload = jwt.verify(token, getJwtSecret());
     if (expectedRole && payload.role !== expectedRole) return null;
     return payload;
   } catch {
@@ -48,7 +44,7 @@ export async function requireAgent(req) {
 }
 
 export function requireAdmin(req) {
-  return verifyBearerToken(req, 'admin');
+  return requireRole(req, 'admin');
 }
 
 export async function ensureAgentSchema() {

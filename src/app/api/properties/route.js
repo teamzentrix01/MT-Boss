@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 // GET — public. ?listing_type=buy|rent&status=verified for public pages.
 //       ?status=all for admin (requires token).
@@ -19,8 +20,7 @@ export async function GET(req) {
 
     // Admin wants all — requires token
     if (status === 'all') {
-      const token = req.headers.get('Authorization')?.split(' ')[1];
-      if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      if (!requireRole(req, 'admin')) return unauthorized();
       const result = await pool.query(`SELECT * FROM properties ORDER BY created_at DESC`);
       return NextResponse.json({ success: true, data: result.rows });
     }
@@ -82,8 +82,7 @@ export async function POST(req) {
 // PUT — admin only (verify / reject / edit)
 export async function PUT(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const body = await req.json();
     const { id, action } = body;
@@ -148,8 +147,7 @@ export async function PUT(req) {
 // DELETE — admin only
 export async function DELETE(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');

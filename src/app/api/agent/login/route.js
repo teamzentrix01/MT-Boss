@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import pool from '@/lib/db';
+import { setAuthCookie } from '@/lib/auth';
 import { ensureAgentSchema, signAgentToken } from '@/lib/agent-auth';
 
 export async function POST(req) {
@@ -41,12 +42,13 @@ export async function POST(req) {
     const token = signAgentToken(agent);
     delete agent.password_hash;
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       token,
       agent: { ...agent, role: 'agent' },
       redirectTo: '/agent/dashboard',
     });
+    return setAuthCookie(response, 'agent-auth-token', token);
   } catch (error) {
     console.error('Agent login error:', error);
     return NextResponse.json({ error: 'Server error occurred.' }, { status: 500 });

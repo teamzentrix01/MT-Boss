@@ -1,24 +1,12 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import jwt from 'jsonwebtoken';
 import { ensurePackageSchema, calculateExpiry } from '@/lib/packages';
-
-const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || process.env.JWT_SECRET || 'fallback-secret';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 // GET - list all vendors/suppliers with pending packages
 export async function GET(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    try {
-      const decoded = jwt.verify(token, JWT_SECRET);
-      if (decoded.role !== 'admin' && decoded.id !== 0) {
-        return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-      }
-    } catch {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     await ensurePackageSchema();
 
@@ -57,17 +45,7 @@ export async function GET(req) {
 // POST - approve a vendor/supplier package → activates it, sets start + expiry dates
 export async function POST(req) {
   try {
-    const token = req.headers.get('Authorization')?.split(' ')[1];
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    try {
-      const decoded = jwt.verify(token, JWT_SECRET);
-      if (decoded.role !== 'admin' && decoded.id !== 0) {
-        return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-      }
-    } catch {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
+    if (!requireRole(req, 'admin')) return unauthorized();
 
     await ensurePackageSchema();
     const { entity_type, entity_id, action } = await req.json();

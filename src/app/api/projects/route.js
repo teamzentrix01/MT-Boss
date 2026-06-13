@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
+
+    if (status === 'all' && !requireRole(req, 'admin')) return unauthorized();
 
     const query = status === 'all'
       ? 'SELECT * FROM projects ORDER BY created_at DESC'
@@ -20,6 +23,8 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    if (!requireRole(req, 'admin')) return unauthorized();
+
     const { title, category, location, description, image_url, cloudinary_public_id, size, status } = await req.json();
 
     if (!title || !image_url || !category) {
@@ -41,6 +46,8 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   try {
+    if (!requireRole(req, 'admin')) return unauthorized();
+
     const { id, title, category, location, description, image_url, cloudinary_public_id, size, status } = await req.json();
 
     const result = await pool.query(
@@ -58,6 +65,8 @@ export async function PATCH(req) {
 
 export async function DELETE(req) {
   try {
+    if (!requireRole(req, 'admin')) return unauthorized();
+
     const { id, cloudinary_public_id } = await req.json();
 
     // Delete from Cloudinary if public_id exists
