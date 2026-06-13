@@ -120,7 +120,7 @@ export default function ForgotPasswordForm({ userType, loginHref, accentColor })
   const text    = dark ? '#f0f0f5' : '#111';
   const muted   = dark ? '#71717a' : '#6b6b76';
   const inputBg = dark ? '#1a1a1a' : '#f9f9fb';
-  const isYellow = accentColor === '#facc15';
+  const isYellow = accentColor === 'var(--brand-blue)';
 
   const inputStyle = {
     width: '100%', padding: '0.75rem 0.9rem',

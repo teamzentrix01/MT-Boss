@@ -59,14 +59,14 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
   const overlay = isDark ? 'bg-black/80' : 'bg-zinc-900/60';
   const modal = isDark ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-white border-zinc-200 text-zinc-900';
   const input = isDark
-    ? 'bg-zinc-900 border-zinc-700 text-white placeholder-zinc-600 focus:border-[#facc15]'
+    ? 'bg-zinc-900 border-zinc-700 text-white placeholder-zinc-600 focus:border-[var(--brand-blue)]'
     : 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:border-zinc-900';
   const label = isDark ? 'text-zinc-400' : 'text-zinc-500';
   const muted = isDark ? 'text-zinc-500' : 'text-zinc-400';
   const divider = isDark ? 'border-zinc-800' : 'border-zinc-100';
   const pillBase = 'px-3 py-1.5 text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer';
   const pillActive = isDark
-    ? 'border-[#facc15] bg-[#facc15] text-black'
+    ? 'border-[var(--brand-blue)] bg-[var(--brand-blue)] text-black'
     : 'border-zinc-900 bg-zinc-900 text-white';
   const pillInactive = isDark
     ? 'border-zinc-700 text-zinc-400 hover:border-zinc-500'
@@ -241,13 +241,13 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
           <div className="flex items-center gap-3">
             <span className="text-2xl">{service.icon}</span>
             <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#facc15]">Book Service</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[var(--brand-blue)]">Book Service</p>
               <h2 className="text-lg font-black uppercase tracking-tight">{service.label}</h2>
             </div>
           </div>
           <button
             onClick={onClose}
-            className={`w-8 h-8 flex items-center justify-center border transition-all font-black text-sm ${isDark ? 'border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]' : 'border-zinc-300 text-zinc-400 hover:border-zinc-900 hover:text-zinc-900'}`}
+            className={`w-8 h-8 flex items-center justify-center border transition-all font-black text-sm ${isDark ? 'border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]' : 'border-zinc-300 text-zinc-400 hover:border-zinc-900 hover:text-zinc-900'}`}
           >
             ✕
           </button>
@@ -260,7 +260,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
               <div
                 key={i}
                 className={`flex-1 py-2.5 text-center text-[9px] font-black uppercase tracking-widest transition-all ${
-                  step === i + 1 ? "text-[#facc15] border-b-2 border-[#facc15]" : muted
+                  step === i + 1 ? "text-[var(--brand-blue)] border-b-2 border-[var(--brand-blue)]" : muted
                 }`}
               >
                 {i + 1}. {s}
@@ -277,12 +277,12 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
             <div className="p-6 space-y-5">
 
               {/* Service Info Bar */}
-              <div className={`border overflow-hidden ${isDark ? 'border-zinc-800' : 'border-amber-200'}`}>
+              <div className={`border overflow-hidden ${isDark ? 'border-zinc-800' : 'border-sky-200'}`}>
                 {/* Top: price + duration */}
-                <div className={`flex items-center justify-between px-4 py-3 ${isDark ? 'bg-zinc-900' : 'bg-amber-50'}`}>
+                <div className={`flex items-center justify-between px-4 py-3 ${isDark ? 'bg-zinc-900' : 'bg-sky-50'}`}>
                   <div>
                     <p className={`text-[8px] uppercase tracking-widest font-black mb-0.5 ${muted}`}>Visit / Inspection Charge</p>
-                    <p className="text-xl font-black text-[#facc15]">₹{basePrice} <span className={`text-[10px] font-bold ${muted}`}>only</span></p>
+                    <p className="text-xl font-black text-[var(--brand-blue)]">₹{basePrice} <span className={`text-[10px] font-bold ${muted}`}>only</span></p>
                   </div>
                   <div className="text-right">
                     <p className={`text-[8px] uppercase tracking-widest font-black mb-0.5 ${muted}`}>Duration</p>
@@ -290,13 +290,13 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                   </div>
                 </div>
                 {/* Bottom: clarification banner */}
-                <div className={`flex items-start gap-2.5 px-4 py-2.5 border-t ${isDark ? 'border-zinc-800 bg-black' : 'border-amber-200 bg-amber-100/60'}`}>
+                <div className={`flex items-start gap-2.5 px-4 py-2.5 border-t ${isDark ? 'border-zinc-800 bg-black' : 'border-sky-200 bg-sky-100/60'}`}>
                   <span className="text-base shrink-0 mt-0.5">⚠️</span>
                   <div>
-                    <p className={`text-[10px] font-black uppercase tracking-wide mb-0.5 ${isDark ? 'text-yellow-400' : 'text-amber-700'}`}>
+                    <p className={`text-[10px] font-black uppercase tracking-wide mb-0.5 ${isDark ? 'text-[var(--brand-blue-light)]' : 'text-[var(--brand-blue-deep)]'}`}>
                       ₹{basePrice} is the visit/inspection fee only
                     </p>
-                    <p className={`text-[10px] leading-relaxed ${isDark ? 'text-zinc-400' : 'text-amber-800'}`}>
+                    <p className={`text-[10px] leading-relaxed ${isDark ? 'text-zinc-400' : 'text-[var(--brand-blue-deeper)]'}`}>
                       Actual repair &amp; work charges are <strong>separate</strong> and will be quoted by the technician <strong>after on-site inspection</strong>. You decide before any work begins.
                     </p>
                   </div>
@@ -402,7 +402,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                       : form.latitude && form.longitude
                       ? 'border-green-500 text-green-500 hover:bg-green-500/10'
                       : isDark
-                      ? 'border-[#facc15] text-[#facc15] hover:bg-[#facc15]/10'
+                      ? 'border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/10'
                       : 'border-zinc-900 text-zinc-900 hover:bg-zinc-50'
                   }`}
                 >
@@ -424,12 +424,12 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                     onClick={() => { setSlotType(key); setSelectedFreeSlot(null); }}
                     className={`flex-1 p-3 border text-left transition-all ${
                       slotType === key
-                        ? isDark ? 'border-[#facc15] bg-[#facc15]/10' : 'border-zinc-900 bg-zinc-50'
+                        ? isDark ? 'border-[var(--brand-blue)] bg-[var(--brand-blue)]/10' : 'border-zinc-900 bg-zinc-50'
                         : isDark ? 'border-zinc-800' : 'border-zinc-200'
                     }`}
                   >
                     <p className={`text-[10px] font-black uppercase tracking-widest ${
-                      slotType === key ? (isDark ? 'text-[#facc15]' : 'text-zinc-900') : muted
+                      slotType === key ? (isDark ? 'text-[var(--brand-blue)]' : 'text-zinc-900') : muted
                     }`}>{icon} {label}</p>
                     <p className={`text-[10px] mt-0.5 ${muted}`}>{sub}</p>
                   </button>
@@ -444,11 +444,11 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                   ) : slotsLoading ? (
                     <p className={`text-[10px] animate-pulse ${muted}`}>Loading slots...</p>
                   ) : freeSlots.length === 0 ? (
-                    <div className={`p-3 border ${isDark ? 'border-zinc-700 bg-zinc-900' : 'border-amber-200 bg-amber-50'}`}>
-                      <p className={`text-[10px] font-black uppercase tracking-wide mb-1 ${isDark ? 'text-yellow-400' : 'text-amber-700'}`}>
+                    <div className={`p-3 border ${isDark ? 'border-zinc-700 bg-zinc-900' : 'border-sky-200 bg-sky-50'}`}>
+                      <p className={`text-[10px] font-black uppercase tracking-wide mb-1 ${isDark ? 'text-[var(--brand-blue-light)]' : 'text-[var(--brand-blue-deep)]'}`}>
                         No upcoming slots in {form.city}
                       </p>
-                      <p className={`text-[10px] leading-relaxed ${isDark ? 'text-zinc-400' : 'text-amber-800'}`}>
+                      <p className={`text-[10px] leading-relaxed ${isDark ? 'text-zinc-400' : 'text-[var(--brand-blue-deeper)]'}`}>
                         The admin hasn&apos;t scheduled a free slot for your city yet — or existing slots may have expired. Please choose <strong>your own time</strong> instead, or check back later.
                       </p>
                     </div>
@@ -461,11 +461,11 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                           onClick={() => { setSelectedFreeSlot(slot); setErrors((e) => ({ ...e, freeSlot: '' })); }}
                           className={`p-3 border text-left transition-all ${
                             selectedFreeSlot?.id === slot.id
-                              ? isDark ? 'border-[#facc15] bg-[#facc15]/10' : 'border-zinc-900 bg-zinc-50'
+                              ? isDark ? 'border-[var(--brand-blue)] bg-[var(--brand-blue)]/10' : 'border-zinc-900 bg-zinc-50'
                               : isDark ? 'border-zinc-800 hover:border-zinc-600' : 'border-zinc-200 hover:border-zinc-400'
                           }`}
                         >
-                          <p className={`text-[10px] font-black uppercase tracking-widest ${selectedFreeSlot?.id === slot.id ? (isDark ? 'text-[#facc15]' : 'text-zinc-900') : muted}`}>
+                          <p className={`text-[10px] font-black uppercase tracking-widest ${selectedFreeSlot?.id === slot.id ? (isDark ? 'text-[var(--brand-blue)]' : 'text-zinc-900') : muted}`}>
                             {new Date(slot.slot_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                           </p>
                           <p className={`text-xs font-bold mt-0.5 ${selectedFreeSlot?.id === slot.id ? (isDark ? 'text-white' : 'text-zinc-900') : ''}`}>
@@ -522,7 +522,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
 
               <button
                 onClick={handleNext}
-                className="w-full py-3.5 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-yellow-300 transition-all"
+                className="w-full py-3.5 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all"
               >
                 Proceed to Confirm →
               </button>
@@ -556,13 +556,13 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
               <SectionTitle isDark={isDark}>Charges Breakdown</SectionTitle>
 
               {/* Visit fee clarification box */}
-              <div className={`flex items-start gap-2.5 p-3 border ${isDark ? 'border-zinc-700 bg-zinc-900' : 'border-amber-200 bg-amber-50'}`}>
+              <div className={`flex items-start gap-2.5 p-3 border ${isDark ? 'border-zinc-700 bg-zinc-900' : 'border-sky-200 bg-sky-50'}`}>
                 <span className="text-base shrink-0">⚠️</span>
                 <div>
-                  <p className={`text-[10px] font-black uppercase tracking-wide mb-0.5 ${isDark ? 'text-yellow-400' : 'text-amber-700'}`}>
+                  <p className={`text-[10px] font-black uppercase tracking-wide mb-0.5 ${isDark ? 'text-[var(--brand-blue-light)]' : 'text-[var(--brand-blue-deep)]'}`}>
                     Visit fee — ₹{basePrice} only
                   </p>
-                  <p className={`text-[10px] leading-relaxed ${isDark ? 'text-zinc-400' : 'text-amber-800'}`}>
+                  <p className={`text-[10px] leading-relaxed ${isDark ? 'text-zinc-400' : 'text-[var(--brand-blue-deeper)]'}`}>
                     This covers the technician&apos;s visit &amp; inspection. <strong>Repair / work charges are separate</strong> and will be communicated on-site before any work starts.
                   </p>
                 </div>
@@ -579,7 +579,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                       <p className={`text-xs ${i === 2 ? 'font-black' : 'font-medium'} ${isDark ? 'text-zinc-300' : 'text-zinc-700'}`}>{k}</p>
                       {i === 2 && <p className={`text-[8px] mt-0.5 ${muted}`}>Repair charges billed separately after inspection</p>}
                     </div>
-                    <p className={`text-xs font-black ${i === 2 ? 'text-[#facc15]' : isDark ? 'text-white' : 'text-zinc-900'}`}>{v}</p>
+                    <p className={`text-xs font-black ${i === 2 ? 'text-[var(--brand-blue)]' : isDark ? 'text-white' : 'text-zinc-900'}`}>{v}</p>
                   </div>
                 ))}
               </div>
@@ -600,7 +600,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                 <button
                   onClick={handleConfirm}
                   disabled={loading}
-                  className={`flex-1 py-3 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`flex-1 py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-light)] transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {loading ? 'Confirming...' : 'Confirm Booking ✓'}
                 </button>
@@ -612,7 +612,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
           {step === 3 && (
             <div className="p-10 text-center space-y-5">
               <div className="text-6xl animate-bounce">✅</div>
-              <p className="text-[#facc15] text-[9px] font-black uppercase tracking-[0.5em]">Booking Confirmed</p>
+              <p className="text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-[0.5em]">Booking Confirmed</p>
               <h3 className={`text-2xl font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                 We&apos;re on our way!
               </h3>
@@ -630,7 +630,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
 
               <button
                 onClick={onClose}
-                className="w-full py-3 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all"
+                className="w-full py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-light)] transition-all"
               >
                 Done
               </button>
@@ -680,7 +680,7 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
   const overlay = isDark ? 'bg-black/80' : 'bg-zinc-900/60';
   const modal = isDark ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-white border-zinc-200 text-zinc-900';
   const select = isDark
-    ? 'bg-zinc-900 border-zinc-700 text-white focus:border-[#facc15]'
+    ? 'bg-zinc-900 border-zinc-700 text-white focus:border-[var(--brand-blue)]'
     : 'bg-zinc-50 border-zinc-300 text-zinc-900 focus:border-zinc-900';
   const divider = isDark ? 'border-zinc-800' : 'border-zinc-100';
 
@@ -708,14 +708,14 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
           <div className="flex items-center gap-3">
             <span className="text-2xl">{service.icon}</span>
             <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#facc15]">Availability Check</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[var(--brand-blue)]">Availability Check</p>
               <h2 className="text-lg font-black uppercase tracking-tight">{service.label}</h2>
             </div>
           </div>
           <button
             onClick={onClose}
             className={`w-8 h-8 flex items-center justify-center border transition-all font-black text-sm ${
-              isDark ? 'border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]' : 'border-zinc-300 text-zinc-400 hover:border-zinc-900 hover:text-zinc-900'
+              isDark ? 'border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]' : 'border-zinc-300 text-zinc-400 hover:border-zinc-900 hover:text-zinc-900'
             }`}
           >
             ✕
@@ -724,13 +724,13 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
 
         <div className="p-6 space-y-4 text-center">
           {loading ? (
-            <p className="text-sm font-black uppercase tracking-widest animate-pulse text-[#facc15] py-4">Checking Availability...</p>
+            <p className="text-sm font-black uppercase tracking-widest animate-pulse text-[var(--brand-blue)] py-4">Checking Availability...</p>
           ) : error ? (
             <div className="space-y-4">
               <p className="text-sm text-red-500 font-bold">{error}</p>
               <button
                 onClick={onClose}
-                className="w-full py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-yellow-300 transition-all"
+                className="w-full py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all"
               >
                 Close
               </button>
@@ -738,13 +738,13 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
           ) : cities.length === 0 ? (
             <div className="space-y-4 py-2">
               <p className="text-3xl">⚠️</p>
-              <h3 className="text-base font-black uppercase text-[#facc15] tracking-wide">Service Not Available</h3>
+              <h3 className="text-base font-black uppercase text-[var(--brand-blue)] tracking-wide">Service Not Available</h3>
               <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                 We are sorry! This service is currently not available in any location because there are no active technicians registered. Please try again later.
               </p>
               <button
                 onClick={onClose}
-                className="w-full py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-yellow-300 transition-all"
+                className="w-full py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all"
               >
                 Close
               </button>
@@ -770,7 +770,7 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
 
               <button
                 onClick={() => onProceed(selectedCity)}
-                className="w-full py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-yellow-300 transition-all"
+                className="w-full py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all"
               >
                 Proceed to Book →
               </button>
@@ -864,11 +864,11 @@ export default function AllQuickServicesPage() {
   const bg = isDark ? 'bg-black text-white' : 'bg-white text-zinc-900';
   const border = isDark ? 'border-zinc-900' : 'border-zinc-100';
   const card = isDark
-    ? 'bg-zinc-950 border-zinc-800 hover:border-[#facc15]'
+    ? 'bg-zinc-950 border-zinc-800 hover:border-[var(--brand-blue)]'
     : 'bg-zinc-50 border-zinc-200 hover:bg-white hover:shadow-lg hover:border-zinc-900';
   const muted = isDark ? 'text-zinc-500' : 'text-zinc-600';
   const btn = isDark
-    ? 'border-[#facc15] text-[#facc15] hover:bg-[#facc15] hover:text-black'
+    ? 'border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
     : 'border-black text-black hover:bg-black hover:text-white';
 
   // Loading state
@@ -876,7 +876,7 @@ export default function AllQuickServicesPage() {
     return (
       <main className={`min-h-screen font-serif ${bg}`}>
         <section className={`pt-28 pb-10 px-6 text-center`}>
-          <p className="text-[#facc15]">Loading Services...</p>
+          <p className="text-[var(--brand-blue)]">Loading Services...</p>
         </section>
       </main>
     );
@@ -888,9 +888,9 @@ export default function AllQuickServicesPage() {
       {/* Hero */}
       <section className={`pt-28 pb-10 px-6 text-center border-b ${border}`}>
         <div className="max-w-3xl mx-auto">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.5em] mb-3">Quality Guaranteed</p>
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-3">Quality Guaranteed</p>
           <h1 className={`text-4xl md:text-6xl font-black uppercase tracking-tighter mb-4 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-            Quick <span className="text-[#facc15]">Home</span> Services
+            Quick <span className="text-[var(--brand-blue)]">Home</span> Services
           </h1>
           <p className={`text-sm max-w-xl mx-auto leading-relaxed ${muted}`}>
             Hassle-free home maintenance with India&apos;s most trusted professionals. Select a service to book an appointment.
@@ -904,7 +904,7 @@ export default function AllQuickServicesPage() {
           {services.length > 0 ? (
             services.map((s) => (
               <div key={s.id} className={`group p-5 border transition-all duration-300 relative overflow-hidden ${card}`}>
-                <span className={`absolute -top-1 -right-1 text-6xl font-black opacity-[0.03] group-hover:opacity-10 group-hover:text-[#facc15] transition-all ${isDark ? 'text-white' : 'text-black'}`}>
+                <span className={`absolute -top-1 -right-1 text-6xl font-black opacity-[0.03] group-hover:opacity-10 group-hover:text-[var(--brand-blue)] transition-all ${isDark ? 'text-white' : 'text-black'}`}>
                   {s.id < 10 ? `0${s.id}` : s.id}
                 </span>
                 <div className="text-3xl mb-3 transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300 origin-left">
@@ -917,7 +917,7 @@ export default function AllQuickServicesPage() {
 
                 {/* ✅ FIX: Use admin_base_price or base_price */}
                 <p className={`text-[10px] font-black mb-3 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  Starts at <span className="text-[#facc15]">₹{s.admin_base_price || s.base_price || 199}</span>
+                  Starts at <span className="text-[var(--brand-blue)]">₹{s.admin_base_price || s.base_price || 199}</span>
                 </p>
 
                 <button

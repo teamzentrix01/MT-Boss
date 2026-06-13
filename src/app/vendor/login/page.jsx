@@ -73,8 +73,8 @@ export default function VendorLoginPage() {
         <div style={{ flex: '0 0 300px', background: dark ? '#111' : '#111113', padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} className="hidden sm:flex">
           <div>
             <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: '2rem' }}>
-              MT<span style={{ color: '#facc15' }}>BOSS</span>
-              <span style={{ marginLeft: 8, fontSize: '0.65rem', fontWeight: 600, color: '#facc15', background: 'rgba(250,204,21,0.15)', padding: '2px 8px', borderRadius: 99, letterSpacing: '0.08em' }}>VENDOR</span>
+              MT<span style={{ color: 'var(--brand-blue)' }}>BOSS</span>
+              <span style={{ marginLeft: 8, fontSize: '0.65rem', fontWeight: 600, color: 'var(--brand-blue)', background: 'color-mix(in srgb, var(--brand-blue) 15%, transparent)', padding: '2px 8px', borderRadius: 99, letterSpacing: '0.08em' }}>VENDOR</span>
             </div>
             <div style={{ fontSize: '1.375rem', fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: '0.75rem' }}>
               Grow your business with us.
@@ -119,7 +119,7 @@ export default function VendorLoginPage() {
                 </svg>
                 <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="vendor@example.com" required
                   style={{ width: '100%', padding: '0.5rem 0.75rem 0.5rem 2.25rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: '0.8125rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.15s' }}
-                  onFocus={e => e.target.style.borderColor = '#facc15'}
+                  onFocus={e => e.target.style.borderColor = 'var(--brand-blue)'}
                   onBlur={e => e.target.style.borderColor = border}
                 />
               </div>
@@ -134,7 +134,7 @@ export default function VendorLoginPage() {
                 </svg>
                 <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} placeholder="••••••••" required
                   style={{ width: '100%', padding: '0.5rem 2.5rem 0.5rem 2.25rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: '0.8125rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.15s' }}
-                  onFocus={e => e.target.style.borderColor = '#facc15'}
+                  onFocus={e => e.target.style.borderColor = 'var(--brand-blue)'}
                   onBlur={e => e.target.style.borderColor = border}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
@@ -149,19 +149,19 @@ export default function VendorLoginPage() {
 
             {/* Forgot password */}
             <div style={{ textAlign: 'right', marginBottom: '1rem', marginTop: '-0.25rem' }}>
-              <Link href="/vendor/forgot-password" style={{ fontSize: '0.78rem', fontWeight: 600, color: '#facc15', textDecoration: 'none' }}>
+              <Link href="/vendor/forgot-password" style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--brand-blue)', textDecoration: 'none' }}>
                 Forgot password?
               </Link>
             </div>
 
             <button type="submit" disabled={loading}
-              style={{ width: '100%', padding: '0.6rem 1rem', background: '#facc15', color: '#000', border: 'none', borderRadius: 7, fontSize: '0.875rem', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: '1.25rem', transition: 'opacity 0.15s' }}>
+              style={{ width: '100%', padding: '0.6rem 1rem', background: 'var(--brand-blue)', color: '#000', border: 'none', borderRadius: 7, fontSize: '0.875rem', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: '1.25rem', transition: 'opacity 0.15s' }}>
               {loading ? 'Signing in…' : <>Sign In <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></>}
             </button>
           </form>
 
           <div style={{ textAlign: 'center', fontSize: '0.8rem', color: muted }}>
-            No vendor account? <Link href="/vendor/signup" style={{ color: '#facc15', fontWeight: 600, textDecoration: 'none' }}>Register here</Link>
+            No vendor account? <Link href="/vendor/signup" style={{ color: 'var(--brand-blue)', fontWeight: 600, textDecoration: 'none' }}>Register here</Link>
           </div>
         </div>
       </div>

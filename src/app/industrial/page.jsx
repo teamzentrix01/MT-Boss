@@ -129,7 +129,7 @@ const industrialProperties = [
 ];
 
 const tagColors = {
-  Featured: "bg-[#facc15] text-black",
+  Featured: "bg-[var(--brand-blue)] text-black",
   Premium: "bg-purple-500 text-white",
   New: "bg-green-500 text-white",
 };
@@ -139,7 +139,7 @@ const typeColors = {
   "Factory": { dark: "bg-orange-500/10 text-orange-400 border-orange-500/20", light: "bg-orange-50 text-orange-600 border-orange-100" },
   "Plot": { dark: "bg-green-500/10 text-green-400 border-green-500/20", light: "bg-green-50 text-green-600 border-green-100" },
   "Cold Storage": { dark: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20", light: "bg-cyan-50 text-cyan-600 border-cyan-100" },
-  "Logistics": { dark: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20", light: "bg-yellow-50 text-yellow-600 border-yellow-100" },
+  "Logistics": { dark: "bg-sky-500/10 text-[var(--brand-blue-light)] border-[var(--brand-blue)]/20", light: "bg-sky-50 text-[var(--brand-blue-deep)] border-sky-100" },
 };
 
 export default function IndustrialPage() {
@@ -194,18 +194,18 @@ export default function IndustrialPage() {
   };
 
   const filterBtn = (active) => `px-3 py-1.5 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all ${
-    active ? "bg-[#facc15] border-[#facc15] text-black"
-    : dark ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]"
+    active ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black"
+    : dark ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
     : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
   }`;
 
   const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all ${
-    dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]"
+    dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
     : "bg-white border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
   }`;
 
   const modalInput = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all ${
-    dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]"
+    dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
     : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
   }`;
 
@@ -218,10 +218,10 @@ export default function IndustrialPage() {
         <div className="absolute inset-0 bg-black/80" />
         <div ref={heroRef} className="relative z-10 max-w-3xl mx-auto"
           style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "translateY(0)" : "translateY(30px)", transition: "opacity 0.7s ease, transform 0.7s ease" }}>
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">MTBOSS Construction</span>
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">MTBOSS Construction</span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Industrial
-            <span className="block text-[#facc15]">Properties</span>
+            <span className="block text-[var(--brand-blue)]">Properties</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
             Warehouses, factories, logistics hubs, cold storages and industrial plots — buy, sell or lease across Delhi NCR's major industrial corridors.
@@ -234,7 +234,7 @@ export default function IndustrialPage() {
               { value: "Verified", label: "Properties" },
             ].map((s) => (
               <div key={s.label} className="text-center">
-                <p className="text-[#facc15] text-2xl font-black">{s.value}</p>
+                <p className="text-[var(--brand-blue)] text-2xl font-black">{s.value}</p>
                 <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">{s.label}</p>
               </div>
             ))}
@@ -248,9 +248,9 @@ export default function IndustrialPage() {
         {/* FILTERS */}
         <div className={`p-6 rounded-sm border mb-8 ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100 shadow-sm"}`}>
           <div className="flex items-center justify-between mb-5">
-            <h2 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-[#facc15]" : "text-zinc-800"}`}>Filter Properties</h2>
+            <h2 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>Filter Properties</h2>
             <button onClick={() => setFilters({ type: "All", transaction: "All", location: "", minArea: "", maxPrice: "" })}
-              className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 border rounded-sm transition-all ${dark ? "border-zinc-700 text-zinc-500 hover:border-[#facc15] hover:text-[#facc15]" : "border-gray-200 text-zinc-400 hover:border-zinc-800 hover:text-zinc-800"}`}>
+              className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 border rounded-sm transition-all ${dark ? "border-zinc-700 text-zinc-500 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-200 text-zinc-400 hover:border-zinc-800 hover:text-zinc-800"}`}>
               Reset
             </button>
           </div>
@@ -284,7 +284,7 @@ export default function IndustrialPage() {
 
         {/* COUNT */}
         <p className={`text-xs font-black uppercase tracking-widest mb-6 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
-          Showing <span className={dark ? "text-[#facc15]" : "text-zinc-800"}>{filtered.length}</span> Industrial Properties
+          Showing <span className={dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}>{filtered.length}</span> Industrial Properties
         </p>
 
         {/* GRID */}
@@ -295,7 +295,7 @@ export default function IndustrialPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((p) => (
-              <div key={p.id} className={`group rounded-sm overflow-hidden border transition-all duration-300 hover:shadow-xl ${dark ? "bg-zinc-900 border-zinc-800 hover:border-[#facc15]" : "bg-white border-gray-100 hover:border-zinc-300 shadow-sm"}`}>
+              <div key={p.id} className={`group rounded-sm overflow-hidden border transition-all duration-300 hover:shadow-xl ${dark ? "bg-zinc-900 border-zinc-800 hover:border-[var(--brand-blue)]" : "bg-white border-gray-100 hover:border-zinc-300 shadow-sm"}`}>
 
                 {/* Image */}
                 <div className="relative overflow-hidden h-52">
@@ -313,13 +313,13 @@ export default function IndustrialPage() {
 
                 {/* Content */}
                 <div className="p-5">
-                  <p className="text-[#facc15] text-xl font-black mb-0.5">₹ {p.price}</p>
+                  <p className="text-[var(--brand-blue)] text-xl font-black mb-0.5">₹ {p.price}</p>
                   <p className={`text-[10px] font-bold mb-2 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
                     {p.transaction === "Lease" ? "Per Month" : "Sale Price"}
                   </p>
                   <h3 className={`text-sm font-black uppercase tracking-widest mb-2 line-clamp-1 ${dark ? "text-white" : "text-zinc-800"}`}>{p.title}</h3>
                   <div className="flex items-center gap-1 mb-4">
-                    <svg className="w-3 h-3 text-[#facc15] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3 h-3 text-[var(--brand-blue)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                     </svg>
                     <span className={`text-[11px] font-bold truncate ${dark ? "text-zinc-400" : "text-zinc-500"}`}>{p.location}</span>
@@ -350,7 +350,7 @@ export default function IndustrialPage() {
 
                   <button
                     onClick={() => { setEnquiryModal(p); setEnquiryDone(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); }}
-                    className={`w-full py-2.5 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${dark ? "border-[#facc15] text-[#facc15] hover:bg-[#facc15] hover:text-black" : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"}`}
+                    className={`w-full py-2.5 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${dark ? "border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black" : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"}`}
                   >
                     Enquire Now
                   </button>
@@ -363,18 +363,18 @@ export default function IndustrialPage() {
         {/* CTA */}
         <div className={`mt-16 p-8 rounded-sm border flex flex-col md:flex-row items-center justify-between gap-6 ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100 shadow-sm"}`}>
           <div>
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest block mb-1">Have an Industrial Property?</span>
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest block mb-1">Have an Industrial Property?</span>
             <h3 className={`text-xl font-black uppercase tracking-tight mb-2 ${dark ? "text-white" : "text-zinc-800"}`}>List Your Industrial Property</h3>
             <p className={`text-xs max-w-lg ${dark ? "text-zinc-400" : "text-zinc-500"}`}>Connect with serious buyers and tenants. Zero commission, fast listing.</p>
           </div>
           <div className="flex gap-3 flex-shrink-0">
             <button
               onClick={() => { setEnquiryModal({ title: "List Industrial Property", type: "Listing Request", transaction: "", location: "", price: "" }); setEnquiryDone(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); }}
-              className="px-8 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all rounded-sm"
+              className="px-8 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all rounded-sm"
             >
               List Property
             </button>
-            <Link href="/contact" className={`px-8 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${dark ? "border-zinc-700 text-zinc-300 hover:border-[#facc15] hover:text-[#facc15]" : "border-gray-200 text-zinc-600 hover:border-zinc-800 hover:text-zinc-800"}`}>
+            <Link href="/contact" className={`px-8 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${dark ? "border-zinc-700 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-200 text-zinc-600 hover:border-zinc-800 hover:text-zinc-800"}`}>
               Contact Us
             </Link>
           </div>
@@ -392,17 +392,17 @@ export default function IndustrialPage() {
             <div className="p-6">
               {enquiryDone ? (
                 <div className="text-center py-6">
-                  <div className="w-16 h-16 bg-[#facc15] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-[var(--brand-blue)] rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                   </div>
                   <h3 className={`text-sm font-black uppercase mb-2 ${dark ? "text-white" : "text-zinc-800"}`}>Enquiry Sent!</h3>
-                  <p className="text-[#facc15] font-black text-xs mb-4">{enquiryModal.title}</p>
-                  <button onClick={() => setEnquiryModal(null)} className="px-6 py-2.5 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-all">Close</button>
+                  <p className="text-[var(--brand-blue)] font-black text-xs mb-4">{enquiryModal.title}</p>
+                  <button onClick={() => setEnquiryModal(null)} className="px-6 py-2.5 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-[var(--brand-blue-dark)] transition-all">Close</button>
                 </div>
               ) : (
                 <>
                   <div className="mb-5">
-                    <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest block mb-1">Send Enquiry</span>
+                    <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest block mb-1">Send Enquiry</span>
                     <h3 className={`text-base font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>{enquiryModal.title}</h3>
                     {enquiryModal.price && <p className={`text-xs mt-1 ${dark ? "text-zinc-400" : "text-zinc-500"}`}>₹ {enquiryModal.price} • {enquiryModal.location}</p>}
                   </div>
@@ -411,7 +411,7 @@ export default function IndustrialPage() {
                     <input type="tel" name="phone" placeholder="10-digit mobile number *" value={enquiryForm.phone} onChange={(e) => setEnquiryForm({ ...enquiryForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })} maxLength={10} inputMode="numeric" className={modalInput} />
                     <input type="email" name="email" placeholder="Email address" value={enquiryForm.email} onChange={(e) => setEnquiryForm({ ...enquiryForm, email: e.target.value })} className={modalInput} />
                     <textarea name="message" rows={3} placeholder="Message or requirements..." value={enquiryForm.message} onChange={(e) => setEnquiryForm({ ...enquiryForm, message: e.target.value })} className={`${modalInput} resize-none`} />
-                    <button type="submit" disabled={enquiryLoading} className="w-full py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+                    <button type="submit" disabled={enquiryLoading} className="w-full py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 flex items-center justify-center gap-2">
                       {enquiryLoading ? <><svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" /></svg>Sending...</> : "Send Enquiry"}
                     </button>
                   </form>

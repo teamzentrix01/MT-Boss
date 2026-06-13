@@ -61,19 +61,19 @@ function ServiceCard({ service, index, isDark }) {
       <div className={`absolute inset-0 bg-gradient-to-t ${isDark ? 'from-black via-black/40' : 'from-black/90 via-black/20'} to-transparent transition-opacity group-hover:opacity-0`} />
       
       <div className="absolute bottom-0 left-0 right-0 p-8 group-hover:opacity-0 group-hover:translate-y-4 transition-all duration-300">
-        <div className="w-12 h-0.5 bg-[#facc15] mb-4" />
+        <div className="w-12 h-0.5 bg-[var(--brand-blue)] mb-4" />
         <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none">{service.title}</h3>
       </div>
 
       {/* Button click handling via Link */}
-      <div className="absolute inset-0 bg-[#facc15] flex flex-col items-center justify-center text-center p-8 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 z-20">
+      <div className="absolute inset-0 bg-[var(--brand-blue)] flex flex-col items-center justify-center text-center p-8 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 z-20">
         <h3 className="text-2xl font-black text-black uppercase mb-4 tracking-tighter">{service.title}</h3>
         <p className="text-sm text-black font-bold leading-relaxed mb-8">{service.description}</p>
         
         {/* Is Link par click karte hi page change ho jayega */}
         <Link 
           href={service.link} 
-          className="px-8 py-3 bg-black text-[#facc15] text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-transform"
+          className="px-8 py-3 bg-black text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-transform"
         >
           View Details
         </Link>
@@ -99,11 +99,11 @@ export default function Services() {
     <section className={`py-24 px-6 transition-colors duration-500 ${isDark ? 'bg-black' : 'bg-white'}`}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
-          <p className="text-[#facc15] text-xs font-black uppercase tracking-[0.5em] mb-4">Core Expertise</p>
+          <p className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-[0.5em] mb-4">Core Expertise</p>
           <h2 className={`text-4xl md:text-6xl font-black uppercase tracking-tighter mb-6 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-            Major <span className="text-[#facc15]">Services</span>
+            Major <span className="text-[var(--brand-blue)]">Services</span>
           </h2>
-          <div className="w-20 h-1.5 bg-[#facc15] mx-auto rounded-full" />
+          <div className="w-20 h-1.5 bg-[var(--brand-blue)] mx-auto rounded-full" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
@@ -115,9 +115,9 @@ export default function Services() {
         <div className="text-center mt-20">
           <Link 
             href="/Services/all" 
-            className="group relative inline-flex items-center gap-4 px-12 py-5 bg-transparent border-2 border-[#facc15] text-[#facc15] font-black uppercase text-xs tracking-[0.3em] overflow-hidden transition-all hover:text-white"
+            className="group relative inline-flex items-center gap-4 px-12 py-5 bg-transparent border-2 border-[var(--brand-blue)] text-[var(--brand-blue)] font-black uppercase text-xs tracking-[0.3em] overflow-hidden transition-all hover:text-white"
           >
-            <span className="absolute inset-0 bg-[#facc15] translate-y-full transition-transform group-hover:translate-y-0 -z-10" />
+            <span className="absolute inset-0 bg-[var(--brand-blue)] translate-y-full transition-transform group-hover:translate-y-0 -z-10" />
             Explore All Services
             <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />

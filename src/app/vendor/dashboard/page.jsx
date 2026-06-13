@@ -354,7 +354,7 @@ export default function VendorDashboard() {
                 onClick={() => { setActiveTab(tab.key); if (tab.key === 'packages') loadPackages(); }}
                 className={`px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all ${
                   activeTab === tab.key
-                    ? "bg-[#facc15] text-black"
+                    ? "bg-[var(--brand-blue)] text-black"
                     : isDark ? "text-zinc-400 hover:text-white" : "text-zinc-500 hover:text-zinc-900"
                 }`}
               >
@@ -369,11 +369,11 @@ export default function VendorDashboard() {
           <div className="space-y-4">
             {/* Earnings Summary */}
             <div className={`border ${card} p-5`}>
-              <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest mb-4">Earnings Breakdown</p>
+              <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest mb-4">Earnings Breakdown</p>
               <div className="grid grid-cols-3 gap-4">
                 {[
                   { label: "Your Net Earnings (85%)", value: `₹${totalEarning.toLocaleString('en-IN')}`, color: "text-green-500" },
-                  { label: "Admin Commission (15%)", value: `₹${Math.round(completedBookings.reduce((s,b) => s + parseFloat(b.admin_commission||0), 0)).toLocaleString('en-IN')}`, color: "text-yellow-500" },
+                  { label: "Admin Commission (15%)", value: `₹${Math.round(completedBookings.reduce((s,b) => s + parseFloat(b.admin_commission||0), 0)).toLocaleString('en-IN')}`, color: "text-[var(--brand-blue)]" },
                   { label: "GST Collected (18%)", value: `₹${Math.round(completedBookings.reduce((s,b) => s + parseFloat(b.gst_amount||0), 0)).toLocaleString('en-IN')}`, color: "text-zinc-400" },
                 ].map(({ label, value, color }) => (
                   <div key={label} className={`p-4 border ${isDark ? "border-zinc-800 bg-zinc-900" : "border-zinc-100 bg-zinc-50"}`}>
@@ -423,9 +423,9 @@ export default function VendorDashboard() {
 
                         {/* Rating */}
                         {b.rating_stars ? (
-                          <div className={`p-3 border-l-2 border-[#facc15] ${isDark ? "bg-zinc-900" : "bg-zinc-50"}`}>
+                          <div className={`p-3 border-l-2 border-[var(--brand-blue)] ${isDark ? "bg-zinc-900" : "bg-zinc-50"}`}>
                             <div className="flex items-center gap-2">
-                              <span className="text-[#facc15] font-black">{"★".repeat(b.rating_stars)}{"☆".repeat(5 - b.rating_stars)}</span>
+                              <span className="text-[var(--brand-blue)] font-black">{"★".repeat(b.rating_stars)}{"☆".repeat(5 - b.rating_stars)}</span>
                               <span className={`text-[10px] font-black ${muted}`}>{b.rating_stars}/5</span>
                             </div>
                             {b.review_text && <p className={`text-xs mt-1 ${muted}`}>"{b.review_text}"</p>}
@@ -521,13 +521,13 @@ export default function VendorDashboard() {
           <div className={`border ${card} p-6 max-w-2xl`}>
             <div className="flex items-center justify-between mb-6">
               <div>
-                <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest">Your Profile</p>
+                <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Your Profile</p>
                 <h2 className="text-2xl font-black uppercase mt-0.5">{vendorProfile?.shop_name || "My Shop"}</h2>
               </div>
               {!editMode && (
                 <button
                   onClick={() => { setEditMode(true); loadAllServices(); }}
-                  className="px-5 py-2 border border-[#facc15] text-[#facc15] text-[9px] font-black uppercase tracking-widest hover:bg-[#facc15]/10 transition-all"
+                  className="px-5 py-2 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue)]/10 transition-all"
                 >
                   Edit Profile
                 </button>
@@ -580,7 +580,7 @@ export default function VendorDashboard() {
                           key={svc.id}
                           className={`flex items-center gap-2 p-2 border cursor-pointer transition-all ${
                             selectedServices.includes(svc.id)
-                              ? "border-[#facc15] bg-[#facc15]/10"
+                              ? "border-[var(--brand-blue)] bg-[var(--brand-blue)]/10"
                               : isDark ? "border-zinc-800 hover:border-zinc-600" : "border-zinc-200 hover:border-zinc-300"
                           }`}
                         >
@@ -588,7 +588,7 @@ export default function VendorDashboard() {
                             type="checkbox"
                             checked={selectedServices.includes(svc.id)}
                             onChange={() => toggleService(svc.id)}
-                            className="accent-[#facc15]"
+                            className="accent-[var(--brand-blue)]"
                           />
                           <span className="text-xs">{svc.icon} {svc.label}</span>
                         </label>
@@ -607,7 +607,7 @@ export default function VendorDashboard() {
                   <button
                     onClick={saveProfile}
                     disabled={profileLoading}
-                    className="flex-1 py-2.5 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all disabled:opacity-50"
+                    className="flex-1 py-2.5 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-light)] transition-all disabled:opacity-50"
                   >
                     {profileLoading ? "Saving..." : "Save Changes →"}
                   </button>
@@ -655,7 +655,7 @@ export default function VendorDashboard() {
                       No services assigned yet.{" "}
                       <button
                         onClick={() => { setEditMode(true); loadAllServices(); }}
-                        className="text-[#facc15] underline"
+                        className="text-[var(--brand-blue)] underline"
                       >
                         Add services
                       </button>
@@ -670,25 +670,25 @@ export default function VendorDashboard() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className={`p-6 border ${card}`}>
-            <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest">Pending</p>
+            <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Pending</p>
             <p className="text-3xl font-black mt-2">{notifications.length}</p>
             <p className={`text-[10px] ${muted} mt-1`}>Incoming requests</p>
           </div>
  
           <div className={`p-6 border ${card}`}>
-            <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest">Active</p>
+            <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Active</p>
             <p className="text-3xl font-black mt-2">{activeBooking ? 1 : 0}</p>
             <p className={`text-[10px] ${muted} mt-1`}>Current booking</p>
           </div>
  
           <div className={`p-6 border ${card}`}>
-            <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest">Completed</p>
+            <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Completed</p>
             <p className="text-3xl font-black mt-2">{completedCount}</p>
             <p className={`text-[10px] ${muted} mt-1`}>Total jobs</p>
           </div>
  
           <div className={`p-6 border ${card}`}>
-            <p className="text-[10px] font-black uppercase text-[#facc15] tracking-widest">Your Earnings</p>
+            <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Your Earnings</p>
             <p className="text-3xl font-black mt-2">₹{totalEarning.toLocaleString('en-IN')}</p>
             <p className={`text-[10px] ${muted} mt-1`}>After GST + commission</p>
           </div>
@@ -709,7 +709,7 @@ export default function VendorDashboard() {
                       key={notif.booking_id}
                       onClick={() => setSelectedNotification(notif)}
                       className={`w-full text-left p-4 border transition-all ${selectedNotification?.booking_id === notif.booking_id
-                        ? "border-[#facc15] bg-[#facc15]/5"
+                        ? "border-[var(--brand-blue)] bg-[var(--brand-blue)]/5"
                         : isDark
                           ? "border-zinc-800 hover:border-zinc-700"
                           : "border-zinc-200 hover:border-zinc-300"
@@ -717,7 +717,7 @@ export default function VendorDashboard() {
                     >
                       <div className="flex items-start justify-between">
                         <div>
-                          <p className="font-black text-[#facc15]">{notif.label} 📍 {notif.service_city}</p>
+                          <p className="font-black text-[var(--brand-blue)]">{notif.label} 📍 {notif.service_city}</p>
                           <p className={`text-sm ${muted} mt-1`}>📞 {notif.user_phone}</p>
                           <p className="text-[10px] text-green-500 mt-1">₹{notif.base_amount} base + ₹{notif.total_amount - notif.base_amount} (fees & tax)</p>
                         </div>
@@ -735,28 +735,28 @@ export default function VendorDashboard() {
             {selectedNotification ? (
               <div className="space-y-4">
                 <div>
-                  <p className="text-[10px] font-black uppercase text-[#facc15]">Customer</p>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Customer</p>
                   <p className="font-black">{selectedNotification.user_name}</p>
                   <p className={`text-[10px] ${muted}`}>{selectedNotification.user_phone}</p>
                 </div>
  
                 <div>
-                  <p className="text-[10px] font-black uppercase text-[#facc15]">Location</p>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Location</p>
                   <p className="text-sm font-medium">{selectedNotification.service_address}</p>
                   {selectedNotification.location_map_url && (
-                    <a href={selectedNotification.location_map_url} target="_blank" className="text-[10px] text-[#facc15] hover:underline mt-1 inline-block">
+                    <a href={selectedNotification.location_map_url} target="_blank" className="text-[10px] text-[var(--brand-blue)] hover:underline mt-1 inline-block">
                       📍 View on Map
                     </a>
                   )}
                 </div>
  
                 <div>
-                  <p className="text-[10px] font-black uppercase text-[#facc15]">Details</p>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Details</p>
                   <p className="text-sm">{selectedNotification.service_description || "No description"}</p>
                 </div>
  
                 <div>
-                  <p className="text-[10px] font-black uppercase text-[#facc15]">Date & Time</p>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Date & Time</p>
                   <p className="text-sm">{selectedNotification.booking_date} • {selectedNotification.booking_time}</p>
                 </div>
  
@@ -769,7 +769,7 @@ export default function VendorDashboard() {
                   </button>
                   <button
                     onClick={() => acceptBooking(selectedNotification.booking_id)}
-                    className="flex-1 py-2.5 bg-[#facc15] text-black text-[9px] font-black uppercase hover:bg-yellow-300 transition-all"
+                    className="flex-1 py-2.5 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase hover:bg-[var(--brand-blue-light)] transition-all"
                   >
                     Accept →
                   </button>
@@ -789,18 +789,18 @@ export default function VendorDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <div>
-                  <p className="text-[10px] font-black uppercase text-[#facc15]">Reference</p>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Reference</p>
                   <p className="font-black text-lg">{activeBooking.booking_reference}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase text-[#facc15]">Customer</p>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Customer</p>
                   <p className="font-medium">{activeBooking.user_name}</p>
                   <p className={`text-[10px] ${muted}`}>{activeBooking.user_phone}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase text-[#facc15]">Address</p>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Address</p>
                   <p className="text-sm">{activeBooking.service_address}</p>
-                  <a href={activeBooking.location_map_url} target="_blank" className="text-[10px] text-[#facc15] hover:underline mt-1 inline-block">
+                  <a href={activeBooking.location_map_url} target="_blank" className="text-[10px] text-[var(--brand-blue)] hover:underline mt-1 inline-block">
                     📍 Open in Maps
                   </a>
                 </div>
@@ -808,7 +808,7 @@ export default function VendorDashboard() {
  
               <div className="space-y-3">
                 <div>
-                  <p className="text-[10px] font-black uppercase text-[#facc15]">Status</p>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Status</p>
                   <div className="flex items-center gap-2 mt-1">
                     <div className={`w-3 h-3 rounded-full animate-pulse ${activeBooking.status === 'AWAITING_PAYMENT' ? 'bg-green-500' : activeBooking.status === 'IN_PROGRESS' ? 'bg-orange-500' : 'bg-blue-500'}`}></div>
                     <p className={`font-black uppercase ${activeBooking.status === 'AWAITING_PAYMENT' ? 'text-green-500' : activeBooking.status === 'IN_PROGRESS' ? 'text-orange-500' : 'text-blue-500'}`}>
@@ -877,13 +877,13 @@ export default function VendorDashboard() {
                   <>
                     <button
                       onClick={updateLocation}
-                      className="w-full py-2.5 border border-[#facc15] text-[#facc15] text-[9px] font-black uppercase hover:bg-[#facc15]/10 transition-all"
+                      className="w-full py-2.5 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase hover:bg-[var(--brand-blue)]/10 transition-all"
                     >
                       📍 Update My Location
                     </button>
                     <button
                       onClick={() => { setIsQuickJob(true); setExtraAmount(""); setVendorNote(""); setShowCompleteModal(true); }}
-                      className="w-full py-2.5 bg-[#facc15] text-black text-[9px] font-black uppercase hover:bg-yellow-300 transition-all"
+                      className="w-full py-2.5 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase hover:bg-[var(--brand-blue-light)] transition-all"
                     >
                       ✓ Mark Work Complete
                     </button>
@@ -904,11 +904,11 @@ export default function VendorDashboard() {
           <div className={`w-full max-w-sm border shadow-2xl ${isDark ? "bg-zinc-950 border-zinc-800 text-white" : "bg-white border-zinc-200 text-zinc-900"}`}>
             <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? "border-zinc-800" : "border-zinc-100"}`}>
               <div>
-                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#facc15]">Mark Complete</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[var(--brand-blue)]">Mark Complete</p>
                 <h3 className="text-base font-black uppercase">{activeBooking.label}</h3>
               </div>
               <button onClick={() => setShowCompleteModal(false)}
-                className={`w-8 h-8 border flex items-center justify-center font-black text-sm transition-all ${isDark ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]" : "border-zinc-300 text-zinc-400 hover:border-zinc-900"}`}>
+                className={`w-8 h-8 border flex items-center justify-center font-black text-sm transition-all ${isDark ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-zinc-300 text-zinc-400 hover:border-zinc-900"}`}>
                 ✕
               </button>
             </div>
@@ -925,11 +925,11 @@ export default function VendorDashboard() {
                 <label className={`block text-[9px] font-black uppercase tracking-widest mb-2 ${muted}`}>Job Duration</label>
                 <div className="grid grid-cols-2 gap-2">
                   <button type="button" onClick={() => setIsQuickJob(true)}
-                    className={`py-3 text-[10px] font-black uppercase border transition-all ${isQuickJob ? "bg-[#facc15] border-[#facc15] text-black" : isDark ? "border-zinc-700 text-zinc-400" : "border-zinc-300 text-zinc-500"}`}>
+                    className={`py-3 text-[10px] font-black uppercase border transition-all ${isQuickJob ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black" : isDark ? "border-zinc-700 text-zinc-400" : "border-zinc-300 text-zinc-500"}`}>
                     ⚡ Within 15 mins
                   </button>
                   <button type="button" onClick={() => setIsQuickJob(false)}
-                    className={`py-3 text-[10px] font-black uppercase border transition-all ${!isQuickJob ? "bg-[#facc15] border-[#facc15] text-black" : isDark ? "border-zinc-700 text-zinc-400" : "border-zinc-300 text-zinc-500"}`}>
+                    className={`py-3 text-[10px] font-black uppercase border transition-all ${!isQuickJob ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black" : isDark ? "border-zinc-700 text-zinc-400" : "border-zinc-300 text-zinc-500"}`}>
                     🕐 More than 15 mins
                   </button>
                 </div>
@@ -964,8 +964,8 @@ export default function VendorDashboard() {
                     />
                   </div>
                   {extraAmount > 0 && (
-                    <div className={`px-4 py-3 border border-yellow-500/30 ${isDark ? "bg-yellow-500/10" : "bg-yellow-50"}`}>
-                      <p className="text-[9px] font-black uppercase text-[#facc15] mb-2">Earnings Preview</p>
+                    <div className={`px-4 py-3 border border-[var(--brand-blue)]/30 ${isDark ? "bg-sky-500/10" : "bg-sky-50"}`}>
+                      <p className="text-[9px] font-black uppercase text-[var(--brand-blue)] mb-2">Earnings Preview</p>
                       <div className="flex justify-between text-xs"><span className={muted}>Base (admin)</span><span className="text-red-400">₹{activeBooking.base_amount}</span></div>
                       <div className="flex justify-between text-xs mt-1"><span className={muted}>Extra charged</span><span>₹{extraAmount}</span></div>
                       <div className="flex justify-between text-xs mt-1"><span className={muted}>GST on extra (18%)</span><span className="text-red-400">−₹{Math.round(extraAmount * 0.18)}</span></div>
@@ -991,7 +991,7 @@ export default function VendorDashboard() {
               </div>
 
               <button onClick={markComplete} disabled={completeLoading || (!isQuickJob && !extraAmount)}
-                className="w-full py-3 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-[0.3em] hover:bg-yellow-300 transition-all disabled:opacity-50">
+                className="w-full py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all disabled:opacity-50">
                 {completeLoading ? "Submitting..." : "Confirm Completion →"}
               </button>
             </div>

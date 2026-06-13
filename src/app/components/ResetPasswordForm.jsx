@@ -72,7 +72,7 @@ function ResetForm({ loginHref, accentColor }) {
   };
 
   const btnStyle = {
-    width:'100%', padding:'0.8rem', background:accentColor, color:accentColor==='#facc15'?'#000':'#fff',
+    width:'100%', padding:'0.8rem', background:accentColor, color:accentColor==='var(--brand-blue)'?'#000':'#fff',
     border:'none', borderRadius:8, fontSize:'0.9rem', fontWeight:700, cursor:'pointer',
     fontFamily:'inherit', transition:'opacity .2s', marginTop:'0.5rem',
   };
@@ -91,7 +91,7 @@ function ResetForm({ loginHref, accentColor }) {
               This reset link is no longer valid. Please request a new one.
             </p>
             <Link href={loginHref.replace('login', 'forgot-password')}
-              style={{ display:'block', textAlign:'center', padding:'0.75rem', background:accentColor, color:accentColor==='#facc15'?'#000':'#fff', borderRadius:8, fontWeight:700, textDecoration:'none' }}>
+              style={{ display:'block', textAlign:'center', padding:'0.75rem', background:accentColor, color:accentColor==='var(--brand-blue)'?'#000':'#fff', borderRadius:8, fontWeight:700, textDecoration:'none' }}>
               Request New Link
             </Link>
           </>

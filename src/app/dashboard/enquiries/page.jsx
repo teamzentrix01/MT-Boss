@@ -24,7 +24,7 @@ export default function EnquiriesPage() {
 
   const getStatusColor = (status) => {
     const colors = {
-      'Pending': 'bg-yellow-100 text-yellow-800',
+      'Pending': 'bg-sky-100 text-[var(--brand-blue-deepest)]',
       'Contacted': 'bg-blue-100 text-blue-800',
       'Closed': 'bg-red-100 text-red-800',
     };
@@ -50,7 +50,7 @@ export default function EnquiriesPage() {
                 placeholder="Search by name or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)]"
               />
             </div>
             <div>
@@ -58,7 +58,7 @@ export default function EnquiriesPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)]"
               >
                 <option>All</option>
                 <option>Pending</option>
@@ -67,7 +67,7 @@ export default function EnquiriesPage() {
               </select>
             </div>
             <div className="flex items-end">
-              <button className="w-full px-4 py-2 bg-yellow-400 text-black rounded-lg font-semibold hover:bg-yellow-500 transition-colors">
+              <button className="w-full px-4 py-2 bg-[var(--brand-blue)] text-black rounded-lg font-semibold hover:bg-sky-500 transition-colors">
                 Export CSV
               </button>
             </div>
@@ -166,12 +166,12 @@ export default function EnquiriesPage() {
               </div>
 
               <div className="flex gap-3">
-                <select defaultValue={selectedEnquiry.status} className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <select defaultValue={selectedEnquiry.status} className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)]">
                   <option>Pending</option>
                   <option>Contacted</option>
                   <option>Closed</option>
                 </select>
-                <button className="px-6 py-2 bg-yellow-400 text-black rounded-lg font-semibold hover:bg-yellow-500 transition-colors">
+                <button className="px-6 py-2 bg-[var(--brand-blue)] text-black rounded-lg font-semibold hover:bg-sky-500 transition-colors">
                   Update Status
                 </button>
               </div>

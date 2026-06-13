@@ -356,10 +356,10 @@ export default function AgentDashboardPage() {
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-[#facc15]">Agent Workspace</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-[var(--brand-blue)]">Agent Workspace</p>
             <h1 className="text-3xl font-black uppercase mt-1">{agent?.name || 'Agent Dashboard'}</h1>
             <p className={`text-sm ${muted} mt-1`}>
-              {agent?.agent_type || 'Agent'} - assigned city: <span className="font-black text-[#facc15]">{agent?.city}</span>
+              {agent?.agent_type || 'Agent'} - assigned city: <span className="font-black text-[var(--brand-blue)]">{agent?.city}</span>
               {agent?.state ? `, ${agent.state}` : ''}
             </p>
           </div>
@@ -368,7 +368,7 @@ export default function AgentDashboardPage() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-5 py-2.5 border text-[10px] font-black uppercase tracking-widest ${activeTab === tab ? 'bg-[#facc15] border-[#facc15] text-black' : `${card} ${muted}`}`}
+                className={`px-5 py-2.5 border text-[10px] font-black uppercase tracking-widest ${activeTab === tab ? 'bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black' : `${card} ${muted}`}`}
               >
                 {tab}
               </button>
@@ -380,13 +380,13 @@ export default function AgentDashboardPage() {
         </header>
 
         {agent?.must_change_password && (
-          <div className={`border border-[#facc15] ${dark ? 'bg-yellow-400/10' : 'bg-yellow-50'} p-4 mb-5 text-sm font-bold`}>
+          <div className={`border border-[var(--brand-blue)] ${dark ? 'bg-[var(--brand-blue)]/10' : 'bg-sky-50'} p-4 mb-5 text-sm font-bold`}>
             Please change your temporary password from the Profile tab.
           </div>
         )}
 
         {message && (
-          <div className={`border ${card} p-3 mb-5 text-sm font-bold text-[#facc15]`}>
+          <div className={`border ${card} p-3 mb-5 text-sm font-bold text-[var(--brand-blue)]`}>
             {message}
           </div>
         )}
@@ -493,7 +493,7 @@ export default function AgentDashboardPage() {
                       <button type="button" onClick={() => startEditLead(lead)} className={`px-3 py-2 border text-xs font-bold ${input}`}>Edit</button>
                     </div>
                   </div>
-                  {lead.follow_up_date && <p className="text-xs text-[#facc15] font-black mt-3">Follow-up: {new Date(lead.follow_up_date).toLocaleDateString('en-IN')}</p>}
+                  {lead.follow_up_date && <p className="text-xs text-[var(--brand-blue)] font-black mt-3">Follow-up: {new Date(lead.follow_up_date).toLocaleDateString('en-IN')}</p>}
                 </div>
               ))}
             </div>
@@ -642,13 +642,13 @@ export default function AgentDashboardPage() {
         {activeTab === 'schedule' && (
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <form onSubmit={createTask} className={`border ${card} p-5 h-fit`}>
-              <p className="text-[10px] font-black uppercase tracking-widest text-[#facc15] mb-4">Plan Day in {agent?.city}</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] mb-4">Plan Day in {agent?.city}</p>
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} placeholder="Title" value={taskForm.title} onChange={(e) => setTaskForm((f) => ({ ...f, title: e.target.value }))} required />
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="date" value={taskForm.scheduleDate} onChange={(e) => setTaskForm((f) => ({ ...f, scheduleDate: e.target.value }))} required />
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="time" value={taskForm.scheduleTime} onChange={(e) => setTaskForm((f) => ({ ...f, scheduleTime: e.target.value }))} />
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} placeholder="Type" value={taskForm.type} onChange={(e) => setTaskForm((f) => ({ ...f, type: e.target.value }))} />
               <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={3} placeholder="Notes" value={taskForm.notes} onChange={(e) => setTaskForm((f) => ({ ...f, notes: e.target.value }))} />
-              <button className="w-full mt-4 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest">Add Schedule</button>
+              <button className="w-full mt-4 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">Add Schedule</button>
             </form>
 
             <div className="lg:col-span-2 space-y-3">
@@ -672,7 +672,7 @@ export default function AgentDashboardPage() {
 
         {activeTab === 'profile' && (
           <section className={`border ${card} p-6 max-w-2xl`}>
-            <p className="text-[10px] font-black uppercase tracking-widest text-[#facc15] mb-4">Profile</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] mb-4">Profile</p>
             {[
               ['Name', agent?.name],
               ['Email', agent?.email],
@@ -688,10 +688,10 @@ export default function AgentDashboardPage() {
             ))}
 
             <form onSubmit={changePassword} className="mt-6">
-              <p className="text-[10px] font-black uppercase tracking-widest text-[#facc15] mb-3">Change Password</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] mb-3">Change Password</p>
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="password" placeholder="Current password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm((f) => ({ ...f, currentPassword: e.target.value }))} required />
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="password" placeholder="New password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm((f) => ({ ...f, newPassword: e.target.value }))} required />
-              <button className="px-6 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest">Update Password</button>
+              <button className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">Update Password</button>
             </form>
           </section>
         )}

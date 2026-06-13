@@ -51,16 +51,16 @@ export default function FeaturedProjects() {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className={`transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-            <p className="text-xs font-black uppercase tracking-[0.3em] mb-3" style={{ color: "#facc15" }}>
+            <p className="text-xs font-black uppercase tracking-[0.3em] mb-3" style={{ color: "var(--brand-blue)" }}>
               Our Masterpieces
             </p>
             <h2 className={`text-4xl sm:text-6xl font-black tracking-tighter uppercase ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-              Featured <br /> <span style={{ color: isDark ? '#facc15' : 'inherit' }}>Projects</span>
+              Featured <br /> <span style={{ color: isDark ? 'var(--brand-blue)' : 'inherit' }}>Projects</span>
             </h2>
           </div>
           <button className={`group flex items-center gap-3 px-8 py-4 border-2 font-black uppercase text-xs tracking-widest transition-all ${
             isDark 
-            ? 'border-zinc-800 text-white hover:bg-[#facc15] hover:text-black hover:border-[#facc15]' 
+            ? 'border-zinc-800 text-white hover:bg-[var(--brand-blue)] hover:text-black hover:border-[var(--brand-blue)]' 
             : 'border-zinc-200 text-zinc-900 hover:bg-black hover:text-white hover:border-black'
           }`}>
             View All Projects
@@ -91,7 +91,7 @@ export default function FeaturedProjects() {
 
               {/* Overlay Info */}
               <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-8 group-hover:translate-y-0 transition-transform duration-500">
-                <p className="text-[#facc15] text-xs font-black uppercase tracking-widest mb-2 opacity-0 group-hover:opacity-100 transition-opacity delay-100">
+                <p className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-widest mb-2 opacity-0 group-hover:opacity-100 transition-opacity delay-100">
                   {project.category} — {project.location}
                 </p>
                 <h3 className="text-white text-3xl font-black uppercase leading-none mb-6">
@@ -100,14 +100,14 @@ export default function FeaturedProjects() {
                 
                 {/* Expandable Button on Hover */}
                 <div className="h-0 group-hover:h-12 overflow-hidden transition-all duration-500">
-                  <button className="bg-[#facc15] text-black px-6 py-3 text-[10px] font-black uppercase tracking-tighter hover:bg-white transition-colors">
+                  <button className="bg-[var(--brand-blue)] text-black px-6 py-3 text-[10px] font-black uppercase tracking-tighter hover:bg-white transition-colors">
                     Explore Details
                   </button>
                 </div>
               </div>
 
               {/* Decorative Number */}
-              <span className="absolute top-8 right-8 text-white/10 text-6xl font-black italic group-hover:text-[#facc15]/20 transition-colors">
+              <span className="absolute top-8 right-8 text-white/10 text-6xl font-black italic group-hover:text-[var(--brand-blue)]/20 transition-colors">
                 0{idx + 1}
               </span>
             </div>

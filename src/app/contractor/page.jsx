@@ -44,8 +44,8 @@ const vendorTypes = [
     title: "MEP Contractor",
     desc: "Mechanical, electrical, plumbing, HVAC, fire fighting and allied services.",
     tag: "High Demand",
-    color: "border-[#facc15]/30",
-    badge: "bg-[#facc15]/10 text-[#facc15]",
+    color: "border-[var(--brand-blue)]/30",
+    badge: "bg-[var(--brand-blue)]/10 text-[var(--brand-blue)]",
     popular: true,
   },
   {
@@ -94,7 +94,7 @@ const plans = [
     name: "Professional",
     price: "₹ 2,999",
     period: "Per Year",
-    color: "border-[#facc15]",
+    color: "border-[var(--brand-blue)]",
     features: [
       "Priority profile placement",
       "Verified contractor badge",
@@ -242,7 +242,7 @@ export default function ContractorPage() {
 
   const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${
     dark
-      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]"
+      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
       : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
   }`;
 
@@ -254,12 +254,12 @@ export default function ContractorPage() {
     return (
       <main className={`min-h-screen flex items-center justify-center px-6 ${dark ? "bg-black" : "bg-gray-50"}`}>
         <div className={`max-w-lg w-full text-center p-12 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100 shadow-xl"}`}>
-          <div className="w-20 h-20 bg-[#facc15] rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-[var(--brand-blue)] rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest block mb-2">
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest block mb-2">
             Registration Submitted!
           </span>
           <h2 className={`text-xl font-black uppercase tracking-tight mb-3 ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -268,7 +268,7 @@ export default function ContractorPage() {
           <p className={`text-xs leading-relaxed mb-3 ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
             Your contractor registration has been received.
           </p>
-          <p className="text-[#facc15] font-black text-sm mb-2">{form.vendorType} — {form.plan}</p>
+          <p className="text-[var(--brand-blue)] font-black text-sm mb-2">{form.vendorType} — {form.plan}</p>
           <p className={`text-xs mb-8 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
             Our team will verify your details and contact you within 2-3 business days on{" "}
             <span className={`font-black ${dark ? "text-white" : "text-zinc-800"}`}>{form.email}</span>
@@ -277,7 +277,7 @@ export default function ContractorPage() {
             <Link
               href="/"
               className={`px-6 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all ${
-                dark ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]" : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
+                dark ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
               }`}
             >
               Go Home
@@ -287,7 +287,7 @@ export default function ContractorPage() {
                 setSubmitted(false);
                 setForm({ name: "", email: "", phone: "", companyName: "", city: "", state: "", vendorType: "", experience: "", gst: "", pan: "", plan: "Free Listing", supplierDetails: "", message: "" });
               }}
-              className="px-6 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all"
+              className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
             >
               New Registration
             </button>
@@ -311,12 +311,12 @@ export default function ContractorPage() {
       >
         <div className="absolute inset-0 bg-black/80" />
         <div className="relative z-10 max-w-3xl mx-auto">
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
             MTBOSS Construction
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Join Our
-            <span className="block text-[#facc15]">Vendor Network</span>
+            <span className="block text-[var(--brand-blue)]">Vendor Network</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
             Register as a contractor or vendor with MTBOSS Construction. Get access to real projects, verified status, and a growing network of opportunities across India.
@@ -330,7 +330,7 @@ export default function ContractorPage() {
               { value: "Free", label: "Basic Registration" },
             ].map((s) => (
               <div key={s.label} className="text-center">
-                <p className="text-[#facc15] text-2xl font-black">{s.value}</p>
+                <p className="text-[var(--brand-blue)] text-2xl font-black">{s.value}</p>
                 <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">{s.label}</p>
               </div>
             ))}
@@ -338,7 +338,7 @@ export default function ContractorPage() {
 <a
           
             href="#contractor-form"
-            className="mt-10 inline-flex items-center gap-3 px-10 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all"
+            className="mt-10 inline-flex items-center gap-3 px-10 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
           >
             Register Now
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -352,7 +352,7 @@ export default function ContractorPage() {
       <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Who Can Join
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -364,13 +364,13 @@ export default function ContractorPage() {
             {vendorTypes.map((type, i) => (
               <div
                 key={i}
-                className={`relative p-6 rounded-sm border-2 transition-all duration-300 flex flex-col group hover:border-[#facc15] ${type.color} ${
+                className={`relative p-6 rounded-sm border-2 transition-all duration-300 flex flex-col group hover:border-[var(--brand-blue)] ${type.color} ${
                   dark ? "bg-zinc-800" : "bg-white shadow-md"
                 }`}
               >
                 {type.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="px-3 py-1 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest rounded-sm">
+                    <span className="px-3 py-1 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest rounded-sm">
                       High Demand
                     </span>
                   </div>
@@ -379,7 +379,7 @@ export default function ContractorPage() {
                 <span className={`inline-block self-start px-2 py-1 text-[9px] font-black uppercase tracking-widest rounded-sm mb-3 ${type.badge}`}>
                   {type.tag}
                 </span>
-                <h3 className={`text-sm font-black uppercase tracking-wide mb-2 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                <h3 className={`text-sm font-black uppercase tracking-wide mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
                   {type.title}
                 </h3>
                 <p className={`text-xs leading-relaxed flex-1 ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
@@ -403,7 +403,7 @@ export default function ContractorPage() {
           }}
         >
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               What We Need
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -418,12 +418,12 @@ export default function ContractorPage() {
             {requirements.map((r, i) => (
               <div
                 key={i}
-                className={`p-6 rounded-sm border transition-all duration-300 hover:border-[#facc15] group ${
+                className={`p-6 rounded-sm border transition-all duration-300 hover:border-[var(--brand-blue)] group ${
                   dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100 shadow-sm hover:shadow-md"
                 }`}
               >
                 <span className="text-3xl block mb-4">{r.icon}</span>
-                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
                   {r.title}
                 </h3>
                 <p className={`text-xs leading-relaxed ${dark ? "text-zinc-500" : "text-zinc-500"}`}>
@@ -439,7 +439,7 @@ export default function ContractorPage() {
       <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Choose Your Plan
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -460,7 +460,7 @@ export default function ContractorPage() {
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="px-4 py-1 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm">
+                    <span className="px-4 py-1 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm">
                       Most Popular
                     </span>
                   </div>
@@ -470,7 +470,7 @@ export default function ContractorPage() {
                   <h3 className={`text-sm font-black uppercase tracking-widest mb-3 ${dark ? "text-white" : "text-zinc-800"}`}>
                     {plan.name}
                   </h3>
-                  <p className="text-[#facc15] text-3xl font-black">{plan.price}</p>
+                  <p className="text-[var(--brand-blue)] text-3xl font-black">{plan.price}</p>
                   <p className={`text-[10px] font-bold uppercase tracking-widest mt-1 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
                     {plan.period}
                   </p>
@@ -479,7 +479,7 @@ export default function ContractorPage() {
                 <ul className="space-y-2.5 mb-6 flex-1">
                   {plan.features.map((f, j) => (
                     <li key={j} className="flex items-start gap-2">
-                      <svg className="w-3.5 h-3.5 text-[#facc15] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-3.5 h-3.5 text-[var(--brand-blue)] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                       <span className={`text-[11px] font-bold ${dark ? "text-zinc-300" : "text-zinc-600"}`}>{f}</span>
@@ -503,9 +503,9 @@ export default function ContractorPage() {
                   }}
                   className={`block text-center py-3 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${
                     plan.highlight
-                      ? "bg-[#facc15] border-[#facc15] text-black hover:bg-yellow-400"
+                      ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-dark)]"
                       : dark
-                      ? "border-zinc-600 text-zinc-300 hover:border-[#facc15] hover:text-[#facc15]"
+                      ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
                       : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"
                   }`}
                 >
@@ -529,7 +529,7 @@ export default function ContractorPage() {
           }}
         >
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Why Register
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -541,12 +541,12 @@ export default function ContractorPage() {
             {benefits.map((b, i) => (
               <div
                 key={i}
-                className={`group p-6 rounded-sm border transition-all duration-300 hover:border-[#facc15] ${
+                className={`group p-6 rounded-sm border transition-all duration-300 hover:border-[var(--brand-blue)] ${
                   dark ? "bg-zinc-900 border-zinc-800 hover:bg-zinc-800" : "bg-white border-gray-100 hover:shadow-lg"
                 }`}
               >
                 <span className="text-3xl block mb-4">{b.icon}</span>
-                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
                   {b.title}
                 </h3>
                 <p className={`text-xs leading-relaxed ${dark ? "text-zinc-500" : "text-zinc-500"}`}>
@@ -559,7 +559,7 @@ export default function ContractorPage() {
       </section>
 
       {/* ── STATS STRIP ── */}
-      <section className="py-12 px-6 bg-[#facc15]">
+      <section className="py-12 px-6 bg-[var(--brand-blue)]">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
@@ -581,7 +581,7 @@ export default function ContractorPage() {
       <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Common Questions
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -595,7 +595,7 @@ export default function ContractorPage() {
                 key={i}
                 className={`rounded-sm border overflow-hidden transition-all duration-300 ${
                   activeFaq === i
-                    ? dark ? "border-[#facc15] bg-zinc-800" : "border-zinc-800 bg-white shadow-md"
+                    ? dark ? "border-[var(--brand-blue)] bg-zinc-800" : "border-zinc-800 bg-white shadow-md"
                     : dark ? "border-zinc-700 bg-zinc-800" : "border-gray-100 bg-white"
                 }`}
               >
@@ -607,7 +607,7 @@ export default function ContractorPage() {
                     {faq.q}
                   </span>
                   <svg
-                    className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 text-[#facc15] ${activeFaq === i ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 text-[var(--brand-blue)] ${activeFaq === i ? "rotate-180" : ""}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -634,7 +634,7 @@ export default function ContractorPage() {
         <div className="max-w-4xl mx-auto">
 
           <div className="text-center mb-12">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Get Started
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -644,11 +644,11 @@ export default function ContractorPage() {
               Fill in your details. Our verification team will contact you within 2-3 business days.
             </p>
             {/* Selected Plan Badge */}
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#facc15]/10 border border-[#facc15]/30 rounded-sm">
-              <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest">
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-blue)]/10 border border-[var(--brand-blue)]/30 rounded-sm">
+              <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">
                 Selected Plan:
               </span>
-              <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest">
+              <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">
                 {form.plan}
               </span>
             </div>
@@ -798,9 +798,9 @@ export default function ContractorPage() {
               </div>
 
               {/* Agreement */}
-              <div className={`p-4 rounded-sm border ${dark ? "bg-zinc-800 border-zinc-700" : "bg-yellow-50 border-yellow-100"}`}>
+              <div className={`p-4 rounded-sm border ${dark ? "bg-zinc-800 border-zinc-700" : "bg-sky-50 border-sky-100"}`}>
                 <label className="flex items-start gap-3 cursor-pointer">
-                  <input type="checkbox" required className="mt-0.5 accent-[#facc15]" />
+                  <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)]" />
                   <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
                     I confirm that all information provided is accurate and that I have the required documents available for verification. I agree to MTBOSS Construction's vendor terms and conditions.
                   </span>
@@ -815,7 +815,7 @@ export default function ContractorPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-12 py-4 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 rounded-sm"
+                  className="px-12 py-4 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 rounded-sm"
                 >
                   {loading ? (
                     <>
@@ -844,7 +844,7 @@ export default function ContractorPage() {
       {/* ── BOTTOM CTA ── */}
       <section className={`py-16 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-zinc-800"}`}>
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">
             Need Help?
           </p>
           <h2 className="text-2xl sm:text-3xl font-black uppercase text-white mb-4 tracking-tight">
@@ -856,7 +856,7 @@ export default function ContractorPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="tel:+919999999999"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.948V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />

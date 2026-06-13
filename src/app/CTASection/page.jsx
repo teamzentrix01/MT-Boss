@@ -4,14 +4,14 @@ import Link from "next/link";
 
 const InquiryCard = ({ title, subtitle, icon, isDark, href }) => (
   <div className={`p-8 border-l-4 transition-all duration-300 ${
-    isDark ? "bg-zinc-950 border-[#facc15] hover:bg-zinc-900" : "bg-zinc-50 border-black hover:bg-white hover:shadow-xl"
+    isDark ? "bg-zinc-950 border-[var(--brand-blue)] hover:bg-zinc-900" : "bg-zinc-50 border-black hover:bg-white hover:shadow-xl"
   }`}>
-    <div className="mb-4 text-[#facc15]">{icon}</div>
+    <div className="mb-4 text-[var(--brand-blue)]">{icon}</div>
     <h3 className={`text-2xl font-black uppercase tracking-tighter mb-2 ${isDark ? 'text-white' : 'text-zinc-900'}`}>{title}</h3>
     <p className={`text-sm leading-relaxed mb-6 ${isDark ? 'text-zinc-500' : 'text-zinc-600'}`}>{subtitle}</p>
     <Link href={href}>
       <button className={`w-full px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all ${
-        isDark ? 'bg-[#facc15] text-black' : 'bg-black text-white hover:bg-[#facc15] hover:text-black'
+        isDark ? 'bg-[var(--brand-blue)] text-black' : 'bg-black text-white hover:bg-[var(--brand-blue)] hover:text-black'
       }`}>
         Proceed Now
       </button>
@@ -34,9 +34,9 @@ export default function CTAHubPage() {
     <main className={`min-h-screen transition-colors duration-500 ${isDark ? "bg-black" : "bg-white"}`}>
       <section className={`pt-40 pb-20 px-6 text-center border-b ${isDark ? 'border-zinc-900' : 'border-zinc-100'}`}>
         <div className="max-w-4xl mx-auto">
-          <p className="text-[#facc15] text-xs font-black uppercase tracking-[0.4em] mb-4">Connect With MTBOSS</p>
+          <p className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-[0.4em] mb-4">Connect With MTBOSS</p>
           <h1 className={`text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none mb-6 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-            Ready to <span className="text-[#facc15]">Build</span> <br /> Something Big?
+            Ready to <span className="text-[var(--brand-blue)]">Build</span> <br /> Something Big?
           </h1>
         </div>
       </section>

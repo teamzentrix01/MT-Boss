@@ -11,7 +11,7 @@ function th(d) {
     muted:    d ? '#52525b' : '#9ca3af',
     border:   d ? '#27272a' : '#e5e7eb',
     inputBg:  d ? '#0a0a0a' : '#f9fafb',
-    accent:   d ? '#facc15' : '#111827',
+    accent:   d ? 'var(--brand-blue)' : '#111827',
     accentFg: d ? '#000000' : '#ffffff',
     tHead:    d ? '#0a0a0a' : '#f3f4f6',
     rowHov:   d ? '#1a1a1a' : '#f9fafb',
@@ -141,14 +141,14 @@ function TagListEditor({ label, helpText, items, onChange, placeholder, t }) {
 
 /* ── colour options ──────────────────────────────────────────────────────── */
 const COLOR_OPTIONS = [
-  { value: 'yellow', label: 'Yellow',  dot: '#ca8a04' },
+  { value: 'yellow', label: 'Blue',    dot: 'var(--brand-blue)' },
   { value: 'blue',   label: 'Blue',    dot: '#2563eb' },
   { value: 'green',  label: 'Green',   dot: '#16a34a' },
   { value: 'red',    label: 'Red',     dot: '#dc2626' },
   { value: 'purple', label: 'Purple',  dot: '#9333ea' },
   { value: 'pink',   label: 'Pink',    dot: '#db2777' },
   { value: 'orange', label: 'Orange',  dot: '#ea580c' },
-  { value: 'amber',  label: 'Amber',   dot: '#d97706' },
+  { value: 'amber',  label: 'Deep Blue', dot: 'var(--brand-blue-deep)' },
   { value: 'cyan',   label: 'Cyan',    dot: '#0891b2' },
   { value: 'gray',   label: 'Gray',    dot: '#6b7280' },
 ];
@@ -616,7 +616,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
               { label: 'Total',           val: cats.length,                           color: t.sub     },
               { label: 'Active',          val: cats.filter(c => c.is_active).length,  color: '#22c55e' },
               { label: 'Hidden',          val: cats.filter(c => !c.is_active).length, color: '#ef4444' },
-              { label: 'With Types',      val: cats.filter(c => (c.types||[]).length > 0).length, color: '#f59e0b' },
+              { label: 'With Types',      val: cats.filter(c => (c.types||[]).length > 0).length, color: 'var(--brand-blue-dark)' },
             ].map(s => (
               <div key={s.label} style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '16px', textAlign: 'center' }}>
                 <div style={{ fontSize: '22px', fontWeight: 800, color: s.color }}>{s.val}</div>
@@ -678,7 +678,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                       <td style={{ padding: '10px 14px' }}>
                         {(cat.types || []).length > 0 ? (
                           <div>
-                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#f59e0b' }}>
+                            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--brand-blue-dark)' }}>
                               {(cat.types || []).length} type{(cat.types || []).length !== 1 ? 's' : ''}
                             </span>
                             {(cat.subcategories || []).length > 0 && (

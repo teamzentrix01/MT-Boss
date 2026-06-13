@@ -226,23 +226,23 @@ export default function ShopPage() {
   const subText    = isDarkMode ? "text-zinc-400"  : "text-gray-500";
   const divider    = isDarkMode ? "border-zinc-700" : "border-gray-100";
   const inputCls   = isDarkMode
-    ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-yellow-400"
-    : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-yellow-400";
+    ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue-light)]"
+    : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-[var(--brand-blue-light)]";
   const selectCls  = isDarkMode
-    ? "bg-zinc-800 border-zinc-700 text-white focus:border-yellow-400"
-    : "bg-gray-50 border-gray-200 text-gray-900 focus:border-yellow-400";
+    ? "bg-zinc-800 border-zinc-700 text-white focus:border-[var(--brand-blue-light)]"
+    : "bg-gray-50 border-gray-200 text-gray-900 focus:border-[var(--brand-blue-light)]";
   const labelText  = isDarkMode ? "text-zinc-300"  : "text-gray-700";
   const modalBg    = isDarkMode ? "bg-zinc-900 border-zinc-700" : "bg-white border-gray-100";
   const modalHead  = isDarkMode ? "border-zinc-800" : "border-gray-100";
 
   const labelStyles = {
     blue:   { bg: isDarkMode ? "bg-blue-900/40"   : "bg-blue-50",   text: isDarkMode ? "text-blue-300"   : "text-blue-600",   border: isDarkMode ? "border-blue-700"   : "border-blue-200"   },
-    yellow: { bg: isDarkMode ? "bg-yellow-900/40" : "bg-yellow-50", text: isDarkMode ? "text-yellow-300" : "text-yellow-600", border: isDarkMode ? "border-yellow-700" : "border-yellow-200" },
+    yellow: { bg: isDarkMode ? "bg-[var(--brand-blue-ink)]/40" : "bg-sky-50", text: isDarkMode ? "text-[var(--brand-blue-lighter)]" : "text-[var(--brand-blue-deep)]", border: isDarkMode ? "border-[var(--brand-blue-deeper)]" : "border-sky-200" },
     green:  { bg: isDarkMode ? "bg-green-900/40"  : "bg-green-50",  text: isDarkMode ? "text-green-300"  : "text-green-600",  border: isDarkMode ? "border-green-700"  : "border-green-200"  },
     purple: { bg: isDarkMode ? "bg-purple-900/40" : "bg-purple-50", text: isDarkMode ? "text-purple-300" : "text-purple-600", border: isDarkMode ? "border-purple-700" : "border-purple-200" },
     pink:   { bg: isDarkMode ? "bg-pink-900/40"   : "bg-pink-50",   text: isDarkMode ? "text-pink-300"   : "text-pink-600",   border: isDarkMode ? "border-pink-700"   : "border-pink-200"   },
     orange: { bg: isDarkMode ? "bg-orange-900/40" : "bg-orange-50", text: isDarkMode ? "text-orange-300" : "text-orange-600", border: isDarkMode ? "border-orange-700" : "border-orange-200" },
-    amber:  { bg: isDarkMode ? "bg-amber-900/40"  : "bg-amber-50",  text: isDarkMode ? "text-amber-300"  : "text-amber-600",  border: isDarkMode ? "border-amber-700"  : "border-amber-200"  },
+    amber:  { bg: isDarkMode ? "bg-[var(--brand-blue-ink)]/40"  : "bg-sky-50",  text: isDarkMode ? "text-[var(--brand-blue-lighter)]"  : "text-[var(--brand-blue-deep)]",  border: isDarkMode ? "border-[var(--brand-blue-deeper)]"  : "border-sky-200"  },
     cyan:   { bg: isDarkMode ? "bg-cyan-900/40"   : "bg-cyan-50",   text: isDarkMode ? "text-cyan-300"   : "text-cyan-600",   border: isDarkMode ? "border-cyan-700"   : "border-cyan-200"   },
   };
 
@@ -254,8 +254,8 @@ export default function ShopPage() {
   ];
 
   // shared input class
-  const inp = `w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-300 transition-all ${inputCls}`;
-  const sel = `w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-300 transition-all ${selectCls}`;
+  const inp = `w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--brand-blue-lighter)] transition-all ${inputCls}`;
+  const sel = `w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--brand-blue-lighter)] transition-all ${selectCls}`;
   const lbl = `block text-[10px] font-bold mb-1 ${labelText} uppercase tracking-wide`;
 
   // ── render ──────────────────────────────────────────────────────────────────
@@ -265,12 +265,12 @@ export default function ShopPage() {
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden bg-zinc-950">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-          <div className="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/30 text-yellow-500 text-xs font-bold px-4 py-1.5 rounded-full mb-5 tracking-widest uppercase">
+          <div className="inline-flex items-center gap-2 bg-[var(--brand-blue)]/10 border border-[var(--brand-blue-light)]/30 text-[var(--brand-blue)] text-xs font-bold px-4 py-1.5 rounded-full mb-5 tracking-widest uppercase">
             <Zap size={12} /> Material Marketplace
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 leading-tight">
             Construction Materials,<br />
-            <span className="text-yellow-400">Sourced Right.</span>
+            <span className="text-[var(--brand-blue-light)]">Sourced Right.</span>
           </h1>
           <p className="text-base md:text-lg text-zinc-400 max-w-xl mx-auto mb-10">
             Browse all major construction categories and get a direct quote from verified suppliers across India.
@@ -278,7 +278,7 @@ export default function ShopPage() {
           <div className="flex flex-wrap justify-center gap-6">
             {stats.map((s, i) => (
               <div key={i} className="flex items-center gap-2 text-zinc-300">
-                <span className="text-yellow-400">{s.icon}</span>
+                <span className="text-[var(--brand-blue-light)]">{s.icon}</span>
                 <span className="font-bold text-lg">{s.value}</span>
                 <span className="text-sm text-zinc-400">{s.label}</span>
               </div>
@@ -290,7 +290,7 @@ export default function ShopPage() {
       {/* ── Categories Grid ──────────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-          <p className="text-xs font-bold tracking-widest uppercase text-yellow-500 mb-2">What We Offer</p>
+          <p className="text-xs font-bold tracking-widest uppercase text-[var(--brand-blue)] mb-2">What We Offer</p>
           <h2 className={`text-3xl md:text-4xl font-bold ${headText}`}>Material Categories</h2>
           <p className={`mt-2 text-sm ${subText}`}>Click any category to get a quote</p>
         </div>
@@ -298,7 +298,7 @@ export default function ShopPage() {
         {catsLoading ? (
           <div className="flex justify-center items-center py-20">
             <div className="flex flex-col items-center gap-3">
-              <svg className="w-8 h-8 animate-spin text-yellow-400" fill="none" viewBox="0 0 24 24">
+              <svg className="w-8 h-8 animate-spin text-[var(--brand-blue-light)]" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
               </svg>
@@ -363,7 +363,7 @@ export default function ShopPage() {
                       </div>
                     )}
 
-                    <button className="w-full flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 text-xs font-bold py-2.5 px-4 rounded-lg transition-all duration-200 group-hover:shadow-md">
+                    <button className="w-full flex items-center justify-center gap-2 bg-[var(--brand-blue)] hover:bg-sky-500 text-gray-900 text-xs font-bold py-2.5 px-4 rounded-lg transition-all duration-200 group-hover:shadow-md">
                       Get Quote <ArrowRight size={13} />
                     </button>
                   </div>
@@ -393,7 +393,7 @@ export default function ShopPage() {
             {/* Modal Header */}
             <div className={`flex items-center justify-between px-6 py-4 border-b ${modalHead}`}>
               <div>
-                <p className="text-xs font-bold tracking-widest uppercase text-yellow-500 mb-0.5">Request Quote</p>
+                <p className="text-xs font-bold tracking-widest uppercase text-[var(--brand-blue)] mb-0.5">Request Quote</p>
                 <h2 className={`text-lg font-extrabold ${headText} flex items-center gap-2`}>
                   {selectedCategory?.image
                     ? <img src={selectedCategory.image} alt="" style={{ width: 28, height: 28, objectFit: "cover", borderRadius: 4 }} />
@@ -457,16 +457,16 @@ export default function ShopPage() {
                   const hasCityPrice = cityData?.price_range && cityData.price_range.trim() !== '';
                   if (hasCityPrice) {
                     return (
-                      <div className={`rounded-xl border-2 px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-yellow-500 bg-yellow-900/20" : "border-yellow-400 bg-yellow-50"}`}>
+                      <div className={`rounded-xl border-2 px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-[var(--brand-blue)] bg-[var(--brand-blue-ink)]/20" : "border-[var(--brand-blue-light)] bg-sky-50"}`}>
                         <div>
-                          <p className={`text-[9px] font-extrabold uppercase tracking-widest mb-0.5 ${isDarkMode ? "text-yellow-400" : "text-yellow-600"}`}>
+                          <p className={`text-[9px] font-extrabold uppercase tracking-widest mb-0.5 ${isDarkMode ? "text-[var(--brand-blue-light)]" : "text-[var(--brand-blue-deep)]"}`}>
                             📍 {selectedCity} — Local Price
                           </p>
-                          <p className={`text-base font-black ${isDarkMode ? "text-yellow-300" : "text-yellow-700"}`}>
+                          <p className={`text-base font-black ${isDarkMode ? "text-[var(--brand-blue-lighter)]" : "text-[var(--brand-blue-deeper)]"}`}>
                             {cityData.price_range}
                           </p>
                           {cityData.unit && (
-                            <p className={`text-[10px] ${isDarkMode ? "text-yellow-500" : "text-yellow-600"}`}>{cityData.unit}</p>
+                            <p className={`text-[10px] ${isDarkMode ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>{cityData.unit}</p>
                           )}
                         </div>
                         <span className="text-2xl">🏷️</span>
@@ -649,19 +649,19 @@ export default function ShopPage() {
                     </span>
                     {locationStatus !== "loading" && (
                       <button type="button" onClick={retryLocation}
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded border transition-all ${isDarkMode ? "border-zinc-600 text-zinc-300 hover:border-yellow-500 hover:text-yellow-400" : "border-gray-300 text-gray-500 hover:border-yellow-500 hover:text-yellow-600"}`}>
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded border transition-all ${isDarkMode ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue-light)]" : "border-gray-300 text-gray-500 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue-deep)]"}`}>
                         🔄 Retry
                       </button>
                     )}
                   </div>
 
                   {locationStatus === "loading" && (
-                    <div className={`flex items-center gap-2 px-3 py-3 rounded-lg border ${isDarkMode ? "border-yellow-700 bg-yellow-900/10" : "border-yellow-300 bg-yellow-50"}`}>
-                      <svg className="w-3.5 h-3.5 animate-spin text-yellow-500 flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                    <div className={`flex items-center gap-2 px-3 py-3 rounded-lg border ${isDarkMode ? "border-[var(--brand-blue-deeper)] bg-[var(--brand-blue-ink)]/10" : "border-[var(--brand-blue-lighter)] bg-sky-50"}`}>
+                      <svg className="w-3.5 h-3.5 animate-spin text-[var(--brand-blue)] flex-shrink-0" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                       </svg>
-                      <span className={`text-[10px] font-bold ${isDarkMode ? "text-yellow-400" : "text-yellow-600"}`}>
+                      <span className={`text-[10px] font-bold ${isDarkMode ? "text-[var(--brand-blue-light)]" : "text-[var(--brand-blue-deep)]"}`}>
                         Fetching your GPS location…
                       </span>
                     </div>
@@ -683,7 +683,7 @@ export default function ShopPage() {
                         </span>
                         <a href={`https://www.google.com/maps?q=${locationCoords.latitude},${locationCoords.longitude}`}
                           target="_blank" rel="noopener noreferrer"
-                          className="text-[10px] font-bold text-yellow-500 hover:underline">
+                          className="text-[10px] font-bold text-[var(--brand-blue)] hover:underline">
                           Open in Maps →
                         </a>
                       </div>
@@ -725,7 +725,7 @@ export default function ShopPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:opacity-60 text-gray-900 font-extrabold py-3 px-4 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 text-sm tracking-wide"
+                  className="w-full bg-[var(--brand-blue)] hover:bg-sky-500 disabled:opacity-60 text-gray-900 font-extrabold py-3 px-4 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 text-sm tracking-wide"
                 >
                   {submitting ? "Submitting…" : "Submit Enquiry →"}
                 </button>

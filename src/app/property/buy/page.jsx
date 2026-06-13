@@ -97,7 +97,7 @@ export default function BrowsePropertiesPage() {
 
   // Get tag color based on listing type
   const getTagColor = (listingType) => {
-    return listingType === "rent" ? "bg-blue-500 text-white" : "bg-[#facc15] text-black";
+    return listingType === "rent" ? "bg-blue-500 text-white" : "bg-[var(--brand-blue)] text-black";
   };
 
   const getTagLabel = (listingType) => {
@@ -109,9 +109,9 @@ export default function BrowsePropertiesPage() {
 
       {/* Hero */}
       <div className={`relative py-20 px-4 text-center ${dark ? "bg-zinc-900" : "bg-zinc-800"}`}>
-        <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest">MTBOSS Property</span>
+        <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">MTBOSS Property</span>
         <h1 className="text-white text-3xl md:text-5xl font-black uppercase tracking-widest mt-2 mb-4">
-          Browse<span className="block text-[#facc15]">Properties</span>
+          Browse<span className="block text-[var(--brand-blue)]">Properties</span>
         </h1>
         <p className="text-zinc-400 text-xs max-w-xl mx-auto font-bold tracking-wide">
           Find properties to buy or rent across Delhi NCR
@@ -123,8 +123,8 @@ export default function BrowsePropertiesPage() {
             onClick={() => { setMode("buy"); handleFilter({}); }}
             className={`px-6 py-2.5 text-xs font-black uppercase tracking-widest transition-all rounded-sm ${
               mode === "buy"
-                ? "bg-[#facc15] text-black"
-                : `border ${dark ? "border-zinc-600 text-zinc-300 hover:border-[#facc15] hover:text-[#facc15]" : "border-gray-300 text-gray-600 hover:border-zinc-800 hover:text-zinc-800"}`
+                ? "bg-[var(--brand-blue)] text-black"
+                : `border ${dark ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-300 text-gray-600 hover:border-zinc-800 hover:text-zinc-800"}`
             }`}
           >
             🏠 Buy Properties ({buyCount})
@@ -159,7 +159,7 @@ export default function BrowsePropertiesPage() {
             ["Verified Only", "✓"]
           ].map(([label, val]) => (
             <div key={label} className="text-center">
-              <p className="text-[#facc15] text-xl font-black">{val}</p>
+              <p className="text-[var(--brand-blue)] text-xl font-black">{val}</p>
               <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">{label}</p>
             </div>
           ))}
@@ -171,10 +171,10 @@ export default function BrowsePropertiesPage() {
 
         <div className="flex items-center justify-between mb-6">
           <p className={`text-xs font-black uppercase tracking-widest ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
-            Showing <span className={dark ? "text-[#facc15]" : "text-zinc-800"}>{filtered.length}</span> Properties
+            Showing <span className={dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}>{filtered.length}</span> Properties
           </p>
           <div className="flex gap-2">
-            <a href="/property/sell" className="px-4 py-2 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all rounded-sm">
+            <a href="/property/sell" className="px-4 py-2 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all rounded-sm">
               + Sell Property
             </a>
             <a href="/property/rent" className="px-4 py-2 bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all rounded-sm">
@@ -220,7 +220,7 @@ export default function BrowsePropertiesPage() {
                     <span className={`px-3 py-1 text-[9px] font-black uppercase rounded-sm ${getTagColor(property.listing_type)}`}>
                       {getTagLabel(property.listing_type)}
                     </span>
-                    <span className={`px-3 py-1 text-[9px] font-black uppercase rounded-sm ${dark ? "bg-black/60 text-[#facc15]" : "bg-white/90 text-zinc-800"}`}>
+                    <span className={`px-3 py-1 text-[9px] font-black uppercase rounded-sm ${dark ? "bg-black/60 text-[var(--brand-blue)]" : "bg-white/90 text-zinc-800"}`}>
                       {property.type}
                     </span>
                   </div>
@@ -229,7 +229,7 @@ export default function BrowsePropertiesPage() {
                 {/* Content */}
                 <div className="p-4">
                   {/* Price */}
-                  <p className="text-[#facc15] text-lg font-black mb-2">
+                  <p className="text-[var(--brand-blue)] text-lg font-black mb-2">
                     ₹{property.price}{property.listing_type === "rent" ? "/mo" : ""}
                   </p>
 
@@ -240,7 +240,7 @@ export default function BrowsePropertiesPage() {
 
                   {/* Location */}
                   <div className="flex items-center gap-2 mb-3">
-                    <svg className="w-3 h-3 text-[#facc15]" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3 h-3 text-[var(--brand-blue)]" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                     </svg>
                     <span className={`text-[10px] font-bold ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
@@ -271,7 +271,7 @@ export default function BrowsePropertiesPage() {
                   </div>
 
                   {/* View Button */}
-                  <button className="w-full mt-3 py-2 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all rounded-sm">
+                  <button className="w-full mt-3 py-2 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all rounded-sm">
                     View Details →
                   </button>
                 </div>

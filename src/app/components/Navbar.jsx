@@ -150,10 +150,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
   const bg = isDarkMode ? "bg-black border-zinc-800" : "bg-white border-gray-100";
   const text = isDarkMode ? "text-zinc-300" : "text-zinc-600";
-  const textHover = isDarkMode ? "hover:text-[#facc15]" : "hover:text-zinc-900";
+  const textHover = isDarkMode ? "hover:text-[var(--brand-blue)]" : "hover:text-zinc-900";
   const dropdownBg = isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100";
   const dropdownTxt = isDarkMode
-    ? "text-zinc-400 hover:text-[#facc15] hover:bg-zinc-800"
+    ? "text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800"
     : "text-zinc-600 hover:text-zinc-900 hover:bg-gray-50";
 
   return (
@@ -270,7 +270,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               onClick={toggleTheme}
               className={`p-2 rounded-full transition-all ${
                 isDarkMode
-                  ? "text-zinc-400 hover:text-[#facc15] hover:bg-zinc-800"
+                  ? "text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800"
                   : "text-zinc-500 hover:text-zinc-800 hover:bg-gray-100"
               }`}
             >
@@ -306,8 +306,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                     className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
                       user.role === 'admin' ? 'bg-red-500'
                       : user.role === 'vendor' ? 'bg-green-500'
-                      : user.role === 'supplier' ? 'bg-yellow-500'
-                      : user.role === 'franchise' ? 'bg-amber-600'
+                      : user.role === 'supplier' ? 'bg-sky-500'
+                      : user.role === 'franchise' ? 'bg-[var(--brand-blue-deep)]'
                       : 'bg-blue-500'
                     } text-white`}
                   >
@@ -352,15 +352,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                     href="/login"
                     className={`px-5 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
                       isDarkMode
-                        ? 'text-[#facc15] border border-[#facc15] hover:bg-[#facc15] hover:text-black'
-                        : 'text-yellow-600 border border-yellow-600 hover:bg-yellow-50'
+                        ? 'text-[var(--brand-blue)] border border-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
+                        : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)] hover:bg-sky-50'
                     }`}
                   >
                     Sign In
                   </Link>
                   <Link
                     href="/signup"
-                    className="px-5 py-2 text-sm font-semibold bg-[#facc15] text-black rounded-md hover:bg-yellow-400 transition-all duration-200"
+                    className="px-5 py-2 text-sm font-semibold bg-[var(--brand-blue)] text-black rounded-md hover:bg-[var(--brand-blue-dark)] transition-all duration-200"
                   >
                     Sign Up
                   </Link>
@@ -374,7 +374,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             <button
               onClick={toggleTheme}
               className={`p-2 rounded-full ${
-                isDarkMode ? 'text-zinc-400 hover:text-[#facc15]' : 'text-zinc-500 hover:text-zinc-800'
+                isDarkMode ? 'text-zinc-400 hover:text-[var(--brand-blue)]' : 'text-zinc-500 hover:text-zinc-800'
               }`}
             >
               {isDarkMode ? '☀️' : '🌙'}
@@ -445,7 +445,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               href={link.href}
               className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
                 isDarkMode
-                  ? 'text-zinc-300 hover:text-[#facc15] hover:bg-zinc-800'
+                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
                   : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
               }`}
             >
@@ -459,7 +459,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               onClick={() => setServicesOpen(!servicesOpen)}
               className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
                 isDarkMode
-                  ? 'text-zinc-300 hover:text-[#facc15] hover:bg-zinc-800'
+                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
                   : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
               }`}
             >
@@ -488,7 +488,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                     href={s.href}
                     className={`block px-3 py-2 text-sm rounded-md transition-colors ${
                       isDarkMode
-                        ? 'text-zinc-400 hover:text-[#facc15] hover:bg-zinc-800'
+                        ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
                         : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
                     }`}
                   >
@@ -505,7 +505,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               onClick={() => setPropertyOpen(!propertyOpen)}
               className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
                 isDarkMode
-                  ? 'text-zinc-300 hover:text-[#facc15] hover:bg-zinc-800'
+                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
                   : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
               }`}
             >
@@ -534,7 +534,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                     href={s.href}
                     className={`block px-3 py-2 text-sm rounded-md transition-colors ${
                       isDarkMode
-                        ? 'text-zinc-400 hover:text-[#facc15] hover:bg-zinc-800'
+                        ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
                         : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
                     }`}
                   >
@@ -549,7 +549,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             href="/agent"
             className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
               isDarkMode
-                ? 'text-zinc-300 hover:text-[#facc15] hover:bg-zinc-800'
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
                 : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
             }`}
           >
@@ -559,7 +559,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             href="/franchise"
             className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
               isDarkMode
-                ? 'text-zinc-300 hover:text-[#facc15] hover:bg-zinc-800'
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
                 : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
             }`}
           >
@@ -600,15 +600,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   href="/login"
                   className={`block text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
                     isDarkMode
-                      ? 'text-[#facc15] border border-[#facc15] hover:bg-[#facc15] hover:text-black'
-                      : 'text-yellow-600 border border-yellow-600 hover:bg-yellow-50'
+                      ? 'text-[var(--brand-blue)] border border-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
+                      : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)] hover:bg-sky-50'
                   }`}
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/signup"
-                  className="block text-center px-5 py-2.5 text-sm font-semibold bg-[#facc15] text-black rounded-md hover:bg-yellow-400 transition-all"
+                  className="block text-center px-5 py-2.5 text-sm font-semibold bg-[var(--brand-blue)] text-black rounded-md hover:bg-[var(--brand-blue-dark)] transition-all"
                 >
                   Sign Up
                 </Link>

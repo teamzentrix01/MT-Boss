@@ -327,7 +327,7 @@ function AdminDashboard() {
           --stat-b-tx: #9a3412;
           --stat-c-bg: #f0fdf4;
           --stat-c-tx: #14532d;
-          --stat-d-bg: #fef3c7;
+          --stat-d-bg: var(--brand-blue-soft);
           --stat-d-tx: #92400e;
 
           --sn-bg: #dbeafe; --sn-tx: #1e40af;
@@ -347,7 +347,7 @@ function AdminDashboard() {
           --stat-a-bg: #1a2035; --stat-a-tx: #93c5fd;
           --stat-b-bg: #2a1a0e; --stat-b-tx: #fb923c;
           --stat-c-bg: #0f2a18; --stat-c-tx: #86efac;
-          --stat-d-bg: #2a1f0e; --stat-d-tx: #fbbf24;
+          --stat-d-bg: #2a1f0e; --stat-d-tx: var(--brand-blue-light);
 
           --sn-bg: #1e2a3a; --sn-tx: #93c5fd;
           --sp-bg: #2a1a0e; --sp-tx: #fb923c;
@@ -666,7 +666,7 @@ function AdminDashboard() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem', padding: '1rem' }}>
                   {[
-                    { label: "Today's Commission", value: `₹${todayCommission.toLocaleString('en-IN')}`, sub: '15% of today\'s bookings', color: '#facc15' },
+                    { label: "Today's Commission", value: `₹${todayCommission.toLocaleString('en-IN')}`, sub: '15% of today\'s bookings', color: 'var(--brand-blue)' },
                     { label: 'Total Commission', value: `₹${totalCommission.toLocaleString('en-IN')}`, sub: '15% of all completed', color: '#4ade80' },
                     { label: 'Total GST Collected', value: `₹${totalGST.toLocaleString('en-IN')}`, sub: '18% collected from users', color: '#60a5fa' },
                   ].map(({ label, value, sub, color }) => (
@@ -686,7 +686,7 @@ function AdminDashboard() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem', padding: '1rem' }}>
                   {[
-                    { label: "Today's Commission", value: `₹${supplierCommission.today.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: '#facc15' },
+                    { label: "Today's Commission", value: `₹${supplierCommission.today.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: 'var(--brand-blue)' },
                     { label: 'Total Commission', value: `₹${supplierCommission.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: '#4ade80' },
                     { label: 'Orders Fulfilled', value: supplierCommission.fulfilled, color: '#60a5fa' },
                     { label: 'Open Enquiries', value: supplierCommission.open, color: '#f97316' },

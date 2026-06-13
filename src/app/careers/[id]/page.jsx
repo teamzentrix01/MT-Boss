@@ -190,7 +190,7 @@ export default function JobDetailPage() {
           <p className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
             Job not found
           </p>
-          <Link href="/careers" className="px-6 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest">
+          <Link href="/careers" className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">
             Back to Careers
           </Link>
         </div>
@@ -200,7 +200,7 @@ export default function JobDetailPage() {
 
   const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${
     dark
-      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]"
+      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
       : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
   }`;
 
@@ -216,12 +216,12 @@ export default function JobDetailPage() {
     return (
       <main className={`min-h-screen flex items-center justify-center px-6 ${dark ? "bg-black" : "bg-gray-50"}`}>
         <div className={`max-w-lg w-full text-center p-12 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100 shadow-xl"}`}>
-          <div className="w-20 h-20 bg-[#facc15] rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-[var(--brand-blue)] rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest block mb-2">
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest block mb-2">
             Application Submitted!
           </span>
           <h2 className={`text-xl font-black uppercase tracking-tight mb-3 ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -230,7 +230,7 @@ export default function JobDetailPage() {
           <p className={`text-xs leading-relaxed mb-2 ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
             Your application for
           </p>
-          <p className="text-[#facc15] font-black text-sm mb-6">{job.title}</p>
+          <p className="text-[var(--brand-blue)] font-black text-sm mb-6">{job.title}</p>
           <p className={`text-xs leading-relaxed mb-8 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
             Our HR team will review your application and get back to you within 3-5 business days on{" "}
             <span className={`font-black ${dark ? "text-white" : "text-zinc-800"}`}>{form.email}</span>
@@ -240,7 +240,7 @@ export default function JobDetailPage() {
               href="/careers"
               className={`px-6 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all ${
                 dark
-                  ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]"
+                  ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
                   : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
               }`}
             >
@@ -248,7 +248,7 @@ export default function JobDetailPage() {
             </Link>
             <Link
               href="/"
-              className="px-6 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all"
+              className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
             >
               Go Home
             </Link>
@@ -264,11 +264,11 @@ export default function JobDetailPage() {
       {/* Breadcrumb */}
       <div className={`py-4 px-6 border-b ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100"}`}>
         <div className="max-w-7xl mx-auto flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
-          <Link href="/" className={`transition-colors ${dark ? "text-zinc-500 hover:text-[#facc15]" : "text-zinc-400 hover:text-zinc-800"}`}>Home</Link>
+          <Link href="/" className={`transition-colors ${dark ? "text-zinc-500 hover:text-[var(--brand-blue)]" : "text-zinc-400 hover:text-zinc-800"}`}>Home</Link>
           <span className={dark ? "text-zinc-700" : "text-gray-300"}>›</span>
-          <Link href="/careers" className={`transition-colors ${dark ? "text-zinc-500 hover:text-[#facc15]" : "text-zinc-400 hover:text-zinc-800"}`}>Careers</Link>
+          <Link href="/careers" className={`transition-colors ${dark ? "text-zinc-500 hover:text-[var(--brand-blue)]" : "text-zinc-400 hover:text-zinc-800"}`}>Careers</Link>
           <span className={dark ? "text-zinc-700" : "text-gray-300"}>›</span>
-          <span className="text-[#facc15] truncate max-w-48">{job.title}</span>
+          <span className="text-[var(--brand-blue)] truncate max-w-48">{job.title}</span>
         </div>
       </div>
 
@@ -305,10 +305,10 @@ export default function JobDetailPage() {
               <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
                 Salary Range
               </p>
-              <p className="text-[#facc15] text-2xl font-black">{job.salary}</p>
+              <p className="text-[var(--brand-blue)] text-2xl font-black">{job.salary}</p>
               <a
                 href="#apply-form"
-                className="mt-3 inline-block px-8 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all"
+                className="mt-3 inline-block px-8 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
               >
                 Apply Now →
               </a>
@@ -325,7 +325,7 @@ export default function JobDetailPage() {
           <div className="lg:col-span-2 space-y-6">
 
             <div className={sectionCard}>
-              <h2 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[#facc15]" : "text-zinc-800"}`}>
+              <h2 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
                 About This Role
               </h2>
               <p className={`text-xs leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
@@ -334,13 +334,13 @@ export default function JobDetailPage() {
             </div>
 
             <div className={sectionCard}>
-              <h2 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[#facc15]" : "text-zinc-800"}`}>
+              <h2 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
                 Key Responsibilities
               </h2>
               <ul className="space-y-3">
                 {job.responsibilities.map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#facc15] mt-1.5 flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--brand-blue)] mt-1.5 flex-shrink-0" />
                     <span className={`text-xs leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-500"}`}>{item}</span>
                   </li>
                 ))}
@@ -348,13 +348,13 @@ export default function JobDetailPage() {
             </div>
 
             <div className={sectionCard}>
-              <h2 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[#facc15]" : "text-zinc-800"}`}>
+              <h2 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
                 Requirements
               </h2>
               <ul className="space-y-3">
                 {job.requirements.map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <svg className="w-3.5 h-3.5 text-[#facc15] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3.5 h-3.5 text-[var(--brand-blue)] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     <span className={`text-xs leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-500"}`}>{item}</span>
@@ -364,7 +364,7 @@ export default function JobDetailPage() {
             </div>
 
             <div className={sectionCard}>
-              <h2 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[#facc15]" : "text-zinc-800"}`}>
+              <h2 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
                 Skills Required
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -401,7 +401,7 @@ export default function JobDetailPage() {
                 ))}
                 <a
                   href="#apply-form"
-                  className="mt-5 block text-center py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all rounded-sm"
+                  className="mt-5 block text-center py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all rounded-sm"
                 >
                   Apply for this Job
                 </a>
@@ -419,9 +419,9 @@ export default function JobDetailPage() {
                       <Link
                         key={j.id}
                         href={`/careers/${j.id}`}
-                        className={`block p-3 border rounded-sm transition-all hover:border-[#facc15] group ${dark ? "border-zinc-800 hover:bg-zinc-800" : "border-gray-100 hover:bg-gray-50"}`}
+                        className={`block p-3 border rounded-sm transition-all hover:border-[var(--brand-blue)] group ${dark ? "border-zinc-800 hover:bg-zinc-800" : "border-gray-100 hover:bg-gray-50"}`}
                       >
-                        <p className={`text-[10px] font-black uppercase tracking-wide group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                        <p className={`text-[10px] font-black uppercase tracking-wide group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
                           {j.title}
                         </p>
                         <p className={`text-[10px] mt-1 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
@@ -445,14 +445,14 @@ export default function JobDetailPage() {
         <div id="apply-form" className={`mt-12 p-8 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100 shadow-sm"}`}>
 
           <div className="mb-8">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest block mb-1">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest block mb-1">
               Apply Now
             </span>
             <h2 className={`text-2xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
               Application Form
             </h2>
             <p className={`text-xs mt-2 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
-              Applying for: <span className="text-[#facc15] font-black">{job.title}</span> — {job.department} — {job.location}
+              Applying for: <span className="text-[var(--brand-blue)] font-black">{job.title}</span> — {job.department} — {job.location}
             </p>
           </div>
 
@@ -537,11 +537,11 @@ export default function JobDetailPage() {
                 onClick={() => fileRef.current?.click()}
                 className={`relative border-2 border-dashed rounded-sm p-10 text-center cursor-pointer transition-all duration-300 ${
                   dragOver
-                    ? "border-[#facc15] bg-[#facc15]/5"
+                    ? "border-[var(--brand-blue)] bg-[var(--brand-blue)]/5"
                     : resumeName
                     ? dark ? "border-green-500/40 bg-green-500/5" : "border-green-400 bg-green-50"
                     : dark
-                    ? "border-zinc-700 hover:border-[#facc15] hover:bg-zinc-800/50"
+                    ? "border-zinc-700 hover:border-[var(--brand-blue)] hover:bg-zinc-800/50"
                     : "border-gray-200 hover:border-zinc-400 hover:bg-gray-50"
                 }`}
               >
@@ -615,7 +615,7 @@ export default function JobDetailPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-12 py-4 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 rounded-sm"
+                className="px-12 py-4 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 rounded-sm"
               >
                 {loading ? (
                   <>

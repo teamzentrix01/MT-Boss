@@ -258,7 +258,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
         }
         .status-available { background: #dcfce7; color: #166534; }
         .status-booked { background: #fee2e2; color: #991b1b; }
-        .status-expired { background: #fef3c7; color: #92400e; }
+        .status-expired { background: var(--brand-blue-soft); color: #92400e; }
         
         .action-buttons {
           display: flex;

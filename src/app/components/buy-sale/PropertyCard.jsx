@@ -15,7 +15,7 @@ export default function PropertyCard({ property, isDarkMode }) {
   } = property;
 
   const tagColors = {
-    Sale: "bg-[#facc15] text-black",
+    Sale: "bg-[var(--brand-blue)] text-black",
     Rent: "bg-blue-500 text-white",
     New: "bg-green-500 text-white",
     Featured: "bg-purple-500 text-white",
@@ -25,7 +25,7 @@ export default function PropertyCard({ property, isDarkMode }) {
     <div
       className={`group rounded-sm overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border ${
         isDarkMode
-          ? "bg-zinc-900 border-zinc-800 hover:border-[#facc15]"
+          ? "bg-zinc-900 border-zinc-800 hover:border-[var(--brand-blue)]"
           : "bg-white border-gray-100 hover:border-zinc-300"
       }`}
     >
@@ -39,13 +39,13 @@ export default function PropertyCard({ property, isDarkMode }) {
 
         {/* Tag Badge */}
         {tag && (
-          <span className={`absolute top-3 left-3 px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm ${tagColors[tag] || "bg-[#facc15] text-black"}`}>
+          <span className={`absolute top-3 left-3 px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm ${tagColors[tag] || "bg-[var(--brand-blue)] text-black"}`}>
             {tag}
           </span>
         )}
 
         {/* Type Badge */}
-        <span className={`absolute top-3 right-3 px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm ${isDarkMode ? "bg-black text-[#facc15]" : "bg-white text-zinc-800"}`}>
+        <span className={`absolute top-3 right-3 px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm ${isDarkMode ? "bg-black text-[var(--brand-blue)]" : "bg-white text-zinc-800"}`}>
           {type}
         </span>
       </div>
@@ -54,7 +54,7 @@ export default function PropertyCard({ property, isDarkMode }) {
       <div className="p-5">
 
         {/* Price */}
-        <p className="text-[#facc15] text-lg font-black tracking-wide mb-1">
+        <p className="text-[var(--brand-blue)] text-lg font-black tracking-wide mb-1">
           ₹ {price}
         </p>
 
@@ -65,7 +65,7 @@ export default function PropertyCard({ property, isDarkMode }) {
 
         {/* Location */}
         <div className="flex items-center gap-1 mb-4">
-          <svg className="w-3 h-3 text-[#facc15] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-3 h-3 text-[var(--brand-blue)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
           </svg>
           <span className={`text-[11px] font-bold truncate ${isDarkMode ? "text-zinc-400" : "text-zinc-500"}`}>
@@ -122,7 +122,7 @@ export default function PropertyCard({ property, isDarkMode }) {
           href={`/buy-sale/${id}`}
           className={`mt-4 block text-center py-2 text-[10px] uppercase tracking-widest font-black border-2 rounded-sm transition-all duration-300 ${
             isDarkMode
-              ? "border-[#facc15] text-[#facc15] hover:bg-[#facc15] hover:text-black"
+              ? "border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black"
               : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"
           }`}
         >

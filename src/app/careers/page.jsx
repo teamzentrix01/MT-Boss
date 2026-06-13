@@ -92,12 +92,12 @@ export default function CareersPage() {
       >
         <div className="absolute inset-0 bg-black/75" />
         <div className="relative z-10 max-w-3xl mx-auto">
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">
             MTBOSS Construction
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Build Your
-            <span className="block text-[#facc15]">Career With Us</span>
+            <span className="block text-[var(--brand-blue)]">Career With Us</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
             Join a team of 500+ engineers, architects, and professionals building India&apos;s future. We offer growth, challenges, and the chance to work on landmark projects.
@@ -111,7 +111,7 @@ export default function CareersPage() {
               { value: "20+", label: "Years Legacy" },
             ].map((s) => (
               <div key={s.label} className="text-center">
-                <p className="text-[#facc15] text-2xl font-black">{s.value}</p>
+                <p className="text-[var(--brand-blue)] text-2xl font-black">{s.value}</p>
                 <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">{s.label}</p>
               </div>
             ))}
@@ -123,7 +123,7 @@ export default function CareersPage() {
       <section className={`py-16 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Perks and Benefits</p>
+            <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Perks and Benefits</p>
             <h2 className={`text-3xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
               Why Join MTBOSS?
             </h2>
@@ -141,12 +141,12 @@ export default function CareersPage() {
             ].map((item, i) => (
               <div
                 key={i}
-                className={`p-6 rounded-sm border transition-all duration-300 group hover:border-[#facc15] ${
+                className={`p-6 rounded-sm border transition-all duration-300 group hover:border-[var(--brand-blue)] ${
                   dark ? "bg-zinc-800 border-zinc-700" : "bg-gray-50 border-gray-100 hover:bg-white hover:shadow-md"
                 }`}
               >
                 <span className="text-2xl block mb-3">{item.icon}</span>
-                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
                   {item.title}
                 </h3>
                 <p className={`text-xs leading-relaxed ${dark ? "text-zinc-500" : "text-zinc-500"}`}>
@@ -174,7 +174,7 @@ export default function CareersPage() {
           {/* Section Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
             <div>
-              <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-2">
+              <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-2">
                 Join Our Team
               </p>
               <h2 className={`text-3xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -197,7 +197,7 @@ export default function CareersPage() {
                 onChange={(e) => setSearch(e.target.value)}
                 className={`pl-10 pr-4 py-3 text-xs font-bold border rounded-sm outline-none w-64 transition-all ${
                   dark
-                    ? "bg-zinc-900 border-zinc-700 text-white placeholder-zinc-600 focus:border-[#facc15]"
+                    ? "bg-zinc-900 border-zinc-700 text-white placeholder-zinc-600 focus:border-[var(--brand-blue)]"
                     : "bg-white border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
                 }`}
               />
@@ -212,9 +212,9 @@ export default function CareersPage() {
                 onClick={() => setFilter(dept)}
                 className={`px-5 py-2 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${
                   filter === dept
-                    ? "bg-[#facc15] border-[#facc15] text-black"
+                    ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black"
                     : dark
-                    ? "border-zinc-700 text-zinc-500 hover:border-[#facc15] hover:text-[#facc15]"
+                    ? "border-zinc-700 text-zinc-500 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
                     : "border-gray-200 text-zinc-400 hover:border-zinc-800 hover:text-zinc-800"
                 }`}
               >
@@ -235,7 +235,7 @@ export default function CareersPage() {
               {filtered.map((job, i) => (
                 <div
                   key={job.id}
-                  className={`group relative p-6 border rounded-sm transition-all duration-300 hover:border-[#facc15] ${
+                  className={`group relative p-6 border rounded-sm transition-all duration-300 hover:border-[var(--brand-blue)] ${
                     dark
                       ? "bg-zinc-900 border-zinc-800 hover:bg-zinc-900"
                       : "bg-white border-gray-100 hover:shadow-lg"
@@ -255,13 +255,13 @@ export default function CareersPage() {
                   <div className="flex items-start gap-4 mb-4">
                     {/* Icon */}
                     <div className={`w-12 h-12 rounded-sm flex items-center justify-center flex-shrink-0 ${dark ? "bg-zinc-800" : "bg-gray-50"}`}>
-                      <svg className="w-6 h-6 text-[#facc15]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-6 h-6 text-[var(--brand-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h3 className={`text-sm font-black uppercase tracking-wide mb-1 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                      <h3 className={`text-sm font-black uppercase tracking-wide mb-1 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
                         {job.title}
                       </h3>
                       <div className="flex items-center gap-2 flex-wrap">
@@ -297,13 +297,13 @@ export default function CareersPage() {
                       <p className={`text-[10px] font-black uppercase tracking-widest ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
                         Salary Range
                       </p>
-                      <p className="text-[#facc15] text-sm font-black">{job.salary}</p>
+                      <p className="text-[var(--brand-blue)] text-sm font-black">{job.salary}</p>
                     </div>
                     <Link
                       href={`/careers/${job.id}`}
                       className={`px-5 py-2 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${
                         dark
-                          ? "border-[#facc15] text-[#facc15] hover:bg-[#facc15] hover:text-black"
+                          ? "border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black"
                           : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"
                       }`}
                     >
@@ -320,7 +320,7 @@ export default function CareersPage() {
       {/* Bottom CTA */}
       <section className={`py-16 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-zinc-800"}`}>
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">
             Do not see your role?
           </p>
           <h2 className="text-2xl sm:text-3xl font-black uppercase text-white mb-4 tracking-tight">
@@ -331,7 +331,7 @@ export default function CareersPage() {
           </p>
           <a
             href="mailto:careers@mtboss.com"
-            className="inline-flex items-center gap-3 px-10 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all"
+            className="inline-flex items-center gap-3 px-10 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
           >
             Send Your Resume
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

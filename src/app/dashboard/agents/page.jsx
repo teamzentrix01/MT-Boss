@@ -484,8 +484,8 @@ export default function AgentsPage() {
             )}
 
             {tempLogin && (
-              <div style={{ marginBottom: '1rem', padding: '0.875rem', border: '1px solid #facc15', borderRadius: 6, background: 'rgba(250,204,21,0.08)' }}>
-                <div className="ag-field-label" style={{ color: '#ca8a04' }}>Agent Login Created</div>
+              <div style={{ marginBottom: '1rem', padding: '0.875rem', border: '1px solid var(--brand-blue)', borderRadius: 6, background: 'color-mix(in srgb, var(--brand-blue) 8%, transparent)' }}>
+                <div className="ag-field-label" style={{ color: 'var(--brand-blue-deep)' }}>Agent Login Created</div>
                 <div className="ag-field-value" style={{ marginTop: 4 }}>Email: {tempLogin.email}</div>
                 <div className="ag-field-value">Temporary Password: {tempLogin.password}</div>
                 <div className="ag-muted" style={{ marginTop: 6 }}>

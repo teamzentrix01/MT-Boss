@@ -69,12 +69,12 @@ export default function BuySalePage() {
           style={{ backgroundImage: "url('/images/property1.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}
         />
         <div className="relative z-10">
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest">
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">
             MTBOSS Construction
           </span>
           <h1 className="text-white text-3xl md:text-5xl font-black uppercase tracking-widest mt-2 mb-4">
             Buy and Sale
-            <span className="block text-[#facc15]">Properties</span>
+            <span className="block text-[var(--brand-blue)]">Properties</span>
           </h1>
           <p className="text-zinc-400 text-xs max-w-xl mx-auto font-bold tracking-wide">
             Find your perfect property from our curated listings across Delhi NCR
@@ -88,7 +88,7 @@ export default function BuySalePage() {
               { label: "Happy Clients", value: "200+" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
-                <p className="text-[#facc15] text-xl font-black">{stat.value}</p>
+                <p className="text-[var(--brand-blue)] text-xl font-black">{stat.value}</p>
                 <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">{stat.label}</p>
               </div>
             ))}
@@ -106,7 +106,7 @@ export default function BuySalePage() {
         <div className="flex items-center justify-between mb-6">
           <p className={`text-xs font-black uppercase tracking-widest ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
             Showing{" "}
-            <span className={dark ? "text-[#facc15]" : "text-zinc-800"}>
+            <span className={dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}>
               {filtered.length}
             </span>{" "}
             Properties

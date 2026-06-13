@@ -70,7 +70,7 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
 
   const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${
     isDarkMode
-      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]"
+      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
       : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
   }`;
 
@@ -81,7 +81,7 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
   if (submitted) {
     return (
       <div className={`rounded-sm border p-8 text-center ${isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100"}`}>
-        <div className="w-16 h-16 bg-[#facc15] rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-[var(--brand-blue)] rounded-full flex items-center justify-center mx-auto mb-4">
           <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
           </svg>
@@ -92,10 +92,10 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
         <p className={`text-xs ${isDarkMode ? "text-zinc-400" : "text-zinc-500"}`}>
           We will contact you shortly regarding
         </p>
-        <p className="text-[#facc15] text-xs font-black mt-1">{propertyTitle}</p>
+        <p className="text-[var(--brand-blue)] text-xs font-black mt-1">{propertyTitle}</p>
         <button
           onClick={() => setSubmitted(false)}
-          className="mt-6 px-6 py-2 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-all"
+          className="mt-6 px-6 py-2 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-[var(--brand-blue-dark)] transition-all"
         >
           Send Another
         </button>
@@ -106,7 +106,7 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
   return (
     <div className={`rounded-sm border shadow-lg p-6 ${isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100"}`}>
       <div className="mb-6">
-        <span className="text-[10px] font-black uppercase tracking-widest text-[#facc15]">
+        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">
           Interested?
         </span>
         <h3 className={`text-sm font-black uppercase tracking-widest mt-1 ${isDarkMode ? "text-white" : "text-zinc-800"}`}>
@@ -177,7 +177,7 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-[var(--brand-blue-dark)] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {loading ? (
             <>

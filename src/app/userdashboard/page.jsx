@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 // ── Status config ──────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
-  WAITING_FOR_VENDOR_ACCEPTANCE: { label: 'Searching Vendor', color: 'text-yellow-500 border-yellow-500', bg: 'bg-yellow-500/10', pulse: true },
+  WAITING_FOR_VENDOR_ACCEPTANCE: { label: 'Searching Vendor', color: 'text-[var(--brand-blue)] border-[var(--brand-blue)]', bg: 'bg-sky-500/10', pulse: true },
   VENDOR_ACCEPTED:               { label: 'Vendor On The Way', color: 'text-green-500 border-green-500',  bg: 'bg-green-500/10',  pulse: false },
   VENDOR_ON_WAY:                 { label: 'Vendor On The Way', color: 'text-green-500 border-green-500',  bg: 'bg-green-500/10',  pulse: false },
   IN_PROGRESS:                   { label: 'Work In Progress',  color: 'text-blue-500 border-blue-500',    bg: 'bg-blue-500/10',   pulse: false },
@@ -49,15 +49,15 @@ function PaymentModal({ booking, isDark, onClose, onSuccess }) {
       <div className={`w-full max-w-sm border shadow-2xl ${modal}`}>
         <div className={`flex items-center justify-between px-5 py-4 border-b ${divider}`}>
           <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#facc15]">Confirm Payment</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[var(--brand-blue)]">Confirm Payment</p>
             <h3 className="text-base font-black uppercase tracking-tight">{booking.service_label}</h3>
           </div>
-          <button onClick={onClose} className={`w-8 h-8 border flex items-center justify-center font-black text-sm transition-all ${isDark ? 'border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]' : 'border-zinc-300 text-zinc-400 hover:border-zinc-900'}`}>✕</button>
+          <button onClick={onClose} className={`w-8 h-8 border flex items-center justify-center font-black text-sm transition-all ${isDark ? 'border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]' : 'border-zinc-300 text-zinc-400 hover:border-zinc-900'}`}>✕</button>
         </div>
         <div className="p-5 space-y-4">
           <div className={`px-4 py-3 border ${isDark ? 'border-zinc-800 bg-zinc-900' : 'border-zinc-100 bg-zinc-50'}`}>
             <p className={`text-[9px] uppercase font-black tracking-widest ${muted}`}>Vendor Quoted Amount</p>
-            <p className="text-2xl font-black text-[#facc15]">₹{booking.final_amount || booking.total_amount}</p>
+            <p className="text-2xl font-black text-[var(--brand-blue)]">₹{booking.final_amount || booking.total_amount}</p>
           </div>
 
           <div>
@@ -80,7 +80,7 @@ function PaymentModal({ booking, isDark, onClose, onSuccess }) {
           {error && <p className="text-[10px] text-red-500 font-bold">{error}</p>}
 
           <button onClick={handleConfirm} disabled={loading}
-            className="w-full py-3 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-[0.3em] hover:bg-yellow-300 transition-all disabled:opacity-50">
+            className="w-full py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all disabled:opacity-50">
             {loading ? 'Confirming...' : 'Confirm Payment ✓'}
           </button>
         </div>
@@ -97,7 +97,7 @@ function SubRating({ label, value, onChange, isDark, muted }) {
       <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((s) => (
           <button key={s} type="button" onClick={() => onChange(s)}
-            className={`text-xl transition-all ${s <= value ? 'text-[#facc15]' : isDark ? 'text-zinc-700' : 'text-zinc-200'}`}>★</button>
+            className={`text-xl transition-all ${s <= value ? 'text-[var(--brand-blue)]' : isDark ? 'text-zinc-700' : 'text-zinc-200'}`}>★</button>
         ))}
       </div>
     </div>
@@ -151,10 +151,10 @@ function RatingModal({ booking, isDark, onClose, onSuccess }) {
       <div className={`w-full max-w-sm border shadow-2xl ${modal}`} style={{ maxHeight: '90vh', overflowY: 'auto', scrollbarWidth: 'none' }}>
         <div className={`flex items-center justify-between px-5 py-4 border-b ${divider}`}>
           <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#facc15]">Rate Your Service</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[var(--brand-blue)]">Rate Your Service</p>
             <h3 className="text-base font-black uppercase tracking-tight">{booking.service_label}</h3>
           </div>
-          <button onClick={onClose} className={`w-8 h-8 border flex items-center justify-center font-black text-sm transition-all ${isDark ? 'border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]' : 'border-zinc-300 text-zinc-400 hover:border-zinc-900'}`}>✕</button>
+          <button onClick={onClose} className={`w-8 h-8 border flex items-center justify-center font-black text-sm transition-all ${isDark ? 'border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]' : 'border-zinc-300 text-zinc-400 hover:border-zinc-900'}`}>✕</button>
         </div>
 
         <div className="p-5 space-y-5">
@@ -171,11 +171,11 @@ function RatingModal({ booking, isDark, onClose, onSuccess }) {
                   onClick={() => setStars(s)}
                   onMouseEnter={() => setHover(s)}
                   onMouseLeave={() => setHover(0)}
-                  className={`text-4xl transition-all ${s <= (hover || stars) ? 'text-[#facc15] scale-110' : isDark ? 'text-zinc-700' : 'text-zinc-200'}`}>★</button>
+                  className={`text-4xl transition-all ${s <= (hover || stars) ? 'text-[var(--brand-blue)] scale-110' : isDark ? 'text-zinc-700' : 'text-zinc-200'}`}>★</button>
               ))}
             </div>
             {(hover || stars) > 0 && (
-              <p className="text-[10px] font-black text-[#facc15] mt-1 uppercase tracking-widest">{LABELS[hover || stars]}</p>
+              <p className="text-[10px] font-black text-[var(--brand-blue)] mt-1 uppercase tracking-widest">{LABELS[hover || stars]}</p>
             )}
           </div>
 
@@ -196,14 +196,14 @@ function RatingModal({ booking, isDark, onClose, onSuccess }) {
 
           {/* Would Recommend */}
           <label className="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" checked={recommend} onChange={(e) => setRecommend(e.target.checked)} className="w-4 h-4 accent-[#facc15]" />
+            <input type="checkbox" checked={recommend} onChange={(e) => setRecommend(e.target.checked)} className="w-4 h-4 accent-[var(--brand-blue)]" />
             <span className={`text-xs font-bold ${isDark ? 'text-zinc-300' : 'text-zinc-700'}`}>I would recommend this vendor to others</span>
           </label>
 
           {error && <p className="text-[10px] text-red-500 font-bold">{error}</p>}
 
           <button onClick={handleSubmit} disabled={loading || !stars}
-            className="w-full py-3 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-[0.3em] hover:bg-yellow-300 transition-all disabled:opacity-50">
+            className="w-full py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all disabled:opacity-50">
             {loading ? 'Submitting...' : 'Submit Review ★'}
           </button>
         </div>
@@ -297,7 +297,7 @@ function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
         )}
         {booking.status === 'WAITING_FOR_VENDOR_ACCEPTANCE' && (
           <div className="col-span-2">
-            <p className="text-yellow-500 font-bold animate-pulse">Notifying vendors in {booking.service_city}...</p>
+            <p className="text-[var(--brand-blue)] font-bold animate-pulse">Notifying vendors in {booking.service_city}...</p>
           </div>
         )}
       </div>
@@ -401,25 +401,25 @@ function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
           <p className={`text-[9px] font-black uppercase tracking-widest ${muted}`}>
             {booking.status === 'AWAITING_PAYMENT' ? 'Final Amount' : 'Estimated'}
           </p>
-          <p className="font-black text-[#facc15] text-lg">₹{displayAmount}</p>
+          <p className="font-black text-[var(--brand-blue)] text-lg">₹{displayAmount}</p>
         </div>
 
         <div className="flex flex-col gap-2 items-end">
           {booking.status === 'AWAITING_PAYMENT' && (
             <button onClick={() => onPayment(booking)}
-              className="px-4 py-2 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all">
+              className="px-4 py-2 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-light)] transition-all">
               Confirm Payment
             </button>
           )}
           {booking.status === 'COMPLETED' && !booking.has_rating && (
             <button onClick={() => onRate(booking)}
-              className={`px-4 py-2 border text-[9px] font-black uppercase tracking-widest transition-all ${isDark ? 'border-[#facc15] text-[#facc15] hover:bg-[#facc15]/10' : 'border-zinc-900 text-zinc-900 hover:bg-zinc-50'}`}>
+              className={`px-4 py-2 border text-[9px] font-black uppercase tracking-widest transition-all ${isDark ? 'border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/10' : 'border-zinc-900 text-zinc-900 hover:bg-zinc-50'}`}>
               Rate Service ★
             </button>
           )}
           {booking.status === 'COMPLETED' && booking.has_rating && (
             <div className={`flex items-center gap-1 ${muted}`}>
-              <span className="text-[#facc15] text-sm">{'★'.repeat(booking.rating_stars || 5)}</span>
+              <span className="text-[var(--brand-blue)] text-sm">{'★'.repeat(booking.rating_stars || 5)}</span>
               <span className="text-[9px] font-black uppercase tracking-widest">Rated</span>
             </div>
           )}
@@ -494,7 +494,7 @@ export default function UserDashboard() {
   if (loading) {
     return (
       <div className={`min-h-screen flex items-center justify-center font-serif ${bg}`}>
-        <p className="text-[#facc15] text-[9px] font-black uppercase tracking-[0.5em] animate-pulse">Loading Dashboard...</p>
+        <p className="text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-[0.5em] animate-pulse">Loading Dashboard...</p>
       </div>
     );
   }
@@ -506,14 +506,14 @@ export default function UserDashboard() {
       <section className={`pt-24 pb-6 px-6 border-b ${border}`}>
         <div className="max-w-4xl mx-auto flex items-start justify-between flex-wrap gap-4">
           <div>
-            <p className="text-[#facc15] text-[9px] font-black uppercase tracking-[0.5em] mb-1">My Account</p>
+            <p className="text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-[0.5em] mb-1">My Account</p>
             <h1 className={`text-3xl md:text-4xl font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-zinc-900'}`}>
               {user?.name || 'Dashboard'}
             </h1>
             {user?.email && <p className={`text-xs mt-1 ${muted}`}>{user.email}</p>}
           </div>
           <Link href="/quick"
-            className={`self-start px-5 py-2.5 text-[9px] font-black uppercase tracking-widest border transition-all ${isDark ? 'border-[#facc15] text-[#facc15] hover:bg-[#facc15]/10' : 'border-zinc-900 text-zinc-900 hover:bg-zinc-100'}`}>
+            className={`self-start px-5 py-2.5 text-[9px] font-black uppercase tracking-widest border transition-all ${isDark ? 'border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/10' : 'border-zinc-900 text-zinc-900 hover:bg-zinc-100'}`}>
             + Book a Service
           </Link>
         </div>
@@ -524,7 +524,7 @@ export default function UserDashboard() {
         <div className={`max-w-4xl mx-auto grid grid-cols-3 divide-x ${isDark ? 'divide-zinc-900' : 'divide-zinc-100'}`}>
           {[
             { label: 'Total Bookings', value: bookings.length, color: '' },
-            { label: 'Active',          value: activeBookings.length, color: 'text-yellow-500' },
+            { label: 'Active',          value: activeBookings.length, color: 'text-[var(--brand-blue)]' },
             { label: 'Completed',       value: historyBookings.filter((b) => b.status === 'COMPLETED').length, color: 'text-green-500' },
           ].map(({ label, value, color }) => (
             <div key={label} className="py-5 px-6 text-center">
@@ -547,7 +547,7 @@ export default function UserDashboard() {
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setTab(key)}
                 className={`px-5 py-3 text-[9px] font-black uppercase tracking-widest border-b-2 transition-all ${
-                  tab === key ? 'border-[#facc15] text-[#facc15]' : `border-transparent ${muted} hover:text-current`
+                  tab === key ? 'border-[var(--brand-blue)] text-[var(--brand-blue)]' : `border-transparent ${muted} hover:text-current`
                 }`}>
                 {label}
               </button>
@@ -563,7 +563,7 @@ export default function UserDashboard() {
               </p>
               {tab === 'active' && (
                 <Link href="/quick"
-                  className="inline-block px-6 py-3 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all">
+                  className="inline-block px-6 py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-light)] transition-all">
                   Book a Service Now
                 </Link>
               )}

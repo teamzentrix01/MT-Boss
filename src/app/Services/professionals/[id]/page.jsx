@@ -26,7 +26,7 @@ function th(d) {
     muted:     d ? '#52525b' : '#9ca3af',
     border:    d ? '#27272a' : '#e5e7eb',
     inputBg:   d ? '#0a0a0a' : '#ffffff',
-    accent:    d ? '#facc15' : '#111827',
+    accent:    d ? 'var(--brand-blue)' : '#111827',
     accentFg:  d ? '#000000' : '#ffffff',
     heroBg:    d ? '#070707' : '#111827',
     tagBg:     d ? '#1c1c1c' : '#f3f4f6',
@@ -140,7 +140,7 @@ export default function ProfessionalProfilePage() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-        .enq-inp:focus  { border-color: ${t.accent} !important; box-shadow: 0 0 0 3px ${isDark ? 'rgba(250,204,21,0.12)' : 'rgba(17,24,39,0.08)'} !important; }
+        .enq-inp:focus  { border-color: ${t.accent} !important; box-shadow: 0 0 0 3px ${isDark ? 'color-mix(in srgb, var(--brand-blue) 12%, transparent)' : 'rgba(17,24,39,0.08)'} !important; }
         .enq-inp::placeholder { color: ${t.muted}; }
         .back-lnk:hover { color: ${t.accent} !important; }
         .port-thumb { transition: transform 0.25s, box-shadow 0.25s; cursor: zoom-in; }
@@ -183,7 +183,7 @@ export default function ProfessionalProfilePage() {
 
           {/* Name block */}
           <div style={{ flex: 1, minWidth: '180px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(250,204,21,0.1)', border: '1px solid rgba(250,204,21,0.28)', color: t.accent, fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', padding: '4px 12px', marginBottom: '14px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'color-mix(in srgb, var(--brand-blue) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--brand-blue) 28%, transparent)', color: t.accent, fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', padding: '4px 12px', marginBottom: '14px' }}>
               {pro.category}
             </div>
             <h1 style={{ color: '#fff', margin: '0 0 6px', fontSize: 'clamp(26px,4vw,42px)', fontWeight: 900, letterSpacing: '-0.025em', lineHeight: 1.05 }}>

@@ -11,7 +11,7 @@ function th(dark) {
     muted:    dark ? '#52525b' : '#9ca3af',
     border:   dark ? '#27272a' : '#e5e7eb',
     inputBg:  dark ? '#0a0a0a' : '#f9fafb',
-    accent:   dark ? '#facc15' : '#111827',
+    accent:   dark ? 'var(--brand-blue)' : '#111827',
     accentFg: dark ? '#000000' : '#ffffff',
     rowHov:   dark ? '#1a1a1a' : '#f9fafb',
     tHead:    dark ? '#0a0a0a' : '#f3f4f6',

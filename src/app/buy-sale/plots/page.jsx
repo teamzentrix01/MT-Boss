@@ -46,12 +46,12 @@ export default function PlotsPage() {
 
       {/* Hero */}
       <div className={`relative py-16 px-4 text-center ${dark ? "bg-zinc-900" : "bg-zinc-800"}`}>
-        <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest">
+        <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">
           Buy and Sale
         </span>
         <h1 className="text-white text-3xl md:text-4xl font-black uppercase tracking-widest mt-2 mb-3">
           Plots and
-          <span className="block text-[#facc15]">Apartments</span>
+          <span className="block text-[var(--brand-blue)]">Apartments</span>
         </h1>
         <p className="text-zinc-400 text-xs max-w-lg mx-auto font-bold">
           Residential Plots, Farm Land, Apartments and more
@@ -59,15 +59,15 @@ export default function PlotsPage() {
 
         {/* Breadcrumb */}
         <div className="flex items-center justify-center gap-2 mt-4 text-[10px] font-black uppercase tracking-widest">
-          <a href="/" className="text-zinc-500 hover:text-[#facc15] transition-colors">
+          <a href="/" className="text-zinc-500 hover:text-[var(--brand-blue)] transition-colors">
             Home
           </a>
           <span className="text-zinc-700">›</span>
-          <a href="/buy-sale" className="text-zinc-500 hover:text-[#facc15] transition-colors">
+          <a href="/buy-sale" className="text-zinc-500 hover:text-[var(--brand-blue)] transition-colors">
             Buy and Sale
           </a>
           <span className="text-zinc-700">›</span>
-          <span className="text-[#facc15]">Plots and Apartments</span>
+          <span className="text-[var(--brand-blue)]">Plots and Apartments</span>
         </div>
       </div>
 
@@ -79,7 +79,7 @@ export default function PlotsPage() {
         <div className="flex items-center justify-between mb-6">
           <p className={`text-xs font-black uppercase tracking-widest ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
             Showing{" "}
-            <span className={dark ? "text-[#facc15]" : "text-zinc-800"}>
+            <span className={dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}>
               {filtered.length}
             </span>{" "}
             Plots and Apartments

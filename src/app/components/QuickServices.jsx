@@ -49,7 +49,7 @@ export default function QuickServices() {
     fetchServices();
   }, []);
 
-  const themeYellow = "#facc15";
+  const themeYellow = "var(--brand-blue)";
 
   return (
     <>
@@ -74,7 +74,7 @@ export default function QuickServices() {
           background: ${themeYellow};
           transform: scale(1.07);
           z-index: 10;
-          box-shadow: 0 8px 32px ${isDark ? 'rgba(250,204,21,0.2)' : 'rgba(234,179,8,0.25)'};
+          box-shadow: 0 8px 32px ${isDark ? 'color-mix(in srgb, var(--brand-blue) 20%, transparent)' : 'color-mix(in srgb, var(--brand-blue) 25%, transparent)'};
           border-color: ${themeYellow};
         }
         .qs-card::before {
@@ -151,7 +151,7 @@ export default function QuickServices() {
           gap: 0.45rem;
           padding: 0.7rem 1rem;
           border-radius: 999px;
-          background: #facc15;
+          background: var(--brand-blue);
           color: #000;
           font-size: 0.75rem;
           font-weight: 900;
@@ -161,7 +161,7 @@ export default function QuickServices() {
           transition: transform 0.2s ease, background 0.2s ease;
         }
         .qs-calculator-btn:hover {
-          background: #eab308;
+          background: var(--brand-blue-dark);
           transform: translateY(-1px);
         }
         @media(max-width: 640px) {
@@ -201,13 +201,13 @@ export default function QuickServices() {
               transition: "opacity 0.7s ease, transform 0.7s ease",
             }}
           >
-            <p className={`text-xs uppercase tracking-widest mb-1 font-black ${isDark ? 'text-[#facc15]' : 'text-[#eab308]'}`}>
+            <p className={`text-xs uppercase tracking-widest mb-1 font-black ${isDark ? 'text-[var(--brand-blue)]' : 'text-[var(--brand-blue-dark)]'}`}>
               At Your Doorstep
             </p>
             <h2 className={`text-2xl sm:text-3xl font-black tracking-wide mb-2 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
               Quick Home Services
             </h2>
-            <div className={`w-8 h-0.5 mx-auto mb-3 rounded ${isDark ? 'bg-[#facc15]' : 'bg-[#eab308]'}`} />
+            <div className={`w-8 h-0.5 mx-auto mb-3 rounded ${isDark ? 'bg-[var(--brand-blue)]' : 'bg-[var(--brand-blue-dark)]'}`} />
             <p className={`text-xs sm:text-sm max-w-md mx-auto leading-relaxed font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
               Everything your home needs — one call away. Book trusted professionals instantly.
             </p>
@@ -260,7 +260,7 @@ export default function QuickServices() {
           >
             <Link
               href="/quick"
-              className="inline-flex items-center gap-2 px-8 py-3 text-xs font-black uppercase tracking-widest rounded transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 bg-[#facc15] text-black hover:bg-[#eab308]"
+              className="inline-flex items-center gap-2 px-8 py-3 text-xs font-black uppercase tracking-widest rounded transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 bg-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-dark)]"
             >
               View All Services
               <svg

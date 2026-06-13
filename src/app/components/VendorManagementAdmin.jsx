@@ -359,7 +359,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
           letter-spacing: 0.05em;
         }
 
-        .badge-pending { background: #fbbf24; color: #78350f; }
+        .badge-pending { background: var(--brand-blue-light); color: #78350f; }
         .badge-verified { background: #10b981; color: #fff; }
         .badge-active { background: #3b82f6; color: #fff; }
         .badge-inactive { background: #6b7280; color: #fff; }

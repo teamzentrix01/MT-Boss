@@ -56,8 +56,8 @@ const franchiseModels = [
     returns: "Up to 35% ROI",
     area: "Multiple Districts",
     support: "Premium",
-    color: "border-[#facc15]",
-    badge: "bg-[#facc15]",
+    color: "border-[var(--brand-blue)]",
+    badge: "bg-[var(--brand-blue)]",
     popular: true,
     features: [
       "Exclusive territory rights",
@@ -215,7 +215,7 @@ const handleSubmit = async (e) => {
 
   const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${
     dark
-      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]"
+      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
       : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
   }`;
 
@@ -231,12 +231,12 @@ const handleSubmit = async (e) => {
     return (
       <main className={`min-h-screen flex items-center justify-center px-6 ${dark ? "bg-black" : "bg-gray-50"}`}>
         <div className={`max-w-lg w-full text-center p-12 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100 shadow-xl"}`}>
-          <div className="w-20 h-20 bg-[#facc15] rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-[var(--brand-blue)] rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest block mb-2">
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest block mb-2">
             Inquiry Submitted!
           </span>
           <h2 className={`text-xl font-black uppercase tracking-tight mb-3 ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -246,9 +246,9 @@ const handleSubmit = async (e) => {
             Our franchise team will review your application and contact you within 3-5 business days on{" "}
             <span className={`font-black ${dark ? "text-white" : "text-zinc-800"}`}>{form.email}</span>
           </p>
-          <p className="text-[#facc15] font-black text-sm mb-8">{form.model} — {form.city}, {form.state}</p>
+          <p className="text-[var(--brand-blue)] font-black text-sm mb-8">{form.model} — {form.city}, {form.state}</p>
           <div className="flex gap-3 justify-center">
-            <Link href="/" className={`px-6 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all ${dark ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]" : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"}`}>
+            <Link href="/" className={`px-6 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all ${dark ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"}`}>
               Go Home
             </Link>
             <button
@@ -262,7 +262,7 @@ const handleSubmit = async (e) => {
                 officeArea: "", officeDistrict: "", premisesOwnership: "", leaseDuration: "", officeArea_sqft: "", officeType: "",
                 message: "", otherFranchise: "", trainingWilling: "",
               }); }}
-              className="px-6 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all"
+              className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
             >
               New Inquiry
             </button>
@@ -294,12 +294,12 @@ const handleSubmit = async (e) => {
             transition: "opacity 0.7s ease, transform 0.7s ease",
           }}
         >
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
             MTBOSS Construction
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Franchise
-            <span className="block text-[#facc15]">Opportunity</span>
+            <span className="block text-[var(--brand-blue)]">Opportunity</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
             Partner with India's trusted construction brand. Build a profitable business with MTBOSS's proven model, technical expertise, and 20+ years of legacy.
@@ -314,7 +314,7 @@ const handleSubmit = async (e) => {
               { value: "3", label: "Franchise Models" },
             ].map((s) => (
               <div key={s.label} className="text-center">
-                <p className="text-[#facc15] text-2xl font-black">{s.value}</p>
+                <p className="text-[var(--brand-blue)] text-2xl font-black">{s.value}</p>
                 <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">{s.label}</p>
               </div>
             ))}
@@ -322,7 +322,7 @@ const handleSubmit = async (e) => {
           <a
           
             href="#franchise-form"
-            className="mt-10 inline-flex items-center gap-3 px-10 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all"
+            className="mt-10 inline-flex items-center gap-3 px-10 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
           >
             Apply for Franchise
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -342,7 +342,7 @@ const handleSubmit = async (e) => {
       <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Choose Your Path
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -364,14 +364,14 @@ const handleSubmit = async (e) => {
                 {/* Popular Badge */}
                 {model.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="px-4 py-1 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm">
+                    <span className="px-4 py-1 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm">
                       Most Popular
                     </span>
                   </div>
                 )}
 
                 {/* Badge */}
-                <span className={`inline-block px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-sm mb-4 ${model.badge} ${model.badge === "bg-[#facc15]" ? "text-black" : "text-white"}`}>
+                <span className={`inline-block px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-sm mb-4 ${model.badge} ${model.badge === "bg-[var(--brand-blue)]" ? "text-black" : "text-white"}`}>
                   {model.support} Support
                 </span>
 
@@ -379,14 +379,14 @@ const handleSubmit = async (e) => {
                   {model.name}
                 </h3>
 
-                <p className="text-[#facc15] text-2xl font-black mb-1">{model.investment}</p>
+                <p className="text-[var(--brand-blue)] text-2xl font-black mb-1">{model.investment}</p>
                 <p className={`text-[10px] font-bold uppercase tracking-widest mb-6 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
                   Investment Range
                 </p>
 
                 <div className={`flex items-center justify-between py-3 border-y mb-6 ${dark ? "border-zinc-700" : "border-gray-100"}`}>
                   <div className="text-center">
-                    <p className="text-[#facc15] font-black text-sm">{model.returns}</p>
+                    <p className="text-[var(--brand-blue)] font-black text-sm">{model.returns}</p>
                     <p className={`text-[9px] uppercase tracking-widest font-bold ${dark ? "text-zinc-500" : "text-zinc-400"}`}>Returns</p>
                   </div>
                   <div className={`w-px h-8 ${dark ? "bg-zinc-700" : "bg-gray-200"}`} />
@@ -399,7 +399,7 @@ const handleSubmit = async (e) => {
                 <ul className="space-y-2 mb-8 flex-1">
                   {model.features.map((f, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <svg className="w-3.5 h-3.5 text-[#facc15] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-3.5 h-3.5 text-[var(--brand-blue)] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                       <span className={`text-[11px] font-bold ${dark ? "text-zinc-400" : "text-zinc-500"}`}>{f}</span>
@@ -412,9 +412,9 @@ const handleSubmit = async (e) => {
                   onClick={() => setForm({ ...form, model: model.name })}
                   className={`block text-center py-3 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${
                     model.popular
-                      ? "bg-[#facc15] border-[#facc15] text-black hover:bg-yellow-400"
+                      ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-dark)]"
                       : dark
-                      ? "border-zinc-600 text-zinc-300 hover:border-[#facc15] hover:text-[#facc15]"
+                      ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
                       : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"
                   }`}
                 >
@@ -438,7 +438,7 @@ const handleSubmit = async (e) => {
           }}
         >
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Why Partner With Us
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -450,12 +450,12 @@ const handleSubmit = async (e) => {
             {benefits.map((b, i) => (
               <div
                 key={i}
-                className={`group p-6 rounded-sm border transition-all duration-300 hover:border-[#facc15] ${
+                className={`group p-6 rounded-sm border transition-all duration-300 hover:border-[var(--brand-blue)] ${
                   dark ? "bg-zinc-900 border-zinc-800 hover:bg-zinc-800" : "bg-white border-gray-100 hover:shadow-lg"
                 }`}
               >
                 <span className="text-3xl block mb-4">{b.icon}</span>
-                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
                   {b.title}
                 </h3>
                 <p className={`text-xs leading-relaxed ${dark ? "text-zinc-500" : "text-zinc-500"}`}>
@@ -479,7 +479,7 @@ const handleSubmit = async (e) => {
           }}
         >
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Simple Steps
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -491,17 +491,17 @@ const handleSubmit = async (e) => {
             {process.map((p, i) => (
               <div
                 key={i}
-                className={`relative p-6 rounded-sm border transition-all duration-300 group hover:border-[#facc15] ${
+                className={`relative p-6 rounded-sm border transition-all duration-300 group hover:border-[var(--brand-blue)] ${
                   dark ? "bg-zinc-800 border-zinc-700" : "bg-gray-50 border-gray-100 hover:bg-white hover:shadow-md"
                 }`}
               >
-                <span className={`text-5xl font-black opacity-10 group-hover:opacity-20 transition-opacity absolute top-4 right-4 ${dark ? "text-[#facc15]" : "text-zinc-800"}`}>
+                <span className={`text-5xl font-black opacity-10 group-hover:opacity-20 transition-opacity absolute top-4 right-4 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
                   {p.step}
                 </span>
-                <div className="w-10 h-10 bg-[#facc15] rounded-sm flex items-center justify-center mb-4">
+                <div className="w-10 h-10 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center mb-4">
                   <span className="text-black font-black text-sm">{p.step}</span>
                 </div>
-                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
                   {p.title}
                 </h3>
                 <p className={`text-xs leading-relaxed ${dark ? "text-zinc-500" : "text-zinc-500"}`}>
@@ -517,7 +517,7 @@ const handleSubmit = async (e) => {
       <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-gray-50"}`}>
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Common Questions
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -531,7 +531,7 @@ const handleSubmit = async (e) => {
                 key={i}
                 className={`rounded-sm border overflow-hidden transition-all duration-300 ${
                   activeFaq === i
-                    ? dark ? "border-[#facc15] bg-zinc-900" : "border-zinc-800 bg-white shadow-md"
+                    ? dark ? "border-[var(--brand-blue)] bg-zinc-900" : "border-zinc-800 bg-white shadow-md"
                     : dark ? "border-zinc-800 bg-zinc-900" : "border-gray-100 bg-white"
                 }`}
               >
@@ -543,7 +543,7 @@ const handleSubmit = async (e) => {
                     {faq.q}
                   </span>
                   <svg
-                    className={`w-4 h-4 flex-shrink-0 ml-4 transition-transform duration-300 text-[#facc15] ${activeFaq === i ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 flex-shrink-0 ml-4 transition-transform duration-300 text-[var(--brand-blue)] ${activeFaq === i ? "rotate-180" : ""}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -571,7 +571,7 @@ const handleSubmit = async (e) => {
   <div className="max-w-4xl mx-auto">
 
     <div className="text-center mb-12">
-      <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Get Started</span>
+      <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Get Started</span>
       <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
         Franchise Application Form
       </h2>
@@ -596,7 +596,7 @@ const handleSubmit = async (e) => {
         {/* ── SECTION 1: PERSONAL DETAILS ── */}
         <div>
           <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[#facc15] rounded-sm flex items-center justify-center flex-shrink-0">
+            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
               <span className="text-black text-[10px] font-black">01</span>
             </div>
             <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -709,7 +709,7 @@ const handleSubmit = async (e) => {
         {/* ── SECTION 2: ADDRESS DETAILS ── */}
         <div>
           <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[#facc15] rounded-sm flex items-center justify-center flex-shrink-0">
+            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
               <span className="text-black text-[10px] font-black">02</span>
             </div>
             <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -750,7 +750,7 @@ const handleSubmit = async (e) => {
         {/* ── SECTION 3: BUSINESS EXPERIENCE ── */}
         <div>
           <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[#facc15] rounded-sm flex items-center justify-center flex-shrink-0">
+            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
               <span className="text-black text-[10px] font-black">03</span>
             </div>
             <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -807,7 +807,7 @@ const handleSubmit = async (e) => {
         {/* ── SECTION 4: BANKING DETAILS ── */}
         <div>
           <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[#facc15] rounded-sm flex items-center justify-center flex-shrink-0">
+            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
               <span className="text-black text-[10px] font-black">04</span>
             </div>
             <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -840,7 +840,7 @@ const handleSubmit = async (e) => {
         {/* ── SECTION 5: FRANCHISE PREFERENCE ── */}
         <div>
           <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[#facc15] rounded-sm flex items-center justify-center flex-shrink-0">
+            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
               <span className="text-black text-[10px] font-black">05</span>
             </div>
             <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -906,7 +906,7 @@ const handleSubmit = async (e) => {
         {/* ── SECTION 6: PROPOSED OFFICE LOCATION ── */}
         <div>
           <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[#facc15] rounded-sm flex items-center justify-center flex-shrink-0">
+            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
               <span className="text-black text-[10px] font-black">06</span>
             </div>
             <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -962,7 +962,7 @@ const handleSubmit = async (e) => {
         {/* ── SECTION 7: ADDITIONAL INFO ── */}
         <div>
           <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[#facc15] rounded-sm flex items-center justify-center flex-shrink-0">
+            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
               <span className="text-black text-[10px] font-black">07</span>
             </div>
             <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -971,7 +971,7 @@ const handleSubmit = async (e) => {
           </div>
           <div className="space-y-4">
             <div>
-              <label className={labelClass}>Why do you want to partner with MT BOSS? *</label>
+              <label className={labelClass}>Why do you want to partner with MTBoss? *</label>
               <textarea name="message" required rows={4} placeholder="Share your motivation, goals, and what you bring to this partnership..." value={form.message} onChange={handleChange} className={`${inputClass} resize-none`} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -998,25 +998,25 @@ const handleSubmit = async (e) => {
         </div>
 
         {/* ── DECLARATION ── */}
-        <div className={`p-6 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-700" : "bg-yellow-50 border-yellow-100"}`}>
-          <h3 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[#facc15]" : "text-zinc-800"}`}>
+        <div className={`p-6 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-700" : "bg-sky-50 border-sky-100"}`}>
+          <h3 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
             Declaration
           </h3>
           <div className="space-y-3">
             <label className="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" required className="mt-0.5 accent-[#facc15] flex-shrink-0" />
+              <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
               <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
                 I hereby declare that all the information provided in this application form is true, correct, and complete to the best of my knowledge. I understand that any false information may result in rejection of my application.
               </span>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" required className="mt-0.5 accent-[#facc15] flex-shrink-0" />
+              <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
               <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
                 I have read and understood all information available about MTbossConstruction franchise opportunity, including the investment requirements, terms, and fee structure involved.
               </span>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" required className="mt-0.5 accent-[#facc15] flex-shrink-0" />
+              <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
               <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
                 I agree that MTbossConstruction may contact me regarding this franchise inquiry. I understand that submitting this form does not guarantee a franchise agreement.
               </span>
@@ -1032,7 +1032,7 @@ const handleSubmit = async (e) => {
           <button
             type="submit"
             disabled={loading}
-            className="px-12 py-4 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 rounded-sm"
+            className="px-12 py-4 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 rounded-sm"
           >
             {loading ? (
               <>
@@ -1061,7 +1061,7 @@ const handleSubmit = async (e) => {
       {/* ── BOTTOM CTA ── */}
       <section className={`py-16 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-zinc-800"}`}>
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">
             Have Questions?
           </p>
           <h2 className="text-2xl sm:text-3xl font-black uppercase text-white mb-4 tracking-tight">
@@ -1073,7 +1073,7 @@ const handleSubmit = async (e) => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="tel:+919999999999"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.948V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />

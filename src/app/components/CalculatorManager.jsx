@@ -392,7 +392,7 @@ export default function CalculatorManager({ isDarkMode }) {
           --cm-border:  ${isDarkMode ? '#2a2a30' : '#e2e2e7'};
           --cm-text:    ${isDarkMode ? '#f0f0f5' : '#111113'};
           --cm-muted:   ${isDarkMode ? '#8b8b98' : '#6b6b76'};
-          --cm-accent:  ${isDarkMode ? '#facc15' : '#f6b400'};
+          --cm-accent:  ${isDarkMode ? 'var(--brand-blue)' : '#f6b400'};
           color: var(--cm-text);
         }
         .cm-head    { display:flex; justify-content:space-between; align-items:center; margin-bottom:.9rem; }
@@ -402,7 +402,7 @@ export default function CalculatorManager({ isDarkMode }) {
         .cm-alert   { border-radius:7px; padding:.55rem .85rem; margin-bottom:.75rem; font-size:.8rem; }
         .cm-ok      { background:#ecfdf5; color:#166534; border:1px solid #86efac; }
         .cm-err     { background:#fff1f2; color:#9f1239; border:1px solid #fca5a5; }
-        .cm-warn    { background:#fffbeb; color:#92400e; border:1px solid #fcd34d; }
+        .cm-warn    { background:var(--brand-blue-faint); color:#92400e; border:1px solid #fcd34d; }
         .cm-panel   { background:var(--cm-surface); border:1px solid var(--cm-border); border-radius:8px; padding:1rem; margin-bottom:.9rem; }
         .cm-modal-backdrop {
           position:fixed; inset:0; z-index:80;

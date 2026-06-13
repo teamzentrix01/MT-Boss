@@ -151,20 +151,20 @@ export default function Hero() {
                     transform:  i === current ? "translateX(0)"   : "translateX(-32px)",
                     transition: i === current ? "opacity 0.7s ease 0.1s, transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s" : "none",
                   }}>
-                  <span className={`block h-px ${isDark ? "bg-[#facc15]" : "bg-zinc-800"}`}
+                  <span className={`block h-px ${isDark ? "bg-[var(--brand-blue)]" : "bg-zinc-800"}`}
                     style={{
                       minWidth:   i === current ? "40px" : "0px",
                       width:      i === current ? "40px" : "0px",
                       transition: i === current ? "width 0.6s ease 0.3s, min-width 0.6s ease 0.3s" : "none",
                     }} />
-                  <span className={`text-xs sm:text-sm uppercase tracking-[0.22em] font-semibold ${isDark ? "text-[#facc15]" : "text-zinc-800"}`}>
+                  <span className={`text-xs sm:text-sm uppercase tracking-[0.22em] font-semibold ${isDark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
                     {slide.label || "Engineering Excellence"}
                   </span>
                 </div>
 
                 {/* Title — slides up with slight blur */}
                 <h1
-                  className={`font-bold leading-[1.1] mb-2 ${isDark ? "text-[#facc15]" : "text-zinc-900"}`}
+                  className={`font-bold leading-[1.1] mb-2 ${isDark ? "text-[var(--brand-blue)]" : "text-zinc-900"}`}
                   style={{
                     fontSize:   "clamp(2rem, 5vw, 3.8rem)",
                     textShadow: isDark ? "0 2px 10px rgba(0,0,0,0.5)" : "none",
@@ -213,11 +213,11 @@ export default function Hero() {
       ))}
 
       {/* Navigation Buttons */}
-      <button onClick={prev} className={`absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center rounded-full border transition-all ${isDark ? 'border-zinc-700 text-white bg-black/20 hover:bg-[#facc15] hover:text-black hover:border-[#facc15]' : 'border-zinc-300 text-zinc-800 bg-white/20 hover:bg-black hover:text-white hover:border-black'} backdrop-blur-md`} aria-label="Previous slide">
+      <button onClick={prev} className={`absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center rounded-full border transition-all ${isDark ? 'border-zinc-700 text-white bg-black/20 hover:bg-[var(--brand-blue)] hover:text-black hover:border-[var(--brand-blue)]' : 'border-zinc-300 text-zinc-800 bg-white/20 hover:bg-black hover:text-white hover:border-black'} backdrop-blur-md`} aria-label="Previous slide">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
       </button>
       
-      <button onClick={next} className={`absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center rounded-full border transition-all ${isDark ? 'border-zinc-700 text-white bg-black/20 hover:bg-[#facc15] hover:text-black hover:border-[#facc15]' : 'border-zinc-300 text-zinc-800 bg-white/20 hover:bg-black hover:text-white hover:border-black'} backdrop-blur-md`} aria-label="Next slide">
+      <button onClick={next} className={`absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center rounded-full border transition-all ${isDark ? 'border-zinc-700 text-white bg-black/20 hover:bg-[var(--brand-blue)] hover:text-black hover:border-[var(--brand-blue)]' : 'border-zinc-300 text-zinc-800 bg-white/20 hover:bg-black hover:text-white hover:border-black'} backdrop-blur-md`} aria-label="Next slide">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
       </button>
 
@@ -229,7 +229,7 @@ export default function Hero() {
               <button key={i} onClick={() => goTo(i)} className="relative h-1.5 flex items-center">
                 {i === current ? (
                   <div className={`w-16 h-full rounded-full overflow-hidden ${isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`}>
-                    <div className="h-full bg-[#facc15] transition-none" style={{ width: `${progress}%` }} />
+                    <div className="h-full bg-[var(--brand-blue)] transition-none" style={{ width: `${progress}%` }} />
                   </div>
                 ) : (
                   <div className={`w-6 h-full rounded-full transition-all ${isDark ? 'bg-zinc-800 hover:bg-zinc-600' : 'bg-zinc-300 hover:bg-zinc-400'}`} />
@@ -237,7 +237,7 @@ export default function Hero() {
               </button>
             ))}
           </div>
-          <div className={`text-[10px] font-black tracking-[0.3em] ml-auto ${isDark ? 'text-[#facc15]' : 'text-zinc-900'}`}>
+          <div className={`text-[10px] font-black tracking-[0.3em] ml-auto ${isDark ? 'text-[var(--brand-blue)]' : 'text-zinc-900'}`}>
             {String(current + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
           </div>
         </div>

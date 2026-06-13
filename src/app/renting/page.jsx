@@ -135,14 +135,14 @@ const rentalProperties = [
 ];
 
 const tagColors = {
-  Featured: "bg-[#facc15] text-black",
+  Featured: "bg-[var(--brand-blue)] text-black",
   New: "bg-green-500 text-white",
   Premium: "bg-purple-500 text-white",
 };
 
 const furnishingColors = {
   "Fully Furnished": { dark: "bg-green-500/10 text-green-400 border-green-500/20", light: "bg-green-50 text-green-600 border-green-100" },
-  "Semi Furnished": { dark: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20", light: "bg-yellow-50 text-yellow-600 border-yellow-100" },
+  "Semi Furnished": { dark: "bg-sky-500/10 text-[var(--brand-blue-light)] border-[var(--brand-blue)]/20", light: "bg-sky-50 text-[var(--brand-blue-deep)] border-sky-100" },
   "Unfurnished": { dark: "bg-zinc-700 text-zinc-400 border-zinc-600", light: "bg-gray-50 text-gray-500 border-gray-200" },
   "Bare Shell": { dark: "bg-zinc-700 text-zinc-400 border-zinc-600", light: "bg-gray-50 text-gray-500 border-gray-200" },
 };
@@ -222,16 +222,16 @@ export default function RentingPage() {
 
   const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${
     dark
-      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]"
+      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
       : "bg-white border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
   }`;
 
   const filterBtnClass = (active) =>
     `px-4 py-1.5 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all ${
       active
-        ? "bg-[#facc15] border-[#facc15] text-black"
+        ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black"
         : dark
-        ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]"
+        ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
         : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
     }`;
 
@@ -257,12 +257,12 @@ export default function RentingPage() {
             transition: "opacity 0.7s ease, transform 0.7s ease",
           }}
         >
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
             MTBOSS Construction
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Find Your
-            <span className="block text-[#facc15]">Rental Property</span>
+            <span className="block text-[var(--brand-blue)]">Rental Property</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
             Residential and commercial properties for rent across Delhi NCR. Verified listings, zero brokerage, and direct owner contact.
@@ -277,7 +277,7 @@ export default function RentingPage() {
               { value: "Verified", label: "Properties" },
             ].map((s) => (
               <div key={s.label} className="text-center">
-                <p className="text-[#facc15] text-2xl font-black">{s.value}</p>
+                <p className="text-[var(--brand-blue)] text-2xl font-black">{s.value}</p>
                 <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">{s.label}</p>
               </div>
             ))}
@@ -291,13 +291,13 @@ export default function RentingPage() {
         {/* ── FILTER BAR ── */}
         <div className={`p-6 rounded-sm border mb-8 ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100 shadow-sm"}`}>
           <div className="flex items-center justify-between mb-5">
-            <h2 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-[#facc15]" : "text-zinc-800"}`}>
+            <h2 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
               Filter Rentals
             </h2>
             <button
               onClick={() => setFilters({ type: "All", furnishing: "All", minRent: "", maxRent: "", location: "" })}
               className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 border rounded-sm transition-all ${
-                dark ? "border-zinc-700 text-zinc-500 hover:border-[#facc15] hover:text-[#facc15]" : "border-gray-200 text-zinc-400 hover:border-zinc-800 hover:text-zinc-800"
+                dark ? "border-zinc-700 text-zinc-500 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-200 text-zinc-400 hover:border-zinc-800 hover:text-zinc-800"
               }`}
             >
               Reset
@@ -373,12 +373,12 @@ export default function RentingPage() {
         <div className="flex items-center justify-between mb-6">
           <p className={`text-xs font-black uppercase tracking-widest ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
             Showing{" "}
-            <span className={dark ? "text-[#facc15]" : "text-zinc-800"}>{filtered.length}</span>{" "}
+            <span className={dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}>{filtered.length}</span>{" "}
             Rental Properties
           </p>
           <Link
             href="/buy-sale"
-            className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1 transition-colors ${dark ? "text-zinc-500 hover:text-[#facc15]" : "text-zinc-400 hover:text-zinc-800"}`}
+            className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1 transition-colors ${dark ? "text-zinc-500 hover:text-[var(--brand-blue)]" : "text-zinc-400 hover:text-zinc-800"}`}
           >
             View Properties for Sale →
           </Link>
@@ -401,7 +401,7 @@ export default function RentingPage() {
                 key={property.id}
                 className={`group rounded-sm overflow-hidden border transition-all duration-300 hover:shadow-xl ${
                   dark
-                    ? "bg-zinc-900 border-zinc-800 hover:border-[#facc15]"
+                    ? "bg-zinc-900 border-zinc-800 hover:border-[var(--brand-blue)]"
                     : "bg-white border-gray-100 hover:border-zinc-300 shadow-sm"
                 }`}
               >
@@ -414,7 +414,7 @@ export default function RentingPage() {
                   />
                   {/* Tag */}
                   {property.tag && (
-                    <span className={`absolute top-3 left-3 px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-sm ${tagColors[property.tag] || "bg-[#facc15] text-black"}`}>
+                    <span className={`absolute top-3 left-3 px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-sm ${tagColors[property.tag] || "bg-[var(--brand-blue)] text-black"}`}>
                       {property.tag}
                     </span>
                   )}
@@ -438,7 +438,7 @@ export default function RentingPage() {
                 <div className="p-5">
                   {/* Rent */}
                   <div className="flex items-baseline gap-1 mb-1">
-                    <p className="text-[#facc15] text-xl font-black">₹ {property.rent}</p>
+                    <p className="text-[var(--brand-blue)] text-xl font-black">₹ {property.rent}</p>
                     <p className={`text-[10px] font-bold ${dark ? "text-zinc-500" : "text-zinc-400"}`}>/month</p>
                   </div>
 
@@ -454,7 +454,7 @@ export default function RentingPage() {
 
                   {/* Location */}
                   <div className="flex items-center gap-1 mb-4">
-                    <svg className="w-3 h-3 text-[#facc15] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3 h-3 text-[var(--brand-blue)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                     </svg>
                     <span className={`text-[11px] font-bold truncate ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
@@ -513,7 +513,7 @@ export default function RentingPage() {
                     onClick={() => { setEnquiryModal(property); setEnquiryDone(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); }}
                     className={`w-full py-2.5 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${
                       dark
-                        ? "border-[#facc15] text-[#facc15] hover:bg-[#facc15] hover:text-black"
+                        ? "border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black"
                         : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"
                     }`}
                   >
@@ -529,7 +529,7 @@ export default function RentingPage() {
         <div className={`mt-16 p-8 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100 shadow-sm"}`}>
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest block mb-1">
+              <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest block mb-1">
                 Property Owner?
               </span>
               <h3 className={`text-xl font-black uppercase tracking-tight mb-2 ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -542,14 +542,14 @@ export default function RentingPage() {
             <div className="flex gap-3 flex-shrink-0">
               <button
                 onClick={() => { setEnquiryModal({ title: "List My Property", type: "Listing Request", location: "", rent: "" }); setEnquiryDone(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); }}
-                className="px-8 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all rounded-sm"
+                className="px-8 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all rounded-sm"
               >
                 List for Free
               </button>
               <a
                 href="/contact"
                 className={`px-8 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${
-                  dark ? "border-zinc-700 text-zinc-300 hover:border-[#facc15] hover:text-[#facc15]" : "border-gray-200 text-zinc-600 hover:border-zinc-800 hover:text-zinc-800"
+                  dark ? "border-zinc-700 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-200 text-zinc-600 hover:border-zinc-800 hover:text-zinc-800"
                 }`}
               >
                 Contact Us
@@ -564,7 +564,7 @@ export default function RentingPage() {
       <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Our Promise</span>
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Our Promise</span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
               Why Rent With MTBOSS
             </h2>
@@ -582,12 +582,12 @@ export default function RentingPage() {
             ].map((b, i) => (
               <div
                 key={i}
-                className={`group p-5 rounded-sm border transition-all duration-300 hover:border-[#facc15] ${
+                className={`group p-5 rounded-sm border transition-all duration-300 hover:border-[var(--brand-blue)] ${
                   dark ? "bg-zinc-800 border-zinc-700 hover:bg-zinc-700" : "bg-gray-50 border-gray-100 hover:bg-white hover:shadow-md"
                 }`}
               >
                 <span className="text-2xl block mb-3">{b.icon}</span>
-                <h3 className={`text-xs font-black uppercase tracking-widest mb-1.5 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                <h3 className={`text-xs font-black uppercase tracking-widest mb-1.5 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
                   {b.title}
                 </h3>
                 <p className={`text-[11px] leading-relaxed ${dark ? "text-zinc-500" : "text-zinc-500"}`}>{b.desc}</p>
@@ -622,7 +622,7 @@ export default function RentingPage() {
             <div className="p-6">
               {enquiryDone ? (
                 <div className="text-center py-6">
-                  <div className="w-16 h-16 bg-[#facc15] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-[var(--brand-blue)] rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
@@ -633,10 +633,10 @@ export default function RentingPage() {
                   <p className={`text-xs mb-1 ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
                     We will contact you shortly regarding
                   </p>
-                  <p className="text-[#facc15] font-black text-xs">{enquiryModal.title}</p>
+                  <p className="text-[var(--brand-blue)] font-black text-xs">{enquiryModal.title}</p>
                   <button
                     onClick={() => setEnquiryModal(null)}
-                    className="mt-5 px-6 py-2.5 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-all"
+                    className="mt-5 px-6 py-2.5 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-[var(--brand-blue-dark)] transition-all"
                   >
                     Close
                   </button>
@@ -644,7 +644,7 @@ export default function RentingPage() {
               ) : (
                 <>
                   <div className="mb-5">
-                    <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest block mb-1">
+                    <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest block mb-1">
                       Send Enquiry
                     </span>
                     <h3 className={`text-base font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -660,28 +660,28 @@ export default function RentingPage() {
                   <form onSubmit={handleEnquirySubmit} className="space-y-3">
                     <div>
                       <input type="text" name="name" required placeholder="Your full name *" value={enquiryForm.name} onChange={handleEnquiryChange}
-                        className={`w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all ${dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]" : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"}`}
+                        className={`w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all ${dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]" : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"}`}
                       />
                     </div>
                     <div>
                       <input type="tel" name="phone" placeholder="10-digit mobile number *" value={enquiryForm.phone} onChange={handleEnquiryChange} maxLength={10} inputMode="numeric"
-                        className={`w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all ${dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]" : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"}`}
+                        className={`w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all ${dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]" : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"}`}
                       />
                     </div>
                     <div>
                       <input type="email" name="email" placeholder="Email address" value={enquiryForm.email} onChange={handleEnquiryChange}
-                        className={`w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all ${dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]" : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"}`}
+                        className={`w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all ${dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]" : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"}`}
                       />
                     </div>
                     <div>
                       <textarea name="message" rows={3} placeholder="Any specific requirements or message..." value={enquiryForm.message} onChange={handleEnquiryChange}
-                        className={`w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all resize-none ${dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]" : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"}`}
+                        className={`w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all resize-none ${dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]" : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"}`}
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={enquiryLoading}
-                      className="w-full py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+                      className="w-full py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
                     >
                       {enquiryLoading ? (
                         <>

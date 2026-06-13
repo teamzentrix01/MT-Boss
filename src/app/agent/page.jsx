@@ -63,8 +63,8 @@ const agentTypes = [
     title: "Construction Agent",
     desc: "Connect clients who need construction, renovation, or infrastructure projects.",
     earn: "Up to 3% per project",
-    color: "border-[#facc15]/30",
-    badge: "bg-[#facc15]/10 text-[#facc15]",
+    color: "border-[var(--brand-blue)]/30",
+    badge: "bg-[var(--brand-blue)]/10 text-[var(--brand-blue)]",
     popular: true,
   },
   {
@@ -195,7 +195,7 @@ export default function AgentPage() {
 
   const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${
     dark
-      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]"
+      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
       : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
   }`;
 
@@ -207,12 +207,12 @@ export default function AgentPage() {
     return (
       <main className={`min-h-screen flex items-center justify-center px-6 ${dark ? "bg-black" : "bg-gray-50"}`}>
         <div className={`max-w-lg w-full text-center p-12 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100 shadow-xl"}`}>
-          <div className="w-20 h-20 bg-[#facc15] rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-[var(--brand-blue)] rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest block mb-2">
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest block mb-2">
             Application Received!
           </span>
           <h2 className={`text-xl font-black uppercase tracking-tight mb-3 ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -221,7 +221,7 @@ export default function AgentPage() {
           <p className={`text-xs leading-relaxed mb-3 ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
             Your agent application has been submitted successfully.
           </p>
-          <p className="text-[#facc15] font-black text-sm mb-2">{form.agentType}</p>
+          <p className="text-[var(--brand-blue)] font-black text-sm mb-2">{form.agentType}</p>
           <p className={`text-xs mb-8 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
             Our team will contact you within 2-3 business days on{" "}
             <span className={`font-black ${dark ? "text-white" : "text-zinc-800"}`}>{form.email}</span>
@@ -230,7 +230,7 @@ export default function AgentPage() {
             <Link
               href="/"
               className={`px-6 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all ${
-                dark ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]" : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
+                dark ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
               }`}
             >
               Go Home
@@ -240,7 +240,7 @@ export default function AgentPage() {
                 setSubmitted(false);
                 setForm({ name: "", email: "", phone: "", city: "", state: "", occupation: "", agentType: "", experience: "", network: "", message: "" });
               }}
-              className="px-6 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all"
+              className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
             >
               New Application
             </button>
@@ -272,12 +272,12 @@ export default function AgentPage() {
             transition: "opacity 0.7s ease, transform 0.7s ease",
           }}
         >
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
             MTBOSS Construction
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Become an
-            <span className="block text-[#facc15]">Agent</span>
+            <span className="block text-[var(--brand-blue)]">Agent</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
             Expand your income by joining MTBOSS's growing agent network. Refer clients, close deals, and earn high commissions — on your own schedule.
@@ -292,7 +292,7 @@ export default function AgentPage() {
               { value: "Free", label: "To Join" },
             ].map((s) => (
               <div key={s.label} className="text-center">
-                <p className="text-[#facc15] text-2xl font-black">{s.value}</p>
+                <p className="text-[var(--brand-blue)] text-2xl font-black">{s.value}</p>
                 <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">{s.label}</p>
               </div>
             ))}
@@ -300,7 +300,7 @@ export default function AgentPage() {
 <a
           
             href="#agent-form"
-            className="mt-10 inline-flex items-center gap-3 px-10 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all"
+            className="mt-10 inline-flex items-center gap-3 px-10 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
           >
             Register as Agent
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -314,7 +314,7 @@ export default function AgentPage() {
       <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Choose Your Role
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -335,7 +335,7 @@ export default function AgentPage() {
               >
                 {type.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="px-4 py-1 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm">
+                    <span className="px-4 py-1 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm">
                       Most Popular
                     </span>
                   </div>
@@ -356,9 +356,9 @@ export default function AgentPage() {
                   onClick={() => setForm({ ...form, agentType: type.title })}
                   className={`block text-center py-3 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${
                     type.popular
-                      ? "bg-[#facc15] border-[#facc15] text-black hover:bg-yellow-400"
+                      ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-dark)]"
                       : dark
-                      ? "border-zinc-600 text-zinc-300 hover:border-[#facc15] hover:text-[#facc15]"
+                      ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
                       : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"
                   }`}
                 >
@@ -382,7 +382,7 @@ export default function AgentPage() {
           }}
         >
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Why Join Us
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -394,12 +394,12 @@ export default function AgentPage() {
             {benefits.map((b, i) => (
               <div
                 key={i}
-                className={`group p-6 rounded-sm border transition-all duration-300 hover:border-[#facc15] ${
+                className={`group p-6 rounded-sm border transition-all duration-300 hover:border-[var(--brand-blue)] ${
                   dark ? "bg-zinc-900 border-zinc-800 hover:bg-zinc-800" : "bg-white border-gray-100 hover:shadow-lg"
                 }`}
               >
                 <span className="text-3xl block mb-4">{b.icon}</span>
-                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
                   {b.title}
                 </h3>
                 <p className={`text-xs leading-relaxed ${dark ? "text-zinc-500" : "text-zinc-500"}`}>
@@ -423,7 +423,7 @@ export default function AgentPage() {
           }}
         >
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Simple Process
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -435,17 +435,17 @@ export default function AgentPage() {
             {howItWorks.map((p, i) => (
               <div
                 key={i}
-                className={`relative p-6 rounded-sm border transition-all duration-300 group hover:border-[#facc15] ${
+                className={`relative p-6 rounded-sm border transition-all duration-300 group hover:border-[var(--brand-blue)] ${
                   dark ? "bg-zinc-800 border-zinc-700" : "bg-gray-50 border-gray-100 hover:bg-white hover:shadow-md"
                 }`}
               >
-                <span className={`text-5xl font-black opacity-10 group-hover:opacity-20 transition-opacity absolute top-4 right-4 ${dark ? "text-[#facc15]" : "text-zinc-800"}`}>
+                <span className={`text-5xl font-black opacity-10 group-hover:opacity-20 transition-opacity absolute top-4 right-4 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
                   {p.step}
                 </span>
-                <div className="w-10 h-10 bg-[#facc15] rounded-sm flex items-center justify-center mb-4">
+                <div className="w-10 h-10 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center mb-4">
                   <span className="text-black font-black text-sm">{p.step}</span>
                 </div>
-                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
                   {p.title}
                 </h3>
                 <p className={`text-xs leading-relaxed ${dark ? "text-zinc-500" : "text-zinc-500"}`}>
@@ -458,7 +458,7 @@ export default function AgentPage() {
       </section>
 
       {/* ── LEAD CAPTURE STATS STRIP ── */}
-      <section className={`py-12 px-6 transition-colors duration-500 ${dark ? "bg-[#facc15]" : "bg-[#facc15]"}`}>
+      <section className={`py-12 px-6 transition-colors duration-500 ${dark ? "bg-[var(--brand-blue)]" : "bg-[var(--brand-blue)]"}`}>
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
@@ -480,7 +480,7 @@ export default function AgentPage() {
       <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-gray-50"}`}>
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Common Questions
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -494,7 +494,7 @@ export default function AgentPage() {
                 key={i}
                 className={`rounded-sm border overflow-hidden transition-all duration-300 ${
                   activeFaq === i
-                    ? dark ? "border-[#facc15] bg-zinc-900" : "border-zinc-800 bg-white shadow-md"
+                    ? dark ? "border-[var(--brand-blue)] bg-zinc-900" : "border-zinc-800 bg-white shadow-md"
                     : dark ? "border-zinc-800 bg-zinc-900" : "border-gray-100 bg-white"
                 }`}
               >
@@ -506,7 +506,7 @@ export default function AgentPage() {
                     {faq.q}
                   </span>
                   <svg
-                    className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 text-[#facc15] ${activeFaq === i ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 text-[var(--brand-blue)] ${activeFaq === i ? "rotate-180" : ""}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -533,7 +533,7 @@ export default function AgentPage() {
         <div className="max-w-4xl mx-auto">
 
           <div className="text-center mb-12">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
               Join Now
             </span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -668,9 +668,9 @@ export default function AgentPage() {
               </div>
 
               {/* Agreement */}
-              <div className={`p-4 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-700" : "bg-yellow-50 border-yellow-100"}`}>
+              <div className={`p-4 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-700" : "bg-sky-50 border-sky-100"}`}>
                 <label className="flex items-start gap-3 cursor-pointer">
-                  <input type="checkbox" required className="mt-0.5 accent-[#facc15]" />
+                  <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)]" />
                   <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
                     I confirm that the information provided is accurate. I agree to MTBOSS Construction's agent terms and understand that registration does not guarantee agent status until verified.
                   </span>
@@ -685,7 +685,7 @@ export default function AgentPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-12 py-4 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 rounded-sm"
+                  className="px-12 py-4 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 rounded-sm"
                 >
                   {loading ? (
                     <>
@@ -714,7 +714,7 @@ export default function AgentPage() {
       {/* ── BOTTOM CTA ── */}
       <section className={`py-16 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-zinc-800"}`}>
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">
             Have Questions?
           </p>
           <h2 className="text-2xl sm:text-3xl font-black uppercase text-white mb-4 tracking-tight">
@@ -726,7 +726,7 @@ export default function AgentPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="tel:+919999999999"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.948V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />

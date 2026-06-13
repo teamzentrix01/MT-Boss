@@ -77,10 +77,10 @@ export default function LoginPage() {
         .lp-root {
           --lp-bg:      ${dark ? '#000000' : '#f5f5f7'};
           --lp-surface: ${dark ? '#000000' : '#ffffff'};
-          --lp-border:  ${dark ? '#fbbf24' : '#e2e2e7'};
+          --lp-border:  ${dark ? 'var(--brand-blue-light)' : '#e2e2e7'};
           --lp-text:    ${dark ? '#ffffff' : '#111113'};
           --lp-muted:   ${dark ? '#9ca3af' : '#6b6b76'};
-          --lp-accent:  ${dark ? '#fbbf24' : '#2563eb'};
+          --lp-accent:  ${dark ? 'var(--brand-blue-light)' : '#2563eb'};
           --lp-err-bg:  ${dark ? '#7f1d1d' : '#fff1f2'};
           --lp-err-tx:  ${dark ? '#fca5a5' : '#9f1239'};
           --lp-err-br:  ${dark ? '#dc2626' : '#fca5a5'};
@@ -126,7 +126,7 @@ export default function LoginPage() {
           color: #fff;
           letter-spacing: -0.02em;
         }
-        .lp-brand-logo span { color: #fbbf24; }
+        .lp-brand-logo span { color: var(--brand-blue-light); }
 
         .lp-brand-heading {
           font-size: 1.5rem;

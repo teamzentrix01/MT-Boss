@@ -171,18 +171,18 @@ export default function ContactPage() {
 
   const inputClass = `w-full px-4 py-3 text-sm border rounded-lg outline-none transition-all duration-200 ${
     dark
-      ? 'bg-black border-yellow-400 text-white placeholder-yellow-700 focus:border-yellow-300 focus:ring-2 focus:ring-yellow-400/20'
-      : 'bg-white border-yellow-400 text-black placeholder-yellow-600 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20'
+      ? 'bg-black border-[var(--brand-blue-light)] text-white placeholder-[var(--brand-blue-deeper)] focus:border-[var(--brand-blue-lighter)] focus:ring-2 focus:ring-[var(--brand-blue)]/20'
+      : 'bg-white border-[var(--brand-blue-light)] text-black placeholder-[var(--brand-blue-deep)] focus:border-[var(--brand-blue)] focus:ring-2 focus:ring-[var(--brand-blue)]/20'
   }`;
 
   const labelClass = `block text-xs font-bold uppercase tracking-widest mb-2 ${
-    dark ? 'text-yellow-400' : 'text-yellow-600'
+    dark ? 'text-[var(--brand-blue-light)]' : 'text-[var(--brand-blue-deep)]'
   }`;
 
   const bgClass = dark ? 'bg-black' : 'bg-white';
   const textPrimaryClass = dark ? 'text-white' : 'text-black';
-  const textSecondaryClass = dark ? 'text-yellow-400' : 'text-yellow-600';
-  const borderClass = dark ? 'border-yellow-400' : 'border-yellow-500';
+  const textSecondaryClass = dark ? 'text-[var(--brand-blue-light)]' : 'text-[var(--brand-blue-deep)]';
+  const borderClass = dark ? 'border-[var(--brand-blue-light)]' : 'border-[var(--brand-blue)]';
 
   return (
     <main className={`min-h-screen transition-colors duration-500 ${dark ? 'bg-black' : 'bg-gray-50'}`}>
@@ -197,11 +197,11 @@ export default function ContactPage() {
       >
         <div className="absolute inset-0 bg-black/80" />
         <div className="relative z-10 max-w-2xl mx-auto">
-          <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest block mb-4">
+          <span className="text-[var(--brand-blue-light)] text-xs font-bold uppercase tracking-widest block mb-4">
             MTBOSS
           </span>
           <h1 className="text-4xl sm:text-5xl font-black uppercase text-white mb-4 tracking-tight">
-            Get In<span className="text-yellow-400"> Touch</span>
+            Get In<span className="text-[var(--brand-blue-light)]"> Touch</span>
           </h1>
           <p className="text-gray-300 text-sm max-w-lg mx-auto leading-relaxed">
             Have a project in mind, a question, or want to partner with us? We would love to hear from you.
@@ -211,7 +211,7 @@ export default function ContactPage() {
           <div className="flex flex-wrap justify-center gap-3 mt-8">
             <a
               href="tel:+9194584 10866"
-              className="flex items-center gap-2 px-5 py-2.5 bg-yellow-400 text-black text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-yellow-300 transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[var(--brand-blue)] text-black text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-[var(--brand-blue-light)] transition-all"
             >
               📞 Call Us
             </a>
@@ -234,7 +234,7 @@ export default function ContactPage() {
       </section>
 
       {/* ── QUICK STATS ── */}
-      <section className="py-10 px-6 bg-yellow-400">
+      <section className="py-10 px-6 bg-[var(--brand-blue)]">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
@@ -266,7 +266,7 @@ export default function ContactPage() {
                 transition: 'opacity 0.7s ease, transform 0.7s ease',
               }}
             >
-              <div className={`p-8 rounded-lg border-2 ${dark ? 'bg-black border-yellow-400' : 'bg-white border-yellow-500 shadow-lg'}`}>
+              <div className={`p-8 rounded-lg border-2 ${dark ? 'bg-black border-[var(--brand-blue-light)]' : 'bg-white border-[var(--brand-blue)] shadow-lg'}`}>
                 {/* Header */}
                 <div className="mb-8">
                   <span className={`text-xs font-bold uppercase tracking-widest block mb-2 ${textSecondaryClass}`}>
@@ -291,8 +291,8 @@ export default function ContactPage() {
                         onClick={() => { setForm({ ...form, department: dept.label }); setFieldErrors(prev => ({ ...prev, department: '' })); }}
                         className={`p-3 rounded-lg border-2 text-left transition-all duration-200 ${
                           form.department === dept.label
-                            ? dark ? 'border-yellow-400 bg-yellow-400/10' : 'border-yellow-500 bg-yellow-50'
-                            : dark ? 'border-yellow-600 hover:border-yellow-400' : 'border-yellow-300 hover:border-yellow-500'
+                            ? dark ? 'border-[var(--brand-blue-light)] bg-[var(--brand-blue)]/10' : 'border-[var(--brand-blue)] bg-sky-50'
+                            : dark ? 'border-[var(--brand-blue-deep)] hover:border-[var(--brand-blue-light)]' : 'border-[var(--brand-blue-lighter)] hover:border-[var(--brand-blue)]'
                         }`}
                       >
                         <span className="text-lg block mb-1">{dept.icon}</span>
@@ -318,7 +318,7 @@ export default function ContactPage() {
 
                 {submitted ? (
                   <div className="text-center py-12">
-                    <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-[var(--brand-blue)] rounded-full flex items-center justify-center mx-auto mb-4">
                       <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
@@ -412,7 +412,7 @@ export default function ContactPage() {
                       <button
                         type="submit"
                         disabled={loading}
-                        className="px-8 py-3 bg-yellow-400 text-black text-xs font-bold uppercase tracking-widest hover:bg-yellow-300 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 rounded-lg"
+                        className="px-8 py-3 bg-[var(--brand-blue)] text-black text-xs font-bold uppercase tracking-widest hover:bg-[var(--brand-blue-light)] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 rounded-lg"
                       >
                         {loading ? (
                           <>
@@ -449,13 +449,13 @@ export default function ContactPage() {
             >
               <div className="space-y-5">
                 {/* Quick Contact */}
-                <div className={`p-6 rounded-lg border-2 ${dark ? 'bg-black border-yellow-400' : 'bg-white border-yellow-500 shadow-lg'}`}>
+                <div className={`p-6 rounded-lg border-2 ${dark ? 'bg-black border-[var(--brand-blue-light)]' : 'bg-white border-[var(--brand-blue)] shadow-lg'}`}>
                   <h3 className={`text-xs font-bold uppercase tracking-widest mb-5 ${textSecondaryClass}`}>
                     Quick Contact
                   </h3>
                   <div className="space-y-4">
                     <a href="tel:+9194584 10866" className="flex items-start gap-3 group">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${dark ? 'bg-yellow-400/20 group-hover:bg-yellow-400' : 'bg-yellow-100 group-hover:bg-yellow-400'}`}>
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${dark ? 'bg-[var(--brand-blue)]/20 group-hover:bg-[var(--brand-blue-dark)]' : 'bg-sky-100 group-hover:bg-[var(--brand-blue-dark)]'}`}>
                         <span className={`text-lg transition-all ${dark ? 'group-hover:text-black' : 'group-hover:text-white'}`}>📞</span>
                       </div>
                       <div>
@@ -465,7 +465,7 @@ export default function ContactPage() {
                     </a>
 
                     <a href="mailto:info@mtboss.com" className="flex items-start gap-3 group">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${dark ? 'bg-yellow-400/20 group-hover:bg-yellow-400' : 'bg-yellow-100 group-hover:bg-yellow-400'}`}>
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${dark ? 'bg-[var(--brand-blue)]/20 group-hover:bg-[var(--brand-blue-dark)]' : 'bg-sky-100 group-hover:bg-[var(--brand-blue-dark)]'}`}>
                         <span className="text-lg">✉️</span>
                       </div>
                       <div>
@@ -487,7 +487,7 @@ export default function ContactPage() {
                 </div>
 
                 {/* Business Hours */}
-                <div className={`p-6 rounded-lg border-2 ${dark ? 'bg-black border-yellow-400' : 'bg-white border-yellow-500 shadow-lg'}`}>
+                <div className={`p-6 rounded-lg border-2 ${dark ? 'bg-black border-[var(--brand-blue-light)]' : 'bg-white border-[var(--brand-blue)] shadow-lg'}`}>
                   <h3 className={`text-xs font-bold uppercase tracking-widest mb-4 ${textSecondaryClass}`}>
                     Business Hours
                   </h3>
@@ -496,7 +496,7 @@ export default function ContactPage() {
                     { day: 'Saturday', hours: '9:00 AM - 2:00 PM', open: true },
                     { day: 'Sunday', hours: 'Closed', open: false },
                   ].map((item) => (
-                    <div key={item.day} className={`flex justify-between items-center py-2.5 border-b last:border-0 ${dark ? 'border-yellow-400/20' : 'border-yellow-200'}`}>
+                    <div key={item.day} className={`flex justify-between items-center py-2.5 border-b last:border-0 ${dark ? 'border-[var(--brand-blue-light)]/20' : 'border-sky-200'}`}>
                       <span className={`text-xs font-bold ${dark ? 'text-gray-400' : 'text-gray-600'}`}>{item.day}</span>
                       <span className={`text-xs font-bold ${item.open ? textSecondaryClass : dark ? 'text-gray-500' : 'text-gray-400'}`}>
                         {item.hours}
@@ -530,10 +530,10 @@ export default function ContactPage() {
                 onClick={() => setActiveOffice(i)}
                 className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest border-2 rounded-lg transition-all duration-200 ${
                   activeOffice === i
-                    ? 'bg-yellow-400 border-yellow-400 text-black'
+                    ? 'bg-[var(--brand-blue)] border-[var(--brand-blue-light)] text-black'
                     : dark
-                    ? 'border-yellow-400 text-yellow-400 hover:border-yellow-300 hover:text-yellow-300'
-                    : 'border-yellow-500 text-yellow-600 hover:border-yellow-600'
+                    ? 'border-[var(--brand-blue-light)] text-[var(--brand-blue-light)] hover:border-[var(--brand-blue-lighter)] hover:text-[var(--brand-blue-lighter)]'
+                    : 'border-[var(--brand-blue)] text-[var(--brand-blue-deep)] hover:border-[var(--brand-blue-deep)]'
                 }`}
               >
                 {office.city}
@@ -544,7 +544,7 @@ export default function ContactPage() {
           {/* Active Office Details + Map */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Office Info */}
-            <div className={`p-6 rounded-lg border-2 ${dark ? 'bg-black border-yellow-400' : 'bg-white border-yellow-500 shadow-lg'}`}>
+            <div className={`p-6 rounded-lg border-2 ${dark ? 'bg-black border-[var(--brand-blue-light)]' : 'bg-white border-[var(--brand-blue)] shadow-lg'}`}>
               <h3 className={`text-sm font-black uppercase tracking-widest mb-5 ${textSecondaryClass}`}>
                 {offices[activeOffice].city}
               </h3>
@@ -570,14 +570,14 @@ export default function ContactPage() {
                 href={`https://www.google.com/maps/search/${encodeURIComponent(offices[activeOffice].address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-6 flex items-center gap-2 px-5 py-2.5 bg-yellow-400 text-black text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-yellow-300 transition-all"
+                className="mt-6 flex items-center gap-2 px-5 py-2.5 bg-[var(--brand-blue)] text-black text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-[var(--brand-blue-light)] transition-all"
               >
                 📍 Get Directions
               </a>
             </div>
 
             {/* Map */}
-            <div className="lg:col-span-2 rounded-lg overflow-hidden border-2 border-yellow-400 h-80 lg:h-auto">
+            <div className="lg:col-span-2 rounded-lg overflow-hidden border-2 border-[var(--brand-blue-light)] h-80 lg:h-auto">
               <iframe
                 src={offices[activeOffice].mapUrl}
                 width="100%"
@@ -611,11 +611,11 @@ export default function ContactPage() {
                 className={`rounded-lg border-2 overflow-hidden transition-all duration-300 ${
                   activeFaq === i
                     ? dark
-                      ? 'border-yellow-400 bg-black'
-                      : 'border-yellow-500 bg-white shadow-lg'
+                      ? 'border-[var(--brand-blue-light)] bg-black'
+                      : 'border-[var(--brand-blue)] bg-white shadow-lg'
                     : dark
-                    ? 'border-yellow-400/30 bg-black'
-                    : 'border-yellow-200 bg-white'
+                    ? 'border-[var(--brand-blue-light)]/30 bg-black'
+                    : 'border-sky-200 bg-white'
                 }`}
               >
                 <button
@@ -624,7 +624,7 @@ export default function ContactPage() {
                 >
                   <span className={`text-xs font-bold uppercase tracking-wide pr-4 ${textPrimaryClass}`}>{faq.q}</span>
                   <svg
-                    className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 text-yellow-400 ${activeFaq === i ? 'rotate-180' : ''}`}
+                    className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 text-[var(--brand-blue-light)] ${activeFaq === i ? 'rotate-180' : ''}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

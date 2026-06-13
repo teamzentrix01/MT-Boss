@@ -67,8 +67,8 @@ export default function AgentLoginPage() {
         <section className="hidden sm:flex" style={{ flex: '0 0 300px', background: '#111113', color: '#fff', padding: '2.5rem 2rem', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ fontWeight: 900, fontSize: '1rem', marginBottom: '2rem' }}>
-              MT<span style={{ color: '#facc15' }}>BOSS</span>
-              <span style={{ marginLeft: 8, fontSize: 10, color: '#111', background: '#facc15', padding: '3px 8px', borderRadius: 99 }}>AGENT</span>
+              MT<span style={{ color: 'var(--brand-blue)' }}>BOSS</span>
+              <span style={{ marginLeft: 8, fontSize: 10, color: '#111', background: 'var(--brand-blue)', padding: '3px 8px', borderRadius: 99 }}>AGENT</span>
             </div>
             <h1 style={{ fontSize: '1.4rem', fontWeight: 800, lineHeight: 1.25, marginBottom: 10 }}>Manage your city leads with focus.</h1>
             <p style={{ fontSize: 13, color: '#aaa', lineHeight: 1.7 }}>Sign in to track leads, follow-ups, and your daily schedule.</p>
@@ -109,12 +109,12 @@ export default function AgentLoginPage() {
                 placeholder="Temporary password"
                 style={{ width: '100%', boxSizing: 'border-box', padding: '0.65rem 4.5rem 0.65rem 0.75rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: 13, outline: 'none' }}
               />
-              <button type="button" onClick={() => setShowPassword((v) => !v)} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 0, background: 'transparent', color: '#facc15', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
+              <button type="button" onClick={() => setShowPassword((v) => !v)} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 0, background: 'transparent', color: 'var(--brand-blue)', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
                 {showPassword ? 'Hide' : 'Show'}
               </button>
             </div>
 
-            <button type="submit" disabled={loading} style={{ width: '100%', padding: '0.7rem 1rem', border: 0, borderRadius: 7, background: '#facc15', color: '#111', fontSize: 13, fontWeight: 900, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.65 : 1 }}>
+            <button type="submit" disabled={loading} style={{ width: '100%', padding: '0.7rem 1rem', border: 0, borderRadius: 7, background: 'var(--brand-blue)', color: '#111', fontSize: 13, fontWeight: 900, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.65 : 1 }}>
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>

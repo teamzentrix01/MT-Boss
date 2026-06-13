@@ -50,7 +50,7 @@ function CategoryCard({ cat, dark, idx, visible }) {
       }}
       className={`group flex flex-col border transition-all duration-300 overflow-hidden ${
         dark
-          ? "bg-zinc-950 border-zinc-800 hover:border-[#facc15]/60"
+          ? "bg-zinc-950 border-zinc-800 hover:border-[var(--brand-blue)]/60"
           : "bg-white border-zinc-100 hover:border-zinc-300 hover:shadow-lg"
       }`}
     >
@@ -67,7 +67,7 @@ function CategoryCard({ cat, dark, idx, visible }) {
         )}
         {/* label badge */}
         {cat.label && (
-          <span className="absolute top-2 left-2 bg-[#facc15] text-black text-[7px] font-black uppercase tracking-widest px-2 py-0.5">
+          <span className="absolute top-2 left-2 bg-[var(--brand-blue)] text-black text-[7px] font-black uppercase tracking-widest px-2 py-0.5">
             {cat.label}
           </span>
         )}
@@ -113,7 +113,7 @@ function CategoryCard({ cat, dark, idx, visible }) {
 
         {/* CTA */}
         <div className={`flex items-center justify-between mt-auto pt-2.5 border-t ${dark ? "border-zinc-800" : "border-zinc-100"}`}>
-          <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${dark ? "text-zinc-600 group-hover:text-[#facc15]" : "text-zinc-300 group-hover:text-[#0d6ebd]"}`}>
+          <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${dark ? "text-zinc-600 group-hover:text-[var(--brand-blue)]" : "text-zinc-300 group-hover:text-[var(--brand-blue-deep)]"}`}>
             Get Quote →
           </span>
           {cat.unit && (
@@ -156,18 +156,18 @@ export default function ShopCTA() {
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-7"
         >
           <div>
-            <p className={`text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>
+            <p className={`text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>
               Material Marketplace
             </p>
             <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-none ${dark ? "text-white" : "text-zinc-900"}`}>
-              Construction Materials, <span className="text-[#facc15]">Sourced Right</span>
+              Construction Materials, <span className="text-[var(--brand-blue)]">Sourced Right</span>
             </h2>
-            <div className={`w-8 h-0.5 mt-2 ${dark ? "bg-[#facc15]" : "bg-zinc-900"}`} />
+            <div className={`w-8 h-0.5 mt-2 ${dark ? "bg-[var(--brand-blue)]" : "bg-zinc-900"}`} />
           </div>
           <Link
             href="/ShopNow"
             className={`self-start shrink-0 px-5 py-2.5 text-[9px] font-black uppercase tracking-widest transition-all ${
-              dark ? "bg-[#facc15] text-black hover:bg-yellow-300" : "bg-zinc-900 text-white hover:bg-[#facc15] hover:text-black"
+              dark ? "bg-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-light)]" : "bg-zinc-900 text-white hover:bg-[var(--brand-blue)] hover:text-black"
             }`}
           >
             Browse All →
@@ -187,7 +187,7 @@ export default function ShopCTA() {
             <div key={s.n} className={`flex-1 flex items-center gap-2.5 py-3 px-4 border-r last:border-r-0 ${dark ? "border-zinc-800" : "border-zinc-100"}`}>
               <span className="text-lg">{s.icon}</span>
               <div>
-                <p className={`text-[7px] font-black uppercase tracking-widest ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>Step {s.n}</p>
+                <p className={`text-[7px] font-black uppercase tracking-widest ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>Step {s.n}</p>
                 <p className={`text-[9px] font-black uppercase ${dark ? "text-white" : "text-zinc-800"}`}>{s.label}</p>
               </div>
             </div>
@@ -220,7 +220,7 @@ export default function ShopCTA() {
           <Link
             href="/ShopNow"
             className={`shrink-0 px-6 py-2.5 text-[9px] font-black uppercase tracking-widest transition-all ${
-              dark ? "border border-[#facc15] text-[#facc15] hover:bg-[#facc15] hover:text-black" : "border border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white"
+              dark ? "border border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black" : "border border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white"
             }`}
           >
             Get a Quote Now →

@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+:root {
+  --brand-blue: #facc15;
+  --brand-blue-dark: color-mix(in srgb, var(--brand-blue) 86%, black);
+  --brand-blue-deep: color-mix(in srgb, var(--brand-blue) 78%, black);
+  --brand-blue-deeper: color-mix(in srgb, var(--brand-blue) 64%, black);
+  --brand-blue-deepest: color-mix(in srgb, var(--brand-blue) 54%, black);
+  --brand-blue-ink: color-mix(in srgb, var(--brand-blue) 42%, black);
+  --brand-blue-light: color-mix(in srgb, var(--brand-blue) 82%, white);
+  --brand-blue-lighter: color-mix(in srgb, var(--brand-blue) 58%, white);
+  --brand-blue-pale: color-mix(in srgb, var(--brand-blue) 20%, white);
+  --brand-blue-soft: color-mix(in srgb, var(--brand-blue) 10%, white);
+  --brand-blue-faint: color-mix(in srgb, var(--brand-blue) 5%, white);
+}
+
 
 @layer base {
   body {
@@ -10,4 +24,81 @@
 
 h1, h2, h3, h4, h5, h6, button, a {
   font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif !important;
+}
+
+button,
+[role="button"],
+a.btn,
+a[class~="btn"],
+a[class*="-btn"],
+a[class*="btn-"],
+a[href][class*="uppercase"][class*="bg-"],
+a[href][class*="uppercase"][class*="border"] {
+  background-color: var(--brand-blue) !important;
+  background-image: linear-gradient(90deg, #fff 0%, #fff 50%, var(--brand-blue) 50%, var(--brand-blue) 100%) !important;
+  background-position: 100% 0 !important;
+  background-size: 200% 100% !important;
+  border-color: var(--brand-blue) !important;
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand-blue) 24%, transparent) !important;
+  color: #fff !important;
+  transition:
+    background-position 2s cubic-bezier(.16,1,.3,1),
+    border-color 2s cubic-bezier(.16,1,.3,1),
+    box-shadow 420ms ease,
+    color 2s cubic-bezier(.16,1,.3,1),
+    transform 220ms cubic-bezier(.2,.8,.2,1) !important;
+  will-change: transform, background-position, box-shadow;
+}
+
+button:hover:not(:disabled),
+[role="button"]:hover,
+a.btn:hover,
+a[class~="btn"]:hover,
+a[class*="-btn"]:hover,
+a[class*="btn-"]:hover,
+a[href][class*="uppercase"][class*="bg-"]:hover,
+a[href][class*="uppercase"][class*="border"]:hover {
+  background-color: var(--brand-blue) !important;
+  background-position: 0 0 !important;
+  border-color: var(--brand-blue) !important;
+  box-shadow:
+    0 14px 30px color-mix(in srgb, var(--brand-blue) 28%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--brand-blue) 34%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--brand-blue) 18%, transparent) !important;
+  color: var(--brand-blue) !important;
+  transform: translateY(-3px) scale(1.015);
+}
+
+button:active:not(:disabled),
+[role="button"]:active,
+a.btn:active,
+a[class~="btn"]:active,
+a[class*="-btn"]:active,
+a[class*="btn-"]:active,
+a[href][class*="uppercase"][class*="bg-"]:active,
+a[href][class*="uppercase"][class*="border"]:active {
+  box-shadow:
+    0 6px 14px color-mix(in srgb, var(--brand-blue) 18%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--brand-blue) 28%, transparent) !important;
+  transform: translateY(-1px) scale(0.99);
+}
+
+button:focus-visible,
+[role="button"]:focus-visible,
+a.btn:focus-visible,
+a[class~="btn"]:focus-visible,
+a[class*="-btn"]:focus-visible,
+a[class*="btn-"]:focus-visible,
+a[href][class*="uppercase"][class*="bg-"]:focus-visible,
+a[href][class*="uppercase"][class*="border"]:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--brand-blue) 30%, white);
+  outline-offset: 3px;
+}
+
+button:disabled,
+button[aria-disabled="true"],
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed !important;
+  opacity: 0.62 !important;
+  transform: none !important;
 }

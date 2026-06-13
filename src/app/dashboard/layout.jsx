@@ -65,8 +65,8 @@ export default function DashboardLayout({ children }) {
   const bgClass = isDarkMode ? 'bg-black' : 'bg-white';
   const textPrimary = isDarkMode ? 'text-white' : 'text-black';
   const textSecondary = isDarkMode ? 'text-gray-400' : 'text-gray-600';
-  const borderColor = isDarkMode ? 'border-yellow-400' : 'border-yellow-500';
-  const hoverBg = isDarkMode ? 'hover:bg-yellow-400/10' : 'hover:bg-yellow-50';
+  const borderColor = isDarkMode ? 'border-[var(--brand-blue-light)]' : 'border-[var(--brand-blue)]';
+  const hoverBg = isDarkMode ? 'hover:bg-[var(--brand-blue-dark)]/10' : 'hover:bg-sky-50';
 
   return (
     <div className="flex h-screen bg-gray-900">
@@ -77,7 +77,7 @@ export default function DashboardLayout({ children }) {
           {sidebarOpen && <span className={`font-black text-xl ${textPrimary}`}>MT-BOSS</span>}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className={`p-2 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-yellow-400/10' : 'hover:bg-yellow-50'}`}
+            className={`p-2 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-[var(--brand-blue-dark)]/10' : 'hover:bg-sky-50'}`}
           >
             {sidebarOpen ? '◀️' : '▶️'}
           </button>
@@ -89,7 +89,7 @@ export default function DashboardLayout({ children }) {
             <Link
               key={item.label}
               href={item.tab ? `/dashboard?tab=${item.tab}` : '/dashboard'}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isDarkMode ? 'text-gray-400 hover:text-yellow-400 hover:bg-yellow-400/10' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'}`}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isDarkMode ? 'text-gray-400 hover:text-[var(--brand-blue-light)] hover:bg-[var(--brand-blue-dark)]/10' : 'text-gray-700 hover:text-[var(--brand-blue-deep)] hover:bg-sky-50'}`}
             >
               <span className="text-xl">{item.icon}</span>
               {sidebarOpen && <span className="text-sm font-medium">{item.label}</span>}
@@ -104,7 +104,7 @@ export default function DashboardLayout({ children }) {
               onClick={() => setProfileOpen(!profileOpen)}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${hoverBg}`}
             >
-              <div className="w-10 h-10 rounded-lg bg-yellow-400 flex items-center justify-center font-bold text-black">
+              <div className="w-10 h-10 rounded-lg bg-[var(--brand-blue)] flex items-center justify-center font-bold text-black">
                 {user.name?.charAt(0) || 'A'}
               </div>
               {sidebarOpen && (

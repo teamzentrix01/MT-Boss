@@ -53,7 +53,7 @@ function approvalEmail({ name, email, password, city }) {
   const passwordText = password || 'Use the password you created while filling the franchise application form.';
   return `
     <div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;padding:24px;color:#111;">
-      <h2 style="margin:0 0 12px;">MT Boss Franchise Approved</h2>
+      <h2 style="margin:0 0 12px;">MTBoss Franchise Approved</h2>
       <p style="line-height:1.6;">Hello ${name || 'Franchise Partner'},</p>
       <p style="line-height:1.6;">
         Your franchise application for <strong>${city}</strong> has been approved.
@@ -65,9 +65,9 @@ function approvalEmail({ name, email, password, city }) {
         <p style="margin:0;"><strong>Password:</strong> ${passwordText}</p>
       </div>
       <p style="line-height:1.6;">
-        Please keep these credentials private. For security, change this password by contacting the MT Boss admin team if it is ever shared.
+        Please keep these credentials private. For security, change this password by contacting the MTBoss admin team if it is ever shared.
       </p>
-      <p style="font-size:12px;color:#777;margin-top:24px;">MT Boss Construction</p>
+      <p style="font-size:12px;color:#777;margin-top:24px;">MTBoss Construction</p>
     </div>
   `;
 }
@@ -197,7 +197,7 @@ export async function PATCH(req) {
 
       await sendMail({
         to: current.email,
-        subject: 'Your MT Boss franchise login credentials',
+        subject: 'Your MTBoss franchise login credentials',
         html: approvalEmail({
           name: current.name,
           email: current.email,
@@ -264,7 +264,7 @@ export async function PATCH(req) {
       try {
         await sendMail({
           to: current.email,
-          subject: 'Your MT Boss franchise has been approved',
+          subject: 'Your MTBoss franchise has been approved',
           html: approvalEmail({
             name: current.name,
             email: current.email,

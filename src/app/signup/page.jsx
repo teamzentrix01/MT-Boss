@@ -101,7 +101,7 @@ export default function SignupPage() {
         <div style={{ flex: '0 0 300px', background: dark ? '#111' : '#111113', padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} className="hidden sm:flex flex-col">
           <div>
             <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: '2.5rem' }}>
-              MT<span style={{ color: '#facc15' }}>BOSS</span>
+              MT<span style={{ color: 'var(--brand-blue)' }}>BOSS</span>
             </div>
             <div style={{ fontSize: '1.375rem', fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: '0.75rem' }}>
               Join thousands of happy customers.
@@ -111,7 +111,7 @@ export default function SignupPage() {
             </p>
             {['Free to create', 'Instant booking', 'Verified vendors', 'Secure payments'].map(f => (
               <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                <span style={{ color: '#facc15', fontWeight: 700, fontSize: '0.75rem' }}>✓</span>
+                <span style={{ color: 'var(--brand-blue)', fontWeight: 700, fontSize: '0.75rem' }}>✓</span>
                 <span style={{ fontSize: '0.8125rem', color: '#d1d5db' }}>{f}</span>
               </div>
             ))}
@@ -147,7 +147,7 @@ export default function SignupPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
                 <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Your full name" required style={inputStyle}
-                  onFocus={e => e.target.style.borderColor = '#facc15'} onBlur={e => e.target.style.borderColor = border} />
+                  onFocus={e => e.target.style.borderColor = 'var(--brand-blue)'} onBlur={e => e.target.style.borderColor = border} />
               </div>
             </div>
 
@@ -159,7 +159,7 @@ export default function SignupPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="you@example.com" required style={inputStyle}
-                  onFocus={e => e.target.style.borderColor = '#facc15'} onBlur={e => e.target.style.borderColor = border} />
+                  onFocus={e => e.target.style.borderColor = 'var(--brand-blue)'} onBlur={e => e.target.style.borderColor = border} />
               </div>
             </div>
 
@@ -172,7 +172,7 @@ export default function SignupPage() {
                 </svg>
                 <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} placeholder="Min. 6 characters" required
                   style={{ ...inputStyle, paddingRight: '2.5rem' }}
-                  onFocus={e => e.target.style.borderColor = '#facc15'} onBlur={e => e.target.style.borderColor = border} />
+                  onFocus={e => e.target.style.borderColor = 'var(--brand-blue)'} onBlur={e => e.target.style.borderColor = border} />
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
                   style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: muted, padding: 0, display: 'flex' }}>
                   {showPassword ? <EyeOpen /> : <EyeClosed />}
@@ -189,7 +189,7 @@ export default function SignupPage() {
                 </svg>
                 <input type={showConfirm ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Re-enter password" required
                   style={{ ...inputStyle, paddingRight: '2.5rem' }}
-                  onFocus={e => e.target.style.borderColor = '#facc15'} onBlur={e => e.target.style.borderColor = border} />
+                  onFocus={e => e.target.style.borderColor = 'var(--brand-blue)'} onBlur={e => e.target.style.borderColor = border} />
                 <button type="button" onClick={() => setShowConfirm(!showConfirm)}
                   style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: muted, padding: 0, display: 'flex' }}>
                   {showConfirm ? <EyeOpen /> : <EyeClosed />}
@@ -198,7 +198,7 @@ export default function SignupPage() {
             </div>
 
             <button type="submit" disabled={loading || !!success}
-              style={{ width: '100%', padding: '0.6rem 1rem', background: '#facc15', color: '#000', border: 'none', borderRadius: 7, fontSize: '0.875rem', fontWeight: 700, cursor: (loading || success) ? 'not-allowed' : 'pointer', opacity: (loading || success) ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: '1.25rem', transition: 'opacity 0.15s' }}>
+              style={{ width: '100%', padding: '0.6rem 1rem', background: 'var(--brand-blue)', color: '#000', border: 'none', borderRadius: 7, fontSize: '0.875rem', fontWeight: 700, cursor: (loading || success) ? 'not-allowed' : 'pointer', opacity: (loading || success) ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: '1.25rem', transition: 'opacity 0.15s' }}>
               {loading ? 'Creating account…' : <>Create Account <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></>}
             </button>
           </form>
@@ -207,7 +207,7 @@ export default function SignupPage() {
             Already have an account?{' '}
             <Link
               href={redirectParam ? `/login?redirect=${encodeURIComponent(redirectParam)}` : '/login'}
-              style={{ color: '#facc15', fontWeight: 600, textDecoration: 'none' }}
+              style={{ color: 'var(--brand-blue)', fontWeight: 600, textDecoration: 'none' }}
             >
               Sign in
             </Link>

@@ -32,7 +32,7 @@ export default function ProjectDetailPage() {
     return (
       <div className={`min-h-screen flex items-center justify-center ${isDark ? "bg-black" : "bg-white"}`}>
         <div className="text-center">
-          <div className="w-10 h-10 border-4 border-[#facc15] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-10 h-10 border-4 border-[var(--brand-blue)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className={`text-sm font-bold uppercase tracking-widest ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Loading Project…</p>
         </div>
       </div>
@@ -43,9 +43,9 @@ export default function ProjectDetailPage() {
     return (
       <div className={`min-h-screen flex items-center justify-center ${isDark ? "bg-black" : "bg-white"}`}>
         <div className="text-center">
-          <p className="text-[#facc15] text-xs font-black uppercase tracking-[0.4em] mb-4">404</p>
+          <p className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-[0.4em] mb-4">404</p>
           <h1 className={`text-4xl font-black uppercase tracking-tighter mb-6 ${isDark ? "text-white" : "text-zinc-900"}`}>Project Not Found</h1>
-          <Link href="/FeaturedProjects/ProjectGallery" className="inline-flex items-center gap-3 px-8 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all">
+          <Link href="/FeaturedProjects/ProjectGallery" className="inline-flex items-center gap-3 px-8 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all">
             ← Back to Gallery
           </Link>
         </div>
@@ -69,14 +69,14 @@ export default function ProjectDetailPage() {
         {/* Back button */}
         <Link
           href="/FeaturedProjects/ProjectGallery"
-          className="absolute top-8 left-8 flex items-center gap-2 text-white text-xs font-black uppercase tracking-widest border-b-2 border-[#facc15] hover:text-[#facc15] transition-colors"
+          className="absolute top-8 left-8 flex items-center gap-2 text-white text-xs font-black uppercase tracking-widest border-b-2 border-[var(--brand-blue)] hover:text-[var(--brand-blue)] transition-colors"
         >
           ← Back to Gallery
         </Link>
 
         {/* Hero text */}
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16">
-          <span className="text-[#facc15] text-xs font-black uppercase tracking-[0.4em] block mb-3">
+          <span className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-[0.4em] block mb-3">
             {project.category}{project.location ? ` — ${project.location}` : ""}
           </span>
           <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter text-white leading-none">
@@ -109,7 +109,7 @@ export default function ProjectDetailPage() {
         {/* Description */}
         {project.description && (
           <div className="mb-16">
-            <p className="text-[#facc15] text-xs font-black uppercase tracking-[0.4em] mb-4">About This Project</p>
+            <p className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-[0.4em] mb-4">About This Project</p>
             <p className={`text-lg md:text-xl leading-relaxed font-medium ${isDark ? "text-zinc-300" : "text-zinc-600"}`}>
               {project.description}
             </p>
@@ -119,7 +119,7 @@ export default function ProjectDetailPage() {
         {/* Back CTA */}
         <Link
           href="/FeaturedProjects/ProjectGallery"
-          className="inline-flex items-center gap-4 px-12 py-5 bg-[#facc15] text-black font-black uppercase text-xs tracking-[0.3em] hover:bg-black hover:text-white transition-all"
+          className="inline-flex items-center gap-4 px-12 py-5 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-[0.3em] hover:bg-black hover:text-white transition-all"
         >
           ← Explore More Projects
         </Link>

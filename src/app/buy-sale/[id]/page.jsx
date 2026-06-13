@@ -30,7 +30,7 @@ export default function PropertyDetailPage() {
           </p>
           <a
             href="/buy-sale"
-            className="mt-4 inline-block px-6 py-2 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm"
+            className="mt-4 inline-block px-6 py-2 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm"
           >
             Back to Listings
           </a>
@@ -47,7 +47,7 @@ export default function PropertyDetailPage() {
   ];
 
   const tagColors = {
-    Sale: "bg-[#facc15] text-black",
+    Sale: "bg-[var(--brand-blue)] text-black",
     Rent: "bg-blue-500 text-white",
     New: "bg-green-500 text-white",
     Featured: "bg-purple-500 text-white",
@@ -59,11 +59,11 @@ export default function PropertyDetailPage() {
       {/* Breadcrumb */}
       <div className={`py-4 px-4 border-b ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100"}`}>
         <div className="max-w-7xl mx-auto flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
-          <a href="/" className={`${dark ? "text-zinc-500 hover:text-[#facc15]" : "text-zinc-400 hover:text-zinc-800"} transition-colors`}>Home</a>
+          <a href="/" className={`${dark ? "text-zinc-500 hover:text-[var(--brand-blue)]" : "text-zinc-400 hover:text-zinc-800"} transition-colors`}>Home</a>
           <span className={dark ? "text-zinc-700" : "text-gray-300"}>›</span>
-          <a href="/buy-sale" className={`${dark ? "text-zinc-500 hover:text-[#facc15]" : "text-zinc-400 hover:text-zinc-800"} transition-colors`}>Buy and Sale</a>
+          <a href="/buy-sale" className={`${dark ? "text-zinc-500 hover:text-[var(--brand-blue)]" : "text-zinc-400 hover:text-zinc-800"} transition-colors`}>Buy and Sale</a>
           <span className={dark ? "text-zinc-700" : "text-gray-300"}>›</span>
-          <span className="text-[#facc15]">{property.title}</span>
+          <span className="text-[var(--brand-blue)]">{property.title}</span>
         </div>
       </div>
 
@@ -82,12 +82,12 @@ export default function PropertyDetailPage() {
               />
               {/* Tag */}
               {property.tag && (
-                <span className={`absolute top-4 left-4 px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm ${tagColors[property.tag] || "bg-[#facc15] text-black"}`}>
+                <span className={`absolute top-4 left-4 px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm ${tagColors[property.tag] || "bg-[var(--brand-blue)] text-black"}`}>
                   {property.tag}
                 </span>
               )}
               {/* Type */}
-              <span className={`absolute top-4 right-4 px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm ${dark ? "bg-black text-[#facc15]" : "bg-white text-zinc-800"}`}>
+              <span className={`absolute top-4 right-4 px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm ${dark ? "bg-black text-[var(--brand-blue)]" : "bg-white text-zinc-800"}`}>
                 {property.type}
               </span>
             </div>
@@ -98,7 +98,7 @@ export default function PropertyDetailPage() {
                 <button
                   key={i}
                   onClick={() => setActiveImage(i)}
-                  className={`w-20 h-16 rounded-sm overflow-hidden border-2 transition-all ${activeImage === i ? "border-[#facc15]" : dark ? "border-zinc-800" : "border-gray-200"}`}
+                  className={`w-20 h-16 rounded-sm overflow-hidden border-2 transition-all ${activeImage === i ? "border-[var(--brand-blue)]" : dark ? "border-zinc-800" : "border-gray-200"}`}
                 >
                   <img src={img} alt="" className="w-full h-full object-cover" />
                 </button>
@@ -107,7 +107,7 @@ export default function PropertyDetailPage() {
 
             {/* Title + Price */}
             <div className={`p-6 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100"}`}>
-              <p className="text-[#facc15] text-2xl font-black mb-1">
+              <p className="text-[var(--brand-blue)] text-2xl font-black mb-1">
                 ₹ {property.price}
               </p>
               <h1 className={`text-xl font-black uppercase tracking-widest mb-4 ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -116,7 +116,7 @@ export default function PropertyDetailPage() {
 
               {/* Location */}
               <div className="flex items-center gap-2 mb-6">
-                <svg className="w-4 h-4 text-[#facc15]" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 text-[var(--brand-blue)]" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
                 <span className={`text-xs font-bold ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
@@ -148,7 +148,7 @@ export default function PropertyDetailPage() {
 
               {/* Description */}
               <div className="mt-6">
-                <h2 className={`text-xs font-black uppercase tracking-widest mb-3 ${dark ? "text-[#facc15]" : "text-zinc-800"}`}>
+                <h2 className={`text-xs font-black uppercase tracking-widest mb-3 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
                   About This Property
                 </h2>
                 <p className={`text-xs leading-relaxed font-medium ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
@@ -159,7 +159,7 @@ export default function PropertyDetailPage() {
 
             {/* Location Highlights */}
             <div className={`p-6 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100"}`}>
-              <h2 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[#facc15]" : "text-zinc-800"}`}>
+              <h2 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
                 Location Highlights
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -168,7 +168,7 @@ export default function PropertyDetailPage() {
                     key={highlight}
                     className={`flex items-center gap-2 p-3 rounded-sm border ${dark ? "border-zinc-800 bg-zinc-800/50" : "border-gray-100 bg-gray-50"}`}
                   >
-                    <span className="w-2 h-2 rounded-full bg-[#facc15] flex-shrink-0" />
+                    <span className="w-2 h-2 rounded-full bg-[var(--brand-blue)] flex-shrink-0" />
                     <span className={`text-[10px] font-black uppercase tracking-widest ${dark ? "text-zinc-300" : "text-zinc-600"}`}>
                       {highlight}
                     </span>

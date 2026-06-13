@@ -68,9 +68,9 @@ export default function RentBrowsePage() {
 
       {/* Hero */}
       <div className={`relative py-20 px-4 text-center ${dark ? "bg-zinc-900" : "bg-zinc-800"}`}>
-        <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest">MTBOSS Property</span>
+        <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">MTBOSS Property</span>
         <h1 className="text-white text-3xl md:text-5xl font-black uppercase tracking-widest mt-2 mb-4">
-          Rent<span className="block text-[#facc15]">Properties</span>
+          Rent<span className="block text-[var(--brand-blue)]">Properties</span>
         </h1>
         <p className="text-zinc-400 text-xs max-w-xl mx-auto font-bold tracking-wide">
           Verified rental listings across Delhi NCR — find your perfect rental home
@@ -78,7 +78,7 @@ export default function RentBrowsePage() {
         <div className="flex items-center justify-center gap-8 mt-8">
           {[["Listings", `${allProps.length}+`], ["Locations", "8+"], ["Verified Only", "✓"]].map(([label, val]) => (
             <div key={label} className="text-center">
-              <p className="text-[#facc15] text-xl font-black">{val}</p>
+              <p className="text-[var(--brand-blue)] text-xl font-black">{val}</p>
               <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">{label}</p>
             </div>
           ))}
@@ -90,9 +90,9 @@ export default function RentBrowsePage() {
 
         <div className="flex items-center justify-between mb-6">
           <p className={`text-xs font-black uppercase tracking-widest ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
-            Showing <span className={dark ? "text-[#facc15]" : "text-zinc-800"}>{filtered.length}</span> Rental Properties
+            Showing <span className={dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}>{filtered.length}</span> Rental Properties
           </p>
-          <a href="/property/rent" className="px-4 py-2 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all">
+          <a href="/property/rent" className="px-4 py-2 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all">
             + List Your Property
           </a>
         </div>
@@ -134,7 +134,7 @@ export default function RentBrowsePage() {
                         {property.tag}
                       </span>
                     )}
-                    <span className={`px-3 py-1 text-[9px] font-black uppercase rounded-sm ${dark ? "bg-black/60 text-[#facc15]" : "bg-white/90 text-zinc-800"}`}>
+                    <span className={`px-3 py-1 text-[9px] font-black uppercase rounded-sm ${dark ? "bg-black/60 text-[var(--brand-blue)]" : "bg-white/90 text-zinc-800"}`}>
                       {property.type}
                     </span>
                   </div>
@@ -143,7 +143,7 @@ export default function RentBrowsePage() {
                 {/* Content */}
                 <div className="p-4">
                   {/* Price - Monthly Rent */}
-                  <p className="text-[#facc15] text-lg font-black mb-2">₹{property.price}/mo</p>
+                  <p className="text-[var(--brand-blue)] text-lg font-black mb-2">₹{property.price}/mo</p>
 
                   {/* Title */}
                   <h3 className={`font-black text-sm uppercase tracking-tight mb-2 line-clamp-2 ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -152,7 +152,7 @@ export default function RentBrowsePage() {
 
                   {/* Location */}
                   <div className="flex items-center gap-2 mb-3">
-                    <svg className="w-3 h-3 text-[#facc15]" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3 h-3 text-[var(--brand-blue)]" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                     </svg>
                     <span className={`text-[10px] font-bold ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
@@ -183,7 +183,7 @@ export default function RentBrowsePage() {
                   </div>
 
                   {/* View Button */}
-                  <button className="w-full mt-3 py-2 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all rounded-sm">
+                  <button className="w-full mt-3 py-2 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all rounded-sm">
                     View Details →
                   </button>
                 </div>

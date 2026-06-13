@@ -57,9 +57,9 @@ export default function AboutSection({
   }, [images.length]);
 
   // Updated Theme Colors
-  const themeColor = "#facc15"; 
+  const themeColor = "var(--brand-blue)"; 
   const bgColor = isDark ? "#000000" : "#ffffff";
-  const headingColor = isDark ? "#facc15" : "#eab308"; 
+  const headingColor = isDark ? "var(--brand-blue)" : "var(--brand-blue-dark)"; 
   const bodyTextColor = isDark ? "#d1d5db" : "#4b5563";
 
   return (
@@ -96,7 +96,7 @@ export default function AboutSection({
         <h2 className="text-3xl sm:text-5xl font-black tracking-wide mb-2 transition-colors duration-500"
           style={{ 
             color: headingColor, 
-            textShadow: isDark ? '0 2px 10px rgba(250,204,21,0.3)' : '0 1px 4px rgba(0,0,0,0.1)' 
+            textShadow: isDark ? '0 2px 10px color-mix(in srgb, var(--brand-blue) 30%, transparent)' : '0 1px 4px rgba(0,0,0,0.1)' 
           }}>
           {title}
         </h2>

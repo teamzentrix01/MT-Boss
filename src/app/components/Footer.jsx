@@ -42,7 +42,7 @@ export default function Footer() {
     { label: "LinkedIn", href: "https://in.linkedin.com/company/mtboss-construction-company", icon: <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /> },
   ];
 
-  const themeYellow = "#facc15";
+  const themeYellow = "var(--brand-blue)";
 
   return (
     <footer className={`transition-colors duration-500 border-t ${isDark ? 'bg-black border-zinc-900' : 'bg-white border-zinc-100'}`}>
@@ -60,7 +60,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-3">
               {socialLinks.map((s) => (
-                <a key={s.label} href={s.href} className={`w-9 h-9 flex items-center justify-center rounded-sm transition-all duration-300 hover:scale-110 ${isDark ? 'bg-zinc-900 text-white hover:bg-[#facc15] hover:text-black' : 'bg-zinc-100 text-zinc-900 hover:bg-[#facc15]'}`}>
+                <a key={s.label} href={s.href} className={`w-9 h-9 flex items-center justify-center rounded-sm transition-all duration-300 hover:scale-110 ${isDark ? 'bg-zinc-900 text-white hover:bg-[var(--brand-blue)] hover:text-black' : 'bg-zinc-100 text-zinc-900 hover:bg-[var(--brand-blue)]'}`}>
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">{s.icon}</svg>
                 </a>
               ))}
@@ -75,7 +75,7 @@ export default function Footer() {
             <ul className="space-y-4">
               {quickLinks.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className={`text-sm font-bold transition-colors duration-200 hover:text-[#facc15] ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
+                  <a href={link.href} className={`text-sm font-bold transition-colors duration-200 hover:text-[var(--brand-blue)] ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
                     {link.label}
                   </a>
                 </li>
@@ -91,7 +91,7 @@ export default function Footer() {
             <ul className="space-y-4">
               {serviceLinks.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className={`text-sm font-bold transition-colors duration-200 hover:text-[#facc15] ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
+                  <a href={link.href} className={`text-sm font-bold transition-colors duration-200 hover:text-[var(--brand-blue)] ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
                     {link.label}
                   </a>
                 </li>
@@ -111,10 +111,10 @@ export default function Footer() {
                   Harthala Kanth Road Behind Kr Collection, near Domino's,<br />Uttar Pradesh, India
                 </p>
               </div>
-              <a href="mailto:info@mtboss.in" className={`block text-sm font-black hover:text-[#facc15] transition-colors ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+              <a href="mailto:info@mtboss.in" className={`block text-sm font-black hover:text-[var(--brand-blue)] transition-colors ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                 info@mtboss.in
               </a>
-              <a href="tel:+911234567890" className={`block text-sm font-black hover:text-[#facc15] transition-colors ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+              <a href="tel:+911234567890" className={`block text-sm font-black hover:text-[var(--brand-blue)] transition-colors ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                 +91 94584 10866
               </a>
             </div>
@@ -130,8 +130,8 @@ export default function Footer() {
             © {new Date().getFullYear()} MTBOSS CONSTRUCTION — BUILT WITH PRECISION
           </p>
           <div className="flex gap-6">
-            <a href="#" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[#facc15]">Privacy</a>
-            <a href="#" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[#facc15]">Terms</a>
+            <a href="#" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[var(--brand-blue)]">Privacy</a>
+            <a href="#" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[var(--brand-blue)]">Terms</a>
           </div>
         </div>
       </div>

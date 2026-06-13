@@ -80,7 +80,7 @@ export default function ServiceDetailPage() {
   const muted= isDark ? "text-zinc-400"                  : "text-zinc-600";
   const card = isDark ? "bg-zinc-950 border-zinc-800"    : "bg-zinc-50 border-zinc-100";
   const inp  = `w-full px-3 py-2.5 border text-sm outline-none transition-all ${isDark
-    ? "bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-[#facc15]"
+    ? "bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-[var(--brand-blue)]"
     : "bg-white border-zinc-300 text-zinc-900 placeholder:text-zinc-400 focus:border-black"}`;
 
   const fetchLiveLocation = () => {
@@ -156,7 +156,7 @@ export default function ServiceDetailPage() {
 
   if (loading) return (
     <main className={`min-h-screen flex items-center justify-center font-serif ${bg}`}>
-      <p className="text-[#facc15] text-sm font-black uppercase tracking-widest animate-pulse">Loading...</p>
+      <p className="text-[var(--brand-blue)] text-sm font-black uppercase tracking-widest animate-pulse">Loading...</p>
     </main>
   );
 
@@ -166,7 +166,7 @@ export default function ServiceDetailPage() {
       <h1 className="text-2xl font-black uppercase tracking-tight mb-2">Service Not Found</h1>
       <p className={`text-sm mb-6 ${muted}`}>This service doesn&apos;t exist or has been removed.</p>
       <button onClick={() => router.push("/Services/all")}
-        className="px-6 py-3 bg-[#facc15] text-black font-black uppercase text-[9px] tracking-widest hover:bg-black hover:text-[#facc15] transition-all">
+        className="px-6 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-[9px] tracking-widest hover:bg-black hover:text-[var(--brand-blue)] transition-all">
         ← Back to Services
       </button>
     </main>
@@ -207,9 +207,9 @@ export default function ServiceDetailPage() {
         <img src={service.image} alt={service.title} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
         <div className="relative z-10 max-w-4xl mx-auto px-6 pb-14 w-full">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.5em] mb-3">MTBOSS Construction</p>
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-3">MTBOSS Construction</p>
           <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-white leading-none mb-4">
-            {titleMain}<br /><span className="text-[#facc15]">{titleLast}</span>
+            {titleMain}<br /><span className="text-[var(--brand-blue)]">{titleLast}</span>
           </h1>
           <p className="text-zinc-300 text-sm max-w-md leading-relaxed">{heroSubtitle}</p>
         </div>
@@ -219,19 +219,19 @@ export default function ServiceDetailPage() {
       <section className={`py-14 px-6 border-b ${isDark ? "border-zinc-900" : "border-zinc-100"}`}>
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center">
           <div>
-            <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">About This Service</p>
+            <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">About This Service</p>
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">
               {aboutHeading.includes(" ") ? (
                 <>{aboutHeading.split(" ").slice(0,-1).join(" ")}<br />
-                  <span className="text-[#facc15]">{aboutHeading.split(" ").slice(-1)}</span></>
-              ) : <span className="text-[#facc15]">{aboutHeading}</span>}
+                  <span className="text-[var(--brand-blue)]">{aboutHeading.split(" ").slice(-1)}</span></>
+              ) : <span className="text-[var(--brand-blue)]">{aboutHeading}</span>}
             </h2>
             <p className={`text-sm leading-relaxed mb-4 ${muted}`}>{aboutBody}</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {finalStats.map(([val, label]) => (
               <div key={label} className={`border p-5 ${card}`}>
-                <p className="text-2xl font-black text-[#facc15]">{val}</p>
+                <p className="text-2xl font-black text-[var(--brand-blue)]">{val}</p>
                 <p className={`text-[10px] uppercase tracking-widest mt-1 font-bold ${muted}`}>{label}</p>
               </div>
             ))}
@@ -242,12 +242,12 @@ export default function ServiceDetailPage() {
       {/* ── Process ── */}
       <section className="py-14 px-6">
         <div className="max-w-5xl mx-auto">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">How We Work</p>
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">How We Work</p>
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">Our Process</h2>
           <div className="grid md:grid-cols-3 gap-0">
             {processList.map((p, i) => (
               <div key={i} className={`border p-6 ${card} ${i > 0 && i % 3 !== 0 ? "border-l-0" : ""} ${i >= 3 ? "border-t-0" : ""}`}>
-                <p className="text-3xl font-black text-[#facc15]/30 mb-3">{p.step}</p>
+                <p className="text-3xl font-black text-[var(--brand-blue)]/30 mb-3">{p.step}</p>
                 <h3 className="text-sm font-black uppercase tracking-tight mb-2">{p.title}</h3>
                 <p className={`text-xs leading-relaxed ${muted}`}>{p.desc}</p>
               </div>
@@ -259,11 +259,11 @@ export default function ServiceDetailPage() {
       {/* ── Benefits ── */}
       <section className={`py-14 px-6 ${isDark ? "bg-zinc-950" : "bg-zinc-50"}`}>
         <div className="max-w-5xl mx-auto">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Why Choose Us</p>
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Why Choose Us</p>
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">The MTBOSS<br />Advantage</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {benefitsList.map((b, i) => (
-              <div key={i} className={`border p-5 hover:border-[#facc15] transition-all ${card}`}>
+              <div key={i} className={`border p-5 hover:border-[var(--brand-blue)] transition-all ${card}`}>
                 <p className="text-2xl mb-3">{b.icon}</p>
                 <h3 className="text-xs font-black uppercase tracking-tight mb-1">{b.title}</h3>
                 <p className={`text-xs leading-relaxed ${muted}`}>{b.desc}</p>
@@ -276,7 +276,7 @@ export default function ServiceDetailPage() {
       {/* ── Projects ── */}
       <section className="py-14 px-6">
         <div className="max-w-5xl mx-auto">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Project References</p>
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Project References</p>
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">Signature<br />Projects</h2>
           <div className="grid md:grid-cols-3 gap-5">
             {projectsList.map((p, i) => (
@@ -284,7 +284,7 @@ export default function ServiceDetailPage() {
                 <div className="relative h-44 overflow-hidden">
                   <img src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className={`absolute top-3 right-3 px-2 py-1 text-[9px] font-black uppercase tracking-widest ${
-                    p.status === "Delivered" ? "bg-[#facc15] text-black" : "bg-black text-[#facc15] border border-[#facc15]"
+                    p.status === "Delivered" ? "bg-[var(--brand-blue)] text-black" : "bg-black text-[var(--brand-blue)] border border-[var(--brand-blue)]"
                   }`}>{p.status}</div>
                 </div>
                 <div className="p-4">
@@ -301,16 +301,16 @@ export default function ServiceDetailPage() {
       <section className={`py-14 px-6 ${isDark ? "bg-zinc-950" : "bg-zinc-100"}`}>
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-start">
           <div>
-            <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Get Started</p>
+            <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Get Started</p>
             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4">
               {ctaHeading.split(" ").length > 2
-                ? <>{ctaHeading.split(" ").slice(0,2).join(" ")}<br /><span className="text-[#facc15]">{ctaHeading.split(" ").slice(2,4).join(" ")}</span><br />{ctaHeading.split(" ").slice(4).join(" ")}</>
+                ? <>{ctaHeading.split(" ").slice(0,2).join(" ")}<br /><span className="text-[var(--brand-blue)]">{ctaHeading.split(" ").slice(2,4).join(" ")}</span><br />{ctaHeading.split(" ").slice(4).join(" ")}</>
                 : ctaHeading}
             </h2>
             <p className={`text-sm leading-relaxed ${muted}`}>
               Our specialist will reach out within 24 hours with a customised proposal.
             </p>
-            <div className={`mt-6 border-l-4 border-[#facc15] pl-4 ${muted}`}>
+            <div className={`mt-6 border-l-4 border-[var(--brand-blue)] pl-4 ${muted}`}>
               <p className="text-xs font-bold mb-1">📞 {phone}</p>
               <p className="text-xs font-bold">✉️ {email}</p>
             </div>
@@ -384,7 +384,7 @@ export default function ServiceDetailPage() {
                     gpsCoords
                       ? "bg-green-600 text-white border-green-600"
                       : isDark
-                        ? "bg-zinc-800 text-zinc-300 border-zinc-600 hover:border-[#facc15] hover:text-[#facc15]"
+                        ? "bg-zinc-800 text-zinc-300 border-zinc-600 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
                         : "bg-white text-zinc-700 border-zinc-300 hover:border-black"
                   } disabled:opacity-60 disabled:cursor-not-allowed`}>
                   {fetchingGps ? "📡 Fetching location…" : gpsCoords ? `✓ Location Fetched (${gpsCoords.lat.toFixed(4)}, ${gpsCoords.lng.toFixed(4)})` : "📍 Use My Live Location"}
@@ -424,7 +424,7 @@ export default function ServiceDetailPage() {
               {submitError && <p className="text-xs font-bold text-red-500">{submitError}</p>}
 
               <button type="submit" disabled={submitting}
-                className="w-full py-3 bg-[#facc15] text-black font-black uppercase text-[9px] tracking-widest hover:bg-black hover:text-[#facc15] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed">
+                className="w-full py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-[9px] tracking-widest hover:bg-black hover:text-[var(--brand-blue)] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed">
                 {submitting ? "Submitting…" : "Submit Enquiry →"}
               </button>
             </form>

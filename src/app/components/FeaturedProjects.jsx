@@ -43,16 +43,16 @@ export default function FeaturedProjects() {
           style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? "translateY(0)" : "translateY(16px)", transition: "opacity 0.6s ease, transform 0.6s ease" }}
         >
           <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 text-[#facc15]">Our Masterpieces</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 text-[var(--brand-blue)]">Our Masterpieces</p>
             <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-none ${isDark ? "text-white" : "text-zinc-900"}`}>
-              Featured <span className="text-[#facc15]">Projects</span>
+              Featured <span className="text-[var(--brand-blue)]">Projects</span>
             </h2>
           </div>
           <Link
             href="/FeaturedProjects/ProjectGallery"
             className={`group self-start flex items-center gap-2 px-5 py-2.5 border font-black uppercase text-[9px] tracking-widest transition-all ${
               isDark
-                ? "border-zinc-700 text-white hover:bg-[#facc15] hover:text-black hover:border-[#facc15]"
+                ? "border-zinc-700 text-white hover:bg-[var(--brand-blue)] hover:text-black hover:border-[var(--brand-blue)]"
                 : "border-zinc-300 text-zinc-800 hover:bg-zinc-900 hover:text-white hover:border-zinc-900"
             }`}
           >
@@ -91,14 +91,14 @@ export default function FeaturedProjects() {
 
               {/* Overlay */}
               <div className="absolute inset-0 p-4 flex flex-col justify-end">
-                <p className="text-[#facc15] text-[8px] font-black uppercase tracking-widest mb-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <p className="text-[var(--brand-blue)] text-[8px] font-black uppercase tracking-widest mb-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {project.category}{project.location ? ` — ${project.location}` : ""}
                 </p>
                 <h3 className="text-white text-sm font-black uppercase leading-tight mb-2">{project.title}</h3>
                 <div className="h-0 group-hover:h-8 overflow-hidden transition-all duration-500">
                   <Link
                     href="/FeaturedProjects/ProjectGallery"
-                    className="inline-block bg-[#facc15] text-black px-4 py-1.5 text-[8px] font-black uppercase tracking-widest hover:bg-white transition-colors"
+                    className="inline-block bg-[var(--brand-blue)] text-black px-4 py-1.5 text-[8px] font-black uppercase tracking-widest hover:bg-white transition-colors"
                   >
                     Explore Details
                   </Link>
@@ -106,7 +106,7 @@ export default function FeaturedProjects() {
               </div>
 
               {/* Number watermark */}
-              <span className="absolute top-3 right-3 text-white/10 text-3xl font-black italic group-hover:text-[#facc15]/20 transition-colors">
+              <span className="absolute top-3 right-3 text-white/10 text-3xl font-black italic group-hover:text-[var(--brand-blue)]/20 transition-colors">
                 0{idx + 1}
               </span>
             </div>

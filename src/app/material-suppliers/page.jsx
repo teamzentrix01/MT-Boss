@@ -31,12 +31,12 @@ function useInView(threshold = 0.1) {
 
 const materialCategories = [
   { icon: "🧱", title: "Cement & Concrete", desc: "OPC, PPC, RMC, fly ash bricks, AAC blocks and allied products.", tag: "High Volume", color: "border-blue-500/30", badge: "bg-blue-500/10 text-blue-400" },
-  { icon: "⚙️", title: "Steel & Iron", desc: "TMT bars, structural steel, MS plates, wire mesh and fabrication materials.", tag: "Always Needed", color: "border-[#facc15]/30", badge: "bg-[#facc15]/10 text-[#facc15]", popular: true },
+  { icon: "⚙️", title: "Steel & Iron", desc: "TMT bars, structural steel, MS plates, wire mesh and fabrication materials.", tag: "Always Needed", color: "border-[var(--brand-blue)]/30", badge: "bg-[var(--brand-blue)]/10 text-[var(--brand-blue)]", popular: true },
   { icon: "🪵", title: "Wood & Timber", desc: "Plywood, MDF, hardwood, softwood, veneers and wood-based panels.", tag: "Growing", color: "border-green-500/30", badge: "bg-green-500/10 text-green-400" },
   { icon: "🔧", title: "Hardware & Fixtures", desc: "Pipes, fittings, fasteners, electrical hardware and plumbing accessories.", tag: "Steady Demand", color: "border-purple-500/30", badge: "bg-purple-500/10 text-purple-400" },
   { icon: "🪟", title: "Glass & Aluminium", desc: "Float glass, toughened glass, aluminium sections, UPVC windows and facades.", tag: "Specialized", color: "border-pink-500/30", badge: "bg-pink-500/10 text-pink-400" },
   { icon: "🎨", title: "Paints & Chemicals", desc: "Exterior paints, waterproofing, adhesives, sealants and construction chemicals.", tag: "Regular Supply", color: "border-orange-500/30", badge: "bg-orange-500/10 text-orange-400" },
-  { icon: "🪨", title: "Aggregates & Sand", desc: "M-sand, river sand, gravel, stone chips, granite and quarrying products.", tag: "Bulk Supply", color: "border-yellow-500/30", badge: "bg-yellow-500/10 text-yellow-600" },
+  { icon: "🪨", title: "Aggregates & Sand", desc: "M-sand, river sand, gravel, stone chips, granite and quarrying products.", tag: "Bulk Supply", color: "border-[var(--brand-blue)]/30", badge: "bg-sky-500/10 text-[var(--brand-blue-deep)]" },
   { icon: "💡", title: "Electrical Materials", desc: "Wires, cables, switchgear, conduits, panels and electrical accessories.", tag: "High Demand", color: "border-cyan-500/30", badge: "bg-cyan-500/10 text-cyan-400" },
 ];
 
@@ -66,7 +66,7 @@ const plans = [
     name: "Verified Supplier",
     price: "₹ 3,999",
     period: "Per Year",
-    color: "border-[#facc15]",
+    color: "border-[var(--brand-blue)]",
     highlight: true,
     popular: true,
     features: [
@@ -210,7 +210,7 @@ export default function MaterialSuppliersPage() {
 
   const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${
     dark
-      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]"
+      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
       : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
   }`;
 
@@ -222,30 +222,30 @@ export default function MaterialSuppliersPage() {
     return (
       <main className={`min-h-screen flex items-center justify-center px-6 ${dark ? "bg-black" : "bg-gray-50"}`}>
         <div className={`max-w-lg w-full text-center p-12 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100 shadow-xl"}`}>
-          <div className="w-20 h-20 bg-[#facc15] rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-[var(--brand-blue)] rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest block mb-2">Registration Submitted!</span>
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest block mb-2">Registration Submitted!</span>
           <h2 className={`text-xl font-black uppercase tracking-tight mb-3 ${dark ? "text-white" : "text-zinc-800"}`}>
             Welcome, {form.name.split(" ")[0]}!
           </h2>
           <p className={`text-xs leading-relaxed mb-3 ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
             Your material supplier registration has been received.
           </p>
-          <p className="text-[#facc15] font-black text-sm mb-2">{form.materialCategory} — {form.plan}</p>
+          <p className="text-[var(--brand-blue)] font-black text-sm mb-2">{form.materialCategory} — {form.plan}</p>
           <p className={`text-xs mb-8 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
             Our procurement team will verify and contact you within 2-3 business days on{" "}
             <span className={`font-black ${dark ? "text-white" : "text-zinc-800"}`}>{form.email}</span>
           </p>
           <div className="flex gap-3 justify-center">
-            <Link href="/" className={`px-6 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all ${dark ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]" : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"}`}>
+            <Link href="/" className={`px-6 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all ${dark ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"}`}>
               Go Home
             </Link>
             <button
               onClick={() => { setSubmitted(false); setForm({ name: "", email: "", phone: "", companyName: "", city: "", state: "", materialCategory: "", supplyCapacity: "", experience: "", gst: "", pan: "", plan: "Free Listing", brands: "", deliveryArea: "", message: "" }); }}
-              className="px-6 py-3 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all"
+              className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
             >
               New Registration
             </button>
@@ -269,10 +269,10 @@ export default function MaterialSuppliersPage() {
       >
         <div className="absolute inset-0 bg-black/80" />
         <div className="relative z-10 max-w-3xl mx-auto">
-          <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">MTBOSS Construction</span>
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">MTBOSS Construction</span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Material
-            <span className="block text-[#facc15]">Suppliers</span>
+            <span className="block text-[var(--brand-blue)]">Suppliers</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
             Register as an approved material supplier with MTBOSS Construction. Get direct access to project RFQs, bulk orders, and long-term supply contracts across India.
@@ -285,12 +285,12 @@ export default function MaterialSuppliersPage() {
               { value: "Free", label: "Basic Listing" },
             ].map((s) => (
               <div key={s.label} className="text-center">
-                <p className="text-[#facc15] text-2xl font-black">{s.value}</p>
+                <p className="text-[var(--brand-blue)] text-2xl font-black">{s.value}</p>
                 <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">{s.label}</p>
               </div>
             ))}
           </div>
-          <a href="#supplier-form" className="mt-10 inline-flex items-center gap-3 px-10 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all">
+          <a href="#supplier-form" className="mt-10 inline-flex items-center gap-3 px-10 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all">
             Register as Supplier
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -305,7 +305,7 @@ export default function MaterialSuppliersPage() {
           style={{ opacity: catVisible ? 1 : 0, transform: catVisible ? "translateY(0)" : "translateY(30px)", transition: "opacity 0.7s ease, transform 0.7s ease" }}
         >
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">What We Need</span>
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">What We Need</span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
               Material Categories
             </h2>
@@ -315,15 +315,15 @@ export default function MaterialSuppliersPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {materialCategories.map((cat, i) => (
-              <div key={i} className={`relative p-6 rounded-sm border-2 transition-all duration-300 group hover:border-[#facc15] ${cat.color} ${dark ? "bg-zinc-800" : "bg-white shadow-md"}`}>
+              <div key={i} className={`relative p-6 rounded-sm border-2 transition-all duration-300 group hover:border-[var(--brand-blue)] ${cat.color} ${dark ? "bg-zinc-800" : "bg-white shadow-md"}`}>
                 {cat.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="px-3 py-1 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest rounded-sm">High Volume</span>
+                    <span className="px-3 py-1 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest rounded-sm">High Volume</span>
                   </div>
                 )}
                 <span className="text-3xl block mb-3">{cat.icon}</span>
                 <span className={`inline-block px-2 py-1 text-[9px] font-black uppercase tracking-widest rounded-sm mb-3 ${cat.badge}`}>{cat.tag}</span>
-                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>{cat.title}</h3>
+                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>{cat.title}</h3>
                 <p className={`text-xs leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-500"}`}>{cat.desc}</p>
               </div>
             ))}
@@ -337,14 +337,14 @@ export default function MaterialSuppliersPage() {
           style={{ opacity: benefitsVisible ? 1 : 0, transform: benefitsVisible ? "translateY(0)" : "translateY(30px)", transition: "opacity 0.7s ease, transform 0.7s ease" }}
         >
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Why Register</span>
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Why Register</span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>Supplier Benefits</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {benefits.map((b, i) => (
-              <div key={i} className={`group p-6 rounded-sm border transition-all duration-300 hover:border-[#facc15] ${dark ? "bg-zinc-900 border-zinc-800 hover:bg-zinc-800" : "bg-white border-gray-100 hover:shadow-lg"}`}>
+              <div key={i} className={`group p-6 rounded-sm border transition-all duration-300 hover:border-[var(--brand-blue)] ${dark ? "bg-zinc-900 border-zinc-800 hover:bg-zinc-800" : "bg-white border-gray-100 hover:shadow-lg"}`}>
                 <span className="text-3xl block mb-4">{b.icon}</span>
-                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[#facc15] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>{b.title}</h3>
+                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>{b.title}</h3>
                 <p className={`text-xs leading-relaxed ${dark ? "text-zinc-500" : "text-zinc-500"}`}>{b.desc}</p>
               </div>
             ))}
@@ -356,7 +356,7 @@ export default function MaterialSuppliersPage() {
       <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Choose Your Plan</span>
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Choose Your Plan</span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>Free and Paid Plans</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
@@ -364,18 +364,18 @@ export default function MaterialSuppliersPage() {
               <div key={i} className={`relative p-8 rounded-sm border-2 flex flex-col transition-all duration-300 ${plan.color} ${dark ? "bg-zinc-800" : "bg-white shadow-lg"}`}>
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="px-4 py-1 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest rounded-sm">Most Popular</span>
+                    <span className="px-4 py-1 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm">Most Popular</span>
                   </div>
                 )}
                 <div className="mb-6">
                   <h3 className={`text-sm font-black uppercase tracking-widest mb-3 ${dark ? "text-white" : "text-zinc-800"}`}>{plan.name}</h3>
-                  <p className="text-[#facc15] text-3xl font-black">{plan.price}</p>
+                  <p className="text-[var(--brand-blue)] text-3xl font-black">{plan.price}</p>
                   <p className={`text-[10px] font-bold uppercase tracking-widest mt-1 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>{plan.period}</p>
                 </div>
                 <ul className="space-y-2.5 mb-6 flex-1">
                   {plan.features.map((f, j) => (
                     <li key={j} className="flex items-start gap-2">
-                      <svg className="w-3.5 h-3.5 text-[#facc15] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-3.5 h-3.5 text-[var(--brand-blue)] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                       <span className={`text-[11px] font-bold ${dark ? "text-zinc-300" : "text-zinc-600"}`}>{f}</span>
@@ -391,7 +391,7 @@ export default function MaterialSuppliersPage() {
                   ))}
                 </ul>
                 <a href="#supplier-form" onClick={() => setForm({ ...form, plan: plan.name })}
-                  className={`block text-center py-3 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${plan.highlight ? "bg-[#facc15] border-[#facc15] text-black hover:bg-yellow-400" : dark ? "border-zinc-600 text-zinc-300 hover:border-[#facc15] hover:text-[#facc15]" : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"}`}
+                  className={`block text-center py-3 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${plan.highlight ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-dark)]" : dark ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"}`}
                 >
                   {plan.cta}
                 </a>
@@ -402,7 +402,7 @@ export default function MaterialSuppliersPage() {
       </section>
 
       {/* STATS STRIP */}
-      <section className="py-12 px-6 bg-[#facc15]">
+      <section className="py-12 px-6 bg-[var(--brand-blue)]">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
@@ -424,15 +424,15 @@ export default function MaterialSuppliersPage() {
       <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-gray-50"}`}>
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Common Questions</span>
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Common Questions</span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>FAQ</h2>
           </div>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
-              <div key={i} className={`rounded-sm border overflow-hidden transition-all duration-300 ${activeFaq === i ? dark ? "border-[#facc15] bg-zinc-900" : "border-zinc-800 bg-white shadow-md" : dark ? "border-zinc-800 bg-zinc-900" : "border-gray-100 bg-white"}`}>
+              <div key={i} className={`rounded-sm border overflow-hidden transition-all duration-300 ${activeFaq === i ? dark ? "border-[var(--brand-blue)] bg-zinc-900" : "border-zinc-800 bg-white shadow-md" : dark ? "border-zinc-800 bg-zinc-900" : "border-gray-100 bg-white"}`}>
                 <button onClick={() => setActiveFaq(activeFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left">
                   <span className={`text-xs font-black uppercase tracking-wide pr-4 ${dark ? "text-white" : "text-zinc-800"}`}>{faq.q}</span>
-                  <svg className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 text-[#facc15] ${activeFaq === i ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 text-[var(--brand-blue)] ${activeFaq === i ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
@@ -449,13 +449,13 @@ export default function MaterialSuppliersPage() {
       <section id="supplier-form" className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Get Started</span>
+            <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Get Started</span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>Supplier Registration</h2>
             <p className={`text-xs mt-3 max-w-lg mx-auto ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
               Fill in your details. Our procurement team will verify and onboard you within 2-3 business days.
             </p>
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#facc15]/10 border border-[#facc15]/30 rounded-sm">
-              <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest">Selected Plan: {form.plan}</span>
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-blue)]/10 border border-[var(--brand-blue)]/30 rounded-sm">
+              <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">Selected Plan: {form.plan}</span>
             </div>
           </div>
 
@@ -578,9 +578,9 @@ export default function MaterialSuppliersPage() {
               </div>
 
               {/* Agreement */}
-              <div className={`p-4 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-700" : "bg-yellow-50 border-yellow-100"}`}>
+              <div className={`p-4 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-700" : "bg-sky-50 border-sky-100"}`}>
                 <label className="flex items-start gap-3 cursor-pointer">
-                  <input type="checkbox" required className="mt-0.5 accent-[#facc15]" />
+                  <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)]" />
                   <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
                     I confirm that all information provided is accurate and that my business holds valid legal registrations. I agree to MTBOSS Construction's supplier terms and quality standards.
                   </span>
@@ -592,7 +592,7 @@ export default function MaterialSuppliersPage() {
                 <p className={`text-[10px] ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
                   Your information is secure and used only for verification.
                 </p>
-                <button type="submit" disabled={loading} className="px-12 py-4 bg-[#facc15] text-black text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 rounded-sm">
+                <button type="submit" disabled={loading} className="px-12 py-4 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 rounded-sm">
                   {loading ? (
                     <>
                       <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -620,13 +620,13 @@ export default function MaterialSuppliersPage() {
       {/* BOTTOM CTA */}
       <section className={`py-16 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-zinc-800"}`}>
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#facc15] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Need Help?</p>
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Need Help?</p>
           <h2 className="text-2xl sm:text-3xl font-black uppercase text-white mb-4 tracking-tight">Talk to Our Procurement Team</h2>
           <p className="text-zinc-400 text-xs mb-8 max-w-lg mx-auto leading-relaxed">
             Questions about registration, supply requirements, or rate contracts? Our procurement team is ready to help.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="tel:+919999999999" className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all">
+            <a href="tel:+919999999999" className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.948V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>

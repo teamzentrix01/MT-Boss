@@ -10,13 +10,13 @@ function th(dark) {
     muted:   dark ? '#52525b'  : '#9ca3af',
     border:  dark ? '#27272a'  : '#e5e7eb',
     inputBg: dark ? '#0a0a0a'  : '#f9fafb',
-    accent:  dark ? '#facc15'  : '#111827',
+    accent:  dark ? 'var(--brand-blue)'  : '#111827',
     accentFg:dark ? '#000000'  : '#ffffff',
     rowHov:  dark ? '#1a1a1a'  : '#f9fafb',
     tHead:   dark ? '#0a0a0a'  : '#f3f4f6',
     newBg:   dark ? '#1a1400'  : '#fefce8',
-    newBorder:dark? '#854d0e'  : '#fde68a',
-    newText: dark ? '#fbbf24'  : '#92400e',
+    newBorder:dark? 'var(--brand-blue-deeper)'  : '#fde68a',
+    newText: dark ? 'var(--brand-blue-light)'  : '#92400e',
   };
 }
 
@@ -102,11 +102,11 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
 
       {/* ── Pending Applications Banner ─────────────────────────────────── */}
       {pendingApps.length > 0 && (
-        <div style={{ border:`1px solid #854d0e`, borderRadius:'6px', background: isDarkMode ? '#1a1000' : '#fffbeb', marginBottom:'24px', overflow:'hidden' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'12px 16px', borderBottom:`1px solid #854d0e` }}>
+        <div style={{ border:`1px solid var(--brand-blue-deeper)`, borderRadius:'6px', background: isDarkMode ? '#1a1000' : 'var(--brand-blue-faint)', marginBottom:'24px', overflow:'hidden' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'12px 16px', borderBottom:`1px solid var(--brand-blue-deeper)` }}>
             <span style={{ fontSize:'18px' }}>🔔</span>
             <div style={{ flex:1 }}>
-              <span style={{ fontWeight:800, fontSize:'13px', color: isDarkMode ? '#fbbf24' : '#92400e' }}>
+              <span style={{ fontWeight:800, fontSize:'13px', color: isDarkMode ? 'var(--brand-blue-light)' : '#92400e' }}>
                 {pendingApps.length} New Professional Application{pendingApps.length > 1 ? 's' : ''} Awaiting Review
               </span>
               <span style={{ fontSize:'11px', color: isDarkMode ? '#a16207' : '#b45309', marginLeft:'10px' }}>
@@ -114,7 +114,7 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
               </span>
             </div>
             <a href="?tab=professionals"
-              style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', color: isDarkMode ? '#fbbf24' : '#92400e', textDecoration:'none', border:`1px solid #854d0e`, borderRadius:'4px', padding:'5px 10px', whiteSpace:'nowrap' }}>
+              style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', color: isDarkMode ? 'var(--brand-blue-light)' : '#92400e', textDecoration:'none', border:`1px solid var(--brand-blue-deeper)`, borderRadius:'4px', padding:'5px 10px', whiteSpace:'nowrap' }}>
               Review →
             </a>
           </div>
@@ -125,7 +125,7 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
                 onClick={() => setSelectedApp(p)}>
                 <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
                   {p.profile_picture
-                    ? <img src={p.profile_picture} alt="" style={{ width:38, height:38, borderRadius:'50%', objectFit:'cover', border:`1px solid #854d0e`, flexShrink:0 }} />
+                    ? <img src={p.profile_picture} alt="" style={{ width:38, height:38, borderRadius:'50%', objectFit:'cover', border:`1px solid var(--brand-blue-deeper)`, flexShrink:0 }} />
                     : <div style={{ width:38, height:38, borderRadius:'50%', background: isDarkMode ? '#2a1800' : '#fde68a', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'18px', flexShrink:0 }}>👤</div>
                   }
                   <div style={{ flex:1, minWidth:0 }}>
@@ -133,7 +133,7 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
                     <div style={{ fontSize:'11px', color: isDarkMode ? '#a16207' : '#b45309', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.title} · {p.city}</div>
                     <div style={{ fontSize:'10px', color: isDarkMode ? '#6b7280' : '#9ca3af', marginTop:'1px' }}>{fmtDate(p.created_at)}</div>
                   </div>
-                  <span style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', color:'#f59e0b', background: isDarkMode ? '#2a1800' : '#fef3c7', padding:'2px 8px', borderRadius:'20px', whiteSpace:'nowrap' }}>Pending</span>
+                  <span style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', color:'var(--brand-blue-dark)', background: isDarkMode ? '#2a1800' : 'var(--brand-blue-soft)', padding:'2px 8px', borderRadius:'20px', whiteSpace:'nowrap' }}>Pending</span>
                 </div>
               </div>
             ))}
@@ -145,10 +145,10 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))', gap:'12px', marginBottom:'24px' }}>
         {[
           { label:'Total',   val:enquiries.length,                    color:t.sub    },
-          { label:'New',     val:unread,                              color:'#facc15' },
+          { label:'New',     val:unread,                              color:'var(--brand-blue)' },
           { label:'Read',    val:enquiries.length - unread,           color:'#22c55e' },
           { label:'Professionals', val:new Set(enquiries.map(e=>e.professional_id)).size, color:t.accent },
-          { label:'Pending Apps',  val:pendingApps.length,            color:'#f59e0b' },
+          { label:'Pending Apps',  val:pendingApps.length,            color:'var(--brand-blue-dark)' },
         ].map(s=>(
           <div key={s.label} style={{ background:t.card, border:`1px solid ${t.border}`, borderRadius:'4px', padding:'16px', textAlign:'center' }}>
             <div style={{ fontSize:'22px', fontWeight:800, color:s.color, fontVariantNumeric:'tabular-nums' }}>{s.val}</div>
@@ -248,11 +248,11 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
             <button onClick={() => setSelectedApp(null)}
               style={{ position:'absolute', top:'12px', right:'12px', background:'none', border:`1px solid ${t.border}`, borderRadius:'2px', width:'28px', height:'28px', cursor:'pointer', color:t.sub, fontSize:'14px', display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
 
-            <p style={{ color:'#f59e0b', fontSize:'10px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', margin:'0 0 4px' }}>Professional Application</p>
+            <p style={{ color:'var(--brand-blue-dark)', fontSize:'10px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', margin:'0 0 4px' }}>Professional Application</p>
             <h3 style={{ color:t.text, margin:'0 0 16px', fontSize:'18px', fontWeight:800 }}>{selectedApp.name}</h3>
 
             {selectedApp.profile_picture && (
-              <img src={selectedApp.profile_picture} alt="" style={{ width:64, height:64, borderRadius:'50%', objectFit:'cover', border:`2px solid #f59e0b`, marginBottom:'16px' }} />
+              <img src={selectedApp.profile_picture} alt="" style={{ width:64, height:64, borderRadius:'50%', objectFit:'cover', border:`2px solid var(--brand-blue-dark)`, marginBottom:'16px' }} />
             )}
 
             <div style={{ background:t.inputBg, border:`1px solid ${t.border}`, borderRadius:'4px', padding:'16px', marginBottom:'16px' }}>
@@ -282,7 +282,7 @@ export default function ProfessionalEnquiriesManager({ isDarkMode }) {
             )}
 
             <a href="?tab=professionals"
-              style={{ display:'block', textAlign:'center', background:'#f59e0b', color:'#000', borderRadius:'4px', padding:'11px', textDecoration:'none', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em' }}>
+              style={{ display:'block', textAlign:'center', background:'var(--brand-blue-dark)', color:'#000', borderRadius:'4px', padding:'11px', textDecoration:'none', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em' }}>
               Go to Professional Services to Approve / Reject →
             </a>
           </div>

@@ -18,7 +18,7 @@ const pct  = (n) => `${Number(n || 0).toFixed(1)}%`;
 const STATUS_META = {
   WAITING_FOR_VENDOR_ACCEPTANCE: { label: 'Waiting',     bg: '#fff7ed', tx: '#9a3412' },
   VENDOR_ACCEPTED:               { label: 'Accepted',    bg: '#dbeafe', tx: '#1e40af' },
-  VENDOR_ON_WAY:                 { label: 'On Way',      bg: '#fef3c7', tx: '#92400e' },
+  VENDOR_ON_WAY:                 { label: 'On Way',      bg: 'var(--brand-blue-soft)', tx: '#92400e' },
   IN_PROGRESS:                   { label: 'In Progress', bg: '#ffe4e6', tx: '#831843' },
   COMPLETED:                     { label: 'Completed',   bg: '#dcfce7', tx: '#166534' },
   CANCELLED:                     { label: 'Cancelled',   bg: '#f3f4f6', tx: '#374151' },
@@ -201,7 +201,7 @@ export default function RevenueManager({ isDarkMode }) {
     // Money cells
     green: { color: '#16a34a', fontWeight: 700 },
     blue:  { color: '#2563eb', fontWeight: 700 },
-    amber: { color: '#d97706', fontWeight: 700 },
+    amber: { color: 'var(--brand-blue-deep)', fontWeight: 700 },
     red:   { color: '#dc2626', fontWeight: 700 },
 
     // Journey step
@@ -220,7 +220,7 @@ export default function RevenueManager({ isDarkMode }) {
 
   const CARD_DEFS = summary ? [
     { label: 'Total Revenue Collected', value: fmt(summary.total_collected),  sub: `${summary.completed_bookings} completed bookings`, bg: '#f0fdf4', tx: '#14532d' },
-    { label: 'Admin Earned (15%)',       value: fmt(summary.total_admin_earn), sub: 'Platform commission',                              bg: '#fef9c3', tx: '#713f12' },
+    { label: 'Admin Earned (15%)',       value: fmt(summary.total_admin_earn), sub: 'Platform commission',                              bg: 'var(--brand-blue-soft)', tx: 'var(--brand-blue-deepest)' },
     { label: 'Vendor Payouts (85%)',     value: fmt(summary.total_vendor_pay), sub: 'Total due to vendors',                            bg: '#dbeafe', tx: '#1e3a8a' },
     { label: 'GST Collected',            value: fmt(summary.total_gst),        sub: 'Tax component',                                   bg: '#fce7f3', tx: '#831843' },
     { label: 'Pipeline Value',           value: fmt(summary.pipeline_value),   sub: `${summary.active_bookings} active bookings`,      bg: '#fff7ed', tx: '#9a3412' },
@@ -312,8 +312,8 @@ export default function RevenueManager({ isDarkMode }) {
               ['Base Amount (estimated)',   fmt(b.base_amount),       '#2563eb'],
               ['Visit Fee',                 fmt(b.visit_fee),         '#2563eb'],
               ['GST / Tax',                 fmt(b.tax_amount),        '#7c3aed'],
-              ['Total Estimate',            fmt(b.total_amount),      '#d97706'],
-              ['Vendor Final Quote',        fmt(b.final_amount),      '#d97706'],
+              ['Total Estimate',            fmt(b.total_amount),      'var(--brand-blue-deep)'],
+              ['Vendor Final Quote',        fmt(b.final_amount),      'var(--brand-blue-deep)'],
               ['User Actually Paid',        fmt(b.user_paid_amount),  '#16a34a'],
               ['Admin Commission (15%)',    fmt(b.admin_commission),  '#dc2626'],
               ['Vendor Payout (85%)',       fmt(b.vendor_payout),     '#16a34a'],
@@ -580,7 +580,7 @@ export default function RevenueManager({ isDarkMode }) {
                     <tbody>
                       {filteredVendors.map((v, i) => {
                         const rate = v.total_bookings > 0 ? (v.completed_count / v.total_bookings * 100).toFixed(1) : 0;
-                        const rateColor = rate >= 80 ? '#16a34a' : rate >= 50 ? '#d97706' : '#dc2626';
+                        const rateColor = rate >= 80 ? '#16a34a' : rate >= 50 ? 'var(--brand-blue-deep)' : '#dc2626';
                         return (
                           <tr key={v.vendor_id} className="rev-tr" style={{ borderBottom: '1px solid var(--border)', background: i % 2 === 0 ? 'transparent' : 'var(--bg)' }}>
                             <td style={{ ...S.td, fontWeight: 700 }}>
@@ -691,7 +691,7 @@ export default function RevenueManager({ isDarkMode }) {
                         {/* Amounts */}
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '0.375rem' }}>
                           {[
-                            { label: 'Estimate',  val: fmt(b.total_amount),     color: '#d97706' },
+                            { label: 'Estimate',  val: fmt(b.total_amount),     color: 'var(--brand-blue-deep)' },
                             { label: 'Quote',     val: parseFloat(b.final_amount) > 0 ? fmt(b.final_amount) : '—', color: '#2563eb' },
                             { label: 'Paid',      val: parseFloat(b.user_paid_amount) > 0 ? fmt(b.user_paid_amount) : '—', color: '#16a34a' },
                           ].map(({ label, val, color }) => (

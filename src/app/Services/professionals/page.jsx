@@ -26,8 +26,8 @@ function th(isDark) {
     sub:       isDark ? '#71717a'  : '#6b7280',
     muted:     isDark ? '#52525b'  : '#9ca3af',
     border:    isDark ? '#27272a'  : '#e5e7eb',
-    borderHov: isDark ? '#facc15'  : '#111827',
-    accent:    isDark ? '#facc15'  : '#111827',
+    borderHov: isDark ? 'var(--brand-blue)'  : '#111827',
+    accent:    isDark ? 'var(--brand-blue)'  : '#111827',
     accentFg:  isDark ? '#000000'  : '#ffffff',
     inputBg:   isDark ? '#0a0a0a'  : '#f9fafb',
     tagBg:     isDark ? '#1c1c1c'  : '#f3f4f6',
@@ -416,7 +416,7 @@ function ProCard({ pro, isDark, onClick }) {
       style={{ background:hov?t.cardHov:t.card,border:`1px solid ${hov?t.borderHov:t.border}`,cursor:'pointer',overflow:'hidden',
                transition:'transform 0.18s,border-color 0.18s,box-shadow 0.18s',
                transform:hov?'translateY(-3px)':'none',
-               boxShadow:hov?(isDark?'0 8px 24px rgba(250,204,21,0.12)':'0 8px 24px rgba(0,0,0,0.12)'):'none' }}>
+               boxShadow:hov?(isDark?'0 8px 24px color-mix(in srgb, var(--brand-blue) 12%, transparent)':'0 8px 24px rgba(0,0,0,0.12)'):'none' }}>
       <div style={{ height:'200px',position:'relative',overflow:'hidden',background:isDark?'#1a1a1a':'#f3f4f6' }}>
         {pro.profile_picture
           ? <img src={pro.profile_picture} alt={pro.name} style={{ width:'100%',height:'100%',objectFit:'cover' }} />
@@ -476,14 +476,14 @@ export default function ProfessionalsPage() {
 
       {/* Hero */}
       <div style={{ background:t.heroBg,padding:'72px 24px 80px',textAlign:'center',position:'relative',overflow:'hidden',borderBottom:`2px solid ${t.accent}` }}>
-        <div style={{ position:'absolute',inset:0,backgroundImage:`linear-gradient(${isDark?'rgba(250,204,21,0.03)':'rgba(255,255,255,0.03)'} 1px,transparent 1px),linear-gradient(90deg,${isDark?'rgba(250,204,21,0.03)':'rgba(255,255,255,0.03)'} 1px,transparent 1px)`,backgroundSize:'40px 40px',pointerEvents:'none' }} />
+        <div style={{ position:'absolute',inset:0,backgroundImage:`linear-gradient(${isDark?'color-mix(in srgb, var(--brand-blue) 3%, transparent)':'rgba(255,255,255,0.03)'} 1px,transparent 1px),linear-gradient(90deg,${isDark?'color-mix(in srgb, var(--brand-blue) 3%, transparent)':'rgba(255,255,255,0.03)'} 1px,transparent 1px)`,backgroundSize:'40px 40px',pointerEvents:'none' }} />
         <p style={{ color:t.accent,fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.15em',margin:'0 0 14px' }}>MTbossProfessional Services</p>
         <h1 style={{ color:'#fff',fontSize:'clamp(28px,5vw,52px)',fontWeight:800,margin:'0 0 16px',lineHeight:1.1,textTransform:'uppercase',letterSpacing:'-0.02em' }}>Meet Our Professionals</h1>
         <p style={{ color:'rgba(255,255,255,0.55)',fontSize:'15px',maxWidth:'480px',margin:'0 auto 40px',lineHeight:1.7 }}>
           Verified interior designers, architects and home experts — handpicked for quality and excellence.
         </p>
         <button onClick={()=>setShowApply(true)}
-          style={{ background:t.accent,color:t.accentFg,border:'none',borderRadius:'2px',padding:'14px 36px',cursor:'pointer',fontSize:'11px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.12em',boxShadow:isDark?'0 0 24px rgba(250,204,21,0.3)':'0 4px 16px rgba(0,0,0,0.25)' }}>
+          style={{ background:t.accent,color:t.accentFg,border:'none',borderRadius:'2px',padding:'14px 36px',cursor:'pointer',fontSize:'11px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.12em',boxShadow:isDark?'0 0 24px color-mix(in srgb, var(--brand-blue) 30%, transparent)':'0 4px 16px rgba(0,0,0,0.25)' }}>
           Apply as a Professional →
         </button>
       </div>

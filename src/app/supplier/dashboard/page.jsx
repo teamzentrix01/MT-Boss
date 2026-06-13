@@ -227,7 +227,7 @@ export default function SupplierDashboard() {
     const isTaken    = mode === 'taken';
 
     const badgeStyle = isOpen
-      ? { background: '#fef9c3', color: '#92400e' }
+      ? { background: 'var(--brand-blue-soft)', color: '#92400e' }
       : isTaken
         ? { background: '#fee2e2', color: '#991b1b' }
         : e.status === 'fulfilled'
@@ -255,7 +255,7 @@ export default function SupplierDashboard() {
           <div style={{ marginBottom: '0.5rem', paddingBottom: '0.5rem', borderBottom: `1px solid ${border}` }}>
             {e.material_type && (
               <div className="sd-order-meta">
-                <span style={{ color: '#f59e0b', fontWeight: 700 }}>📋 Type:</span> {e.material_type}
+                <span style={{ color: 'var(--brand-blue-dark)', fontWeight: 700 }}>📋 Type:</span> {e.material_type}
                 {e.subcategory_name ? ` › ${e.subcategory_name}` : ''}
               </div>
             )}
@@ -273,7 +273,7 @@ export default function SupplierDashboard() {
             <div className="sd-order-meta">📦 <strong>{e.quantity_text}</strong></div>
           )}
           {e.delivery_date && (
-            <div className="sd-order-meta">📅 Needed by: <strong style={{ color: '#f59e0b' }}>{fmtDate(e.delivery_date)}</strong></div>
+            <div className="sd-order-meta">📅 Needed by: <strong style={{ color: 'var(--brand-blue-dark)' }}>{fmtDate(e.delivery_date)}</strong></div>
           )}
         </div>
 
@@ -368,7 +368,7 @@ export default function SupplierDashboard() {
         .sd-page{min-height:100vh;background:${bg};color:${text};font-family:'DM Sans',system-ui,sans-serif;}
         .sd-topbar{background:${surface};border-bottom:1px solid ${border};padding:0 2rem;height:64px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;}
         .sd-logo{font-size:1rem;font-weight:800;letter-spacing:-0.02em;color:${text};}
-        .sd-logo span{color:#f59e0b;}
+        .sd-logo span{color:var(--brand-blue-dark);}
         .sd-status-active{background:${dark?'#1a2a0a':'#dcfce7'};color:#22c55e;border:1px solid #22c55e33;}
         .sd-status-inactive{background:${dark?'#2a0a0a':'#fee2e2'};color:#ef4444;border:1px solid #ef444433;}
         .sd-pill{padding:0.3rem 0.8rem;border-radius:20px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
@@ -379,8 +379,8 @@ export default function SupplierDashboard() {
         .sd-tabs::-webkit-scrollbar{display:none;}
         .sd-tab{padding:0.875rem 1.5rem;background:none;border:none;color:${dark?'#555':'#aaa'};cursor:pointer;font-weight:600;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;position:relative;transition:color 0.2s;white-space:nowrap;font-family:inherit;}
         .sd-tab:hover{color:${text};}
-        .sd-tab.active{color:#f59e0b;}
-        .sd-tab.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:#f59e0b;}
+        .sd-tab.active{color:var(--brand-blue-dark);}
+        .sd-tab.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--brand-blue-dark);}
         .sd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;}
         .sd-order-card{background:${surface};border:1px solid ${border};border-radius:12px;padding:1.25rem;}
         .sd-order-cat{font-size:1rem;font-weight:700;color:${text};}
@@ -397,7 +397,7 @@ export default function SupplierDashboard() {
         .sd-earn-value{font-size:1.5rem;font-weight:800;}
         .sd-profile-card{background:${surface};border:1px solid ${border};border-radius:14px;padding:1.75rem;margin-bottom:1.25rem;}
         .sd-form-input{width:100%;padding:0.7rem 0.9rem;border:1px solid ${border};border-radius:8px;background:${inputBg};color:${text};font-family:inherit;font-size:0.875rem;transition:border-color 0.2s;box-sizing:border-box;}
-        .sd-form-input:focus{outline:none;border-color:#f59e0b;}
+        .sd-form-input:focus{outline:none;border-color:var(--brand-blue-dark);}
         .sd-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);}
         .sd-modal{background:${surface};border:1px solid ${border};border-radius:16px;padding:2rem;max-width:480px;width:90%;max-height:90vh;overflow-y:auto;}
         .sd-empty{padding:3rem;text-align:center;color:${dark?'#444':'#bbb'};font-size:0.875rem;}
@@ -461,7 +461,7 @@ export default function SupplierDashboard() {
                     <div style={{ fontWeight: 700, color: '#f97316', fontSize: '0.9rem' }}>No product categories set</div>
                     <div style={{ fontSize: '0.82rem', color: muted, marginTop: '0.2rem' }}>
                       You won't receive any enquiries until you set your product categories.{' '}
-                      <button onClick={() => setActiveTab('profile')} style={{ background: 'none', border: 'none', color: '#f59e0b', fontWeight: 700, cursor: 'pointer', fontSize: '0.82rem', padding: 0, textDecoration: 'underline' }}>
+                      <button onClick={() => setActiveTab('profile')} style={{ background: 'none', border: 'none', color: 'var(--brand-blue-dark)', fontWeight: 700, cursor: 'pointer', fontSize: '0.82rem', padding: 0, textDecoration: 'underline' }}>
                         Set categories now →
                       </button>
                     </div>
@@ -530,11 +530,11 @@ export default function SupplierDashboard() {
                 <>
                   <div className="sd-earn-grid">
                     {[
-                      { label: "Today's Revenue",  value: fmt(earnings.today_earned),    color: '#f59e0b', sub: 'Gross received today'    },
+                      { label: "Today's Revenue",  value: fmt(earnings.today_earned),    color: 'var(--brand-blue-dark)', sub: 'Gross received today'    },
                       { label: "Today's Net",       value: fmt(earnings.today_net),       color: '#22c55e', sub: 'After 15% commission'    },
                       { label: 'Total Revenue',     value: fmt(earnings.total_earned),    color: '#3b82f6', sub: 'All-time gross'          },
                       { label: 'Total Net Earning', value: fmt(earnings.total_net),       color: '#10b981', sub: 'After all commissions'   },
-                      { label: 'Commission Paid',   value: fmt(earnings.total_commission),color: '#f97316', sub: '15% to MT Boss'         },
+                      { label: 'Commission Paid',   value: fmt(earnings.total_commission),color: '#f97316', sub: '15% to MTBoss'         },
                       { label: 'Orders Fulfilled',  value: earnings.total_fulfilled,      color: text,      sub: 'Total completed'        },
                       { label: 'Active Orders',     value: earnings.active_orders,        color: '#3b82f6', sub: 'In progress'            },
                     ].map(c => (
@@ -546,7 +546,7 @@ export default function SupplierDashboard() {
                     ))}
                   </div>
                   <div style={{ background: surface, border: `1px solid ${border}`, borderRadius: 12, padding: '1.25rem', fontSize: '0.85rem', color: muted, lineHeight: 1.7 }}>
-                    <strong style={{ color: text }}>Commission:</strong> MTbossdeducts <strong style={{ color: '#f59e0b' }}>15%</strong> of the amount received on every fulfilled order.
+                    <strong style={{ color: text }}>Commission:</strong> MTbossdeducts <strong style={{ color: 'var(--brand-blue-dark)' }}>15%</strong> of the amount received on every fulfilled order.
                   </div>
                 </>
               ) : <div className="sd-empty">Could not load earnings.</div>}
@@ -800,7 +800,7 @@ export default function SupplierDashboard() {
             </div>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button onClick={submitFulfill} disabled={fulfilling}
-                style={{ flex: 1, padding: '0.75rem', background: '#f59e0b', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', opacity: fulfilling ? 0.6 : 1, fontFamily: 'inherit' }}>
+                style={{ flex: 1, padding: '0.75rem', background: 'var(--brand-blue-dark)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', opacity: fulfilling ? 0.6 : 1, fontFamily: 'inherit' }}>
                 {fulfilling ? 'Saving…' : '✅ Mark as Fulfilled'}
               </button>
               <button onClick={() => setFulfillModal(null)}

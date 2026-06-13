@@ -44,7 +44,7 @@ export default function FilterBar({ isDarkMode, onFilter }) {
 
   const inputClass = `w-full px-3 py-2 text-xs font-bold uppercase tracking-wide border rounded-sm outline-none transition-all duration-200 ${
     isDarkMode
-      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]"
+      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
       : "bg-white border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
   }`;
 
@@ -62,14 +62,14 @@ export default function FilterBar({ isDarkMode, onFilter }) {
     >
       {/* Heading */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-[#facc15]" : "text-zinc-800"}`}>
+        <h2 className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
           Filter Properties
         </h2>
         <button
           onClick={handleReset}
           className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 border rounded-sm transition-all ${
             isDarkMode
-              ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]"
+              ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
               : "border-gray-200 text-zinc-400 hover:border-zinc-800 hover:text-zinc-800"
           }`}
         >
@@ -90,9 +90,9 @@ export default function FilterBar({ isDarkMode, onFilter }) {
                 onClick={() => handleChange("type", type)}
                 className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm border transition-all ${
                   filters.type === type
-                    ? "bg-[#facc15] text-black border-[#facc15]"
+                    ? "bg-[var(--brand-blue)] text-black border-[var(--brand-blue)]"
                     : isDarkMode
-                    ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]"
+                    ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
                     : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
                 }`}
               >
@@ -152,9 +152,9 @@ export default function FilterBar({ isDarkMode, onFilter }) {
                 onClick={() => handleChange("beds", bed)}
                 className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm border transition-all ${
                   filters.beds === bed
-                    ? "bg-[#facc15] text-black border-[#facc15]"
+                    ? "bg-[var(--brand-blue)] text-black border-[var(--brand-blue)]"
                     : isDarkMode
-                    ? "border-zinc-700 text-zinc-400 hover:border-[#facc15] hover:text-[#facc15]"
+                    ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
                     : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
                 }`}
               >

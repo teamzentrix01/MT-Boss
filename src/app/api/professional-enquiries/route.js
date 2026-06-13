@@ -75,7 +75,7 @@ export async function POST(req) {
       const adminEmail = process.env.SMTP_USER || 'team.zentrix01@gmail.com';
       await sendMail({
         to: adminEmail,
-        subject: `Professional Enquiry: ${enquirer_name} → ${professional.name} — MT Boss`,
+        subject: `Professional Enquiry: ${enquirer_name} → ${professional.name} — MTBoss`,
         html: `
           <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;
                       background:#fff;border-radius:8px;border:1px solid #e5e7eb">

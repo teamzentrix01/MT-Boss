@@ -41,8 +41,8 @@ const CARDS = [
         <circle cx="32" cy="28" r="4" strokeWidth="2" />
       </svg>
     ),
-    accent: "#facc15",
-    accentDark: "#facc15",
+    accent: "var(--brand-blue)",
+    accentDark: "var(--brand-blue)",
   },
   {
     type: "SELL",
@@ -59,8 +59,8 @@ const CARDS = [
         <path d="M20 36l6 6 18-14" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    accent: "#facc15",
-    accentDark: "#facc15",
+    accent: "var(--brand-blue)",
+    accentDark: "var(--brand-blue)",
   },
   {
     type: "RENT",
@@ -79,8 +79,8 @@ const CARDS = [
         <path d="M44 15v4l2 2" strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
-    accent: "#facc15",
-    accentDark: "#facc15",
+    accent: "var(--brand-blue)",
+    accentDark: "var(--brand-blue)",
   },
 ];
 
@@ -100,21 +100,21 @@ function Card({ card, dark, idx }) {
       }}
       className={`group relative flex flex-col border transition-all duration-400 overflow-hidden ${
         dark
-          ? "bg-zinc-950 border-zinc-800 hover:border-[#facc15]"
+          ? "bg-zinc-950 border-zinc-800 hover:border-[var(--brand-blue)]"
           : "bg-white border-zinc-100 hover:border-zinc-900 hover:shadow-2xl"
       }`}
     >
       {/* Top accent bar */}
       <div
         className="h-0.5 w-full transition-all duration-500"
-        style={{ background: hovered ? "#facc15" : "transparent" }}
+        style={{ background: hovered ? "var(--brand-blue)" : "transparent" }}
       />
 
       {/* Type badge + icon row */}
       <div className="flex items-start justify-between p-6 pb-4">
         <div>
           <span className={`inline-block px-3 py-1 text-[8px] font-black uppercase tracking-[0.2em] mb-3 ${
-            dark ? "bg-[#facc15] text-black" : "bg-zinc-900 text-white"
+            dark ? "bg-[var(--brand-blue)] text-black" : "bg-zinc-900 text-white"
           }`}>
             {card.type}
           </span>
@@ -127,7 +127,7 @@ function Card({ card, dark, idx }) {
         {/* Icon */}
         <div
           className={`shrink-0 ml-4 w-14 h-14 transition-colors duration-300 ${
-            dark ? "text-[#facc15]" : "text-[#0d6ebd]"
+            dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"
           } ${hovered ? (dark ? "text-white" : "text-zinc-900") : ""}`}
           style={{ stroke: "currentColor" }}
         >
@@ -146,7 +146,7 @@ function Card({ card, dark, idx }) {
       }`}>
         {card.stats.map((s) => (
           <div key={s.label} className="py-3 text-center">
-            <p className={`text-sm font-black ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>{s.val}</p>
+            <p className={`text-sm font-black ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>{s.val}</p>
             <p className={`text-[8px] uppercase tracking-widest mt-0.5 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>{s.label}</p>
           </div>
         ))}
@@ -158,8 +158,8 @@ function Card({ card, dark, idx }) {
           href={card.href}
           className={`flex items-center justify-between w-full px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-all duration-300 group/btn ${
             dark
-              ? "bg-zinc-900 text-white border border-zinc-700 hover:bg-[#facc15] hover:text-black hover:border-[#facc15]"
-              : "bg-zinc-900 text-white hover:bg-[#facc15] hover:text-black"
+              ? "bg-zinc-900 text-white border border-zinc-700 hover:bg-[var(--brand-blue)] hover:text-black hover:border-[var(--brand-blue)]"
+              : "bg-zinc-900 text-white hover:bg-[var(--brand-blue)] hover:text-black"
           }`}
         >
           {card.cta}
@@ -177,7 +177,7 @@ export default function PropertyCTA() {
   const [headRef, headVisible] = useInView(0.1);
 
   return (
-    <section className={`py-16 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-[#f0f7ff]"}`}>
+    <section className={`py-16 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-[var(--brand-blue-faint)]"}`}>
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
@@ -191,13 +191,13 @@ export default function PropertyCTA() {
           className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10"
         >
           <div>
-            <p className={`text-[10px] font-black uppercase tracking-[0.4em] mb-2 ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>
+            <p className={`text-[10px] font-black uppercase tracking-[0.4em] mb-2 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>
               MTbossProperty
             </p>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tighter leading-none ${dark ? "text-white" : "text-zinc-900"}`}>
-              Buy, Sell &amp; <span className="text-[#facc15]">Rent</span>
+              Buy, Sell &amp; <span className="text-[var(--brand-blue)]">Rent</span>
             </h2>
-            <div className={`w-10 h-0.5 mt-3 ${dark ? "bg-[#facc15]" : "bg-zinc-900"}`} />
+            <div className={`w-10 h-0.5 mt-3 ${dark ? "bg-[var(--brand-blue)]" : "bg-zinc-900"}`} />
           </div>
           <p className={`text-[11px] leading-relaxed max-w-xs ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
             Everything property-related in one place — find your next home, sell yours, or list it for rent.
@@ -232,7 +232,7 @@ export default function PropertyCTA() {
           <Link
             href="/property/buy"
             className={`shrink-0 px-7 py-3 text-[9px] font-black uppercase tracking-widest transition-all ${
-              dark ? "bg-[#facc15] text-black hover:bg-yellow-300" : "bg-zinc-900 text-white hover:bg-[#facc15] hover:text-black"
+              dark ? "bg-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-light)]" : "bg-zinc-900 text-white hover:bg-[var(--brand-blue)] hover:text-black"
             }`}
           >
             View All Properties →

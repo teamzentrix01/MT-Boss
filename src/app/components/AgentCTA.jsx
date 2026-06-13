@@ -39,8 +39,8 @@ const AGENT_TYPES = [
     type: "Construction Agent",
     earn: "Up to 3% / project",
     desc: "Connect clients needing construction or renovation projects.",
-    earnColor: "text-[#facc15]",
-    earnBg: "bg-[#facc15]/10 border-[#facc15]/20",
+    earnColor: "text-[var(--brand-blue)]",
+    earnBg: "bg-[var(--brand-blue)]/10 border-[var(--brand-blue)]/20",
     popular: true,
   },
   {
@@ -72,17 +72,17 @@ export default function AgentCTA() {
         {/* Header row */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-7">
           <div>
-            <p className={`text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>
-              Earn with MT Boss
+            <p className={`text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>
+              Earn with MTBoss
             </p>
             <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-none ${dark ? "text-white" : "text-zinc-900"}`}>
-              Become an <span className="text-[#facc15]">Agent</span>
+              Become an <span className="text-[var(--brand-blue)]">Agent</span>
             </h2>
           </div>
           <Link
             href="/agent"
             className={`self-start shrink-0 px-6 py-2.5 text-[9px] font-black uppercase tracking-widest transition-all ${
-              dark ? "bg-[#facc15] text-black hover:bg-yellow-300" : "bg-zinc-900 text-white hover:bg-[#facc15] hover:text-black"
+              dark ? "bg-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-light)]" : "bg-zinc-900 text-white hover:bg-[var(--brand-blue)] hover:text-black"
             }`}
           >
             Register as Agent →
@@ -102,12 +102,12 @@ export default function AgentCTA() {
               }}
               className={`group relative flex flex-col gap-3 p-4 border transition-all duration-300 ${
                 agent.popular
-                  ? dark ? "bg-zinc-950 border-[#facc15]/60" : "bg-white border-zinc-800 shadow-md"
+                  ? dark ? "bg-zinc-950 border-[var(--brand-blue)]/60" : "bg-white border-zinc-800 shadow-md"
                   : dark ? "bg-zinc-950 border-zinc-800 hover:border-zinc-600" : "bg-white border-zinc-100 hover:border-zinc-300 hover:shadow-sm"
               }`}
             >
               {agent.popular && (
-                <span className="absolute -top-2.5 left-4 bg-[#facc15] text-black text-[7px] font-black uppercase tracking-widest px-2 py-0.5">
+                <span className="absolute -top-2.5 left-4 bg-[var(--brand-blue)] text-black text-[7px] font-black uppercase tracking-widest px-2 py-0.5">
                   Most Popular
                 </span>
               )}
@@ -122,7 +122,7 @@ export default function AgentCTA() {
               </div>
               <p className={`text-[10px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-500"}`}>{agent.desc}</p>
               <span className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-widest mt-auto transition-colors ${
-                dark ? "text-zinc-600 group-hover:text-[#facc15]" : "text-zinc-300 group-hover:text-[#0d6ebd]"
+                dark ? "text-zinc-600 group-hover:text-[var(--brand-blue)]" : "text-zinc-300 group-hover:text-[var(--brand-blue-deep)]"
               }`}>
                 Apply Now
                 <svg className="w-2.5 h-2.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -52,7 +52,7 @@ export default function ExperienceSection() {
               }}
             >
               <p className={`text-2xl sm:text-3xl font-black leading-none mb-1 ${isDark ? "text-white" : "text-zinc-900"}`}>
-                {s.value.replace(/[+M]/g, "")}<span className="text-[#facc15]">{s.value.match(/[+M]+$/)?.[0]}</span>
+                {s.value.replace(/[+M]/g, "")}<span className="text-[var(--brand-blue)]">{s.value.match(/[+M]+$/)?.[0]}</span>
               </p>
               <p className={`text-[8px] uppercase font-black tracking-widest ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>{s.label}</p>
             </div>
@@ -65,15 +65,15 @@ export default function ExperienceSection() {
         >
           {/* Left */}
           <div className={`p-7 border-b lg:border-b-0 lg:border-r ${isDark ? "border-zinc-800 bg-zinc-950" : "border-zinc-100 bg-zinc-50"}`}>
-            <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-2 text-[#facc15]">Our Journey</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-2 text-[var(--brand-blue)]">Our Journey</p>
             <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-tight mb-3 ${isDark ? "text-white" : "text-zinc-900"}`}>
-              Two Decades of <span className="text-[#facc15]">Unmatched</span> Achievements
+              Two Decades of <span className="text-[var(--brand-blue)]">Unmatched</span> Achievements
             </h2>
             <p className={`text-[11px] leading-relaxed mb-5 ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
               From a local contractor to a national engineering powerhouse — every project a testament to our commitment to quality.
             </p>
             <button className={`px-6 py-2.5 text-[9px] font-black uppercase tracking-widest transition-all ${
-              isDark ? "bg-[#facc15] text-black hover:bg-yellow-300" : "bg-zinc-900 text-white hover:bg-[#facc15] hover:text-black"
+              isDark ? "bg-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-light)]" : "bg-zinc-900 text-white hover:bg-[var(--brand-blue)] hover:text-black"
             }`}>
               Download Portfolio
             </button>
@@ -95,11 +95,11 @@ export default function ExperienceSection() {
                 >
                   {/* Dot */}
                   <div className="shrink-0 w-11 flex flex-col items-center pt-0.5 z-10">
-                    <div className={`w-2.5 h-2.5 rounded-full border-2 border-[#facc15] ${isDark ? "bg-zinc-950" : "bg-white"}`} />
+                    <div className={`w-2.5 h-2.5 rounded-full border-2 border-[var(--brand-blue)] ${isDark ? "bg-zinc-950" : "bg-white"}`} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-[#facc15] text-[9px] font-black uppercase tracking-widest">{m.year}</span>
+                      <span className="text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-widest">{m.year}</span>
                       <span className={`text-[10px] font-black uppercase tracking-tight ${isDark ? "text-white" : "text-zinc-900"}`}>{m.title}</span>
                     </div>
                     <p className={`text-[10px] leading-relaxed ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>{m.desc}</p>

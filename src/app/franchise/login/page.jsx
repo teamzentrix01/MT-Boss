@@ -88,11 +88,11 @@ export default function FranchiseLoginPage() {
           minHeight: 420,
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center' }}>
-            <strong style={{ letterSpacing: '-.03em' }}>MT<span style={{ color: '#facc15' }}>BOSS</span></strong>
+            <strong style={{ letterSpacing: '-.03em' }}>MT<span style={{ color: 'var(--brand-blue)' }}>BOSS</span></strong>
             <Link href="/" style={{ color: '#aaa', textDecoration: 'none', fontSize: '.8rem', fontWeight: 700 }}>Home</Link>
           </div>
           <div>
-            <p style={{ color: '#facc15', fontSize: '.7rem', fontWeight: 900, letterSpacing: '.18em', textTransform: 'uppercase' }}>Franchise Portal</p>
+            <p style={{ color: 'var(--brand-blue)', fontSize: '.7rem', fontWeight: 900, letterSpacing: '.18em', textTransform: 'uppercase' }}>Franchise Portal</p>
             <h1 style={{ fontSize: '2.2rem', lineHeight: 1.08, margin: '0 0 1rem', letterSpacing: '-.05em' }}>
               Manage your approved territory.
             </h1>
@@ -151,7 +151,7 @@ export default function FranchiseLoginPage() {
               type="checkbox"
               checked={form.rememberMe}
               onChange={e => setForm(f => ({ ...f, rememberMe: e.target.checked }))}
-              style={{ accentColor: '#facc15' }}
+              style={{ accentColor: 'var(--brand-blue)' }}
             />
             Remember me
           </label>
@@ -159,7 +159,7 @@ export default function FranchiseLoginPage() {
           <button type="submit" disabled={loading} style={{
             border: 0,
             borderRadius: 8,
-            background: '#facc15',
+            background: 'var(--brand-blue)',
             color: '#111',
             padding: '.9rem 1rem',
             fontWeight: 900,
@@ -170,7 +170,7 @@ export default function FranchiseLoginPage() {
           </button>
 
           <p style={{ margin: '1rem 0 0', fontSize: '.82rem', color: dark ? '#71717a' : '#71717a', lineHeight: 1.6 }}>
-            Do not have credentials yet? Submit the <Link href="/franchise" style={{ color: '#ca8a04', fontWeight: 800 }}>franchise form</Link> and wait for admin approval.
+            Do not have credentials yet? Submit the <Link href="/franchise" style={{ color: 'var(--brand-blue-deep)', fontWeight: 800 }}>franchise form</Link> and wait for admin approval.
           </p>
         </form>
       </section>

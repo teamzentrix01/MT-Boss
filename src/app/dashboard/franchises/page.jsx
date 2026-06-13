@@ -13,7 +13,7 @@ const statusStyle = {
 
 const modelStyle = {
   'Associate Partner':  { bg: '#eff4ff', tx: '#1e3a8a' },
-  'Regional Franchise': { bg: '#fefce8', tx: '#854d0e' },
+  'Regional Franchise': { bg: '#fefce8', tx: 'var(--brand-blue-deeper)' },
   'Master Franchise':   { bg: '#faf5ff', tx: '#581c87' },
 };
 
@@ -572,7 +572,7 @@ export default function FranchisesPage() {
                     <Field label="Other Franchise"    value={selected.other_franchise} />
                     <Field label="Training Willing"   value={selected.training_willing} />
                   </div>
-                  <div style={{ marginBottom: '0.2rem', fontSize: '0.6875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>Why MT BOSS</div>
+                  <div style={{ marginBottom: '0.2rem', fontSize: '0.6875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>Why MTBoss</div>
                   <div className="fr-modal-msg">{selected.message}</div>
                 </>
               )}

@@ -253,13 +253,13 @@ export default function FranchiseDashboardPage() {
         .fd-page{min-height:100vh;background:#f5f5f7;color:#111;font-family:DM Sans,system-ui,sans-serif;}
         .fd-top{background:#fff;border-bottom:1px solid #e5e7eb;padding:1rem 2rem;}
         .fd-top-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem}
-        .fd-brand{font-weight:900;letter-spacing:-.03em;font-size:1rem}.fd-brand span{color:#ca8a04}
+        .fd-brand{font-weight:900;letter-spacing:-.03em;font-size:1rem}.fd-brand span{color:var(--brand-blue-deep)}
         .fd-top-actions{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
         .fd-user{display:flex;gap:.75rem;align-items:center;font-size:.82rem;color:#52525b;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:.55rem .75rem}
-        .fd-avatar{width:34px;height:34px;border-radius:9px;background:#facc15;color:#111;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
+        .fd-avatar{width:34px;height:34px;border-radius:9px;background:var(--brand-blue);color:#111;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
         .fd-user-main{display:flex;flex-direction:column;line-height:1.25}
         .fd-user-meta{font-size:.74rem;color:#71717a;margin-top:.1rem}
-        .fd-btn{border:0;border-radius:7px;background:#facc15;color:#111;padding:.58rem .95rem;font-weight:900;cursor:pointer}
+        .fd-btn{border:0;border-radius:7px;background:var(--brand-blue);color:#111;padding:.58rem .95rem;font-weight:900;cursor:pointer}
         .fd-btn.secondary{background:#fff;border:1px solid #d4d4d8;color:#3f3f46}
         .fd-btn.danger{background:#fff1f2;border:1px solid #fecdd3;color:#be123c}
         .fd-btn:disabled{opacity:.6;cursor:not-allowed}

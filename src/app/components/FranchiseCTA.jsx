@@ -44,9 +44,9 @@ const MODELS = [
     territory: "Multiple Districts",
     support: "Premium",
     features: ["Exclusive territory rights", "Full brand partnership", "Technical support", "Lead generation", "Revenue sharing", "Priority allocation"],
-    borderColor: "border-[#facc15]/60",
-    badgeBg: "bg-[#facc15]",
-    roiColor: "text-[#facc15]",
+    borderColor: "border-[var(--brand-blue)]/60",
+    badgeBg: "bg-[var(--brand-blue)]",
+    roiColor: "text-[var(--brand-blue)]",
     popular: true,
   },
   {
@@ -81,7 +81,7 @@ function ModelCard({ model, dark, idx, visible }) {
     >
       {/* Popular badge */}
       {model.popular && (
-        <div className="flex justify-center py-1.5 bg-[#facc15]">
+        <div className="flex justify-center py-1.5 bg-[var(--brand-blue)]">
           <span className="text-[7px] font-black uppercase tracking-[0.2em] text-black">Most Popular</span>
         </div>
       )}
@@ -130,10 +130,10 @@ function ModelCard({ model, dark, idx, visible }) {
           href="/franchise"
           className={`flex items-center justify-between w-full px-4 py-3 text-[9px] font-black uppercase tracking-widest transition-all duration-300 group/btn ${
             model.popular
-              ? "bg-[#facc15] text-black hover:bg-yellow-300"
+              ? "bg-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-light)]"
               : dark
-              ? "bg-zinc-900 text-white border border-zinc-700 hover:bg-[#facc15] hover:text-black hover:border-[#facc15]"
-              : "bg-zinc-900 text-white hover:bg-[#facc15] hover:text-black"
+              ? "bg-zinc-900 text-white border border-zinc-700 hover:bg-[var(--brand-blue)] hover:text-black hover:border-[var(--brand-blue)]"
+              : "bg-zinc-900 text-white hover:bg-[var(--brand-blue)] hover:text-black"
           }`}
         >
           Apply for {model.name.split(" ")[0]} {model.name.split(" ")[1] || ""}
@@ -152,7 +152,7 @@ export default function FranchiseCTA() {
 
   return (
     <section
-      className={`py-12 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-[#f0f7ff]"}`}
+      className={`py-12 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-[var(--brand-blue-faint)]"}`}
     >
       <div className="max-w-6xl mx-auto">
 
@@ -167,13 +167,13 @@ export default function FranchiseCTA() {
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8"
         >
           <div>
-            <p className={`text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>
+            <p className={`text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>
               Own a Business
             </p>
             <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-none ${dark ? "text-white" : "text-zinc-900"}`}>
-              MTboss<span className="text-[#facc15]">Franchise</span>
+              MTboss<span className="text-[var(--brand-blue)]">Franchise</span>
             </h2>
-            <div className={`w-8 h-0.5 mt-2 ${dark ? "bg-[#facc15]" : "bg-zinc-900"}`} />
+            <div className={`w-8 h-0.5 mt-2 ${dark ? "bg-[var(--brand-blue)]" : "bg-zinc-900"}`} />
           </div>
           <div className="flex flex-col items-start sm:items-end gap-1">
             <p className={`text-[10px] leading-relaxed max-w-xs text-right ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
@@ -182,7 +182,7 @@ export default function FranchiseCTA() {
             <Link
               href="/franchise"
               className={`shrink-0 px-5 py-2 text-[9px] font-black uppercase tracking-widest transition-all ${
-                dark ? "bg-[#facc15] text-black hover:bg-yellow-300" : "bg-zinc-900 text-white hover:bg-[#facc15] hover:text-black"
+                dark ? "bg-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-light)]" : "bg-zinc-900 text-white hover:bg-[var(--brand-blue)] hover:text-black"
               }`}
             >
               View All Models →
@@ -217,7 +217,7 @@ export default function FranchiseCTA() {
           <Link
             href="/franchise"
             className={`shrink-0 px-6 py-2.5 text-[9px] font-black uppercase tracking-widest transition-all ${
-              dark ? "border border-[#facc15] text-[#facc15] hover:bg-[#facc15] hover:text-black" : "border border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white"
+              dark ? "border border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black" : "border border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white"
             }`}
           >
             Apply Now →

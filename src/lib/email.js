@@ -28,7 +28,7 @@ export async function sendMail({ to, subject, html }) {
 export async function sendEnquiryAcceptedEmail({ to, userName, shopName, categoryName, phone }) {
   await sendMail({
     to,
-    subject: `Your ${categoryName} enquiry has been accepted — MT Boss`,
+    subject: `Your ${categoryName} enquiry has been accepted — MTBoss`,
     html: `
       <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;border-radius:8px;">
         <h2 style="color:#111;margin-bottom:8px;">Great news, ${userName}! 🎉</h2>

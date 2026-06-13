@@ -70,7 +70,7 @@ function StarRating({ rating }) {
       {[...Array(5)].map((_, i) => (
         <svg
           key={i}
-          className={`w-4 h-4 ${i < rating ? "text-yellow-400" : "text-gray-300"}`}
+          className={`w-4 h-4 ${i < rating ? "text-[var(--brand-blue-light)]" : "text-gray-300"}`}
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -143,12 +143,12 @@ export default function TestimonialsPage() {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-[#0d6ebd]/75" />
+        <div className="absolute inset-0 bg-[var(--brand-blue-deep)]/75" />
 
        
 
         <div className="relative z-10 px-6">
-          <p className="text-xs uppercase tracking-widest text-[#cce8ff] mb-3">MTBOSS Construction</p>
+          <p className="text-xs uppercase tracking-widest text-[var(--brand-blue-pale)] mb-3">MTBOSS Construction</p>
           <h1
             className="text-4xl sm:text-5xl font-black text-white mb-4"
             style={{ fontFamily: "'Georgia', serif" }}
@@ -156,19 +156,19 @@ export default function TestimonialsPage() {
             Testimonials
           </h1>
           <div className="w-10 h-0.5 bg-white mx-auto mb-4 rounded" />
-          <p className="text-sm text-[#cce8ff] max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm text-[var(--brand-blue-pale)] max-w-xl mx-auto leading-relaxed">
             What our clients say about working with MTBOSS.
           </p>
         </div>
       </section>
 
       {/* Carousel Section */}
-      <section className="bg-[#f0f7ff] py-20 px-6">
+      <section className="bg-[var(--brand-blue-faint)] py-20 px-6">
         <div className="max-w-4xl mx-auto">
 
           {/* Big Quote Icon */}
           <div className="text-center mb-6">
-            <svg className="w-12 h-12 text-[#0d6ebd]/30 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 text-[var(--brand-blue-deep)]/30 mx-auto" fill="currentColor" viewBox="0 0 24 24">
               <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
             </svg>
           </div>
@@ -185,7 +185,7 @@ export default function TestimonialsPage() {
             }}
           >
             {/* Blue accent top bar */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-[#0d6ebd]" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-[var(--brand-blue-deep)]" />
 
             {/* Rating */}
             <div className="flex justify-center mb-6">
@@ -198,18 +198,18 @@ export default function TestimonialsPage() {
             </p>
 
             {/* Divider */}
-            <div className="w-10 h-0.5 bg-[#0d6ebd] mx-auto mb-6 rounded" />
+            <div className="w-10 h-0.5 bg-[var(--brand-blue-deep)] mx-auto mb-6 rounded" />
 
             {/* Client Info */}
             <div className="flex flex-col items-center gap-3">
               <img
                 src={t.photo}
                 alt={t.name}
-                className="w-16 h-16 rounded-full object-cover border-4 border-[#0d6ebd] shadow-md"
+                className="w-16 h-16 rounded-full object-cover border-4 border-[var(--brand-blue-deep)] shadow-md"
               />
               <div className="text-center">
-                <p className="text-sm font-black text-[#0a3d6e] uppercase tracking-wide">{t.name}</p>
-                <p className="text-xs text-[#0d6ebd] font-semibold">{t.role}</p>
+                <p className="text-sm font-black text-[var(--brand-blue-ink)] uppercase tracking-wide">{t.name}</p>
+                <p className="text-xs text-[var(--brand-blue-deep)] font-semibold">{t.role}</p>
                 <p className="text-xs text-gray-400 uppercase tracking-widest mt-0.5">{t.company}</p>
               </div>
             </div>
@@ -220,7 +220,7 @@ export default function TestimonialsPage() {
             {/* Prev */}
             <button
               onClick={prev}
-              className="w-10 h-10 flex items-center justify-center rounded-full border border-[#0d6ebd]/50 bg-white hover:bg-[#0d6ebd] text-[#0d6ebd] hover:text-white transition-all duration-200 shadow-sm"
+              className="w-10 h-10 flex items-center justify-center rounded-full border border-[var(--brand-blue-deep)]/50 bg-white hover:bg-[var(--brand-blue-deep)] text-[var(--brand-blue-deep)] hover:text-white transition-all duration-200 shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -236,14 +236,14 @@ export default function TestimonialsPage() {
                   aria-label={`Go to testimonial ${i + 1}`}
                 >
                   {i === current ? (
-                    <span className="relative block w-10 h-1.5 rounded-full bg-[#0d6ebd]/30 overflow-hidden">
+                    <span className="relative block w-10 h-1.5 rounded-full bg-[var(--brand-blue-deep)]/30 overflow-hidden">
                       <span
-                        className="absolute left-0 top-0 h-full bg-[#0d6ebd] rounded-full"
+                        className="absolute left-0 top-0 h-full bg-[var(--brand-blue-deep)] rounded-full"
                         style={{ width: `${progress}%` }}
                       />
                     </span>
                   ) : (
-                    <span className="block w-4 h-1.5 rounded-full bg-[#0d6ebd]/30 hover:bg-[#0d6ebd]/60 transition-colors duration-200" />
+                    <span className="block w-4 h-1.5 rounded-full bg-[var(--brand-blue-deep)]/30 hover:bg-[var(--brand-blue-deep)]/60 transition-colors duration-200" />
                   )}
                 </button>
               ))}
@@ -252,7 +252,7 @@ export default function TestimonialsPage() {
             {/* Next */}
             <button
               onClick={next}
-              className="w-10 h-10 flex items-center justify-center rounded-full border border-[#0d6ebd]/50 bg-white hover:bg-[#0d6ebd] text-[#0d6ebd] hover:text-white transition-all duration-200 shadow-sm"
+              className="w-10 h-10 flex items-center justify-center rounded-full border border-[var(--brand-blue-deep)]/50 bg-white hover:bg-[var(--brand-blue-deep)] text-[var(--brand-blue-deep)] hover:text-white transition-all duration-200 shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -261,9 +261,9 @@ export default function TestimonialsPage() {
           </div>
 
           {/* Counter */}
-          <p className="text-center text-xs text-[#0d6ebd]/60 tracking-widest mt-4"
+          <p className="text-center text-xs text-[var(--brand-blue-deep)]/60 tracking-widest mt-4"
             style={{ fontFamily: "'Georgia', serif" }}>
-            <span className="font-bold text-[#0d6ebd]">{String(current + 1).padStart(2, "0")}</span>
+            <span className="font-bold text-[var(--brand-blue-deep)]">{String(current + 1).padStart(2, "0")}</span>
             {" / "}
             {String(testimonials.length).padStart(2, "0")}
           </p>
@@ -274,17 +274,17 @@ export default function TestimonialsPage() {
       <section className="bg-white py-16 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
-            <p className="text-xs uppercase tracking-widest text-[#0d6ebd] mb-2">All Reviews</p>
-            <h2 className="text-3xl font-black text-[#0a3d6e] mb-3">What Everyone Says</h2>
-            <div className="w-10 h-0.5 bg-[#0d6ebd] mx-auto rounded" />
+            <p className="text-xs uppercase tracking-widest text-[var(--brand-blue-deep)] mb-2">All Reviews</p>
+            <h2 className="text-3xl font-black text-[var(--brand-blue-ink)] mb-3">What Everyone Says</h2>
+            <div className="w-10 h-0.5 bg-[var(--brand-blue-deep)] mx-auto rounded" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {testimonials.map((item, i) => (
               <div
                 key={item.id}
-                className={`bg-[#f0f7ff] rounded-sm p-6 shadow-sm border-t-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
-                  i === current ? "border-[#0d6ebd]" : "border-[#b3d9f7]"
+                className={`bg-[var(--brand-blue-faint)] rounded-sm p-6 shadow-sm border-t-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
+                  i === current ? "border-[var(--brand-blue-deep)]" : "border-[#b3d9f7]"
                 }`}
               >
                 <StarRating rating={item.rating} />
@@ -295,11 +295,11 @@ export default function TestimonialsPage() {
                   <img
                     src={item.photo}
                     alt={item.name}
-                    className="w-10 h-10 rounded-full object-cover border-2 border-[#0d6ebd]"
+                    className="w-10 h-10 rounded-full object-cover border-2 border-[var(--brand-blue-deep)]"
                   />
                   <div>
-                    <p className="text-xs font-black text-[#0a3d6e] uppercase tracking-wide">{item.name}</p>
-                    <p className="text-xs text-[#0d6ebd]">{item.role}</p>
+                    <p className="text-xs font-black text-[var(--brand-blue-ink)] uppercase tracking-wide">{item.name}</p>
+                    <p className="text-xs text-[var(--brand-blue-deep)]">{item.role}</p>
                     <p className="text-xs text-gray-400">{item.company}</p>
                   </div>
                 </div>

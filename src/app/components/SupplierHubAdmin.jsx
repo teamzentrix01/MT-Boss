@@ -7,7 +7,7 @@ const fmt  = (n) => `₹${parseFloat(n || 0).toLocaleString('en-IN', { minimumFr
 const fmtD = (d) => { try { return new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }); } catch { return d || '—'; } };
 const fmtDT= (d) => { try { return new Date(d).toLocaleString('en-IN',   { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); } catch { return d || '—'; } };
 
-function StatCard({ label, value, sub, color = '#f59e0b', bg, border }) {
+function StatCard({ label, value, sub, color = 'var(--brand-blue-dark)', bg, border }) {
   return (
     <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 10, padding: '1.1rem 1.25rem' }}>
       <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#888', marginBottom: '0.35rem' }}>{label}</div>
@@ -27,7 +27,7 @@ function StatusBadge({ s }) {
 
 function EnqStatusBadge({ status }) {
   const map = {
-    open:      { bg:'#fef9c3', color:'#92400e', label:'Open'      },
+    open:      { bg:'var(--brand-blue-soft)', color:'#92400e', label:'Open'      },
     accepted:  { bg:'#dbeafe', color:'#1e40af', label:'Accepted'  },
     fulfilled: { bg:'#dcfce7', color:'#15803d', label:'Fulfilled' },
     cancelled: { bg:'#fee2e2', color:'#991b1b', label:'Cancelled' },
@@ -446,9 +446,9 @@ export default function SupplierHubAdmin({ isDarkMode }) {
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(175px,1fr))', gap:'0.875rem', marginBottom:'1.5rem' }}>
             <StatCard label="Pending Approval"  value={pendingCount}                  sub="Awaiting review"           color="#f97316" bg={isDarkMode?'#2a1a0a':'#fff7ed'} border={isDarkMode?'#a3590033':'#fdba7433'} />
             <StatCard label="Active Suppliers"  value={activeCount}                   sub="Currently serving"         color="#16a34a" bg={isDarkMode?'#0a2a14':'#f0fdf4'} border={isDarkMode?'#16a34a33':'#bbf7d0'} />
-            <StatCard label="Open Enquiries"    value={commission.open}               sub="Waiting for supplier"      color="#f59e0b" bg={isDarkMode?'#1a1a0a':'#fffbeb'} border={isDarkMode?'#92400e33':'#fde68a'} />
+            <StatCard label="Open Enquiries"    value={commission.open}               sub="Waiting for supplier"      color="var(--brand-blue-dark)" bg={isDarkMode?'#1a1a0a':'var(--brand-blue-faint)'} border={isDarkMode?'#92400e33':'#fde68a'} />
             <StatCard label="Orders Fulfilled"  value={commission.fulfilled}          sub="Completed deliveries"      color="#3b82f6" bg={isDarkMode?'#0a1a2a':'#eff6ff'} border={isDarkMode?'#1e40af33':'#bfdbfe'} />
-            <StatCard label="Today's Commission" value={fmt(commission.today)}        sub="15% of today's fulfil."   color="#f59e0b" bg={isDarkMode?'#1a1a0a':'#fffbeb'} border={isDarkMode?'#92400e33':'#fde68a'} />
+            <StatCard label="Today's Commission" value={fmt(commission.today)}        sub="15% of today's fulfil."   color="var(--brand-blue-dark)" bg={isDarkMode?'#1a1a0a':'var(--brand-blue-faint)'} border={isDarkMode?'#92400e33':'#fde68a'} />
             <StatCard label="Total Commission"   value={fmt(commission.total)}        sub="All-time 15% earned"      color="#16a34a" bg={isDarkMode?'#0a2a14':'#f0fdf4'} border={isDarkMode?'#16a34a33':'#bbf7d0'} />
           </div>
 
@@ -570,7 +570,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                         {!e.material_type && !e.brand_company && '—'}
                       </td>
                       <td style={td({ color:muted, whiteSpace:'nowrap' })}>{e.quantity_text || '—'}</td>
-                      <td style={td({ whiteSpace:'nowrap', color: e.delivery_date ? '#f59e0b' : muted, fontWeight: e.delivery_date ? 700 : 400 })}>{fmtD(e.delivery_date)}</td>
+                      <td style={td({ whiteSpace:'nowrap', color: e.delivery_date ? 'var(--brand-blue-dark)' : muted, fontWeight: e.delivery_date ? 700 : 400 })}>{fmtD(e.delivery_date)}</td>
                       <td style={td({ color:muted, maxWidth:160 })}>
                         {e.delivery_address ? <span title={e.delivery_address}>{e.delivery_address.slice(0,50)}{e.delivery_address.length>50?'…':''}</span> : '—'}
                         {e.latitude && e.longitude && (
@@ -689,7 +689,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
           {/* Top commission summary */}
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(175px,1fr))', gap:'0.875rem', marginBottom:'1.5rem' }}>
             <StatCard label="Total Commission Earned" value={fmt(commission.total)}     sub="15% of all fulfilled orders"   color="#16a34a" bg={isDarkMode?'#0a2a14':'#f0fdf4'} border={isDarkMode?'#16a34a33':'#bbf7d0'} />
-            <StatCard label="Today's Commission"      value={fmt(commission.today)}     sub="Fulfilled orders today"         color="#f59e0b" bg={isDarkMode?'#1a1a0a':'#fffbeb'} border={isDarkMode?'#92400e33':'#fde68a'} />
+            <StatCard label="Today's Commission"      value={fmt(commission.today)}     sub="Fulfilled orders today"         color="var(--brand-blue-dark)" bg={isDarkMode?'#1a1a0a':'var(--brand-blue-faint)'} border={isDarkMode?'#92400e33':'#fde68a'} />
             <StatCard label="Orders Fulfilled"        value={commission.fulfilled}      sub="All-time completed"             color="#3b82f6" bg={isDarkMode?'#0a1a2a':'#eff6ff'} border={isDarkMode?'#1e40af33':'#bfdbfe'} />
             <StatCard label="Open Enquiries"          value={commission.open}           sub="Pending supplier response"      color="#f97316" bg={isDarkMode?'#2a1a0a':'#fff7ed'} border={isDarkMode?'#a3590033':'#fdba7433'} />
           </div>

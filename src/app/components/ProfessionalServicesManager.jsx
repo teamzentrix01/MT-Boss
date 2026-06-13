@@ -88,7 +88,7 @@ const CATEGORIES = ['Interior Designer', 'Architect', 'Landscape Designer',
 
 const STATUS_TABS = [
   { key: 'all',      label: 'All',      color: '#a1a1aa' },
-  { key: 'pending',  label: 'Pending',  color: '#facc15' },
+  { key: 'pending',  label: 'Pending',  color: 'var(--brand-blue)' },
   { key: 'approved', label: 'Approved', color: '#22c55e' },
   { key: 'rejected', label: 'Rejected', color: '#ef4444' },
 ];
@@ -102,7 +102,7 @@ function t(dark) {
     sub:      dark ? '#71717a' : '#6b7280',
     border:   dark ? '#27272a' : '#e5e7eb',
     inputBg:  dark ? '#0a0a0a' : '#f9fafb',
-    accent:   dark ? '#facc15' : '#111827',
+    accent:   dark ? 'var(--brand-blue)' : '#111827',
     accentFg: dark ? '#000000' : '#ffffff',
     rowHov:   dark ? '#1a1a1a' : '#f9fafb',
     tHead:    dark ? '#0a0a0a' : '#f3f4f6',
@@ -405,7 +405,7 @@ export default function ProfessionalServicesManager({ isDarkMode }) {
 
       {/* Drag hint */}
       {(statusTab === 'approved' || statusTab === 'all') && approved.length > 1 && (
-        <div style={{ background:isDarkMode?'#1a1500':'#fefce8', border:`1px solid ${isDarkMode?'#854d0e':'#fde68a'}`, borderRadius:'4px', padding:'8px 14px', marginBottom:'14px', fontSize:'12px', color:isDarkMode?'#fbbf24':'#92400e', display:'flex', alignItems:'center', gap:'6px', fontWeight:600 }}>
+        <div style={{ background:isDarkMode?'#1a1500':'#fefce8', border:`1px solid ${isDarkMode?'var(--brand-blue-deeper)':'#fde68a'}`, borderRadius:'4px', padding:'8px 14px', marginBottom:'14px', fontSize:'12px', color:isDarkMode?'var(--brand-blue-light)':'#92400e', display:'flex', alignItems:'center', gap:'6px', fontWeight:600 }}>
           <span style={{ fontSize:'16px' }}>⠿</span> Drag approved rows to set the display order on the public page.
           {orderSaving && <span style={{ marginLeft:'auto', opacity:0.7, fontWeight:400 }}>Saving order…</span>}
         </div>
@@ -436,8 +436,8 @@ export default function ProfessionalServicesManager({ isDarkMode }) {
                 const isDragging = isApproved && dragIndex === approvedIdx;
                 const isDragOver = isApproved && dragOverIndex === approvedIdx;
 
-                const statusColor = pro.status==='approved'?'#22c55e':pro.status==='pending'?'#facc15':'#ef4444';
-                const statusBg = pro.status==='approved'?(isDarkMode?'#052e16':'#dcfce7'):pro.status==='pending'?(isDarkMode?'#1c1400':'#fef9c3'):(isDarkMode?'#2d1515':'#fee2e2');
+                const statusColor = pro.status==='approved'?'#22c55e':pro.status==='pending'?'var(--brand-blue)':'#ef4444';
+                const statusBg = pro.status==='approved'?(isDarkMode?'#052e16':'#dcfce7'):pro.status==='pending'?(isDarkMode?'#1c1400':'var(--brand-blue-soft)'):(isDarkMode?'#2d1515':'#fee2e2');
 
                 return (
                   <tr key={pro.id} className={`psm-row ${isDragging?'psm-row-dragging':''} ${isDragOver?'psm-row-drag-over':''}`}

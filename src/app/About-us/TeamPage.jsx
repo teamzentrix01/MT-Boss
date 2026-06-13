@@ -86,14 +86,14 @@ function WebIcon() {
 
 // ── Admin Featured Card ─────────────────────────────────────────
 function AdminCard({ dark }) {
-  const accent = dark ? "text-[#facc15]" : "text-[#0d6ebd]";
-  const accentBg = dark ? "bg-[#facc15] text-black" : "bg-[#0d6ebd] text-white";
+  const accent = dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]";
+  const accentBg = dark ? "bg-[var(--brand-blue)] text-black" : "bg-[var(--brand-blue-deep)] text-white";
   return (
     <FadeIn>
-      <div className={`relative overflow-hidden border-2 ${dark ? "border-[#facc15] bg-zinc-950" : "border-[#0d6ebd] bg-white shadow-xl"}`}>
+      <div className={`relative overflow-hidden border-2 ${dark ? "border-[var(--brand-blue)] bg-zinc-950" : "border-[var(--brand-blue-deep)] bg-white shadow-xl"}`}>
         <div className="flex flex-col sm:flex-row">
           {/* Photo */}
-          <div className={`relative sm:w-56 shrink-0 flex items-center justify-center ${dark ? "bg-zinc-900" : "bg-[#e8f4ff]"}`} style={{ minHeight: 220 }}>
+          <div className={`relative sm:w-56 shrink-0 flex items-center justify-center ${dark ? "bg-zinc-900" : "bg-[var(--brand-blue-soft)]"}`} style={{ minHeight: 220 }}>
             <div className={`w-24 h-24 rounded-full flex items-center justify-center text-4xl font-black ${accentBg}`}>
               M
             </div>
@@ -119,7 +119,7 @@ function AdminCard({ dark }) {
 
             <div className="flex flex-wrap gap-1.5">
               {ADMIN.specializations.map((tag) => (
-                <span key={tag} className={`px-2 py-1 text-[8px] font-black uppercase tracking-wide border ${dark ? "border-[#facc15]/30 text-[#facc15]/70 bg-[#facc15]/5" : "border-[#0d6ebd]/30 text-[#0d6ebd]/70 bg-[#e8f4ff]"}`}>
+                <span key={tag} className={`px-2 py-1 text-[8px] font-black uppercase tracking-wide border ${dark ? "border-[var(--brand-blue)]/30 text-[var(--brand-blue)]/70 bg-[var(--brand-blue)]/5" : "border-[var(--brand-blue-deep)]/30 text-[var(--brand-blue-deep)]/70 bg-[var(--brand-blue-soft)]"}`}>
                   {tag}
                 </span>
               ))}
@@ -147,15 +147,15 @@ function ProfCardInner({ member, dark, idx }) {
         ? JSON.parse(member.specializations || "[]")
         : []);
 
-  const accent = dark ? "text-[#facc15]" : "text-[#0d6ebd]";
-  const accentBg = dark ? "bg-[#facc15] text-black" : "bg-[#0d6ebd] text-white";
+  const accent = dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]";
+  const accentBg = dark ? "bg-[var(--brand-blue)] text-black" : "bg-[var(--brand-blue-deep)] text-white";
   const initials = member.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
   return (
     <FadeIn delay={idx * 60}>
       <div className={`group flex flex-col h-full border transition-all duration-300 cursor-pointer ${
         dark
-          ? "bg-zinc-950 border-zinc-800 hover:border-[#facc15]/60"
+          ? "bg-zinc-950 border-zinc-800 hover:border-[var(--brand-blue)]/60"
           : "bg-white border-zinc-100 hover:border-zinc-300 hover:shadow-lg"
       }`}>
         {/* Photo / Avatar */}
@@ -167,7 +167,7 @@ function ProfCardInner({ member, dark, idx }) {
               className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <div className={`w-full h-full flex items-center justify-center text-4xl font-black ${dark ? "bg-zinc-900" : "bg-[#e8f4ff]"}`}>
+            <div className={`w-full h-full flex items-center justify-center text-4xl font-black ${dark ? "bg-zinc-900" : "bg-[var(--brand-blue-soft)]"}`}>
               <span className={accent}>{initials}</span>
             </div>
           )}
@@ -184,7 +184,7 @@ function ProfCardInner({ member, dark, idx }) {
           {/* name overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-3">
             <h3 className="text-white text-sm font-black uppercase tracking-tight leading-tight">{member.name}</h3>
-            <p className={`text-[9px] font-black uppercase tracking-widest mt-0.5 text-[#facc15]`}>{member.title}</p>
+            <p className={`text-[9px] font-black uppercase tracking-widest mt-0.5 text-[var(--brand-blue)]`}>{member.title}</p>
           </div>
         </div>
 
@@ -230,7 +230,7 @@ function ProfCardInner({ member, dark, idx }) {
                 </span>
               )}
             </div>
-            <span className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-widest transition-colors ${dark ? "text-zinc-600 group-hover:text-[#facc15]" : "text-zinc-300 group-hover:text-[#0d6ebd]"}`}>
+            <span className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-widest transition-colors ${dark ? "text-zinc-600 group-hover:text-[var(--brand-blue)]" : "text-zinc-300 group-hover:text-[var(--brand-blue-deep)]"}`}>
               View Profile
               <svg className="w-2.5 h-2.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
@@ -277,14 +277,14 @@ export default function TeamPage({ onBack }) {
           backgroundPosition: "center top",
         }}
       >
-        <div className={`absolute inset-0 ${dark ? "bg-black/85" : "bg-[#0a3d6e]/82"}`} />
+        <div className={`absolute inset-0 ${dark ? "bg-black/85" : "bg-[var(--brand-blue-ink)]/82"}`} />
         <div className="relative z-10 px-6">
-          <p className={`text-[9px] uppercase tracking-[0.5em] mb-2 font-black ${dark ? "text-[#facc15]" : "text-[#cce8ff]"}`}>MTBOSS Construction</p>
+          <p className={`text-[9px] uppercase tracking-[0.5em] mb-2 font-black ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-pale)]"}`}>MTBOSS Construction</p>
           <h1 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter mb-3 leading-none">
-            Our <span className="text-[#facc15]">Team</span>
+            Our <span className="text-[var(--brand-blue)]">Team</span>
           </h1>
-          <div className={`w-8 h-0.5 mx-auto mb-3 ${dark ? "bg-[#facc15]" : "bg-white"}`} />
-          <p className={`text-xs max-w-md mx-auto leading-relaxed ${dark ? "text-zinc-400" : "text-[#cce8ff]"}`}>
+          <div className={`w-8 h-0.5 mx-auto mb-3 ${dark ? "bg-[var(--brand-blue)]" : "bg-white"}`} />
+          <p className={`text-xs max-w-md mx-auto leading-relaxed ${dark ? "text-zinc-400" : "text-[var(--brand-blue-pale)]"}`}>
             The professionals who power every project, service, and relationship at MTBOSS.
           </p>
         </div>
@@ -300,7 +300,7 @@ export default function TeamPage({ onBack }) {
             { val: "India", label: "Nationwide" },
           ].map((s, i) => (
             <div key={i} className={`py-5 px-4 border-r last:border-r-0 ${dark ? "border-zinc-800" : "border-zinc-100"}`}>
-              <p className={`text-xl sm:text-2xl font-black ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>{s.val}</p>
+              <p className={`text-xl sm:text-2xl font-black ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>{s.val}</p>
               <p className={`text-[8px] uppercase tracking-widest ${muted}`}>{s.label}</p>
             </div>
           ))}
@@ -311,7 +311,7 @@ export default function TeamPage({ onBack }) {
       <section className={`py-10 px-6 ${dark ? "bg-black" : "bg-white"}`}>
         <div className="max-w-6xl mx-auto">
           <FadeIn className="mb-6">
-            <p className="text-[#facc15] text-[9px] font-black uppercase tracking-[0.4em] mb-1">Executive Leadership</p>
+            <p className="text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-[0.4em] mb-1">Executive Leadership</p>
             <h2 className={`text-2xl font-black uppercase tracking-tighter ${dark ? "text-white" : "text-zinc-900"}`}>
               Founder &amp; Director
             </h2>
@@ -328,7 +328,7 @@ export default function TeamPage({ onBack }) {
           <FadeIn className="mb-6">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <p className="text-[#facc15] text-[9px] font-black uppercase tracking-[0.4em] mb-1">Our Professionals</p>
+                <p className="text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-[0.4em] mb-1">Our Professionals</p>
                 <h2 className={`text-2xl font-black uppercase tracking-tighter ${dark ? "text-white" : "text-zinc-900"}`}>
                   Expert Team Members
                 </h2>
@@ -342,7 +342,7 @@ export default function TeamPage({ onBack }) {
                       onClick={() => setFilter(cat)}
                       className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest border transition-all ${
                         filter === cat
-                          ? "bg-[#facc15] border-[#facc15] text-black"
+                          ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black"
                           : dark
                           ? "border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
                           : "border-zinc-300 text-zinc-400 hover:border-zinc-600 hover:text-zinc-700"
@@ -380,10 +380,10 @@ export default function TeamPage({ onBack }) {
       </section>
 
       {/* ── Values ── */}
-      <section className={`py-10 px-6 ${dark ? "bg-black" : "bg-[#0a3d6e]"}`}>
+      <section className={`py-10 px-6 ${dark ? "bg-black" : "bg-[var(--brand-blue-ink)]"}`}>
         <div className="max-w-6xl mx-auto">
           <FadeIn className="text-center mb-8">
-            <p className={`text-[9px] uppercase tracking-[0.4em] font-black mb-1.5 ${dark ? "text-[#facc15]" : "text-[#cce8ff]"}`}>What Drives Us</p>
+            <p className={`text-[9px] uppercase tracking-[0.4em] font-black mb-1.5 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-pale)]"}`}>What Drives Us</p>
             <h2 className="text-2xl font-black text-white uppercase tracking-tighter">What Unites Our Team</h2>
           </FadeIn>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -394,7 +394,7 @@ export default function TeamPage({ onBack }) {
               { icon: "🌱", val: "Innovation", desc: "Building tomorrow today" },
             ].map((v, i) => (
               <FadeIn key={i} delay={i * 60}>
-                <div className={`p-5 text-center border transition-all hover:border-[#facc15] ${dark ? "border-zinc-800 bg-zinc-950 hover:bg-zinc-900" : "border-white/20 bg-white/10 hover:bg-white/20"}`}>
+                <div className={`p-5 text-center border transition-all hover:border-[var(--brand-blue)] ${dark ? "border-zinc-800 bg-zinc-950 hover:bg-zinc-900" : "border-white/20 bg-white/10 hover:bg-white/20"}`}>
                   <span className="text-3xl block mb-3">{v.icon}</span>
                   <p className="text-sm font-black uppercase tracking-wide mb-1 text-white">{v.val}</p>
                   <p className={`text-[9px] ${dark ? "text-zinc-500" : "text-[#99ccf0]"}`}>{v.desc}</p>
@@ -411,7 +411,7 @@ export default function TeamPage({ onBack }) {
           <div className="max-w-6xl mx-auto">
             <div className={`flex flex-col sm:flex-row items-center justify-between gap-6 p-7 border ${dark ? "border-zinc-800 bg-zinc-900" : "border-zinc-100 bg-zinc-50"}`}>
               <div>
-                <p className={`text-[9px] uppercase tracking-[0.4em] font-black mb-1 ${dark ? "text-[#facc15]" : "text-[#0d6ebd]"}`}>Join Our Network</p>
+                <p className={`text-[9px] uppercase tracking-[0.4em] font-black mb-1 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>Join Our Network</p>
                 <p className={`text-base font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-900"}`}>Become a Professional Partner</p>
                 <p className={`text-xs mt-1 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>List your services and connect with thousands of clients across India.</p>
               </div>
@@ -424,7 +424,7 @@ export default function TeamPage({ onBack }) {
                     ← About Us
                   </button>
                 )}
-                <Link href="/ProfessionalServices" className="px-6 py-3 bg-[#facc15] text-black text-[9px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all">
+                <Link href="/ProfessionalServices" className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-light)] transition-all">
                   Join as Professional →
                 </Link>
               </div>

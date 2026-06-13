@@ -65,7 +65,7 @@ function StarRating({ rating }) {
         <svg
           key={i}
           className={`w-4 h-4 ${
-            i < rating ? "text-[#facc15]" : "text-gray-400 opacity-30"
+            i < rating ? "text-[var(--brand-blue)]" : "text-gray-400 opacity-30"
           }`}
           fill="currentColor"
           viewBox="0 0 20 20"
@@ -155,7 +155,7 @@ export default function TestimonialsSection() {
   }, [current]);
 
   const t = testimonials[current];
-  const themeYellow = "#facc15";
+  const themeYellow = "var(--brand-blue)";
 
   return (
     <section
@@ -179,14 +179,14 @@ export default function TestimonialsSection() {
           >
             Client Feedback
           </h2>
-          <div className="w-12 h-1 bg-[#facc15] mx-auto rounded-full" />
+          <div className="w-12 h-1 bg-[var(--brand-blue)] mx-auto rounded-full" />
         </div>
 
         <div
           className={`rounded-sm shadow-2xl p-8 sm:p-14 relative overflow-hidden transition-all duration-500 border ${
             isDark
-              ? "bg-[#0a0a0a] border-yellow-500/30 shadow-yellow-500/10"
-              : "bg-white border-yellow-200"
+              ? "bg-[#0a0a0a] border-[var(--brand-blue)]/30 shadow-[var(--brand-blue)]/10"
+              : "bg-white border-sky-200"
           }`}
           style={{
             opacity: animating ? 0 : 1,
@@ -197,7 +197,7 @@ export default function TestimonialsSection() {
               : "translateX(0)",
           }}
         >
-          <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#facc15]" />
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-[var(--brand-blue)]" />
 
           <div className="flex justify-center mb-8">
             <StarRating rating={t.rating} />
@@ -243,7 +243,7 @@ export default function TestimonialsSection() {
           <div className="flex items-center gap-8">
 
             <button onClick={prev} className={`w-12 h-12 flex items-center justify-center rounded-full border-2 ${
-              isDark ? 'border-yellow-500 text-yellow-400' : 'border-yellow-400 text-yellow-600'
+              isDark ? 'border-[var(--brand-blue)] text-[var(--brand-blue-light)]' : 'border-[var(--brand-blue-light)] text-[var(--brand-blue-deep)]'
             }`}>
               ←
             </button>
@@ -257,7 +257,7 @@ export default function TestimonialsSection() {
             </div>
 
             <button onClick={next} className={`w-12 h-12 flex items-center justify-center rounded-full border-2 ${
-              isDark ? 'border-yellow-500 text-yellow-400' : 'border-yellow-400 text-yellow-600'
+              isDark ? 'border-[var(--brand-blue)] text-[var(--brand-blue-light)]' : 'border-[var(--brand-blue-light)] text-[var(--brand-blue-deep)]'
             }`}>
               →
             </button>

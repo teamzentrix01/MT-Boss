@@ -190,7 +190,7 @@ export default function SellPage() {
 
   const bg   = dark ? "bg-black text-white"         : "bg-white text-zinc-900";
   const card = dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-200";
-  const inp  = `w-full px-4 py-3 text-sm border rounded-sm outline-none transition-all ${dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#facc15]" : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"}`;
+  const inp  = `w-full px-4 py-3 text-sm border rounded-sm outline-none transition-all ${dark ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]" : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"}`;
   const lbl  = `block text-[10px] font-black uppercase tracking-widest mb-1.5 ${dark ? "text-zinc-400" : "text-zinc-500"}`;
   const muted= dark ? "text-zinc-500" : "text-zinc-400";
 
@@ -201,9 +201,9 @@ export default function SellPage() {
 
       {/* Hero */}
       <div className={`py-16 px-4 text-center ${dark ? "bg-zinc-950" : "bg-zinc-800"}`}>
-        <span className="text-[#facc15] text-[10px] font-black uppercase tracking-widest">MTBOSS Property</span>
+        <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">MTBOSS Property</span>
         <h1 className="text-white text-3xl md:text-5xl font-black uppercase tracking-widest mt-2 mb-3">
-          List Your<span className="block text-[#facc15]">Property</span>
+          List Your<span className="block text-[var(--brand-blue)]">Property</span>
         </h1>
         <p className="text-zinc-400 text-xs max-w-md mx-auto font-bold">
           Free listing. Admin-verified before going live. Reach thousands of buyers.
@@ -218,12 +218,12 @@ export default function SellPage() {
             {steps.slice(0,3).map((s, i) => (
               <div key={i} className="flex-1 flex items-center">
                 <div className="flex flex-col items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${step > i+1 ? "bg-[#facc15] text-black" : step === i+1 ? "bg-[#facc15] text-black" : dark ? "bg-zinc-800 text-zinc-500" : "bg-zinc-200 text-zinc-400"}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${step > i+1 ? "bg-[var(--brand-blue)] text-black" : step === i+1 ? "bg-[var(--brand-blue)] text-black" : dark ? "bg-zinc-800 text-zinc-500" : "bg-zinc-200 text-zinc-400"}`}>
                     {step > i+1 ? "✓" : i+1}
                   </div>
-                  <p className={`text-[9px] font-black uppercase tracking-widest mt-1 ${step === i+1 ? "text-[#facc15]" : muted}`}>{s}</p>
+                  <p className={`text-[9px] font-black uppercase tracking-widest mt-1 ${step === i+1 ? "text-[var(--brand-blue)]" : muted}`}>{s}</p>
                 </div>
-                {i < 2 && <div className={`flex-1 h-px mx-2 ${step > i+1 ? "bg-[#facc15]" : dark ? "bg-zinc-800" : "bg-zinc-200"}`} />}
+                {i < 2 && <div className={`flex-1 h-px mx-2 ${step > i+1 ? "bg-[var(--brand-blue)]" : dark ? "bg-zinc-800" : "bg-zinc-200"}`} />}
               </div>
             ))}
           </div>
@@ -242,7 +242,7 @@ export default function SellPage() {
               <div className="flex gap-3">
                 {["owner","broker"].map(t => (
                   <button key={t} type="button" onClick={() => set("seller_type", t)}
-                    className={`flex-1 py-2.5 text-xs font-black uppercase tracking-widest border transition-all ${form.seller_type === t ? "bg-[#facc15] text-black border-[#facc15]" : dark ? "border-zinc-700 text-zinc-400 hover:border-zinc-500" : "border-gray-200 text-zinc-500 hover:border-zinc-500"}`}>
+                    className={`flex-1 py-2.5 text-xs font-black uppercase tracking-widest border transition-all ${form.seller_type === t ? "bg-[var(--brand-blue)] text-black border-[var(--brand-blue)]" : dark ? "border-zinc-700 text-zinc-400 hover:border-zinc-500" : "border-gray-200 text-zinc-500 hover:border-zinc-500"}`}>
                     {t === "owner" ? "🏠 Owner" : "🤝 Broker / Agent"}
                   </button>
                 ))}
@@ -283,7 +283,7 @@ export default function SellPage() {
             <div><label className={lbl}>Description</label><textarea rows={3} className={`${inp} resize-none`} placeholder="Describe your property..." value={form.description} onChange={e=>set("description",e.target.value)} /></div>
             <div><label className={lbl}>Highlights (one per line)</label><textarea rows={3} className={`${inp} resize-none`} placeholder={"Gated Community\nSwimming Pool\n24/7 Security"} value={form.highlights} onChange={e=>set("highlights",e.target.value)} /></div>
 
-            <button onClick={handleNext} className="w-full py-3 bg-[#facc15] text-black font-black uppercase text-[10px] tracking-widest hover:bg-yellow-400 transition-all">Next: Your Info →</button>
+            <button onClick={handleNext} className="w-full py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-[10px] tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all">Next: Your Info →</button>
           </div>
         )}
 
@@ -297,7 +297,7 @@ export default function SellPage() {
             <p className={`text-[11px] leading-relaxed ${muted}`}>⚠️ Your contact details are only shared with verified buyers after admin approval.</p>
             <div className="flex gap-3">
               <button onClick={() => setStep(1)} className={`flex-1 py-3 border text-xs font-black uppercase tracking-widest transition-all ${dark ? "border-zinc-700 text-zinc-400 hover:border-zinc-500" : "border-gray-300 text-zinc-500 hover:border-zinc-700"}`}>← Back</button>
-              <button onClick={handleNext} className="flex-1 py-3 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all">Next: Photos →</button>
+              <button onClick={handleNext} className="flex-1 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all">Next: Photos →</button>
             </div>
           </div>
         )}
@@ -309,7 +309,7 @@ export default function SellPage() {
             <p className={`text-xs ${muted}`}>Upload up to 10 photos. Good photos get 3× more enquiries.</p>
 
             {/* Upload zone */}
-            <label className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-sm cursor-pointer transition-all ${dark ? "border-zinc-700 hover:border-[#facc15]" : "border-gray-300 hover:border-zinc-800"}`}>
+            <label className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-sm cursor-pointer transition-all ${dark ? "border-zinc-700 hover:border-[var(--brand-blue)]" : "border-gray-300 hover:border-zinc-800"}`}>
               <input type="file" multiple accept="image/*" className="hidden" onChange={handleImages} disabled={uploading} />
               <p className="text-3xl mb-2">📸</p>
               <p className={`text-xs font-black uppercase tracking-widest ${muted}`}>Click to upload photos</p>
@@ -318,12 +318,12 @@ export default function SellPage() {
 
             {/* Upload Progress */}
             {uploading && (
-              <div className={`p-4 rounded ${dark ? "bg-zinc-800" : "bg-yellow-50"}`}>
+              <div className={`p-4 rounded ${dark ? "bg-zinc-800" : "bg-sky-50"}`}>
                 <div className="flex items-center justify-between mb-2">
                   <p className={`text-xs font-bold ${muted}`}>Uploading: {uploadProgress}%</p>
                 </div>
-                <div className={`w-full h-2 rounded-full ${dark ? "bg-zinc-700" : "bg-yellow-200"}`}>
-                  <div className="h-full bg-[#facc15] rounded-full transition-all" style={{width: `${uploadProgress}%`}}></div>
+                <div className={`w-full h-2 rounded-full ${dark ? "bg-zinc-700" : "bg-sky-200"}`}>
+                  <div className="h-full bg-[var(--brand-blue)] rounded-full transition-all" style={{width: `${uploadProgress}%`}}></div>
                 </div>
               </div>
             )}
@@ -338,7 +338,7 @@ export default function SellPage() {
                       className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white text-xs font-black rounded-full opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
                       ✕
                     </button>
-                    {i === 0 && <span className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-[#facc15] text-black text-[9px] font-black uppercase">Cover</span>}
+                    {i === 0 && <span className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase">Cover</span>}
                   </div>
                 ))}
               </div>
@@ -351,7 +351,7 @@ export default function SellPage() {
             <div className="flex gap-3">
               <button onClick={() => setStep(2)} className={`flex-1 py-3 border text-xs font-black uppercase tracking-widest transition-all ${dark ? "border-zinc-700 text-zinc-400 hover:border-zinc-500" : "border-gray-300 text-zinc-500 hover:border-zinc-700"}`}>← Back</button>
               <button onClick={handleNext} disabled={uploading || imageFiles.length === 0}
-                className="flex-1 py-3 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+                className="flex-1 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 flex items-center justify-center gap-2">
                 {uploading ? <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>Uploading...</> : "Next: Review →"}
               </button>
             </div>
@@ -374,7 +374,7 @@ export default function SellPage() {
             </div>
 
             {/* Property Summary */}
-            <div className={`p-4 rounded ${dark ? "bg-zinc-800" : "bg-yellow-50"}`}>
+            <div className={`p-4 rounded ${dark ? "bg-zinc-800" : "bg-sky-50"}`}>
               <p className={`text-xs font-black uppercase tracking-widest mb-3 ${muted}`}>Property Summary</p>
               <div className="space-y-1 text-sm">
                 <p><strong>Title:</strong> {form.title}</p>
@@ -388,7 +388,7 @@ export default function SellPage() {
             <div className="flex gap-3">
               <button onClick={() => setStep(3)} className={`flex-1 py-3 border text-xs font-black uppercase tracking-widest transition-all ${dark ? "border-zinc-700 text-zinc-400 hover:border-zinc-500" : "border-gray-300 text-zinc-500 hover:border-zinc-700"}`}>← Back</button>
               <button onClick={handleSubmit} disabled={loading}
-                className="flex-1 py-3 bg-[#facc15] text-black font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+                className="flex-1 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 flex items-center justify-center gap-2">
                 {loading ? <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>Submitting...</> : "Submit Listing ✓"}
               </button>
             </div>
@@ -399,7 +399,7 @@ export default function SellPage() {
         {step === 4 && images.length === 0 && (
           <div className={`border rounded-sm p-10 text-center space-y-4 ${card}`}>
             <p className="text-6xl">🎉</p>
-            <h2 className="text-xl font-black uppercase tracking-tight text-[#facc15]">Listing Submitted!</h2>
+            <h2 className="text-xl font-black uppercase tracking-tight text-[var(--brand-blue)]">Listing Submitted!</h2>
             <p className={`text-sm leading-relaxed ${muted}`}>
               Your property has been submitted for review. Our admin team will verify it within <strong className={dark ? "text-white":"text-zinc-800"}>24–48 hours</strong>. Once approved, it will appear live on the Buy page.
             </p>
@@ -411,7 +411,7 @@ export default function SellPage() {
               <p className={`text-xs ${muted}`}>✓ Buyers can enquire directly</p>
             </div>
             <div className="flex gap-3 pt-2">
-              <a href="/property/buy" className="flex-1 py-3 bg-[#facc15] text-black font-black uppercase text-[10px] tracking-widest hover:bg-yellow-400 transition-all text-center">Browse Properties</a>
+              <a href="/property/buy" className="flex-1 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-[10px] tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all text-center">Browse Properties</a>
               <button onClick={() => { setStep(1); setForm(empty); setImages([]); setImageFiles([]); }}
                 className={`flex-1 py-3 border text-[10px] font-black uppercase tracking-widest transition-all ${dark ? "border-zinc-700 text-zinc-400 hover:border-zinc-500":"border-gray-300 text-zinc-500"}`}>
                 List Another

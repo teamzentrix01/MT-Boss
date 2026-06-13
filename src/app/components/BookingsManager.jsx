@@ -38,7 +38,7 @@ export default function BookingsManager({ isDarkMode }) {
   const statusColors = {
     'WAITING_FOR_VENDOR_ACCEPTANCE': { bg: '#fff7ed', text: '#9a3412', label: 'Waiting' },
     'VENDOR_ACCEPTED': { bg: '#dbeafe', text: '#1e40af', label: 'Accepted' },
-    'VENDOR_ON_WAY': { bg: '#fef3c7', text: '#92400e', label: 'On Way' },
+    'VENDOR_ON_WAY': { bg: 'var(--brand-blue-soft)', text: '#92400e', label: 'On Way' },
     'IN_PROGRESS': { bg: '#ffe4e6', text: '#831843', label: 'In Progress' },
     'COMPLETED': { bg: '#dcfce7', text: '#166534', label: 'Completed' },
     'CANCELLED': { bg: '#f3f4f6', text: '#374151', label: 'Cancelled' },

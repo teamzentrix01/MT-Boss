@@ -11,7 +11,7 @@ function theme(dark) {
     muted: dark ? '#71717a' : '#9ca3af',
     border: dark ? '#27272a' : '#e5e7eb',
     inputBg: dark ? '#0a0a0a' : '#f9fafb',
-    accent: '#facc15',
+    accent: 'var(--brand-blue)',
   };
 }
 
