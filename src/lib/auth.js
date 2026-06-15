@@ -23,7 +23,12 @@ const ROLE_COOKIE_NAMES = {
 
 export function getBearerToken(req, role) {
   const auth = req.headers.get('authorization') || '';
-  if (auth.startsWith('Bearer ')) return auth.slice(7);
+  if (auth.startsWith('Bearer ')) {
+    const headerToken = auth.slice(7).trim();
+    if (headerToken && headerToken !== 'null' && headerToken !== 'undefined') {
+      return headerToken;
+    }
+  }
 
   const cookieName = ROLE_COOKIE_NAMES[role] || 'auth-token';
   const cookieToken = req.cookies?.get?.(cookieName)?.value;
@@ -33,14 +38,24 @@ export function getBearerToken(req, role) {
 }
 
 export function verifyBearer(req, role) {
-  const token = getBearerToken(req, role);
-  if (!token) return null;
+  const auth = req.headers.get('authorization') || '';
+  const headerToken = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+  const cookieName = ROLE_COOKIE_NAMES[role] || 'auth-token';
+  const cookieToken = req.cookies?.get?.(cookieName)?.value || '';
+  const tokens = [headerToken, cookieToken]
+    .filter((token) => token && token !== 'null' && token !== 'undefined')
+    .filter((token, index, list) => list.indexOf(token) === index);
 
-  try {
-    return jwt.verify(token, getJwtSecret());
-  } catch {
-    return null;
+  for (const token of tokens) {
+    try {
+      const user = jwt.verify(token, getJwtSecret());
+      if (!role || user.role === role) return user;
+    } catch {
+      // Try the next available token source.
+    }
   }
+
+  return null;
 }
 
 export function requireRole(req, role) {

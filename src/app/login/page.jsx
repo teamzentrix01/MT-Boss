@@ -49,6 +49,10 @@ export default function LoginPage() {
       if (res.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
+        if (data.user?.role === 'admin') {
+          localStorage.setItem('admin-token', data.token);
+          localStorage.setItem('admin', JSON.stringify(data.user));
+        }
         window.dispatchEvent(new Event('userLoggedIn'));
         // Admin always goes to admin dashboard; regular users honour the redirect param
         const destination =
