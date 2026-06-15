@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 const DEV_JWT_SECRET = 'development-only-change-me';
 
 export function getJwtSecret() {
-  const secret = process.env.JWT_SECRET;
+  const secret = process.env.JWT_SECRET || process.env.NEXT_PUBLIC_JWT_SECRET;
   if (secret) return secret;
 
   if (process.env.NODE_ENV !== 'production') return DEV_JWT_SECRET;
