@@ -1,9 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function SupplierDashboard() {
+  return (
+    <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>Loading...</div>}>
+      <SupplierDashboardContent />
+    </Suspense>
+  );
+}
+
+function SupplierDashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [supplier, setSupplier] = useState(null);

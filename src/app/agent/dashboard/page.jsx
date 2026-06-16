@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const leadStatuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
@@ -13,6 +13,14 @@ function todayIso() {
 }
 
 export default function AgentDashboardPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen flex items-center justify-center">Loading agent dashboard...</main>}>
+      <AgentDashboardContent />
+    </Suspense>
+  );
+}
+
+function AgentDashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [dark, setDark] = useState(false);

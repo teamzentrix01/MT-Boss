@@ -4,10 +4,18 @@
 // ════════════════════════════════════════════════════════════════════════════════
  
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
  
 export default function VendorDashboard() {
+  return (
+    <Suspense fallback={<main className="min-h-screen flex items-center justify-center">Loading dashboard...</main>}>
+      <VendorDashboardContent />
+    </Suspense>
+  );
+}
+
+function VendorDashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [vendor, setVendor] = useState(null);
