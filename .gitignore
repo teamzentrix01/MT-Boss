@@ -19,6 +19,7 @@
 
 # production
 /build
+/db-dumps/
 
 # misc
 .DS_Store
