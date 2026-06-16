@@ -17,6 +17,7 @@ async function ensureTable() {
       subcategory_name        VARCHAR(255),
       brand_company           VARCHAR(255),
       quantity_text           VARCHAR(255),
+      order_unit              VARCHAR(100),
       delivery_date           DATE,
       delivery_address        TEXT,
       latitude                DECIMAL(10,8),
@@ -39,6 +40,7 @@ async function ensureTable() {
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS material_type    VARCHAR(255)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS subcategory_name VARCHAR(255)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS brand_company    VARCHAR(255)`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS order_unit       VARCHAR(100)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS delivery_date    DATE`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS selected_city    VARCHAR(100)`,
   ];
@@ -56,7 +58,7 @@ export async function POST(req) {
       user_name, user_phone, user_email,
       category_name, category_emoji,
       material_type, subcategory_name, brand_company,
-      quantity_text, delivery_date,
+      quantity_text, order_unit, delivery_date,
       delivery_address, latitude, longitude,
       message, selected_city,
     } = await req.json();
@@ -73,15 +75,15 @@ export async function POST(req) {
          (user_name, user_phone, user_email,
           category_name, category_emoji,
           material_type, subcategory_name, brand_company,
-          quantity_text, delivery_date,
+          quantity_text, order_unit, delivery_date,
           delivery_address, latitude, longitude, message, selected_city)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
        RETURNING id, status, created_at`,
       [
         user_name, user_phone, user_email || null,
         category_name, category_emoji || '',
         material_type || null, subcategory_name || null, brand_company || null,
-        quantity_text || null, delivery_date || null,
+        quantity_text || null, order_unit || null, delivery_date || null,
         delivery_address || null, latitude || null, longitude || null,
         message || null, selected_city || null,
       ]

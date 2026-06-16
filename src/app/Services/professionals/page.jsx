@@ -475,29 +475,29 @@ export default function ProfessionalsPage() {
       `}</style>
 
       {/* Hero */}
-      <div style={{ background:t.heroBg,padding:'72px 24px 80px',textAlign:'center',position:'relative',overflow:'hidden',borderBottom:`2px solid ${t.accent}` }}>
+      <div style={{ background:t.heroBg,padding:'22px 24px 24px',textAlign:'center',position:'relative',overflow:'hidden',borderBottom:`2px solid ${t.accent}` }}>
         <div style={{ position:'absolute',inset:0,backgroundImage:`linear-gradient(${isDark?'color-mix(in srgb, var(--brand-blue) 3%, transparent)':'rgba(255,255,255,0.03)'} 1px,transparent 1px),linear-gradient(90deg,${isDark?'color-mix(in srgb, var(--brand-blue) 3%, transparent)':'rgba(255,255,255,0.03)'} 1px,transparent 1px)`,backgroundSize:'40px 40px',pointerEvents:'none' }} />
-        <p style={{ color:t.accent,fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.15em',margin:'0 0 14px' }}>MTbossProfessional Services</p>
-        <h1 style={{ color:'#fff',fontSize:'clamp(28px,5vw,52px)',fontWeight:800,margin:'0 0 16px',lineHeight:1.1,textTransform:'uppercase',letterSpacing:'-0.02em' }}>Meet Our Professionals</h1>
-        <p style={{ color:'rgba(255,255,255,0.55)',fontSize:'15px',maxWidth:'480px',margin:'0 auto 40px',lineHeight:1.7 }}>
+        <p style={{ color:t.accent,fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.15em',margin:'0 0 8px' }}>MTbossProfessional Services</p>
+        <h1 style={{ color:'#fff',fontSize:'clamp(24px,3.4vw,36px)',fontWeight:800,margin:'0 0 8px',lineHeight:1.05,textTransform:'uppercase',letterSpacing:'-0.02em' }}>Meet Our Professionals</h1>
+        <p style={{ color:'rgba(255,255,255,0.55)',fontSize:'13px',maxWidth:'480px',margin:'0 auto 14px',lineHeight:1.45 }}>
           Verified interior designers, architects and home experts — handpicked for quality and excellence.
         </p>
         <button onClick={()=>setShowApply(true)}
-          style={{ background:t.accent,color:t.accentFg,border:'none',borderRadius:'2px',padding:'14px 36px',cursor:'pointer',fontSize:'11px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.12em',boxShadow:isDark?'0 0 24px color-mix(in srgb, var(--brand-blue) 30%, transparent)':'0 4px 16px rgba(0,0,0,0.25)' }}>
+          style={{ background:t.accent,color:t.accentFg,border:'none',borderRadius:'2px',padding:'9px 24px',cursor:'pointer',fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.12em',boxShadow:isDark?'0 0 14px color-mix(in srgb, var(--brand-blue) 20%, transparent)':'0 4px 16px rgba(0,0,0,0.25)' }}>
           Apply as a Professional →
         </button>
       </div>
 
       {/* Filters */}
-      <div style={{ maxWidth:'1200px',margin:'0 auto',padding:'36px 24px 0' }}>
-        <div style={{ position:'relative',marginBottom:'20px' }}>
+      <div style={{ maxWidth:'1200px',margin:'0 auto',padding:'14px 24px 0' }}>
+        <div style={{ position:'relative',marginBottom:'10px' }}>
           <span style={{ position:'absolute',left:'14px',top:'50%',transform:'translateY(-50%)',color:t.muted,fontSize:'14px' }}>🔍</span>
           <input className="pro-search" value={search} onChange={e=>setSearch(e.target.value)}
             placeholder="Search by name, title or city…"
             style={{ width:'100%',boxSizing:'border-box',border:`1px solid ${t.border}`,borderRadius:'4px',padding:'11px 14px 11px 40px',background:t.inputBg,color:t.text,fontSize:'13px',outline:'none',transition:'border-color 0.15s' }} />
         </div>
 
-        <div style={{ display:'flex',gap:'8px',flexWrap:'wrap',marginBottom:'36px' }}>
+        <div style={{ display:'flex',gap:'8px',flexWrap:'wrap',marginBottom:'14px' }}>
           {CATEGORIES.map(cat=>{
             const active = category===cat;
             return (

@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function SupplierDashboard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [supplier, setSupplier] = useState(null);
   const [dark, setDark] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -73,6 +74,16 @@ export default function SupplierDashboard() {
   }, [router]);
 
   const token = () => localStorage.getItem('supplier-token');
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (['orders', 'earnings', 'packages', 'profile'].includes(tab)) {
+      setActiveTab(tab);
+      if (tab === 'orders') fetchOrders();
+      if (tab === 'earnings') fetchEarnings();
+      if (tab === 'packages') loadPackages();
+    }
+  }, [searchParams]);
 
   // ── Product Categories ────────────────────────────────────────────────────
   const saveCategories = async () => {
@@ -460,7 +471,7 @@ export default function SupplierDashboard() {
                   <div>
                     <div style={{ fontWeight: 700, color: '#f97316', fontSize: '0.9rem' }}>No product categories set</div>
                     <div style={{ fontSize: '0.82rem', color: muted, marginTop: '0.2rem' }}>
-                      You won't receive any enquiries until you set your product categories.{' '}
+                      You won&apos;t receive any enquiries until you set your product categories.{' '}
                       <button onClick={() => setActiveTab('profile')} style={{ background: 'none', border: 'none', color: 'var(--brand-blue-dark)', fontWeight: 700, cursor: 'pointer', fontSize: '0.82rem', padding: 0, textDecoration: 'underline' }}>
                         Set categories now →
                       </button>

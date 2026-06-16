@@ -106,6 +106,9 @@ export default function ShopPage() {
   const [customType, setCustomType]             = useState("");   // free-text if "Others"
   const [subcategoryVal, setSubcategoryVal]     = useState("");
   const [customSubcategory, setCustomSubcategory] = useState("");
+  const [orderUnit, setOrderUnit]               = useState("");
+  const [productOptions, setProductOptions]     = useState({ products: [], types: [], units: [] });
+  const [loadingProductOptions, setLoadingProductOptions] = useState(false);
   const [brandCompany, setBrandCompany]         = useState("");
   const [deliveryDate, setDeliveryDate]         = useState("");
 
@@ -117,10 +120,27 @@ export default function ShopPage() {
   const [locationCoords, setLocationCoords] = useState(null);
 
   // ── helpers ────────────────────────────────────────────────────────────────
-  const catTypes    = (selectedCategory?.types        || []).filter(Boolean);
+  const dynamicTypes = productOptions.types || [];
+  const dynamicUnits = productOptions.units || [];
+  const catTypes    = (dynamicTypes.length > 0 ? dynamicTypes : (selectedCategory?.types || [])).filter(Boolean);
   const catSubs     = (selectedCategory?.subcategories || []).filter(Boolean);
   const hasTypes    = catTypes.length > 0;
   const hasSubs     = catSubs.length  > 0;
+  const categoryUnits = [
+    ...dynamicUnits,
+    selectedCategory?.unit || '',
+    'bag',
+    'bags',
+    'pcs',
+    'kg',
+    'quintal',
+    'box',
+    'bundle',
+    'cft',
+    'ton',
+    'meter',
+  ].map((u) => String(u || '').trim()).filter(Boolean);
+  const unitOptions = [...new Set(categoryUnits)];
 
   const openModal = (category) => {
     setSelectedCategory(category);
@@ -132,6 +152,8 @@ export default function ShopPage() {
     setCustomType("");
     setSubcategoryVal("");
     setCustomSubcategory("");
+    setOrderUnit("");
+    setProductOptions({ products: [], types: [], units: [] });
     setBrandCompany("");
     setDeliveryDate("");
     setLocationStatus("loading");
@@ -151,6 +173,18 @@ export default function ShopPage() {
       setLocationStatus("error");
     }
   };
+
+  useEffect(() => {
+    if (!selectedCategory?.name) return;
+    setLoadingProductOptions(true);
+    fetch(`/api/shop-material-options?category=${encodeURIComponent(selectedCategory.name)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) setProductOptions(data.data || { products: [], types: [], units: [] });
+      })
+      .catch(console.error)
+      .finally(() => setLoadingProductOptions(false));
+  }, [selectedCategory?.name]);
 
   const retryLocation = () => {
     if (!navigator.geolocation) { setLocationStatus("error"); return; }
@@ -176,7 +210,7 @@ export default function ShopPage() {
     setSubmitError("");
 
     // Resolve final type & subcategory values
-    const finalType     = materialType     === "Others" ? customType.trim()        : materialType;
+    const finalType     = hasTypes ? (materialType === "Others" ? customType.trim() : materialType) : customType.trim();
     const finalSubcat   = subcategoryVal   === "Others" ? customSubcategory.trim() : subcategoryVal;
 
     if (!selectedCity) {
@@ -198,7 +232,8 @@ export default function ShopPage() {
           material_type:   finalType   || null,
           subcategory_name: finalSubcat || null,
           brand_company:   brandCompany.trim() || null,
-          quantity_text:   formData.quantity || null,
+          quantity_text:   formData.quantity && orderUnit ? `${formData.quantity} ${orderUnit}` : formData.quantity || null,
+          order_unit:      orderUnit || null,
           delivery_date:   deliveryDate || null,
           delivery_address: formData.address,
           latitude:        locationCoords?.latitude  || null,
@@ -264,23 +299,22 @@ export default function ShopPage() {
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden bg-zinc-950">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-          <div className="inline-flex items-center gap-2 bg-[var(--brand-blue)]/10 border border-[var(--brand-blue-light)]/30 text-[var(--brand-blue)] text-xs font-bold px-4 py-1.5 rounded-full mb-5 tracking-widest uppercase">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-5 text-center">
+          <div className="inline-flex items-center gap-2 bg-[var(--brand-blue)]/10 border border-[var(--brand-blue-light)]/30 text-[var(--brand-blue)] text-[9px] font-bold px-3 py-1 rounded-full mb-2 tracking-widest uppercase">
             <Zap size={12} /> Material Marketplace
           </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 leading-tight">
-            Construction Materials,<br />
-            <span className="text-[var(--brand-blue-light)]">Sourced Right.</span>
+          <h1 className="text-2xl md:text-4xl font-extrabold text-white mb-2 leading-tight">
+            Construction Materials, <span className="text-[var(--brand-blue-light)]">Sourced Right.</span>
           </h1>
-          <p className="text-base md:text-lg text-zinc-400 max-w-xl mx-auto mb-10">
+          <p className="text-xs md:text-sm text-zinc-400 max-w-xl mx-auto mb-3">
             Browse all major construction categories and get a direct quote from verified suppliers across India.
           </p>
-          <div className="flex flex-wrap justify-center gap-6">
+          <div className="flex flex-wrap justify-center gap-3">
             {stats.map((s, i) => (
-              <div key={i} className="flex items-center gap-2 text-zinc-300">
+              <div key={i} className="flex items-center gap-1.5 text-zinc-300">
                 <span className="text-[var(--brand-blue-light)]">{s.icon}</span>
-                <span className="font-bold text-lg">{s.value}</span>
-                <span className="text-sm text-zinc-400">{s.label}</span>
+                <span className="font-bold text-sm">{s.value}</span>
+                <span className="text-[11px] text-zinc-400">{s.label}</span>
               </div>
             ))}
           </div>
@@ -288,11 +322,11 @@ export default function ShopPage() {
       </div>
 
       {/* ── Categories Grid ──────────────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <p className="text-xs font-bold tracking-widest uppercase text-[var(--brand-blue)] mb-2">What We Offer</p>
-          <h2 className={`text-3xl md:text-4xl font-bold ${headText}`}>Material Categories</h2>
-          <p className={`mt-2 text-sm ${subText}`}>Click any category to get a quote</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-5">
+        <div className="text-center mb-5">
+          <p className="text-[10px] font-bold tracking-widest uppercase text-[var(--brand-blue)] mb-1">What We Offer</p>
+          <h2 className={`text-xl md:text-2xl font-bold ${headText}`}>Material Categories</h2>
+          <p className={`mt-1 text-xs ${subText}`}>Click any category to get a quote</p>
         </div>
 
         {catsLoading ? (
@@ -387,49 +421,41 @@ export default function ShopPage() {
           MODAL — Get a Quote
       ════════════════════════════════════════════════════════════════════════ */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className={`${modalBg} rounded-2xl shadow-2xl w-full max-w-lg border overflow-hidden my-4`}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] flex items-start justify-center p-3 sm:p-4 overflow-hidden">
+          <div className={`${modalBg} rounded-2xl shadow-2xl w-full max-w-lg border overflow-hidden max-h-[calc(100vh-2rem)] flex flex-col`}>
 
             {/* Modal Header */}
             <div className={`flex items-center justify-between px-6 py-4 border-b ${modalHead}`}>
               <div>
                 <p className="text-xs font-bold tracking-widest uppercase text-[var(--brand-blue)] mb-0.5">Request Quote</p>
                 <h2 className={`text-lg font-extrabold ${headText} flex items-center gap-2`}>
-                  {selectedCategory?.image
-                    ? <img src={selectedCategory.image} alt="" style={{ width: 28, height: 28, objectFit: "cover", borderRadius: 4 }} />
-                    : selectedCategory?.emoji}
-                  {selectedCategory?.name}
+                  {selectedCategory?.emoji || "📦"} {selectedCategory?.name}
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className={`p-2 rounded-full transition-colors ${isDarkMode ? "text-zinc-400 hover:text-white hover:bg-zinc-800" : "text-gray-400 hover:text-gray-700 hover:bg-gray-100"}`}
+                className={`p-2 rounded-full transition-all ${isDarkMode ? "text-zinc-400 hover:bg-zinc-800 hover:text-white" : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"}`}
+                aria-label="Close quote form"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
-            {/* ── Success screen ─────────────────────────────────────────── */}
             {submitted ? (
-              <div className="py-10 text-center px-6">
-                <div className="text-5xl mb-3">🎉</div>
-                <h3 className={`text-lg font-bold ${headText} mb-2`}>Enquiry Submitted!</h3>
-                <p className={`text-sm ${subText} mb-3`}>
-                  Your request for <strong>{selectedCategory?.name}</strong> has been received.
-                </p>
-                <p className={`text-xs ${subText}`}>
-                  Verified suppliers will review your enquiry. You will receive a call &amp; email once a supplier accepts your order.
+              <div className="p-8 text-center overflow-y-auto">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--brand-blue)] text-2xl text-gray-950">
+                  ✓
+                </div>
+                <h3 className={`text-xl font-black ${headText}`}>Request submitted</h3>
+                <p className={`mt-2 text-sm ${subText}`}>
+                  Your order request has been received. Order will be placed within 24 to 48 hrs after supplier confirmation.
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="p-5 space-y-0 max-h-[80vh] overflow-y-auto">
-
-                {/* ── CITY SELECTOR ───────────────────────────────────── */}
+              <form onSubmit={handleSubmit} className="p-6 overflow-y-auto">
                 <div className="mb-4">
-                  <label className={lbl}>
-                    📍 Select Your City <span className="text-red-500">*</span>
-                  </label>
+                  <label className={lbl}>Delivery City *</label>
                   <select
                     value={selectedCity}
                     onChange={(e) => setSelectedCity(e.target.value)}
@@ -504,7 +530,13 @@ export default function ShopPage() {
                 {/* ── SECTION 1 — Material Details ───────────────────── */}
                 <SectionLabel isDark={isDarkMode}>📦 Material Details</SectionLabel>
 
-                {/* Material Type (only if types are defined) */}
+                {loadingProductOptions && (
+                  <p className={`text-[10px] font-semibold mb-2 ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>
+                    Loading uploaded product options...
+                  </p>
+                )}
+
+                {/* Material Type */}
                 {hasTypes && (
                   <div className="mb-3">
                     <label className={lbl}>Type of Material *</label>
@@ -520,18 +552,23 @@ export default function ShopPage() {
                       ))}
                       <option value="Others">Others (specify below)</option>
                     </select>
+                    {dynamicTypes.length > 0 && (
+                      <p className={`text-[9px] mt-0.5 ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>
+                        Options are coming from uploaded products.
+                      </p>
+                    )}
                   </div>
                 )}
 
                 {/* Custom type input */}
-                {materialType === "Others" && (
+                {(materialType === "Others" || !hasTypes) && (
                   <div className="mb-3">
-                    <label className={lbl}>Specify Material Type *</label>
+                    <label className={lbl}>{hasTypes ? "Specify Material Type *" : "Type of Material"}</label>
                     <input
                       type="text"
                       value={customType}
                       onChange={(e) => setCustomType(e.target.value)}
-                      required
+                      required={!hasTypes}
                       placeholder={`e.g. special grade ${selectedCategory?.name || "material"}`}
                       className={inp}
                     />
@@ -608,10 +645,24 @@ export default function ShopPage() {
                 {/* ── SECTION 3 — Quantity & Delivery ───────────────── */}
                 <SectionLabel isDark={isDarkMode}>🚚 Quantity & Delivery</SectionLabel>
 
-                <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                   <div>
                     <label className={lbl}>Quantity Required</label>
-                    <input type="text" name="quantity" value={formData.quantity} onChange={handleInputChange} placeholder="e.g. 500 bags" className={inp} />
+                    <input type="text" name="quantity" value={formData.quantity} onChange={handleInputChange} placeholder="e.g. 500" className={inp} />
+                  </div>
+                  <div>
+                    <label className={lbl}>SKU / Unit</label>
+                    <select
+                      value={orderUnit}
+                      onChange={(e) => setOrderUnit(e.target.value)}
+                      className={sel}
+                      required={Boolean(formData.quantity)}
+                    >
+                      <option value="">Select unit</option>
+                      {unitOptions.map((unit) => (
+                        <option key={unit} value={unit}>{unit}</option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className={lbl}>Delivery Needed By</label>

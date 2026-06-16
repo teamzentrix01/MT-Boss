@@ -22,9 +22,10 @@ export async function POST(req) {
       user_longitude,
       location_map_url,
     } = await req.json();
+    const selectedCity = String(service_city || '').trim();
 
     // Validation
-    if (!quick_service_id || !user_name || !user_phone || !service_address || !service_city || !service_pincode) {
+    if (!quick_service_id || !user_name || !user_phone || !service_address || !selectedCity || !service_pincode) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -68,11 +69,11 @@ export async function POST(req) {
         [
           booking_reference, quick_service_id,
           user_name, user_phone, user_email,
-          service_address, service_city, service_pincode, property_type,
+          service_address, selectedCity, service_pincode, property_type,
           booking_date, booking_time, slot_type, time_slot_id,
           'normal', visit_fee, service_description,
           user_latitude, user_longitude, location_map_url,
-          base_price, visit_fee, total_amount, 'pending', null, 'pending'
+          base_price, visit_fee, total_amount, 'WAITING_FOR_VENDOR_ACCEPTANCE', null, 'PENDING'
         ]
       );
 
@@ -88,18 +89,16 @@ export async function POST(req) {
         );
       }
 
-      // Get all active vendors in the city providing this service
+      // Notify every approved vendor in the same city. Full details and
+      // accept actions are gated later by package + service eligibility.
       const vendorResult = await client.query(
         `SELECT DISTINCT v.id, v.email, v.phone, v.shop_name 
          FROM vendors v
-         JOIN vendor_services vs ON v.id = vs.vendor_id
-         WHERE vs.quick_service_id = $1 
-         AND LOWER(TRIM(v.city)) = LOWER(TRIM($2))
-         AND v.status = 'active'
+         WHERE LOWER(TRIM(v.city)) = LOWER(TRIM($1))
+         AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
          AND v.is_approved = TRUE
-         AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
-         AND vs.is_active = TRUE`,
-        [quick_service_id, service_city]
+         AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')`,
+        [selectedCity]
       );
 
       const vendors = vendorResult.rows;
@@ -114,8 +113,8 @@ export async function POST(req) {
             booking.id,
             vendor.id,
             'new_booking',
-            `New ${service_city} Service Request`,
-            `New booking request for your service at ${service_address}, ${service_city}`
+            `New ${selectedCity} Service Request`,
+            `New booking request for your service at ${service_address}, ${selectedCity}`
           ]
         );
       }

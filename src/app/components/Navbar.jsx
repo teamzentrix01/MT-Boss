@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import GlobalSearch from "./GlobalSearch";
 
 function DropdownButton({ label, children, text, textHover, dropdownBg }) {
   return (
@@ -152,7 +153,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     <nav
       className={`${bg} border-b shadow-sm transition-all duration-500 sticky top-0 z-[100]`}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="w-full mx-auto px-2 xl:px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0">
@@ -167,16 +168,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           <div className="hidden lg:flex items-center gap-0.5">
             <Link
               href="/"
-              className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
+              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Home
             </Link>
-            {/* <Link
-              href="/About-us"
-              className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
-            >
-              About Us
-            </Link> */}
 
             {/* Services */}
             <DropdownButton label="Services" text={text} textHover={textHover} dropdownBg={dropdownBg}>
@@ -217,46 +212,36 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
             <Link
               href="/agent"
-              className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
+              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Become an Agent
             </Link>
             <Link
               href="/franchise"
-              className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
+              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Franchise
             </Link>
 
             <Link
               href="/calculator"
-              className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
+              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Budget Calculator
             </Link>
 
             <Link
               href="/ShopNow"
-              className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
+              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Shop Now
             </Link>
-            {/* <Link
-              href="/careers"
-              className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
-            >
-              Careers
-            </Link> */}
-            {/* <Link
-              href="/contact"
-              className={`px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
-            >
-              Contact
-            </Link> */}
           </div>
 
           {/* Right Side */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-1.5 xl:gap-3">
+            <GlobalSearch user={user} isDarkMode={isDarkMode} />
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -288,8 +273,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             {/* User Info / Auth Buttons */}
             {!loading ? (
               user ? (
-                // Logged In User - IMPROVED
-                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
+                // Logged In User
+                <div className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border transition-all ${
                   isDarkMode 
                     ? 'border-zinc-700 bg-zinc-900/50' 
                     : 'border-gray-200 bg-gray-50'
@@ -305,8 +290,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   >
                     {(user.name || user.shop_name || user.email || 'U')[0].toUpperCase()}
                   </div>
-                  <div className="flex flex-col text-xs min-w-max">
-                    <span className="font-semibold text-sm">
+                  <div className="flex flex-col text-xs">
+                    <span className="font-semibold text-sm truncate max-w-[80px] xl:max-w-[120px]" title={user.name || user.shop_name || user.email}>
                       {user.name || user.shop_name || user.email}
                     </span>
                     <span className={`text-[10px] ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>
@@ -424,9 +409,12 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-gray-100'
           } border-t px-6 py-4 space-y-1`}
         >
+          <div className="pb-3">
+            <GlobalSearch user={user} isDarkMode={isDarkMode} onNavigate={() => setIsOpen(false)} />
+          </div>
+
           {[
             { label: 'Home', href: '/' },
-            { label: 'About Us', href: '/About-us' },
             { label: 'Budget Calculator', href: '/calculator' },
             { label: 'Shop Now', href: '/shop' },
             { label: 'Careers', href: '/careers' },

@@ -784,9 +784,20 @@ export default function CalculatorManager({ isDarkMode }) {
                   </div>
                   <div>
                     <label className="cm-label">Unit</label>
-                    <input className="cm-input" value={formData.unit}
-                      onChange={e => setFormData({ ...formData, unit: e.target.value })}
-                      placeholder="bag, kg, piece" />
+                    <select className="cm-select" value={formData.unit}
+                      onChange={e => setFormData({ ...formData, unit: e.target.value })}>
+                      <option value="unit">unit</option>
+                      <option value="bag">bag</option>
+                      <option value="bags">bags</option>
+                      <option value="pcs">pcs</option>
+                      <option value="kg">kg</option>
+                      <option value="quintal">quintal</option>
+                      <option value="box">box</option>
+                      <option value="sqft">sqft</option>
+                      <option value="sqm">sqm</option>
+                      <option value="ton">ton</option>
+                      <option value="litre">litre</option>
+                    </select>
                   </div>
                   <div style={{ display:'flex', alignItems:'center', paddingTop:'1.2rem' }}>
                     <label style={{ display:'flex', alignItems:'center', gap:8, color:'var(--cm-muted)', fontSize:'.8rem', fontWeight:700, cursor:'pointer' }}>

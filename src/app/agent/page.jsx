@@ -251,11 +251,11 @@ export default function AgentPage() {
   }
 
   return (
-    <main className={`min-h-screen transition-colors duration-500 ${dark ? "bg-black" : "bg-gray-50"}`}>
+    <main className={`min-h-screen transition-colors duration-500 flex flex-col ${dark ? "bg-black" : "bg-gray-50"}`}>
 
       {/* ── HERO ── */}
       <section
-        className="relative flex items-center justify-center text-center py-28 px-6"
+        className="relative order-1 flex items-center justify-center text-center py-20 px-6"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=1600&q=80)",
           backgroundSize: "cover",
@@ -280,7 +280,7 @@ export default function AgentPage() {
             <span className="block text-[var(--brand-blue)]">Agent</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-            Expand your income by joining MTBOSS's growing agent network. Refer clients, close deals, and earn high commissions — on your own schedule.
+            Expand your income by joining MTBOSS&apos;s growing agent network. Refer clients, close deals, and earn high commissions — on your own schedule.
           </p>
 
           {/* Stats */}
@@ -311,7 +311,7 @@ export default function AgentPage() {
       </section>
 
       {/* ── AGENT TYPES ── */}
-      <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
+      <section className={`order-2 py-16 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
@@ -371,7 +371,7 @@ export default function AgentPage() {
       </section>
 
       {/* ── BENEFITS ── */}
-      <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-gray-50"}`}>
+      <section className={`order-4 py-20 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-gray-50"}`}>
         <div
           ref={benefitsRef}
           className="max-w-7xl mx-auto"
@@ -412,7 +412,7 @@ export default function AgentPage() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
+      <section className={`order-5 py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div
           ref={processRef}
           className="max-w-6xl mx-auto"
@@ -458,7 +458,7 @@ export default function AgentPage() {
       </section>
 
       {/* ── LEAD CAPTURE STATS STRIP ── */}
-      <section className={`py-12 px-6 transition-colors duration-500 ${dark ? "bg-[var(--brand-blue)]" : "bg-[var(--brand-blue)]"}`}>
+      <section className={`order-6 py-12 px-6 transition-colors duration-500 ${dark ? "bg-[var(--brand-blue)]" : "bg-[var(--brand-blue)]"}`}>
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
@@ -477,7 +477,7 @@ export default function AgentPage() {
       </section>
 
       {/* ── FAQ ── */}
-      <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-gray-50"}`}>
+      <section className={`order-7 py-20 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-gray-50"}`}>
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14">
             <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
@@ -528,7 +528,7 @@ export default function AgentPage() {
       {/* ── AGENT REGISTRATION FORM ── */}
       <section
         id="agent-form"
-        className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}
+        className={`order-3 py-12 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}
       >
         <div className="max-w-4xl mx-auto">
 
@@ -672,7 +672,7 @@ export default function AgentPage() {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)]" />
                   <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                    I confirm that the information provided is accurate. I agree to MTBOSS Construction's agent terms and understand that registration does not guarantee agent status until verified.
+                    I confirm that the information provided is accurate. I agree to MTBOSS Construction&apos;s agent terms and understand that registration does not guarantee agent status until verified.
                   </span>
                 </label>
               </div>
@@ -712,7 +712,7 @@ export default function AgentPage() {
       </section>
 
       {/* ── BOTTOM CTA ── */}
-      <section className={`py-16 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-zinc-800"}`}>
+      <section className={`order-8 py-16 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-zinc-800"}`}>
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">
             Have Questions?

@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" className={isDarkMode ? "dark-mode" : ""}>
-      <body className={`transition-colors duration-500 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+      <body className={`transition-colors duration-500 overflow-x-hidden ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
         <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
         {children}
         <Footer/>

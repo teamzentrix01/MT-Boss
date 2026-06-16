@@ -22,7 +22,7 @@ export async function GET(req) {
         [vendorId]
       ),
       pool.query(
-        `SELECT vs.quick_service_id AS id, qs.label, qs.icon
+        `SELECT DISTINCT vs.quick_service_id AS id, qs.label, qs.icon
          FROM vendor_services vs
          JOIN quick_services qs ON vs.quick_service_id = qs.id
          WHERE vs.vendor_id = $1 AND vs.is_active = TRUE`,
@@ -72,23 +72,50 @@ export async function PUT(req) {
 
     // Update services if provided
     if (Array.isArray(services)) {
-      await pool.query(
-        `UPDATE vendor_services SET is_active = FALSE WHERE vendor_id = $1`,
-        [vendorId]
-      );
-      for (const serviceId of services) {
-        await pool.query(
-          `INSERT INTO vendor_services (vendor_id, quick_service_id, is_active)
-           VALUES ($1, $2, TRUE)
-           ON CONFLICT (vendor_id, quick_service_id) DO UPDATE SET is_active = TRUE`,
-          [vendorId, serviceId]
+      const serviceIds = [...new Set(
+        services
+          .map((serviceId) => Number(serviceId))
+          .filter((serviceId) => Number.isInteger(serviceId) && serviceId > 0)
+      )];
+
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        await client.query(
+          `UPDATE vendor_services SET is_active = FALSE WHERE vendor_id = $1`,
+          [vendorId]
         );
+
+        for (const serviceId of serviceIds) {
+          const updated = await client.query(
+            `UPDATE vendor_services
+             SET is_active = TRUE
+             WHERE vendor_id = $1 AND quick_service_id = $2
+             RETURNING vendor_id`,
+            [vendorId, serviceId]
+          );
+
+          if (updated.rows.length === 0) {
+            await client.query(
+              `INSERT INTO vendor_services (vendor_id, quick_service_id, is_active)
+               VALUES ($1, $2, TRUE)`,
+              [vendorId, serviceId]
+            );
+          }
+        }
+
+        await client.query('COMMIT');
+      } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+      } finally {
+        client.release();
       }
     }
 
     // Return updated data including services
     const servicesResult = await pool.query(
-      `SELECT vs.quick_service_id AS id, qs.label, qs.icon
+      `SELECT DISTINCT vs.quick_service_id AS id, qs.label, qs.icon
        FROM vendor_services vs
        JOIN quick_services qs ON vs.quick_service_id = qs.id
        WHERE vs.vendor_id = $1 AND vs.is_active = TRUE`,

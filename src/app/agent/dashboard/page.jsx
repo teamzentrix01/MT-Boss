@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const leadStatuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
 const leadStages = ['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost'];
@@ -14,6 +14,7 @@ function todayIso() {
 
 export default function AgentDashboardPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [dark, setDark] = useState(false);
   const [loading, setLoading] = useState(true);
   const [agent, setAgent] = useState(null);
@@ -50,6 +51,13 @@ export default function AgentDashboardPage() {
     status: 'Planned',
     notes: '',
   });
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (['leads', 'projects', 'schedule', 'profile'].includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
   const [projectForm, setProjectForm] = useState({
     project_status: 'lead',
     deal_amount: '',
@@ -73,6 +81,14 @@ export default function AgentDashboardPage() {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (localStorage.getItem('agent-token')) refreshLeads();
+    }, 20000);
+    return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -135,6 +151,13 @@ export default function AgentDashboardPage() {
     if (!res) return;
     const data = await res.json();
     if (data.success) setProjects(data.data || []);
+  }
+
+  async function refreshLeads() {
+    const res = await authFetch('/api/agent/leads');
+    if (!res) return;
+    const data = await res.json();
+    if (data.success) setLeads(data.data || []);
   }
 
   async function openProject(project) {

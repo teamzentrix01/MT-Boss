@@ -12,7 +12,7 @@ export async function GET(req, { params }) {
        WHERE vs.quick_service_id = $1
          AND vs.is_active = TRUE
          AND v.is_approved = TRUE
-         AND v.status = 'active'
+         AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
          AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
        ORDER BY v.city ASC`,
       [id]

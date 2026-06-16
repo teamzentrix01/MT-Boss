@@ -4,11 +4,12 @@
 // ════════════════════════════════════════════════════════════════════════════════
  
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
  
 export default function VendorDashboard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [vendor, setVendor] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [activeBooking, setActiveBooking] = useState(null);
@@ -24,6 +25,7 @@ export default function VendorDashboard() {
   const [activeTab, setActiveTab] = useState("notifications");
   const [vendorProfile, setVendorProfile] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const editModeRef = useRef(false);
   const [profileForm, setProfileForm] = useState({ shop_name: "", phone: "", city: "", state: "", description: "" });
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileMsg, setProfileMsg] = useState("");
@@ -39,6 +41,7 @@ export default function VendorDashboard() {
   const [pkgStatus, setPkgStatus] = useState(null);
   const [pkgLoading, setPkgLoading] = useState(false);
   const [pkgMsg, setPkgMsg] = useState('');
+  const [requestMsg, setRequestMsg] = useState('');
  
   useEffect(() => {
     const check = () => setIsDark(document.documentElement.classList.contains("dark-mode"));
@@ -47,6 +50,10 @@ export default function VendorDashboard() {
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     return () => obs.disconnect();
   }, []);
+
+  useEffect(() => {
+    editModeRef.current = editMode;
+  }, [editMode]);
  
   useEffect(() => {
     const token = localStorage.getItem("vendor-token");
@@ -59,6 +66,14 @@ export default function VendorDashboard() {
     const interval = setInterval(() => fetchVendorData(token), 5000); // Poll every 5 seconds
     return () => clearInterval(interval);
   }, [router]);
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (['notifications', 'history', 'packages', 'profile'].includes(tab)) {
+      setActiveTab(tab);
+      if (tab === 'packages') loadPackages();
+    }
+  }, [searchParams]);
  
   async function fetchVendorData(token) {
     try {
@@ -93,14 +108,16 @@ export default function VendorDashboard() {
       const profData = await profRes.json();
       if (profData.success) {
         setVendorProfile(profData.vendor);
-        setSelectedServices((profData.vendor.services || []).map((s) => s.id));
-        setProfileForm({
-          shop_name: profData.vendor.shop_name || "",
-          phone: profData.vendor.phone || "",
-          city: profData.vendor.city || "",
-          state: profData.vendor.state || "",
-          description: profData.vendor.description || "",
-        });
+        if (!editModeRef.current) {
+          setSelectedServices((profData.vendor.services || []).map((s) => s.id));
+          setProfileForm({
+            shop_name: profData.vendor.shop_name || "",
+            phone: profData.vendor.phone || "",
+            city: profData.vendor.city || "",
+            state: profData.vendor.state || "",
+            description: profData.vendor.description || "",
+          });
+        }
       }
 
       setLoading(false);
@@ -230,7 +247,15 @@ export default function VendorDashboard() {
   }
  
   async function acceptBooking(bookingId) {
+    if (selectedNotification && !selectedNotification.can_accept) {
+      setRequestMsg('Buy an active package to unlock contact details and accept this booking.');
+      setActiveTab('packages');
+      loadPackages();
+      return;
+    }
+
     const token = localStorage.getItem("vendor-token");
+    setRequestMsg('');
     try {
       const res = await fetch(`/api/bookings/${bookingId}/accept`, {
         method: "POST",
@@ -241,9 +266,12 @@ export default function VendorDashboard() {
         setSelectedNotification(null);
         setNotifications((n) => n.filter((x) => x.booking_id !== bookingId));
         fetchVendorData(token);
+      } else {
+        setRequestMsg(data.error || 'Unable to accept this booking.');
       }
     } catch (error) {
       console.error("Error accepting booking:", error);
+      setRequestMsg('Network error while accepting booking.');
     }
   }
  
@@ -433,7 +461,7 @@ export default function VendorDashboard() {
                               <span className="text-[var(--brand-blue)] font-black">{"★".repeat(b.rating_stars)}{"☆".repeat(5 - b.rating_stars)}</span>
                               <span className={`text-[10px] font-black ${muted}`}>{b.rating_stars}/5</span>
                             </div>
-                            {b.review_text && <p className={`text-xs mt-1 ${muted}`}>"{b.review_text}"</p>}
+                            {b.review_text && <p className={`text-xs mt-1 ${muted}`}>{b.review_text}</p>}
                           </div>
                         ) : (
                           <p className={`text-[10px] ${muted}`}>No rating yet</p>
@@ -704,6 +732,7 @@ export default function VendorDashboard() {
           <div className="lg:col-span-2">
             <div className={`border ${card} p-6`}>
               <h2 className="text-xl font-black uppercase mb-4">📬 Incoming Requests ({notifications.length})</h2>
+              {requestMsg && <p className="text-xs font-bold text-[var(--brand-blue)] mb-4">{requestMsg}</p>}
  
               {notifications.length === 0 ? (
                 <p className={`${muted} text-center py-8`}>No new booking requests</p>
@@ -723,8 +752,15 @@ export default function VendorDashboard() {
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="font-black text-[var(--brand-blue)]">{notif.label} 📍 {notif.service_city}</p>
-                          <p className={`text-sm ${muted} mt-1`}>📞 {notif.user_phone}</p>
+                          <p className={`text-sm ${muted} mt-1`}>
+                            {notif.contact_locked ? 'Contact locked - package required' : `Phone: ${notif.user_phone}`}
+                          </p>
                           <p className="text-[10px] text-green-500 mt-1">₹{notif.base_amount} base + ₹{notif.total_amount - notif.base_amount} (fees & tax)</p>
+                          {notif.contact_locked && (
+                            <p className="text-[10px] text-[var(--brand-blue)] font-black uppercase tracking-widest mt-2">
+                              Upgrade to accept and view full details
+                            </p>
+                          )}
                         </div>
                         <span className="text-2xl">{notif.icon}</span>
                       </div>
@@ -742,12 +778,16 @@ export default function VendorDashboard() {
                 <div>
                   <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Customer</p>
                   <p className="font-black">{selectedNotification.user_name}</p>
-                  <p className={`text-[10px] ${muted}`}>{selectedNotification.user_phone}</p>
+                  <p className={`text-[10px] ${muted}`}>
+                    {selectedNotification.contact_locked ? 'Contact details locked' : selectedNotification.user_phone}
+                  </p>
                 </div>
  
                 <div>
                   <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Location</p>
-                  <p className="text-sm font-medium">{selectedNotification.service_address}</p>
+                  <p className="text-sm font-medium">
+                    {selectedNotification.contact_locked ? selectedNotification.service_city : selectedNotification.service_address}
+                  </p>
                   {selectedNotification.location_map_url && (
                     <a href={selectedNotification.location_map_url} target="_blank" className="text-[10px] text-[var(--brand-blue)] hover:underline mt-1 inline-block">
                       📍 View on Map
@@ -764,6 +804,19 @@ export default function VendorDashboard() {
                   <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Date & Time</p>
                   <p className="text-sm">{selectedNotification.booking_date} • {selectedNotification.booking_time}</p>
                 </div>
+
+                {selectedNotification.contact_locked && (
+                  <div className={`p-4 border ${isDark ? 'border-yellow-500/30 bg-yellow-500/10' : 'border-yellow-200 bg-yellow-50'}`}>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-yellow-600">Package Required</p>
+                    <p className={`text-xs mt-1 ${muted}`}>Only paid vendors can accept this request and see customer phone, address, and map details.</p>
+                    <button
+                      onClick={() => { setActiveTab('packages'); loadPackages(); }}
+                      className="mt-3 w-full py-2.5 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase hover:bg-[var(--brand-blue-light)] transition-all"
+                    >
+                      View Packages
+                    </button>
+                  </div>
+                )}
  
                 <div className="flex gap-2">
                   <button
@@ -774,9 +827,10 @@ export default function VendorDashboard() {
                   </button>
                   <button
                     onClick={() => acceptBooking(selectedNotification.booking_id)}
-                    className="flex-1 py-2.5 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase hover:bg-[var(--brand-blue-light)] transition-all"
+                    disabled={!selectedNotification.can_accept}
+                    className="flex-1 py-2.5 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase hover:bg-[var(--brand-blue-light)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Accept →
+                    {selectedNotification.can_accept ? 'Accept →' : 'Locked'}
                   </button>
                 </div>
               </div>

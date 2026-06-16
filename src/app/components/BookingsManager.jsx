@@ -226,7 +226,7 @@ export default function BookingsManager({ isDarkMode }) {
                       <tr key={booking.id}>
                         <td style={{ fontWeight: '600' }}>{booking.booking_reference}</td>
                         <td>{booking.user_name}</td>
-                        <td>{booking.quick_service_id}</td>
+                        <td>{booking.service_label || booking.quick_service_id}</td>
                         <td>{booking.service_city}</td>
                         <td>
                           <span
@@ -331,8 +331,30 @@ export default function BookingsManager({ isDarkMode }) {
 
           {selectedBooking.vendor_id && (
             <div style={{ marginBottom: '1rem', padding: '0.75rem', background: 'var(--bg)', borderRadius: '6px' }}>
-              <div className="detail-label">Assigned Vendor ID</div>
-              <div className="detail-value">{selectedBooking.vendor_id}</div>
+              <div className="detail-label">Accepted Vendor</div>
+              <div className="detail-value">
+                {selectedBooking.vendor_name || `Vendor #${selectedBooking.vendor_id}`}
+                {selectedBooking.vendor_phone ? ` - ${selectedBooking.vendor_phone}` : ''}
+              </div>
+              <div style={{ color: 'var(--muted)', fontSize: '0.72rem', marginTop: '0.25rem' }}>
+                {selectedBooking.vendor_email || 'No email'} · {selectedBooking.vendor_package_name || 'No package'} · {selectedBooking.vendor_package_status || 'unknown'}
+              </div>
+            </div>
+          )}
+
+          {Array.isArray(selectedBooking.notified_vendors) && selectedBooking.notified_vendors.length > 0 && (
+            <div style={{ marginBottom: '1rem', padding: '0.75rem', background: 'var(--bg)', borderRadius: '6px' }}>
+              <div className="detail-label">Vendors Notified</div>
+              <div style={{ display: 'grid', gap: '0.5rem', marginTop: '0.5rem' }}>
+                {selectedBooking.notified_vendors.map((vendor) => (
+                  <div key={vendor.vendor_id} style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', fontSize: '0.78rem' }}>
+                    <span className="detail-value">{vendor.shop_name || `Vendor #${vendor.vendor_id}`}</span>
+                    <span style={{ color: 'var(--muted)' }}>
+                      {vendor.city || '-'} · {vendor.package_status || 'none'} · {vendor.notification_status}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

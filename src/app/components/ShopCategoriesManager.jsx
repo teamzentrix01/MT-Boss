@@ -167,6 +167,8 @@ const INDIAN_CITIES = [
   'Varanasi','Vijayawada','Visakhapatnam','Vadodara',
 ];
 
+const SKU_UNITS = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
+
 /* ══════════════════════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════════════════════ */
@@ -416,6 +418,32 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                   </select>
                 </div>
 
+                <div>
+                  <label style={lbl}>Default Price Range</label>
+                  <input
+                    className="sc-inp"
+                    style={inp}
+                    value={form.price_range}
+                    onChange={e => setForm(f => ({ ...f, price_range: e.target.value }))}
+                    placeholder="e.g. Rs 380-450"
+                  />
+                </div>
+
+                <div>
+                  <label style={lbl}>SKU / Unit</label>
+                  <select
+                    className="sc-inp"
+                    style={inp}
+                    value={form.unit}
+                    onChange={e => setForm(f => ({ ...f, unit: e.target.value }))}
+                  >
+                    <option value="">Select unit</option>
+                    {SKU_UNITS.map(unit => (
+                      <option key={unit} value={unit}>{unit}</option>
+                    ))}
+                  </select>
+                </div>
+
                 {/* Preview */}
                 {(form.label || form.emoji) && (
                   <div style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px' }}>
@@ -465,7 +493,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                 <div style={{ gridColumn: 'span 2', borderTop: `1px solid ${t.border}`, paddingTop: '20px', marginTop: '4px' }}>
                   <label style={{ ...lbl, display: 'block', marginBottom: '4px' }}>City-wise Pricing</label>
                   <p style={{ fontSize: '11px', color: t.muted, marginBottom: '12px' }}>
-                    Set separate prices per city. Users see their city's price when they request a quote. If no city price is set, users are told the price will be quoted by a verified supplier.
+                    Set separate prices per city. Users see their city&apos;s price when they request a quote. If no city price is set, users are told the price will be quoted by a verified supplier.
                   </p>
 
                   {/* Add city row */}
@@ -518,13 +546,17 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                           </div>
                           <div>
                             <label style={{ ...lbl, marginBottom: '3px' }}>Unit</label>
-                            <input
+                            <select
                               className="sc-inp"
                               style={{ ...inp, fontSize: '12px', padding: '6px 8px' }}
-                              placeholder="e.g. per 50 kg bag"
                               value={vals.unit || ''}
                               onChange={e => setCityPrices(prev => ({ ...prev, [city]: { ...prev[city], unit: e.target.value } }))}
-                            />
+                            >
+                              <option value="">Select unit</option>
+                              {SKU_UNITS.map(unit => (
+                                <option key={unit} value={unit}>{unit}</option>
+                              ))}
+                            </select>
                           </div>
                           <button
                             type="button"

@@ -14,6 +14,8 @@ const STATUS_CONFIG = {
   CANCELLED:                     { label: 'Cancelled',         color: 'text-red-500 border-red-500',      bg: 'bg-red-500/10',    pulse: false },
 };
 
+const PRIMARY_SERVICE_STAGES = ['Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
+
 // ── Payment Modal ─────────────────────────────────────────────────────────────
 function PaymentModal({ booking, isDark, onClose, onSuccess }) {
   const [amount, setAmount] = useState(String(booking.final_amount || booking.total_amount || ''));
@@ -207,6 +209,172 @@ function RatingModal({ booking, isDark, onClose, onSuccess }) {
             {loading ? 'Submitting...' : 'Submit Review ★'}
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PrimaryServiceReviewModal({ enquiry, isDark, onClose, onSuccess }) {
+  const [stars, setStars] = useState(enquiry.rating_stars || 0);
+  const [hover, setHover] = useState(0);
+  const [review, setReview] = useState(enquiry.review_text || '');
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const modal = isDark ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-white border-zinc-200 text-zinc-900';
+  const inp = isDark ? 'bg-zinc-900 border-zinc-700 text-white placeholder-zinc-600' : 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400';
+  const muted = isDark ? 'text-zinc-400' : 'text-zinc-500';
+  const divider = isDark ? 'border-zinc-800' : 'border-zinc-100';
+
+  function handlePhotos(fileList) {
+    const selected = Array.from(fileList || []);
+    if (selected.length > 10) {
+      setError('Maximum 10 site photos allowed.');
+      setPhotos([]);
+      return;
+    }
+    setError('');
+    setPhotos(selected);
+  }
+
+  async function handleSubmit() {
+    if (!stars) { setError('Please select a star rating.'); return; }
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const payload = new FormData();
+      payload.append('enquiry_id', enquiry.id);
+      payload.append('rating_stars', stars);
+      payload.append('review_text', review);
+      photos.forEach((file) => payload.append('site_photos', file));
+
+      const res = await fetch('/api/user/primary-services', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: payload,
+      });
+      const data = await res.json();
+      if (data.success) onSuccess();
+      else setError(data.error || 'Failed to submit review.');
+    } catch {
+      setError('Something went wrong. Try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-[99999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className={`w-full max-w-md border shadow-2xl ${modal}`} style={{ maxHeight: '90vh', overflowY: 'auto' }}>
+        <div className={`flex items-center justify-between px-5 py-4 border-b ${divider}`}>
+          <div>
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[var(--brand-blue)]">Primary Service Review</p>
+            <h3 className="text-base font-black uppercase tracking-tight">{enquiry.service_title}</h3>
+          </div>
+          <button onClick={onClose} className={`w-8 h-8 border flex items-center justify-center font-black text-sm ${isDark ? 'border-zinc-700 text-zinc-400' : 'border-zinc-300 text-zinc-500'}`}>x</button>
+        </div>
+        <div className="p-5 space-y-5">
+          <div className="text-center">
+            <p className={`text-[9px] font-black uppercase tracking-widest mb-3 ${muted}`}>Overall Rating *</p>
+            <div className="flex justify-center gap-1">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <button key={s} type="button"
+                  onClick={() => setStars(s)}
+                  onMouseEnter={() => setHover(s)}
+                  onMouseLeave={() => setHover(0)}
+                  className={`text-4xl transition-all ${s <= (hover || stars) ? 'text-[var(--brand-blue)] scale-110' : isDark ? 'text-zinc-700' : 'text-zinc-200'}`}>
+                  ★
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>Review</label>
+            <textarea rows={3} className={`w-full px-3 py-2.5 text-sm border outline-none resize-none ${inp}`}
+              placeholder="Share your project experience..." value={review} onChange={(e) => setReview(e.target.value)} />
+          </div>
+
+          <div>
+            <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>Upload Site Photos</label>
+            <input type="file" multiple accept="image/jpeg,image/png,image/webp" className={`w-full px-3 py-2.5 text-sm border ${inp}`}
+              onChange={(e) => handlePhotos(e.target.files)} />
+            {photos.length > 0 && <p className={`mt-2 text-[10px] font-bold ${muted}`}>{photos.length} photo(s) selected</p>}
+          </div>
+
+          {error && <p className="text-[10px] text-red-500 font-bold">{error}</p>}
+          <button onClick={handleSubmit} disabled={loading || !stars}
+            className="w-full py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all disabled:opacity-50">
+            {loading ? 'Submitting...' : 'Submit Review ★'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PrimaryServiceCard({ enquiry, isDark, onReview }) {
+  const muted = isDark ? 'text-zinc-500' : 'text-zinc-400';
+  const text = isDark ? 'text-zinc-200' : 'text-zinc-800';
+  const card = isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-white border-zinc-200';
+  const activeIndex = Math.max(0, PRIMARY_SERVICE_STAGES.indexOf(enquiry.status));
+  const sitePhotos = Array.isArray(enquiry.site_image_urls) ? enquiry.site_image_urls : [];
+
+  return (
+    <div className={`border p-5 ${card}`}>
+      <div className="flex items-start justify-between gap-3 mb-4">
+        <div>
+          <h3 className={`font-black uppercase tracking-tight text-sm ${isDark ? 'text-white' : 'text-zinc-900'}`}>{enquiry.service_title}</h3>
+          <p className={`text-[10px] mt-1 ${muted}`}>{new Date(enquiry.created_at).toLocaleDateString('en-IN')}</p>
+        </div>
+        <span className="px-2.5 py-1 border border-[var(--brand-blue)] text-[var(--brand-blue)] bg-[var(--brand-blue)]/10 text-[9px] font-black uppercase tracking-widest">
+          {enquiry.status}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-5 gap-1 mb-4">
+        {PRIMARY_SERVICE_STAGES.map((stage, index) => {
+          const done = index <= activeIndex;
+          return (
+            <div key={stage} className="min-w-0">
+              <div className={`h-1.5 mb-1 ${done ? 'bg-[var(--brand-blue)]' : isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
+              <p className={`text-[8px] font-black uppercase leading-tight ${done ? 'text-[var(--brand-blue)]' : muted}`}>{stage}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className={`grid grid-cols-2 gap-x-4 gap-y-2 text-[10px] ${muted}`}>
+        <div><span className="font-black uppercase">Budget</span><p className={text}>{enquiry.budget || 'Not shared'}</p></div>
+        <div><span className="font-black uppercase">Meeting</span><p className={text}>{enquiry.meeting_date ? new Date(enquiry.meeting_date).toLocaleDateString('en-IN') : 'Not set'}</p></div>
+        <div className="col-span-2"><span className="font-black uppercase">Address</span><p className={text}>{enquiry.address || 'Not shared'}</p></div>
+        {enquiry.message && <div className="col-span-2"><span className="font-black uppercase">Details</span><p className={text}>{enquiry.message}</p></div>}
+      </div>
+
+      <div className={`border-t mt-4 pt-3 ${isDark ? 'border-zinc-800' : 'border-zinc-100'}`}>
+        {enquiry.status === 'Complete' && !enquiry.rating_stars && (
+          <button onClick={() => onReview(enquiry)}
+            className="px-4 py-2 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue)]/10 transition-all">
+            Add Review + Site Photos
+          </button>
+        )}
+        {enquiry.rating_stars && (
+          <div>
+            <p className="text-[var(--brand-blue)] text-sm">{'★'.repeat(enquiry.rating_stars)}{'☆'.repeat(5 - enquiry.rating_stars)}</p>
+            {enquiry.review_text && <p className={`text-xs mt-1 ${muted}`}>{enquiry.review_text}</p>}
+            {sitePhotos.length > 0 && (
+              <div className="flex gap-2 mt-3 flex-wrap">
+                {sitePhotos.slice(0, 6).map((url, index) => (
+                  <a key={url} href={url} target="_blank" rel="noreferrer">
+                    <img src={url} alt={`Site photo ${index + 1}`} className="w-14 h-14 object-cover border border-zinc-700" />
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -455,10 +623,12 @@ export default function UserDashboard() {
   const [isDark, setIsDark]           = useState(false);
   const [user, setUser]               = useState(null);
   const [bookings, setBookings]       = useState([]);
+  const [primaryServices, setPrimaryServices] = useState([]);
   const [loading, setLoading]         = useState(true);
   const [tab, setTab]                 = useState('active');
   const [paymentBooking, setPaymentBooking] = useState(null);
   const [rateBooking, setRateBooking]       = useState(null);
+  const [reviewPrimaryService, setReviewPrimaryService] = useState(null);
 
   // Dark mode
   useEffect(() => {
@@ -471,9 +641,14 @@ export default function UserDashboard() {
 
   const fetchBookings = useCallback(async (token) => {
     try {
-      const res = await fetch('/api/user/bookings', { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      if (data.success) setBookings(data.data);
+      const [bookingRes, primaryRes] = await Promise.all([
+        fetch('/api/user/bookings', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/user/primary-services', { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
+      const bookingData = await bookingRes.json();
+      const primaryData = await primaryRes.json();
+      if (bookingData.success) setBookings(bookingData.data);
+      if (primaryData.success) setPrimaryServices(primaryData.data);
     } catch (err) {
       console.error('Error fetching bookings:', err);
     } finally {
@@ -495,7 +670,7 @@ export default function UserDashboard() {
 
   const activeBookings  = bookings.filter((b) => !['COMPLETED', 'CANCELLED'].includes(b.status));
   const historyBookings = bookings.filter((b) =>  ['COMPLETED', 'CANCELLED'].includes(b.status));
-  const displayed       = tab === 'active' ? activeBookings : historyBookings;
+  const displayed       = tab === 'active' ? activeBookings : tab === 'history' ? historyBookings : primaryServices;
 
   const bg      = isDark ? 'bg-black text-white' : 'bg-zinc-50 text-zinc-900';
   const muted   = isDark ? 'text-zinc-500' : 'text-zinc-400';
@@ -508,6 +683,10 @@ export default function UserDashboard() {
   }
   function handleRateSuccess() {
     setRateBooking(null);
+    fetchBookings(localStorage.getItem('token'));
+  }
+  function handlePrimaryReviewSuccess() {
+    setReviewPrimaryService(null);
     fetchBookings(localStorage.getItem('token'));
   }
 
@@ -545,7 +724,7 @@ export default function UserDashboard() {
           {[
             { label: 'Total Bookings', value: bookings.length, color: '' },
             { label: 'Active',          value: activeBookings.length, color: 'text-[var(--brand-blue)]' },
-            { label: 'Completed',       value: historyBookings.filter((b) => b.status === 'COMPLETED').length, color: 'text-green-500' },
+            { label: 'Primary Services', value: primaryServices.length, color: 'text-green-500' },
           ].map(({ label, value, color }) => (
             <div key={label} className="py-5 px-6 text-center">
               <p className={`text-2xl font-black ${color || (isDark ? 'text-white' : 'text-zinc-900')}`}>{value}</p>
@@ -560,33 +739,60 @@ export default function UserDashboard() {
         <div className="max-w-4xl mx-auto">
 
           {/* Tab selector */}
-          <div className={`flex border-b mb-6 ${isDark ? 'border-zinc-800' : 'border-zinc-200'}`}>
+          <div className={`flex flex-wrap gap-2 border-b pb-3 mb-6 ${isDark ? 'border-zinc-800' : 'border-zinc-200'}`}>
             {[
               { key: 'active',  label: `Active (${activeBookings.length})` },
               { key: 'history', label: `History (${historyBookings.length})` },
-            ].map(({ key, label }) => (
-              <button key={key} onClick={() => setTab(key)}
-                className={`px-5 py-3 text-[9px] font-black uppercase tracking-widest border-b-2 transition-all ${
-                  tab === key ? 'border-[var(--brand-blue)] text-[var(--brand-blue)]' : `border-transparent ${muted} hover:text-current`
-                }`}>
-                {label}
-              </button>
-            ))}
+              { key: 'primary', label: `Primary Services (${primaryServices.length})` },
+            ].map(({ key, label }) => {
+              const selected = tab === key;
+              return (
+                <button key={key} onClick={() => setTab(key)}
+                  aria-pressed={selected}
+                  className={`px-5 py-3 text-[9px] font-black uppercase tracking-widest border transition-all ${
+                    selected
+                      ? 'bg-black text-[var(--brand-blue)] border-[var(--brand-blue)] shadow-[0_0_0_3px_rgba(255,204,0,0.18)]'
+                      : isDark
+                        ? 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]'
+                        : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-900 hover:text-zinc-900'
+                  }`}>
+                  {selected ? `✓ ${label}` : label}
+                </button>
+              );
+            })}
           </div>
+
+          {tab === 'primary' && primaryServices.length > 0 && (
+            <div className={`mb-4 px-4 py-3 border ${isDark ? 'border-zinc-800 bg-zinc-950' : 'border-zinc-200 bg-white'}`}>
+              <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[var(--brand-blue)]">Primary Services</p>
+              <p className={`text-xs mt-1 ${muted}`}>Your existing primary service enquiries and current project status.</p>
+            </div>
+          )}
 
           {/* Empty state */}
           {displayed.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-5xl mb-4">{tab === 'active' ? '🔍' : '📋'}</p>
               <p className={`text-[9px] font-black uppercase tracking-widest mb-4 ${muted}`}>
-                {tab === 'active' ? 'No active bookings' : 'No booking history yet'}
+                {tab === 'active' ? 'No active bookings' : tab === 'history' ? 'No booking history yet' : 'No primary service enquiries yet'}
               </p>
-              {tab === 'active' && (
-                <Link href="/quick"
+              {tab !== 'history' && (
+                <Link href={tab === 'primary' ? '/Services/all' : '/quick'}
                   className="inline-block px-6 py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-light)] transition-all">
-                  Book a Service Now
+                  {tab === 'primary' ? 'Explore Primary Services' : 'Book a Service Now'}
                 </Link>
               )}
+            </div>
+          ) : tab === 'primary' ? (
+            <div className="grid grid-cols-1 gap-4">
+              {primaryServices.map((enquiry) => (
+                <PrimaryServiceCard
+                  key={enquiry.id}
+                  enquiry={enquiry}
+                  isDark={isDark}
+                  onReview={setReviewPrimaryService}
+                />
+              ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -620,6 +826,14 @@ export default function UserDashboard() {
           isDark={isDark}
           onClose={() => setRateBooking(null)}
           onSuccess={handleRateSuccess}
+        />
+      )}
+      {reviewPrimaryService && (
+        <PrimaryServiceReviewModal
+          enquiry={reviewPrimaryService}
+          isDark={isDark}
+          onClose={() => setReviewPrimaryService(null)}
+          onSuccess={handlePrimaryReviewSuccess}
         />
       )}
     </main>

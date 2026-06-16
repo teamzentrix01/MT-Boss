@@ -21,6 +21,7 @@ import RevenueManager from '../components/RevenueManager';
 import HeroBannersManager from '../components/HeroBannersManager';
 import JobsManager from '../components/JobsManager';
 import OfficeLocationsManager from '../components/OfficeLocationsManager';
+import LeadManagementAdmin from '../components/LeadManagementAdmin';
 
 function getResumeActionUrl(resumeUrl, mode) {
   if (!resumeUrl) return '';
@@ -58,6 +59,8 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [calculatorQuotes, setCalculatorQuotes] = useState([]);
+  const [selectedCalculatorQuote, setSelectedCalculatorQuote] = useState(null);
   const [primaryServiceEnquiries, setPrimaryServiceEnquiries] = useState([]);
   const [selectedPrimaryServiceEnquiry, setSelectedPrimaryServiceEnquiry] = useState(null);
   const [pseSearch, setPseSearch] = useState('');
@@ -150,7 +153,7 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
 
         // Fetch contact submissions
         const contactRes = await fetch('/api/contact', {
@@ -158,6 +161,12 @@ function AdminDashboard() {
         });
         const contactData = await contactRes.json();
         if (contactData.success) setSubmissions(contactData.data);
+
+        const calculatorQuotesRes = await fetch('/api/calculator-quote-otp', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const calculatorQuotesData = await calculatorQuotesRes.json();
+        if (calculatorQuotesData.success) setCalculatorQuotes(calculatorQuotesData.data || []);
 
         const primaryEnquiryRes = await fetch('/api/primary-service-enquiries', {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -260,19 +269,27 @@ function AdminDashboard() {
   const getStatusColor = (status) => {
     const map = {
       'New': 'status-new',
+      'Site Visit': 'status-new',
+      'Estimate': 'status-pending',
+      'Planning': 'status-contacted',
+      'Work Start': 'status-pending',
+      'Complete': 'status-resolved',
       'Pending': 'status-pending',
       'Contacted': 'status-contacted',
       'Resolved': 'status-resolved',
     };
     return map[status] || 'status-new';
   };
+  const primaryServiceStatuses = ['Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
   const tabs = [
     { id: 'overview',                   label: 'Overview',                  icon: '▦'  },
     { id: 'agents',                     label: 'Agents',                    icon: '👤' },
     { id: 'calculator',                 label: 'Calculator',                icon: '🧮' },
+    { id: 'calculator-quotes',          label: 'Calculator Quotes',         icon: '✉'  },
     { id: 'hero-banners',              label: 'Hero Banners',              icon: '🖼️' },
     { id: 'career-enquiries',           label: 'Career Enquiry',            icon: '✉'  },
     { id: 'jobs',                       label: 'New Jobs',                  icon: '💼' },
+    { id: 'lead-management',            label: 'Lead Management',           icon: '📋' },
     { id: 'office-locations',           label: 'Office Locations',          icon: 'LOC' },
     { id: 'submissions',                label: 'Contact Forms',             icon: '✉'  },
     { id: 'franchises',                 label: 'Franchises',                icon: '🏢' },
@@ -828,7 +845,7 @@ function AdminDashboard() {
                 <span className="section-head-title">Primary Services Enquiry</span>
                 <input
                   type="text"
-                  placeholder="Search name, phone, service, email…"
+                  placeholder="Search name, phone, alternate phone, service, email…"
                   className="search-input"
                   value={pseSearch}
                   onChange={e => setPseSearch(e.target.value)}
@@ -851,6 +868,7 @@ function AdminDashboard() {
                           return !q ||
                             item.name?.toLowerCase().includes(q) ||
                             item.phone?.includes(q) ||
+                            item.alternate_phone?.includes(q) ||
                             item.email?.toLowerCase().includes(q) ||
                             item.service_title?.toLowerCase().includes(q) ||
                             item.address?.toLowerCase().includes(q);
@@ -863,7 +881,8 @@ function AdminDashboard() {
                             <tr key={item.id} style={{ borderBottom: '1px solid var(--border)' }}>
                               <td style={{ padding: '0.6rem 0.875rem', minWidth: '150px' }}>
                                 <div style={{ fontWeight: 700 }}>{item.name}</div>
-                                <div style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{item.phone}</div>
+                                <div style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>Main: {item.phone}</div>
+                                <div style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>Alt: {item.alternate_phone || '—'}</div>
                                 {item.email && <div style={{ color: 'var(--muted)', fontSize: '0.7rem' }}>{item.email}</div>}
                               </td>
                               <td style={{ padding: '0.6rem 0.875rem', minWidth: '160px' }}>
@@ -906,7 +925,7 @@ function AdminDashboard() {
                                   }}
                                   style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', borderRadius: '4px', padding: '3px 6px', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
                                 >
-                                  {['New', 'Reviewing', 'In Progress', 'Completed', 'Cancelled'].map(s => (
+                                  {primaryServiceStatuses.map(s => (
                                     <option key={s} value={s}>{s}</option>
                                   ))}
                                 </select>
@@ -1108,11 +1127,174 @@ function AdminDashboard() {
           {activeTab === 'free-slots' && <FreeTimeSlotsManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services-pricing' && <QuickServicesPricing isDarkMode={isDarkMode} />}
           {activeTab === 'calculator' && <CalculatorManager isDarkMode={isDarkMode} />}
+
+          {activeTab === 'calculator-quotes' && (
+            <div>
+              <div className="section-head">
+                <span className="section-head-title">Calculator Quote Requests</span>
+                <span style={{ color: 'var(--muted)', fontSize: '0.75rem', fontWeight: 700 }}>
+                  {calculatorQuotes.length} total
+                </span>
+              </div>
+              <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+                    <thead>
+                      <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+                        {['Customer', 'Project', 'Estimated Budget', 'Site Image', 'Status', 'Submitted', 'Action'].map(col => (
+                          <th key={col} style={{ padding: '0.55rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)', whiteSpace: 'nowrap' }}>{col}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {calculatorQuotes.map((item) => {
+                        const est = item.estimate || {};
+                        const project = est.project || {};
+                        const totals = est.totals || {};
+                        return (
+                          <tr key={item.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                            <td style={{ padding: '0.6rem 0.875rem', minWidth: 170 }}>
+                              <div style={{ fontWeight: 700 }}>{item.name}</div>
+                              <div style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{item.phone}</div>
+                              <div style={{ color: 'var(--muted)', fontSize: '0.7rem' }}>{item.email}</div>
+                            </td>
+                            <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)', minWidth: 180 }}>
+                              <div style={{ fontWeight: 700, color: 'var(--text)' }}>{project.city || '-'}</div>
+                              <div>{project.propertySize ? `${Number(project.propertySize).toLocaleString('en-IN')} sqft` : '-'} · {project.floors || '-'} floors</div>
+                              <div>{project.quality || '-'} · {project.foundation || '-'}</div>
+                            </td>
+                            <td style={{ padding: '0.6rem 0.875rem', fontWeight: 800, whiteSpace: 'nowrap' }}>
+                              ₹{Number(totals.grandTotal || 0).toLocaleString('en-IN')}
+                            </td>
+                            <td style={{ padding: '0.6rem 0.875rem' }}>
+                              {item.site_image_url ? (
+                                <img src={item.site_image_url} alt="Site" style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)' }} />
+                              ) : <span style={{ color: 'var(--muted)' }}>-</span>}
+                            </td>
+                            <td style={{ padding: '0.6rem 0.875rem' }}>
+                              <span className={`badge ${item.verified ? 'status-resolved' : 'status-pending'}`}>{item.verified ? 'Verified' : 'OTP Pending'}</span>
+                            </td>
+                            <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                              {new Date(item.created_at).toLocaleDateString('en-IN')}
+                            </td>
+                            <td style={{ padding: '0.6rem 0.875rem' }}>
+                              <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '700', padding: 0, whiteSpace: 'nowrap' }}
+                                onClick={() => setSelectedCalculatorQuote(item)}>
+                                View All
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  {calculatorQuotes.length === 0 && <p className="empty-state">No calculator quote requests yet.</p>}
+                </div>
+              </div>
+            </div>
+          )}
           {activeTab === 'hero-banners' && <HeroBannersManager isDarkMode={isDarkMode} />}
           {activeTab === 'jobs' && <JobsManager isDarkMode={isDarkMode} />}
+          {activeTab === 'lead-management' && <LeadManagementAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'office-locations' && <OfficeLocationsManager isDarkMode={isDarkMode} />}
 
         </div>
+
+        {selectedCalculatorQuote && (() => {
+          const q = selectedCalculatorQuote;
+          const est = q.estimate || {};
+          const project = est.project || {};
+          const totals = est.totals || {};
+          const rows = Array.isArray(est.lineItems) ? est.lineItems : [];
+          return (
+            <div className="modal-backdrop" onClick={() => setSelectedCalculatorQuote(null)}>
+              <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '860px', maxHeight: '90vh', overflowY: 'auto' }}>
+                <div className="modal-head">
+                  <span className="modal-title">Calculator Quote Details</span>
+                  <button className="modal-close" onClick={() => setSelectedCalculatorQuote(null)}>✕</button>
+                </div>
+
+                <div className="modal-grid">
+                  {[
+                    ['Name', q.name],
+                    ['Email', q.email],
+                    ['Phone', q.phone],
+                    ['OTP Status', q.verified ? 'Verified' : 'Pending'],
+                    ['City', project.city || '-'],
+                    ['Property Size', project.propertySize ? `${Number(project.propertySize).toLocaleString('en-IN')} sqft` : '-'],
+                    ['Built-up Area', project.builtUpArea ? `${Number(project.builtUpArea).toLocaleString('en-IN')} sqft` : '-'],
+                    ['Floors', project.floors || '-'],
+                    ['Package', project.quality || '-'],
+                    ['Foundation', project.foundation || '-'],
+                    ['Estimated Budget', `₹${Number(totals.grandTotal || 0).toLocaleString('en-IN')}`],
+                    ['Approx Rate', `₹${Number(totals.perSqft || 0).toLocaleString('en-IN')} / sqft`],
+                  ].map(([label, value]) => (
+                    <div key={label}>
+                      <div className="modal-field-label">{label}</div>
+                      <div className="modal-field-value">{value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ marginBottom: '0.75rem' }}>
+                  <div className="modal-field-label">Site Address</div>
+                  <div className="modal-message">{q.address}</div>
+                </div>
+
+                {q.site_image_url && (
+                  <div style={{ marginBottom: '1rem' }}>
+                    <div className="modal-field-label" style={{ marginBottom: '0.375rem' }}>Site Image</div>
+                    <a href={q.site_image_url} target="_blank" rel="noopener noreferrer">
+                      <img src={q.site_image_url} alt="Site upload" style={{ width: '100%', maxHeight: 320, objectFit: 'cover', borderRadius: 6, border: '1px solid var(--border)' }} />
+                    </a>
+                  </div>
+                )}
+
+                <div className="modal-grid">
+                  {[
+                    ['Material Total', `₹${Number(totals.materialTotal || 0).toLocaleString('en-IN')}`],
+                    ['Labour Cost', `₹${Number(totals.labourTotal || 0).toLocaleString('en-IN')}`],
+                    ['Transport', `₹${Number(totals.transportTotal || 0).toLocaleString('en-IN')}`],
+                    ['Supervision', `₹${Number(totals.supervisionTotal || 0).toLocaleString('en-IN')}`],
+                    ['Contingency', `₹${Number(totals.contingencyTotal || 0).toLocaleString('en-IN')}`],
+                  ].map(([label, value]) => (
+                    <div key={label}>
+                      <div className="modal-field-label">{label}</div>
+                      <div className="modal-field-value">{value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="modal-field-label" style={{ margin: '0.75rem 0 0.375rem' }}>Material BOQ</div>
+                <div style={{ overflowX: 'auto', border: '1px solid var(--border)', borderRadius: 6 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem' }}>
+                    <thead>
+                      <tr style={{ background: 'var(--bg)' }}>
+                        {['Phase', 'Category', 'Product', 'Quantity', 'Rate', 'Amount'].map(h => (
+                          <th key={h} style={{ padding: '0.5rem', textAlign: 'left', color: 'var(--muted)' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((row, idx) => (
+                        <tr key={`${row.category}-${idx}`} style={{ borderTop: '1px solid var(--border)' }}>
+                          <td style={{ padding: '0.5rem' }}>{row.phase}</td>
+                          <td style={{ padding: '0.5rem' }}>{row.category}</td>
+                          <td style={{ padding: '0.5rem' }}>{row.product}</td>
+                          <td style={{ padding: '0.5rem' }}>{Number(row.quantity || 0).toLocaleString('en-IN')} {row.unit}</td>
+                          <td style={{ padding: '0.5rem' }}>₹{Number(row.rate || 0).toLocaleString('en-IN')}</td>
+                          <td style={{ padding: '0.5rem', fontWeight: 700 }}>₹{Number(row.amount || 0).toLocaleString('en-IN')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <button className="modal-close-btn" onClick={() => setSelectedCalculatorQuote(null)}>Close</button>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Modal */}
         {selectedSubmission && (
@@ -1158,6 +1340,8 @@ function AdminDashboard() {
           const imgNames = Array.isArray(enq.property_image_names)
             ? enq.property_image_names
             : enq.property_image_name ? [enq.property_image_name] : [];
+          const siteImgUrls = Array.isArray(enq.site_image_urls) ? enq.site_image_urls : [];
+          const siteImgNames = Array.isArray(enq.site_image_names) ? enq.site_image_names : [];
 
           const updateStatus = async (status) => {
             const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
@@ -1193,7 +1377,8 @@ function AdminDashboard() {
                   <div className="modal-grid">
                     {[
                       ['Name', enq.name],
-                      ['Phone', enq.phone],
+                      ['Main Phone', enq.phone],
+                      ['Alternative Phone', enq.alternate_phone || '—'],
                       ['Email', enq.email || '—'],
                       ['Service', enq.service_title],
                       ['Status', enq.status],
@@ -1287,22 +1472,55 @@ function AdminDashboard() {
                 </div>
 
                 {/* ── Section 4: Admin Actions ── */}
+                {(enq.rating_stars || enq.review_text || siteImgUrls.length > 0) && (
+                  <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>
+                      Customer Review
+                    </div>
+                    {enq.rating_stars && (
+                      <div style={{ color: 'var(--accent)', fontSize: '1rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+                        {'★'.repeat(enq.rating_stars)}{'☆'.repeat(5 - enq.rating_stars)}
+                      </div>
+                    )}
+                    {enq.review_text && <div className="modal-message">{enq.review_text}</div>}
+                    {siteImgUrls.length > 0 && (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.75rem', marginTop: '0.875rem' }}>
+                        {siteImgUrls.map((url, idx) => (
+                          <a key={url} href={url} target="_blank" rel="noreferrer" style={{ border: '1px solid var(--border)', borderRadius: 6, overflow: 'hidden', display: 'block', background: 'var(--bg)' }}>
+                            <img src={url} alt={siteImgNames[idx] || `Site photo ${idx + 1}`} style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }} />
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap' }}>
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '0.72rem', color: 'var(--muted)', fontWeight: 700, alignSelf: 'center' }}>Mark as:</span>
-                    {['Reviewing', 'In Progress', 'Completed', 'Cancelled'].map(status => (
-                      <button key={status}
-                        onClick={() => updateStatus(status)}
-                        style={{
-                          padding: '0.35rem 0.75rem', fontSize: '0.72rem', fontWeight: 700,
-                          border: '1px solid var(--border)',
-                          background: enq.status === status ? 'var(--accent)' : 'var(--bg)',
-                          color: enq.status === status ? '#111' : 'var(--text)',
-                          borderRadius: '4px', cursor: 'pointer', whiteSpace: 'nowrap',
-                        }}>
-                        {status}
-                      </button>
-                    ))}
+                    {primaryServiceStatuses.map(status => {
+                      const isActive = enq.status === status;
+                      return (
+                        <button key={status}
+                          onClick={() => updateStatus(status)}
+                          aria-pressed={isActive}
+                          style={{
+                            padding: '0.45rem 0.85rem',
+                            fontSize: '0.72rem',
+                            fontWeight: 800,
+                            border: isActive ? '2px solid var(--accent)' : '1px solid var(--border)',
+                            background: isActive ? '#111' : 'var(--accent)',
+                            color: isActive ? 'var(--accent)' : '#111',
+                            borderRadius: '5px',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                            boxShadow: isActive ? '0 0 0 3px rgba(255, 204, 0, 0.22)' : 'none',
+                            transform: isActive ? 'translateY(-1px)' : 'none',
+                          }}>
+                          {isActive ? `✓ ${status}` : status}
+                        </button>
+                      );
+                    })}
                   </div>
                   <button className="modal-close-btn" style={{ margin: 0 }}
                     onClick={() => setSelectedPrimaryServiceEnquiry(null)}>

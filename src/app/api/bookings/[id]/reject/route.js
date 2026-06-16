@@ -25,11 +25,27 @@ export async function POST(req, { params }) {
  
     const { id: bookingId } = await params;
  
-    // Delete notification for this vendor
-    await pool.query(
-      'DELETE FROM service_notifications WHERE booking_id = $1 AND vendor_id = $2',
+    const updateResult = await pool.query(
+      `UPDATE service_notifications
+       SET is_read = TRUE, expires_at = NOW()
+       WHERE booking_id = $1 AND vendor_id = $2`,
       [bookingId, vendorId]
     );
+
+    if (updateResult.rowCount === 0) {
+      await pool.query(
+        `INSERT INTO service_notifications (
+          booking_id, vendor_id, notification_type, title, message, is_read, expires_at, created_at
+        )
+        SELECT $1, $2, 'new_booking', 'Rejected Service Request', 'Vendor rejected this request', TRUE, NOW(), NOW()
+        WHERE NOT EXISTS (
+          SELECT 1
+          FROM service_notifications
+          WHERE booking_id = $1 AND vendor_id = $2
+        )`,
+        [bookingId, vendorId]
+      );
+    }
  
     return NextResponse.json({
       success: true,

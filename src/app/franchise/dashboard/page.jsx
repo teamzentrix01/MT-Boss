@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const CATEGORIES = ['Commercial', 'Residential', 'Hospitality', 'Industrial', 'IT Infrastructure', 'Luxury Home'];
+const leadStatuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
+const leadStages = ['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost'];
 const SIZES = [
   { value: 'small', label: 'Small' },
   { value: 'medium', label: 'Medium' },
@@ -33,6 +35,7 @@ export default function FranchiseDashboardPage() {
   const fileRef = useRef(null);
   const [franchise, setFranchise] = useState(null);
   const [projects, setProjects] = useState([]);
+  const [leads, setLeads] = useState([]);
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -62,8 +65,16 @@ export default function FranchiseDashboardPage() {
       return;
     }
 
-    Promise.all([fetchProjects(tok), fetchAgents(tok)]).finally(() => setLoading(false));
+    Promise.all([fetchProjects(tok), fetchAgents(tok), fetchLeads(tok)]).finally(() => setLoading(false));
   }, [router]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (localStorage.getItem('franchise-token')) fetchLeads();
+    }, 20000);
+    return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchProjects = async (tok = token()) => {
     const res = await fetch('/api/franchise/projects', {
@@ -81,11 +92,34 @@ export default function FranchiseDashboardPage() {
     if (data.success) setAgents(data.data);
   };
 
+  const fetchLeads = async (tok = token()) => {
+    const res = await fetch('/api/franchise/lead-management', {
+      headers: { Authorization: `Bearer ${tok}` },
+    });
+    const data = await res.json();
+    if (data.success) {
+      setLeads(data.data || []);
+      if (data.agents?.length) setAgents(data.agents);
+    }
+  };
+
+  const updateLead = async (id, patch) => {
+    const res = await fetch('/api/franchise/lead-management', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
+      body: JSON.stringify({ id, ...patch }),
+    });
+    const data = await res.json();
+    if (data.success) setLeads(prev => prev.map(lead => lead.id === id ? { ...lead, ...data.data } : lead));
+    else setMessage({ type: 'error', text: data.error || 'Could not update lead.' });
+  };
+
   const stats = useMemo(() => ({
     total: projects.length,
     published: projects.filter(p => p.status === 'published').length,
     draft: projects.filter(p => p.status === 'draft').length,
-  }), [projects]);
+    leads: leads.length,
+  }), [projects, leads]);
 
   const openAdd = () => {
     setEditProject(null);
@@ -266,7 +300,7 @@ export default function FranchiseDashboardPage() {
         .fd-body{max-width:1180px;margin:0 auto;padding:1.5rem}
         .fd-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:1rem}
         .fd-title{font-size:1.35rem;font-weight:900;margin:0}.fd-sub{font-size:.85rem;color:#71717a;margin:.25rem 0 0}
-        .fd-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem}
+        .fd-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1rem}
         .fd-stat{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:1rem}
         .fd-stat-label{font-size:.68rem;color:#71717a;text-transform:uppercase;font-weight:800;letter-spacing:.06em}
         .fd-stat-value{font-size:1.6rem;font-weight:900;margin-top:.2rem}
@@ -280,6 +314,9 @@ export default function FranchiseDashboardPage() {
         .fd-money div{background:#f8fafc;border:1px solid #eef2f7;border-radius:7px;padding:.45rem}.fd-money strong{display:block;color:#111;margin-top:.12rem}
         .fd-pill{display:inline-flex;padding:.18rem .55rem;border-radius:999px;background:#fef9c3;color:#854d0e;font-size:.68rem;font-weight:900;margin-top:.55rem}
         .fd-actions{display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap}
+        .fd-section{margin-top:1.25rem;background:#fff;border:1px solid #e5e7eb;border-radius:9px;overflow:hidden}
+        .fd-section-head{display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:1rem;border-bottom:1px solid #e5e7eb}
+        .fd-table{width:100%;border-collapse:collapse;font-size:.8rem}.fd-table th{padding:.65rem;text-align:left;color:#71717a;background:#f8fafc;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em}.fd-table td{padding:.65rem;border-top:1px solid #eef2f7;vertical-align:top}.fd-mini-select{border:1px solid #d4d4d8;border-radius:6px;background:#fafafa;color:#111;padding:.45rem;font-size:.76rem;font-weight:800;width:100%}
         .fd-empty{padding:3rem;text-align:center;color:#71717a}
         .fd-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.58);display:flex;align-items:center;justify-content:center;padding:1rem;z-index:200}
         .fd-modal{width:min(760px,100%);max-height:calc(100vh - 2rem);overflow:hidden;background:#fff;border-radius:10px;border:1px solid #e5e7eb;box-shadow:0 24px 80px rgba(0,0,0,.28);display:flex;flex-direction:column}
@@ -324,6 +361,7 @@ export default function FranchiseDashboardPage() {
           <div className="fd-stat"><div className="fd-stat-label">Total</div><div className="fd-stat-value">{stats.total}</div></div>
           <div className="fd-stat"><div className="fd-stat-label">Published</div><div className="fd-stat-value">{stats.published}</div></div>
           <div className="fd-stat"><div className="fd-stat-label">Draft</div><div className="fd-stat-value">{stats.draft}</div></div>
+          <div className="fd-stat"><div className="fd-stat-label">Assigned Leads</div><div className="fd-stat-value">{stats.leads}</div></div>
         </div>
 
         {message.text && <div className={`fd-notice ${message.type}`}>{message.text}</div>}
@@ -360,6 +398,62 @@ export default function FranchiseDashboardPage() {
             ))}
           </div>
         )}
+
+        <section className="fd-section">
+          <div className="fd-section-head">
+            <div>
+              <div className="fd-card-title">Assigned Leads</div>
+              <div className="fd-muted">Leads assigned by admin to this franchise. Assign an approved agent/sub-agent and track progress.</div>
+            </div>
+            <button className="fd-btn secondary" onClick={() => fetchLeads()}>Refresh</button>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table className="fd-table">
+              <thead>
+                <tr>
+                  {['Client', 'Service', 'Source', 'Status', 'Stage', 'Agent / Sub-agent', 'Follow Up'].map(h => <th key={h}>{h}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {leads.length === 0 ? (
+                  <tr><td colSpan={7} className="fd-muted">No assigned leads yet.</td></tr>
+                ) : leads.map(lead => (
+                  <tr key={lead.id}>
+                    <td>
+                      <strong>{lead.client_name}</strong>
+                      <div className="fd-muted">{lead.client_phone}</div>
+                      {lead.client_email && <div className="fd-muted">{lead.client_email}</div>}
+                    </td>
+                    <td>
+                      {lead.service_type || '-'}
+                      <div className="fd-muted">{lead.city}</div>
+                    </td>
+                    <td>{lead.lead_source || '-'}</td>
+                    <td>
+                      <select className="fd-mini-select" value={lead.status || 'New'} onChange={e => updateLead(lead.id, { status: e.target.value })}>
+                        {leadStatuses.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </td>
+                    <td>
+                      <select className="fd-mini-select" value={lead.lead_stage || 'New'} onChange={e => updateLead(lead.id, { lead_stage: e.target.value })}>
+                        {leadStages.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </td>
+                    <td>
+                      <select className="fd-mini-select" value={lead.agent_id || ''} onChange={e => updateLead(lead.id, { agent_id: e.target.value })}>
+                        <option value="">Not assigned</option>
+                        {agents.map(agent => <option key={agent.id} value={agent.id}>{agent.name} - {agent.city || agent.email}</option>)}
+                      </select>
+                    </td>
+                    <td>
+                      <input className="fd-mini-select" type="date" value={lead.follow_up_date ? String(lead.follow_up_date).slice(0, 10) : ''} onChange={e => updateLead(lead.id, { follow_up_date: e.target.value })} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </section>
 
       {showForm && (

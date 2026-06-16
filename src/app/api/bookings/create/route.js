@@ -50,9 +50,10 @@ export async function POST(req) {
       location_map_url,
       service_description,
     } = await req.json();
+    const selectedCity = String(service_city || '').trim();
  
     // Validation
-    if (!user_name || !user_phone || !service_address || !service_city || !service_pincode) {
+    if (!user_name || !user_phone || !service_address || !selectedCity || !service_pincode) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
  
@@ -102,7 +103,7 @@ export async function POST(req) {
            AND slot_date::DATE >= CURRENT_DATE
            AND is_available = TRUE
            AND COALESCE(current_bookings, 0) < COALESCE(max_bookings, 1)`,
-        [time_slot_id, quick_service_id, service_city, booking_date]
+        [time_slot_id, quick_service_id, selectedCity, booking_date]
       );
 
       if (slotCheck.rows.length === 0) {
@@ -129,7 +130,7 @@ export async function POST(req) {
       ) RETURNING id, booking_reference, total_amount`,
       [
         bookingReference, userId || null, quick_service_id, user_name, user_phone, user_email,
-        service_address, service_city, service_pincode, property_type,
+        service_address, selectedCity, service_pincode, property_type,
         booking_date, booking_time, slot_type, time_slot_id,
         user_latitude, user_longitude, location_map_url,
         service_description,
@@ -155,7 +156,7 @@ export async function POST(req) {
            AND is_available = TRUE
            AND COALESCE(current_bookings, 0) < COALESCE(max_bookings, 1)
          RETURNING id`,
-        [time_slot_id, quick_service_id, service_city, booking_date]
+        [time_slot_id, quick_service_id, selectedCity, booking_date]
       );
 
       if (slotResult.rows.length === 0) {
@@ -166,18 +167,17 @@ export async function POST(req) {
       }
     }
  
-    // Notify every active approved vendor who serves this quick service in the same city.
+    // Notify every approved vendor in the same city. The vendor dashboard
+    // locks contact/accept actions unless the vendor has an active package
+    // and serves this quick service.
     const vendorsResult = await pool.query(
       `SELECT DISTINCT v.id
        FROM vendors v
-       JOIN vendor_services vs ON vs.vendor_id = v.id
-       WHERE vs.quick_service_id = $1
-         AND vs.is_active = TRUE
-         AND LOWER(TRIM(v.city)) = LOWER(TRIM($2))
+       WHERE LOWER(TRIM(v.city)) = LOWER(TRIM($1))
          AND v.is_approved = TRUE
-         AND v.status = 'active'
+         AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
          AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')`,
-      [quick_service_id, service_city]
+      [selectedCity]
     );
  
     // Create notifications for each vendor
@@ -186,7 +186,7 @@ export async function POST(req) {
         `INSERT INTO service_notifications (
           booking_id, vendor_id, notification_type, title, message, is_read, created_at
         ) VALUES ($1, $2, 'new_booking', 'New Service Request', $3, FALSE, NOW())`,
-        [bookingId, vendor.id, `New ${user_name} booking in ${service_city}. Base: ₹${basePrice}`]
+        [bookingId, vendor.id, `New ${user_name} booking in ${selectedCity}. Base: ₹${basePrice}`]
       );
     }
  

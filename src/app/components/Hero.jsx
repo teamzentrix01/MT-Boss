@@ -120,7 +120,7 @@ export default function Hero() {
   return (
     <section
       className={`relative w-full overflow-hidden transition-colors duration-500 ${isDark ? "bg-black" : "bg-white"}`}
-      style={{ height: "100svh", minHeight: "480px", maxHeight: "900px" }}
+      style={{ height: "65svh", minHeight: "400px", maxHeight: "650px" }}
     >
       {slides.map((slide, i) => (
         <div

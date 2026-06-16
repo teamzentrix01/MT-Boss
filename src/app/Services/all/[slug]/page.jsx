@@ -42,7 +42,7 @@ export default function ServiceDetailPage() {
   const [isDark,    setIsDark]    = useState(false);
 
   const [form, setForm] = useState({
-    name: "", phone: "", email: "", message: "",
+    name: "", phone: "", alternatePhone: "", email: "", message: "",
     budget: "", carpetArea: "", timeSlot: "", meetingDate: "", address: "",
   });
 
@@ -133,6 +133,7 @@ export default function ServiceDetailPage() {
       payload.append("service_title", service.title);
       payload.append("name", form.name);
       payload.append("phone", form.phone);
+      payload.append("alternate_phone", form.alternatePhone);
       payload.append("email", form.email);
       payload.append("message", form.message);
       payload.append("budget", form.budget);
@@ -143,7 +144,12 @@ export default function ServiceDetailPage() {
       payload.append("address", form.address);
       propertyImages.forEach(file => payload.append("property_images", file));
 
-      const res = await fetch("/api/primary-service-enquiries", { method: "POST", body: payload });
+      const token = localStorage.getItem('token');
+      const res = await fetch("/api/primary-service-enquiries", {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: payload,
+      });
       const data = await res.json();
       if (!data.success) { setSubmitError(data.error || "Something went wrong. Please try again."); return; }
       setSubmitted(true);
@@ -200,10 +206,10 @@ export default function ServiceDetailPage() {
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <main className={`min-h-screen font-serif transition-colors duration-500 ${bg}`}>
+    <main className={`min-h-screen font-serif transition-colors duration-500 flex flex-col ${bg}`}>
 
       {/* ── Hero ── */}
-      <section className="relative h-[70vh] flex items-end overflow-hidden">
+      <section className="relative order-1 h-[58vh] min-h-[420px] flex items-end overflow-hidden">
         <img src={service.image} alt={service.title} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
         <div className="relative z-10 max-w-4xl mx-auto px-6 pb-14 w-full">
@@ -216,7 +222,7 @@ export default function ServiceDetailPage() {
       </section>
 
       {/* ── About ── */}
-      <section className={`py-14 px-6 border-b ${isDark ? "border-zinc-900" : "border-zinc-100"}`}>
+      <section className={`order-2 py-14 px-6 border-b ${isDark ? "border-zinc-900" : "border-zinc-100"}`}>
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center">
           <div>
             <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">About This Service</p>
@@ -240,7 +246,7 @@ export default function ServiceDetailPage() {
       </section>
 
       {/* ── Process ── */}
-      <section className="py-14 px-6">
+      <section className="order-4 py-14 px-6">
         <div className="max-w-5xl mx-auto">
           <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">How We Work</p>
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">Our Process</h2>
@@ -257,7 +263,7 @@ export default function ServiceDetailPage() {
       </section>
 
       {/* ── Benefits ── */}
-      <section className={`py-14 px-6 ${isDark ? "bg-zinc-950" : "bg-zinc-50"}`}>
+      <section className={`order-5 py-14 px-6 ${isDark ? "bg-zinc-950" : "bg-zinc-50"}`}>
         <div className="max-w-5xl mx-auto">
           <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Why Choose Us</p>
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">The MTBOSS<br />Advantage</h2>
@@ -274,7 +280,7 @@ export default function ServiceDetailPage() {
       </section>
 
       {/* ── Projects ── */}
-      <section className="py-14 px-6">
+      <section className="order-6 py-14 px-6">
         <div className="max-w-5xl mx-auto">
           <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Project References</p>
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">Signature<br />Projects</h2>
@@ -298,7 +304,7 @@ export default function ServiceDetailPage() {
       </section>
 
       {/* ── CTA Form ── */}
-      <section className={`py-14 px-6 ${isDark ? "bg-zinc-950" : "bg-zinc-100"}`}>
+      <section className={`order-3 py-10 px-6 ${isDark ? "bg-zinc-950" : "bg-zinc-100"}`}>
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-start">
           <div>
             <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Get Started</p>
@@ -326,16 +332,21 @@ export default function ServiceDetailPage() {
             <form onSubmit={handleSubmit} className={`border p-6 space-y-4 ${card}`}>
 
               {/* Name & Phone */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
                   <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Full Name *</label>
                   <input required type="text" className={inp} placeholder="John Sharma"
                     value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
                 </div>
                 <div>
-                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Phone Number *</label>
+                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Main Phone Number *</label>
                   <input required type="tel" className={inp} placeholder="+91 9876543210"
                     value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+                </div>
+                <div>
+                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Alternative Phone *</label>
+                  <input required type="tel" className={inp} placeholder="+91 9876500000"
+                    value={form.alternatePhone} onChange={e => setForm({ ...form, alternatePhone: e.target.value })} />
                 </div>
               </div>
 

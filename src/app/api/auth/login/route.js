@@ -10,12 +10,18 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 export async function POST(req) {
   try {
     const { email, password } = await req.json();
+    const normalizedEmail = String(email || '').trim().toLowerCase();
 
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    if (ADMIN_EMAIL && ADMIN_PASSWORD && email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    if (
+      ADMIN_EMAIL &&
+      ADMIN_PASSWORD &&
+      normalizedEmail === ADMIN_EMAIL.trim().toLowerCase() &&
+      password === ADMIN_PASSWORD
+    ) {
       const token = jwt.sign(
         { id: 0, email: ADMIN_EMAIL, role: 'admin' },
         getJwtSecret(),
@@ -30,8 +36,8 @@ export async function POST(req) {
     }
 
     const vendorResult = await pool.query(
-      'SELECT id FROM vendors WHERE email = $1',
-      [email]
+      'SELECT id FROM vendors WHERE LOWER(email) = $1',
+      [normalizedEmail]
     );
 
     if (vendorResult.rows.length > 0) {
@@ -42,8 +48,8 @@ export async function POST(req) {
     }
 
     const result = await pool.query(
-      'SELECT id, email, password, name FROM users WHERE email = $1',
-      [email]
+      'SELECT id, email, password, name FROM users WHERE LOWER(email) = $1',
+      [normalizedEmail]
     );
 
     if (result.rows.length === 0) {

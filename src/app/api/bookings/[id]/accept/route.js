@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
+import { ensurePackageSchema } from '@/lib/packages';
  
 export async function POST(req, { params }) {
   try {
@@ -24,6 +25,7 @@ export async function POST(req, { params }) {
     }
  
     const { id: bookingId } = await params;
+    await ensurePackageSchema();
  
     const client = await pool.connect();
     let booking;
@@ -42,20 +44,18 @@ export async function POST(req, { params }) {
            AND sb.vendor_id IS NULL
            AND EXISTS (
              SELECT 1
-             FROM service_notifications sn
-             JOIN vendors v ON v.id = sn.vendor_id
+             FROM vendors v
              JOIN vendor_services vs
                ON vs.vendor_id = v.id
               AND vs.quick_service_id = sb.quick_service_id
               AND vs.is_active = TRUE
-             WHERE sn.booking_id = sb.id
-               AND sn.vendor_id = $1
-               AND sn.is_read = FALSE
-               AND (sn.expires_at IS NULL OR sn.expires_at > NOW())
+             WHERE v.id = $1
                AND LOWER(TRIM(v.city)) = LOWER(TRIM(sb.service_city))
                AND v.is_approved = TRUE
-               AND v.status = 'active'
+               AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
                AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
+               AND v.package_status = 'active'
+               AND v.package_expires_at > NOW()
            )
          RETURNING id, booking_reference, total_amount, user_id`,
         [vendorId, bookingId]
