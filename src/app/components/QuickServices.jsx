@@ -216,7 +216,7 @@ export default function QuickServices() {
           {/* Services Grid — exact same layout as before */}
           <div
             ref={gridRef}
-            className="grid grid-cols-5 sm:grid-cols-10 shadow-sm"
+            className="grid grid-cols-2 min-[420px]:grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 shadow-sm"
             style={{ border: isDark ? "1px solid #3f3f46" : "1px solid #f3f4f6" }}
           >
             {loading

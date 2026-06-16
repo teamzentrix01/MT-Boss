@@ -83,13 +83,8 @@ export default function DashboardLayout({ children }) {
     <div className="flex min-h-[calc(100dvh-4rem)] bg-gray-900">
       {sidebarOpen && (
         <div
-          role="button"
-          tabIndex={0}
           aria-label="Close dashboard menu"
           onClick={() => setSidebarOpen(false)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') setSidebarOpen(false);
-          }}
           className="fixed inset-x-0 top-16 bottom-0 z-[70] bg-black/50 lg:hidden"
         />
       )}

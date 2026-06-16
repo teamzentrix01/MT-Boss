@@ -32,7 +32,7 @@ export default function EnquiriesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -121,7 +121,7 @@ export default function EnquiriesPage() {
       {/* Modal */}
       {selectedEnquiry && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-8 shadow-xl">
+          <div className="bg-white rounded-lg max-w-2xl w-full p-4 sm:p-8 shadow-xl max-h-[90dvh] overflow-y-auto">
             <div className="flex justify-between items-start mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Enquiry Details</h2>
               <button
@@ -133,7 +133,7 @@ export default function EnquiriesPage() {
             </div>
 
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Name</p>
                   <p className="text-lg font-semibold text-gray-900">{selectedEnquiry.name}</p>
@@ -165,7 +165,7 @@ export default function EnquiriesPage() {
                 <p className="text-gray-900 bg-gray-50 p-4 rounded-lg mt-2">{selectedEnquiry.message}</p>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <select defaultValue={selectedEnquiry.status} className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)]">
                   <option>Pending</option>
                   <option>Contacted</option>
@@ -176,7 +176,7 @@ export default function EnquiriesPage() {
                 </button>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                   Send Email
                 </button>

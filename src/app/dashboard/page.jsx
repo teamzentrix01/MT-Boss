@@ -460,8 +460,8 @@ function AdminDashboard() {
 
         /* ── Stat Cards ── */
         .dash-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.75rem; margin-bottom: 1rem; }
-        @media(max-width:640px){ .dash-stats { grid-template-columns: 1fr; } }
         @media(max-width:1024px){ .dash-stats { grid-template-columns: repeat(2,1fr); } }
+        @media(max-width:640px){ .dash-stats { grid-template-columns: 1fr; } }
 
         .stat-card {
           background: var(--surface);
@@ -618,6 +618,47 @@ function AdminDashboard() {
           cursor: pointer; transition: opacity .15s;
         }
         .modal-close-btn:hover { opacity: .85; }
+
+        @media(max-width:720px){
+          .dash-header-inner {
+            padding: 0.75rem 1rem;
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 0.75rem;
+          }
+          .dash-tabs-inner {
+            padding: 0 1rem 4px;
+          }
+          .dash-content {
+            padding: 1rem;
+            overflow-x: hidden;
+          }
+          .dash-content table {
+            display: block;
+            max-width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+          }
+          .modal-backdrop {
+            align-items: flex-end;
+            padding: 0.75rem;
+          }
+          .modal {
+            max-width: 100%;
+            max-height: calc(100dvh - 1.5rem);
+            padding: 1rem;
+          }
+          .modal-grid {
+            grid-template-columns: 1fr;
+          }
+          .modal-head {
+            gap: 0.75rem;
+          }
+          .modal-title {
+            line-height: 1.3;
+          }
+        }
 
         .empty-state {
           text-align: center; padding: 2rem;

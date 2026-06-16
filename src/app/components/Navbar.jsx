@@ -421,13 +421,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
       {/* Mobile Menu */}
       {isOpen && (
         <div
-          role="button"
-          tabIndex={0}
           aria-label="Close navigation menu"
           onClick={closeMobileMenu}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') closeMobileMenu();
-          }}
           className="lg:hidden fixed inset-x-0 top-16 bottom-0 z-[90] bg-black/50"
         />
       )}

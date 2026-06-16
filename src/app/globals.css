@@ -14,6 +14,26 @@
   --brand-blue-faint: color-mix(in srgb, var(--brand-blue) 5%, white);
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
 
 @layer base {
   body {
@@ -101,4 +121,57 @@ button[aria-disabled="true"],
   cursor: not-allowed !important;
   opacity: 0.62 !important;
   transform: none !important;
+}
+
+@media (max-width: 768px) {
+  button:hover:not(:disabled),
+  [role="button"]:hover,
+  a.btn:hover,
+  a[class~="btn"]:hover,
+  a[class*="-btn"]:hover,
+  a[class*="btn-"]:hover,
+  a[href][class*="uppercase"][class*="bg-"]:hover,
+  a[href][class*="uppercase"][class*="border"]:hover {
+    transform: none !important;
+  }
+
+  .booking-table,
+  .cm-table,
+  .slots-table,
+  .pm-table,
+  .qs-table,
+  .pricing-table,
+  .vendors-table,
+  .ag-table,
+  .fr-table,
+  .fd-table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .booking-table th,
+  .booking-table td,
+  .cm-table th,
+  .cm-table td,
+  .slots-table th,
+  .slots-table td,
+  .pm-table th,
+  .pm-table td,
+  .qs-table th,
+  .qs-table td,
+  .pricing-table th,
+  .pricing-table td,
+  .vendors-table th,
+  .vendors-table td,
+  .ag-table th,
+  .ag-table td,
+  .fr-table th,
+  .fr-table td,
+  .fd-table th,
+  .fd-table td {
+    white-space: nowrap;
+  }
 }
