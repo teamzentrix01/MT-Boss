@@ -15,17 +15,31 @@ export default function VendorManagementAdmin({ isDarkMode }) {
     fetchVendors();
   }, []);
 
+  const getAdminHeaders = (contentType) => {
+    let user = {};
+    try {
+      user = JSON.parse(localStorage.getItem('user') || '{}');
+    } catch {
+      user = {};
+    }
+    const token = localStorage.getItem('admin-token') || (user.role === 'admin' ? localStorage.getItem('token') : '');
+    return {
+      ...(contentType ? { 'Content-Type': contentType } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
   const fetchVendors = async () => {
     setLoading(true);
     setError(null);
+    const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
     try {
-      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       
       // ← NEW: Logging
       console.log('🔍 Fetching vendors with token:', token ? 'Present' : 'MISSING');
       
       const res = await fetch('/api/admin/vendors', {
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: getAdminHeaders(),
         cache: 'no-store'  // ← NEW: Prevent caching issues
       });
 
@@ -58,16 +72,12 @@ export default function VendorManagementAdmin({ isDarkMode }) {
 
   const handleApproveVendor = async (vendorId) => {
     try {
-      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       
       console.log('✓ Approving vendor:', vendorId);
 
       const res = await fetch('/api/admin/vendors', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: getAdminHeaders('application/json'),
         body: JSON.stringify({
           vendor_id: vendorId,
           action: 'approve'
@@ -93,16 +103,12 @@ export default function VendorManagementAdmin({ isDarkMode }) {
 
   const handleRejectVendor = async (vendorId, reason) => {
     try {
-      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       
       console.log('✕ Rejecting vendor:', vendorId, 'Reason:', reason);
 
       const res = await fetch('/api/admin/vendors', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: getAdminHeaders('application/json'),
         body: JSON.stringify({
           vendor_id: vendorId,
           action: 'reject',
@@ -128,17 +134,13 @@ export default function VendorManagementAdmin({ isDarkMode }) {
 
   const handleToggleStatus = async (vendorId, newStatus) => {
     try {
-      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       
       const action = newStatus === 'active' ? 'deactivate' : 'activate';
       console.log('⚙️ Toggling vendor status:', vendorId, '→', action);
 
       const res = await fetch('/api/admin/vendors', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: getAdminHeaders('application/json'),
         body: JSON.stringify({
           vendor_id: vendorId,
           action: action
