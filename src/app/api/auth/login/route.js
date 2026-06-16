@@ -26,6 +26,7 @@ export async function POST(req) {
       normalizedEmail === ADMIN_EMAIL.trim().toLowerCase() &&
       password === ADMIN_PASSWORD
     ) {
+      const normalizedAdminEmail = ADMIN_EMAIL.trim().toLowerCase();
       const token = jwt.sign(
         { id: 0, email: normalizedAdminEmail, role: 'admin' },
         getJwtSecret(),
