@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardLayout({ children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [user, setUser] = useState({});
@@ -28,6 +28,13 @@ export default function DashboardLayout({ children }) {
     } catch {
       setUser({});
     }
+  }, []);
+
+  useEffect(() => {
+    const syncSidebar = () => setSidebarOpen(window.innerWidth >= 1024);
+    syncSidebar();
+    window.addEventListener('resize', syncSidebar);
+    return () => window.removeEventListener('resize', syncSidebar);
   }, []);
 
   const menuItems = [
@@ -62,6 +69,10 @@ export default function DashboardLayout({ children }) {
     router.push('/login');
   };
 
+  const closeSidebarOnMobile = () => {
+    if (window.innerWidth < 1024) setSidebarOpen(false);
+  };
+
   const bgClass = isDarkMode ? 'bg-black' : 'bg-white';
   const textPrimary = isDarkMode ? 'text-white' : 'text-black';
   const textSecondary = isDarkMode ? 'text-gray-400' : 'text-gray-600';
@@ -69,9 +80,22 @@ export default function DashboardLayout({ children }) {
   const hoverBg = isDarkMode ? 'hover:bg-[var(--brand-blue-dark)]/10' : 'hover:bg-sky-50';
 
   return (
-    <div className="flex h-screen bg-gray-900">
+    <div className="flex min-h-[calc(100dvh-4rem)] bg-gray-900">
+      {sidebarOpen && (
+        <div
+          role="button"
+          tabIndex={0}
+          aria-label="Close dashboard menu"
+          onClick={() => setSidebarOpen(false)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') setSidebarOpen(false);
+          }}
+          className="fixed inset-x-0 top-16 bottom-0 z-[70] bg-black/50 lg:hidden"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} ${bgClass} border-r-2 ${borderColor} transition-all duration-300 flex flex-col shadow-lg`}>
+      <aside className={`${sidebarOpen ? 'translate-x-0 lg:w-64' : '-translate-x-full lg:translate-x-0 lg:w-20'} fixed lg:relative top-16 bottom-0 lg:top-auto lg:bottom-auto left-0 z-[80] w-72 ${bgClass} border-r-2 ${borderColor} transition-all duration-300 flex flex-col shadow-lg`}>
         {/* Logo */}
         <div className={`flex items-center justify-between h-16 px-4 border-b-2 ${borderColor}`}>
           {sidebarOpen && <span className={`font-black text-xl ${textPrimary}`}>MT-BOSS</span>}
@@ -89,6 +113,7 @@ export default function DashboardLayout({ children }) {
             <Link
               key={item.label}
               href={item.tab ? `/dashboard?tab=${item.tab}` : '/dashboard'}
+              onClick={closeSidebarOnMobile}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isDarkMode ? 'text-gray-400 hover:text-[var(--brand-blue-light)] hover:bg-[var(--brand-blue-dark)]/10' : 'text-gray-700 hover:text-[var(--brand-blue-deep)] hover:bg-sky-50'}`}
             >
               <span className="text-xl">{item.icon}</span>
@@ -130,7 +155,17 @@ export default function DashboardLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 min-w-0 overflow-auto">
+        <div className={`lg:hidden sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 ${bgClass} ${borderColor}`}>
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(true)}
+            className={`px-3 py-2 rounded-lg text-sm font-black ${isDarkMode ? 'text-white' : 'text-black'}`}
+          >
+            Menu
+          </button>
+          <span className={`text-sm font-black ${textPrimary}`}>Dashboard</span>
+        </div>
         {children}
       </main>
     </div>

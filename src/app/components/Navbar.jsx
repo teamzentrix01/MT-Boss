@@ -98,6 +98,25 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     };
   }, [pathname]); // re-check on every route change too
 
+  useEffect(() => {
+    setIsOpen(false);
+    setPropertyOpen(false);
+    setServicesOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  const closeMobileMenu = () => {
+    setIsOpen(false);
+    setPropertyOpen(false);
+    setServicesOpen(false);
+  };
+
   const handleLogout = async () => {
     const logoutRole = user?.role;
 
@@ -122,6 +141,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   };
 
   const handleDashboard = () => {
+    closeMobileMenu();
     if (user?.role === 'vendor') router.push('/vendor/dashboard');
     else if (user?.role === 'admin') router.push('/dashboard');
     else if (user?.role === 'supplier') router.push('/supplier/dashboard');
@@ -399,15 +419,29 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
       </div>
 
       {/* Mobile Menu */}
+      {isOpen && (
+        <div
+          role="button"
+          tabIndex={0}
+          aria-label="Close navigation menu"
+          onClick={closeMobileMenu}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') closeMobileMenu();
+          }}
+          className="lg:hidden fixed inset-x-0 top-16 bottom-0 z-[90] bg-black/50"
+        />
+      )}
       <div
-        className={`lg:hidden overflow-hidden transition-all duration-300 ${
-          isOpen ? 'max-h-screen' : 'max-h-0'
+        className={`lg:hidden fixed inset-x-0 top-16 z-[120] transition-all duration-300 ${
+          isOpen
+            ? 'visible translate-y-0 opacity-100'
+            : 'invisible -translate-y-3 opacity-0 pointer-events-none'
         }`}
       >
         <div
           className={`${
             isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-gray-100'
-          } border-t px-6 py-4 space-y-1`}
+          } border-t px-4 py-4 space-y-1 max-h-[calc(100dvh-4rem)] overflow-y-auto shadow-2xl`}
         >
           <div className="pb-3">
             <GlobalSearch user={user} isDarkMode={isDarkMode} onNavigate={() => setIsOpen(false)} />
@@ -416,13 +450,14 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           {[
             { label: 'Home', href: '/' },
             { label: 'Budget Calculator', href: '/calculator' },
-            { label: 'Shop Now', href: '/shop' },
+            { label: 'Shop Now', href: '/ShopNow' },
             { label: 'Careers', href: '/careers' },
             { label: 'Contact', href: '/contact' },
           ].map((link) => (
             <Link
               key={link.label}
               href={link.href}
+              onClick={closeMobileMenu}
               className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
                 isDarkMode
                   ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
@@ -466,6 +501,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   <Link
                     key={s.label}
                     href={s.href}
+                    onClick={closeMobileMenu}
                     className={`block px-3 py-2 text-sm rounded-md transition-colors ${
                       isDarkMode
                         ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
@@ -512,6 +548,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   <Link
                     key={s.label}
                     href={s.href}
+                    onClick={closeMobileMenu}
                     className={`block px-3 py-2 text-sm rounded-md transition-colors ${
                       isDarkMode
                         ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
@@ -527,6 +564,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
           <Link
             href="/agent"
+            onClick={closeMobileMenu}
             className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
               isDarkMode
                 ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
@@ -537,6 +575,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           </Link>
           <Link
             href="/franchise"
+            onClick={closeMobileMenu}
             className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
               isDarkMode
                 ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
@@ -578,6 +617,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               <>
                 <Link
                   href="/login"
+                  onClick={closeMobileMenu}
                   className={`block text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
                     isDarkMode
                       ? 'text-[var(--brand-blue)] border border-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
@@ -588,6 +628,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 </Link>
                 <Link
                   href="/signup"
+                  onClick={closeMobileMenu}
                   className="block text-center px-5 py-2.5 text-sm font-semibold bg-[var(--brand-blue)] text-black rounded-md hover:bg-[var(--brand-blue-dark)] transition-all"
                 >
                   Sign Up
