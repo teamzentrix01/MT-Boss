@@ -60,6 +60,7 @@ export default function DashboardLayout({ children }) {
     { label: 'Shop Categories',          icon: '🛒', tab: 'shop-categories' },
     { label: 'Suppliers',                icon: '📦', tab: 'suppliers' },
     { label: 'Vendors',                  icon: '🏪', tab: 'vendors' },
+    { label: 'Package Approvals',        icon: '📦', tab: 'packages' },
   ];
 
   const handleLogout = async () => {
