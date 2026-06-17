@@ -423,6 +423,7 @@ function AdminDashboard() {
           background: var(--surface);
           border-bottom: 1px solid var(--border);
           position: sticky; top: 0; z-index: 40;
+          display: none;
         }
         .dash-tabs-inner {
           max-width: 1280px; margin: 0 auto;
