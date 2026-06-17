@@ -17,6 +17,71 @@ const defaultForm = {
   cta_heading: '', contact_phone: '', contact_email: '',
 };
 
+async function uploadPrimaryServiceImage(file) {
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+  if (!cloudName || !uploadPreset) throw new Error('Cloudinary env is missing');
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', uploadPreset);
+  fd.append('folder', 'mtboss/primary-services');
+
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: 'POST',
+    body: fd,
+  });
+  const data = await res.json();
+  if (!res.ok || !data.secure_url) throw new Error(data.error?.message || 'Image upload failed');
+  return data.secure_url;
+}
+
+function ImageUrlUploadField({ label, value, onChange, required = false, compact = false }) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+
+  const handleFile = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError('');
+    try {
+      onChange(await uploadPrimaryServiceImage(file));
+    } catch (err) {
+      setUploadError(err.message || 'Image upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="ps-field">
+      <label className="ps-field-label">{label}{required ? ' *' : ''}</label>
+      <div className="ps-upload-line">
+        {!compact && (
+          <input
+            className="ps-input"
+            type="url"
+            placeholder="Paste image URL or upload from gallery"
+            value={value || ''}
+            onChange={e => onChange(e.target.value)}
+          />
+        )}
+        <label className={`ps-local-upload-btn${uploading ? ' disabled' : ''}`}>
+          {uploading ? 'Uploading...' : 'Upload from gallery'}
+          <input type="file" accept="image/*" onChange={handleFile} disabled={uploading} />
+        </label>
+      </div>
+      {uploadError && <p className="ps-upload-error">{uploadError}</p>}
+      {value && !compact && (
+        <div className="ps-img-preview"><img src={value} alt="Preview" onError={e => { e.target.style.display = 'none'; }} /></div>
+      )}
+    </div>
+  );
+}
+
 export default function PrimaryServicesManager({ isDarkMode }) {
   const [services,  setServices]  = useState([]);
   const [loading,   setLoading]   = useState(true);
@@ -254,6 +319,18 @@ export default function PrimaryServicesManager({ isDarkMode }) {
           border:1px solid var(--ps-border); margin-top:0.5rem;
         }
         .ps-img-preview img { width:100%; height:100%; object-fit:cover; }
+        .ps-upload-line { display:flex; gap:0.5rem; align-items:stretch; }
+        .ps-local-upload-btn {
+          min-width:7rem; padding:0.4rem 0.75rem; border:1px dashed var(--ps-border);
+          border-radius:6px; color:var(--ps-text); background:var(--ps-sub-bg);
+          font-size:0.75rem; font-weight:700; cursor:pointer; display:flex;
+          align-items:center; justify-content:center; white-space:nowrap;
+        }
+        .ps-local-upload-btn:hover { border-color:var(--ps-accent); color:var(--ps-accent); }
+        .ps-local-upload-btn.disabled { opacity:.65; cursor:wait; }
+        .ps-local-upload-btn input { display:none; }
+        .ps-upload-error { color:var(--ps-err-tx); font-size:0.7rem; margin:0.35rem 0 0; }
+        @media(max-width:520px){ .ps-upload-line { flex-direction:column; } .ps-local-upload-btn { width:100%; } }
 
         .ps-form-actions {
           display:flex; gap:0.5rem; padding:0.875rem 1.25rem;
@@ -411,9 +488,15 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                         value={formData.hero_subtitle} onChange={e => set('hero_subtitle', e.target.value)} />
                     </div>
                     <div className="ps-field">
-                      <label className="ps-field-label">Hero Image URL *</label>
+                      <label className="ps-field-label">Hero Image URL or Upload *</label>
                       <input className="ps-input" type="url" placeholder="https://images.unsplash.com/…"
                         value={formData.image} onChange={e => set('image', e.target.value)} />
+                      <ImageUrlUploadField
+                        label="Upload From Gallery"
+                        value={formData.image}
+                        onChange={val => set('image', val)}
+                        compact
+                      />
                       {formData.image && (
                         <div className="ps-img-preview"><img src={formData.image} alt="Preview" onError={e => { e.target.style.display = 'none'; }} /></div>
                       )}
@@ -546,6 +629,12 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                         </div>
                         <input className="ps-input" type="url" placeholder="Image URL" style={{ marginBottom: '0.375rem' }}
                           value={row.img} onChange={e => updateRow('projects', i, 'img', e.target.value)} />
+                        <ImageUrlUploadField
+                          label="Upload From Gallery"
+                          value={row.img}
+                          onChange={val => updateRow('projects', i, 'img', val)}
+                          compact
+                        />
                         {row.img && (
                           <div className="ps-img-preview"><img src={row.img} alt="preview" onError={e => { e.target.style.display = 'none'; }} /></div>
                         )}

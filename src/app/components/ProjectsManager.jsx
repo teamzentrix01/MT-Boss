@@ -332,6 +332,12 @@ export default function ProjectsManager() {
           transition: all .15s; display: inline-block;
         }
         .pm-upload-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .pm-url-helper {
+          margin-top: 0.75rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+        }
 
         .pm-size-opts { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .pm-size-opt {
@@ -465,6 +471,20 @@ export default function ProjectsManager() {
                   style={{ display: 'none' }}
                   onChange={handleImageUpload}
                 />
+                <div className="pm-url-helper">
+                  <label className="pm-field-label">Or Paste Image URL</label>
+                  <input
+                    className="pm-input"
+                    type="url"
+                    placeholder="https://..."
+                    value={form.image_url}
+                    onChange={e => {
+                      const imageUrl = e.target.value;
+                      setForm(f => ({ ...f, image_url: imageUrl, cloudinary_public_id: '' }));
+                      setPreview(imageUrl);
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Title */}

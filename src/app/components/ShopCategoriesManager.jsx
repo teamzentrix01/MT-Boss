@@ -69,6 +69,25 @@ function ImageUpload({ value, onChange, t }) {
           <input type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} disabled={uploading} />
         </label>
       </div>
+      <input
+        type="url"
+        value={value || ''}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Or paste image URL"
+        style={{
+          width: '100%',
+          marginTop: '8px',
+          border: `1px solid ${t.border}`,
+          borderRadius: '4px',
+          padding: '8px 10px',
+          background: t.inputBg,
+          color: t.text,
+          fontSize: '12px',
+          outline: 'none',
+          boxSizing: 'border-box',
+          fontFamily: 'inherit',
+        }}
+      />
       {err && <p style={{ color: '#ef4444', fontSize: '11px', margin: '4px 0 0' }}>{err}</p>}
     </div>
   );
