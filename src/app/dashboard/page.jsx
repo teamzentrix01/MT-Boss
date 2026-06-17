@@ -440,14 +440,24 @@ function AdminDashboard() {
           font-size: 0.8125rem; font-weight: 500;
           color: var(--muted);
           border: none; background: none;
+          background-color: transparent !important;
+          background-image: none !important;
+          box-shadow: none !important;
+          transform: none !important;
           border-bottom: 2px solid transparent;
           cursor: pointer; white-space: nowrap;
           transition: color .15s, border-color .15s;
           margin-bottom: -1px;
         }
-        .dash-tab:hover { color: var(--text); }
+        .dash-tab:hover {
+          color: var(--text) !important;
+          background: transparent !important;
+          background-image: none !important;
+          box-shadow: none !important;
+          transform: none !important;
+        }
         .dash-tab.active {
-          color: var(--accent);
+          color: var(--accent) !important;
           border-bottom-color: var(--accent);
         }
         .dash-tab-icon { font-size: 0.875rem; }
