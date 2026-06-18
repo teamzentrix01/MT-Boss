@@ -23,6 +23,7 @@ export default function AgentsPage() {
   const [workspaceLoading, setWorkspaceLoading] = useState(false);
   const [showLeads, setShowLeads] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchAgents();
@@ -53,6 +54,7 @@ export default function AgentsPage() {
   const updateStatus = async (id, status) => {
     setUpdating(true);
     setTempLogin(null);
+    setError('');
     try {
       const token = localStorage.getItem('token');
       const res = await fetch('/api/agents', {
@@ -65,6 +67,11 @@ export default function AgentsPage() {
         }),
       });
       const data = await res.json();
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Could not update agent status.');
+        return;
+      }
+
       if (data.success) {
         setAgents(prev => prev.map(a => a.id === id ? { ...a, ...data.data } : a));
         if (selected?.id === id) setSelected({ ...selected, ...data.data });
@@ -76,6 +83,8 @@ export default function AgentsPage() {
           });
         }
       }
+    } catch (err) {
+      setError(err.message || 'Could not update agent status.');
     } finally {
       setUpdating(false);
     }
@@ -344,6 +353,11 @@ export default function AgentsPage() {
       `}</style>
 
       <div className="ag-wrap">
+        {error && (
+          <div style={{ marginBottom: '0.75rem', padding: '0.75rem 1rem', border: '1px solid #fecaca', borderRadius: 8, background: '#fef2f2', color: '#991b1b', fontSize: '0.8rem', fontWeight: 700 }}>
+            {error}
+          </div>
+        )}
 
         {/* Toolbar */}
         <div className="ag-toolbar">

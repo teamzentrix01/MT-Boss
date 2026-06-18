@@ -47,6 +47,10 @@ export function requireAdmin(req) {
   return requireRole(req, 'admin');
 }
 
+function quoteIdent(name) {
+  return `"${String(name).replace(/"/g, '""')}"`;
+}
+
 export async function ensureAgentSchema() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS agents (
@@ -78,6 +82,33 @@ export async function ensureAgentSchema() {
 
   for (const sql of alters) {
     await pool.query(sql);
+  }
+
+  const nullableAlters = [
+    `ALTER TABLE agents ALTER COLUMN password_hash DROP NOT NULL`,
+    `ALTER TABLE agents ALTER COLUMN approved_at DROP NOT NULL`,
+    `ALTER TABLE agents ALTER COLUMN approved_by DROP NOT NULL`,
+    `ALTER TABLE agents ALTER COLUMN last_login_at DROP NOT NULL`,
+  ];
+
+  for (const sql of nullableAlters) {
+    try {
+      await pool.query(sql);
+    } catch {
+      // Column may not exist in very old partial schemas; ADD COLUMN above handles normal cases.
+    }
+  }
+
+  const statusChecks = await pool.query(`
+    SELECT conname
+      FROM pg_constraint
+     WHERE conrelid = 'agents'::regclass
+       AND contype = 'c'
+       AND pg_get_constraintdef(oid) ILIKE '%status%'
+  `);
+
+  for (const row of statusChecks.rows) {
+    await pool.query(`ALTER TABLE agents DROP CONSTRAINT IF EXISTS ${quoteIdent(row.conname)}`);
   }
 
   await pool.query(`
