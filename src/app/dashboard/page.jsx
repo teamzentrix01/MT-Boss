@@ -584,13 +584,13 @@ function AdminDashboard() {
           position: fixed; inset: 0;
           background: rgba(0,0,0,.45);
           display: flex; align-items: center; justify-content: center;
-          padding: 1rem; z-index: 50;
+          padding: 1rem; z-index: 200;
         }
         .modal {
           background: var(--surface);
           border: 1px solid var(--border);
           border-radius: 10px;
-          max-width: 540px; width: 100%;
+          max-width: min(540px, calc(100vw - 2rem)); width: 100%;
           max-height: 90vh; overflow-y: auto;
           padding: 1.5rem;
           box-shadow: 0 20px 60px rgba(0,0,0,.2);
@@ -1261,7 +1261,7 @@ function AdminDashboard() {
           const rows = Array.isArray(est.lineItems) ? est.lineItems : [];
           return (
             <div className="modal-backdrop" onClick={() => setSelectedCalculatorQuote(null)}>
-              <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '860px', maxHeight: '90vh', overflowY: 'auto' }}>
+              <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 'min(860px, calc(100vw - 2rem))', maxHeight: '90vh', overflowY: 'auto' }}>
                 <div className="modal-head">
                   <span className="modal-title">Calculator Quote Details</span>
                   <button className="modal-close" onClick={() => setSelectedCalculatorQuote(null)}>✕</button>
