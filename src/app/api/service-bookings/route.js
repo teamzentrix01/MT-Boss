@@ -1,6 +1,28 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
+function normalizeTimeSlot(slot) {
+  return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
+}
+
+async function ensurePaidSlotsTable(client = pool) {
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS paid_time_slot_availability (
+      id SERIAL PRIMARY KEY,
+      quick_service_id INTEGER NOT NULL REFERENCES quick_services(id) ON DELETE CASCADE,
+      slot_date DATE NOT NULL,
+      city VARCHAR(120) NOT NULL,
+      time_slot VARCHAR(80) NOT NULL,
+      is_available BOOLEAN NOT NULL DEFAULT TRUE,
+      updated_by_role VARCHAR(30),
+      updated_by_id INTEGER,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
+      UNIQUE (quick_service_id, slot_date, city, time_slot)
+    )
+  `);
+}
+
 // POST - Create new service booking
 export async function POST(req) {
   try {
@@ -53,6 +75,28 @@ export async function POST(req) {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+
+      if (slot_type !== 'free') {
+        await ensurePaidSlotsTable(client);
+        const paidSlotCheck = await client.query(
+          `SELECT is_available
+           FROM paid_time_slot_availability
+           WHERE quick_service_id = $1
+             AND slot_date::DATE = $2::DATE
+             AND LOWER(TRIM(city)) = LOWER(TRIM($3))
+             AND time_slot = $4
+           LIMIT 1`,
+          [quick_service_id, booking_date, selectedCity, normalizeTimeSlot(booking_time)]
+        );
+
+        if (paidSlotCheck.rows[0]?.is_available === false) {
+          await client.query('ROLLBACK');
+          return NextResponse.json(
+            { error: 'This paid time slot is closed for the selected date. Please choose another slot.' },
+            { status: 409 }
+          );
+        }
+      }
 
       // Create booking
       const bookingResult = await client.query(

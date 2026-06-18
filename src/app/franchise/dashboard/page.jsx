@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import FreeTimeSlotsManager from '@/app/components/FreeTimeSlotsManager';
 
 const CATEGORIES = ['Commercial', 'Residential', 'Hospitality', 'Industrial', 'IT Infrastructure', 'Luxury Home'];
 const leadStatuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
@@ -452,6 +453,18 @@ export default function FranchiseDashboardPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </section>
+
+        <section className="fd-section fd-slot-section">
+          <div className="fd-section-head">
+            <div>
+              <div className="fd-card-title">Quick-Service Slots</div>
+              <div className="fd-muted">Open or close free and paid quick-service slots for your franchise city.</div>
+            </div>
+          </div>
+          <div style={{ padding: '1rem' }}>
+            <FreeTimeSlotsManager tokenKey="franchise-token" defaultCity={franchise?.city || ''} compact />
           </div>
         </section>
       </section>

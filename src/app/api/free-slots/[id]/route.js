@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole, unauthorized } from '@/lib/auth';
+import { requireAnyRole, unauthorized } from '@/lib/auth';
 
 function hasToken(req) {
-  return Boolean(requireRole(req, 'admin'));
+  return Boolean(requireAnyRole(req, ['admin', 'franchise']));
 }
 
 // PATCH - admin edits slot details and opens/closes availability.

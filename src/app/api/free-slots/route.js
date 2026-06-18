@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole, unauthorized } from '@/lib/auth';
+import { requireAnyRole, unauthorized } from '@/lib/auth';
 
 async function ensureFreeSlotsColumns() {
   await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS current_bookings INTEGER DEFAULT 0`);
@@ -11,7 +11,7 @@ async function ensureFreeSlotsColumns() {
 }
 
 function hasToken(req) {
-  return Boolean(requireRole(req, 'admin'));
+  return Boolean(requireAnyRole(req, ['admin', 'franchise']));
 }
 
 // GET — user mode: city + service_id; admin mode: no params

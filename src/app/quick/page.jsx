@@ -48,8 +48,10 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
   const [locationLoading, setLocationLoading] = useState(false);
   const [slotType, setSlotType] = useState(initialSlotType || 'paid'); // 'free' | 'paid'
   const [freeSlots, setFreeSlots] = useState([]);
+  const [paidSlots, setPaidSlots] = useState(TIME_SLOTS.map((timeSlot) => ({ time_slot: timeSlot, is_available: true })));
   const [selectedFreeSlot, setSelectedFreeSlot] = useState(initialSelectedFreeSlot || null);
   const [slotsLoading, setSlotsLoading] = useState(false);
+  const [paidSlotsLoading, setPaidSlotsLoading] = useState(false);
 
   // ✅ FIX: Use admin_base_price or fallback to base_price — force number to avoid string concat
   const basePrice = parseFloat(service.admin_base_price || service.base_price || 199);
@@ -207,6 +209,30 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
       .catch(() => {})
       .finally(() => setSlotsLoading(false));
   }, [slotType, form.city, service.id]);
+
+  useEffect(() => {
+    if (slotType !== 'paid' || !form.city.trim() || !form.date) {
+      setPaidSlots(TIME_SLOTS.map((timeSlot) => ({ time_slot: timeSlot, is_available: true })));
+      return;
+    }
+
+    setPaidSlotsLoading(true);
+    fetch(`/api/paid-slots?city=${encodeURIComponent(form.city)}&service_id=${service.id}&date=${form.date}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success) {
+          const slots = d.data || [];
+          setPaidSlots(slots);
+          const available = slots.filter((slot) => slot.is_available).map((slot) => slot.time_slot);
+          if (form.timeSlot && !available.includes(form.timeSlot)) {
+            set('timeSlot', '');
+          }
+        }
+      })
+      .catch(() => {})
+      .finally(() => setPaidSlotsLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slotType, form.city, form.date, service.id]);
 
   // Trap scroll
   useEffect(() => {
@@ -500,11 +526,14 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                       value={form.timeSlot}
                       onChange={(e) => set('timeSlot', e.target.value)}
                     >
-                      <option value="">Select slot</option>
-                      {TIME_SLOTS.map((t) => (
-                        <option key={t} value={t}>{t}</option>
+                      <option value="">{paidSlotsLoading ? 'Loading slots...' : 'Select slot'}</option>
+                      {paidSlots.filter((slot) => slot.is_available).map((slot) => (
+                        <option key={slot.time_slot} value={slot.time_slot}>{slot.time_slot}</option>
                       ))}
                     </select>
+                    {!paidSlotsLoading && form.city && form.date && paidSlots.filter((slot) => slot.is_available).length === 0 && (
+                      <p className={`text-[10px] mt-2 font-bold ${muted}`}>No paid slots available for this date. Please choose another date.</p>
+                    )}
                   </Field>
                 </div>
               )}

@@ -6,8 +6,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import PaidTimeSlotsManager from './PaidTimeSlotsManager';
 
-export default function FreeTimeSlotsManager({ isDarkMode }) {
+export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', defaultCity = '', compact = false }) {
   const [slots, setSlots] = useState([]);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +21,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
     slot_date: '',
     slot_start: '08:00',
     slot_end: '10:00',
-    city: '',
+    city: defaultCity || '',
     max_bookings: 1,
   });
 
@@ -28,10 +29,14 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
     fetchData();
   }, [filterCity]);
 
+  useEffect(() => {
+    if (defaultCity) setFormData((current) => ({ ...current, city: defaultCity }));
+  }, [defaultCity]);
+
   async function fetchData() {
     setLoading(true);
     try {
-      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const token = localStorage.getItem(tokenKey) || localStorage.getItem('admin-token') || localStorage.getItem('token');
       
       // Fetch free slots
       const slotsRes = await fetch(`/api/free-slots${filterCity !== 'all' ? `?city=${filterCity}` : ''}`, {
@@ -64,7 +69,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
     }
 
     try {
-      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const token = localStorage.getItem(tokenKey) || localStorage.getItem('admin-token') || localStorage.getItem('token');
       const res = await fetch(editingSlot ? `/api/free-slots/${editingSlot.id}` : '/api/free-slots', {
         method: editingSlot ? 'PATCH' : 'POST',
         headers: {
@@ -84,7 +89,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
           slot_date: '',
           slot_start: '08:00',
           slot_end: '10:00',
-          city: '',
+          city: defaultCity || '',
           max_bookings: 1,
         });
         fetchData();
@@ -99,7 +104,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
 
   async function handleToggleAvailability(slotId, currentStatus) {
     try {
-      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const token = localStorage.getItem(tokenKey) || localStorage.getItem('admin-token') || localStorage.getItem('token');
       const res = await fetch(`/api/free-slots/${slotId}`, {
         method: 'PATCH',
         headers: {
@@ -123,7 +128,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
     if (!confirm('Are you sure you want to delete this slot?')) return;
 
     try {
-      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const token = localStorage.getItem(tokenKey) || localStorage.getItem('admin-token') || localStorage.getItem('token');
       const res = await fetch(`/api/free-slots/${slotId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
@@ -144,7 +149,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
       slot_date: slot.slot_date ? String(slot.slot_date).split('T')[0] : '',
       slot_start: String(slot.slot_start || '08:00').slice(0, 5),
       slot_end: String(slot.slot_end || '10:00').slice(0, 5),
-      city: slot.city || '',
+      city: slot.city || defaultCity || '',
       max_bookings: slot.max_bookings || 1,
     });
     setShowForm(true);
@@ -158,7 +163,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
       slot_date: '',
       slot_start: '08:00',
       slot_end: '10:00',
-      city: '',
+      city: defaultCity || '',
       max_bookings: 1,
     });
   }
@@ -192,7 +197,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
           background: var(--surface);
           border: 1px solid var(--border);
           border-radius: 8px;
-          padding: 1.25rem;
+          padding: ${compact ? '1rem' : '1.25rem'};
           margin-bottom: 1rem;
         }
         .form-grid {
@@ -464,6 +469,7 @@ export default function FreeTimeSlotsManager({ isDarkMode }) {
             </div>
           )}
         </div>
+        <PaidTimeSlotsManager tokenKey={tokenKey} defaultCity={defaultCity} compact={compact} />
       </div>
     </>
   );
