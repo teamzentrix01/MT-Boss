@@ -84,7 +84,7 @@ export default function DashboardLayout({ children }) {
   const hoverBg = isDarkMode ? 'hover:bg-[var(--brand-blue-dark)]/10' : 'hover:bg-sky-50';
 
   return (
-    <div className="flex min-h-[calc(100dvh-4rem)] bg-gray-900">
+    <div className="flex items-start bg-gray-900">
       {sidebarOpen && (
         <div
           aria-label="Close dashboard menu"
@@ -94,7 +94,7 @@ export default function DashboardLayout({ children }) {
       )}
 
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'translate-x-0 lg:w-64' : '-translate-x-full lg:translate-x-0 lg:w-20'} fixed lg:relative top-16 bottom-0 lg:top-auto lg:bottom-auto left-0 z-[80] w-72 ${bgClass} border-r-2 ${borderColor} transition-all duration-300 flex flex-col shadow-lg`}>
+      <aside className={`${sidebarOpen ? 'translate-x-0 lg:w-64' : '-translate-x-full lg:translate-x-0 lg:w-20'} fixed lg:sticky top-16 bottom-0 lg:bottom-auto left-0 z-[80] w-72 max-h-[calc(100dvh-4rem)] ${bgClass} border-r-2 ${borderColor} transition-all duration-300 flex flex-col shadow-lg`}>
         {/* Logo */}
         <div className={`flex items-center justify-between h-16 px-4 border-b-2 ${borderColor}`}>
           {sidebarOpen && <span className={`font-black text-xl ${textPrimary}`}>MT-BOSS</span>}
@@ -154,7 +154,7 @@ export default function DashboardLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 min-w-0 overflow-auto">
+      <main className="flex-1 min-w-0">
         <div className={`lg:hidden sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 ${bgClass} ${borderColor}`}>
           <button
             type="button"

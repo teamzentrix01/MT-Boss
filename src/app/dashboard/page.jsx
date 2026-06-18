@@ -374,7 +374,6 @@ function AdminDashboard() {
 
         /* ── Base ── */
         .dash-root {
-          min-height: 100vh;
           background: var(--bg);
           font-family: 'DM Sans', system-ui, sans-serif;
           color: var(--text);
