@@ -678,6 +678,7 @@ function AdminDashboard() {
 
       <div className="dash-root">
         {/* Header */}
+        {activeTab === 'overview' && (
         <div className="dash-header">
           <div className="dash-header-inner">
             <div>
@@ -692,6 +693,7 @@ function AdminDashboard() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Tab Bar */}
         <div className="dash-tabs-bar">
