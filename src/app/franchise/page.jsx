@@ -536,14 +536,15 @@ const handleSubmit = async (e) => {
                 }`}
               >
                 <button
+                  aria-expanded={activeFaq === i}
                   onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between p-5 text-left"
+                  className="faq-trigger w-full flex items-center justify-between p-5 text-left"
                 >
-                  <span className={`text-xs font-black uppercase tracking-wide ${dark ? "text-white" : "text-zinc-800"}`}>
+                  <span className="text-xs font-black uppercase tracking-wide">
                     {faq.q}
                   </span>
                   <svg
-                    className={`w-4 h-4 flex-shrink-0 ml-4 transition-transform duration-300 text-[var(--brand-blue)] ${activeFaq === i ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 flex-shrink-0 ml-4 transition-transform duration-300 ${activeFaq === i ? "rotate-180" : ""}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -552,7 +553,7 @@ const handleSubmit = async (e) => {
                   </svg>
                 </button>
                 {activeFaq === i && (
-                  <div className={`px-5 pb-5 text-xs leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
+                  <div className="faq-panel px-5 pb-5 text-xs leading-relaxed">
                     {faq.a}
                   </div>
                 )}

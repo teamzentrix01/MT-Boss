@@ -172,6 +172,31 @@ button[aria-expanded]:hover * {
   color: inherit !important;
 }
 
+.faq-trigger {
+  background: #111 !important;
+  background-image: none !important;
+  color: #fff !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.faq-trigger:hover,
+.faq-trigger[aria-expanded="true"] {
+  background: var(--brand-blue) !important;
+  color: #111 !important;
+  transform: none !important;
+}
+
+.faq-trigger svg {
+  color: inherit !important;
+}
+
+.faq-panel {
+  background: #111 !important;
+  color: #fff !important;
+  border-top: 1px solid color-mix(in srgb, var(--brand-blue) 55%, transparent);
+}
+
 .qs-choice-active {
   background: var(--brand-blue) !important;
   background-image: none !important;

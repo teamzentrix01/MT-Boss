@@ -11,19 +11,21 @@ const TIME_SLOTS = [
   '06:00 PM - 08:00 PM',
 ];
 
+const emptyForm = (defaultCity = '') => ({
+  quick_service_id: '',
+  city: defaultCity || '',
+  slot_date: '',
+  time_slot: '',
+  is_available: false,
+});
+
 export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity = '', compact = false }) {
   const [services, setServices] = useState([]);
   const [rules, setRules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-  const [form, setForm] = useState({
-    quick_service_id: '',
-    city: defaultCity || '',
-    slot_date: new Date().toISOString().split('T')[0],
-    time_slot: TIME_SLOTS[0],
-    is_available: false,
-  });
+  const [form, setForm] = useState(emptyForm(defaultCity));
 
   const authToken = () => localStorage.getItem(tokenKey) || localStorage.getItem('admin-token') || localStorage.getItem('token');
 
@@ -80,8 +82,9 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
         setMessage(data.error || 'Could not update paid slot.');
         return;
       }
-      setMessage(form.is_available ? 'Paid slot opened and override removed.' : 'Paid slot closed.');
+      setMessage(form.is_available ? 'Paid slot opened.' : 'Paid slot closed.');
       await load();
+      setForm(emptyForm(defaultCity));
     } catch {
       setMessage('Could not update paid slot.');
     } finally {
@@ -112,8 +115,9 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
     });
     const data = await res.json();
     if (data.success) {
-      setMessage(rule.is_available ? 'Paid slot closed.' : 'Paid slot opened and override removed.');
-      load();
+      setMessage(rule.is_available ? 'Paid slot closed.' : 'Paid slot opened.');
+      await load();
+      setForm(emptyForm(defaultCity));
     }
     else setMessage(data.error || 'Could not update paid slot.');
   }
@@ -179,6 +183,7 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
         <div className="psm-field">
           <label>Time Slot</label>
           <select className="psm-input" value={form.time_slot} onChange={(e) => setForm(f => ({ ...f, time_slot: e.target.value }))}>
+            <option value="">Select time slot</option>
             {TIME_SLOTS.map((slot) => <option key={slot} value={slot}>{slot}</option>)}
           </select>
         </div>

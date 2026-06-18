@@ -114,31 +114,15 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
     }
 
-    if (Boolean(is_available)) {
-      const result = await pool.query(
-        `DELETE FROM paid_time_slot_availability
-          WHERE quick_service_id = $1
-            AND slot_date = $2::DATE
-            AND LOWER(TRIM(city)) = LOWER(TRIM($3))
-            AND TRIM(REGEXP_REPLACE(REGEXP_REPLACE(time_slot, '[–—]', '-', 'g'), '\\s+', ' ', 'g')) = $4
-          RETURNING id`,
-        [quick_service_id, slot_date, city, normalizedSlot]
-      );
-
-      return NextResponse.json({
-        success: true,
-        data: {
-          quick_service_id,
-          slot_date,
-          city: city.trim(),
-          time_slot: normalizedSlot,
-          is_available: true,
-          removedOverride: result.rows.length > 0,
-        },
-      }, {
-        headers: { 'Cache-Control': 'no-store, max-age=0' },
-      });
-    }
+    await pool.query(
+      `DELETE FROM paid_time_slot_availability
+        WHERE quick_service_id = $1
+          AND slot_date = $2::DATE
+          AND LOWER(TRIM(city)) = LOWER(TRIM($3))
+          AND TRIM(REGEXP_REPLACE(REGEXP_REPLACE(time_slot, '[–—]', '-', 'g'), '\\s+', ' ', 'g')) = $4
+          AND NOT (city = TRIM($3) AND time_slot = $4)`,
+      [quick_service_id, slot_date, city, normalizedSlot]
+    );
 
     const result = await pool.query(
       `INSERT INTO paid_time_slot_availability
