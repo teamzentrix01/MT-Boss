@@ -185,12 +185,12 @@ export async function PATCH(req) {
 
     const result = await pool.query(
       `UPDATE agents
-          SET status = $1,
-              login_enabled = CASE WHEN $1 = 'Rejected' THEN FALSE ELSE login_enabled END,
-              password_hash = CASE WHEN $1 = 'Rejected' THEN NULL ELSE password_hash END,
-              must_change_password = CASE WHEN $1 = 'Rejected' THEN FALSE ELSE must_change_password END,
-              approved_at = CASE WHEN $1 = 'Rejected' THEN NULL ELSE approved_at END,
-              approved_by = CASE WHEN $1 = 'Rejected' THEN NULL ELSE approved_by END,
+          SET status = $1::VARCHAR,
+              login_enabled = CASE WHEN $1::VARCHAR = 'Rejected' THEN FALSE ELSE login_enabled END,
+              password_hash = CASE WHEN $1::VARCHAR = 'Rejected' THEN NULL ELSE password_hash END,
+              must_change_password = CASE WHEN $1::VARCHAR = 'Rejected' THEN FALSE ELSE must_change_password END,
+              approved_at = CASE WHEN $1::VARCHAR = 'Rejected' THEN NULL ELSE approved_at END,
+              approved_by = CASE WHEN $1::VARCHAR = 'Rejected' THEN NULL ELSE approved_by END,
               updated_at = NOW()
         WHERE id = $2
         RETURNING *`,
