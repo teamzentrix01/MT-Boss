@@ -77,8 +77,16 @@ export default function OfficeLocationsManager({ isDarkMode }) {
   };
 
   const save = async () => {
-    if (!form.city.trim() || !form.address.trim()) {
-      setError('City and address are required.');
+    if (!form.city.trim() || !form.address.trim() || !form.phone.trim() || !form.email.trim() || !form.hours.trim()) {
+      setError('City, address, phone, email and hours are required.');
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(form.phone.replace(/\D/g, '').slice(-10))) {
+      setError('Phone must be a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      setError('Enter a valid email address.');
       return;
     }
 
@@ -182,11 +190,11 @@ export default function OfficeLocationsManager({ isDarkMode }) {
           <h3 style={{ color: t.text, margin: '0 0 14px', fontSize: 14, fontWeight: 800, textTransform: 'uppercase' }}>{editing ? `Edit ${editing.city}` : 'Office Details'}</h3>
           <div style={{ display: 'grid', gap: 12 }}>
             {[
-              ['City *', 'city', 'text', true],
-              ['Phone', 'phone', 'text'],
-              ['Email', 'email', 'email'],
-              ['Hours', 'hours', 'text'],
-              ['Map Embed URL', 'map_url', 'text'],
+              ['City', 'city', 'text', true],
+              ['Phone', 'phone', 'tel', true],
+              ['Email', 'email', 'email', true],
+              ['Hours', 'hours', 'text', true],
+              ['Map Embed URL', 'map_url', 'text', false],
               ['Sort Order', 'sort_order', 'number'],
             ].map(([label, field, type, required]) => (
               <label key={field}>
@@ -202,7 +210,7 @@ export default function OfficeLocationsManager({ isDarkMode }) {
             ))}
 
             <label>
-              <div style={labelStyle}>Address *</div>
+              <div style={labelStyle}>Address</div>
               <textarea
                 required
                 value={form.address}

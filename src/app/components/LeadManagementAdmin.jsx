@@ -112,7 +112,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   }
 
   function exportExcel() {
-    const params = new URLSearchParams({ export: 'xls' });
+    const params = new URLSearchParams({ export: 'xlsx' });
     if (search) params.set('search', search);
     if (status) params.set('status', status);
     if (source) params.set('source', source);

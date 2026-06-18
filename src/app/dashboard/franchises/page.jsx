@@ -261,7 +261,8 @@ export default function FranchisesPage() {
           background: var(--surface);
           border: 1px solid var(--border);
           border-radius: 10px;
-          width: 100%; max-width: 680px;
+          width: min(960px, calc(100vw - 2rem));
+          max-width: 960px;
           max-height: 90vh;
           display: flex; flex-direction: column;
           box-shadow: 0 20px 60px rgba(0,0,0,.25);
@@ -288,6 +289,7 @@ export default function FranchisesPage() {
         }
         .fr-modal-tabs::-webkit-scrollbar { display: none; }
         .fr-modal-tab {
+          flex: 1;
           padding: 0.5rem 1rem; white-space: nowrap;
           font-size: 0.75rem; font-weight: 600;
           color: var(--muted); background: none; border: none;

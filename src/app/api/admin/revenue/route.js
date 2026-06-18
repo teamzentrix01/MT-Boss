@@ -174,7 +174,10 @@ export async function GET(req) {
 
     // ── 5. Vendor list (for filter dropdown) ────────────────────────────────────
     const vendorListRes = await pool.query(
-      `SELECT id, shop_name, phone FROM vendors WHERE verification_status = 'approved' ORDER BY shop_name`
+      `SELECT id, shop_name, phone
+         FROM vendors
+        WHERE verification_status IN ('verified', 'approved')
+        ORDER BY shop_name`
     );
 
     return NextResponse.json({

@@ -135,7 +135,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
   const handleToggleStatus = async (vendorId, newStatus) => {
     try {
       
-      const action = newStatus === 'active' ? 'deactivate' : 'activate';
+      const action = newStatus === 'inactive' ? 'deactivate' : 'activate';
       console.log('⚙️ Toggling vendor status:', vendorId, '→', action);
 
       const res = await fetch('/api/admin/vendors', {
@@ -151,6 +151,10 @@ export default function VendorManagementAdmin({ isDarkMode }) {
 
       if (res.ok) {
         console.log('✅ Vendor status toggled:', data);
+        if (data.data) {
+          setVendors((current) => current.map((vendor) => vendor.id === vendorId ? { ...vendor, ...data.data } : vendor));
+          setSelectedVendor((current) => current?.id === vendorId ? { ...current, ...data.data } : current);
+        }
         setTimeout(() => fetchVendors(), 500);
       } else {
         console.error('❌ Toggle failed:', data.error);

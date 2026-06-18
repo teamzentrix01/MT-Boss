@@ -132,7 +132,7 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
         .psm-head { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; margin-bottom:1rem; }
         .psm-title { font-size:0.9rem; font-weight:800; margin:0; }
         .psm-sub { font-size:0.75rem; color:var(--muted, #71717a); margin:0.2rem 0 0; }
-        .psm-form { display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:0.75rem; align-items:end; margin-bottom:1rem; }
+        .psm-form { display:grid; grid-template-columns:repeat(6, minmax(0, 1fr)); gap:0.75rem; align-items:end; margin-bottom:1rem; }
         .psm-field label { display:block; font-size:0.68rem; font-weight:800; color:var(--muted, #71717a); text-transform:uppercase; letter-spacing:.06em; margin-bottom:0.35rem; }
         .psm-input { width:100%; box-sizing:border-box; border:1px solid var(--border, #d4d4d8); border-radius:6px; background:var(--bg, #fafafa); color:var(--text, #111); padding:0.55rem 0.7rem; font-size:0.8rem; outline:none; }
         .psm-btn { border:0; border-radius:6px; background:var(--accent, #0ea5e9); color:#fff; padding:0.6rem 0.8rem; font-size:0.78rem; font-weight:800; cursor:pointer; }
@@ -180,6 +180,13 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
           <label>Time Slot</label>
           <select className="psm-input" value={form.time_slot} onChange={(e) => setForm(f => ({ ...f, time_slot: e.target.value }))}>
             {TIME_SLOTS.map((slot) => <option key={slot} value={slot}>{slot}</option>)}
+          </select>
+        </div>
+        <div className="psm-field">
+          <label>Action</label>
+          <select className="psm-input" value={form.is_available ? 'open' : 'close'} onChange={(e) => setForm(f => ({ ...f, is_available: e.target.value === 'open' }))}>
+            <option value="close">Close slot</option>
+            <option value="open">Open slot</option>
           </select>
         </div>
         <button

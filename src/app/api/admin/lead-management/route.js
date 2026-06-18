@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { ensureAgentSchema } from '@/lib/agent-auth';
+import { createXlsxWorkbook } from '@/lib/xlsx';
 
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
@@ -121,14 +122,6 @@ function csvCell(value) {
   return `"${text.replaceAll('"', '""')}"`;
 }
 
-function xlsCell(value) {
-  return String(value ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;');
-}
-
 async function getLeadRows({ search = '', status = '', source = '' } = {}) {
   const params = [];
   const filters = [];
@@ -188,7 +181,7 @@ export async function GET(req) {
       source: searchParams.get('source') || '',
     });
 
-    if (exportType === 'csv' || exportType === 'xls' || exportType === 'excel') {
+    if (exportType === 'csv' || exportType === 'xlsx' || exportType === 'excel') {
       const headers = [
         'ID', 'Client Name', 'Phone', 'Email', 'City', 'Service Type', 'Lead Type',
         'Source', 'Status', 'Stage', 'Agent', 'Franchise', 'Follow Up', 'Final Amount',
@@ -201,24 +194,12 @@ export async function GET(req) {
         row.final_amount || 0, row.client_requirement || '', row.notes || '', row.created_at,
       ]);
 
-      if (exportType === 'xls' || exportType === 'excel') {
-        const table = `<!doctype html>
-          <html>
-            <head><meta charset="utf-8" /></head>
-            <body>
-              <table border="1">
-                <thead><tr>${headers.map((head) => `<th>${xlsCell(head)}</th>`).join('')}</tr></thead>
-                <tbody>
-                  ${values.map((row) => `<tr>${row.map((cell) => `<td>${xlsCell(cell)}</td>`).join('')}</tr>`).join('')}
-                </tbody>
-              </table>
-            </body>
-          </html>`;
-
-        return new Response(table, {
+      if (exportType === 'xlsx' || exportType === 'excel') {
+        const xlsx = createXlsxWorkbook([headers, ...values], 'Leads');
+        return new Response(xlsx, {
           headers: {
-            'Content-Type': 'application/vnd.ms-excel; charset=utf-8',
-            'Content-Disposition': 'attachment; filename="mtboss-leads.xls"',
+            'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition': 'attachment; filename="mtboss-leads.xlsx"',
             'Cache-Control': 'no-store',
           },
         });

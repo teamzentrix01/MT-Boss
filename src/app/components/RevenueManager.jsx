@@ -8,6 +8,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { downloadXlsx } from '@/lib/xlsx';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 const fmt  = (n) => `₹${Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -53,17 +54,10 @@ function getPresetDates(days) {
 }
 
 // ── CSV export ────────────────────────────────────────────────────────────────
-function exportCSV(rows, filename) {
+function exportExcel(rows, filename, sheetName) {
   if (!rows.length) return;
   const keys = Object.keys(rows[0]);
-  const lines = [keys.join(','), ...rows.map(r =>
-    keys.map(k => JSON.stringify(r[k] ?? '')).join(',')
-  )];
-  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
+  downloadXlsx([keys, ...rows.map((row) => keys.map((key) => row[key] ?? ''))], filename, sheetName);
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -144,6 +138,15 @@ export default function RevenueManager({ isDarkMode }) {
     setToDate(to);
   }
 
+  function resetFilters() {
+    setPreset('All Time');
+    setFromDate('');
+    setToDate('');
+    setSelVendor('all');
+    setSelStatus('all');
+    setSearch('');
+  }
+
   // ── styles ──────────────────────────────────────────────────────────────────
   const S = {
     root:     { minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)', fontFamily: "'DM Sans', system-ui, sans-serif" },
@@ -168,7 +171,7 @@ export default function RevenueManager({ isDarkMode }) {
       padding: '0.3rem 0.7rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer',
       border: '1px solid var(--border)',
       background: active ? 'var(--accent)' : 'var(--surface)',
-      color:      active ? '#fff'          : 'var(--text)',
+      color:      active ? '#111'          : 'var(--text)',
       transition: 'all .15s',
     }),
 
@@ -178,7 +181,7 @@ export default function RevenueManager({ isDarkMode }) {
       flex: 1, padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.8125rem', fontWeight: 600,
       cursor: 'pointer', border: 'none', textAlign: 'center',
       background: active ? 'var(--accent)' : 'transparent',
-      color:      active ? '#fff'          : 'var(--muted)',
+      color:      active ? '#111'          : 'var(--muted)',
       transition: 'all .15s',
     }),
 
@@ -359,21 +362,21 @@ export default function RevenueManager({ isDarkMode }) {
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <button style={S.refreshBtn} onClick={fetchData}>↻ Refresh</button>
             <button style={S.exportBtn} onClick={() => {
-              if (subTab === 'transactions') exportCSV(filteredTxns.map(b => ({
+              if (subTab === 'transactions') exportExcel(filteredTxns.map(b => ({
                 Ref: b.booking_reference, Customer: b.user_name, Service: b.service_label,
                 City: b.service_city, Vendor: b.vendor_name, Status: b.status,
                 'Base Amount': b.base_amount, 'Visit Fee': b.visit_fee, 'Tax': b.tax_amount,
                 'Total Estimate': b.total_amount, 'Final Quote': b.final_amount,
                 'User Paid': b.user_paid_amount, 'Admin Commission': b.admin_commission,
                 'Vendor Payout': b.vendor_payout, 'Booking Date': date(b.booking_date), 'Completed At': dt(b.completed_at)
-              })), 'revenue-transactions.csv');
-              else if (subTab === 'vendors') exportCSV(filteredVendors.map(v => ({
+              })), 'revenue-transactions.xlsx', 'Transactions');
+              else if (subTab === 'vendors') exportExcel(filteredVendors.map(v => ({
                 Vendor: v.vendor_name, Phone: v.vendor_phone,
                 'Total Bookings': v.total_bookings, 'Completed': v.completed_count,
                 'Total Collected': v.total_collected, 'Admin Commission': v.admin_commission,
                 'Vendor Payout': v.vendor_payout, 'GST': v.gst_collected,
-              })), 'revenue-vendors.csv');
-            }}>⬇ Export CSV</button>
+              })), 'revenue-vendors.xlsx', 'Vendors');
+            }}>Export Excel</button>
           </div>
         </div>
 
@@ -446,6 +449,10 @@ export default function RevenueManager({ isDarkMode }) {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
+            </div>
+            <div>
+              <div style={S.label}>Reset</div>
+              <button type="button" style={S.refreshBtn} onClick={resetFilters}>Reset Filters</button>
             </div>
           </div>
 
