@@ -120,7 +120,7 @@ export async function POST(req) {
           WHERE quick_service_id = $1
             AND slot_date = $2::DATE
             AND LOWER(TRIM(city)) = LOWER(TRIM($3))
-            AND time_slot = $4
+            AND TRIM(REGEXP_REPLACE(REGEXP_REPLACE(time_slot, '[–—]', '-', 'g'), '\\s+', ' ', 'g')) = $4
           RETURNING id`,
         [quick_service_id, slot_date, city, normalizedSlot]
       );

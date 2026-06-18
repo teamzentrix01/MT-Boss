@@ -144,6 +144,10 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
             step: 2,
           }));
         } catch (e) { /* localStorage might be full — proceed to login anyway */ }
+        setErrors({
+          submit: 'Please login first. Your booking details are saved and will continue after login.',
+        });
+        await new Promise((resolve) => setTimeout(resolve, 900));
         router.push('/login?redirect=/quick');
         return;
       }
@@ -427,6 +431,14 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                     value={form.propertyTypeOther || ''}
                     onChange={(e) => set('propertyTypeOther', e.target.value)}
                   />
+                )}
+                {form.propertyType && (
+                  <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">
+                    Selected property type:{' '}
+                    {form.propertyType === 'Other'
+                      ? form.propertyTypeOther?.trim() || 'Other'
+                      : form.propertyType}
+                  </p>
                 )}
               </Field>
 
