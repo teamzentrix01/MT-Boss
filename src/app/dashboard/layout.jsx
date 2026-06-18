@@ -94,7 +94,7 @@ export default function DashboardLayout({ children }) {
       )}
 
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'translate-x-0 lg:w-64' : '-translate-x-full lg:translate-x-0 lg:w-20'} fixed lg:sticky top-16 bottom-0 lg:bottom-auto left-0 z-[80] w-72 max-h-[calc(100dvh-4rem)] ${bgClass} border-r-2 ${borderColor} transition-all duration-300 flex flex-col shadow-lg`}>
+      <aside className={`${sidebarOpen ? 'translate-x-0 lg:w-64' : '-translate-x-full lg:translate-x-0 lg:w-20'} fixed lg:sticky top-16 bottom-0 lg:bottom-auto left-0 z-[80] w-72 h-[calc(100dvh-4rem)] shrink-0 ${bgClass} border-r-2 ${borderColor} transition-all duration-300 flex flex-col shadow-lg`}>
         {/* Logo */}
         <div className={`flex items-center justify-between h-16 px-4 border-b-2 ${borderColor}`}>
           {sidebarOpen && <span className={`font-black text-xl ${textPrimary}`}>MT-BOSS</span>}
