@@ -24,6 +24,7 @@ export default function AgentsPage() {
   const [showLeads, setShowLeads] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
   const [error, setError] = useState('');
+  const [pendingStatus, setPendingStatus] = useState('');
 
   useEffect(() => {
     fetchAgents();
@@ -75,6 +76,8 @@ export default function AgentsPage() {
       if (data.success) {
         setAgents(prev => prev.map(a => a.id === id ? { ...a, ...data.data } : a));
         if (selected?.id === id) setSelected({ ...selected, ...data.data });
+        setPendingStatus('');
+        await fetchAgents();
         if (data.temporaryPassword) {
           setTempLogin({
             email: data.data.email,
@@ -96,6 +99,8 @@ export default function AgentsPage() {
     setWorkspaceLoading(true);
     setShowLeads(false);
     setSelectedLead(null);
+    setPendingStatus('');
+    setError('');
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`/api/admin/agents/${agent.id}/workspace`, {
@@ -300,8 +305,8 @@ export default function AgentsPage() {
         .ag-modal-title { font-size: 0.9375rem; font-weight: 700; color: var(--text); }
         .ag-modal-close {
           background: none; border: none; cursor: pointer;
-          color: var(--muted); font-size: 1.25rem;
-          padding: 0.125rem 0.25rem; border-radius: 4px;
+          color: var(--muted); font-size: 0.75rem; font-weight: 800;
+          padding: 0.35rem 0.65rem; border-radius: 6px;
         }
         .ag-modal-close:hover { background: var(--bg); }
 
@@ -340,6 +345,46 @@ export default function AgentsPage() {
           border-color: transparent; color: #fff;
         }
         .ag-status-opt:disabled { opacity: .5; cursor: not-allowed; }
+        .ag-status-opt.pending {
+          border-color: var(--accent);
+          color: var(--accent);
+          box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 18%, transparent);
+        }
+        .ag-confirm {
+          display: flex; align-items: center; justify-content: space-between;
+          gap: 0.75rem; flex-wrap: wrap;
+          margin: -0.65rem 0 1.25rem;
+          padding: 0.75rem;
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          background: var(--bg);
+        }
+        .ag-confirm-text {
+          color: var(--text);
+          font-size: 0.78rem;
+          font-weight: 700;
+        }
+        .ag-confirm-actions { display: flex; gap: 0.5rem; }
+        .ag-ok-btn {
+          padding: 0.4rem 0.85rem;
+          border: none;
+          border-radius: 6px;
+          background: #16a34a;
+          color: #fff;
+          font-size: 0.75rem;
+          font-weight: 800;
+          cursor: pointer;
+        }
+        .ag-cancel-btn {
+          padding: 0.4rem 0.85rem;
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          background: var(--surface);
+          color: var(--muted);
+          font-size: 0.75rem;
+          font-weight: 700;
+          cursor: pointer;
+        }
 
         .ag-modal-footer {
           display: flex; gap: 0.5rem; justify-content: flex-end;
@@ -466,7 +511,7 @@ export default function AgentsPage() {
           <div className="ag-modal" onClick={e => e.stopPropagation()}>
             <div className="ag-modal-head">
               <span className="ag-modal-title">Agent Application</span>
-              <button className="ag-modal-close" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setSelectedLead(null); }}>x</button>
+              <button className="ag-modal-close" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setSelectedLead(null); setPendingStatus(''); }}>Close</button>
             </div>
 
             <div className="ag-modal-grid">
@@ -519,20 +564,47 @@ export default function AgentsPage() {
               {STATUS_OPTIONS.map(s => {
                 const st = statusStyle[s];
                 const isSelected = selected.status === s;
+                const isPending = pendingStatus === s;
                 const locked = selected.status === 'Approved' && s !== 'Approved';
                 return (
                   <button
                     key={s}
                     disabled={updating || locked}
-                    className={`ag-status-opt${isSelected ? ' sel' : ''}`}
+                    className={`ag-status-opt${isSelected ? ' sel' : ''}${isPending ? ' pending' : ''}`}
                     style={isSelected ? { background: st.tx, borderColor: st.tx } : {}}
-                    onClick={() => updateStatus(selected.id, s)}
+                    onClick={() => setPendingStatus(s)}
                   >
                     {s}
                   </button>
                 );
               })}
             </div>
+
+            {pendingStatus && pendingStatus !== selected.status && (
+              <div className="ag-confirm">
+                <div className="ag-confirm-text">
+                  Change status to <strong>{pendingStatus}</strong>?
+                </div>
+                <div className="ag-confirm-actions">
+                  <button
+                    type="button"
+                    className="ag-cancel-btn"
+                    disabled={updating}
+                    onClick={() => setPendingStatus('')}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="ag-ok-btn"
+                    disabled={updating}
+                    onClick={() => updateStatus(selected.id, pendingStatus)}
+                  >
+                    {updating ? 'Saving...' : 'OK'}
+                  </button>
+                </div>
+              </div>
+            )}
 
             {workspaceLoading ? (
               <div className="ag-modal-msg">Loading agent workspace...</div>

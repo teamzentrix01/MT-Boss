@@ -106,22 +106,26 @@ export async function PATCH(req) {
         [passwordHash, admin.email || 'admin', id]
       );
 
-      await sendMail({
-        to: agent.email,
-        subject: 'Your MT-BOSS Agent Login',
-        html: `
-          <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;border:1px solid #eee;">
-            <h2 style="margin:0 0 12px;color:#111;">Welcome to MT-BOSS Agent Network</h2>
-            <p style="color:#444;line-height:1.6;">Your agent application has been approved for <strong>${agent.city}, ${agent.state || ''}</strong>.</p>
-            <div style="background:#f8f8f8;padding:16px;margin:18px 0;border-radius:6px;">
-              <p style="margin:0 0 8px;"><strong>Login URL:</strong> /agent/login</p>
-              <p style="margin:0 0 8px;"><strong>Email:</strong> ${agent.email}</p>
-              <p style="margin:0;"><strong>Temporary Password:</strong> ${temporaryPassword}</p>
+      try {
+        await sendMail({
+          to: agent.email,
+          subject: 'Your MT-BOSS Agent Login',
+          html: `
+            <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;border:1px solid #eee;">
+              <h2 style="margin:0 0 12px;color:#111;">Welcome to MT-BOSS Agent Network</h2>
+              <p style="color:#444;line-height:1.6;">Your agent application has been approved for <strong>${agent.city}, ${agent.state || ''}</strong>.</p>
+              <div style="background:#f8f8f8;padding:16px;margin:18px 0;border-radius:6px;">
+                <p style="margin:0 0 8px;"><strong>Login URL:</strong> /agent/login</p>
+                <p style="margin:0 0 8px;"><strong>Email:</strong> ${agent.email}</p>
+                <p style="margin:0;"><strong>Temporary Password:</strong> ${temporaryPassword}</p>
+              </div>
+              <p style="color:#666;font-size:13px;">Please change your password after first login.</p>
             </div>
-            <p style="color:#666;font-size:13px;">Please change your password after first login.</p>
-          </div>
-        `,
-      });
+          `,
+        });
+      } catch (mailError) {
+        console.error('Agent approval email error:', mailError);
+      }
 
       return NextResponse.json({
         success: true,
@@ -148,6 +152,9 @@ export async function PATCH(req) {
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
     console.error('Agent update error:', error);
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: error.message || 'Server error' },
+      { status: 500 }
+    );
   }
 }
