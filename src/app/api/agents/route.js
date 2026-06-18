@@ -4,8 +4,52 @@ import pool from '@/lib/db';
 import { ensureAgentSchema, requireAdmin } from '@/lib/agent-auth';
 import { sendMail } from '@/lib/email';
 
+const AGENT_STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
+
 function makeTemporaryPassword() {
   return `Agent@${Math.random().toString(36).slice(2, 8)}${Math.floor(10 + Math.random() * 90)}`;
+}
+
+function quoteIdent(name) {
+  return `"${String(name).replace(/"/g, '""')}"`;
+}
+
+async function ensureAgentPatchSchema() {
+  const patchAlters = [
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS login_enabled BOOLEAN DEFAULT FALSE`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS password_hash TEXT`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS must_change_password BOOLEAN DEFAULT FALSE`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS approved_at TIMESTAMP`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS approved_by VARCHAR(255)`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW()`,
+    `ALTER TABLE agents ALTER COLUMN password_hash DROP NOT NULL`,
+    `ALTER TABLE agents ALTER COLUMN approved_at DROP NOT NULL`,
+    `ALTER TABLE agents ALTER COLUMN approved_by DROP NOT NULL`,
+  ];
+
+  for (const sql of patchAlters) {
+    try {
+      await pool.query(sql);
+    } catch (error) {
+      console.warn('Agent PATCH schema warning:', error.message);
+    }
+  }
+
+  try {
+    const statusChecks = await pool.query(`
+      SELECT conname
+        FROM pg_constraint
+       WHERE conrelid = 'agents'::regclass
+         AND contype = 'c'
+         AND pg_get_constraintdef(oid) ILIKE '%status%'
+    `);
+
+    for (const row of statusChecks.rows) {
+      await pool.query(`ALTER TABLE agents DROP CONSTRAINT IF EXISTS ${quoteIdent(row.conname)}`);
+    }
+  } catch (error) {
+    console.warn('Agent status constraint warning:', error.message);
+  }
 }
 
 export async function GET(req) {
@@ -61,7 +105,7 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   try {
-    await ensureAgentSchema();
+    await ensureAgentPatchSchema();
     const admin = requireAdmin(req);
     if (!admin) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
@@ -70,6 +114,10 @@ export async function PATCH(req) {
     const { id, status, createLogin } = await req.json();
     if (!id || !status) {
       return NextResponse.json({ success: false, error: 'Agent id and status are required' }, { status: 400 });
+    }
+
+    if (!AGENT_STATUSES.includes(status)) {
+      return NextResponse.json({ success: false, error: 'Invalid agent status' }, { status: 400 });
     }
 
     const agentResult = await pool.query('SELECT * FROM agents WHERE id = $1', [id]);
@@ -153,7 +201,12 @@ export async function PATCH(req) {
   } catch (error) {
     console.error('Agent update error:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Server error' },
+      {
+        success: false,
+        error: error.message || 'Server error',
+        code: error.code || null,
+        detail: error.detail || null,
+      },
       { status: 500 }
     );
   }
