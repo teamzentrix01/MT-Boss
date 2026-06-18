@@ -1,8 +1,19 @@
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+function appUrl(req) {
+  const configured = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || '').trim();
+  if (configured && !configured.includes('localhost')) {
+    return configured.replace(/\/$/, '');
+  }
+
+  const proto = req.headers.get('x-forwarded-proto') || 'https';
+  const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+  return host ? `${proto}://${host}` : new URL(req.url).origin;
+}
+
+export async function GET(req) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/google`;
+  const redirectUri = `${appUrl(req)}/api/auth/callback/google`;
 
   const params = new URLSearchParams({
     client_id: clientId,

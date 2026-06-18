@@ -5,12 +5,24 @@ import { getJwtSecret, setAuthCookie } from '@/lib/auth';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
+function appUrl(req) {
+  const configured = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || '').trim();
+  if (configured && !configured.includes('localhost')) {
+    return configured.replace(/\/$/, '');
+  }
+
+  const proto = req.headers.get('x-forwarded-proto') || 'https';
+  const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+  return host ? `${proto}://${host}` : new URL(req.url).origin;
+}
+
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get('code');
+  const baseUrl = appUrl(req);
 
   if (!code) {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/login?error=oauth_failed`);
+    return NextResponse.redirect(`${baseUrl}/login?error=oauth_failed`);
   }
 
   try {
@@ -22,7 +34,7 @@ export async function GET(req) {
         code,
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/google`,
+        redirect_uri: `${baseUrl}/api/auth/callback/google`,
         grant_type: 'authorization_code',
       }),
     });
@@ -54,13 +66,12 @@ export async function GET(req) {
       { expiresIn: '7d' }
     );
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
     const response = NextResponse.redirect(
-      `${appUrl}/auth/success?user=${encodeURIComponent(JSON.stringify({ ...user, role }))}&redirect=${encodeURIComponent(redirectTo)}`
+      `${baseUrl}/auth/success?user=${encodeURIComponent(JSON.stringify({ ...user, role }))}&redirect=${encodeURIComponent(redirectTo)}`
     );
     return setAuthCookie(response, 'auth-token', token);
   } catch (err) {
     console.error('Google OAuth error:', err);
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/login?error=oauth_failed`);
+    return NextResponse.redirect(`${baseUrl}/login?error=oauth_failed`);
   }
 }
