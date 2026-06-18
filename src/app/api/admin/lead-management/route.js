@@ -121,6 +121,14 @@ function csvCell(value) {
   return `"${text.replaceAll('"', '""')}"`;
 }
 
+function xlsCell(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
+
 async function getLeadRows({ search = '', status = '', source = '' } = {}) {
   const params = [];
   const filters = [];
@@ -180,20 +188,45 @@ export async function GET(req) {
       source: searchParams.get('source') || '',
     });
 
-    if (exportType === 'csv') {
+    if (exportType === 'csv' || exportType === 'xls' || exportType === 'excel') {
       const headers = [
         'ID', 'Client Name', 'Phone', 'Email', 'City', 'Service Type', 'Lead Type',
         'Source', 'Status', 'Stage', 'Agent', 'Franchise', 'Follow Up', 'Final Amount',
         'Requirement', 'Notes', 'Created At',
       ];
+      const values = rows.map((row) => [
+        row.id, row.client_name, row.client_phone, row.client_email, row.city,
+        row.service_type, row.lead_type, row.lead_source, row.status, row.lead_stage,
+        row.agent_name || '', row.franchise_name || '', row.follow_up_date || '',
+        row.final_amount || 0, row.client_requirement || '', row.notes || '', row.created_at,
+      ]);
+
+      if (exportType === 'xls' || exportType === 'excel') {
+        const table = `<!doctype html>
+          <html>
+            <head><meta charset="utf-8" /></head>
+            <body>
+              <table border="1">
+                <thead><tr>${headers.map((head) => `<th>${xlsCell(head)}</th>`).join('')}</tr></thead>
+                <tbody>
+                  ${values.map((row) => `<tr>${row.map((cell) => `<td>${xlsCell(cell)}</td>`).join('')}</tr>`).join('')}
+                </tbody>
+              </table>
+            </body>
+          </html>`;
+
+        return new Response(table, {
+          headers: {
+            'Content-Type': 'application/vnd.ms-excel; charset=utf-8',
+            'Content-Disposition': 'attachment; filename="mtboss-leads.xls"',
+            'Cache-Control': 'no-store',
+          },
+        });
+      }
+
       const csv = [
         headers.map(csvCell).join(','),
-        ...rows.map((row) => [
-          row.id, row.client_name, row.client_phone, row.client_email, row.city,
-          row.service_type, row.lead_type, row.lead_source, row.status, row.lead_stage,
-          row.agent_name || '', row.franchise_name || '', row.follow_up_date || '',
-          row.final_amount || 0, row.client_requirement || '', row.notes || '', row.created_at,
-        ].map(csvCell).join(',')),
+        ...values.map((row) => row.map(csvCell).join(',')),
       ].join('\n');
 
       return new Response(csv, {

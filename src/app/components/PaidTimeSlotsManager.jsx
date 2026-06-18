@@ -80,7 +80,7 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
         setMessage(data.error || 'Could not update paid slot.');
         return;
       }
-      setMessage(form.is_available ? 'Paid slot opened.' : 'Paid slot closed.');
+      setMessage(form.is_available ? 'Paid slot opened and override removed.' : 'Paid slot closed.');
       await load();
     } catch {
       setMessage('Could not update paid slot.');
@@ -111,7 +111,10 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
       }),
     });
     const data = await res.json();
-    if (data.success) load();
+    if (data.success) {
+      setMessage(rule.is_available ? 'Paid slot closed.' : 'Paid slot opened and override removed.');
+      load();
+    }
     else setMessage(data.error || 'Could not update paid slot.');
   }
 
@@ -187,11 +190,6 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
           {saving ? 'Saving...' : form.is_available ? 'Mark Open' : 'Mark Closed'}
         </button>
       </form>
-
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
-        <button type="button" className="psm-btn close" onClick={() => setForm(f => ({ ...f, is_available: false }))}>Close Selected Slot</button>
-        <button type="button" className="psm-btn open" onClick={() => setForm(f => ({ ...f, is_available: true }))}>Open Selected Slot</button>
-      </div>
 
       {message && <div className="psm-message">{message}</div>}
 

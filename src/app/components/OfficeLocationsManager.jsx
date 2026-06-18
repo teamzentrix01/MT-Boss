@@ -61,13 +61,6 @@ export default function OfficeLocationsManager({ isDarkMode }) {
 
   useEffect(() => { load(); }, [load]);
 
-  const openAdd = () => {
-    const nextOrder = offices.length ? Math.max(...offices.map((o) => o.sort_order || 0)) + 1 : 0;
-    setEditing(null);
-    setForm({ ...EMPTY, sort_order: nextOrder });
-    setError('');
-  };
-
   const openEdit = (office) => {
     setEditing(office);
     setForm({
@@ -175,7 +168,6 @@ export default function OfficeLocationsManager({ isDarkMode }) {
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={load} style={{ border: `1px solid ${t.border}`, background: t.card, color: t.text, borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 11, fontWeight: 800, textTransform: 'uppercase' }}>Refresh</button>
-          <button onClick={openAdd} style={{ border: 0, background: t.accent, color: '#111827', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 11, fontWeight: 900, textTransform: 'uppercase' }}>Add Office</button>
         </div>
       </div>
 
@@ -190,17 +182,18 @@ export default function OfficeLocationsManager({ isDarkMode }) {
           <h3 style={{ color: t.text, margin: '0 0 14px', fontSize: 14, fontWeight: 800, textTransform: 'uppercase' }}>{editing ? `Edit ${editing.city}` : 'Office Details'}</h3>
           <div style={{ display: 'grid', gap: 12 }}>
             {[
-              ['City', 'city', 'text'],
+              ['City *', 'city', 'text', true],
               ['Phone', 'phone', 'text'],
               ['Email', 'email', 'email'],
               ['Hours', 'hours', 'text'],
               ['Map Embed URL', 'map_url', 'text'],
               ['Sort Order', 'sort_order', 'number'],
-            ].map(([label, field, type]) => (
+            ].map(([label, field, type, required]) => (
               <label key={field}>
                 <div style={labelStyle}>{label}</div>
                 <input
                   type={type}
+                  required={Boolean(required)}
                   value={form[field]}
                   onChange={(e) => setForm((prev) => ({ ...prev, [field]: e.target.value }))}
                   style={inputStyle}
@@ -209,8 +202,9 @@ export default function OfficeLocationsManager({ isDarkMode }) {
             ))}
 
             <label>
-              <div style={labelStyle}>Address</div>
+              <div style={labelStyle}>Address *</div>
               <textarea
+                required
                 value={form.address}
                 onChange={(e) => setForm((prev) => ({ ...prev, address: e.target.value }))}
                 rows={4}

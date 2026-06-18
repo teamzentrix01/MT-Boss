@@ -59,6 +59,31 @@ export async function DELETE(req, { params }) {
 
     const { id } = await params;
 
+    const booked = await pool.query(
+      `SELECT COUNT(*)::INT AS count FROM service_bookings WHERE time_slot_id = $1`,
+      [id]
+    );
+
+    if ((booked.rows[0]?.count || 0) > 0) {
+      const closed = await pool.query(
+        `UPDATE free_time_slots
+            SET is_available = FALSE
+          WHERE id = $1
+          RETURNING id`,
+        [id]
+      );
+
+      if (closed.rows.length === 0) {
+        return NextResponse.json({ success: false, error: 'Slot not found' }, { status: 404 });
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Slot has bookings, so it was closed instead of deleted.',
+        closedInstead: true,
+      });
+    }
+
     const result = await pool.query(
       `DELETE FROM free_time_slots WHERE id = $1 RETURNING id`,
       [id]
@@ -71,6 +96,6 @@ export async function DELETE(req, { params }) {
     return NextResponse.json({ success: true, message: 'Slot deleted' });
   } catch (error) {
     console.error('Free slot DELETE error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

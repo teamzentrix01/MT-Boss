@@ -241,7 +241,7 @@ export async function PATCH(req) {
       const passwordHash = await bcrypt.hash(generatedPassword, 10);
       result = await pool.query(
         `UPDATE franchises
-         SET status = $1, password_hash = $2, approved_at = NOW(),
+         SET status = $1::VARCHAR, password_hash = $2, approved_at = NOW(),
              approved_by_email = $3, login_enabled = TRUE
          WHERE id = $4
          RETURNING *`,
@@ -250,10 +250,10 @@ export async function PATCH(req) {
     } else {
       result = await pool.query(
         `UPDATE franchises
-         SET status = $1,
-             login_enabled = CASE WHEN $1 = 'Approved' THEN TRUE ELSE FALSE END,
-             approved_at = CASE WHEN $1 = 'Approved' THEN COALESCE(approved_at, NOW()) ELSE approved_at END,
-             approved_by_email = CASE WHEN $1 = 'Approved' THEN COALESCE(approved_by_email, $2) ELSE approved_by_email END
+         SET status = $1::VARCHAR,
+             login_enabled = CASE WHEN $1::VARCHAR = 'Approved' THEN TRUE ELSE FALSE END,
+             approved_at = CASE WHEN $1::VARCHAR = 'Approved' THEN COALESCE(approved_at, NOW()) ELSE approved_at END,
+             approved_by_email = CASE WHEN $1::VARCHAR = 'Approved' THEN COALESCE(approved_by_email, $2) ELSE approved_by_email END
          WHERE id = $3
          RETURNING *`,
         [status, admin.email, id]
@@ -299,6 +299,11 @@ export async function PATCH(req) {
     });
   } catch (error) {
     console.error('Franchise update error:', error);
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+    return NextResponse.json({
+      success: false,
+      error: error.message || 'Server error',
+      code: error.code || null,
+      detail: error.detail || null,
+    }, { status: 500 });
   }
 }

@@ -14,6 +14,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [filterCity, setFilterCity] = useState('all');
+  const [cityOptions, setCityOptions] = useState(defaultCity ? [defaultCity] : []);
   const [editingSlot, setEditingSlot] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -30,7 +31,10 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
   }, [filterCity]);
 
   useEffect(() => {
-    if (defaultCity) setFormData((current) => ({ ...current, city: defaultCity }));
+    if (defaultCity) {
+      setFormData((current) => ({ ...current, city: defaultCity }));
+      setCityOptions((current) => [...new Set([...current, defaultCity])].sort((a, b) => a.localeCompare(b)));
+    }
   }, [defaultCity]);
 
   async function fetchData() {
@@ -39,12 +43,18 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
       const token = localStorage.getItem(tokenKey) || localStorage.getItem('admin-token') || localStorage.getItem('token');
       
       // Fetch free slots
-      const slotsRes = await fetch(`/api/free-slots${filterCity !== 'all' ? `?city=${filterCity}` : ''}`, {
+      const slotsRes = await fetch(`/api/free-slots${filterCity !== 'all' ? `?city=${encodeURIComponent(filterCity)}` : ''}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const slotsData = await slotsRes.json();
       if (slotsData.success) {
-        setSlots(slotsData.data || []);
+        const nextSlots = slotsData.data || [];
+        setSlots(nextSlots);
+        setCityOptions((current) => [...new Set([
+          ...current,
+          ...(defaultCity ? [defaultCity] : []),
+          ...nextSlots.map((slot) => slot.city).filter(Boolean),
+        ])].sort((a, b) => a.localeCompare(b)));
       }
 
       // Fetch services
@@ -134,8 +144,12 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
-      if (res.ok) {
+      const data = await res.json();
+      if (data.success) {
         fetchData();
+        if (data.closedInstead) alert(data.message);
+      } else {
+        alert(data.error || 'Error deleting slot');
       }
     } catch (error) {
       console.error('Error deleting slot:', error);
@@ -169,8 +183,6 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
   }
 
   const getTodayStr = () => new Date().toISOString().split('T')[0];
-  const cityOptions = [...new Set(slots.map((slot) => slot.city).filter(Boolean))].sort((a, b) => a.localeCompare(b));
-
   return (
     <>
       <style>{`

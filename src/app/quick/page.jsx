@@ -217,7 +217,9 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
     }
 
     setPaidSlotsLoading(true);
-    fetch(`/api/paid-slots?city=${encodeURIComponent(form.city)}&service_id=${service.id}&date=${form.date}`)
+    fetch(`/api/paid-slots?city=${encodeURIComponent(form.city)}&service_id=${service.id}&date=${form.date}&t=${Date.now()}`, {
+      cache: 'no-store',
+    })
       .then((r) => r.json())
       .then((d) => {
         if (d.success) {

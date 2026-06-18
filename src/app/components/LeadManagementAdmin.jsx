@@ -111,8 +111,8 @@ export default function LeadManagementAdmin({ isDarkMode }) {
     }
   }
 
-  function exportCsv() {
-    const params = new URLSearchParams({ export: 'csv' });
+  function exportExcel() {
+    const params = new URLSearchParams({ export: 'xls' });
     if (search) params.set('search', search);
     if (status) params.set('status', status);
     if (source) params.set('source', source);
@@ -132,7 +132,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
       <div className="section-head">
         <span className="section-head-title">Lead Management</span>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button onClick={exportCsv} style={{ border: 0, background: 'var(--accent)', color: '#111', borderRadius: 5, padding: '0.5rem 0.85rem', fontWeight: 900, cursor: 'pointer' }}>Export Excel</button>
+          <button onClick={exportExcel} style={{ border: 0, background: 'var(--accent)', color: '#111', borderRadius: 5, padding: '0.5rem 0.85rem', fontWeight: 900, cursor: 'pointer' }}>Export Excel</button>
           <button onClick={loadLeads} style={{ border: `1px solid ${border}`, background: surface, color: text, borderRadius: 5, padding: '0.5rem 0.85rem', fontWeight: 800, cursor: 'pointer' }}>Refresh</button>
         </div>
       </div>

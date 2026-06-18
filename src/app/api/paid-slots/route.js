@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireAnyRole, unauthorized } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 const TIME_SLOTS = [
   '08:00 AM - 10:00 AM',
   '10:00 AM - 12:00 PM',
@@ -60,7 +62,9 @@ export async function GET(req) {
         time_slot: slot,
         is_available: map.get(slot) !== false,
       }));
-      return NextResponse.json({ success: true, data: slots });
+      return NextResponse.json({ success: true, data: slots }, {
+        headers: { 'Cache-Control': 'no-store, max-age=0' },
+      });
     }
 
     if (!manager(req)) return unauthorized();
@@ -88,7 +92,9 @@ export async function GET(req) {
       params
     );
 
-    return NextResponse.json({ success: true, data: result.rows });
+    return NextResponse.json({ success: true, data: result.rows }, {
+      headers: { 'Cache-Control': 'no-store, max-age=0' },
+    });
   } catch (error) {
     console.error('Paid slots GET error:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -108,6 +114,32 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
     }
 
+    if (Boolean(is_available)) {
+      const result = await pool.query(
+        `DELETE FROM paid_time_slot_availability
+          WHERE quick_service_id = $1
+            AND slot_date = $2::DATE
+            AND LOWER(TRIM(city)) = LOWER(TRIM($3))
+            AND time_slot = $4
+          RETURNING id`,
+        [quick_service_id, slot_date, city, normalizedSlot]
+      );
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          quick_service_id,
+          slot_date,
+          city: city.trim(),
+          time_slot: normalizedSlot,
+          is_available: true,
+          removedOverride: result.rows.length > 0,
+        },
+      }, {
+        headers: { 'Cache-Control': 'no-store, max-age=0' },
+      });
+    }
+
     const result = await pool.query(
       `INSERT INTO paid_time_slot_availability
          (quick_service_id, slot_date, city, time_slot, is_available, updated_by_role, updated_by_id, created_at, updated_at)
@@ -121,7 +153,9 @@ export async function POST(req) {
       [quick_service_id, slot_date, city, normalizedSlot, Boolean(is_available), user.role, user.id || null]
     );
 
-    return NextResponse.json({ success: true, data: result.rows[0] });
+    return NextResponse.json({ success: true, data: result.rows[0] }, {
+      headers: { 'Cache-Control': 'no-store, max-age=0' },
+    });
   } catch (error) {
     console.error('Paid slots POST error:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
