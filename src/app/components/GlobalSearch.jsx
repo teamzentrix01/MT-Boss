@@ -114,7 +114,7 @@ export default function GlobalSearch({ user, isDarkMode, onNavigate }) {
 
     const roleItems = ROLE_RESULTS[role] || [];
     const userItems = role === "guest" ? [] : ROLE_RESULTS.user;
-    const publicItems = role === "admin" ? PUBLIC_RESULTS : [...PUBLIC_RESULTS, ...serviceResults];
+    const publicItems = [...PUBLIC_RESULTS, ...serviceResults];
 
     if (role === "user" || role === "guest") return [...publicItems, ...userItems];
     return [...roleItems, ...publicItems];
@@ -177,7 +177,7 @@ export default function GlobalSearch({ user, isDarkMode, onNavigate }) {
                 key={`${item.href}-${item.title}`}
                 type="button"
                 onClick={() => goTo(item)}
-                className={`w-full text-left px-4 py-3 border-b last:border-b-0 transition-colors ${
+                className={`global-search-result w-full text-left px-4 py-3 border-b last:border-b-0 transition-colors ${
                   isDarkMode ? "border-zinc-900 hover:bg-zinc-900" : "border-gray-100 hover:bg-gray-50"
                 }`}
               >

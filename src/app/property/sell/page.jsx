@@ -21,6 +21,11 @@ export default function SellPage() {
   const [step,      setStep]      = useState(1);    // 1=details 2=seller 3=photos 4=success
   const [loading,   setLoading]   = useState(false);
   const [error,     setError]     = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const showError = (message) => {
+    setError(message);
+  };
 
   useEffect(() => {
     const html = document.documentElement;
@@ -87,7 +92,7 @@ export default function SellPage() {
 
       return uploadedUrls;
     } catch (err) {
-      setError("Image upload failed: " + err.message);
+      showError("Image upload failed: " + err.message);
       setImages([]);
       return null;
     } finally {
@@ -125,7 +130,7 @@ export default function SellPage() {
     // If on photo step, upload images before proceeding
     if (step === 3) {
       const err = validate();
-      if (err) { setError(err); return; }
+      if (err) { showError(err); return; }
       
       setError("");
       const uploadedUrls = await uploadAllImages();
@@ -137,7 +142,7 @@ export default function SellPage() {
     }
 
     const err = validate();
-    if (err) { setError(err); return; }
+    if (err) { showError(err); return; }
     setError("");
     setStep(s => s + 1);
   };
@@ -175,13 +180,13 @@ export default function SellPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setStep(4);
+        setSubmitted(true);
       } else {
-        setError(data.error || "Submission failed");
+        showError(data.error || "Submission failed");
       }
     } catch (err) {
       console.error(err);
-      setError("Network error. Please try again.");
+      showError("Network error. Please try again.");
     }
     finally { 
       setLoading(false); 
@@ -229,7 +234,15 @@ export default function SellPage() {
           </div>
         )}
 
-        {error && <div className={`mb-4 p-3 rounded text-sm font-bold ${dark ? "bg-red-900/20 border border-red-700 text-red-400" : "bg-red-50 border border-red-200 text-red-600"}`}>{error}</div>}
+        {error && (
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 px-4" onClick={() => setError("")}>
+            <div className={`w-full max-w-sm rounded-sm border p-5 shadow-2xl ${dark ? "bg-zinc-950 border-red-700 text-white" : "bg-white border-red-200 text-zinc-900"}`} onClick={(e) => e.stopPropagation()}>
+              <p className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-2">Form Error</p>
+              <p className="text-sm font-bold leading-relaxed">{error}</p>
+              <button onClick={() => setError("")} className="mt-4 w-full py-2.5 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">OK</button>
+            </div>
+          </div>
+        )}
 
         {/* ── STEP 1: Property Details ── */}
         {step === 1 && (
@@ -359,7 +372,7 @@ export default function SellPage() {
         )}
 
         {/* ── STEP 4: Review & Submit ── */}
-        {step === 4 && images.length > 0 && (
+        {step === 4 && images.length > 0 && !submitted && (
           <div className={`border rounded-sm p-6 space-y-5 ${card}`}>
             <h2 className="text-lg font-black uppercase tracking-tight">Review & Submit</h2>
             
@@ -396,7 +409,7 @@ export default function SellPage() {
         )}
 
         {/* ── STEP 5: Success ── */}
-        {step === 4 && images.length === 0 && (
+        {submitted && (
           <div className={`border rounded-sm p-10 text-center space-y-4 ${card}`}>
             <p className="text-6xl">🎉</p>
             <h2 className="text-xl font-black uppercase tracking-tight text-[var(--brand-blue)]">Listing Submitted!</h2>
@@ -412,7 +425,7 @@ export default function SellPage() {
             </div>
             <div className="flex gap-3 pt-2">
               <a href="/property/buy" className="flex-1 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-[10px] tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all text-center">Browse Properties</a>
-              <button onClick={() => { setStep(1); setForm(empty); setImages([]); setImageFiles([]); }}
+              <button onClick={() => { setSubmitted(false); setStep(1); setForm(empty); setImages([]); setImageFiles([]); }}
                 className={`flex-1 py-3 border text-[10px] font-black uppercase tracking-widest transition-all ${dark ? "border-zinc-700 text-zinc-400 hover:border-zinc-500":"border-gray-300 text-zinc-500"}`}>
                 List Another
               </button>

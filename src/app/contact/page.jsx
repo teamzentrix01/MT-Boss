@@ -210,19 +210,19 @@ export default function ContactPage() {
           {/* Quick Contact Pills */}
           <div className="flex flex-wrap justify-center gap-3 mt-8">
             <a
-              href="tel:+9194584 10866"
+              href="tel:+919458410866"
               className="flex items-center gap-2 px-5 py-2.5 bg-[var(--brand-blue)] text-black text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-[var(--brand-blue-light)] transition-all"
             >
               📞 Call Us
             </a>
             <a
-              href="mailto:info@mtboss.com"
+              href="mailto:info@mtboss.in"
               className="flex items-center gap-2 px-5 py-2.5 border-2 border-white text-white text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-white hover:text-black transition-all"
             >
               ✉️ Email Us
             </a>
             <a
-              href="https://wa.me/9194584 10866"
+              href="https://wa.me/919458410866"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-green-400 transition-all"
@@ -454,7 +454,7 @@ export default function ContactPage() {
                     Quick Contact
                   </h3>
                   <div className="space-y-4">
-                    <a href="tel:+9194584 10866" className="flex items-start gap-3 group">
+                    <a href="tel:+919458410866" className="flex items-start gap-3 group">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${dark ? 'bg-[var(--brand-blue)]/20 group-hover:bg-[var(--brand-blue-dark)]' : 'bg-sky-100 group-hover:bg-[var(--brand-blue-dark)]'}`}>
                         <span className={`text-lg transition-all ${dark ? 'group-hover:text-black' : 'group-hover:text-white'}`}>📞</span>
                       </div>
@@ -464,17 +464,17 @@ export default function ContactPage() {
                       </div>
                     </a>
 
-                    <a href="mailto:info@mtboss.com" className="flex items-start gap-3 group">
+                    <a href="mailto:info@mtboss.in" className="flex items-start gap-3 group">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${dark ? 'bg-[var(--brand-blue)]/20 group-hover:bg-[var(--brand-blue-dark)]' : 'bg-sky-100 group-hover:bg-[var(--brand-blue-dark)]'}`}>
                         <span className="text-lg">✉️</span>
                       </div>
                       <div>
                         <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${dark ? 'text-gray-500' : 'text-gray-600'}`}>Email</p>
-                        <p className={`font-bold transition-colors ${textPrimaryClass}`}>info@mtboss.com</p>
+                        <p className={`font-bold transition-colors ${textPrimaryClass}`}>info@mtboss.in</p>
                       </div>
                     </a>
 
-                    <a href="https://wa.me/9194584 10866" target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 group">
+                    <a href="https://wa.me/919458410866" target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 group">
                       <div className="w-10 h-10 rounded-lg bg-green-500/20 group-hover:bg-green-500 flex items-center justify-center flex-shrink-0 transition-all">
                         <span className="text-lg group-hover:text-white transition-all">💬</span>
                       </div>

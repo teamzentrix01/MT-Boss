@@ -52,6 +52,10 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
   const [selectedFreeSlot, setSelectedFreeSlot] = useState(initialSelectedFreeSlot || null);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [paidSlotsLoading, setPaidSlotsLoading] = useState(false);
+  const displayDate = slotType === 'free' ? selectedFreeSlot?.slot_date : form.date;
+  const displayTime = slotType === 'free'
+    ? selectedFreeSlot ? `${selectedFreeSlot.slot_start?.slice(0, 5)} - ${selectedFreeSlot.slot_end?.slice(0, 5)}` : ''
+    : form.timeSlot;
 
   // ✅ FIX: Use admin_base_price or fallback to base_price — force number to avoid string concat
   const basePrice = parseFloat(service.admin_base_price || service.base_price || 199);
@@ -66,7 +70,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
   const label = isDark ? 'text-zinc-400' : 'text-zinc-500';
   const muted = isDark ? 'text-zinc-500' : 'text-zinc-400';
   const divider = isDark ? 'border-zinc-800' : 'border-zinc-100';
-  const pillBase = 'px-3 py-1.5 text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer';
+  const pillBase = 'qs-choice px-3 py-1.5 text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer';
   const pillActive = isDark
     ? 'border-[var(--brand-blue)] bg-[var(--brand-blue)] text-black'
     : 'border-zinc-900 bg-zinc-900 text-white';
@@ -299,6 +303,15 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
 
         {/* ── Scrollable Content ── */}
         <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+          {errors.submit && (
+            <div className="fixed inset-0 z-[100001] flex items-center justify-center bg-black/60 px-4" onClick={() => setErrors((e) => ({ ...e, submit: '' }))}>
+              <div className={`w-full max-w-sm border p-5 shadow-2xl ${isDark ? 'bg-zinc-950 border-red-700 text-white' : 'bg-white border-red-200 text-zinc-900'}`} onClick={(event) => event.stopPropagation()}>
+                <p className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-2">Booking Error</p>
+                <p className="text-sm font-bold leading-relaxed">{errors.submit}</p>
+                <button onClick={() => setErrors((e) => ({ ...e, submit: '' }))} className="mt-4 w-full py-2.5 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">OK</button>
+              </div>
+            </div>
+          )}
 
           {/* ══ STEP 1 ══ */}
           {step === 1 && (
@@ -401,7 +414,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                       key={p}
                       type="button"
                       onClick={() => set('propertyType', p)}
-                      className={`${pillBase} ${form.propertyType === p ? pillActive : pillInactive}`}
+                      className={`${pillBase} ${form.propertyType === p ? `qs-choice-active ${pillActive}` : pillInactive}`}
                     >
                       {p}
                     </button>
@@ -450,7 +463,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                     key={key}
                     type="button"
                     onClick={() => { setSlotType(key); setSelectedFreeSlot(null); }}
-                    className={`flex-1 p-3 border text-left transition-all ${
+                    className={`qs-choice flex-1 p-3 border text-left transition-all ${slotType === key ? 'qs-choice-active' : ''} ${
                       slotType === key
                         ? isDark ? 'border-[var(--brand-blue)] bg-[var(--brand-blue)]/10' : 'border-zinc-900 bg-zinc-50'
                         : isDark ? 'border-zinc-800' : 'border-zinc-200'
@@ -487,7 +500,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                           key={slot.id}
                           type="button"
                           onClick={() => { setSelectedFreeSlot(slot); setErrors((e) => ({ ...e, freeSlot: '' })); }}
-                          className={`p-3 border text-left transition-all ${
+                          className={`qs-choice p-3 border text-left transition-all ${selectedFreeSlot?.id === slot.id ? 'qs-choice-active' : ''} ${
                             selectedFreeSlot?.id === slot.id
                               ? isDark ? 'border-[var(--brand-blue)] bg-[var(--brand-blue)]/10' : 'border-zinc-900 bg-zinc-50'
                               : isDark ? 'border-zinc-800 hover:border-zinc-600' : 'border-zinc-200 hover:border-zinc-400'
@@ -533,6 +546,11 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                         <option key={slot.time_slot} value={slot.time_slot}>{slot.time_slot}</option>
                       ))}
                     </select>
+                    {form.timeSlot && (
+                      <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">
+                        Selected: {form.timeSlot}
+                      </p>
+                    )}
                     {!paidSlotsLoading && form.city && form.date && paidSlots.filter((slot) => slot.is_available).length === 0 && (
                       <p className={`text-[10px] mt-2 font-bold ${muted}`}>No paid slots available for this date. Please choose another date.</p>
                     )}
@@ -573,8 +591,8 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                   ['Email', form.email || '—'],
                   ['Address', `${form.address}, ${form.city} – ${form.pincode}`],
                   ['Property', form.propertyType === 'Other' ? (form.propertyTypeOther.trim() || 'Other') : form.propertyType],
-                  ['Date', form.date],
-                  ['Time Slot', form.timeSlot],
+                  ['Date', displayDate],
+                  ['Time Slot', displayTime],
                   ['Issue', form.description || '—'],
                 ].map(([k, v]) => (
                   <div key={k} className="flex gap-4 px-4 py-2.5">
@@ -615,8 +633,6 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                 ))}
               </div>
 
-              {errors.submit && <p className="text-[10px] text-red-500 font-bold p-3 bg-red-50 border border-red-200">{errors.submit}</p>}
-
               <p className={`text-[10px] leading-relaxed ${muted}`}>
                 ✅ You only pay after the technician visits &amp; you approve the repair quote. Zero hidden charges.
               </p>
@@ -656,7 +672,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                 <p className={`text-lg font-black tracking-tight ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                   #{String(Date.now()).slice(-8).toUpperCase()}
                 </p>
-                <p className={`text-[10px] ${muted}`}>{form.date} • {form.timeSlot}</p>
+                <p className={`text-[10px] ${muted}`}>{displayDate} • {displayTime}</p>
               </div>
 
               <button
