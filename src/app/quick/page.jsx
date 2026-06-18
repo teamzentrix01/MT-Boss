@@ -187,6 +187,25 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
 
       const data = await res.json();
       if (!res.ok) {
+        if (res.status === 401) {
+          try {
+            localStorage.setItem('pendingBooking', JSON.stringify({
+              service,
+              form,
+              slotType,
+              selectedFreeSlot,
+              step: 2,
+            }));
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+          } catch (e) { /* continue to login even if storage is unavailable */ }
+          setErrors({
+            submit: 'Please login with a user account first. Your booking details are saved.',
+          });
+          await new Promise((resolve) => setTimeout(resolve, 900));
+          router.push('/login?redirect=/quick');
+          return;
+        }
         setErrors({ submit: data.error || 'Booking failed' });
         return;
       }
