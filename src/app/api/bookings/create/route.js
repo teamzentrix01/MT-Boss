@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
+import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 
 function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
@@ -73,14 +74,25 @@ export async function POST(req) {
       service_description,
     } = await req.json();
     const selectedCity = String(service_city || '').trim();
+    const cleanUserName = cleanText(user_name);
+    const cleanUserEmail = user_email ? cleanText(user_email).toLowerCase() : null;
+    const cleanUserPhone = normalizePhone(user_phone);
  
     // Validation
-    if (!user_name || !user_phone || !service_address || !selectedCity || !service_pincode) {
+    if (!cleanUserName || !cleanUserPhone || !service_address || !selectedCity || !service_pincode) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
  
-    if (!/^[6-9]\d{9}$/.test(user_phone)) {
-      return NextResponse.json({ error: 'Invalid phone number' }, { status: 400 });
+    const contactError = validateContactFields({
+      name: cleanUserName,
+      email: cleanUserEmail || undefined,
+      phone: cleanUserPhone,
+      emailRequired: false,
+      nameLabel: 'Customer name',
+    });
+    if (contactError) return NextResponse.json({ error: contactError }, { status: 400 });
+    if (!/^\d{6}$/.test(String(service_pincode || '').trim())) {
+      return NextResponse.json({ error: 'Pincode must be exactly 6 digits' }, { status: 400 });
     }
  
     // ── Ensure user_id is nullable (safe to run repeatedly, idempotent) ──
@@ -170,7 +182,7 @@ export async function POST(req) {
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, NOW()
       ) RETURNING id, booking_reference, total_amount`,
       [
-        bookingReference, userId || null, quick_service_id, user_name, user_phone, user_email,
+        bookingReference, userId || null, quick_service_id, cleanUserName, cleanUserPhone, cleanUserEmail,
         service_address, selectedCity, service_pincode, property_type,
         booking_date, booking_time, slot_type, time_slot_id,
         user_latitude, user_longitude, location_map_url,
@@ -227,7 +239,7 @@ export async function POST(req) {
         `INSERT INTO service_notifications (
           booking_id, vendor_id, notification_type, title, message, is_read, created_at
         ) VALUES ($1, $2, 'new_booking', 'New Service Request', $3, FALSE, NOW())`,
-        [bookingId, vendor.id, `New ${user_name} booking in ${selectedCity}. Base: ₹${basePrice}`]
+        [bookingId, vendor.id, `New ${cleanUserName} booking in ${selectedCity}. Base: ₹${basePrice}`]
       );
     }
  

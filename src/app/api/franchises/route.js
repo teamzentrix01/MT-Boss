@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { requireRole, randomPassword } from '@/lib/auth';
 import { sendMail } from '@/lib/email';
+import { normalizePhone, validateContactFields, isValidEmail } from '@/lib/validation';
 
 const STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 
@@ -106,8 +107,25 @@ export async function POST(req) {
       trainingWilling,
     } = body;
 
-    if (!clean(name) || !clean(email) || !clean(phone) || !clean(model) || !clean(city)) {
+    const cleanName = clean(name);
+    const cleanEmail = clean(email).toLowerCase();
+    const cleanPhone = normalizePhone(phone);
+
+    if (!cleanName || !cleanEmail || !cleanPhone || !clean(model) || !clean(city)) {
       return NextResponse.json({ success: false, error: 'Name, email, phone, city and franchise model are required' }, { status: 400 });
+    }
+    const contactError = validateContactFields({ name: cleanName, email: cleanEmail, phone: cleanPhone });
+    if (contactError) {
+      return NextResponse.json({ success: false, error: contactError }, { status: 400 });
+    }
+    if (fatherName && !/^[A-Za-z][A-Za-z\s'.-]*$/.test(clean(fatherName))) {
+      return NextResponse.json({ success: false, error: 'Father or husband name must contain letters only.' }, { status: 400 });
+    }
+    if (pinCode && !/^\d{6}$/.test(clean(pinCode))) {
+      return NextResponse.json({ success: false, error: 'PIN code must be exactly 6 digits.' }, { status: 400 });
+    }
+    if (email && !isValidEmail(cleanEmail)) {
+      return NextResponse.json({ success: false, error: 'Enter a valid email address.' }, { status: 400 });
     }
     if (!password || password.length < 8) {
       return NextResponse.json({ success: false, error: 'Password must be at least 8 characters' }, { status: 400 });
@@ -142,7 +160,7 @@ export async function POST(req) {
         $35,$36,$37,$38,$39,$40,$41,$42,$43,FALSE
       ) RETURNING *`,
       [
-        name, fatherName, dob, gender, maritalStatus, phone, email,
+        cleanName, fatherName, dob, gender, maritalStatus, cleanPhone, cleanEmail,
         occupation, qualification, annualIncome, idType, idNumber, pan,
         address, district, city, state, pinCode, currentBusiness, experience,
         constructionExp, employees, network, bankName, branchName,

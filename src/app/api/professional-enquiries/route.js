@@ -1,6 +1,7 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 
 // Tables are guaranteed to exist by professional-services route (same ensureTables),
 // but guard here too so this route works standalone.
@@ -35,13 +36,24 @@ export async function POST(req) {
       enquirer_phone,
       message,
     } = await req.json();
+    const cleanName = cleanText(enquirer_name);
+    const cleanEmail = cleanText(enquirer_email).toLowerCase();
+    const cleanPhone = enquirer_phone ? normalizePhone(enquirer_phone) : null;
 
-    if (!professional_id || !enquirer_name || !enquirer_email || !message) {
+    if (!professional_id || !cleanName || !cleanEmail || !message) {
       return NextResponse.json(
         { error: 'professional_id, enquirer_name, enquirer_email and message are required' },
         { status: 400 }
       );
     }
+    const contactError = validateContactFields({
+      name: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone || undefined,
+      phoneRequired: false,
+      nameLabel: 'Enquirer name',
+    });
+    if (contactError) return NextResponse.json({ error: contactError }, { status: 400 });
 
     // Fetch professional's email & name
     const proResult = await pool.query(
@@ -63,9 +75,9 @@ export async function POST(req) {
         professional_id,
         professional.name,
         professional.email,
-        enquirer_name,
-        enquirer_email,
-        enquirer_phone || null,
+        cleanName,
+        cleanEmail,
+        cleanPhone,
         message,
       ]
     );

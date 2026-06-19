@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { ensurePackageSchema, getPackageById } from '@/lib/packages';
+import { cleanText, normalizePhone, isValidEmail, isValidIndianMobile } from '@/lib/validation';
 
 export async function POST(req) {
   let client;
@@ -63,6 +64,10 @@ export async function POST(req) {
       package_id    = body.package_id;
     }
 
+    email = cleanText(email).toLowerCase();
+    phone = normalizePhone(phone);
+    postal_code = cleanText(postal_code);
+
     console.log('✅ [SIGNUP] Data parsed:', { email, phone, city, services: services.length });
 
     // ════════════════════════════════════════════════════════════════
@@ -76,8 +81,17 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: 'Enter a valid email address' }, { status: 400 });
+    }
+    if (!isValidIndianMobile(phone)) {
+      return NextResponse.json({ error: 'Phone number must be 10 digits and start with 6, 7, 8 or 9' }, { status: 400 });
+    }
+    if (!/^\d{6}$/.test(postal_code)) {
+      return NextResponse.json({ error: 'Postal code must be exactly 6 digits' }, { status: 400 });
+    }
 
-    if (!aadhar_number || aadhar_number.length !== 12) {
+    if (!aadhar_number || !/^\d{12}$/.test(aadhar_number)) {
       console.warn('❌ [SIGNUP] Invalid Aadhaar number:', aadhar_number);
       return NextResponse.json(
         { error: 'Invalid Aadhaar number — must be 12 digits' },

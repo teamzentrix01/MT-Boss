@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 
 // No `ready` flag — CREATE TABLE IF NOT EXISTS + ALTER IF NOT EXISTS are idempotent
 // and run in milliseconds when the table already exists. This makes the route resilient
@@ -62,13 +63,23 @@ export async function POST(req) {
       delivery_address, latitude, longitude,
       message, selected_city,
     } = await req.json();
+    const cleanName = cleanText(user_name);
+    const cleanEmail = user_email ? cleanText(user_email).toLowerCase() : null;
+    const cleanPhone = normalizePhone(user_phone);
 
-    if (!user_name || !user_phone || !category_name) {
+    if (!cleanName || !cleanPhone || !category_name) {
       return NextResponse.json(
         { success: false, error: 'Name, phone, and category are required' },
         { status: 400 }
       );
     }
+    const contactError = validateContactFields({
+      name: cleanName,
+      email: cleanEmail || undefined,
+      phone: cleanPhone,
+      emailRequired: false,
+    });
+    if (contactError) return NextResponse.json({ success: false, error: contactError }, { status: 400 });
 
     const result = await pool.query(
       `INSERT INTO material_enquiries
@@ -80,7 +91,7 @@ export async function POST(req) {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
        RETURNING id, status, created_at`,
       [
-        user_name, user_phone, user_email || null,
+        cleanName, cleanPhone, cleanEmail,
         category_name, category_emoji || '',
         material_type || null, subcategory_name || null, brand_company || null,
         quantity_text || null, order_unit || null, delivery_date || null,

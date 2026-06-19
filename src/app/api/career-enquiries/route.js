@@ -4,6 +4,7 @@ import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
@@ -136,13 +137,18 @@ export async function POST(req) {
       resume_name,
       cover_letter,
     } = body;
+    const cleanName = cleanText(name);
+    const cleanEmail = cleanText(email).toLowerCase();
+    const cleanPhone = normalizePhone(phone);
 
-    if (!position || !name || !email || !phone || !experience) {
+    if (!position || !cleanName || !cleanEmail || !cleanPhone || !experience) {
       return NextResponse.json(
         { success: false, error: 'Position, name, email, phone, and experience are required' },
         { status: 400 }
       );
     }
+    const contactError = validateContactFields({ name: cleanName, email: cleanEmail, phone: cleanPhone });
+    if (contactError) return NextResponse.json({ success: false, error: contactError }, { status: 400 });
 
     await ensureTable();
     const resumeUrl = await saveResume(resumeFile);
@@ -163,9 +169,9 @@ export async function POST(req) {
         position,
         department || null,
         job_location || null,
-        name,
-        email,
-        phone,
+        cleanName,
+        cleanEmail,
+        cleanPhone,
         experience,
         current_company || null,
         notice_period || null,

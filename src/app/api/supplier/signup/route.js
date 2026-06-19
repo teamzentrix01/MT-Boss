@@ -1,14 +1,27 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { ensurePackageSchema, getPackageById } from '@/lib/packages';
+import { cleanText, normalizePhone, isValidEmail, isValidIndianMobile } from '@/lib/validation';
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { email, password, shop_name, phone, city, state, country, postal_code, aadhaar_number, product_categories, package_id } = body;
+    let { email, password, shop_name, phone, city, state, country, postal_code, aadhaar_number, product_categories, package_id } = body;
+    email = cleanText(email).toLowerCase();
+    phone = normalizePhone(phone);
+    postal_code = cleanText(postal_code);
 
     if (!email || !password || !shop_name || !phone) {
       return NextResponse.json({ error: 'Required fields missing' }, { status: 400 });
+    }
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: 'Enter a valid email address' }, { status: 400 });
+    }
+    if (!isValidIndianMobile(phone)) {
+      return NextResponse.json({ error: 'Phone number must be 10 digits and start with 6, 7, 8 or 9' }, { status: 400 });
+    }
+    if (postal_code && !/^\d{6}$/.test(postal_code)) {
+      return NextResponse.json({ error: 'Postal code must be exactly 6 digits' }, { status: 400 });
     }
     if (password.length < 6) {
       return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });

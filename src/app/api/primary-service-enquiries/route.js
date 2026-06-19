@@ -4,6 +4,7 @@ import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { requireRole, unauthorized, verifyBearer } from '@/lib/auth';
+import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
@@ -189,12 +190,26 @@ export async function POST(req) {
       service_slug, service_title, name, phone, alternate_phone, email, message, property_image_name,
       budget, carpet_area, time_slot, meeting_date, gps_location, address,
     } = body;
+    const cleanName = cleanText(name);
+    const cleanEmail = email ? cleanText(email).toLowerCase() : null;
+    const cleanPhone = normalizePhone(phone);
+    const cleanAlternatePhone = normalizePhone(alternate_phone);
 
-    if (!service_title || !name || !phone || !alternate_phone) {
+    if (!service_title || !cleanName || !cleanPhone || !cleanAlternatePhone) {
       return NextResponse.json(
         { success: false, error: 'Service, name, main phone, and alternative phone are required' },
         { status: 400 }
       );
+    }
+    const contactError = validateContactFields({
+      name: cleanName,
+      email: cleanEmail || undefined,
+      phone: cleanPhone,
+      emailRequired: false,
+    });
+    if (contactError) return NextResponse.json({ success: false, error: contactError }, { status: 400 });
+    if (!/^[6-9]\d{9}$/.test(cleanAlternatePhone)) {
+      return NextResponse.json({ success: false, error: 'Alternate phone number must be 10 digits and start with 6, 7, 8 or 9.' }, { status: 400 });
     }
 
     await ensureTable();
@@ -213,10 +228,10 @@ export async function POST(req) {
         service_slug || null,
         service_title,
         userId,
-        name,
-        phone,
-        alternate_phone,
-        email || null,
+        cleanName,
+        cleanPhone,
+        cleanAlternatePhone,
+        cleanEmail,
         message || null,
         budget || null,
         carpet_area || null,

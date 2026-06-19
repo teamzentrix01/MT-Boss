@@ -1,6 +1,7 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 
 // GET — public. ?listing_type=buy|rent&status=verified for public pages.
 //       ?status=all for admin (requires token).
@@ -53,6 +54,18 @@ export async function POST(req) {
     if (!title || !type || !listing_type || !price || !price_raw || !location) {
       return NextResponse.json({ error: 'title, type, listing_type, price, price_raw and location are required' }, { status: 400 });
     }
+    const cleanSellerName = seller_name ? cleanText(seller_name) : null;
+    const cleanSellerEmail = seller_email ? cleanText(seller_email).toLowerCase() : null;
+    const cleanSellerPhone = seller_phone ? normalizePhone(seller_phone) : null;
+    const contactError = validateContactFields({
+      name: cleanSellerName || undefined,
+      email: cleanSellerEmail || undefined,
+      phone: cleanSellerPhone || undefined,
+      phoneRequired: false,
+      emailRequired: false,
+      nameLabel: 'Seller name',
+    });
+    if (contactError) return NextResponse.json({ error: contactError }, { status: 400 });
 
     const result = await pool.query(
       `INSERT INTO properties
@@ -69,7 +82,7 @@ export async function POST(req) {
         JSON.stringify(images || []),
         tag || 'New',
         seller_type || 'owner',
-        seller_name || null, seller_phone || null, seller_email || null,
+        cleanSellerName, cleanSellerPhone, cleanSellerEmail,
       ]
     );
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
@@ -117,6 +130,18 @@ export async function PUT(req) {
       highlights, images, tag,
       seller_type, seller_name, seller_phone, seller_email,
     } = body;
+    const cleanSellerName = seller_name ? cleanText(seller_name) : null;
+    const cleanSellerEmail = seller_email ? cleanText(seller_email).toLowerCase() : null;
+    const cleanSellerPhone = seller_phone ? normalizePhone(seller_phone) : null;
+    const contactError = validateContactFields({
+      name: cleanSellerName || undefined,
+      email: cleanSellerEmail || undefined,
+      phone: cleanSellerPhone || undefined,
+      phoneRequired: false,
+      emailRequired: false,
+      nameLabel: 'Seller name',
+    });
+    if (contactError) return NextResponse.json({ error: contactError }, { status: 400 });
 
     const r = await pool.query(
       `UPDATE properties SET
@@ -133,7 +158,7 @@ export async function PUT(req) {
         beds, baths, area, description,
         JSON.stringify(highlights || []),
         JSON.stringify(images || []),
-        tag, seller_type, seller_name, seller_phone, seller_email,
+        tag, seller_type, cleanSellerName, cleanSellerPhone, cleanSellerEmail,
         id,
       ]
     );

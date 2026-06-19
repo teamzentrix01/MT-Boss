@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 
 function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
@@ -45,13 +46,27 @@ export async function POST(req) {
       location_map_url,
     } = await req.json();
     const selectedCity = String(service_city || '').trim();
+    const cleanUserName = cleanText(user_name);
+    const cleanUserEmail = user_email ? cleanText(user_email).toLowerCase() : null;
+    const cleanUserPhone = normalizePhone(user_phone);
 
     // Validation
-    if (!quick_service_id || !user_name || !user_phone || !service_address || !selectedCity || !service_pincode) {
+    if (!quick_service_id || !cleanUserName || !cleanUserPhone || !service_address || !selectedCity || !service_pincode) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
+    }
+    const contactError = validateContactFields({
+      name: cleanUserName,
+      email: cleanUserEmail || undefined,
+      phone: cleanUserPhone,
+      emailRequired: false,
+      nameLabel: 'Customer name',
+    });
+    if (contactError) return NextResponse.json({ error: contactError }, { status: 400 });
+    if (!/^\d{6}$/.test(String(service_pincode || '').trim())) {
+      return NextResponse.json({ error: 'Pincode must be exactly 6 digits' }, { status: 400 });
     }
 
     // Generate booking reference
@@ -112,7 +127,7 @@ export async function POST(req) {
         RETURNING *`,
         [
           booking_reference, quick_service_id,
-          user_name, user_phone, user_email,
+          cleanUserName, cleanUserPhone, cleanUserEmail,
           service_address, selectedCity, service_pincode, property_type,
           booking_date, booking_time, slot_type, time_slot_id,
           'normal', visit_fee, service_description,

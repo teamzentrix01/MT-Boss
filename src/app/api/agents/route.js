@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import pool from '@/lib/db';
 import { ensureAgentSchema, requireAdmin } from '@/lib/agent-auth';
 import { sendMail } from '@/lib/email';
+import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 
 const AGENT_STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 
@@ -84,16 +85,23 @@ export async function POST(req) {
     await ensureAgentSchema();
     const body = await req.json();
     const { name, email, phone, city, state, occupation, agentType, experience, network, message } = body;
+    const cleanName = cleanText(name);
+    const cleanEmail = cleanText(email).toLowerCase();
+    const cleanPhone = normalizePhone(phone);
 
-    if (!name || !email || !phone || !city || !state || !agentType) {
+    if (!cleanName || !cleanEmail || !cleanPhone || !city || !state || !agentType) {
       return NextResponse.json({ success: false, error: 'Required fields missing' }, { status: 400 });
+    }
+    const contactError = validateContactFields({ name: cleanName, email: cleanEmail, phone: cleanPhone });
+    if (contactError) {
+      return NextResponse.json({ success: false, error: contactError }, { status: 400 });
     }
 
     const result = await pool.query(
       `INSERT INTO agents (name, email, phone, city, state, occupation, agent_type, experience, network, message)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
        RETURNING *`,
-      [name, email, phone, city, state, occupation, agentType, experience || null, network || null, message || null]
+      [cleanName, cleanEmail, cleanPhone, city, state, occupation, agentType, experience || null, network || null, message || null]
     );
 
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
