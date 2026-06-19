@@ -295,12 +295,8 @@ export default function ContactPage() {
                             : dark ? 'border-[var(--brand-blue-deep)] hover:border-[var(--brand-blue-light)]' : 'border-[var(--brand-blue-lighter)] hover:border-[var(--brand-blue)]'
                         }`}
                       >
-                        <span className="text-lg block mb-1">{dept.icon}</span>
-                        <span className={`text-xs font-bold uppercase tracking-widest leading-tight block ${
-                          form.department === dept.label
-                            ? textSecondaryClass
-                            : dark ? 'text-gray-400' : 'text-gray-600'
-                        }`}>
+                        <span className="text-lg block mb-1 text-black">{dept.icon}</span>
+                        <span className="text-xs font-bold uppercase tracking-widest leading-tight block text-black">
                           {dept.label}
                         </span>
                       </button>
