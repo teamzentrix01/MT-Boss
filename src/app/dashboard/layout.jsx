@@ -133,8 +133,8 @@ export default function DashboardLayout({ children }) {
               </div>
               {sidebarOpen && (
                 <div className="text-left flex-1">
-                  <p className={`text-sm font-medium ${textPrimary}`}>{user.name || 'Admin'}</p>
-                  <p className={`text-xs ${textSecondary}`}>{user.email || 'admin@example.com'}</p>
+                  <p className="text-sm font-medium text-black">{user.name || 'Admin'}</p>
+                  <p className="text-xs text-black">{user.email || 'admin@example.com'}</p>
                 </div>
               )}
             </button>
