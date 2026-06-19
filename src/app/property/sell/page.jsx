@@ -37,7 +37,10 @@ export default function SellPage() {
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  const handlePhone = (v) => set('seller_phone', v.replace(/\D/g, '').slice(0, 10));
+  const handlePhone = (v) => {
+    const rawDigits = v.replace(/\D/g, '');
+    set('seller_phone', rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '');
+  };
 
   const handleImages = (e) => {
     const files = Array.from(e.target.files).slice(0, 10);

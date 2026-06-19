@@ -179,7 +179,8 @@ export default function RentingPage() {
   const handleEnquiryChange = (e) => {
     const { name, value } = e.target;
     if (name === 'phone') {
-      setEnquiryForm(prev => ({ ...prev, phone: value.replace(/\D/g, '').slice(0, 10) }));
+      const rawDigits = value.replace(/\D/g, '');
+      setEnquiryForm(prev => ({ ...prev, phone: rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '' }));
     } else {
       setEnquiryForm({ ...enquiryForm, [name]: value });
     }

@@ -114,7 +114,8 @@ export default function ContactPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'phone') {
-      const digits = value.replace(/\D/g, '').slice(0, 10);
+      const rawDigits = value.replace(/\D/g, '');
+      const digits = rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '';
       setForm({ ...form, phone: digits });
     } else {
       setForm({ ...form, [name]: value });

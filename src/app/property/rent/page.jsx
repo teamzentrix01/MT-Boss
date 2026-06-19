@@ -286,7 +286,7 @@ export default function RentPage() {
           <div className={`border rounded-sm p-6 space-y-5 ${card}`}>
             <h2 className="text-lg font-black uppercase tracking-tight">Your Information</h2>
             <div><label className={lbl}>Full Name *</label><input className={inp} placeholder="Your name" value={form.seller_name} onChange={e=>set("seller_name",e.target.value)} /></div>
-            <div><label className={lbl}>Phone Number *</label><input type="tel" className={inp} placeholder="+91 98765 43210" value={form.seller_phone} onChange={e=>set("seller_phone",e.target.value)} /></div>
+            <div><label className={lbl}>Phone Number *</label><input type="tel" className={inp} placeholder="10-digit mobile number" value={form.seller_phone} onChange={e=>{ const rawDigits = e.target.value.replace(/\D/g, ''); set("seller_phone", rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : ''); }} maxLength={10} inputMode="numeric" /></div>
             <div><label className={lbl}>Email Address</label><input type="email" className={inp} placeholder="you@example.com" value={form.seller_email} onChange={e=>set("seller_email",e.target.value)} /></div>
             <p className={`text-[11px] leading-relaxed ${muted}`}>⚠️ Your contact details are only shared with verified tenants after admin approval.</p>
             <div className="flex gap-3">

@@ -113,7 +113,8 @@ export default function AgentPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'phone') {
-      setForm(prev => ({ ...prev, phone: value.replace(/\D/g, '').slice(0, 10) }));
+      const rawDigits = value.replace(/\D/g, '');
+      setForm(prev => ({ ...prev, phone: rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '' }));
     } else {
       setForm(prev => ({ ...prev, [name]: value }));
     }

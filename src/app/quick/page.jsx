@@ -388,7 +388,10 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                     placeholder="10-digit mobile"
                     maxLength={10}
                     value={form.phone}
-                    onChange={(e) => set('phone', e.target.value.replace(/\D/g, ''))}
+                    onChange={(e) => {
+                      const rawDigits = e.target.value.replace(/\D/g, '');
+                      set('phone', rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '');
+                    }}
                   />
                 </Field>
                 <Field label="Email (optional)" error={errors.email} isDark={isDark}>

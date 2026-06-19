@@ -42,7 +42,12 @@ export default function SupplierSignupPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'phone') {
+      const rawDigits = value.replace(/\D/g, '');
+      setFormData(prev => ({ ...prev, phone: rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '' }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
     if (error) setError('');
   };
 

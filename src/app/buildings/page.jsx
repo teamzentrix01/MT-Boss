@@ -514,7 +514,7 @@ export default function BuildingsPage() {
                   </div>
                   <form onSubmit={handleEnquirySubmit} className="space-y-3">
                     <input type="text" name="name" required placeholder="Full name *" value={enquiryForm.name} onChange={(e) => setEnquiryForm({ ...enquiryForm, name: e.target.value })} className={modalInput} />
-                    <input type="tel" name="phone" placeholder="10-digit mobile number *" value={enquiryForm.phone} onChange={(e) => setEnquiryForm({ ...enquiryForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })} maxLength={10} inputMode="numeric" className={modalInput} />
+                    <input type="tel" name="phone" placeholder="10-digit mobile number *" value={enquiryForm.phone} onChange={(e) => { const rawDigits = e.target.value.replace(/\D/g, ''); setEnquiryForm({ ...enquiryForm, phone: rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '' }); }} maxLength={10} inputMode="numeric" className={modalInput} />
                     <input type="email" name="email" placeholder="Email address" value={enquiryForm.email} onChange={(e) => setEnquiryForm({ ...enquiryForm, email: e.target.value })} className={modalInput} />
                     <input type="text" name="organization" placeholder="Organization / Company name" value={enquiryForm.organization} onChange={(e) => setEnquiryForm({ ...enquiryForm, organization: e.target.value })} className={modalInput} />
                     <textarea name="message" rows={3} placeholder="Message or specific requirements..." value={enquiryForm.message} onChange={(e) => setEnquiryForm({ ...enquiryForm, message: e.target.value })} className={`${modalInput} resize-none`} />
