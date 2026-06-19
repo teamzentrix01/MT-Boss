@@ -5,6 +5,7 @@ import { requireRole, unauthorized } from '@/lib/auth';
 async function ensureQuickServiceSeoColumns() {
   await pool.query(`
     ALTER TABLE quick_services
+      ALTER COLUMN icon TYPE TEXT,
       ADD COLUMN IF NOT EXISTS slug TEXT,
       ADD COLUMN IF NOT EXISTS video_url TEXT,
       ADD COLUMN IF NOT EXISTS seo_title TEXT,
