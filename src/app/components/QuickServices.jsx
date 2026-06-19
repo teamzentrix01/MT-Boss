@@ -16,6 +16,14 @@ function useInView(threshold = 0.1) {
   return [ref, inView];
 }
 
+function slugFromService(service) {
+  return service.slug || String(service.label || service.title || service.id)
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export default function QuickServices() {
   const [headerRef, headerVisible] = useInView(0.1);
   const [gridRef, gridVisible] = useInView(0.05);
@@ -50,6 +58,10 @@ export default function QuickServices() {
   }, []);
 
   const themeYellow = "var(--brand-blue)";
+  const homeDecorIndex = services.findIndex((service) =>
+    String(service.label || '').toLowerCase().includes('home decor')
+  );
+  const visibleServices = services.slice(0, homeDecorIndex >= 0 ? homeDecorIndex + 1 : 21);
 
   return (
     <>
@@ -231,10 +243,10 @@ export default function QuickServices() {
                     <div className="qs-skeleton rounded" style={{ width: 44, height: 10 }} />
                   </div>
                 ))
-              : services.map((service, i) => (
+              : visibleServices.map((service, i) => (
                   <Link
                     key={service.id}
-                    href="/quick"
+                    href={`/quick/${slugFromService(service)}`}
                     className="qs-card qs-grid-item flex flex-col items-center justify-center gap-1.5 py-4 px-2"
                     style={{
                       animationDelay: gridVisible ? `${i * 0.04}s` : "none",

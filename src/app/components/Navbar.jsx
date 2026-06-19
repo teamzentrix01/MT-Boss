@@ -151,7 +151,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
   const serviceDropdown = [
     { label: "Quick Services", href: "/quick" },
-    { label: "Primary Services", href: "/Services/all" },
+    { label: "Construction Services", href: "/Services/all" },
     { label: "Professional Services", href: "/Services/professionals" },
   ];
 

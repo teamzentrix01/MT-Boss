@@ -55,7 +55,7 @@ export default function FeaturedProjects() {
               Our Masterpieces
             </p>
             <h2 className={`text-4xl sm:text-6xl font-black tracking-tighter uppercase ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-              Featured <br /> <span style={{ color: isDark ? 'var(--brand-blue)' : 'inherit' }}>Projects</span>
+              Featured <br /> <span style={{ color: isDark ? 'var(--brand-blue)' : 'inherit' }}>Portfolio</span>
             </h2>
           </div>
           <button className={`group flex items-center gap-3 px-8 py-4 border-2 font-black uppercase text-xs tracking-widest transition-all ${
@@ -63,7 +63,7 @@ export default function FeaturedProjects() {
             ? 'border-zinc-800 text-white hover:bg-[var(--brand-blue)] hover:text-black hover:border-[var(--brand-blue)]' 
             : 'border-zinc-200 text-zinc-900 hover:bg-black hover:text-white hover:border-black'
           }`}>
-            View All Projects
+            View All Portfolio
             <svg className="w-4 h-4 transition-transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>

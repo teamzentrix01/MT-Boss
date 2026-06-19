@@ -43,9 +43,9 @@ export default function FeaturedProjects() {
           style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? "translateY(0)" : "translateY(16px)", transition: "opacity 0.6s ease, transform 0.6s ease" }}
         >
           <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 text-[var(--brand-blue)]">Our Masterpieces</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 text-[var(--brand-blue)]">Our Portfolio</p>
             <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-none ${isDark ? "text-white" : "text-zinc-900"}`}>
-              Featured <span className="text-[var(--brand-blue)]">Projects</span>
+              Featured <span className="text-[var(--brand-blue)]">Portfolio</span>
             </h2>
           </div>
           <Link
@@ -56,7 +56,7 @@ export default function FeaturedProjects() {
                 : "border-zinc-300 text-zinc-800 hover:bg-zinc-900 hover:text-white hover:border-zinc-900"
             }`}
           >
-            View All Projects
+            View All Portfolio
             <svg className="w-3 h-3 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -97,7 +97,7 @@ export default function FeaturedProjects() {
                 <h3 className="text-white text-sm font-black uppercase leading-tight mb-2">{project.title}</h3>
                 <div className="h-0 group-hover:h-8 overflow-hidden transition-all duration-500">
                   <Link
-                    href="/FeaturedProjects/ProjectGallery"
+                    href={`/projects/${project.id}`}
                     className="inline-block bg-[var(--brand-blue)] text-black px-4 py-1.5 text-[8px] font-black uppercase tracking-widest hover:bg-white transition-colors"
                   >
                     Explore Details

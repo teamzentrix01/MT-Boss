@@ -241,7 +241,7 @@ function OurProjects({ dark }) {
           <div>
             <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-1.5">Our Portfolio</p>
             <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter ${dark ? "text-white" : "text-zinc-900"}`}>
-              Our <span className="text-[var(--brand-blue)]">Projects</span>
+              Our <span className="text-[var(--brand-blue)]">Portfolio</span>
             </h2>
           </div>
           <Link
@@ -320,7 +320,7 @@ function OurProjects({ dark }) {
               <p className={`text-sm font-black uppercase ${dark ? "text-white" : "text-zinc-800"}`}>Explore our complete project portfolio</p>
             </div>
             <Link href="/FeaturedProjects/ProjectGallery" className="px-8 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-[9px] tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all shrink-0">
-              View All Projects →
+              View All Portfolio →
             </Link>
           </div>
         </FadeIn>

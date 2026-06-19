@@ -311,7 +311,7 @@ export default function AgentPage() {
       </section>
 
       {/* ── AGENT TYPES ── */}
-      <section className={`order-2 py-16 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
+      <section className={`order-3 py-16 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">
@@ -529,7 +529,7 @@ export default function AgentPage() {
       {/* ── AGENT REGISTRATION FORM ── */}
       <section
         id="agent-form"
-        className={`order-3 py-12 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}
+        className={`order-2 py-12 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}
       >
         <div className="max-w-4xl mx-auto">
 

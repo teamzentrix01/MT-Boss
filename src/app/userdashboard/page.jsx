@@ -724,7 +724,7 @@ export default function UserDashboard() {
           {[
             { label: 'Total Bookings', value: bookings.length, color: '' },
             { label: 'Active',          value: activeBookings.length, color: 'text-[var(--brand-blue)]' },
-            { label: 'Primary Services', value: primaryServices.length, color: 'text-green-500' },
+            { label: 'Construction Services', value: primaryServices.length, color: 'text-green-500' },
           ].map(({ label, value, color }) => (
             <div key={label} className="py-5 px-6 text-center">
               <p className={`text-2xl font-black ${color || (isDark ? 'text-white' : 'text-zinc-900')}`}>{value}</p>
@@ -743,7 +743,7 @@ export default function UserDashboard() {
             {[
               { key: 'active',  label: `Active (${activeBookings.length})` },
               { key: 'history', label: `History (${historyBookings.length})` },
-              { key: 'primary', label: `Primary Services (${primaryServices.length})` },
+              { key: 'primary', label: `Construction Services (${primaryServices.length})` },
             ].map(({ key, label }) => {
               const selected = tab === key;
               return (
@@ -764,7 +764,7 @@ export default function UserDashboard() {
 
           {tab === 'primary' && primaryServices.length > 0 && (
             <div className={`mb-4 px-4 py-3 border ${isDark ? 'border-zinc-800 bg-zinc-950' : 'border-zinc-200 bg-white'}`}>
-              <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[var(--brand-blue)]">Primary Services</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[var(--brand-blue)]">Construction Services</p>
               <p className={`text-xs mt-1 ${muted}`}>Your existing primary service enquiries and current project status.</p>
             </div>
           )}
@@ -779,7 +779,7 @@ export default function UserDashboard() {
               {tab !== 'history' && (
                 <Link href={tab === 'primary' ? '/Services/all' : '/quick'}
                   className="inline-block px-6 py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-light)] transition-all">
-                  {tab === 'primary' ? 'Explore Primary Services' : 'Book a Service Now'}
+                  {tab === 'primary' ? 'Explore Construction Services' : 'Book a Service Now'}
                 </Link>
               )}
             </div>

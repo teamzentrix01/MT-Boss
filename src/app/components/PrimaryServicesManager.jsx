@@ -436,7 +436,7 @@ export default function PrimaryServicesManager({ isDarkMode }) {
       <div className="ps-root">
         {/* Header */}
         <div className="ps-header">
-          <span className="ps-title">Primary Services</span>
+          <span className="ps-title">Construction Services</span>
           <button className={`ps-add-btn${showForm ? ' cancel' : ''}`}
             onClick={() => { resetForm(); setShowForm(!showForm); }}>
             {showForm ? '✕ Cancel' : '+ Add Service'}

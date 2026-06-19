@@ -19,12 +19,12 @@ const Page = () => {
       <Hero />
       {/* <AboutSection /> */}
       <QuickServices />
+      <Services />
       <PropertyCTA />
       <AgentCTA />
       <FranchiseCTA />
       <ShopCTA />
       <CalculatorCTA />
-      <Services />
       <FeaturedProjects />
       <ExperienceSection />
       {/* <TestimonialsSection /> */}

@@ -8,21 +8,21 @@ const featuredServices = [
     title: "Commercial Buildings",
     description: "From corporate offices to retail complexes, we design and construct world-class commercial spaces built to last.",
     image: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80",
-    link: "/Services/all", // Confirm folder name is 'services' not 'Services'
+    link: "/Services/all/commercial-buildings",
   },
   {
     id: 2,
     title: "Hotel & Hospitality",
     description: "We deliver premium hotel and resort construction with meticulous attention to interiors and guest experience.",
     image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
-    link: "/Services/all",
+    link: "/Services/all/hotel-hospitality",
   },
   {
     id: 3,
     title: "Residential Projects",
     description: "Affordable housing to luxury villas — MTBOSS builds residential spaces that marry comfort and safety.",
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
-    link: "/Services/all",
+    link: "/Services/all/residential-projects",
   },
 ];
 
@@ -84,6 +84,7 @@ function ServiceCard({ service, index, isDark }) {
 
 export default function Services() {
   const [isDark, setIsDark] = useState(false);
+  const [services, setServices] = useState(featuredServices);
 
   useEffect(() => {
     const checkTheme = () => {
@@ -95,19 +96,36 @@ export default function Services() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    fetch("/api/primary-services")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.data) && data.data.length) {
+          setServices(data.data.slice(0, 3).map((service) => ({
+            id: service.id,
+            title: service.title,
+            description: service.description,
+            image: service.image,
+            link: `/Services/all/${service.slug}`,
+          })));
+        }
+      })
+      .catch(console.error);
+  }, []);
+
   return (
     <section className={`py-24 px-6 transition-colors duration-500 ${isDark ? 'bg-black' : 'bg-white'}`}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
           <p className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-[0.5em] mb-4">Core Expertise</p>
           <h2 className={`text-4xl md:text-6xl font-black uppercase tracking-tighter mb-6 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-            Major <span className="text-[var(--brand-blue)]">Services</span>
+            Construction <span className="text-[var(--brand-blue)]">Services</span>
           </h2>
           <div className="w-20 h-1.5 bg-[var(--brand-blue)] mx-auto rounded-full" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-          {featuredServices.map((service, i) => (
+          {services.map((service, i) => (
             <ServiceCard key={service.id} service={service} index={i} isDark={isDark} />
           ))}
         </div>
@@ -118,7 +136,7 @@ export default function Services() {
             className="group relative inline-flex items-center gap-4 px-12 py-5 bg-transparent border-2 border-[var(--brand-blue)] text-[var(--brand-blue)] font-black uppercase text-xs tracking-[0.3em] overflow-hidden transition-all hover:text-white"
           >
             <span className="absolute inset-0 bg-[var(--brand-blue)] translate-y-full transition-transform group-hover:translate-y-0 -z-10" />
-            Explore All Services
+            Explore Construction Services
             <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>

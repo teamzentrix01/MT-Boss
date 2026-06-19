@@ -41,7 +41,7 @@ const filteredProjects = filter === "All"
           <div className="max-w-xl">
             <p className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-[0.4em] mb-4">Our Portfolio</p>
             <h2 className={`text-4xl md:text-6xl font-black uppercase tracking-tighter ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-              Featured <span className="text-[var(--brand-blue)]">Projects</span>
+              Featured <span className="text-[var(--brand-blue)]">Portfolio</span>
             </h2>
           </div>
           
@@ -100,7 +100,7 @@ const filteredProjects = filter === "All"
 
         {/* View All CTA */}
         <div className="text-center mt-16">
-          <Link href="/projects" className="inline-flex items-center gap-4 px-12 py-5 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-[0.3em] hover:bg-white transition-all shadow-xl">
+          <Link href="/FeaturedProjects/ProjectGallery" className="inline-flex items-center gap-4 px-12 py-5 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-[0.3em] hover:bg-white transition-all shadow-xl">
             See More Works
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />

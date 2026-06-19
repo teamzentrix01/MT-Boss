@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 const PUBLIC_RESULTS = [
   { title: "Home", subtitle: "MT-BOSS homepage", href: "/", keywords: "home main" },
   { title: "Quick Services", subtitle: "Book home repair and maintenance", href: "/quick", keywords: "quick service plumber electrician repair booking" },
-  { title: "Primary Services", subtitle: "Construction and core services", href: "/Services/all", keywords: "primary construction services" },
+  { title: "Construction Services", subtitle: "Construction and core services", href: "/Services/all", keywords: "primary construction services" },
   { title: "Professional Services", subtitle: "Architects, engineers and consultants", href: "/Services/professionals", keywords: "professional architect engineer consultant" },
   { title: "Buy Property", subtitle: "Browse verified properties", href: "/property/buy", keywords: "buy property house flat plot" },
   { title: "Sell Property", subtitle: "List a property", href: "/property/sell", keywords: "sell property listing" },
@@ -37,7 +37,7 @@ const ROLE_RESULTS = {
     { title: "Projects", subtitle: "Manage projects", href: "/dashboard?tab=projects", keywords: "admin projects gallery" },
     { title: "Agents", subtitle: "Approve and manage agents", href: "/dashboard?tab=agents", keywords: "admin agents leads" },
     { title: "Franchises", subtitle: "Manage franchise requests", href: "/dashboard?tab=franchises", keywords: "admin franchise" },
-    { title: "Primary Services", subtitle: "Manage primary services", href: "/dashboard?tab=primary-services", keywords: "admin primary services" },
+    { title: "Construction Services", subtitle: "Manage construction services", href: "/dashboard?tab=primary-services", keywords: "admin primary services construction services" },
     { title: "Professional Services", subtitle: "Manage professionals", href: "/dashboard?tab=professionals", keywords: "admin professional services" },
     { title: "Shop Categories", subtitle: "Manage shop categories", href: "/dashboard?tab=shop-categories", keywords: "admin shop categories" },
     { title: "Career Enquiries", subtitle: "Review career submissions", href: "/dashboard?tab=career-enquiries", keywords: "admin career enquiries resume" },

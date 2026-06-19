@@ -294,8 +294,8 @@ function AdminDashboard() {
     { id: 'submissions',                label: 'Contact Forms',             icon: '✉'  },
     { id: 'franchises',                 label: 'Franchises',                icon: '🏢' },
     { id: 'free-slots',                 label: 'Free Time Slots',           icon: '📅' },
-    { id: 'primary-services',           label: 'Primary Services',          icon: '⊞'  },
-    { id: 'primary-service-enquiries',  label: 'Primary Services Enquiry',  icon: '✉'  },
+    { id: 'primary-services',           label: 'Construction Services',     icon: '⊞'  },
+    { id: 'primary-service-enquiries',  label: 'Construction Enquiry',      icon: '✉'  },
     { id: 'professional-enquiries',     label: 'Professional Enquiries',    icon: '💬' },
     { id: 'professionals',              label: 'Professional Services',     icon: '👔' },
     { id: 'projects',                   label: 'Projects',                  icon: '🏗️' },
@@ -895,7 +895,7 @@ function AdminDashboard() {
           {activeTab === 'primary-service-enquiries' && (
             <div>
               <div className="section-head">
-                <span className="section-head-title">Primary Services Enquiry</span>
+                <span className="section-head-title">Construction Enquiry</span>
                 <input
                   type="text"
                   placeholder="Search name, phone, alternate phone, service, email…"
