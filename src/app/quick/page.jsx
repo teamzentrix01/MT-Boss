@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import QuickServiceIcon, { isQuickServiceIconImage } from '../components/QuickServiceIcon';
 
 const TIME_SLOTS = [
   '08:00 AM – 10:00 AM',
@@ -294,7 +295,9 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
         {/* ── Header ── */}
         <div className={`flex-shrink-0 flex items-center justify-between px-6 py-4 border-b ${divider}`}>
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{service.icon}</span>
+            <QuickServiceIcon value={service.icon} label={service.label}
+              className="flex h-8 w-8 items-center justify-center text-2xl"
+              imageClassName="h-8 w-8 object-contain" />
             <div>
               <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[var(--brand-blue)]">Book Service</p>
               <h2 className="text-lg font-black uppercase tracking-tight">{service.label}</h2>
@@ -616,7 +619,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
 
               <div className={`border divide-y ${divider} ${isDark ? 'divide-zinc-800' : 'divide-zinc-100'}`}>
                 {[
-                  ['Service', `${service.icon} ${service.label}`],
+                  ['Service', `${isQuickServiceIconImage(service.icon) ? '' : service.icon || ''} ${service.label}`.trim()],
                   ['Name', form.name],
                   ['Phone', form.phone],
                   ['Email', form.email || '—'],
@@ -784,7 +787,9 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
       >
         <div className={`flex items-center justify-between px-6 py-4 border-b ${divider}`}>
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{service.icon}</span>
+            <QuickServiceIcon value={service.icon} label={service.label}
+              className="flex h-8 w-8 items-center justify-center text-2xl"
+              imageClassName="h-8 w-8 object-contain" />
             <div>
               <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[var(--brand-blue)]">Availability Check</p>
               <h2 className="text-lg font-black uppercase tracking-tight">{service.label}</h2>
@@ -986,7 +991,9 @@ export default function AllQuickServicesPage() {
                   {s.id < 10 ? `0${s.id}` : s.id}
                 </span>
                 <div className="text-3xl mb-3 transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300 origin-left">
-                  {s.icon}
+                  <QuickServiceIcon value={s.icon} label={s.label}
+                    className="flex h-10 w-10 items-center justify-center"
+                    imageClassName="h-10 w-10 object-contain" />
                 </div>
                 <h3 className={`text-base font-black uppercase tracking-tight mb-2 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                   {s.label}

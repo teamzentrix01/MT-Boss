@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import QuickServiceIcon from './QuickServiceIcon';
 
 function useInView(threshold = 0.1) {
   const ref = useRef(null);
@@ -254,7 +255,8 @@ export default function QuickServices() {
                       textDecoration: 'none',
                     }}
                   >
-                    <span className="qs-icon">{service.icon}</span>
+                    <QuickServiceIcon value={service.icon} label={service.label}
+                      className="qs-icon" imageClassName="w-8 h-8 object-contain" />
                     <span className="qs-label">{service.label}</span>
                   </Link>
                 ))

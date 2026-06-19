@@ -1,6 +1,27 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import QuickServiceIcon from './QuickServiceIcon';
+
+async function uploadQuickServiceIcon(file) {
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+  if (!cloudName || !uploadPreset) throw new Error('Cloudinary configuration is missing');
+  if (!file.type.startsWith('image/')) throw new Error('Please select an image file');
+  if (file.size > 2 * 1024 * 1024) throw new Error('Icon must be smaller than 2 MB');
+
+  const body = new FormData();
+  body.append('file', file);
+  body.append('upload_preset', uploadPreset);
+  body.append('folder', 'mtboss/quick-service-icons');
+
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: 'POST', body,
+  });
+  const data = await response.json();
+  if (!response.ok || !data.secure_url) throw new Error(data.error?.message || 'Icon upload failed');
+  return data.secure_url;
+}
 
 export default function QuickServicesManager({ isDarkMode }) {
   const [services, setServices] = useState([]);
@@ -9,6 +30,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [iconUploading, setIconUploading] = useState(false);
 
   // ── Drag & Drop state ──────────────────────────────────────────────────────
   const [dragIndex, setDragIndex] = useState(null);
@@ -112,6 +134,24 @@ export default function QuickServicesManager({ isDarkMode }) {
     } catch { setError('Error saving service'); }
   };
 
+  const handleIconUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    setIconUploading(true);
+    setError('');
+    try {
+      const icon = await uploadQuickServiceIcon(file);
+      setFormData(current => ({ ...current, icon }));
+      setSuccess('Icon uploaded from gallery.');
+    } catch (uploadError) {
+      setError(uploadError.message || 'Icon upload failed');
+    } finally {
+      setIconUploading(false);
+    }
+  };
+
   const handleEdit = (service) => {
     setFormData({
       icon: service.icon, label: service.label,
@@ -199,6 +239,29 @@ export default function QuickServicesManager({ isDarkMode }) {
         }
         .qs-input::placeholder, .qs-textarea::placeholder { color:var(--qs-muted); }
         .qs-input:focus, .qs-textarea:focus { border-color:var(--qs-accent); }
+        .qs-icon-input-row { display:flex; align-items:stretch; gap:0.5rem; }
+        .qs-icon-input-row .qs-input { flex:1; min-width:0; }
+        .qs-upload-btn {
+          display:inline-flex; align-items:center; justify-content:center; min-width:10rem;
+          padding:0.4rem 0.75rem; border:1px solid var(--qs-border); border-radius:6px;
+          background:var(--qs-bg); color:var(--qs-text); font-size:0.75rem; font-weight:700;
+          cursor:pointer; white-space:nowrap;
+        }
+        .qs-upload-btn:hover { border-color:var(--qs-accent); color:var(--qs-accent); }
+        .qs-upload-btn.disabled { opacity:.55; cursor:wait; }
+        .qs-upload-btn input { display:none; }
+        .qs-icon-preview { display:flex; align-items:center; gap:0.625rem; margin-top:0.5rem; color:var(--qs-muted); font-size:0.72rem; }
+        .qs-icon-preview-box {
+          display:inline-flex; align-items:center; justify-content:center; width:3rem; height:3rem;
+          padding:0.35rem; border:1px solid var(--qs-border); border-radius:6px;
+          background:var(--qs-input-bg); font-size:1.5rem; overflow:hidden;
+        }
+        @media (max-width: 640px) {
+          .qs-form-grid { grid-template-columns:1fr; }
+          .qs-form-full { grid-column:auto; }
+          .qs-icon-input-row { flex-direction:column; }
+          .qs-upload-btn { min-height:2.5rem; }
+        }
         .qs-textarea { resize:none; }
         .qs-form-actions { display:flex; gap:0.5rem; margin-top:0.875rem; }
         .qs-btn-primary {
@@ -298,9 +361,23 @@ export default function QuickServicesManager({ isDarkMode }) {
               <div className="qs-form-grid">
                 <div>
                   <label className="qs-label">Icon *</label>
-                  <input className="qs-input" type="text" placeholder="e.g. 🔧"
-                    value={formData.icon}
-                    onChange={e => setFormData({ ...formData, icon: e.target.value })} />
+                  <div className="qs-icon-input-row">
+                    <input className="qs-input" type="text" placeholder="Emoji or uploaded icon URL"
+                      value={formData.icon}
+                      onChange={e => setFormData({ ...formData, icon: e.target.value })} />
+                    <label className={`qs-upload-btn${iconUploading ? ' disabled' : ''}`}>
+                      {iconUploading ? 'Uploading...' : 'Upload from gallery'}
+                      <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+                        disabled={iconUploading} onChange={handleIconUpload} />
+                    </label>
+                  </div>
+                  {formData.icon && (
+                    <div className="qs-icon-preview">
+                      <QuickServiceIcon value={formData.icon} label={formData.label}
+                        className="qs-icon-preview-box" />
+                      <span>Selected icon preview</span>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="qs-label">Service Name *</label>
@@ -328,8 +405,8 @@ export default function QuickServicesManager({ isDarkMode }) {
                 </div>
               </div>
               <div className="qs-form-actions">
-                <button type="submit" className="qs-btn-primary">
-                  {editingId ? 'Update Service' : 'Add Service'}
+                <button type="submit" className="qs-btn-primary" disabled={iconUploading}>
+                  {iconUploading ? 'Uploading icon...' : editingId ? 'Update Service' : 'Add Service'}
                 </button>
                 <button type="button" className="qs-btn-secondary" onClick={resetForm}>Cancel</button>
               </div>
@@ -379,7 +456,8 @@ export default function QuickServicesManager({ isDarkMode }) {
                     <td style={{ padding: '0 0.25rem 0 0.5rem', width: '2rem' }}>
                       <span className="qs-drag-handle" title="Drag to reorder">⠿</span>
                     </td>
-                    <td><span className="qs-icon-cell">{service.icon}</span></td>
+                    <td><QuickServiceIcon value={service.icon} label={service.label}
+                      className="qs-icon-cell" imageClassName="w-8 h-8 object-contain" /></td>
                     <td><span className="qs-name-cell">{service.label}</span></td>
                     <td><span className="qs-muted-cell">{service.description}</span></td>
                     <td><span className="qs-price-cell">₹{service.admin_base_price || service.base_price}</span></td>

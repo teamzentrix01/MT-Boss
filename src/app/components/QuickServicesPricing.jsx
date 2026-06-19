@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import QuickServiceIcon from './QuickServiceIcon';
 
 export default function QuickServicesPricing({ isDarkMode }) {
   const [services, setServices] = useState([]);
@@ -270,7 +271,8 @@ export default function QuickServicesPricing({ isDarkMode }) {
                   <tr key={service.id}>
                     <td>
                       <div className="service-name">
-                        <span className="service-icon">{service.icon}</span>
+                        <QuickServiceIcon value={service.icon} label={service.label}
+                          className="service-icon" imageClassName="w-7 h-7 object-contain" />
                         <span>{service.label}</span>
                       </div>
                     </td>

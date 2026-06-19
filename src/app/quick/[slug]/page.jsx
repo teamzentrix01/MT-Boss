@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import QuickServiceIcon from '../../components/QuickServiceIcon';
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -88,7 +89,9 @@ export default function QuickServiceSlugPage() {
         {/* Hero Section */}
         <section className="relative py-20 px-6" style={{ background: dark ? 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)' : 'linear-gradient(135deg, #fefce8 0%, #fef9c3 50%, #fefce8 100%)' }}>
           <div className="max-w-4xl mx-auto text-center">
-            <span className="text-6xl block mb-6">{service.icon || '🔧'}</span>
+            <QuickServiceIcon value={service.icon} label={service.label}
+              className="flex h-20 items-center justify-center text-6xl mb-6"
+              imageClassName="h-20 w-20 object-contain" />
             <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-3">Quick Service</span>
             <h1 className={`text-4xl sm:text-5xl font-black uppercase tracking-tight mb-4 ${dark ? 'text-white' : 'text-zinc-800'}`}>
               {service.label}
