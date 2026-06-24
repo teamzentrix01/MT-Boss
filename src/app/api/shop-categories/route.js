@@ -11,6 +11,7 @@ async function ensureTable() {
       name        VARCHAR(200) NOT NULL,
       image       TEXT,
       emoji       VARCHAR(20)  DEFAULT '🛒',
+      emoji_image TEXT,
       label       VARCHAR(100) DEFAULT '',
       label_color VARCHAR(50)  DEFAULT 'yellow',
       price_range VARCHAR(100) DEFAULT '',
@@ -25,6 +26,7 @@ async function ensureTable() {
   await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS types         JSONB DEFAULT '[]'`);
   await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS subcategories JSONB DEFAULT '[]'`);
   await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS city_prices   JSONB DEFAULT '{}'`);
+  await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS emoji_image   TEXT`);
 }
 
 // ── GET ──────────────────────────────────────────────────────────────────────
@@ -52,19 +54,19 @@ export async function POST(req) {
     await ensureTable();
     if (!requireRole(req, 'admin')) return unauthorized();
 
-    const { name, image, emoji, label, label_color, price_range, unit, types, subcategories, city_prices } = await req.json();
+    const { name, image, emoji, emoji_image, label, label_color, price_range, unit, types, subcategories, city_prices } = await req.json();
     if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 });
 
     const { rows: [{ max }] } = await pool.query(`SELECT COALESCE(MAX(sort_order),0) AS max FROM shop_categories`);
 
     const result = await pool.query(
       `INSERT INTO shop_categories
-         (name, image, emoji, label, label_color, price_range, unit, sort_order,
+         (name, image, emoji, emoji_image, label, label_color, price_range, unit, sort_order,
           is_active, types, subcategories, city_prices, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,TRUE,$9::jsonb,$10::jsonb,$11::jsonb,NOW(),NOW())
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,TRUE,$10::jsonb,$11::jsonb,$12::jsonb,NOW(),NOW())
        RETURNING *`,
       [
-        name, image || null, emoji || '🛒', label || '', label_color || 'yellow',
+        name, image || null, emoji || '🛒', emoji_image || null, label || '', label_color || 'yellow',
         price_range || '', unit || '', parseInt(max) + 1,
         JSON.stringify(Array.isArray(types) ? types : []),
         JSON.stringify(Array.isArray(subcategories) ? subcategories : []),
@@ -85,20 +87,20 @@ export async function PUT(req) {
     if (!requireRole(req, 'admin')) return unauthorized();
 
     const {
-      id, name, image, emoji, label, label_color,
+      id, name, image, emoji, emoji_image, label, label_color,
       price_range, unit, is_active, types, subcategories, city_prices,
     } = await req.json();
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
 
     const result = await pool.query(
       `UPDATE shop_categories
-       SET name=$1, image=$2, emoji=$3, label=$4, label_color=$5,
-           price_range=$6, unit=$7, is_active=$8,
-           types=$9::jsonb, subcategories=$10::jsonb,
-           city_prices=$11::jsonb, updated_at=NOW()
-       WHERE id=$12 RETURNING *`,
+       SET name=$1, image=$2, emoji=$3, emoji_image=$4, label=$5, label_color=$6,
+           price_range=$7, unit=$8, is_active=$9,
+           types=$10::jsonb, subcategories=$11::jsonb,
+           city_prices=$12::jsonb, updated_at=NOW()
+       WHERE id=$13 RETURNING *`,
       [
-        name, image || null, emoji || '🛒', label || '', label_color || 'yellow',
+        name, image || null, emoji || '🛒', emoji_image || null, label || '', label_color || 'yellow',
         price_range || '', unit || '', is_active ?? true,
         JSON.stringify(Array.isArray(types) ? types : []),
         JSON.stringify(Array.isArray(subcategories) ? subcategories : []),

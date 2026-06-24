@@ -2,22 +2,29 @@ import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 
+const CREATE_TABLE_SQL = `
+  CREATE TABLE IF NOT EXISTS hero_banners (
+    id                   SERIAL PRIMARY KEY,
+    label                VARCHAR(255) DEFAULT 'Engineering Excellence',
+    title                VARCHAR(500) NOT NULL,
+    subtitle             VARCHAR(500),
+    description          TEXT,
+    image_url            TEXT NOT NULL,
+    cloudinary_public_id VARCHAR(255),
+    sort_order           INTEGER DEFAULT 0,
+    is_active            BOOLEAN DEFAULT true,
+    created_at           TIMESTAMP DEFAULT NOW(),
+    updated_at           TIMESTAMP DEFAULT NOW()
+  )
+`;
+
 async function ensureTable() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS hero_banners (
-      id                   SERIAL PRIMARY KEY,
-      label                VARCHAR(255) DEFAULT 'Engineering Excellence',
-      title                VARCHAR(500) NOT NULL,
-      subtitle             VARCHAR(500),
-      description          TEXT,
-      image_url            TEXT NOT NULL,
-      cloudinary_public_id VARCHAR(255),
-      sort_order           INTEGER DEFAULT 0,
-      is_active            BOOLEAN DEFAULT true,
-      created_at           TIMESTAMP DEFAULT NOW(),
-      updated_at           TIMESTAMP DEFAULT NOW()
-    )
-  `);
+  try {
+    await pool.query(CREATE_TABLE_SQL);
+  } catch (error) {
+    console.error('ensureTable error:', error);
+    throw new Error('Failed to ensure table exists');
+  }
 }
 
 // Public — used by the home page Hero component
@@ -29,7 +36,12 @@ export async function GET() {
     );
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
-    console.error('GET hero-banners error:', error);
+    console.error('GET hero-banners error:', error.message);
+    
+    if (error.message?.includes('connect') || error.code === 'ECONNREFUSED') {
+      return NextResponse.json({ success: false, error: 'Database connection unavailable' }, { status: 503 });
+    }
+    
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
@@ -59,7 +71,12 @@ export async function POST(req) {
     );
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
-    console.error('POST hero-banners error:', error);
+    console.error('POST hero-banners error:', error.message);
+    
+    if (error.message?.includes('connect') || error.code === 'ECONNREFUSED') {
+      return NextResponse.json({ success: false, error: 'Database connection unavailable' }, { status: 503 });
+    }
+    
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
@@ -93,7 +110,12 @@ export async function PATCH(req) {
       return NextResponse.json({ success: false, error: 'Banner not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
-    console.error('PATCH hero-banners error:', error);
+    console.error('PATCH hero-banners error:', error.message);
+    
+    if (error.message?.includes('connect') || error.code === 'ECONNREFUSED') {
+      return NextResponse.json({ success: false, error: 'Database connection unavailable' }, { status: 503 });
+    }
+    
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }

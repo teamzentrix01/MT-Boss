@@ -20,6 +20,9 @@ const poolConfig = process.env.DATABASE_URL
       ssl: {
         rejectUnauthorized: false,
       },
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
     }
   : {
       host: process.env.DB_HOST,
@@ -27,6 +30,9 @@ const poolConfig = process.env.DATABASE_URL
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
     };
 
 const pool = new Pool(poolConfig);
@@ -38,5 +44,18 @@ pool.on('error', (err) => {
 pool.on('connect', () => {
   console.log('Connected to PostgreSQL database');
 });
+
+// Health check function
+export async function checkPoolHealth() {
+  try {
+    const client = await pool.connect();
+    await client.query('SELECT 1');
+    client.release();
+    return true;
+  } catch (err) {
+    console.error('Pool health check failed:', err.message);
+    return false;
+  }
+}
 
 export default pool;

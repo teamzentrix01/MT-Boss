@@ -93,6 +93,57 @@ function ImageUpload({ value, onChange, t }) {
   );
 }
 
+/* ── Emoji/Icon upload field ────────────────────────────────────────────── */
+function EmojiUpload({ emojiText, emojiImage, onTextChange, onImageChange, t }) {
+  const [uploading, setUploading] = useState(false);
+  const [err, setErr] = useState('');
+
+  async function handleFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true); setErr('');
+    try { onImageChange(await uploadToCloudinary(file)); }
+    catch (e) { setErr(e.message); }
+    finally { setUploading(false); }
+  }
+
+  return (
+    <div>
+      <label style={{ fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>
+        Emoji (Fallback Icon)
+      </label>
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
+        <div style={{ flex: 1, display: 'flex', gap: '6px' }}>
+          <input 
+            className="sc-inp" 
+            style={{ flex: 1, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '9px 12px', background: t.inputBg, color: t.text, fontSize: '13px', outline: 'none', fontFamily: 'inherit' }}
+            value={emojiText}
+            onChange={e => onTextChange(e.target.value)} 
+            placeholder="🧱" 
+            maxLength={4} 
+          />
+          <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 14px', border: `1px solid ${t.border}`, borderRadius: '4px', background: t.inputBg, fontSize: '11px', fontWeight: 600, color: t.sub, whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
+            <span style={{ fontSize: '16px' }}>{uploading ? '⏳' : '🖼️'}</span>
+            <span>{uploading ? 'Uploading…' : 'Upload Icon'}</span>
+            <input type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} disabled={uploading} />
+          </label>
+        </div>
+        {emojiImage && (
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            <img src={emojiImage} alt="emoji" style={{ width: '40px', height: '40px', objectFit: 'cover', border: `1px solid ${t.border}`, borderRadius: '4px' }} />
+            <button type="button" onClick={() => onImageChange('')}
+              style={{ position: 'absolute', top: '-8px', right: '-8px', width: '18px', height: '18px', borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+          </div>
+        )}
+      </div>
+      {err && <p style={{ color: '#ef4444', fontSize: '11px', margin: '4px 0 0' }}>{err}</p>}
+      <p style={{ fontSize: '10px', color: t.muted, margin: '4px 0 0', fontStyle: 'italic' }}>
+        💡 Upload a custom icon (PNG/SVG) or type an emoji. The uploaded icon takes priority if both are provided.
+      </p>
+    </div>
+  );
+}
+
 /* ── Dynamic tag-list editor (for types / subcategories) ─────────────────── */
 function TagListEditor({ label, helpText, items, onChange, placeholder, t }) {
   const [inputVal, setInputVal] = useState('');
@@ -200,6 +251,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
   const [editCat, setEditCat]       = useState(null);
   const [form, setForm]             = useState(EMPTY);
   const [image, setImage]           = useState('');
+  const [emojiImage, setEmojiImage] = useState('');
   const [types, setTypes]           = useState([]);           // array of strings
   const [subcategories, setSubs]    = useState([]);           // array of strings
   const [cityPrices, setCityPrices] = useState({});          // { "Delhi": { price_range, unit } }
@@ -238,6 +290,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
     setEditCat(null);
     setForm(EMPTY);
     setImage('');
+    setEmojiImage('');
     setTypes([]);
     setSubs([]);
     setCityPrices({});
@@ -254,6 +307,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
       price_range: cat.price_range || '', unit: cat.unit || '',
     });
     setImage(cat.image || '');
+    setEmojiImage(cat.emoji_image || '');
     setTypes(Array.isArray(cat.types) ? cat.types : []);
     setSubs(Array.isArray(cat.subcategories) ? cat.subcategories : []);
     // city_prices may arrive as JSONB object, string, or null
@@ -270,7 +324,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
     if (!form.name.trim()) { flash('Name is required.', 'error'); return; }
     setSaving(true);
     try {
-      const payload = { ...form, image: image || null, types, subcategories, city_prices: cityPrices };
+      const payload = { ...form, image: image || null, emoji_image: emojiImage || null, types, subcategories, city_prices: cityPrices };
       let res;
       if (editCat) {
         res = await fetch('/api/shop-categories', {
@@ -303,6 +357,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
       body: JSON.stringify({
         ...cat, id: cat.id, is_active: !cat.is_active,
         types: cat.types || [], subcategories: cat.subcategories || [],
+        emoji_image: cat.emoji_image || null,
       }),
     });
     const d = await res.json();
@@ -413,13 +468,17 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                 </div>
 
                 {/* Emoji */}
-                <div>
-                  <label style={lbl}>Emoji (fallback icon)</label>
-                  <input className="sc-inp" style={inp} value={form.emoji}
-                    onChange={e => setForm(f => ({ ...f, emoji: e.target.value }))} placeholder="🧱" maxLength={4} />
+                <div style={{ gridColumn: 'span 2' }}>
+                  <EmojiUpload 
+                    emojiText={form.emoji}
+                    emojiImage={emojiImage}
+                    onTextChange={e => setForm(f => ({ ...f, emoji: e }))}
+                    onImageChange={setEmojiImage}
+                    t={t}
+                  />
                 </div>
 
-                {/* Badge Label */}
+                {/* Badge Label & Colour */}
                 <div>
                   <label style={lbl}>Badge Label</label>
                   <input className="sc-inp" style={inp} value={form.label}
@@ -464,9 +523,13 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                 </div>
 
                 {/* Preview */}
-                {(form.label || form.emoji) && (
+                {(form.label || form.emoji || emojiImage) && (
                   <div style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px' }}>
-                    <span style={{ fontSize: '32px' }}>{form.emoji}</span>
+                    {emojiImage ? (
+                      <img src={emojiImage} alt="emoji" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', border: `1px solid ${t.border}` }} />
+                    ) : (
+                      <span style={{ fontSize: '32px' }}>{form.emoji}</span>
+                    )}
                     <div>
                       <p style={{ margin: '0 0 2px', fontSize: '10px', fontWeight: 800, color: t.muted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Preview</p>
                       <p style={{ margin: 0, fontSize: '13px', fontWeight: 800, color: t.text }}>{form.name || '—'}</p>
@@ -715,7 +778,12 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                       <td style={{ padding: '8px 14px', width: '60px' }}>
                         {cat.image
                           ? <img src={cat.image} alt={cat.name} style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '4px', border: `1px solid ${t.border}` }} />
-                          : <div style={{ width: '48px', height: '48px', background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>{cat.emoji}</div>
+                          : <div style={{ width: '48px', height: '48px', background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>
+                              {cat.emoji_image 
+                                ? <img src={cat.emoji_image} alt="emoji" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '2px' }} />
+                                : cat.emoji
+                              }
+                            </div>
                         }
                       </td>
 
