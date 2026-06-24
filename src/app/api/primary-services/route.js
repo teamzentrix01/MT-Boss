@@ -1,6 +1,7 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-utils';
 
 // GET — public, no auth. Supports ?slug=xyz for single record.
 export async function GET(req) {
@@ -30,8 +31,8 @@ export async function GET(req) {
     }
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
-    console.error('Error fetching primary services:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error('GET primary-services error:', error.message);
+    return handleApiError(error);
   }
 }
 

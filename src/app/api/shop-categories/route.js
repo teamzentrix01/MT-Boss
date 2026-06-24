@@ -1,32 +1,38 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-utils';
 
 // No `ready` flag — all DDL statements are idempotent (IF NOT EXISTS).
 // This makes the route resilient to dev hot-reloads and out-of-band DB resets.
 async function ensureTable() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS shop_categories (
-      id          SERIAL PRIMARY KEY,
-      name        VARCHAR(200) NOT NULL,
-      image       TEXT,
-      emoji       VARCHAR(20)  DEFAULT '🛒',
-      emoji_image TEXT,
-      label       VARCHAR(100) DEFAULT '',
-      label_color VARCHAR(50)  DEFAULT 'yellow',
-      price_range VARCHAR(100) DEFAULT '',
-      unit        VARCHAR(100) DEFAULT '',
-      sort_order  INTEGER      DEFAULT 0,
-      is_active   BOOLEAN      DEFAULT TRUE,
-      created_at  TIMESTAMP    DEFAULT NOW(),
-      updated_at  TIMESTAMP    DEFAULT NOW()
-    )
-  `);
-  // Column migrations — idempotent
-  await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS types         JSONB DEFAULT '[]'`);
-  await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS subcategories JSONB DEFAULT '[]'`);
-  await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS city_prices   JSONB DEFAULT '{}'`);
-  await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS emoji_image   TEXT`);
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS shop_categories (
+        id          SERIAL PRIMARY KEY,
+        name        VARCHAR(200) NOT NULL,
+        image       TEXT,
+        emoji       VARCHAR(20)  DEFAULT '🛒',
+        emoji_image TEXT,
+        label       VARCHAR(100) DEFAULT '',
+        label_color VARCHAR(50)  DEFAULT 'yellow',
+        price_range VARCHAR(100) DEFAULT '',
+        unit        VARCHAR(100) DEFAULT '',
+        sort_order  INTEGER      DEFAULT 0,
+        is_active   BOOLEAN      DEFAULT TRUE,
+        created_at  TIMESTAMP    DEFAULT NOW(),
+        updated_at  TIMESTAMP    DEFAULT NOW()
+      )
+    `);
+    // Column migrations — idempotent
+    await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS types         JSONB DEFAULT '[]'`);
+    await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS subcategories JSONB DEFAULT '[]'`);
+    await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS city_prices   JSONB DEFAULT '{}'`);
+    await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS emoji_image   TEXT`);
+  } catch (error) {
+    console.error('ensureTable error:', error.message);
+    throw error;
+  }
 }
 
 // ── GET ──────────────────────────────────────────────────────────────────────
@@ -42,9 +48,9 @@ export async function GET(req) {
       : await pool.query(`SELECT * FROM shop_categories WHERE is_active = TRUE ORDER BY sort_order ASC, id ASC`);
 
     return NextResponse.json({ success: true, data: result.rows });
-  } catch (e) {
-    console.error('GET shop-categories error:', e);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  } catch (error) {
+    console.error('GET shop-categories error:', error.message);
+    return handleApiError(error);
   }
 }
 

@@ -2,6 +2,7 @@ import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function POST(req) {
   try {
@@ -40,11 +41,8 @@ export async function POST(req) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Contact form error:', error);
-    return NextResponse.json(
-      { error: 'Server error. Please try again.' },
-      { status: 500 }
-    );
+    console.error('Contact form error:', error.message);
+    return handleApiError(error);
   }
 }
 

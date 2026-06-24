@@ -1,27 +1,33 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-utils';
 
 async function ensureQuickServiceSeoColumns() {
-  await pool.query(`
-    ALTER TABLE quick_services
-      ALTER COLUMN icon TYPE TEXT,
-      ALTER COLUMN label TYPE TEXT,
-      ALTER COLUMN description TYPE TEXT,
-      ALTER COLUMN duration TYPE TEXT,
-      ADD COLUMN IF NOT EXISTS slug TEXT,
-      ADD COLUMN IF NOT EXISTS video_url TEXT,
-      ADD COLUMN IF NOT EXISTS seo_title TEXT,
-      ADD COLUMN IF NOT EXISTS seo_description TEXT,
-      ADD COLUMN IF NOT EXISTS coverage_details TEXT,
-      ADD COLUMN IF NOT EXISTS how_to_use TEXT
-  `);
+  try {
+    await pool.query(`
+      ALTER TABLE quick_services
+        ALTER COLUMN icon TYPE TEXT,
+        ALTER COLUMN label TYPE TEXT,
+        ALTER COLUMN description TYPE TEXT,
+        ALTER COLUMN duration TYPE TEXT,
+        ADD COLUMN IF NOT EXISTS slug TEXT,
+        ADD COLUMN IF NOT EXISTS video_url TEXT,
+        ADD COLUMN IF NOT EXISTS seo_title TEXT,
+        ADD COLUMN IF NOT EXISTS seo_description TEXT,
+        ADD COLUMN IF NOT EXISTS coverage_details TEXT,
+        ADD COLUMN IF NOT EXISTS how_to_use TEXT
+    `);
 
-  await pool.query(`
-    UPDATE quick_services
-       SET slug = LOWER(REGEXP_REPLACE(TRIM(label), '[^a-zA-Z0-9]+', '-', 'g'))
-     WHERE slug IS NULL OR TRIM(slug) = ''
-  `);
+    await pool.query(`
+      UPDATE quick_services
+         SET slug = LOWER(REGEXP_REPLACE(TRIM(label), '[^a-zA-Z0-9]+', '-', 'g'))
+       WHERE slug IS NULL OR TRIM(slug) = ''
+    `);
+  } catch (error) {
+    console.error('ensureQuickServiceSeoColumns error:', error.message);
+    // Don't throw - some columns may already exist
+  }
 }
 
 // GET all quick services — public, no auth required
@@ -53,8 +59,8 @@ export async function GET(req) {
     }
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
-    console.error('Error fetching quick services:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error('GET quick-services error:', error.message);
+    return handleApiError(error);
   }
 }
 

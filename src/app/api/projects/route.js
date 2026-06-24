@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function GET(req) {
   try {
@@ -16,8 +17,8 @@ export async function GET(req) {
     const result = await pool.query(query);
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
-    console.error('Projects fetch error:', error);
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+    console.error('GET projects error:', error.message);
+    return handleApiError(error);
   }
 }
 

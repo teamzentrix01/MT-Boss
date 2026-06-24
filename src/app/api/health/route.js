@@ -11,7 +11,9 @@ export async function GET() {
           success: false, 
           status: 'unhealthy',
           message: 'Database pool is not responding',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          database_url_configured: !!process.env.DATABASE_URL,
+          node_env: process.env.NODE_ENV,
         },
         { status: 503 }
       );
@@ -21,7 +23,10 @@ export async function GET() {
       success: true,
       status: 'healthy',
       database: 'connected',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      database_url_configured: !!process.env.DATABASE_URL,
+      node_env: process.env.NODE_ENV,
+      cloudinary_configured: !!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
     });
   } catch (error) {
     console.error('Health check error:', error.message);
@@ -30,7 +35,9 @@ export async function GET() {
         success: false,
         status: 'error',
         error: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        database_url_configured: !!process.env.DATABASE_URL,
+        node_env: process.env.NODE_ENV,
       },
       { status: 503 }
     );
