@@ -9,7 +9,6 @@ import FranchiseCTA from './components/FranchiseCTA';
 import ShopCTA from './components/ShopCTA';
 import CalculatorCTA from './components/CalculatorCTA';
 // import TestimonialsSection from './components/Testimonal';
-import Footer from './components/Footer';
 import FeaturedProjects from './components/FeaturedProjects';
 import ExperienceSection from './components/ExperienceSection';
 
@@ -20,15 +19,14 @@ const Page = () => {
       {/* <AboutSection /> */}
       <QuickServices />
       <Services />
-      <PropertyCTA />
-      <AgentCTA />
-      <FranchiseCTA />
-      <ShopCTA />
       <CalculatorCTA />
+      <ShopCTA />
+      <PropertyCTA />
+      <FranchiseCTA />
+      <AgentCTA />
       <FeaturedProjects />
       <ExperienceSection />
       {/* <TestimonialsSection /> */}
-
     </div>
   );
 }

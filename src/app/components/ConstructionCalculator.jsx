@@ -493,6 +493,12 @@ export default function ConstructionCalculator() {
   const [settings, setSettings] = useState(() => mergeCalculatorSettings());
   const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(false);
+
+  // Authentication State
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
+
   const [project, setProject] = useState({
     city: 'Moradabad',
     area: 1000,
@@ -530,6 +536,30 @@ export default function ConstructionCalculator() {
       }
     };
     fetchCalculatorData();
+  }, []);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      if (token && userStr) {
+        try {
+          const parsed = JSON.parse(userStr);
+          setIsLoggedIn(true);
+          setCurrentUser(parsed);
+          setQuoteForm(q => ({
+            ...q,
+            name: parsed.name || '',
+            email: parsed.email || '',
+            phone: parsed.phone || '',
+          }));
+        } catch (e) {
+          console.error('Error parsing user data:', e);
+        }
+      }
+      setCheckingAuth(false);
+    };
+    checkAuth();
   }, []);
 
   useEffect(() => {
@@ -633,6 +663,51 @@ export default function ConstructionCalculator() {
     return acc;
   }, {});
 
+  // Automatic lead sync on calculation change (debounced)
+  useEffect(() => {
+    if (!isLoggedIn || !currentUser) return;
+    
+    const name = currentUser.name || quoteForm.name || 'User';
+    const email = currentUser.email || quoteForm.email;
+    const phone = currentUser.phone || quoteForm.phone;
+    
+    if (!name || !phone) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        await fetch('/api/calculator-leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            email,
+            phone,
+            city: project.city,
+            area: project.area,
+            floors: project.floors,
+            quality: project.quality,
+            grandTotal: estimate.grandTotal
+          })
+        });
+      } catch (err) {
+        console.error('Error logging calculator lead:', err);
+      }
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [
+    isLoggedIn, 
+    currentUser, 
+    project.city, 
+    project.area, 
+    project.floors, 
+    project.quality, 
+    estimate.grandTotal,
+    quoteForm.name,
+    quoteForm.email,
+    quoteForm.phone
+  ]);
+
   const updateProject = (key, value) => {
     setProject((current) => ({ ...current, [key]: value }));
   };
@@ -665,6 +740,10 @@ export default function ConstructionCalculator() {
     setQuoteMsg('');
     setDevOtp('');
     try {
+      const phoneRegex = /^[6-9]\d{9}$/;
+      if (!quoteForm.phone || !phoneRegex.test(quoteForm.phone)) {
+        throw new Error('Enter a valid 10-digit Indian mobile number (starts with 6-9).');
+      }
       const snapshot = makeEstimateSnapshot({ project, estimate, phaseTotals, quoteForm });
       if (!siteImage) throw new Error('Please upload a site image.');
       const payload = new FormData();
@@ -724,6 +803,86 @@ export default function ConstructionCalculator() {
     reportWindow.document.write(buildReportHtml(snapshot));
     reportWindow.document.close();
   };
+
+  if (checkingAuth) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#0d0f0f', color: '#fff', fontFamily: 'Arial, sans-serif' }}>
+        Loading…
+      </div>
+    );
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <main className="boq-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '20px', boxSizing: 'border-box', background: '#0d0f0f' }}>
+        <div style={{
+          background: '#151817',
+          border: '1px solid #2f3631',
+          padding: '40px',
+          borderRadius: '12px',
+          maxWidth: '480px',
+          width: '100%',
+          textAlign: 'center',
+          boxShadow: '0 22px 70px rgba(0,0,0,0.5)',
+        }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            background: 'rgba(215, 169, 35, 0.1)',
+            border: '1px solid #d7a923',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 24px',
+            fontSize: '28px',
+            color: '#d7a923'
+          }}>
+            🔒
+          </div>
+          <h2 style={{
+            fontSize: '1.5rem',
+            fontWeight: '900',
+            textTransform: 'uppercase',
+            letterSpacing: '-0.02em',
+            marginBottom: '12px',
+            color: '#f3f5f2'
+          }}>
+            Login Required
+          </h2>
+          <p style={{
+            color: '#a7aea8',
+            fontSize: '0.875rem',
+            lineHeight: '1.6',
+            marginBottom: '32px'
+          }}>
+            Please log in to unlock the MT-Boss Budget Calculator. Get live cost updates, customized material specifications, and download professional engineering reports.
+          </p>
+          <a
+            href="/login?redirect=/calculator"
+            style={{
+              display: 'block',
+              background: '#d7a923',
+              color: '#000',
+              textDecoration: 'none',
+              padding: '14px',
+              borderRadius: '6px',
+              fontSize: '0.8125rem',
+              fontWeight: '900',
+              textTransform: 'uppercase',
+              letterSpacing: '0.15em',
+              transition: 'opacity 0.2s',
+              cursor: 'pointer'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.opacity = '0.9'}
+            onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+          >
+            Log In to Continue
+          </a>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <>
@@ -804,18 +963,38 @@ export default function ConstructionCalculator() {
         .boq-chip { display: inline-flex; align-items: center; gap: 5px; height: 28px; border: 1px solid var(--boq-line); border-radius: 999px; padding: 0 10px; color: var(--boq-muted); background: var(--boq-soft); font-size: .72rem; font-weight: 900; white-space: nowrap; }
         .boq-quality-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: 18px; }
         .boq-quality {
-          min-height: 112px;
-          border: 1px solid var(--boq-line);
-          border-radius: 8px;
-          background: var(--boq-soft);
-          color: var(--boq-text);
-          padding: 14px;
-          cursor: pointer;
-          text-align: left;
+          min-height: 112px !important;
+          border: 1px solid var(--boq-line) !important;
+          border-radius: 8px !important;
+          background: var(--boq-soft) !important;
+          background-image: none !important;
+          color: var(--boq-text) !important;
+          padding: 14px !important;
+          cursor: pointer !important;
+          text-align: left !important;
+          box-shadow: none !important;
+          transform: none !important;
         }
-        .boq-quality.active { border-color: var(--boq-accent); box-shadow: 0 0 0 2px rgba(215,169,35,.28) inset; background: color-mix(in srgb, var(--boq-accent) 12%, var(--boq-surface)); }
+        .boq-quality:hover {
+          background: var(--boq-soft) !important;
+          border-color: var(--boq-line) !important;
+          color: var(--boq-text) !important;
+          transform: none !important;
+          box-shadow: none !important;
+        }
+        .boq-quality.active {
+          border-color: var(--boq-accent) !important;
+          background: var(--boq-accent) !important;
+          color: #111 !important;
+        }
+        .boq-quality.active:hover {
+          background: var(--boq-accent) !important;
+          color: #111 !important;
+        }
         .boq-quality strong { display: block; font-size: .95rem; margin-bottom: 6px; }
         .boq-quality span { display: block; color: var(--boq-muted); font-size: .74rem; line-height: 1.42; }
+        .boq-quality.active span,
+        .boq-quality:hover span { color: #333333 !important; }
         .boq-items { display: grid; gap: 12px; padding: 18px; }
         .boq-item {
           display: grid;
@@ -1241,12 +1420,34 @@ export default function ConstructionCalculator() {
                   </div>
                   <div className="boq-quote-field">
                     <label>Mobile Number *</label>
-                    <input value={quoteForm.phone} onChange={(e) => updateQuoteForm('phone', e.target.value)} required placeholder="+91 XXXXX XXXXX" />
+                    <input
+                      type="tel"
+                      value={quoteForm.phone}
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/\D/g, '');
+                        if (raw === '' || /^[6-9]/.test(raw)) {
+                          updateQuoteForm('phone', raw.slice(0, 10));
+                        }
+                      }}
+                      required
+                      placeholder="10-digit mobile number"
+                    />
                   </div>
                 </div>
                 <div className="boq-quote-field">
-                  <label>Email Address *</label>
-                  <input type="email" value={quoteForm.email} onChange={(e) => updateQuoteForm('email', e.target.value)} required placeholder="you@example.com" />
+                  <label>Email Address * (Registered)</label>
+                  <input
+                    type="email"
+                    value={quoteForm.email}
+                    readOnly
+                    required
+                    style={{
+                      opacity: 0.7,
+                      cursor: 'not-allowed',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      pointerEvents: 'none'
+                    }}
+                  />
                 </div>
                 <div className="boq-quote-field">
                   <label>Site Address *</label>

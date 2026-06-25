@@ -120,12 +120,6 @@ export default function VendorSignupPage() {
         if (!formData.aadhar_number || formData.aadhar_number.replace(/\s/g, '').length !== 12) {
           setError('Enter a valid 12-digit Aadhaar number'); return false;
         }
-        if (!formData.profile_photo) {
-          setError('Please upload a profile photo'); return false;
-        }
-        if (!formData.aadhar_image) {
-          setError('Please upload your Aadhaar card image'); return false;
-        }
         return true;
 
       case 3:
@@ -686,7 +680,7 @@ const handleSubmit = async (e) => {
 
                   <div className="vs-row">
                     <div className="vs-field">
-                      <label className="vs-label">Profile Photo *</label>
+                      <label className="vs-label">Profile Photo (Optional)</label>
                       <div className={`vs-upload-area ${profilePreview ? 'has-file' : ''}`}>
                         <input
                           type="file"
@@ -708,7 +702,7 @@ const handleSubmit = async (e) => {
                     </div>
 
                     <div className="vs-field">
-                      <label className="vs-label">Aadhaar Card Image *</label>
+                      <label className="vs-label">Aadhaar Card Image (Optional)</label>
                       <div className={`vs-upload-area ${aadharPreview ? 'has-file' : ''}`}>
                         <input
                           type="file"

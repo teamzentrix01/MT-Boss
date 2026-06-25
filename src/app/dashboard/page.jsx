@@ -15,7 +15,6 @@ import FranchisesManager from './franchises/page';
 import AgentsManager from './agents/page';
 import BookingsManager from '../components/BookingsManager';
 import FreeTimeSlotsManager from '../components/FreeTimeSlotsManager';
-import QuickServicesPricing from '../components/QuickServicesPricing';
 import CalculatorManager from '../components/CalculatorManager';
 import RevenueManager from '../components/RevenueManager';
 import HeroBannersManager from '../components/HeroBannersManager';
@@ -303,7 +302,6 @@ function AdminDashboard() {
     { id: 'quick-services',             label: 'Quick Services',            icon: '⚡' },
     { id: 'revenue',                    label: 'Revenue & Earnings',        icon: '💸' },
     { id: 'bookings',                   label: 'Service Bookings',          icon: '📝' },
-    { id: 'quick-services-pricing',     label: 'Service Pricing',           icon: '💰' },
     { id: 'shop-categories',            label: 'Shop Categories',           icon: '🛒' },
     { id: 'suppliers',                  label: 'Suppliers',                 icon: '📦' },
     { id: 'vendors',                    label: 'Vendors',                   icon: '🏪' },
@@ -1178,7 +1176,6 @@ function AdminDashboard() {
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'revenue' && <RevenueManager isDarkMode={isDarkMode} />}
           {activeTab === 'free-slots' && <FreeTimeSlotsManager isDarkMode={isDarkMode} />}
-          {activeTab === 'quick-services-pricing' && <QuickServicesPricing isDarkMode={isDarkMode} />}
           {activeTab === 'calculator' && <CalculatorManager isDarkMode={isDarkMode} />}
 
           {activeTab === 'calculator-quotes' && (

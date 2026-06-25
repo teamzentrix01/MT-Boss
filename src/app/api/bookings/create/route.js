@@ -114,7 +114,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Service not found' }, { status: 404 });
     }
 
-    const basePrice = serviceResult.rows[0].admin_base_price || serviceResult.rows[0].base_price || 199;
+    const basePrice = 150;
     const visitFee = 0;
     const taxAmount = Math.round((basePrice * 18) / 100);
     const totalAmount = basePrice + visitFee + taxAmount;

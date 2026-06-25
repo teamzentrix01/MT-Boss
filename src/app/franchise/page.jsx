@@ -127,6 +127,7 @@ export default function FranchisePage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [formStep, setFormStep] = useState(1);
 
  const [form, setForm] = useState({
   // Personal
@@ -163,15 +164,73 @@ export default function FranchisePage() {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  const phoneRegex = /^[6-9]\d{9}$/;
-  if (!form.phone) { setError('Phone number is required.'); return; }
-  if (!phoneRegex.test(form.phone)) { setError('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
-  if (!form.password || form.password.length < 8) { setError('Create a password with at least 8 characters.'); return; }
-  if (form.password !== form.confirmPassword) { setError('Password and confirm password do not match.'); return; }
-  setLoading(true);
+  const validateStep = (step) => {
+    setError("");
+    if (step === 1) {
+      if (!form.name || !form.name.trim()) { setError('Full Name is required.'); return false; }
+      if (!form.fatherName || !form.fatherName.trim()) { setError('Father / Husband Name is required.'); return false; }
+      if (!form.dob) { setError('Date of Birth is required.'); return false; }
+      const dobYear = new Date(form.dob).getFullYear();
+      const currentYear = new Date().getFullYear();
+      if (dobYear < 1900 || dobYear >= currentYear || isNaN(dobYear)) {
+        setError('Please enter a valid date of birth (year must be before the current year).');
+        return false;
+      }
+      if (!form.gender) { setError('Gender is required.'); return false; }
+      const phoneRegex = /^[6-9]\d{9}$/;
+      if (!form.phone) { setError('Mobile Number is required.'); return false; }
+      if (!phoneRegex.test(form.phone)) { setError('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return false; }
+      if (!form.email || !form.email.trim()) { setError('Email Address is required.'); return false; }
+      if (!form.password || form.password.length < 8) { setError('Create a password with at least 8 characters.'); return false; }
+      if (form.password !== form.confirmPassword) { setError('Password and confirm password do not match.'); return false; }
+      if (!form.occupation || !form.occupation.trim()) { setError('Current Occupation is required.'); return false; }
+      if (!form.idType) { setError('ID Type is required.'); return false; }
+      if (!form.idNumber || !form.idNumber.trim()) { setError('ID Number is required.'); return false; }
+      if (!form.pan || !form.pan.trim()) { setError('PAN Number is required.'); return false; }
+    } else if (step === 2) {
+      if (!form.address || !form.address.trim()) { setError('Permanent Address is required.'); return false; }
+      if (!form.district || !form.district.trim()) { setError('District is required.'); return false; }
+      if (!form.state) { setError('State is required.'); return false; }
+      if (!form.pinCode || !/^\d{6}$/.test(form.pinCode)) { setError('Valid 6-digit PIN Code is required.'); return false; }
+      if (!form.city || !form.city.trim()) { setError('City is required.'); return false; }
+    } else if (step === 3) {
+      if (!form.bankName || !form.bankName.trim()) { setError('Bank Name is required.'); return false; }
+      if (!form.branchName || !form.branchName.trim()) { setError('Branch Name is required.'); return false; }
+      if (!form.accountNumber || !form.accountNumber.trim()) { setError('Account Number is required.'); return false; }
+      if (!form.ifscCode || !form.ifscCode.trim()) { setError('IFSC Code is required.'); return false; }
+    } else if (step === 4) {
+      if (!form.model) { setError('Franchise Model is required.'); return false; }
+      if (!form.investment) { setError('Investment Capacity is required.'); return false; }
+      if (!form.territory || !form.territory.trim()) { setError('Preferred Territory is required.'); return false; }
+      if (form.startDate) {
+        const year = new Date(form.startDate).getFullYear();
+        const currentYear = new Date().getFullYear();
+        if (year < currentYear || year > 9999 || isNaN(year)) {
+          setError('Expected Start Date year must be current year or later.');
+          return false;
+        }
+      }
+      if (!form.officeArea || !form.officeArea.trim()) { setError('Proposed Office Area is required.'); return false; }
+      if (!form.officeDistrict || !form.officeDistrict.trim()) { setError('Proposed Office District is required.'); return false; }
+      if (!form.message || !form.message.trim()) { setError('Why do you want to partner is required.'); return false; }
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    // Validate all steps
+    for (let s = 1; s <= 4; s++) {
+      if (!validateStep(s)) {
+        setFormStep(s);
+        document.getElementById("franchise-form")?.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+    }
+
+    setLoading(true);
 
   try {
     // Save to DB first
@@ -253,7 +312,7 @@ const handleSubmit = async (e) => {
               Go Home
             </Link>
             <button
-              onClick={() => { setSubmitted(false); setForm({
+              onClick={() => { setSubmitted(false); setFormStep(1); setForm({
                 name: "", fatherName: "", dob: "", gender: "", maritalStatus: "",
                 phone: "", email: "", password: "", confirmPassword: "", occupation: "", qualification: "", annualIncome: "",
                 idType: "", idNumber: "", pan: "", address: "", district: "", state: "", pinCode: "", city: "",
@@ -595,466 +654,575 @@ const handleSubmit = async (e) => {
 
       <form onSubmit={handleSubmit} className="p-8 space-y-10">
 
-        {/* ── SECTION 1: PERSONAL DETAILS ── */}
-        <div>
-          <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
-              <span className="text-black text-[10px] font-black">01</span>
-            </div>
-            <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
-              Personal Details
-            </h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Full Name *</label>
-              <input type="text" name="name" required placeholder="As per government ID" value={form.name} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Father / Husband Name *</label>
-              <input type="text" name="fatherName" required placeholder="Father's or husband's name" value={form.fatherName || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Date of Birth *</label>
-              <input type="date" name="dob" required value={form.dob || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Gender *</label>
-              <select name="gender" required value={form.gender || ""} onChange={handleChange} className={inputClass}>
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Marital Status</label>
-              <select name="maritalStatus" value={form.maritalStatus || ""} onChange={handleChange} className={inputClass}>
-                <option value="">Select</option>
-                <option value="Single">Single</option>
-                <option value="Married">Married</option>
-                <option value="Divorced">Divorced</option>
-                <option value="Widowed">Widowed</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Mobile Number *</label>
-              <input type="tel" name="phone" placeholder="10-digit mobile number" value={form.phone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Email Address *</label>
-              <input type="email" name="email" required placeholder="your@email.com" value={form.email} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Create Password *</label>
-              <input type="password" name="password" required minLength={8} placeholder="Minimum 8 characters" value={form.password || ""} onChange={handleChange} className={inputClass} autoComplete="new-password" />
-            </div>
-            <div>
-              <label className={labelClass}>Confirm Password *</label>
-              <input type="password" name="confirmPassword" required minLength={8} placeholder="Re-enter password" value={form.confirmPassword || ""} onChange={handleChange} className={inputClass} autoComplete="new-password" />
-            </div>
-            <div>
-              <label className={labelClass}>Current Occupation *</label>
-              <input type="text" name="occupation" required placeholder="e.g. Business Owner, Contractor" value={form.occupation} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Qualification</label>
-              <select name="qualification" value={form.qualification || ""} onChange={handleChange} className={inputClass}>
-                <option value="">Select</option>
-                <option value="10th Pass">10th Pass</option>
-                <option value="12th Pass">12th Pass</option>
-                <option value="Diploma">Diploma</option>
-                <option value="Graduate">Graduate</option>
-                <option value="Post Graduate">Post Graduate</option>
-                <option value="Professional Degree">Professional Degree (B.Tech/MBA etc.)</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Annual Income (Approx)</label>
-              <select name="annualIncome" value={form.annualIncome || ""} onChange={handleChange} className={inputClass}>
-                <option value="">Select Range</option>
-                <option value="Below 5L">Below ₹5 Lakhs</option>
-                <option value="5L-10L">₹5 - 10 Lakhs</option>
-                <option value="10L-25L">₹10 - 25 Lakhs</option>
-                <option value="25L-50L">₹25 - 50 Lakhs</option>
-                <option value="50L+">Above ₹50 Lakhs</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Identity Proof */}
-          <div className={`mt-5 p-4 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-700" : "bg-white border-gray-200"}`}>
-            <p className={`text-[10px] font-black uppercase tracking-widest mb-3 ${dark ? "text-zinc-400" : "text-zinc-500"}`}>Identity Proof</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className={labelClass}>ID Type *</label>
-                <select name="idType" required value={form.idType || ""} onChange={handleChange} className={inputClass}>
-                  <option value="">Select ID Type</option>
-                  <option value="Aadhaar Card">Aadhaar Card</option>
-                  <option value="Passport">Passport</option>
-                  <option value="Voter ID">Voter ID</option>
-                  <option value="Driving License">Driving License</option>
-                </select>
+        {/* Step Indicator */}
+        <div className={`grid grid-cols-2 md:grid-cols-4 gap-2 border-b mb-8 pb-6 ${dark ? "border-zinc-700" : "border-gray-200"}`}>
+          {[
+            { step: 1, label: "Personal Info" },
+            { step: 2, label: "Address Details" },
+            { step: 3, label: "Business & Bank" },
+            { step: 4, label: "Preferences" }
+          ].map((s) => {
+            const isActive = formStep === s.step;
+            const isCompleted = formStep > s.step;
+            return (
+              <div
+                key={s.step}
+                className={`flex items-center gap-3 p-3 rounded-sm border transition-all duration-300 ${
+                  isActive
+                    ? dark
+                      ? "bg-zinc-800/85 border-[var(--brand-blue)] text-white"
+                      : "bg-white border-zinc-800 text-zinc-800 shadow-sm"
+                    : isCompleted
+                    ? dark
+                      ? "bg-zinc-900 border-emerald-500/30 text-emerald-400"
+                      : "bg-emerald-50/50 border-emerald-200 text-emerald-600"
+                    : dark
+                    ? "bg-zinc-900/40 border-zinc-800/50 text-zinc-500"
+                    : "bg-gray-50/50 border-gray-100 text-zinc-400"
+                }`}
+              >
+                <div
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black transition-all duration-300 ${
+                    isActive
+                      ? "bg-[var(--brand-blue)] text-black"
+                      : isCompleted
+                      ? "bg-emerald-500 text-white"
+                      : dark
+                      ? "bg-zinc-800 text-zinc-600"
+                      : "bg-gray-200 text-zinc-400"
+                  }`}
+                >
+                  {isCompleted ? "✓" : s.step}
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[8px] font-black uppercase tracking-wider opacity-60">Step 0{s.step}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">{s.label}</span>
+                </div>
               </div>
-              <div>
-                <label className={labelClass}>ID Number *</label>
-                <input type="text" name="idNumber" required placeholder="Enter ID number" value={form.idNumber || ""} onChange={handleChange} className={inputClass} />
-              </div>
-              <div>
-                <label className={labelClass}>PAN Number *</label>
-                <input type="text" name="pan" required placeholder="ABCDE1234F" value={form.pan || ""} onChange={handleChange} className={`${inputClass} uppercase`} />
-              </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
 
-        {/* ── SECTION 2: ADDRESS DETAILS ── */}
-        <div>
-          <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
-              <span className="text-black text-[10px] font-black">02</span>
-            </div>
-            <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
-              Address Details
-            </h3>
-          </div>
-          <div className="grid grid-cols-1 gap-4">
+        {/* ── STEP 1: PERSONAL & IDENTITY DETAILS ── */}
+        {formStep === 1 && (
+          <div className="space-y-10">
+            {/* ── SECTION 1: PERSONAL DETAILS ── */}
             <div>
-              <label className={labelClass}>Full Permanent Address *</label>
-              <textarea name="address" required rows={2} placeholder="House No., Street, Area, Landmark..." value={form.address || ""} onChange={handleChange} className={`${inputClass} resize-none`} />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className={labelClass}>District *</label>
-                <input type="text" name="district" required placeholder="Your district" value={form.district || ""} onChange={handleChange} className={inputClass} />
+              <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
+                <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
+                  <span className="text-black text-[10px] font-black">01</span>
+                </div>
+                <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
+                  Personal Details
+                </h3>
               </div>
-              <div>
-                <label className={labelClass}>State *</label>
-                <select name="state" required value={form.state} onChange={handleChange} className={inputClass}>
-                  <option value="">Select State</option>
-                  {["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Delhi","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal"].map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Full Name *</label>
+                  <input type="text" name="name" placeholder="As per government ID" value={form.name} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Father / Husband Name *</label>
+                  <input type="text" name="fatherName" placeholder="Father's or husband's name" value={form.fatherName || ""} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Date of Birth *</label>
+                  <input type="date" name="dob" max={new Date().toISOString().split("T")[0]} value={form.dob || ""} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Gender *</label>
+                  <select name="gender" value={form.gender || ""} onChange={handleChange} className={inputClass}>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Marital Status</label>
+                  <select name="maritalStatus" value={form.maritalStatus || ""} onChange={handleChange} className={inputClass}>
+                    <option value="">Select</option>
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                    <option value="Divorced">Divorced</option>
+                    <option value="Widowed">Widowed</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Mobile Number *</label>
+                  <input type="tel" name="phone" placeholder="10-digit mobile number" value={form.phone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Email Address *</label>
+                  <input type="email" name="email" placeholder="your@email.com" value={form.email} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Create Password *</label>
+                  <input type="password" name="password" minLength={8} placeholder="Minimum 8 characters" value={form.password || ""} onChange={handleChange} className={inputClass} autoComplete="new-password" />
+                </div>
+                <div>
+                  <label className={labelClass}>Confirm Password *</label>
+                  <input type="password" name="confirmPassword" minLength={8} placeholder="Re-enter password" value={form.confirmPassword || ""} onChange={handleChange} className={inputClass} autoComplete="new-password" />
+                </div>
+                <div>
+                  <label className={labelClass}>Current Occupation *</label>
+                  <input type="text" name="occupation" placeholder="e.g. Business Owner, Contractor" value={form.occupation} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Qualification</label>
+                  <select name="qualification" value={form.qualification || ""} onChange={handleChange} className={inputClass}>
+                    <option value="">Select</option>
+                    <option value="10th Pass">10th Pass</option>
+                    <option value="12th Pass">12th Pass</option>
+                    <option value="Diploma">Diploma</option>
+                    <option value="Graduate">Graduate</option>
+                    <option value="Post Graduate">Post Graduate</option>
+                    <option value="Professional Degree">Professional Degree (B.Tech/MBA etc.)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Annual Income (Approx)</label>
+                  <select name="annualIncome" value={form.annualIncome || ""} onChange={handleChange} className={inputClass}>
+                    <option value="">Select Range</option>
+                    <option value="Below 5L">Below ₹5 Lakhs</option>
+                    <option value="5L-10L">₹5 - 10 Lakhs</option>
+                    <option value="10L-25L">₹10 - 25 Lakhs</option>
+                    <option value="25L-50L">₹25 - 50 Lakhs</option>
+                    <option value="50L+">Above ₹50 Lakhs</option>
+                  </select>
+                </div>
               </div>
-              <div>
-                <label className={labelClass}>PIN Code *</label>
-                <input type="text" name="pinCode" required placeholder="6-digit PIN" maxLength={6} value={form.pinCode || ""} onChange={handleChange} className={inputClass} />
-              </div>
-            </div>
-            <div>
-              <label className={labelClass}>City *</label>
-              <input type="text" name="city" required placeholder="Your city" value={form.city} onChange={handleChange} className={inputClass} />
-            </div>
-          </div>
-        </div>
 
-        {/* ── SECTION 3: BUSINESS EXPERIENCE ── */}
-        <div>
-          <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
-              <span className="text-black text-[10px] font-black">03</span>
-            </div>
-            <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
-              Business Experience
-            </h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Current Business (if any)</label>
-              <input type="text" name="currentBusiness" placeholder="e.g. Hardware Shop, Civil Contractor" value={form.currentBusiness || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Years in Business</label>
-              <select name="experience" value={form.experience} onChange={handleChange} className={inputClass}>
-                <option value="">Select</option>
-                <option value="No Experience">No Prior Experience</option>
-                <option value="1-2 Years">1-2 Years</option>
-                <option value="3-5 Years">3-5 Years</option>
-                <option value="5-10 Years">5-10 Years</option>
-                <option value="10+ Years">10+ Years</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Construction Industry Experience</label>
-              <select name="constructionExp" value={form.constructionExp || ""} onChange={handleChange} className={inputClass}>
-                <option value="">Select</option>
-                <option value="None">No Experience</option>
-                <option value="Contractor">Civil Contractor</option>
-                <option value="Material Supplier">Material Supplier</option>
-                <option value="Real Estate">Real Estate</option>
-                <option value="Interior Designer">Interior Designer</option>
-                <option value="Architect">Architect / Engineer</option>
-                <option value="Other">Other Related Field</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Number of Employees (Current)</label>
-              <select name="employees" value={form.employees || ""} onChange={handleChange} className={inputClass}>
-                <option value="">Select</option>
-                <option value="Solo">Solo / Proprietor</option>
-                <option value="1-5">1-5 Employees</option>
-                <option value="6-20">6-20 Employees</option>
-                <option value="21-50">21-50 Employees</option>
-                <option value="50+">50+ Employees</option>
-              </select>
-            </div>
-            <div className="md:col-span-2">
-              <label className={labelClass}>Existing Network / Client Base</label>
-              <input type="text" name="network" placeholder="e.g. 200+ builders, 50 architects, real estate agents..." value={form.network || ""} onChange={handleChange} className={inputClass} />
-            </div>
-          </div>
-        </div>
-
-        {/* ── SECTION 4: BANKING DETAILS ── */}
-        <div>
-          <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
-              <span className="text-black text-[10px] font-black">04</span>
-            </div>
-            <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
-              Banking Details
-            </h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Bank Name *</label>
-              <input type="text" name="bankName" required placeholder="e.g. State Bank of India" value={form.bankName || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Branch Name *</label>
-              <input type="text" name="branchName" required placeholder="Branch name" value={form.branchName || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Account Number *</label>
-              <input type="text" name="accountNumber" required placeholder="Your bank account number" value={form.accountNumber || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>IFSC Code *</label>
-              <input type="text" name="ifscCode" required placeholder="e.g. SBIN0001234" value={form.ifscCode || ""} onChange={handleChange} className={`${inputClass} uppercase`} />
-            </div>
-          </div>
-          <p className={`text-[10px] mt-3 ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
-            Banking details are required for franchise fee processing and commission payments.
-          </p>
-        </div>
-
-        {/* ── SECTION 5: FRANCHISE PREFERENCE ── */}
-        <div>
-          <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
-              <span className="text-black text-[10px] font-black">05</span>
-            </div>
-            <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
-              Franchise Preference
-            </h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className={labelClass}>Franchise Model *</label>
-              <select name="model" required value={form.model} onChange={handleChange} className={inputClass}>
-                <option value="">Select Model</option>
-                <option value="Associate Partner">Associate Partner (₹5-10L)</option>
-                <option value="Regional Franchise">Regional Franchise (₹25-50L)</option>
-                <option value="Master Franchise">Master Franchise (₹1Cr+)</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Investment Capacity *</label>
-              <select name="investment" required value={form.investment} onChange={handleChange} className={inputClass}>
-                <option value="">Select Range</option>
-                <option value="5-10 Lakhs">5 - 10 Lakhs</option>
-                <option value="10-25 Lakhs">10 - 25 Lakhs</option>
-                <option value="25-50 Lakhs">25 - 50 Lakhs</option>
-                <option value="50L-1Cr">50 Lakhs - 1 Crore</option>
-                <option value="1Cr+">1 Crore and above</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Preferred Territory *</label>
-              <input type="text" name="territory" required placeholder="City or district you want" value={form.territory || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>How Did You Hear About Us?</label>
-              <select name="referralSource" value={form.referralSource || ""} onChange={handleChange} className={inputClass}>
-                <option value="">Select</option>
-                <option value="Google Search">Google Search</option>
-                <option value="Social Media">Social Media</option>
-                <option value="Friend / Colleague">Friend / Colleague</option>
-                <option value="Existing Franchisee">Existing Franchisee</option>
-                <option value="Newspaper / Magazine">Newspaper / Magazine</option>
-                <option value="Construction Expo">Construction Expo / Event</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Expected Start Date</label>
-              <input type="date" name="startDate" value={form.startDate || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Preferred Service Category</label>
-              <select name="serviceCategory" value={form.serviceCategory || ""} onChange={handleChange} className={inputClass}>
-                <option value="">Select</option>
-                <option value="Residential Construction">Residential Construction</option>
-                <option value="Commercial Construction">Commercial Construction</option>
-                <option value="Infrastructure">Infrastructure Projects</option>
-                <option value="Interior Works">Interior Works</option>
-                <option value="All Services">All Services</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* ── SECTION 6: PROPOSED OFFICE LOCATION ── */}
-        <div>
-          <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
-              <span className="text-black text-[10px] font-black">06</span>
-            </div>
-            <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
-              Proposed Office Location
-            </h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Village / Town / Area *</label>
-              <input type="text" name="officeArea" required placeholder="Area where office will be set up" value={form.officeArea || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Office District *</label>
-              <input type="text" name="officeDistrict" required placeholder="Office district" value={form.officeDistrict || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Do You Own the Premises?</label>
-              <select name="premisesOwnership" value={form.premisesOwnership || ""} onChange={handleChange} className={inputClass}>
-                <option value="">Select</option>
-                <option value="Yes - Own Property">Yes — Own Property</option>
-                <option value="No - Will Lease">No — Will Lease / Rent</option>
-                <option value="Not Decided">Not Decided Yet</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>If Leased — Agreement Duration</label>
-              <select name="leaseDuration" value={form.leaseDuration || ""} onChange={handleChange} className={inputClass}>
-                <option value="">Select</option>
-                <option value="1 Year">1 Year</option>
-                <option value="2 Years">2 Years</option>
-                <option value="3 Years">3 Years</option>
-                <option value="5 Years">5 Years</option>
-                <option value="More than 5 Years">More than 5 Years</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Office Area (sq. ft.)</label>
-              <input type="number" name="officeArea_sqft" placeholder="e.g. 500" value={form.officeArea_sqft || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Office Type</label>
-              <select name="officeType" value={form.officeType || ""} onChange={handleChange} className={inputClass}>
-                <option value="">Select</option>
-                <option value="Ground Floor Shop">Ground Floor Shop</option>
-                <option value="Office Floor">Office Floor</option>
-                <option value="Co-Working Space">Co-Working Space</option>
-                <option value="Home Office">Home Office (Temporary)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* ── SECTION 7: ADDITIONAL INFO ── */}
-        <div>
-          <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-            <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
-              <span className="text-black text-[10px] font-black">07</span>
-            </div>
-            <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
-              Additional Information
-            </h3>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <label className={labelClass}>Why do you want to partner with MTBoss? *</label>
-              <textarea name="message" required rows={4} placeholder="Share your motivation, goals, and what you bring to this partnership..." value={form.message} onChange={handleChange} className={`${inputClass} resize-none`} />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className={labelClass}>Have You Applied to Any Other Franchise?</label>
-                <select name="otherFranchise" value={form.otherFranchise || ""} onChange={handleChange} className={inputClass}>
-                  <option value="">Select</option>
-                  <option value="No">No</option>
-                  <option value="Yes - Construction Related">Yes — Construction Related</option>
-                  <option value="Yes - Other Industry">Yes — Other Industry</option>
-                </select>
-              </div>
-              <div>
-                <label className={labelClass}>Are You Willing to Attend Training?</label>
-                <select name="trainingWilling" value={form.trainingWilling || ""} onChange={handleChange} className={inputClass}>
-                  <option value="">Select</option>
-                  <option value="Yes - Available Immediately">Yes — Available Immediately</option>
-                  <option value="Yes - Within 1 Month">Yes — Within 1 Month</option>
-                  <option value="Need Flexible Schedule">Need Flexible Schedule</option>
-                </select>
+              {/* Identity Proof */}
+              <div className={`mt-5 p-4 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-700" : "bg-white border-gray-200"}`}>
+                <p className={`text-[10px] font-black uppercase tracking-widest mb-3 ${dark ? "text-zinc-400" : "text-zinc-500"}`}>Identity Proof</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className={labelClass}>ID Type *</label>
+                    <select name="idType" value={form.idType || ""} onChange={handleChange} className={inputClass}>
+                      <option value="">Select ID Type</option>
+                      <option value="Aadhaar Card">Aadhaar Card</option>
+                      <option value="Passport">Passport</option>
+                      <option value="Voter ID">Voter ID</option>
+                      <option value="Driving License">Driving License</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>ID Number *</label>
+                    <input type="text" name="idNumber" placeholder="Enter ID number" value={form.idNumber || ""} onChange={handleChange} className={inputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>PAN Number *</label>
+                    <input type="text" name="pan" placeholder="ABCDE1234F" value={form.pan || ""} onChange={handleChange} className={`${inputClass} uppercase`} />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* ── DECLARATION ── */}
-        <div className={`p-6 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-700" : "bg-sky-50 border-sky-100"}`}>
-          <h3 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
-            Declaration
-          </h3>
-          <div className="space-y-3">
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
-              <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                I hereby declare that all the information provided in this application form is true, correct, and complete to the best of my knowledge. I understand that any false information may result in rejection of my application.
-              </span>
-            </label>
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
-              <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                I have read and understood all information available about MTbossConstruction franchise opportunity, including the investment requirements, terms, and fee structure involved.
-              </span>
-            </label>
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
-              <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                I agree that MTbossConstruction may contact me regarding this franchise inquiry. I understand that submitting this form does not guarantee a franchise agreement.
-              </span>
-            </label>
+        {/* ── STEP 2: ADDRESS DETAILS ── */}
+        {formStep === 2 && (
+          <div className="space-y-10">
+            {/* ── SECTION 2: ADDRESS DETAILS ── */}
+            <div>
+              <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
+                <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
+                  <span className="text-black text-[10px] font-black">02</span>
+                </div>
+                <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
+                  Address Details
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className={labelClass}>Full Permanent Address *</label>
+                  <textarea name="address" rows={2} placeholder="House No., Street, Area, Landmark..." value={form.address || ""} onChange={handleChange} className={`${inputClass} resize-none`} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className={labelClass}>District *</label>
+                    <input type="text" name="district" placeholder="Your district" value={form.district || ""} onChange={handleChange} className={inputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>State *</label>
+                    <select name="state" value={form.state} onChange={handleChange} className={inputClass}>
+                      <option value="">Select State</option>
+                      {["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Delhi","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal"].map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>PIN Code *</label>
+                    <input type="text" name="pinCode" placeholder="6-digit PIN" maxLength={6} value={form.pinCode || ""} onChange={handleChange} className={inputClass} />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>City *</label>
+                  <input type="text" name="city" placeholder="Your city" value={form.city} onChange={handleChange} className={inputClass} />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* ── SUBMIT ── */}
-        <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t ${dark ? "border-zinc-700" : "border-gray-200"}`}>
-          <p className={`text-[10px] ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
-            Your data is secure and will only be used for franchise processing purposes.
-          </p>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-12 py-4 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 rounded-sm"
-          >
-            {loading ? (
-              <>
-                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                </svg>
-                Submitting...
-              </>
-            ) : (
-              <>
-                Submit Application
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </>
+        {/* ── STEP 3: BUSINESS & BANKING DETAILS ── */}
+        {formStep === 3 && (
+          <div className="space-y-10">
+            {/* ── SECTION 3: BUSINESS EXPERIENCE ── */}
+            <div>
+              <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
+                <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
+                  <span className="text-black text-[10px] font-black">03</span>
+                </div>
+                <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
+                  Business Experience
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Current Business (if any)</label>
+                  <input type="text" name="currentBusiness" placeholder="e.g. Hardware Shop, Civil Contractor" value={form.currentBusiness || ""} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Years in Business</label>
+                  <select name="experience" value={form.experience} onChange={handleChange} className={inputClass}>
+                    <option value="">Select</option>
+                    <option value="No Experience">No Prior Experience</option>
+                    <option value="1-2 Years">1-2 Years</option>
+                    <option value="3-5 Years">3-5 Years</option>
+                    <option value="5-10 Years">5-10 Years</option>
+                    <option value="10+ Years">10+ Years</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Construction Industry Experience</label>
+                  <select name="constructionExp" value={form.constructionExp || ""} onChange={handleChange} className={inputClass}>
+                    <option value="">Select</option>
+                    <option value="None">No Experience</option>
+                    <option value="Contractor">Civil Contractor</option>
+                    <option value="Material Supplier">Material Supplier</option>
+                    <option value="Real Estate">Real Estate</option>
+                    <option value="Interior Designer">Interior Designer</option>
+                    <option value="Architect">Architect / Engineer</option>
+                    <option value="Other">Other Related Field</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Number of Employees (Current)</label>
+                  <select name="employees" value={form.employees || ""} onChange={handleChange} className={inputClass}>
+                    <option value="">Select</option>
+                    <option value="Solo">Solo / Proprietor</option>
+                    <option value="1-5">1-5 Employees</option>
+                    <option value="6-20">6-20 Employees</option>
+                    <option value="21-50">21-50 Employees</option>
+                    <option value="50+">50+ Employees</option>
+                  </select>
+                </div>
+                <div className="md:col-span-2">
+                  <label className={labelClass}>Existing Network / Client Base</label>
+                  <input type="text" name="network" placeholder="e.g. 200+ builders, 50 architects, real estate agents..." value={form.network || ""} onChange={handleChange} className={inputClass} />
+                </div>
+              </div>
+            </div>
+
+            {/* ── SECTION 4: BANKING DETAILS ── */}
+            <div>
+              <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
+                <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
+                  <span className="text-black text-[10px] font-black">04</span>
+                </div>
+                <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
+                  Banking Details
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Bank Name *</label>
+                  <input type="text" name="bankName" placeholder="e.g. State Bank of India" value={form.bankName || ""} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Branch Name *</label>
+                  <input type="text" name="branchName" placeholder="Branch name" value={form.branchName || ""} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Account Number *</label>
+                  <input type="text" name="accountNumber" placeholder="Your bank account number" value={form.accountNumber || ""} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>IFSC Code *</label>
+                  <input type="text" name="ifscCode" placeholder="e.g. SBIN0001234" value={form.ifscCode || ""} onChange={handleChange} className={`${inputClass} uppercase`} />
+                </div>
+              </div>
+              <p className={`text-[10px] mt-3 ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
+                Banking details are required for franchise fee processing and commission payments.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 4: PREFERENCES & PROPOSAL ── */}
+        {formStep === 4 && (
+          <div className="space-y-10">
+            {/* ── SECTION 5: FRANCHISE PREFERENCE ── */}
+            <div>
+              <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
+                <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
+                  <span className="text-black text-[10px] font-black">05</span>
+                </div>
+                <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
+                  Franchise Preference
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className={labelClass}>Franchise Model *</label>
+                  <select name="model" value={form.model} onChange={handleChange} className={inputClass}>
+                    <option value="">Select Model</option>
+                    <option value="Associate Partner">Associate Partner (₹5-10L)</option>
+                    <option value="Regional Franchise">Regional Franchise (₹25-50L)</option>
+                    <option value="Master Franchise">Master Franchise (₹1Cr+)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Investment Capacity *</label>
+                  <select name="investment" value={form.investment} onChange={handleChange} className={inputClass}>
+                    <option value="">Select Range</option>
+                    <option value="5-10 Lakhs">5 - 10 Lakhs</option>
+                    <option value="10-25 Lakhs">10 - 25 Lakhs</option>
+                    <option value="25-50 Lakhs">25 - 50 Lakhs</option>
+                    <option value="50L-1Cr">50 Lakhs - 1 Crore</option>
+                    <option value="1Cr+">1 Crore and above</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Preferred Territory *</label>
+                  <input type="text" name="territory" placeholder="City or district you want" value={form.territory || ""} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>How Did You Hear About Us?</label>
+                  <select name="referralSource" value={form.referralSource || ""} onChange={handleChange} className={inputClass}>
+                    <option value="">Select</option>
+                    <option value="Google Search">Google Search</option>
+                    <option value="Social Media">Social Media</option>
+                    <option value="Friend / Colleague">Friend / Colleague</option>
+                    <option value="Existing Franchisee">Existing Franchisee</option>
+                    <option value="Newspaper / Magazine">Newspaper / Magazine</option>
+                    <option value="Construction Expo">Construction Expo / Event</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Expected Start Date</label>
+                  <input type="date" name="startDate" min={new Date().toISOString().split("T")[0]} value={form.startDate || ""} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Preferred Service Category</label>
+                  <select name="serviceCategory" value={form.serviceCategory || ""} onChange={handleChange} className={inputClass}>
+                    <option value="">Select</option>
+                    <option value="Residential Construction">Residential Construction</option>
+                    <option value="Commercial Construction">Commercial Construction</option>
+                    <option value="Infrastructure">Infrastructure Projects</option>
+                    <option value="Interior Works">Interior Works</option>
+                    <option value="All Services">All Services</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* ── SECTION 6: PROPOSED OFFICE LOCATION ── */}
+            <div>
+              <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
+                <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
+                  <span className="text-black text-[10px] font-black">06</span>
+                </div>
+                <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
+                  Proposed Office Location
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Village / Town / Area *</label>
+                  <input type="text" name="officeArea" placeholder="Area where office will be set up" value={form.officeArea || ""} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Office District *</label>
+                  <input type="text" name="officeDistrict" placeholder="Office district" value={form.officeDistrict || ""} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Do You Own the Premises?</label>
+                  <select name="premisesOwnership" value={form.premisesOwnership || ""} onChange={handleChange} className={inputClass}>
+                    <option value="">Select</option>
+                    <option value="Yes - Own Property">Yes — Own Property</option>
+                    <option value="No - Will Lease">No — Will Lease / Rent</option>
+                    <option value="Not Decided">Not Decided Yet</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>If Leased — Agreement Duration</label>
+                  <select name="leaseDuration" value={form.leaseDuration || ""} onChange={handleChange} className={inputClass}>
+                    <option value="">Select</option>
+                    <option value="1 Year">1 Year</option>
+                    <option value="2 Years">2 Years</option>
+                    <option value="3 Years">3 Years</option>
+                    <option value="5 Years">5 Years</option>
+                    <option value="More than 5 Years">More than 5 Years</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Office Area (sq. ft.)</label>
+                  <input type="number" name="officeArea_sqft" placeholder="e.g. 500" value={form.officeArea_sqft || ""} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Office Type</label>
+                  <select name="officeType" value={form.officeType || ""} onChange={handleChange} className={inputClass}>
+                    <option value="">Select</option>
+                    <option value="Ground Floor Shop">Ground Floor Shop</option>
+                    <option value="Office Floor">Office Floor</option>
+                    <option value="Co-Working Space">Co-Working Space</option>
+                    <option value="Home Office">Home Office (Temporary)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* ── SECTION 7: ADDITIONAL INFO ── */}
+            <div>
+              <div className={`flex items-center gap-3 mb-6 pb-3 border-b ${dark ? "border-zinc-700" : "border-gray-200"}`}>
+                <div className="w-7 h-7 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center flex-shrink-0">
+                  <span className="text-black text-[10px] font-black">07</span>
+                </div>
+                <h3 className={`text-xs font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
+                  Additional Information
+                </h3>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>Why do you want to partner with MTBoss? *</label>
+                  <textarea name="message" rows={4} placeholder="Share your motivation, goals, and what you bring to this partnership..." value={form.message} onChange={handleChange} className={`${inputClass} resize-none`} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Have You Applied to Any Other Franchise?</label>
+                    <select name="otherFranchise" value={form.otherFranchise || ""} onChange={handleChange} className={inputClass}>
+                      <option value="">Select</option>
+                      <option value="No">No</option>
+                      <option value="Yes - Construction Related">Yes — Construction Related</option>
+                      <option value="Yes - Other Industry">Yes — Other Industry</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Are You Willing to Attend Training?</label>
+                    <select name="trainingWilling" value={form.trainingWilling || ""} onChange={handleChange} className={inputClass}>
+                      <option value="">Select</option>
+                      <option value="Yes - Available Immediately">Yes — Available Immediately</option>
+                      <option value="Yes - Within 1 Month">Yes — Within 1 Month</option>
+                      <option value="Need Flexible Schedule">Need Flexible Schedule</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ── DECLARATION ── */}
+            <div className={`p-6 rounded-sm border ${dark ? "bg-zinc-900 border-zinc-700" : "bg-sky-50 border-sky-100"}`}>
+              <h3 className={`text-xs font-black uppercase tracking-widest mb-4 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
+                Declaration
+              </h3>
+              <div className="space-y-3">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
+                  <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
+                    I hereby declare that all the information provided in this application form is true, correct, and complete to the best of my knowledge. I understand that any false information may result in rejection of my application.
+                  </span>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
+                  <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
+                    I have read and understood all information available about MTbossConstruction franchise opportunity, including the investment requirements, terms, and fee structure involved.
+                  </span>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
+                  <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
+                    I agree that MTbossConstruction may contact me regarding this franchise inquiry. I understand that submitting this form does not guarantee a franchise agreement.
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── BUTTON CONTROLS ── */}
+        <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t ${dark ? "border-zinc-700" : "border-gray-200"}`}>
+          <div className="flex items-center gap-3">
+            {formStep > 1 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFormStep(prev => prev - 1);
+                  document.getElementById("franchise-form")?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className={`px-8 py-3.5 border-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${
+                  dark
+                    ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
+                    : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
+                }`}
+              >
+                Back
+              </button>
             )}
-          </button>
-        </div>
+            <p className={`text-[10px] ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
+              {formStep < 4 ? `Step ${formStep} of 4` : "Your data is secure and protected."}
+            </p>
+          </div>
 
+          <div className="w-full sm:w-auto">
+            {formStep < 4 ? (
+              <button
+                type="button"
+                onClick={() => {
+                  if (validateStep(formStep)) {
+                    setFormStep(prev => prev + 1);
+                    document.getElementById("franchise-form")?.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    document.getElementById("franchise-form")?.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="w-full sm:w-auto px-10 py-3.5 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all flex items-center justify-center gap-3 rounded-sm"
+              >
+                Next Step
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto px-12 py-4 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3 rounded-sm"
+              >
+                {loading ? (
+                  <>
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    Submit Application
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        </div>
       </form>
     </div>
   </div>

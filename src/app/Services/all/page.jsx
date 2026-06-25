@@ -67,7 +67,7 @@ export default function AllServicesPage() {
 
       {/* Grid */}
       <section className="py-12 px-6">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {services.length > 0 ? (
             services.map((s) => (
               <div key={s.id} className={`group relative h-[340px] overflow-hidden border transition-all duration-500 ${isDark ? "border-zinc-800" : "border-zinc-100"}`}>

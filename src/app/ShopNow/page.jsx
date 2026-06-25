@@ -112,8 +112,10 @@ export default function ShopPage() {
   const [brandCompany, setBrandCompany]         = useState("");
   const [deliveryDate, setDeliveryDate]         = useState("");
 
-  // City selection
-  const [selectedCity, setSelectedCity] = useState("");
+  // Pincode selection
+  const [selectedPincode, setSelectedPincode] = useState("");
+  const [pincodeError, setPincodeError] = useState("");
+  const [checkingPincode, setCheckingPincode] = useState(false);
 
   // GPS
   const [locationStatus, setLocationStatus] = useState("idle");
@@ -146,7 +148,8 @@ export default function ShopPage() {
     setSelectedCategory(category);
     setSubmitted(false);
     setSubmitError("");
-    setSelectedCity("");
+    setSelectedPincode("");
+    setPincodeError("");
     setFormData({ name: "", email: "", phone: "", quantity: "", address: "", message: "" });
     setMaterialType("");
     setCustomType("");
@@ -199,6 +202,33 @@ export default function ShopPage() {
     );
   };
 
+  const checkPincodeAvailability = async (pincode) => {
+    if (!pincode || !/^\d{6}$/.test(pincode)) {
+      setPincodeError("Please enter a valid 6-digit pincode");
+      return false;
+    }
+    
+    setCheckingPincode(true);
+    setPincodeError("");
+    try {
+      const res = await fetch(`/api/pincode-check?pincode=${pincode}&type=category&name=${selectedCategory?.name}`);
+      const data = await res.json();
+      
+      if (!data.available) {
+        setPincodeError(data.message || `Service not available in pincode ${pincode}`);
+        setCheckingPincode(false);
+        return false;
+      }
+      setPincodeError("");
+      setCheckingPincode(false);
+      return true;
+    } catch (error) {
+      setPincodeError("Error checking pincode availability");
+      setCheckingPincode(false);
+      return false;
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'phone') {
@@ -218,10 +248,21 @@ export default function ShopPage() {
     const finalType     = hasTypes ? (materialType === "Others" ? customType.trim() : materialType) : customType.trim();
     const finalSubcat   = subcategoryVal   === "Others" ? customSubcategory.trim() : subcategoryVal;
 
-    if (!selectedCity) {
-      setSubmitError("Please select your city first.");
+    // Check pincode availability first
+    const isPincodeAvailable = await checkPincodeAvailability(selectedPincode);
+    if (!isPincodeAvailable) {
       setSubmitting(false);
       return;
+    }
+
+    if (deliveryDate) {
+      const year = new Date(deliveryDate).getFullYear();
+      const currentYear = new Date().getFullYear();
+      if (year < currentYear || year > 9999 || isNaN(year)) {
+        setSubmitError("Please enter a valid year (current year or later) for the delivery date");
+        setSubmitting(false);
+        return;
+      }
     }
 
     try {
@@ -244,7 +285,7 @@ export default function ShopPage() {
           latitude:        locationCoords?.latitude  || null,
           longitude:       locationCoords?.longitude || null,
           message:         formData.message || null,
-          selected_city:   selectedCity,
+          selected_pincode: selectedPincode,
         }),
       });
       const data = await res.json();
@@ -460,50 +501,64 @@ export default function ShopPage() {
             ) : (
               <form onSubmit={handleSubmit} className="p-6 overflow-y-auto">
                 <div className="mb-4">
-                  <label className={lbl}>Delivery City *</label>
-                  <select
-                    value={selectedCity}
-                    onChange={(e) => setSelectedCity(e.target.value)}
-                    required
-                    className={sel}
-                  >
-                    <option value="">— Choose your city to see prices —</option>
-                    {CITIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                    <option value="Other">Other City</option>
-                  </select>
+                  <label className={lbl}>Delivery Pincode *</label>
+                  <div className="flex gap-2 items-end">
+                    <input
+                      type="text"
+                      placeholder="Enter 6-digit pincode"
+                      value={selectedPincode}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+                        setSelectedPincode(val);
+                        if (val.length === 6 && selectedCategory) {
+                          checkPincodeAvailability(val);
+                        } else {
+                          setPincodeError("");
+                        }
+                      }}
+                      maxLength="6"
+                      className={`flex-1 ${sel}`}
+                    />
+                    {selectedPincode.length === 6 && (
+                      <button
+                        type="button"
+                        onClick={() => checkPincodeAvailability(selectedPincode)}
+                        disabled={checkingPincode}
+                        className={`px-4 py-2 text-xs font-bold ${checkingPincode ? 'opacity-50 cursor-wait' : ''} bg-[var(--brand-blue)] text-gray-900 rounded-lg transition-all`}
+                      >
+                        {checkingPincode ? 'Checking...' : 'Verify'}
+                      </button>
+                    )}
+                  </div>
+                  {pincodeError && (
+                    <p className={`text-[9px] mt-1 ${pincodeError.includes('not available') ? 'text-red-500' : 'text-amber-500'}`}>
+                      ⚠ {pincodeError}
+                    </p>
+                  )}
+                  {!pincodeError && selectedPincode.length === 6 && (
+                    <p className="text-[9px] mt-1 text-green-500">✓ Supplier available in this area</p>
+                  )}
                   <p className={`text-[9px] mt-0.5 ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>
-                    Required — used to match the right supplier and show local pricing.
+                    Required — used to check supplier availability and show local pricing.
                   </p>
                 </div>
 
-                {/* ── CITY-SPECIFIC PRICE DISPLAY ─────────────────────── */}
-                {selectedCity && (() => {
-                  // city_prices may be a JSONB object, a JSON string, null, or {}
-                  let rawCp = selectedCategory?.city_prices;
-                  if (typeof rawCp === 'string') { try { rawCp = JSON.parse(rawCp); } catch { rawCp = {}; } }
-                  const cityPricesMap = (rawCp && typeof rawCp === 'object' && !Array.isArray(rawCp)) ? rawCp : {};
-                  const cityData = cityPricesMap[selectedCity];
-                  const hasCityPrice = cityData?.price_range && cityData.price_range.trim() !== '';
-                  if (hasCityPrice) {
-                    return (
-                      <div className={`rounded-xl border-2 px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-[var(--brand-blue)] bg-[var(--brand-blue-ink)]/20" : "border-[var(--brand-blue-light)] bg-sky-50"}`}>
-                        <div>
-                          <p className={`text-[9px] font-extrabold uppercase tracking-widest mb-0.5 ${isDarkMode ? "text-[var(--brand-blue-light)]" : "text-[var(--brand-blue-deep)]"}`}>
-                            📍 {selectedCity} — Local Price
-                          </p>
-                          <p className={`text-base font-black ${isDarkMode ? "text-[var(--brand-blue-lighter)]" : "text-[var(--brand-blue-deeper)]"}`}>
-                            {cityData.price_range}
-                          </p>
-                          {cityData.unit && (
-                            <p className={`text-[10px] ${isDarkMode ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>{cityData.unit}</p>
-                          )}
-                        </div>
-                        <span className="text-2xl">🏷️</span>
-                      </div>
-                    );
-                  } else if (selectedCategory?.price_range) {
+                {/* ── PINCODE VERIFICATION STATUS ─────────────────────── */}
+                {selectedPincode && !pincodeError && (
+                  <div className={`rounded-xl border-2 px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-green-600 bg-green-900/20" : "border-green-500 bg-green-50"}`}>
+                    <div>
+                      <p className={`text-[9px] font-extrabold uppercase tracking-widest mb-0.5 ${isDarkMode ? "text-green-400" : "text-green-700"}`}>
+                        ✓ Supplier Available
+                      </p>
+                      <p className={`text-base font-black ${isDarkMode ? "text-green-300" : "text-green-800"}`}>
+                        Pincode {selectedPincode}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {(() => {
+                  if (selectedCategory?.price_range) {
                     return (
                       <div className={`rounded-xl border px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
                         <div>
@@ -526,7 +581,7 @@ export default function ShopPage() {
                   return (
                     <div className={`rounded-xl border px-4 py-2.5 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
                       <p className={`text-[10px] font-semibold ${isDarkMode ? "text-zinc-400" : "text-gray-500"}`}>
-                        Price will be quoted by a verified supplier in <strong>{selectedCity}</strong>.
+                        Price will be quoted by a verified supplier{selectedPincode ? ` for pincode ${selectedPincode}` : ""}.
                       </p>
                     </div>
                   );
@@ -676,6 +731,7 @@ export default function ShopPage() {
                       value={deliveryDate}
                       onChange={(e) => setDeliveryDate(e.target.value)}
                       min={new Date().toISOString().split("T")[0]}
+                      max="9999-12-31"
                       className={inp}
                     />
                   </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import QuickServiceIcon, { isQuickServiceIconImage } from '../components/QuickServiceIcon';
 
 const TIME_SLOTS = [
@@ -53,13 +54,15 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
   const [selectedFreeSlot, setSelectedFreeSlot] = useState(initialSelectedFreeSlot || null);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [paidSlotsLoading, setPaidSlotsLoading] = useState(false);
+  const [pincodeError, setPincodeError] = useState('');
+  const [checkingPincode, setCheckingPincode] = useState(false);
   const displayDate = slotType === 'free' ? selectedFreeSlot?.slot_date : form.date;
   const displayTime = slotType === 'free'
     ? selectedFreeSlot ? `${selectedFreeSlot.slot_start?.slice(0, 5)} - ${selectedFreeSlot.slot_end?.slice(0, 5)}` : ''
     : form.timeSlot;
 
-  // ✅ FIX: Use admin_base_price or fallback to base_price — force number to avoid string concat
-  const basePrice = parseFloat(service.admin_base_price || service.base_price || 199);
+  // Flat ₹150 visiting charge for all quick services
+  const basePrice = 150;
   const taxAmount = Math.round((basePrice * 18) / 100);
   const totalAmount = basePrice + taxAmount;
 
@@ -70,6 +73,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
     : 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:border-zinc-900';
   const label = isDark ? 'text-zinc-400' : 'text-zinc-500';
   const muted = isDark ? 'text-zinc-500' : 'text-zinc-400';
+  const lbl = `block text-[9px] font-black uppercase tracking-widest mb-1.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`;
   const divider = isDark ? 'border-zinc-800' : 'border-zinc-100';
   const pillBase = 'qs-choice px-3 py-1.5 text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer';
   const pillActive = isDark
@@ -113,11 +117,20 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
     if (!form.address.trim()) e.address = 'Address is required';
     if (!form.city.trim()) e.city = 'City is required';
     if (!form.pincode || form.pincode.length !== 6) e.pincode = 'Valid 6-digit pincode required';
+    if (pincodeError) e.pincode = pincodeError;
     if (!form.propertyType) e.propertyType = 'Select property type';
     if (slotType === 'free') {
       if (!selectedFreeSlot) e.freeSlot = 'Select a free slot';
     } else {
-      if (!form.date) e.date = 'Select a date';
+      if (!form.date) {
+        e.date = 'Select a date';
+      } else {
+        const year = new Date(form.date).getFullYear();
+        const currentYear = new Date().getFullYear();
+        if (year < currentYear || year > 9999 || isNaN(year)) {
+          e.date = 'Enter a valid year (current year or later)';
+        }
+      }
       if (!form.timeSlot) e.timeSlot = 'Select a time slot';
     }
     if (!form.latitude || !form.longitude) e.location = "Location is required. Please click 'Get Location'";
@@ -125,6 +138,34 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
     setErrors(e);
     return Object.keys(e).length === 0;
   }
+
+  const checkServicePincodeAvailability = async (pincode) => {
+    if (!pincode || !/^\d{6}$/.test(pincode)) {
+      setPincodeError('Please enter a valid 6-digit pincode');
+      return false;
+    }
+    
+    setCheckingPincode(true);
+    setPincodeError('');
+    try {
+      const serviceName = service.label?.toLowerCase().replace(/\s+/g, '-') || '';
+      const res = await fetch(`/api/pincode-check?pincode=${pincode}&type=service&name=${serviceName}`);
+      const data = await res.json();
+      
+      if (!data.available) {
+        setPincodeError(data.message || `Service not available in pincode ${pincode}`);
+        setCheckingPincode(false);
+        return false;
+      }
+      setPincodeError('');
+      setCheckingPincode(false);
+      return true;
+    } catch (error) {
+      setPincodeError('Error checking pincode availability');
+      setCheckingPincode(false);
+      return false;
+    }
+  };
 
   function handleNext() {
     if (validate()) setStep(2);
@@ -284,9 +325,6 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
         justifyContent: 'center',
         padding: '16px',
       }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
     >
       <div
         className={`relative w-full border shadow-2xl flex flex-col ${modal}`}
@@ -331,8 +369,16 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
         <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
           {errors.submit && (
             <div className="fixed inset-0 z-[100001] flex items-center justify-center bg-black/60 px-4" onClick={() => setErrors((e) => ({ ...e, submit: '' }))}>
-              <div className={`w-full max-w-sm border p-5 shadow-2xl ${isDark ? 'bg-zinc-950 border-red-700 text-white' : 'bg-white border-red-200 text-zinc-900'}`} onClick={(event) => event.stopPropagation()}>
-                <p className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-2">Booking Error</p>
+              <div className={`w-full max-w-sm border p-5 shadow-2xl ${
+                isDark 
+                  ? errors.submit.toLowerCase().includes('login') ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-zinc-950 border-red-700 text-white' 
+                  : errors.submit.toLowerCase().includes('login') ? 'bg-white border-zinc-300 text-zinc-900' : 'bg-white border-red-200 text-zinc-900'
+              }`} onClick={(event) => event.stopPropagation()}>
+                <p className={`text-[10px] font-black uppercase tracking-widest mb-2 ${
+                  errors.submit.toLowerCase().includes('login') ? 'text-[var(--brand-blue)]' : 'text-red-500'
+                }`}>
+                  {errors.submit.toLowerCase().includes('login') ? 'Login Required' : 'Booking Error'}
+                </p>
                 <p className="text-sm font-bold leading-relaxed">{errors.submit}</p>
                 <button onClick={() => setErrors((e) => ({ ...e, submit: '' }))} className="mt-4 w-full py-2.5 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">OK</button>
               </div>
@@ -425,15 +471,47 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                     readOnly
                   />
                 </Field>
-                <Field label="Pincode *" error={errors.pincode} isDark={isDark}>
-                  <input
-                    className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${input}`}
-                    placeholder="6-digit pincode"
-                    maxLength={6}
-                    value={form.pincode}
-                    onChange={(e) => set('pincode', e.target.value.replace(/\D/g, ''))}
-                  />
-                </Field>
+                <div>
+                  <label className={lbl}>Pincode *</label>
+                  <div className="flex gap-2 items-end">
+                    <input
+                      className={`flex-1 px-3 py-2.5 text-sm border outline-none transition-all ${input} ${pincodeError ? 'border-red-500' : ''}`}
+                      placeholder="6-digit pincode"
+                      maxLength={6}
+                      value={form.pincode}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        set('pincode', val);
+                        if (val.length === 6) {
+                          checkServicePincodeAvailability(val);
+                        } else {
+                          setPincodeError('');
+                        }
+                      }}
+                    />
+                    {form.pincode.length === 6 && (
+                      <button
+                        type="button"
+                        onClick={() => checkServicePincodeAvailability(form.pincode)}
+                        disabled={checkingPincode}
+                        className={`px-3 py-2.5 text-xs font-bold whitespace-nowrap ${checkingPincode ? 'opacity-50 cursor-wait' : ''} bg-[var(--brand-blue)] text-gray-900 rounded transition-all`}
+                      >
+                        {checkingPincode ? 'Checking...' : 'Verify'}
+                      </button>
+                    )}
+                  </div>
+                  {pincodeError && (
+                    <p className={`text-[10px] mt-1 font-medium ${pincodeError.includes('not available') ? 'text-red-500' : 'text-amber-500'}`}>
+                      ⚠ {pincodeError}
+                    </p>
+                  )}
+                  {!pincodeError && form.pincode.length === 6 && (
+                    <p className="text-[10px] mt-1 text-green-500 font-medium">✓ Service available in this area</p>
+                  )}
+                  {errors.pincode && (
+                    <p className={`text-[10px] mt-1 font-medium text-red-500`}>{errors.pincode}</p>
+                  )}
+                </div>
               </div>
 
               <Field label="Property Type *" error={errors.propertyType} isDark={isDark}>
@@ -566,6 +644,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                     <input
                       type="date"
                       min={getTodayStr()}
+                      max="9999-12-31"
                       className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${input}`}
                       value={form.date}
                       onChange={(e) => set('date', e.target.value)}
@@ -728,42 +807,43 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
 
 // ─── Location Check Modal ──────────────────────────────────────────────────────
 function LocationCheckModal({ service, isDark, onClose, onProceed }) {
-  const [cities, setCities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCity, setSelectedCity] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [checking, setChecking] = useState(false);
   const [error, setError] = useState('');
+  const [available, setAvailable] = useState(null);
+  const [detectedCity, setDetectedCity] = useState('');
 
-  useEffect(() => {
-    let active = true;
-    async function fetchCities() {
-      try {
-        const res = await fetch(`/api/quick-services/${service.id}/cities`);
-        const data = await res.json();
-        if (active) {
-          if (data.success) {
-            setCities(data.cities);
-            if (data.cities.length > 0) {
-              setSelectedCity(data.cities[0]);
-            }
-          } else {
-            setError(data.error || 'Failed to check service availability.');
-          }
-        }
-      } catch (err) {
-        if (active) {
-          setError('Could not connect to service. Please try again.');
-        }
-      } finally {
-        if (active) setLoading(false);
-      }
+  const handleVerify = async (val) => {
+    const pinVal = val || pincode;
+    if (!pinVal || !/^\d{6}$/.test(pinVal)) {
+      setError('Please enter a valid 6-digit pincode');
+      setAvailable(null);
+      return;
     }
-    fetchCities();
-    return () => { active = false; };
-  }, [service.id]);
+    setError('');
+    setChecking(true);
+    setAvailable(null);
+    try {
+      const serviceName = service.label?.toLowerCase().replace(/\s+/g, '-') || '';
+      const res = await fetch(`/api/pincode-check?pincode=${pinVal}&type=service&name=${serviceName}`);
+      const data = await res.json();
+      if (data.success && data.available) {
+        setAvailable(true);
+        setDetectedCity(data.city || 'Moradabad');
+      } else {
+        setAvailable(false);
+        setError(data.message || `Service not available in pincode ${pinVal}`);
+      }
+    } catch (err) {
+      setError('Error checking pincode availability. Please try again.');
+    } finally {
+      setChecking(false);
+    }
+  };
 
   const overlay = isDark ? 'bg-black/80' : 'bg-zinc-900/60';
   const modal = isDark ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-white border-zinc-200 text-zinc-900';
-  const select = isDark
+  const inputCls = isDark
     ? 'bg-zinc-900 border-zinc-700 text-white focus:border-[var(--brand-blue)]'
     : 'bg-zinc-50 border-zinc-300 text-zinc-900 focus:border-zinc-900';
   const divider = isDark ? 'border-zinc-800' : 'border-zinc-100';
@@ -779,9 +859,6 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '16px',
-      }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
       }}
     >
       <div
@@ -809,54 +886,52 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
         </div>
 
         <div className="p-6 space-y-4 text-center">
-          {loading ? (
-            <p className="text-sm font-black uppercase tracking-widest animate-pulse text-[var(--brand-blue)] py-4">Checking Availability...</p>
-          ) : error ? (
-            <div className="space-y-4">
-              <p className="text-sm text-red-500 font-bold">{error}</p>
+          <div className="text-left">
+            <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+              Enter Delivery Pincode *
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                maxLength={6}
+                placeholder="6-digit pincode"
+                className={`flex-1 px-3 py-2.5 text-sm border outline-none transition-all ${inputCls}`}
+                value={pincode}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+                  setPincode(val);
+                  setAvailable(null);
+                  setError('');
+                  if (val.length === 6) {
+                    handleVerify(val);
+                  }
+                }}
+              />
               <button
-                onClick={onClose}
-                className="w-full py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all"
+                type="button"
+                onClick={() => handleVerify()}
+                disabled={checking || pincode.length !== 6}
+                className="px-4 py-2.5 text-xs font-black uppercase tracking-widest bg-[var(--brand-blue)] text-black transition-all disabled:opacity-50"
               >
-                Close
+                {checking ? 'Checking...' : 'Verify'}
               </button>
             </div>
-          ) : cities.length === 0 ? (
-            <div className="space-y-4 py-2">
-              <p className="text-3xl">⚠️</p>
-              <h3 className="text-base font-black uppercase text-[var(--brand-blue)] tracking-wide">Service Not Available</h3>
-              <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                We are sorry! This service is currently not available in any location because there are no active technicians registered. Please try again later.
+          </div>
+
+          {error && (
+            <p className="text-xs text-red-500 font-bold text-left">
+              ⚠️ {error}
+            </p>
+          )}
+
+          {available && (
+            <div className="space-y-3">
+              <p className="text-xs text-green-500 font-bold text-left">
+                ✓ Service available in this area ({detectedCity})
               </p>
               <button
-                onClick={onClose}
-                className="w-full py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all"
-              >
-                Close
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-4 text-left">
-              <div>
-                <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                  Choose Your City *
-                </label>
-                <select
-                  className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${select}`}
-                  value={selectedCity}
-                  onChange={(e) => setSelectedCity(e.target.value)}
-                >
-                  {cities.map((city) => (
-                    <option key={city} value={city}>
-                      {city}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <button
-                onClick={() => onProceed(selectedCity)}
-                className="w-full py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all"
+                onClick={() => onProceed(detectedCity, pincode)}
+                className="w-full py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all font-bold"
               >
                 Proceed to Book →
               </button>
@@ -902,6 +977,7 @@ export default function AllQuickServicesPage() {
   const [pendingInitialData, setPendingInitialData] = useState(null);
   const [checkLocationService, setCheckLocationService] = useState(null);
   const [selectedCity, setSelectedCity] = useState('');
+  const [selectedPincode, setSelectedPincode] = useState('');
 
   // Dark mode detection
   useEffect(() => {
@@ -998,22 +1074,25 @@ export default function AllQuickServicesPage() {
                     className="flex h-10 w-10 items-center justify-center"
                     imageClassName="h-10 w-10 object-contain" />
                 </div>
-                <h3 className={`text-base font-black uppercase tracking-tight mb-2 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-                  {s.label}
-                </h3>
+                <Link href={`/quick/${s.slug || s.label.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')}`}>
+                  <h3 className={`text-base font-black uppercase tracking-tight mb-2 hover:text-[var(--brand-blue)] transition-colors ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                    {s.label}
+                  </h3>
+                </Link>
                 <p className={`text-xs leading-relaxed mb-4 min-h-[48px] ${muted}`}>{s.description}</p>
 
-                {/* ✅ FIX: Use admin_base_price or base_price */}
                 <p className={`text-[10px] font-black mb-3 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  Starts at <span className="text-[var(--brand-blue)]">₹{s.admin_base_price || s.base_price || 199}</span>
+                  Visiting Charge: <span className="text-[var(--brand-blue)]">₹150</span>
                 </p>
 
-                <button
-                  onClick={() => setCheckLocationService(s)}
-                  className={`w-full py-2.5 text-[9px] font-black uppercase tracking-[0.2em] border transition-all ${btn}`}
-                >
-                  Book Service
-                </button>
+                <div className="flex gap-2">
+                  <Link
+                    href={`/quick/${s.slug || s.label.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')}`}
+                    className={`w-full py-2.5 text-[9px] font-black uppercase tracking-[0.2em] border text-center transition-all ${btn}`}
+                  >
+                    Book Visit
+                  </Link>
+                </div>
               </div>
             ))
           ) : (
@@ -1030,8 +1109,9 @@ export default function AllQuickServicesPage() {
           service={checkLocationService}
           isDark={isDark}
           onClose={() => setCheckLocationService(null)}
-          onProceed={(city) => {
+          onProceed={(city, pincode) => {
             setSelectedCity(city);
+            setSelectedPincode(pincode);
             setSelectedService(checkLocationService);
             setCheckLocationService(null);
           }}
@@ -1045,7 +1125,7 @@ export default function AllQuickServicesPage() {
           isDark={isDark}
           onClose={() => { setSelectedService(null); setPendingInitialData(null); }}
           onSuccess={() => { setSelectedService(null); setPendingInitialData(null); }}
-          initialForm={pendingInitialData?.form || { city: selectedCity }}
+          initialForm={pendingInitialData?.form || { city: selectedCity, pincode: selectedPincode }}
           initialStep={pendingInitialData?.step}
           initialSlotType={pendingInitialData?.slotType}
           initialSelectedFreeSlot={pendingInitialData?.selectedFreeSlot}

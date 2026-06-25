@@ -59,10 +59,7 @@ export default function QuickServices() {
   }, []);
 
   const themeYellow = "var(--brand-blue)";
-  const homeDecorIndex = services.findIndex((service) =>
-    String(service.label || '').toLowerCase().includes('home decor')
-  );
-  const visibleServices = services.slice(0, homeDecorIndex >= 0 ? homeDecorIndex + 1 : 21);
+  const visibleServices = services.slice(0, 20);
 
   return (
     <>
@@ -191,18 +188,7 @@ export default function QuickServices() {
 
       <section className={`transition-colors duration-500 py-12 px-4 sm:px-6 ${isDark ? 'bg-black' : 'bg-white'}`}>
         <div className="max-w-6xl mx-auto">
-          <div className="qs-calculator-strip">
-            <div>
-              <h3 className="qs-calculator-title">Construction Cost Calculator</h3>
-              <p className="qs-calculator-text">Select products and get an instant quotation before booking home services.</p>
-            </div>
-            <Link href="/calculator" className="qs-calculator-btn">
-              Calculate Now
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
+
 
           {/* Header */}
           <div
@@ -276,7 +262,7 @@ export default function QuickServices() {
               href="/quick"
               className="inline-flex items-center gap-2 px-8 py-3 text-xs font-black uppercase tracking-widest rounded transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 bg-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-dark)]"
             >
-              View All Services
+              View More Services
               <svg
                 className="w-3.5 h-3.5"
                 fill="none" stroke="currentColor" viewBox="0 0 24 24"

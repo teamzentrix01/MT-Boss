@@ -16,13 +16,24 @@ async function ensureQuickServiceSeoColumns() {
         ADD COLUMN IF NOT EXISTS seo_title TEXT,
         ADD COLUMN IF NOT EXISTS seo_description TEXT,
         ADD COLUMN IF NOT EXISTS coverage_details TEXT,
-        ADD COLUMN IF NOT EXISTS how_to_use TEXT
+        ADD COLUMN IF NOT EXISTS how_to_use TEXT,
+        ADD COLUMN IF NOT EXISTS main_category VARCHAR(200),
+        ADD COLUMN IF NOT EXISTS sub_category VARCHAR(200),
+        ADD COLUMN IF NOT EXISTS visiting_price DECIMAL(10,2)
     `);
 
     await pool.query(`
       UPDATE quick_services
          SET slug = LOWER(REGEXP_REPLACE(TRIM(label), '[^a-zA-Z0-9]+', '-', 'g'))
        WHERE slug IS NULL OR TRIM(slug) = ''
+    `);
+
+    // Ensure all services have a flat base_price and visiting_price of 150
+    await pool.query(`
+      UPDATE quick_services
+         SET base_price = 150.00,
+             visiting_price = 150.00
+       WHERE COALESCE(base_price, 0) != 150.00 OR COALESCE(visiting_price, 0) != 150.00
     `);
   } catch (error) {
     console.error('ensureQuickServiceSeoColumns error:', error.message);
@@ -76,6 +87,9 @@ export async function POST(req) {
       desc,
       basePrice,
       duration,
+      visiting_price,
+      main_category,
+      sub_category,
       slug,
       video_url,
       seo_title,
@@ -93,10 +107,11 @@ export async function POST(req) {
 
     const result = await pool.query(
       `INSERT INTO quick_services (
-        icon, label, description, base_price, duration,
+        icon, label, description, base_price, duration, visiting_price,
+        main_category, sub_category,
         slug, video_url, seo_title, seo_description, coverage_details, how_to_use
       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
        RETURNING *`,
       [
         icon,
@@ -104,6 +119,9 @@ export async function POST(req) {
         desc,
         parseFloat(basePrice),
         duration,
+        parseFloat(visiting_price || 150),
+        main_category || null,
+        sub_category || null,
         slug || label.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
         video_url || null,
         seo_title || null,
@@ -118,8 +136,8 @@ export async function POST(req) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating quick service:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error('Error creating quick service:', error.message);
+    return handleApiError(error);
   }
 }
 
@@ -136,6 +154,9 @@ export async function PUT(req) {
       desc,
       basePrice,
       duration,
+      visiting_price,
+      main_category,
+      sub_category,
       slug,
       video_url,
       seo_title,
@@ -153,10 +174,11 @@ export async function PUT(req) {
 
     const result = await pool.query(
       `UPDATE quick_services
-       SET icon=$1, label=$2, description=$3, base_price=$4, duration=$5,
-           slug=$6, video_url=$7, seo_title=$8, seo_description=$9,
-           coverage_details=$10, how_to_use=$11
-       WHERE id=$12
+       SET icon=$1, label=$2, description=$3, base_price=$4, duration=$5, visiting_price=$6,
+           main_category=$7, sub_category=$8,
+           slug=$9, video_url=$10, seo_title=$11, seo_description=$12,
+           coverage_details=$13, how_to_use=$14
+       WHERE id=$15
        RETURNING *`,
       [
         icon,
@@ -164,6 +186,9 @@ export async function PUT(req) {
         desc,
         parseFloat(basePrice),
         duration,
+        parseFloat(visiting_price || 150),
+        main_category || null,
+        sub_category || null,
         slug || label.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
         video_url || null,
         seo_title || null,
@@ -180,8 +205,8 @@ export async function PUT(req) {
 
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
-    console.error('Error updating quick service:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error('Error updating quick service:', error.message);
+    return handleApiError(error);
   }
 }
 

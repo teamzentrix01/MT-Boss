@@ -38,7 +38,8 @@ export default function QuickServicesManager({ isDarkMode }) {
   const [orderSaving, setOrderSaving] = useState(false);
 
   const [formData, setFormData] = useState({
-    icon: '', label: '', desc: '', basePrice: '', duration: '',
+    icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150',
+    main_category: '', sub_category: '',
   });
 
   useEffect(() => { fetchServices(); }, []);
@@ -112,7 +113,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); setSuccess('');
-    if (!formData.icon || !formData.label || !formData.desc || !formData.basePrice || !formData.duration) {
+    if (!formData.icon || !formData.label || !formData.desc || !formData.duration) {
       setError('All fields are required'); return;
     }
     try {
@@ -127,7 +128,7 @@ export default function QuickServicesManager({ isDarkMode }) {
       const data = await res.json();
       if (data.success) {
         setSuccess(editingId ? 'Service updated!' : 'Service added!');
-        setFormData({ icon: '', label: '', desc: '', basePrice: '', duration: '' });
+        setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150', main_category: '', sub_category: '' });
         setEditingId(null); setShowForm(false);
         fetchServices();
       } else setError(data.error || 'Something went wrong');
@@ -155,7 +156,9 @@ export default function QuickServicesManager({ isDarkMode }) {
   const handleEdit = (service) => {
     setFormData({
       icon: service.icon, label: service.label,
-      desc: service.description, basePrice: service.base_price, duration: service.duration,
+      desc: service.description, basePrice: '150', duration: service.duration,
+      visiting_price: '150',
+      main_category: service.main_category || '', sub_category: service.sub_category || '',
     });
     setEditingId(service.id); setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -175,7 +178,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   };
 
   const resetForm = () => {
-    setFormData({ icon: '', label: '', desc: '', basePrice: '', duration: '' });
+    setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150', main_category: '', sub_category: '' });
     setEditingId(null); setShowForm(false);
   };
 
@@ -391,17 +394,24 @@ export default function QuickServicesManager({ isDarkMode }) {
                     value={formData.desc}
                     onChange={e => setFormData({ ...formData, desc: e.target.value })} />
                 </div>
-                <div>
-                  <label className="qs-label">Base Price (₹) *</label>
-                  <input className="qs-input" type="number" placeholder="299"
-                    value={formData.basePrice}
-                    onChange={e => setFormData({ ...formData, basePrice: e.target.value })} />
-                </div>
+
                 <div>
                   <label className="qs-label">Duration *</label>
                   <input className="qs-input" type="text" placeholder="e.g. 1–2 hrs"
                     value={formData.duration}
                     onChange={e => setFormData({ ...formData, duration: e.target.value })} />
+                </div>
+                <div>
+                  <label className="qs-label">Main Category</label>
+                  <input className="qs-input" type="text" placeholder="e.g. Electrician"
+                    value={formData.main_category}
+                    onChange={e => setFormData({ ...formData, main_category: e.target.value })} />
+                </div>
+                <div>
+                  <label className="qs-label">Sub Category</label>
+                  <input className="qs-input" type="text" placeholder="e.g. Light, Fan"
+                    value={formData.sub_category}
+                    onChange={e => setFormData({ ...formData, sub_category: e.target.value })} />
                 </div>
               </div>
               <div className="qs-form-actions">
@@ -434,7 +444,7 @@ export default function QuickServicesManager({ isDarkMode }) {
               <thead>
                 <tr>
                   <th style={{ width: '2rem' }} />
-                  {['Icon', 'Service', 'Description', 'Price', 'Duration', 'Actions'].map(col => (
+                  {['Icon', 'Service', 'Description', 'Main Category', 'Sub Category', 'Visiting Price', 'Duration', 'Actions'].map(col => (
                     <th key={col}>{col}</th>
                   ))}
                 </tr>
@@ -460,7 +470,9 @@ export default function QuickServicesManager({ isDarkMode }) {
                       className="qs-icon-cell" imageClassName="w-8 h-8 object-contain" /></td>
                     <td><span className="qs-name-cell">{service.label}</span></td>
                     <td><span className="qs-muted-cell">{service.description}</span></td>
-                    <td><span className="qs-price-cell">₹{service.admin_base_price || service.base_price}</span></td>
+                    <td><span className="qs-muted-cell">{service.main_category || '—'}</span></td>
+                    <td><span className="qs-muted-cell">{service.sub_category || '—'}</span></td>
+                    <td><span className="qs-price-cell">₹{service.visiting_price || 150}</span></td>
                     <td style={{ color: 'var(--qs-muted)' }}>{service.duration}</td>
                     <td>
                       <div className="qs-row-actions">
@@ -471,7 +483,7 @@ export default function QuickServicesManager({ isDarkMode }) {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={7}>
+                    <td colSpan={10}>
                       <div className="qs-empty">No quick services yet. Add one to get started.</div>
                     </td>
                   </tr>

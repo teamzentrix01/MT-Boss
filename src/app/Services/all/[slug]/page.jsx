@@ -127,6 +127,17 @@ export default function ServiceDetailPage() {
     e.preventDefault();
     setSubmitError("");
     setSubmitting(true);
+
+    if (form.meetingDate) {
+      const year = new Date(form.meetingDate).getFullYear();
+      const currentYear = new Date().getFullYear();
+      if (year < currentYear || year > 9999 || isNaN(year)) {
+        setSubmitError("Please enter a valid year (current year or later) for the preferred meeting date");
+        setSubmitting(false);
+        return;
+      }
+    }
+
     try {
       const payload = new FormData();
       payload.append("service_slug", slug);
@@ -383,7 +394,7 @@ export default function ServiceDetailPage() {
               {/* Meeting Date */}
               <div>
                 <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Preferred Meeting Date</label>
-                <input type="date" className={inp} min={today}
+                <input type="date" className={inp} min={today} max="9999-12-31"
                   value={form.meetingDate} onChange={e => setForm({ ...form, meetingDate: e.target.value })} />
               </div>
 
