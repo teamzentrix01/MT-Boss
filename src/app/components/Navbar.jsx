@@ -231,17 +231,26 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </DropdownButton>
 
             <Link
+              href="/Services/all"
+              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+            >
+              Construction
+            </Link>
+
+            <Link
               href="/agent"
               className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Become an Agent
             </Link>
-            <Link
-              href="/franchise"
-              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
-            >
-              Franchise
-            </Link>
+            {user && (
+              <Link
+                href="/franchise"
+                className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+              >
+                Franchise
+              </Link>
+            )}
 
             <Link
               href="/calculator"
@@ -367,7 +376,27 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           </div>
 
           {/* Mobile Hamburger */}
-          <div className="lg:hidden flex items-center gap-3">
+          <div className="lg:hidden flex items-center gap-2 sm:gap-3">
+            {!loading && !user && (
+              <div className="flex items-center gap-1.5 mr-1">
+                <Link
+                  href="/login"
+                  className={`text-[10px] font-bold px-2 py-1.5 border rounded transition-all duration-200 ${
+                    isDarkMode
+                      ? 'text-[var(--brand-blue)] border-[var(--brand-blue)] hover:bg-[var(--brand-blue)]'
+                      : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)]'
+                  }`}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/signup"
+                  className="text-[10px] font-bold px-2 py-1.5 bg-[var(--brand-blue)] text-black rounded hover:bg-[var(--brand-blue-dark)] transition-all duration-200"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
             <button
               onClick={toggleTheme}
               className={`p-2 rounded-full ${
@@ -444,6 +473,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
           {[
             { label: 'Home', href: '/' },
+            { label: 'Construction', href: '/Services/all' },
             { label: 'Budget Calculator', href: '/calculator' },
             { label: 'Shop Now', href: '/ShopNow' },
             { label: 'Careers', href: '/careers' },
@@ -568,17 +598,19 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           >
             Become an Agent
           </Link>
-          <Link
-            href="/franchise"
-            onClick={closeMobileMenu}
-            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-              isDarkMode
-                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-            }`}
-          >
-            Franchise
-          </Link>
+          {user && (
+            <Link
+              href="/franchise"
+              onClick={closeMobileMenu}
+              className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
+                isDarkMode
+                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
+            >
+              Franchise
+            </Link>
+          )}
 
           {/* Mobile Auth */}
           <div className="pt-4 space-y-2 border-t" style={{ borderTopColor: isDarkMode ? '#27272a' : '#e5e7eb' }}>

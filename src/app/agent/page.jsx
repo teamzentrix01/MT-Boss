@@ -121,7 +121,7 @@ export default function AgentPage() {
   };
 
   const openWhatsApp = (f) => {
-    const num = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '919999999999';
+    const num = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '919410225039';
     const msg = [
       `🤝 *New Agent Registration – MTBOSS*`,
       ``,
@@ -727,7 +727,7 @@ export default function AgentPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="tel:+919458410866"
+              href="tel:+919410225039"
               className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

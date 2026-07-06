@@ -2,6 +2,15 @@
 const nextConfig = {
   /* config options here */
   reactCompiler: true,
+  async redirects() {
+    return [
+      {
+        source: '/construction',
+        destination: '/Services/all',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     if (!process.env.API_PROXY_URL) {
       return [];

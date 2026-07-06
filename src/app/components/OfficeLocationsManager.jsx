@@ -18,7 +18,7 @@ function theme(dark) {
 const EMPTY = {
   city: '',
   address: '',
-  phone: '+91 94584 10866',
+  phone: '+91 94102 25039',
   email: '',
   hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
   map_url: '',

@@ -16,6 +16,8 @@ function useDarkMode() {
   return dark;
 }
 
+const SUPPORTED_CITIES = ['Moradabad', 'Bareilly', 'Meerut', 'Noida', 'Delhi', 'Gurgaon', 'Haldwani', 'Dehradun'];
+
 // ── Inline SVG icons ──────────────────────────────────────────────────────────
 const X = ({ size = 20 }) => (
   <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" viewBox="0 0 24 24">
@@ -112,10 +114,10 @@ export default function ShopPage() {
   const [brandCompany, setBrandCompany]         = useState("");
   const [deliveryDate, setDeliveryDate]         = useState("");
 
-  // Pincode selection
-  const [selectedPincode, setSelectedPincode] = useState("");
-  const [pincodeError, setPincodeError] = useState("");
-  const [checkingPincode, setCheckingPincode] = useState(false);
+  // City selection
+  const [selectedCity, setSelectedCity] = useState("");
+  const [cityError, setCityError] = useState("");
+  const [checkingCity, setCheckingCity] = useState(false);
 
   // GPS
   const [locationStatus, setLocationStatus] = useState("idle");
@@ -148,8 +150,8 @@ export default function ShopPage() {
     setSelectedCategory(category);
     setSubmitted(false);
     setSubmitError("");
-    setSelectedPincode("");
-    setPincodeError("");
+    setSelectedCity("");
+    setCityError("");
     setFormData({ name: "", email: "", phone: "", quantity: "", address: "", message: "" });
     setMaterialType("");
     setCustomType("");
@@ -202,29 +204,29 @@ export default function ShopPage() {
     );
   };
 
-  const checkPincodeAvailability = async (pincode) => {
-    if (!pincode || !/^\d{6}$/.test(pincode)) {
-      setPincodeError("Please enter a valid 6-digit pincode");
+  const checkCityAvailability = async (cityVal) => {
+    if (!cityVal) {
+      setCityError("Please select a city");
       return false;
     }
     
-    setCheckingPincode(true);
-    setPincodeError("");
+    setCheckingCity(true);
+    setCityError("");
     try {
-      const res = await fetch(`/api/pincode-check?pincode=${pincode}&type=category&name=${selectedCategory?.name}`);
+      const res = await fetch(`/api/pincode-check?city=${encodeURIComponent(cityVal)}&type=category&name=${selectedCategory?.name}`);
       const data = await res.json();
       
       if (!data.available) {
-        setPincodeError(data.message || `Service not available in pincode ${pincode}`);
-        setCheckingPincode(false);
+        setCityError(data.message || `Service not available in ${cityVal}`);
+        setCheckingCity(false);
         return false;
       }
-      setPincodeError("");
-      setCheckingPincode(false);
+      setCityError("");
+      setCheckingCity(false);
       return true;
     } catch (error) {
-      setPincodeError("Error checking pincode availability");
-      setCheckingPincode(false);
+      setCityError("Error checking city availability");
+      setCheckingCity(false);
       return false;
     }
   };
@@ -248,9 +250,9 @@ export default function ShopPage() {
     const finalType     = hasTypes ? (materialType === "Others" ? customType.trim() : materialType) : customType.trim();
     const finalSubcat   = subcategoryVal   === "Others" ? customSubcategory.trim() : subcategoryVal;
 
-    // Check pincode availability first
-    const isPincodeAvailable = await checkPincodeAvailability(selectedPincode);
-    if (!isPincodeAvailable) {
+    // Check city availability first
+    const isCityAvailable = await checkCityAvailability(selectedCity);
+    if (!isCityAvailable) {
       setSubmitting(false);
       return;
     }
@@ -259,7 +261,7 @@ export default function ShopPage() {
       const year = new Date(deliveryDate).getFullYear();
       const currentYear = new Date().getFullYear();
       if (year < currentYear || year > 9999 || isNaN(year)) {
-        setSubmitError("Please enter a valid year (current year or later) for the delivery date");
+        setSubmitError("Please enter a valid delivery date.");
         setSubmitting(false);
         return;
       }
@@ -285,7 +287,7 @@ export default function ShopPage() {
           latitude:        locationCoords?.latitude  || null,
           longitude:       locationCoords?.longitude || null,
           message:         formData.message || null,
-          selected_pincode: selectedPincode,
+          selected_city:   selectedCity,
         }),
       });
       const data = await res.json();
@@ -501,57 +503,57 @@ export default function ShopPage() {
             ) : (
               <form onSubmit={handleSubmit} className="p-6 overflow-y-auto">
                 <div className="mb-4">
-                  <label className={lbl}>Delivery Pincode *</label>
+                  <label className={lbl}>Delivery City *</label>
                   <div className="flex gap-2 items-end">
-                    <input
-                      type="text"
-                      placeholder="Enter 6-digit pincode"
-                      value={selectedPincode}
+                    <select
+                      className={`flex-1 ${sel}`}
+                      value={selectedCity}
                       onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, '').slice(0, 6);
-                        setSelectedPincode(val);
-                        if (val.length === 6 && selectedCategory) {
-                          checkPincodeAvailability(val);
+                        const val = e.target.value;
+                        setSelectedCity(val);
+                        if (val && selectedCategory) {
+                          checkCityAvailability(val);
                         } else {
-                          setPincodeError("");
+                          setCityError("");
                         }
                       }}
-                      maxLength="6"
-                      className={`flex-1 ${sel}`}
-                    />
-                    {selectedPincode.length === 6 && (
+                    >
+                      <option value="">Select a city</option>
+                      {SUPPORTED_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    {selectedCity && (
                       <button
                         type="button"
-                        onClick={() => checkPincodeAvailability(selectedPincode)}
-                        disabled={checkingPincode}
-                        className={`px-4 py-2 text-xs font-bold ${checkingPincode ? 'opacity-50 cursor-wait' : ''} bg-[var(--brand-blue)] text-gray-900 rounded-lg transition-all`}
+                        onClick={() => checkCityAvailability(selectedCity)}
+                        disabled={checkingCity}
+                        className={`px-4 py-2 text-xs font-bold ${checkingCity ? 'opacity-50 cursor-wait' : ''} bg-[var(--brand-blue)] text-gray-900 rounded-lg transition-all`}
                       >
-                        {checkingPincode ? 'Checking...' : 'Verify'}
+                        {checkingCity ? 'Checking...' : 'Verify'}
                       </button>
                     )}
                   </div>
-                  {pincodeError && (
-                    <p className={`text-[9px] mt-1 ${pincodeError.includes('not available') ? 'text-red-500' : 'text-amber-500'}`}>
-                      ⚠ {pincodeError}
+                  {cityError && (
+                    <p className={`text-[9px] mt-1 ${cityError.includes('not available') ? 'text-red-500' : 'text-amber-500'}`}>
+                      ⚠ {cityError}
                     </p>
                   )}
-                  {!pincodeError && selectedPincode.length === 6 && (
-                    <p className="text-[9px] mt-1 text-green-500">✓ Supplier available in this area</p>
+                  {!cityError && selectedCity && (
+                    <p className="text-[9px] mt-1 text-green-500">✓ Supplier available in this city</p>
                   )}
                   <p className={`text-[9px] mt-0.5 ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>
                     Required — used to check supplier availability and show local pricing.
                   </p>
                 </div>
 
-                {/* ── PINCODE VERIFICATION STATUS ─────────────────────── */}
-                {selectedPincode && !pincodeError && (
+                {/* ── CITY VERIFICATION STATUS ─────────────────────── */}
+                {selectedCity && !cityError && (
                   <div className={`rounded-xl border-2 px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-green-600 bg-green-900/20" : "border-green-500 bg-green-50"}`}>
                     <div>
                       <p className={`text-[9px] font-extrabold uppercase tracking-widest mb-0.5 ${isDarkMode ? "text-green-400" : "text-green-700"}`}>
                         ✓ Supplier Available
                       </p>
                       <p className={`text-base font-black ${isDarkMode ? "text-green-300" : "text-green-800"}`}>
-                        Pincode {selectedPincode}
+                        {selectedCity}
                       </p>
                     </div>
                   </div>
@@ -581,7 +583,7 @@ export default function ShopPage() {
                   return (
                     <div className={`rounded-xl border px-4 py-2.5 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
                       <p className={`text-[10px] font-semibold ${isDarkMode ? "text-zinc-400" : "text-gray-500"}`}>
-                        Price will be quoted by a verified supplier{selectedPincode ? ` for pincode ${selectedPincode}` : ""}.
+                        Price will be quoted by a verified supplier{selectedCity ? ` for ${selectedCity}` : ""}.
                       </p>
                     </div>
                   );

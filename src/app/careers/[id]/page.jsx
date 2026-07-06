@@ -44,6 +44,7 @@ export default function JobDetailPage() {
     name: "",
     email: "",
     phone: "",
+    alternativePhone: "",
     experience: "",
     currentCompany: "",
     noticePeriod: "",
@@ -94,9 +95,9 @@ export default function JobDetailPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'phone') {
+    if (name === 'phone' || name === 'alternativePhone') {
       const rawDigits = value.replace(/\D/g, '');
-      setForm(prev => ({ ...prev, phone: rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '' }));
+      setForm(prev => ({ ...prev, [name]: rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '' }));
     } else {
       setForm(prev => ({ ...prev, [name]: value }));
     }
@@ -129,14 +130,26 @@ export default function JobDetailPage() {
     handleFileChange(e.dataTransfer.files[0]);
   };
 
-  // Convert file to base64
-//   const toBase64 = (file) =>
-//     new Promise((resolve, reject) => {
-//       const reader = new FileReader();
-//       reader.readAsDataURL(file);
-//       reader.onload = () => resolve(reader.result);
-//       reader.onerror = reject;
-//     });
+  const openWhatsApp = (enquiry) => {
+    const num = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '919410225039';
+    const msg = [
+      `💼 *New Job Application – MTBOSS*`,
+      ``,
+      `👤 *Name:* ${enquiry.name}`,
+      `📧 *Email:* ${enquiry.email}`,
+      `📱 *Phone:* ${enquiry.phone}`,
+      enquiry.alternative_phone ? `📱 *Alt Phone:* ${enquiry.alternative_phone}` : null,
+      `🎯 *Position:* ${enquiry.position}`,
+      `💼 *Experience:* ${enquiry.experience}`,
+      enquiry.current_company ? `🏢 *Current Company:* ${enquiry.current_company}` : null,
+      enquiry.notice_period ? `⏳ *Notice Period:* ${enquiry.notice_period}` : null,
+      enquiry.expected_salary ? `💰 *Expected Salary:* ${enquiry.expected_salary}` : null,
+      enquiry.resume_url ? `📄 *Resume Link:* ${window.location.origin}${enquiry.resume_url}` : null,
+      enquiry.cover_letter ? `📝 *Cover Letter:* ${enquiry.cover_letter}` : null,
+    ].filter(Boolean).join('\n');
+
+    window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank');
+  };
 
  const handleSubmit = async (e) => {
   e.preventDefault();
@@ -144,6 +157,10 @@ export default function JobDetailPage() {
   const phoneRegex = /^[6-9]\d{9}$/;
   if (!form.phone) { setError('Phone number is required.'); return; }
   if (!phoneRegex.test(form.phone)) { setError('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
+  if (form.alternativePhone && !phoneRegex.test(form.alternativePhone)) {
+    setError('Enter a valid 10-digit alternative Indian mobile number.');
+    return;
+  }
   setLoading(true);
 
   try {
@@ -155,6 +172,7 @@ export default function JobDetailPage() {
     payload.append("name", form.name);
     payload.append("email", form.email);
     payload.append("phone", form.phone);
+    payload.append("alternative_phone", form.alternativePhone);
     payload.append("experience", form.experience);
     payload.append("current_company", form.currentCompany);
     payload.append("notice_period", form.noticePeriod);
@@ -173,6 +191,10 @@ export default function JobDetailPage() {
     if (!data.success) {
       setError(data.error || "Failed to send. Please try again.");
       return;
+    }
+
+    if (data.data) {
+      openWhatsApp(data.data);
     }
 
     setSubmitted(true);
@@ -486,6 +508,10 @@ export default function JobDetailPage() {
                 <div>
                   <label className={labelClass}>Phone Number *</label>
                   <input type="tel" name="phone" placeholder="10-digit mobile number" value={form.phone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Alternative Phone Number</label>
+                  <input type="tel" name="alternativePhone" placeholder="Optional 10-digit mobile number" value={form.alternativePhone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} />
                 </div>
                 <div>
                   <label className={labelClass}>Years of Experience *</label>

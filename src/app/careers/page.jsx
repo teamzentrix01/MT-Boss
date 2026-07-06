@@ -119,45 +119,6 @@ export default function CareersPage() {
         </div>
       </section>
 
-      {/* Why Join Us */}
-      <section className={`py-16 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Perks and Benefits</p>
-            <h2 className={`text-3xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
-              Why Join MTBOSS?
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: "🚀", title: "Fast Growth", desc: "Clear career paths with regular promotions and skill development programs." },
-              { icon: "💰", title: "Competitive Pay", desc: "Industry-leading salaries, performance bonuses, and annual appraisals." },
-              { icon: "🏗️", title: "Landmark Projects", desc: "Work on mega infrastructure and iconic construction projects across India." },
-              { icon: "🤝", title: "Great Culture", desc: "Collaborative, inclusive work environment with experienced mentors." },
-              { icon: "📚", title: "Learning Support", desc: "Sponsored certifications, training programs, and international exposure." },
-              { icon: "🏥", title: "Health Benefits", desc: "Comprehensive medical insurance for you and your family." },
-              { icon: "🌍", title: "Pan India Exposure", desc: "Opportunity to work on projects across 50+ cities in India." },
-              { icon: "⚖️", title: "Work Life Balance", desc: "Structured work hours, flexible policies, and employee wellness programs." },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className={`p-6 rounded-sm border transition-all duration-300 group hover:border-[var(--brand-blue)] ${
-                  dark ? "bg-zinc-800 border-zinc-700" : "bg-gray-50 border-gray-100 hover:bg-white hover:shadow-md"
-                }`}
-              >
-                <span className="text-2xl block mb-3">{item.icon}</span>
-                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
-                  {item.title}
-                </h3>
-                <p className={`text-xs leading-relaxed ${dark ? "text-zinc-500" : "text-zinc-500"}`}>
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Job Listings */}
       <section
         ref={ref}
@@ -314,6 +275,45 @@ export default function CareersPage() {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Why Join Us */}
+      <section className={`py-16 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Perks and Benefits</p>
+            <h2 className={`text-3xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
+              Why Join MTBOSS?
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: "🚀", title: "Fast Growth", desc: "Clear career paths with regular promotions and skill development programs." },
+              { icon: "💰", title: "Competitive Pay", desc: "Industry-leading salaries, performance bonuses, and annual appraisals." },
+              { icon: "🏗️", title: "Landmark Projects", desc: "Work on mega infrastructure and iconic construction projects across India." },
+              { icon: "🤝", title: "Great Culture", desc: "Collaborative, inclusive work environment with experienced mentors." },
+              { icon: "📚", title: "Learning Support", desc: "Sponsored certifications, training programs, and international exposure." },
+              { icon: "🏥", title: "Health Benefits", desc: "Comprehensive medical insurance for you and your family." },
+              { icon: "🌍", title: "Pan India Exposure", desc: "Opportunity to work on projects across 50+ cities in India." },
+              { icon: "⚖️", title: "Work Life Balance", desc: "Structured work hours, flexible policies, and employee wellness programs." },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className={`p-6 rounded-sm border transition-all duration-300 group hover:border-[var(--brand-blue)] ${
+                  dark ? "bg-zinc-800 border-zinc-700" : "bg-gray-50 border-gray-100 hover:bg-white hover:shadow-md"
+                }`}
+              >
+                <span className="text-2xl block mb-3">{item.icon}</span>
+                <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
+                  {item.title}
+                </h3>
+                <p className={`text-xs leading-relaxed ${dark ? "text-zinc-500" : "text-zinc-500"}`}>
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

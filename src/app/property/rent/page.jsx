@@ -149,8 +149,8 @@ export default function RentPage() {
         price_raw:    parseInt(form.price_raw.replace(/,/g, "")) || 0,
         location:     form.location,
         address:      form.address,
-        beds:         form.beds   ? parseInt(form.beds)   : null,
-        baths:        form.baths  ? parseInt(form.baths)  : null,
+        beds:         form.type === "Plots" ? null : (form.beds ? parseInt(form.beds) : null),
+        baths:        form.type === "Plots" ? null : (form.baths ? parseInt(form.baths) : null),
         area:         form.area   ? parseInt(form.area)   : null,
         description:  form.description,
         highlights:   form.highlights.split("\n").map(h=>h.trim()).filter(Boolean),
@@ -268,11 +268,18 @@ export default function RentPage() {
               <div><label className={lbl}>Rent Amount (numeric) *</label><input type="number" className={inp} placeholder="e.g. 25000" value={form.price_raw} onChange={e=>set("price_raw",e.target.value)} /></div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div><label className={lbl}>Beds</label><input type="number" className={inp} placeholder="2" value={form.beds} onChange={e=>set("beds",e.target.value)} /></div>
-              <div><label className={lbl}>Baths</label><input type="number" className={inp} placeholder="1" value={form.baths} onChange={e=>set("baths",e.target.value)} /></div>
-              <div><label className={lbl}>Area (sqft) *</label><input type="number" className={inp} placeholder="950" value={form.area} onChange={e=>set("area",e.target.value)} /></div>
-            </div>
+            {form.type !== "Plots" ? (
+              <div className="grid grid-cols-3 gap-4">
+                <div><label className={lbl}>Beds</label><input type="number" className={inp} placeholder="2" value={form.beds} onChange={e=>set("beds",e.target.value)} /></div>
+                <div><label className={lbl}>Baths</label><input type="number" className={inp} placeholder="1" value={form.baths} onChange={e=>set("baths",e.target.value)} /></div>
+                <div><label className={lbl}>Area (sqft) *</label><input type="number" className={inp} placeholder="950" value={form.area} onChange={e=>set("area",e.target.value)} /></div>
+              </div>
+            ) : (
+              <div>
+                <label className={lbl}>Area (sqft) *</label>
+                <input type="number" className={inp} placeholder="950" value={form.area} onChange={e=>set("area",e.target.value)} />
+              </div>
+            )}
 
             <div><label className={lbl}>Description</label><textarea rows={3} className={`${inp} resize-none`} placeholder="Describe the property..." value={form.description} onChange={e=>set("description",e.target.value)} /></div>
             <div><label className={lbl}>Features (one per line)</label><textarea rows={3} className={`${inp} resize-none`} placeholder={"Furnished\nParking Included\nNear Metro"} value={form.highlights} onChange={e=>set("highlights",e.target.value)} /></div>

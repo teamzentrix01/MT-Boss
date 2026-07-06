@@ -39,6 +39,11 @@ async function ensureTable() {
     ALTER TABLE career_enquiries
     ADD COLUMN IF NOT EXISTS resume_url TEXT
   `);
+
+  await pool.query(`
+    ALTER TABLE career_enquiries
+    ADD COLUMN IF NOT EXISTS alternative_phone VARCHAR(50)
+  `);
 }
 
 async function saveResume(file) {
@@ -89,6 +94,7 @@ async function sendAdminNotification(enquiry) {
         'Full Name': enquiry.name,
         Email: enquiry.email,
         Phone: enquiry.phone,
+        'Alternative Phone': enquiry.alternative_phone || 'Not Provided',
         Experience: enquiry.experience,
         'Current Company': enquiry.current_company || 'Not Provided',
         'Notice Period': enquiry.notice_period || 'Not Specified',
@@ -129,6 +135,7 @@ export async function POST(req) {
       name,
       email,
       phone,
+      alternative_phone,
       experience,
       current_company,
       notice_period,
@@ -140,6 +147,7 @@ export async function POST(req) {
     const cleanName = cleanText(name);
     const cleanEmail = cleanText(email).toLowerCase();
     const cleanPhone = normalizePhone(phone);
+    const cleanAltPhone = alternative_phone ? normalizePhone(alternative_phone) : null;
 
     if (!position || !cleanName || !cleanEmail || !cleanPhone || !experience) {
       return NextResponse.json(
@@ -150,18 +158,23 @@ export async function POST(req) {
     const contactError = validateContactFields({ name: cleanName, email: cleanEmail, phone: cleanPhone });
     if (contactError) return NextResponse.json({ success: false, error: contactError }, { status: 400 });
 
+    if (cleanAltPhone) {
+      const altError = validateContactFields({ name: 'Temp', email: 'temp@temp.com', phone: cleanAltPhone });
+      if (altError) return NextResponse.json({ success: false, error: 'Alternative Phone: ' + altError }, { status: 400 });
+    }
+
     await ensureTable();
     const resumeUrl = await saveResume(resumeFile);
 
     const result = await pool.query(
       `INSERT INTO career_enquiries (
-        job_id, position, department, job_location, name, email, phone, experience,
+        job_id, position, department, job_location, name, email, phone, alternative_phone, experience,
         current_company, notice_period, current_salary, expected_salary, resume_name,
         resume_url, cover_letter, status, created_at
       ) VALUES (
-        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,NOW()
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,NOW()
       )
-      RETURNING id, job_id, position, department, job_location, name, email, phone,
+      RETURNING id, job_id, position, department, job_location, name, email, phone, alternative_phone,
         experience, current_company, notice_period, current_salary, expected_salary,
         resume_name, resume_url, cover_letter, status, created_at`,
       [
@@ -172,6 +185,7 @@ export async function POST(req) {
         cleanName,
         cleanEmail,
         cleanPhone,
+        cleanAltPhone,
         experience,
         current_company || null,
         notice_period || null,
@@ -211,7 +225,7 @@ export async function GET(req) {
     await ensureTable();
 
     const result = await pool.query(
-      `SELECT id, job_id, position, department, job_location, name, email, phone,
+      `SELECT id, job_id, position, department, job_location, name, email, phone, alternative_phone,
         experience, current_company, notice_period, current_salary, expected_salary,
         resume_name, resume_url, cover_letter, status, created_at
        FROM career_enquiries

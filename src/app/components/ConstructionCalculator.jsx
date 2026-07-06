@@ -407,7 +407,7 @@ function buildReportHtml(snapshot) {
             <div>
               <h1>MTBoss Construction</h1>
               <p>Construction, materials, site execution and property services</p>
-              <p>info@mtboss.in | +91 94584 10866</p>
+              <p>info@mtboss.in | +91 94102 25039</p>
             </div>
           </div>
           <div class="meta">
@@ -477,7 +477,7 @@ function buildReportHtml(snapshot) {
           </div>
           <div>
             <strong>Contact Us</strong>
-            Phone: <a href="tel:+919458410866">+91 94584 10866</a><br />
+            Phone: <a href="tel:+919410225039">+91 94102 25039</a><br />
             Email: <a href="mailto:info@mtboss.in">info@mtboss.in</a><br />
             Web: <a href="/contact">Contact Us</a>
           </div>

@@ -1595,6 +1595,7 @@ function AdminDashboard() {
                   ['Name', selectedCareerEnquiry.name],
                   ['Email', selectedCareerEnquiry.email],
                   ['Phone', selectedCareerEnquiry.phone],
+                  ['Alternative Phone', selectedCareerEnquiry.alternative_phone || '-'],
                   ['Position', selectedCareerEnquiry.position],
                   ['Department', selectedCareerEnquiry.department || '-'],
                   ['Location', selectedCareerEnquiry.job_location || '-'],

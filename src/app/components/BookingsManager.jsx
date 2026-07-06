@@ -312,6 +312,10 @@ export default function BookingsManager({ isDarkMode }) {
               <div className="detail-value">{selectedBooking.user_phone}</div>
             </div>
             <div className="detail-field">
+              <div className="detail-label">Property Type</div>
+              <div className="detail-value">{selectedBooking.property_type || 'Not Specified'}</div>
+            </div>
+            <div className="detail-field">
               <div className="detail-label">Address</div>
               <div className="detail-value">{selectedBooking.service_address}</div>
             </div>

@@ -19,75 +19,110 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const pincode = searchParams.get('pincode');
+    const city = searchParams.get('city');
     const type = searchParams.get('type'); // 'category' or 'service'
     const name = searchParams.get('name');
 
-    if (!pincode || !type || !name) {
+    if ((!pincode && !city) || !type || !name) {
       return NextResponse.json(
-        { success: false, error: 'Missing pincode, type, or name parameter' },
+        { success: false, error: 'Missing pincode or city, type, or name parameter' },
         { status: 400 }
       );
     }
 
     if (type === 'service') {
       const cleanName = String(name || '').trim();
-      const dbCheck = await pool.query(
-        `SELECT DISTINCT v.city 
-         FROM vendors v
-         JOIN vendor_services vs ON v.id = vs.vendor_id
-         JOIN quick_services qs ON vs.quick_service_id = qs.id
-         WHERE v.postal_code = $1
-           AND (LOWER(qs.slug) = LOWER($2) OR LOWER(qs.label) = LOWER($3) OR LOWER(qs.label) = LOWER($4))
-           AND vs.is_active = TRUE
-           AND v.is_approved = TRUE
-           AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
-           AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
-         LIMIT 1`,
-        [pincode, cleanName, cleanName, cleanName.replace(/-/g, ' ')]
-      );
+      let dbCheck;
+      if (city) {
+        dbCheck = await pool.query(
+          `SELECT DISTINCT v.city 
+           FROM vendors v
+           JOIN vendor_services vs ON v.id = vs.vendor_id
+           JOIN quick_services qs ON vs.quick_service_id = qs.id
+           WHERE LOWER(v.city) = LOWER($1)
+             AND (LOWER(qs.slug) = LOWER($2) OR LOWER(qs.label) = LOWER($3) OR LOWER(qs.label) = LOWER($4))
+             AND vs.is_active = TRUE
+             AND v.is_approved = TRUE
+             AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
+             AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
+           LIMIT 1`,
+          [city.trim(), cleanName, cleanName, cleanName.replace(/-/g, ' ')]
+        );
+      } else {
+        dbCheck = await pool.query(
+          `SELECT DISTINCT v.city 
+           FROM vendors v
+           JOIN vendor_services vs ON v.id = vs.vendor_id
+           JOIN quick_services qs ON vs.quick_service_id = qs.id
+           WHERE v.postal_code = $1
+             AND (LOWER(qs.slug) = LOWER($2) OR LOWER(qs.label) = LOWER($3) OR LOWER(qs.label) = LOWER($4))
+             AND vs.is_active = TRUE
+             AND v.is_approved = TRUE
+             AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
+             AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
+           LIMIT 1`,
+          [pincode, cleanName, cleanName, cleanName.replace(/-/g, ' ')]
+        );
+      }
 
       if (dbCheck.rows.length > 0) {
         return NextResponse.json({
           success: true,
           available: true,
           city: dbCheck.rows[0].city,
-          message: `Service available in pincode ${pincode}`,
+          message: city ? `Service available in ${city}` : `Service available in pincode ${pincode}`,
         });
       } else {
         return NextResponse.json({
           success: true,
           available: false,
-          message: `Service not available in pincode ${pincode} yet. Try another pincode or contact support.`,
+          message: city ? `Service not available in ${city} yet. Try another city or contact support.` : `Service not available in pincode ${pincode} yet. Try another pincode or contact support.`,
         });
       }
     }
 
     if (type === 'category') {
       const cleanName = String(name || '').trim();
-      const dbCheck = await pool.query(
-        `SELECT 1 FROM suppliers s
-         WHERE s.postal_code = $1
-           AND s.status = 'approved'
-           AND s.is_active = TRUE
-           AND EXISTS (
-             SELECT 1 FROM unnest(s.product_categories) cat
-             WHERE LOWER(cat) = LOWER($2)
-           )
-         LIMIT 1`,
-        [pincode, cleanName]
-      );
+      let dbCheck;
+      if (city) {
+        dbCheck = await pool.query(
+          `SELECT 1 FROM suppliers s
+           WHERE LOWER(s.city) = LOWER($1)
+             AND s.status = 'approved'
+             AND s.is_active = TRUE
+             AND EXISTS (
+               SELECT 1 FROM unnest(s.product_categories) cat
+               WHERE LOWER(cat) = LOWER($2)
+             )
+           LIMIT 1`,
+          [city.trim(), cleanName]
+        );
+      } else {
+        dbCheck = await pool.query(
+          `SELECT 1 FROM suppliers s
+           WHERE s.postal_code = $1
+             AND s.status = 'approved'
+             AND s.is_active = TRUE
+             AND EXISTS (
+               SELECT 1 FROM unnest(s.product_categories) cat
+               WHERE LOWER(cat) = LOWER($2)
+             )
+           LIMIT 1`,
+          [pincode, cleanName]
+        );
+      }
 
       if (dbCheck.rows.length > 0) {
         return NextResponse.json({
           success: true,
           available: true,
-          message: `Supplier available in pincode ${pincode}`,
+          message: city ? `Supplier available in ${city}` : `Supplier available in pincode ${pincode}`,
         });
       } else {
         return NextResponse.json({
           success: true,
           available: false,
-          message: `Supplier not available in pincode ${pincode} yet. Try another pincode or contact support.`,
+          message: city ? `Supplier not available in ${city} yet. Try another city or contact support.` : `Supplier not available in pincode ${pincode} yet. Try another pincode or contact support.`,
         });
       }
     }

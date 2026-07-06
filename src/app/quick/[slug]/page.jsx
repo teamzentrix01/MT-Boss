@@ -15,6 +15,7 @@ const TIME_SLOTS = [
 ];
 
 const PROPERTY_TYPES = ['Apartment', 'Independent House', 'Villa', 'Office / Commercial', 'Shop / Showroom', 'Other'];
+const SUPPORTED_CITIES = ['Moradabad', 'Bareilly', 'Meerut', 'Noida', 'Delhi', 'Gurgaon', 'Haldwani', 'Dehradun'];
 
 function getTodayStr() {
   return new Date().toISOString().split('T')[0];
@@ -66,11 +67,10 @@ export default function QuickServiceSlugPage() {
   const [error, setError] = useState('');
 
   // Booking states
-  const [step, setStep] = useState(0); // 0 = pincode verification, 1 = details, 2 = confirm, 3 = success
-  const [pincode, setPincode] = useState('');
-  const [checkingPincode, setCheckingPincode] = useState(false);
-  const [pincodeError, setPincodeError] = useState('');
-  const [detectedCity, setDetectedCity] = useState('');
+  const [step, setStep] = useState(0); // 0 = city verification, 1 = details, 2 = confirm, 3 = success
+  const [selectedCity, setSelectedCity] = useState('');
+  const [checkingCity, setCheckingCity] = useState(false);
+  const [cityError, setCityError] = useState('');
   const [available, setAvailable] = useState(false);
 
   const [form, setForm] = useState({
@@ -148,8 +148,7 @@ export default function QuickServiceSlugPage() {
           setSlotType(pending.slotType);
           setSelectedFreeSlot(pending.selectedFreeSlot);
           setStep(pending.step);
-          setPincode(pending.form.pincode);
-          setDetectedCity(pending.form.city);
+          setSelectedCity(pending.form.city);
           setAvailable(true);
           
           // Scroll to the booking form section
@@ -271,33 +270,32 @@ export default function QuickServiceSlugPage() {
     setErrors((e) => ({ ...e, [field]: '' }));
   }
 
-  const handleVerifyPincode = async (val) => {
-    const pinVal = val || pincode;
-    if (!pinVal || !/^\d{6}$/.test(pinVal)) {
-      setPincodeError('Please enter a valid 6-digit pincode');
+  const handleVerifyCity = async (val) => {
+    const cityVal = val || selectedCity;
+    if (!cityVal) {
+      setCityError('Please select a city');
       setAvailable(false);
       return;
     }
-    setPincodeError('');
-    setCheckingPincode(true);
+    setCityError('');
+    setCheckingCity(true);
     setAvailable(false);
     try {
       const serviceName = service.label?.toLowerCase().replace(/\s+/g, '-') || '';
-      const res = await fetch(`/api/pincode-check?pincode=${pinVal}&type=service&name=${serviceName}`);
+      const res = await fetch(`/api/pincode-check?city=${encodeURIComponent(cityVal)}&type=service&name=${serviceName}`);
       const data = await res.json();
       if (data.success && data.available) {
         setAvailable(true);
-        setDetectedCity(data.city || 'Moradabad');
-        setForm(f => ({ ...f, city: data.city || 'Moradabad', pincode: pinVal }));
+        setForm(f => ({ ...f, city: cityVal }));
         setStep(1); // Proceed to form details step
       } else {
         setAvailable(false);
-        setPincodeError(data.message || `Service not available in pincode ${pinVal}`);
+        setCityError(data.message || `Service not available in ${cityVal} yet.`);
       }
     } catch (err) {
-      setPincodeError('Error checking pincode availability. Please try again.');
+      setCityError('Error checking city availability. Please try again.');
     } finally {
-      setCheckingPincode(false);
+      setCheckingCity(false);
     }
   };
 
@@ -308,6 +306,7 @@ export default function QuickServiceSlugPage() {
     if (!/^[6-9]\d{9}$/.test(form.phone)) e.phone = 'Valid 10-digit phone required';
     if (form.email && !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Invalid email';
     if (!form.address.trim()) e.address = 'Address is required';
+    if (!/^\d{6}$/.test(form.pincode)) e.pincode = 'Valid 6-digit pincode required';
     if (!form.propertyType) e.propertyType = 'Select property type';
     if (slotType === 'free') {
       if (!selectedFreeSlot) e.freeSlot = 'Select a free slot';
@@ -491,6 +490,18 @@ export default function QuickServiceSlugPage() {
             <p className={`text-sm leading-relaxed ${muted}`}>
               Select your preferred appointment details below. We verify technician availability in your pincode area and offer transparent, milestone-free bookings.
             </p>
+            {service.sub_category && (
+              <div className="mt-6">
+                <p className="text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-[0.4em] mb-2">Sub-Services Covered</p>
+                <div className="flex flex-wrap gap-2">
+                  {service.sub_category.split(',').map((sub) => (
+                    <span key={sub} className={`px-3 py-1.5 text-[10px] font-black border uppercase tracking-wider ${dark ? 'border-zinc-800 bg-zinc-900 text-zinc-300' : 'border-zinc-200 bg-zinc-50 text-zinc-700'}`}>
+                      {sub.trim()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-3">
             {stats.map(([val, label]) => (
@@ -539,7 +550,7 @@ export default function QuickServiceSlugPage() {
                   onClick={() => {
                     setStep(0);
                     setAvailable(false);
-                    setPincode('');
+                    setSelectedCity('');
                     setForm({
                       name: '', phone: '', email: '', address: '', city: '', pincode: '',
                       propertyType: '', propertyTypeOther: '', date: '', timeSlot: '',
@@ -553,44 +564,40 @@ export default function QuickServiceSlugPage() {
               </div>
             )}
 
-            {/* Step 0: Pincode Check */}
+            {/* Step 0: City Check */}
             {step === 0 && (
               <div className="space-y-4 max-w-md mx-auto py-4">
                 <div className="text-left">
                   <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>
-                    Enter Delivery Pincode *
+                    Select Delivery City *
                   </label>
                   <div className="flex gap-2">
-                    <input
-                      type="text"
-                      maxLength={6}
-                      placeholder="6-digit pincode"
-                      className={inputCls}
-                      value={pincode}
+                    <select
+                      className={`${inputCls} flex-1`}
+                      value={selectedCity}
                       onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, '').slice(0, 6);
-                        setPincode(val);
+                        setSelectedCity(e.target.value);
                         setAvailable(false);
-                        setPincodeError('');
-                        if (val.length === 6) {
-                          handleVerifyPincode(val);
-                        }
+                        setCityError('');
                       }}
-                    />
+                    >
+                      <option value="">Select a city</option>
+                      {SUPPORTED_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
                     <button
                       type="button"
-                      onClick={() => handleVerifyPincode()}
-                      disabled={checkingPincode || pincode.length !== 6}
+                      onClick={() => handleVerifyCity(selectedCity)}
+                      disabled={checkingCity || !selectedCity}
                       className="px-6 py-2.5 text-xs font-black uppercase tracking-widest bg-[var(--brand-blue)] text-black transition-all disabled:opacity-50"
                     >
-                      {checkingPincode ? 'Checking...' : 'Verify'}
+                      {checkingCity ? 'Checking...' : 'Verify'}
                     </button>
                   </div>
                 </div>
 
-                {pincodeError && (
+                {cityError && (
                   <p className="text-xs text-red-500 font-bold text-left">
-                    ⚠️ {pincodeError}
+                    ⚠️ {cityError}
                   </p>
                 )}
               </div>
@@ -603,7 +610,7 @@ export default function QuickServiceSlugPage() {
                 {/* Verified Location Bar */}
                 <div className={`flex items-center justify-between p-3 border ${border} rounded text-xs`}>
                   <p className="font-bold">
-                    ✓ Available in: <span className="text-[var(--brand-blue)]">{detectedCity} ({pincode})</span>
+                    ✓ Available in: <span className="text-[var(--brand-blue)]">{form.city}</span>
                   </p>
                   <button
                     type="button"
@@ -613,7 +620,7 @@ export default function QuickServiceSlugPage() {
                     }}
                     className="text-[9px] font-black uppercase tracking-widest border border-zinc-500/30 px-3 py-1 hover:border-zinc-500"
                   >
-                    Change Pincode
+                    Change City
                   </button>
                 </div>
 
@@ -674,12 +681,17 @@ export default function QuickServiceSlugPage() {
                       readOnly
                     />
                   </Field>
-                  <Field label="Pincode (Prefilled)" isDark={dark}>
+                  <Field label="Pincode *" error={errors.pincode} isDark={dark}>
                     <input
                       type="text"
-                      className={`${inputCls} opacity-70 cursor-not-allowed`}
+                      maxLength={6}
+                      className={inputCls}
+                      placeholder="6-digit pincode"
                       value={form.pincode}
-                      readOnly
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+                        setField('pincode', val);
+                      }}
                     />
                   </Field>
                 </div>
@@ -716,6 +728,14 @@ export default function QuickServiceSlugPage() {
                       onChange={(e) => setField('propertyTypeOther', e.target.value)}
                     />
                   )}
+                  {form.propertyType && (
+                    <p className={`mt-2 text-[10px] font-black uppercase tracking-widest ${dark ? 'text-[var(--brand-blue)]' : 'text-zinc-900'}`}>
+                      Selected property type:{' '}
+                      {form.propertyType === 'Other'
+                        ? form.propertyTypeOther?.trim() || 'Other'
+                        : form.propertyType}
+                    </p>
+                  )}
                 </Field>
 
                 <Field label="Capture Live GPS *" error={errors.location} isDark={dark}>
@@ -748,16 +768,18 @@ export default function QuickServiceSlugPage() {
                       key={key}
                       type="button"
                       onClick={() => { setSlotType(key); setSelectedFreeSlot(null); }}
-                      className={`flex-1 p-3 border text-left rounded transition-all ${
+                      className={`appointment-tab flex-1 p-3 rounded transition-all !border-2 ${
                         slotType === key
-                          ? dark ? 'border-[var(--brand-blue)] bg-[var(--brand-blue)]/10' : 'border-zinc-900 bg-zinc-50'
-                          : border
+                          ? dark ? '!border-white' : '!border-black'
+                          : dark ? '!border-zinc-800/40' : '!border-zinc-300/40'
                       }`}
                     >
-                      <p className={`text-[10px] font-black uppercase tracking-widest ${
-                        slotType === key ? (dark ? 'text-[var(--brand-blue)]' : 'text-zinc-900') : muted
-                      }`}>{icon} {label}</p>
-                      <p className={`text-[9px] mt-0.5 ${muted}`}>{sub}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest !text-black">
+                        {icon} {label}
+                      </p>
+                      <p className="text-[9px] mt-0.5 !text-zinc-900 font-bold">
+                        {sub}
+                      </p>
                     </button>
                   ))}
                 </div>

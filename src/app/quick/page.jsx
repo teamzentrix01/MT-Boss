@@ -578,16 +578,18 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                     key={key}
                     type="button"
                     onClick={() => { setSlotType(key); setSelectedFreeSlot(null); }}
-                    className={`qs-choice flex-1 p-3 border text-left transition-all ${slotType === key ? 'qs-choice-active' : ''} ${
+                    className={`qs-choice appointment-tab flex-1 p-3 rounded transition-all !border-2 ${
                       slotType === key
-                        ? isDark ? 'border-[var(--brand-blue)] bg-[var(--brand-blue)]/10' : 'border-zinc-900 bg-zinc-50'
-                        : isDark ? 'border-zinc-800' : 'border-zinc-200'
+                        ? isDark ? '!border-white' : '!border-black'
+                        : isDark ? '!border-zinc-800/40' : '!border-zinc-300/40'
                     }`}
                   >
-                    <p className={`text-[10px] font-black uppercase tracking-widest ${
-                      slotType === key ? (isDark ? 'text-[var(--brand-blue)]' : 'text-zinc-900') : muted
-                    }`}>{icon} {label}</p>
-                    <p className={`text-[10px] mt-0.5 ${muted}`}>{sub}</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest !text-black">
+                      {icon} {label}
+                    </p>
+                    <p className="text-[10px] mt-0.5 !text-zinc-900 font-bold">
+                      {sub}
+                    </p>
                   </button>
                 ))}
               </div>
@@ -805,18 +807,19 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
   );
 }
 
+const SUPPORTED_CITIES = ['Moradabad', 'Bareilly', 'Meerut', 'Noida', 'Delhi', 'Gurgaon', 'Haldwani', 'Dehradun'];
+
 // ─── Location Check Modal ──────────────────────────────────────────────────────
 function LocationCheckModal({ service, isDark, onClose, onProceed }) {
-  const [pincode, setPincode] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState('');
   const [available, setAvailable] = useState(null);
-  const [detectedCity, setDetectedCity] = useState('');
 
   const handleVerify = async (val) => {
-    const pinVal = val || pincode;
-    if (!pinVal || !/^\d{6}$/.test(pinVal)) {
-      setError('Please enter a valid 6-digit pincode');
+    const cityVal = val || selectedCity;
+    if (!cityVal) {
+      setError('Please select a city');
       setAvailable(null);
       return;
     }
@@ -825,17 +828,16 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
     setAvailable(null);
     try {
       const serviceName = service.label?.toLowerCase().replace(/\s+/g, '-') || '';
-      const res = await fetch(`/api/pincode-check?pincode=${pinVal}&type=service&name=${serviceName}`);
+      const res = await fetch(`/api/pincode-check?city=${encodeURIComponent(cityVal)}&type=service&name=${serviceName}`);
       const data = await res.json();
       if (data.success && data.available) {
         setAvailable(true);
-        setDetectedCity(data.city || 'Moradabad');
       } else {
         setAvailable(false);
-        setError(data.message || `Service not available in pincode ${pinVal}`);
+        setError(data.message || `Service not available in ${cityVal} yet.`);
       }
     } catch (err) {
-      setError('Error checking pincode availability. Please try again.');
+      setError('Error checking city availability. Please try again.');
     } finally {
       setChecking(false);
     }
@@ -888,29 +890,25 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
         <div className="p-6 space-y-4 text-center">
           <div className="text-left">
             <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-              Enter Delivery Pincode *
+              Select Delivery City *
             </label>
             <div className="flex gap-2">
-              <input
-                type="text"
-                maxLength={6}
-                placeholder="6-digit pincode"
+              <select
                 className={`flex-1 px-3 py-2.5 text-sm border outline-none transition-all ${inputCls}`}
-                value={pincode}
+                value={selectedCity}
                 onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, '').slice(0, 6);
-                  setPincode(val);
+                  setSelectedCity(e.target.value);
                   setAvailable(null);
                   setError('');
-                  if (val.length === 6) {
-                    handleVerify(val);
-                  }
                 }}
-              />
+              >
+                <option value="">Select a city</option>
+                {SUPPORTED_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
               <button
                 type="button"
                 onClick={() => handleVerify()}
-                disabled={checking || pincode.length !== 6}
+                disabled={checking || !selectedCity}
                 className="px-4 py-2.5 text-xs font-black uppercase tracking-widest bg-[var(--brand-blue)] text-black transition-all disabled:opacity-50"
               >
                 {checking ? 'Checking...' : 'Verify'}
@@ -927,10 +925,10 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
           {available && (
             <div className="space-y-3">
               <p className="text-xs text-green-500 font-bold text-left">
-                ✓ Service available in this area ({detectedCity})
+                ✓ Service available in: {selectedCity}
               </p>
               <button
-                onClick={() => onProceed(detectedCity, pincode)}
+                onClick={() => onProceed(selectedCity, '')}
                 className="w-full py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all font-bold"
               >
                 Proceed to Book →
@@ -1079,7 +1077,12 @@ export default function AllQuickServicesPage() {
                     {s.label}
                   </h3>
                 </Link>
-                <p className={`text-xs leading-relaxed mb-4 min-h-[48px] ${muted}`}>{s.description}</p>
+                <p className={`text-xs leading-relaxed mb-3 min-h-[48px] ${muted}`}>{s.description}</p>
+                {s.sub_category && (
+                  <p className={`text-[10px] uppercase font-bold tracking-wide mb-3 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                    Includes: <span className="font-semibold">{s.sub_category}</span>
+                  </p>
+                )}
 
                 <p className={`text-[10px] font-black mb-3 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
                   Visiting Charge: <span className="text-[var(--brand-blue)]">₹150</span>

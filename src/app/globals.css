@@ -268,3 +268,22 @@ button[aria-expanded]:hover * {
     white-space: nowrap;
   }
 }
+
+/* Disable global button transition & hover styles for flat choice/tab buttons */
+.qs-choice,
+.appointment-tab {
+  background-image: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+  transition: border-color 0.2s ease, background-color 0.2s ease !important;
+  will-change: auto !important;
+}
+
+.qs-choice:hover,
+.appointment-tab:hover,
+.qs-choice:active,
+.appointment-tab:active {
+  background-image: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
