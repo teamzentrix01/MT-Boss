@@ -355,8 +355,8 @@ export default function ServiceDetailPage() {
                     value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
                 </div>
                 <div>
-                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Alternative Phone *</label>
-                  <input required type="tel" className={inp} placeholder="+91 9876500000"
+                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Alternative Phone</label>
+                  <input type="tel" className={inp} placeholder="Optional 10-digit number"
                     value={form.alternatePhone} onChange={e => setForm({ ...form, alternatePhone: e.target.value })} />
                 </div>
               </div>

@@ -195,9 +195,9 @@ export async function POST(req) {
     const cleanPhone = normalizePhone(phone);
     const cleanAlternatePhone = normalizePhone(alternate_phone);
 
-    if (!service_title || !cleanName || !cleanPhone || !cleanAlternatePhone) {
+    if (!service_title || !cleanName || !cleanPhone) {
       return NextResponse.json(
-        { success: false, error: 'Service, name, main phone, and alternative phone are required' },
+        { success: false, error: 'Service, name, and main phone are required' },
         { status: 400 }
       );
     }
@@ -208,7 +208,7 @@ export async function POST(req) {
       emailRequired: false,
     });
     if (contactError) return NextResponse.json({ success: false, error: contactError }, { status: 400 });
-    if (!/^[6-9]\d{9}$/.test(cleanAlternatePhone)) {
+    if (cleanAlternatePhone && !/^[6-9]\d{9}$/.test(cleanAlternatePhone)) {
       return NextResponse.json({ success: false, error: 'Alternate phone number must be 10 digits and start with 6, 7, 8 or 9.' }, { status: 400 });
     }
 
@@ -230,7 +230,7 @@ export async function POST(req) {
         userId,
         cleanName,
         cleanPhone,
-        cleanAlternatePhone,
+        cleanAlternatePhone || null,
         cleanEmail,
         message || null,
         budget || null,
