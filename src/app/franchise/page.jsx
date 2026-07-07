@@ -35,8 +35,8 @@ const franchiseModels = [
   {
     id: 1,
     name: "Associate Partner",
-    investment: "₹ 5 - 10 Lakhs",
-    returns: "Up to 20% ROI",
+    investment: "Details after consultation",
+    returns: "Revenue model shared on call",
     area: "Single City",
     support: "Basic",
     color: "border-blue-500",
@@ -52,8 +52,8 @@ const franchiseModels = [
   {
     id: 2,
     name: "Regional Franchise",
-    investment: "₹ 25 - 50 Lakhs",
-    returns: "Up to 35% ROI",
+    investment: "Custom proposal after review",
+    returns: "Revenue model shared on call",
     area: "Multiple Districts",
     support: "Premium",
     color: "border-[var(--brand-blue)]",
@@ -72,8 +72,8 @@ const franchiseModels = [
   {
     id: 3,
     name: "Master Franchise",
-    investment: "₹ 1 Cr+",
-    returns: "Up to 50% ROI",
+    investment: "Tailored state-level proposal",
+    returns: "Revenue model shared on call",
     area: "Entire State",
     support: "Elite",
     color: "border-purple-500",
@@ -93,7 +93,7 @@ const franchiseModels = [
 
 const benefits = [
   { icon: "🏆", title: "Established Brand", desc: "20+ years of trust and recognition across India's construction industry." },
-  { icon: "📈", title: "High ROI", desc: "Proven business model with returns up to 50% depending on franchise tier." },
+  { icon: "📈", title: "Structured Revenue Model", desc: "Franchise commercials, revenue share, and territory economics are discussed after profile review." },
   { icon: "🤝", title: "End-to-End Support", desc: "From training to project execution — we support you at every step." },
   { icon: "🌍", title: "Pan India Network", desc: "Join a network of 50+ cities and 500+ skilled professionals." },
   { icon: "🔧", title: "Technical Expertise", desc: "Access to MTBOSS's engineering and procurement capabilities." },
@@ -112,7 +112,7 @@ const process = [
 ];
 
 const faqs = [
-  { q: "What is the minimum investment required?", a: "The minimum investment starts at ₹5 Lakhs for the Associate Partner model. Regional and Master Franchise models require higher investment with proportionally higher returns." },
+  { q: "What is the minimum investment required?", a: "Franchise investment depends on territory, model, local operating setup, and eligibility. Our team shares the detailed commercial proposal after the discovery call." },
   { q: "Do I need prior construction experience?", a: "No prior construction experience is required. MTBOSS provides complete technical training and ongoing support. Business development and management skills are more important." },
   { q: "What territory will I get?", a: "Territory is allocated based on the franchise model chosen. Associate Partners get city-level rights, Regional Franchises get district-level, and Master Franchises get state-level exclusivity." },
   { q: "How long does onboarding take?", a: "Our streamlined onboarding process typically takes 30 days from agreement signing to being fully operational." },
@@ -200,7 +200,7 @@ export default function FranchisePage() {
       if (!form.ifscCode || !form.ifscCode.trim()) { setError('IFSC Code is required.'); return false; }
     } else if (step === 4) {
       if (!form.model) { setError('Franchise Model is required.'); return false; }
-      if (!form.investment) { setError('Investment Capacity is required.'); return false; }
+      if (!form.investment) { setError('Commercial discussion preference is required.'); return false; }
       if (!form.territory || !form.territory.trim()) { setError('Preferred Territory is required.'); return false; }
       if (form.startDate) {
         const year = new Date(form.startDate).getFullYear();
@@ -409,7 +409,7 @@ export default function FranchisePage() {
               Franchise Models
             </h2>
             <p className={`text-xs mt-3 max-w-lg mx-auto ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
-              Three flexible models designed for different investment levels and business goals
+              Three flexible models designed for different territories, responsibilities, and business goals. Commercial details are shared after consultation.
             </p>
           </div>
 
@@ -441,7 +441,7 @@ export default function FranchisePage() {
 
                 <p className="text-[var(--brand-blue)] text-2xl font-black mb-1">{model.investment}</p>
                 <p className={`text-[10px] font-bold uppercase tracking-widest mb-6 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
-                  Investment Range
+                  Proposal Details
                 </p>
 
                 <div className={`flex items-center justify-between py-3 border-y mb-6 ${dark ? "border-zinc-700" : "border-gray-100"}`}>
@@ -980,20 +980,20 @@ export default function FranchisePage() {
                   <label className={labelClass}>Franchise Model *</label>
                   <select name="model" value={form.model} onChange={handleChange} className={inputClass}>
                     <option value="">Select Model</option>
-                    <option value="Associate Partner">Associate Partner (₹5-10L)</option>
-                    <option value="Regional Franchise">Regional Franchise (₹25-50L)</option>
-                    <option value="Master Franchise">Master Franchise (₹1Cr+)</option>
+                    <option value="Associate Partner">Associate Partner</option>
+                    <option value="Regional Franchise">Regional Franchise</option>
+                    <option value="Master Franchise">Master Franchise</option>
                   </select>
                 </div>
                 <div>
-                  <label className={labelClass}>Investment Capacity *</label>
+                  <label className={labelClass}>Commercial Discussion Preference *</label>
                   <select name="investment" value={form.investment} onChange={handleChange} className={inputClass}>
-                    <option value="">Select Range</option>
-                    <option value="5-10 Lakhs">5 - 10 Lakhs</option>
-                    <option value="10-25 Lakhs">10 - 25 Lakhs</option>
-                    <option value="25-50 Lakhs">25 - 50 Lakhs</option>
-                    <option value="50L-1Cr">50 Lakhs - 1 Crore</option>
-                    <option value="1Cr+">1 Crore and above</option>
+                    <option value="">Select Preference</option>
+                    <option value="Starter territory discussion">Starter territory discussion</option>
+                    <option value="City-level franchise discussion">City-level franchise discussion</option>
+                    <option value="District-level franchise discussion">District-level franchise discussion</option>
+                    <option value="State-level franchise discussion">State-level franchise discussion</option>
+                    <option value="Need team guidance">Need team guidance</option>
                   </select>
                 </div>
                 <div>
