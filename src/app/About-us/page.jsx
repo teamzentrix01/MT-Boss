@@ -1,24 +1,30 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import TeamPage from "./TeamPage";
+import { COMPANY_CONTACT, COMPANY_NAME } from "../lib/company";
 
 function useInView(threshold = 0.1) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setInView(true); },
-      { threshold }
+      ([entry]) => {
+        if (entry.isIntersecting) setInView(true);
+      },
+      { threshold },
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
-  }, []);
+  }, [threshold]);
+
   return [ref, inView];
 }
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
+
   useEffect(() => {
     const html = document.documentElement;
     const update = () => setDark(html.classList.contains("dark-mode"));
@@ -27,11 +33,13 @@ function useDarkMode() {
     observer.observe(html, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
   }, []);
+
   return dark;
 }
 
 function FadeIn({ children, className = "", delay = 0 }) {
   const [ref, visible] = useInView(0.08);
+
   return (
     <div
       ref={ref}
@@ -47,32 +55,63 @@ function FadeIn({ children, className = "", delay = 0 }) {
   );
 }
 
-// ── Company Story ──────────────────────────────────────────────
+function SectionHeading({ eyebrow, title, dark, align = "left" }) {
+  return (
+    <div className={align === "center" ? "text-center" : ""}>
+      <p
+        className={`text-[10px] uppercase tracking-[0.35em] mb-2 font-black ${
+          dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"
+        }`}
+      >
+        {eyebrow}
+      </p>
+      <h2 className={`text-2xl sm:text-3xl font-black leading-tight ${dark ? "text-white" : "text-zinc-900"}`}>
+        {title}
+      </h2>
+      <div
+        className={`w-10 h-0.5 mt-4 ${align === "center" ? "mx-auto" : ""} ${
+          dark ? "bg-[var(--brand-blue)]" : "bg-[var(--brand-blue-deep)]"
+        }`}
+      />
+    </div>
+  );
+}
+
 function CompanyStory({ dark }) {
   return (
-    <section className={`py-10 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-[var(--brand-blue-faint)]"}`}>
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+    <section className={`py-14 px-6 transition-colors duration-500 ${dark ? "bg-zinc-950" : "bg-white"}`}>
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <FadeIn>
-          <p className={`text-[10px] uppercase tracking-[0.4em] mb-1.5 font-black ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>Who We Are</p>
-          <h2 className={`text-2xl sm:text-3xl font-black mb-3 leading-tight ${dark ? "text-white" : "text-[var(--brand-blue-ink)]"}`}>Our Story</h2>
-          <div className={`w-8 h-0.5 mb-4 ${dark ? "bg-[var(--brand-blue)]" : "bg-[var(--brand-blue-deep)]"}`} />
-          <p className={`text-sm leading-relaxed mb-3 ${dark ? "text-zinc-400" : "text-gray-600"}`}>
-            MTBOSS Construction was founded with a single vision — to build infrastructure that stands the test of time. Starting as a small contracting firm, we have grown into one of India's most trusted EPC companies.
-          </p>
-          <p className={`text-sm leading-relaxed ${dark ? "text-zinc-400" : "text-gray-600"}`}>
-            Over two decades, we have delivered hundreds of projects across residential, commercial, industrial, and infrastructure sectors — always on time, within budget, and with uncompromising quality.
-          </p>
+          <SectionHeading eyebrow="Who We Are" title="Built for dependable construction delivery" dark={dark} />
+          <div className={`mt-6 space-y-4 text-sm leading-7 ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
+            <p>
+              {COMPANY_NAME} is a construction-focused company serving clients across residential, commercial,
+              industrial, property, contractor, material supply, and project support requirements.
+            </p>
+            <p>
+              Our platform and team help customers plan construction work, estimate budgets, discover verified
+              services, connect with relevant professionals, and submit enquiries with transparent communication.
+            </p>
+            <p>
+              We work with a practical operating principle: clear scope, responsible coordination, quality-conscious
+              execution, and timely support from first enquiry to project handover.
+            </p>
+          </div>
         </FadeIn>
-        <FadeIn delay={150}>
-          <div className="relative">
+
+        <FadeIn delay={120}>
+          <div className="relative overflow-hidden">
             <img
-              src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80"
-              alt="MTBOSS Construction"
-              className="w-full h-56 object-cover shadow-lg"
+              src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1000&q=80"
+              alt="Construction site managed by Mtboss construction private limited"
+              className="w-full h-72 object-cover"
             />
-            <div className={`absolute -bottom-3 -left-3 px-5 py-3 shadow-md ${dark ? "bg-[var(--brand-blue)]" : "bg-[var(--brand-blue-deep)]"}`}>
-              <p className={`text-2xl font-black leading-none ${dark ? "text-black" : "text-white"}`}>20+</p>
-              <p className={`text-[9px] uppercase tracking-widest ${dark ? "text-black" : "text-white"}`}>Years of Excellence</p>
+            <div className={`absolute inset-0 ${dark ? "bg-black/20" : "bg-[var(--brand-blue-deep)]/10"}`} />
+            <div className={`absolute left-0 bottom-0 p-5 ${dark ? "bg-black/90" : "bg-white/95"}`}>
+              <p className={`text-xs font-black uppercase tracking-[0.25em] ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>
+                Registered Company
+              </p>
+              <p className={`text-lg font-black mt-1 ${dark ? "text-white" : "text-zinc-900"}`}>{COMPANY_NAME}</p>
             </div>
           </div>
         </FadeIn>
@@ -81,43 +120,32 @@ function CompanyStory({ dark }) {
   );
 }
 
-// ── Mission & Vision ───────────────────────────────────────────
 function MissionVision({ dark }) {
+  const items = [
+    {
+      title: "Our Mission",
+      body: "To make construction services more organised, transparent, and accessible by connecting customers with dependable project support, verified professionals, and useful digital tools.",
+    },
+    {
+      title: "Our Vision",
+      body: "To become a trusted construction services partner for clients who want reliable planning, accountable execution, and better visibility across every stage of their project.",
+    },
+  ];
+
   return (
-    <section className={`py-10 px-6 transition-colors duration-500 ${dark ? "bg-zinc-800" : "bg-[var(--brand-blue-soft)]"}`}>
+    <section className={`py-14 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-[var(--brand-blue-faint)]"}`}>
       <div className="max-w-6xl mx-auto">
-        <FadeIn className="text-center mb-8">
-          <p className={`text-[10px] uppercase tracking-[0.4em] mb-1.5 font-black ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>What Drives Us</p>
-          <h2 className={`text-2xl sm:text-3xl font-black mb-2 ${dark ? "text-white" : "text-[var(--brand-blue-ink)]"}`}>Mission & Vision</h2>
-          <div className={`w-8 h-0.5 mx-auto ${dark ? "bg-[var(--brand-blue)]" : "bg-[var(--brand-blue-deep)]"}`} />
+        <FadeIn className="mb-8">
+          <SectionHeading eyebrow="Purpose" title="Construction support with accountability" dark={dark} align="center" />
         </FadeIn>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {[
-            {
-              icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />,
-              title: "Our Mission",
-              text: "To deliver sustainable, technology-led construction and infrastructure solutions that create lasting value for our clients, communities, and the nation — with integrity and precision.",
-              inv: false,
-            },
-            {
-              icon: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></>,
-              title: "Our Vision",
-              text: "To be India's most trusted and innovative construction company — setting new benchmarks in quality, safety, and sustainability for generations to come.",
-              inv: true,
-            },
-          ].map((item, i) => (
-            <FadeIn key={i} delay={i * 100}>
-              <div className={`p-6 border-t-4 shadow-sm transition-colors duration-500 ${item.inv
-                ? (dark ? "bg-[var(--brand-blue)] border-[var(--brand-blue-light)]" : "bg-[var(--brand-blue-deep)] border-[var(--brand-blue-ink)]")
-                : (dark ? "bg-zinc-900 border-[var(--brand-blue)]" : "bg-white border-[var(--brand-blue-deep)]")
-              }`}>
-                <div className={`w-10 h-10 flex items-center justify-center mb-4 ${item.inv ? (dark ? "bg-black" : "bg-white") : (dark ? "bg-[var(--brand-blue)]" : "bg-[var(--brand-blue-deep)]")}`}>
-                  <svg className={`w-5 h-5 ${item.inv ? (dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]") : (dark ? "text-black" : "text-white")}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    {item.icon}
-                  </svg>
-                </div>
-                <h3 className={`text-sm font-black mb-2 uppercase tracking-wide ${item.inv ? (dark ? "text-black" : "text-white") : (dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-ink)]")}`}>{item.title}</h3>
-                <p className={`text-xs leading-relaxed ${item.inv ? (dark ? "text-black/70" : "text-[var(--brand-blue-pale)]") : (dark ? "text-zinc-400" : "text-gray-600")}`}>{item.text}</p>
+          {items.map((item, index) => (
+            <FadeIn key={item.title} delay={index * 100}>
+              <div className={`h-full p-6 border-t-4 ${dark ? "bg-zinc-950 border-[var(--brand-blue)]" : "bg-white border-[var(--brand-blue-deep)] shadow-sm"}`}>
+                <h3 className={`text-sm font-black uppercase tracking-wide mb-3 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-900"}`}>
+                  {item.title}
+                </h3>
+                <p className={`text-sm leading-7 ${dark ? "text-zinc-400" : "text-zinc-600"}`}>{item.body}</p>
               </div>
             </FadeIn>
           ))}
@@ -127,34 +155,30 @@ function MissionVision({ dark }) {
   );
 }
 
-// ── Why Choose Us ──────────────────────────────────────────────
-function WhyChooseUs({ dark }) {
-  const reasons = [
-    { icon: "🏗️", title: "20+ Years Experience", desc: "Two decades of delivering complex projects across India." },
-    { icon: "✅", title: "On-Time Delivery", desc: "Consistent track record of completing projects on schedule." },
-    { icon: "🔬", title: "Technology-Led", desc: "Latest construction technology for superior precision." },
-    { icon: "🤝", title: "Trusted Partnerships", desc: "Long-term relationships built on transparency and respect." },
-    { icon: "🛡️", title: "Safety First", desc: "Zero-compromise safety standards on every project site." },
-    { icon: "🌱", title: "Sustainable Approach", desc: "Eco-conscious methods protecting the environment." },
+function Capabilities({ dark }) {
+  const capabilities = [
+    "Residential and commercial construction enquiries",
+    "Construction budget calculator and project planning support",
+    "Professional services and quick service coordination",
+    "Material supplier and vendor network support",
+    "Property buying, selling, renting, and project discovery",
+    "Franchise, agent, contractor, and partner onboarding",
   ];
+
   return (
-    <section className={`py-10 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-white"}`}>
+    <section className={`py-14 px-6 transition-colors duration-500 ${dark ? "bg-zinc-950" : "bg-white"}`}>
       <div className="max-w-6xl mx-auto">
-        <FadeIn className="text-center mb-8">
-          <p className={`text-[10px] uppercase tracking-[0.4em] mb-1.5 font-black ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>Our Strengths</p>
-          <h2 className={`text-2xl sm:text-3xl font-black mb-2 ${dark ? "text-white" : "text-[var(--brand-blue-ink)]"}`}>Why Choose MTBOSS</h2>
-          <div className={`w-8 h-0.5 mx-auto ${dark ? "bg-[var(--brand-blue)]" : "bg-[var(--brand-blue-deep)]"}`} />
+        <FadeIn className="mb-8">
+          <SectionHeading eyebrow="What We Do" title="Services around the construction journey" dark={dark} />
         </FadeIn>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {reasons.map((r, i) => (
-            <FadeIn key={i} delay={i * 60}>
-              <div className={`group p-4 transition-all duration-300 ${
-                dark ? "bg-zinc-900 hover:bg-[var(--brand-blue)] border border-zinc-800 hover:border-[var(--brand-blue)]"
-                     : "bg-[var(--brand-blue-faint)] hover:bg-[var(--brand-blue-deep)]"
-              }`}>
-                <span className="text-2xl block mb-2">{r.icon}</span>
-                <h3 className={`text-xs font-black mb-1 uppercase tracking-wide transition-colors duration-300 ${dark ? "text-[var(--brand-blue)] group-hover:text-black" : "text-[var(--brand-blue-ink)] group-hover:text-white"}`}>{r.title}</h3>
-                <p className={`text-[11px] leading-relaxed transition-colors duration-300 ${dark ? "text-zinc-400 group-hover:text-black/70" : "text-gray-500 group-hover:text-[var(--brand-blue-pale)]"}`}>{r.desc}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {capabilities.map((item, index) => (
+            <FadeIn key={item} delay={index * 60}>
+              <div className={`h-full p-5 border ${dark ? "bg-black border-zinc-800" : "bg-zinc-50 border-zinc-100"}`}>
+                <span className={`block text-[10px] font-black tracking-widest mb-3 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>
+                  0{index + 1}
+                </span>
+                <p className={`text-sm font-bold leading-6 ${dark ? "text-zinc-200" : "text-zinc-800"}`}>{item}</p>
               </div>
             </FadeIn>
           ))}
@@ -164,51 +188,31 @@ function WhyChooseUs({ dark }) {
   );
 }
 
-// ── Achievements ───────────────────────────────────────────────
-function Achievements({ dark }) {
-  const stats = [
-    { number: "500+", label: "Projects Completed" },
-    { number: "20+", label: "Years Experience" },
-    { number: "50+", label: "Cities Across India" },
-    { number: "500+", label: "Professionals" },
+function Principles({ dark }) {
+  const principles = [
+    { title: "Transparent Communication", body: "We keep service information, enquiry flow, and contact channels clear for customers and partners." },
+    { title: "Quality Consciousness", body: "We focus on practical construction standards, proper coordination, and responsible project support." },
+    { title: "Customer Support", body: "Customers can contact us through email, phone, WhatsApp, and website forms for construction-related assistance." },
+    { title: "Partner Accountability", body: "Vendors, suppliers, contractors, agents, and franchises are expected to follow professional conduct and service commitments." },
   ];
-  const awards = [
-    { year: "2023", title: "Best EPC Company of the Year", body: "Construction World Awards" },
-    { year: "2022", title: "Excellence in Infrastructure", body: "India Construction Summit" },
-    { year: "2021", title: "Sustainable Builder Award", body: "Green Building Council India" },
-    { year: "2019", title: "Top 10 Construction Companies", body: "Forbes India" },
-  ];
+
   return (
-    <section className={`py-10 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-[var(--brand-blue-deep)]"}`}>
+    <section className={`py-14 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-[var(--brand-blue-deep)]"}`}>
       <div className="max-w-6xl mx-auto">
-        <FadeIn className="text-center mb-8">
-          <p className={`text-[10px] uppercase tracking-[0.4em] mb-1.5 font-black ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-pale)]"}`}>Our Milestones</p>
-          <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">Achievements & Awards</h2>
-          <div className={`w-8 h-0.5 mx-auto ${dark ? "bg-[var(--brand-blue)]" : "bg-white"}`} />
+        <FadeIn className="mb-8">
+          <p className={`text-[10px] uppercase tracking-[0.35em] mb-2 font-black ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-pale)]"}`}>
+            Operating Standards
+          </p>
+          <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">How we work</h2>
+          <div className={`w-10 h-0.5 mt-4 ${dark ? "bg-[var(--brand-blue)]" : "bg-white"}`} />
         </FadeIn>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
-          {stats.map((s, i) => (
-            <FadeIn key={i} delay={i * 60}>
-              <div className={`text-center py-5 px-3 ${dark ? "bg-zinc-800 border border-zinc-700" : "bg-white/10 backdrop-blur-sm"}`}>
-                <p className={`text-3xl sm:text-4xl font-black mb-1 ${dark ? "text-[var(--brand-blue)]" : "text-white"}`}>{s.number}</p>
-                <p className={`text-[9px] uppercase tracking-widest ${dark ? "text-zinc-400" : "text-[var(--brand-blue-pale)]"}`}>{s.label}</p>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-
-        {/* Awards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {awards.map((a, i) => (
-            <FadeIn key={i} delay={i * 60}>
-              <div className={`flex items-start gap-3 p-4 ${dark ? "bg-zinc-800 border border-zinc-700" : "bg-white/10 backdrop-blur-sm"}`}>
-                <div className={`text-[10px] font-black px-2.5 py-1.5 shrink-0 uppercase tracking-wide ${dark ? "bg-[var(--brand-blue)] text-black" : "bg-white text-[var(--brand-blue-deep)]"}`}>{a.year}</div>
-                <div>
-                  <h4 className="text-xs font-bold text-white mb-0.5">{a.title}</h4>
-                  <p className={`text-[10px] ${dark ? "text-zinc-400" : "text-[var(--brand-blue-pale)]"}`}>{a.body}</p>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {principles.map((item, index) => (
+            <FadeIn key={item.title} delay={index * 80}>
+              <div className={`p-5 h-full ${dark ? "bg-zinc-950 border border-zinc-800" : "bg-white/10"}`}>
+                <h3 className="text-sm font-black uppercase tracking-wide text-white mb-2">{item.title}</h3>
+                <p className={`text-sm leading-7 ${dark ? "text-zinc-400" : "text-[var(--brand-blue-pale)]"}`}>{item.body}</p>
               </div>
             </FadeIn>
           ))}
@@ -218,148 +222,27 @@ function Achievements({ dark }) {
   );
 }
 
-// ── Projects ───────────────────────────────────────────────────
-function OurProjects({ dark }) {
-  const [filter, setFilter] = useState("All");
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/projects")
-      .then((r) => r.json())
-      .then((res) => { if (res.success) setProjects(res.data); })
-      .finally(() => setLoading(false));
-  }, []);
-
-  const categories = ["All", ...Array.from(new Set(projects.map((p) => p.category)))];
-  const filtered = filter === "All" ? projects : projects.filter((p) => p.category === filter);
-
+function ContactStrip({ dark }) {
   return (
-    <section className={`py-10 px-6 transition-colors duration-500 ${dark ? "bg-black" : "bg-zinc-50"}`}>
-      <div className="max-w-7xl mx-auto">
-        <FadeIn className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-          <div>
-            <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-1.5">Our Portfolio</p>
-            <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter ${dark ? "text-white" : "text-zinc-900"}`}>
-              Our <span className="text-[var(--brand-blue)]">Portfolio</span>
-            </h2>
-          </div>
-          <Link
-            href="/FeaturedProjects/ProjectGallery"
-            className={`group flex items-center gap-2 px-6 py-3 border-2 font-black uppercase text-[10px] tracking-widest transition-all self-start ${
-              dark ? "border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black"
-                   : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"
-            }`}
-          >
-            View Full Portfolio
-            <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
-        </FadeIn>
-
-        {/* Filter Pills */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setFilter(cat)}
-              className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-widest transition-all border ${
-                filter === cat ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black"
-                : dark ? "border-zinc-700 text-zinc-500 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
-                       : "border-zinc-300 text-zinc-400 hover:border-zinc-800 hover:text-zinc-800"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Grid */}
-        {loading && (
-          <div className={`text-center py-16 text-sm font-black uppercase tracking-widest ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
-            Loading projects…
-          </div>
-        )}
-        {!loading && filtered.length === 0 && (
-          <div className={`text-center py-16 text-sm font-black uppercase tracking-widest ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
-            No projects found
-          </div>
-        )}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
-          {filtered.map((project, idx) => (
-            <div key={project.id} className="group relative h-64 overflow-hidden bg-zinc-800">
-              <img
-                src={project.image_url}
-                alt={project.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-40"
-              />
-              <div className="absolute inset-0 p-4 flex flex-col justify-end">
-                <p className="text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-widest mb-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  {project.category} — {project.location}
-                </p>
-                <h3 className="text-white text-base font-black uppercase leading-tight mb-2">{project.title}</h3>
-                <div className="h-0 group-hover:h-8 overflow-hidden transition-all duration-500">
-                  <Link href="/FeaturedProjects/ProjectGallery" className="inline-block bg-[var(--brand-blue)] text-black px-4 py-1.5 text-[9px] font-black uppercase tracking-widest hover:bg-white transition-colors">
-                    Explore Details
-                  </Link>
-                </div>
-              </div>
-              <span className="absolute top-3 right-3 text-white/10 text-3xl font-black italic group-hover:text-[var(--brand-blue)]/20 transition-colors">
-                0{idx + 1}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA Strip */}
-        <FadeIn>
-          <div className={`mt-6 p-5 flex flex-col sm:flex-row items-center justify-between gap-4 ${dark ? "bg-zinc-900 border border-zinc-800" : "bg-white border border-gray-100 shadow-sm"}`}>
-            <div>
-              <p className={`text-[9px] font-black uppercase tracking-widest mb-0.5 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>Want to see more?</p>
-              <p className={`text-sm font-black uppercase ${dark ? "text-white" : "text-zinc-800"}`}>Explore our complete project portfolio</p>
-            </div>
-            <Link href="/FeaturedProjects/ProjectGallery" className="px-8 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-[9px] tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all shrink-0">
-              View All Portfolio →
-            </Link>
-          </div>
-        </FadeIn>
-      </div>
-    </section>
-  );
-}
-
-// ── Meet The Team CTA ──────────────────────────────────────────
-function MeetTeamCTA({ dark, onShowTeam }) {
-  return (
-    <section className={`py-10 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
+    <section className={`py-12 px-6 transition-colors duration-500 ${dark ? "bg-zinc-950" : "bg-white"}`}>
       <FadeIn>
-        <div className="max-w-6xl mx-auto">
-          <div className={`relative overflow-hidden p-8 sm:p-10 ${dark ? "bg-zinc-950 border border-zinc-800" : "bg-[var(--brand-blue-ink)]"}`}>
-            <span className="absolute -right-4 top-1/2 -translate-y-1/2 text-[80px] sm:text-[120px] font-black uppercase leading-none pointer-events-none select-none"
-              style={{ color: dark ? "color-mix(in srgb, var(--brand-blue) 4%, transparent)" : "rgba(255,255,255,0.05)" }}>
-              TEAM
-            </span>
-            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div>
-                <p className={`text-[9px] uppercase tracking-[0.4em] font-black mb-2 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-pale)]"}`}>Leadership</p>
-                <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight leading-tight">
-                  Meet the Minds<br />Behind MTBOSS
-                </h2>
-                <p className={`text-xs mt-2 max-w-sm ${dark ? "text-zinc-400" : "text-[#99ccf0]"}`}>
-                  Our leadership team brings decades of expertise across engineering, finance, and operations.
-                </p>
-              </div>
-              <button
-                onClick={onShowTeam}
-                className="shrink-0 flex items-center gap-2 px-7 py-3.5 bg-[var(--brand-blue)] text-black font-black uppercase text-[10px] tracking-widest hover:bg-[var(--brand-blue-light)] transition-all group"
-              >
-                Meet Our Team
-                <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </button>
-            </div>
+        <div className={`max-w-6xl mx-auto p-6 sm:p-8 flex flex-col lg:flex-row gap-6 lg:items-center lg:justify-between ${dark ? "bg-black border border-zinc-800" : "bg-zinc-50 border border-zinc-100"}`}>
+          <div>
+            <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>
+              Contact Details
+            </p>
+            <h2 className={`text-xl sm:text-2xl font-black ${dark ? "text-white" : "text-zinc-900"}`}>{COMPANY_NAME}</h2>
+            <p className={`text-sm leading-7 mt-3 max-w-2xl ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
+              {COMPANY_CONTACT.address}
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a href={`mailto:${COMPANY_CONTACT.email}`} className="px-6 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-[10px] tracking-widest">
+              Email Us
+            </a>
+            <a href={`tel:${COMPANY_CONTACT.phone.replace(/\s/g, "")}`} className={`px-6 py-3 border font-black uppercase text-[10px] tracking-widest ${dark ? "border-zinc-700 text-white" : "border-zinc-300 text-zinc-900"}`}>
+              Call {COMPANY_CONTACT.phone}
+            </a>
           </div>
         </div>
       </FadeIn>
@@ -367,41 +250,59 @@ function MeetTeamCTA({ dark, onShowTeam }) {
   );
 }
 
-// ── About Content ──────────────────────────────────────────────
 function AboutContent({ dark, onShowTeam }) {
   return (
     <main className={`transition-colors duration-500 ${dark ? "bg-black" : "bg-white"}`}>
       <section
         className="relative flex items-center justify-center text-center"
         style={{
-          height: "260px",
+          minHeight: "340px",
           backgroundImage: "url(https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
         <div className={`absolute inset-0 transition-colors duration-500 ${dark ? "bg-black/80" : "bg-[var(--brand-blue-deep)]/75"}`} />
-        <div className="relative z-10 px-6">
-          <p className={`text-[10px] uppercase tracking-[0.4em] mb-2 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-pale)]"}`}>MTBOSS Construction</p>
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-3">About Us</h1>
-          <div className={`w-8 h-0.5 mx-auto mb-3 ${dark ? "bg-[var(--brand-blue)]" : "bg-white"}`} />
-          <p className={`text-xs max-w-md mx-auto leading-relaxed ${dark ? "text-zinc-400" : "text-[var(--brand-blue-pale)]"}`}>
-            Building India's future — one project at a time.
+        <div className="relative z-10 px-6 max-w-4xl mx-auto">
+          <p className={`text-[10px] uppercase tracking-[0.35em] mb-3 font-black ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-pale)]"}`}>
+            {COMPANY_NAME}
+          </p>
+          <h1 className="text-3xl sm:text-5xl font-black text-white mb-4">About Us</h1>
+          <div className={`w-10 h-0.5 mx-auto mb-5 ${dark ? "bg-[var(--brand-blue)]" : "bg-white"}`} />
+          <p className={`text-sm sm:text-base max-w-2xl mx-auto leading-7 ${dark ? "text-zinc-300" : "text-[var(--brand-blue-pale)]"}`}>
+            A construction services company helping customers plan, connect, and execute construction-related work with clarity and dependable support.
           </p>
         </div>
       </section>
+
       <CompanyStory dark={dark} />
       <MissionVision dark={dark} />
-      <WhyChooseUs dark={dark} />
-      <Achievements dark={dark} />
-      <div className={`h-px w-full ${dark ? "bg-zinc-800" : "bg-gray-100"}`} />
-      <OurProjects dark={dark} />
-      <MeetTeamCTA dark={dark} onShowTeam={onShowTeam} />
+      <Capabilities dark={dark} />
+      <Principles dark={dark} />
+      <ContactStrip dark={dark} />
+
+      <section className={`pb-14 px-6 transition-colors duration-500 ${dark ? "bg-zinc-950" : "bg-white"}`}>
+        <FadeIn>
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+            <div>
+              <p className={`text-[10px] uppercase tracking-[0.3em] font-black mb-2 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>
+                Leadership
+              </p>
+              <h2 className={`text-2xl font-black ${dark ? "text-white" : "text-zinc-900"}`}>Meet the people behind MTBOSS</h2>
+            </div>
+            <button
+              onClick={onShowTeam}
+              className="px-7 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-[10px] tracking-widest"
+            >
+              Meet Our Team
+            </button>
+          </div>
+        </FadeIn>
+      </section>
     </main>
   );
 }
 
-// ── Main Page Export ───────────────────────────────────────────
 export default function AboutPage() {
   const dark = useDarkMode();
   const [showTeam, setShowTeam] = useState(false);
@@ -419,14 +320,17 @@ export default function AboutPage() {
   if (showTeam) {
     return (
       <div>
-        {/* Breadcrumb back bar */}
         <div
-          className={`flex items-center gap-3 px-6 py-3 border-b text-[10px] font-black uppercase tracking-widest ${dark ? "bg-zinc-950 border-zinc-800" : "bg-white border-zinc-100"}`}
+          className={`flex items-center gap-3 px-6 py-3 border-b text-[10px] font-black uppercase tracking-widest ${
+            dark ? "bg-zinc-950 border-zinc-800" : "bg-white border-zinc-100"
+          }`}
           style={{ position: "sticky", top: 0, zIndex: 99 }}
         >
           <button
             onClick={handleBack}
-            className={`flex items-center gap-2 transition-colors hover:text-[var(--brand-blue)] ${dark ? "text-zinc-400" : "text-zinc-500"}`}
+            className={`flex items-center gap-2 transition-colors hover:text-[var(--brand-blue)] ${
+              dark ? "text-zinc-400" : "text-zinc-500"
+            }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
