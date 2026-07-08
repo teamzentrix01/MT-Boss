@@ -1,7 +1,8 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { handleApiError } from '@/lib/api-utils';
+import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
+import { fallbackPrimaryServices, fallbackResponse } from '@/lib/public-fallbacks';
 
 // GET — public, no auth. Supports ?slug=xyz for single record.
 export async function GET(req) {
@@ -32,6 +33,18 @@ export async function GET(req) {
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('GET primary-services error:', error.message);
+    if (isDatabaseConnectionError(error)) {
+      const { searchParams } = new URL(req.url);
+      const slug = searchParams.get('slug');
+      if (slug) {
+        const service = fallbackPrimaryServices.find((item) => item.slug.toLowerCase() === slug.toLowerCase());
+        if (!service) {
+          return NextResponse.json({ error: 'Service not found' }, { status: 404 });
+        }
+        return NextResponse.json(fallbackResponse(service));
+      }
+      return NextResponse.json(fallbackResponse(fallbackPrimaryServices));
+    }
     return handleApiError(error);
   }
 }

@@ -1,5 +1,7 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { isDatabaseConnectionError } from '@/lib/api-utils';
+import { fallbackPrimaryServices, fallbackResponse } from '@/lib/public-fallbacks';
 
 // GET single primary service by slug — public
 export async function GET(req, { params }) {
@@ -21,6 +23,14 @@ export async function GET(req, { params }) {
     });
   } catch (error) {
     console.error('Error fetching primary service:', error);
+    if (isDatabaseConnectionError(error)) {
+      const { slug } = params;
+      const service = fallbackPrimaryServices.find((item) => item.slug.toLowerCase() === slug.toLowerCase());
+      if (!service) {
+        return NextResponse.json({ error: 'Service not found' }, { status: 404 });
+      }
+      return NextResponse.json(fallbackResponse(service));
+    }
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

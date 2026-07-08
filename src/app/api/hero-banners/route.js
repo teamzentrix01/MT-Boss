@@ -1,7 +1,8 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { handleApiError } from '@/lib/api-utils';
+import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
+import { fallbackHeroBanners, fallbackResponse } from '@/lib/public-fallbacks';
 
 const CREATE_TABLE_SQL = `
   CREATE TABLE IF NOT EXISTS hero_banners (
@@ -38,6 +39,9 @@ export async function GET() {
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('GET hero-banners error:', error.message);
+    if (isDatabaseConnectionError(error)) {
+      return NextResponse.json(fallbackResponse(fallbackHeroBanners));
+    }
     return handleApiError(error);
   }
 }

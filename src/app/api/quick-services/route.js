@@ -2,6 +2,7 @@ import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
+import { fallbackQuickServices, fallbackResponse } from '@/lib/public-fallbacks';
 
 async function ensureQuickServiceSeoColumns() {
   try {
@@ -74,6 +75,18 @@ export async function GET(req) {
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('GET quick-services error:', error.message);
+    if (isDatabaseConnectionError(error)) {
+      const { searchParams } = new URL(req.url);
+      const slug = searchParams.get('slug');
+      if (slug) {
+        const service = fallbackQuickServices.find((item) => item.slug.toLowerCase() === slug.toLowerCase());
+        if (!service) {
+          return NextResponse.json({ success: false, error: 'Service not found' }, { status: 404 });
+        }
+        return NextResponse.json(fallbackResponse(service));
+      }
+      return NextResponse.json(fallbackResponse(fallbackQuickServices));
+    }
     return handleApiError(error);
   }
 }

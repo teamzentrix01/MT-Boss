@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { handleApiError } from '@/lib/api-utils';
+import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
+import { fallbackProjects, fallbackResponse } from '@/lib/public-fallbacks';
 
 export async function GET(req) {
   try {
@@ -18,6 +19,13 @@ export async function GET(req) {
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('GET projects error:', error.message);
+    if (isDatabaseConnectionError(error)) {
+      const { searchParams } = new URL(req.url);
+      if (searchParams.get('status') === 'all') {
+        return handleApiError(error);
+      }
+      return NextResponse.json(fallbackResponse(fallbackProjects));
+    }
     return handleApiError(error);
   }
 }

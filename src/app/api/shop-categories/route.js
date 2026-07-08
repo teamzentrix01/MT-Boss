@@ -1,7 +1,8 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { handleApiError } from '@/lib/api-utils';
+import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
+import { fallbackResponse, fallbackShopCategories } from '@/lib/public-fallbacks';
 
 // No `ready` flag — all DDL statements are idempotent (IF NOT EXISTS).
 // This makes the route resilient to dev hot-reloads and out-of-band DB resets.
@@ -50,6 +51,13 @@ export async function GET(req) {
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('GET shop-categories error:', error.message);
+    if (isDatabaseConnectionError(error)) {
+      const { searchParams } = new URL(req.url);
+      if (searchParams.get('admin') === 'true') {
+        return handleApiError(error);
+      }
+      return NextResponse.json(fallbackResponse(fallbackShopCategories));
+    }
     return handleApiError(error);
   }
 }
