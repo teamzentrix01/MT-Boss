@@ -269,7 +269,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
           {/* Right Side */}
           <div className="hidden xl:flex flex-shrink-0 items-center gap-1.5 2xl:gap-3">
-            <div className="hidden 2xl:block">
+            <div className="block w-[180px] 2xl:w-[220px]">
               <GlobalSearch user={user} isDarkMode={isDarkMode} />
             </div>
 
