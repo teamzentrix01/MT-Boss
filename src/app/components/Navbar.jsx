@@ -8,7 +8,7 @@ function DropdownButton({ label, children, text, textHover, dropdownBg }) {
   return (
     <div className="relative group">
       <button
-        className={`flex items-center gap-1 px-3 py-2 text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
+        className={`nav-control flex items-center gap-1 px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
       >
         {label}
         <svg
@@ -171,24 +171,24 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
   return (
     <nav
-      className={`${bg} border-b shadow-sm transition-all duration-500 sticky top-0 z-[100]`}
+      className={`site-navbar ${bg} border-b shadow-sm transition-all duration-500 sticky top-0 z-[100]`}
     >
-      <div className="w-full mx-auto px-2 xl:px-4">
+      <div className="w-full mx-auto px-2 2xl:px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0">
             <img
               src="/logo.png"
               alt="MTBOSS"
-              className="h-15 w-auto object-contain"
+              className="h-12 2xl:h-14 w-auto object-contain"
             />
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-0.5">
+          <div className="hidden xl:flex flex-1 min-w-0 items-center justify-center gap-0.5 px-2">
             <Link
               href="/"
-              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Home
             </Link>
@@ -232,21 +232,21 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
             <Link
               href="/Services/all"
-              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Construction
             </Link>
 
             <Link
               href="/agent"
-              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Become an Agent
             </Link>
             {user && (
               <Link
                 href="/franchise"
-                className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+                className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
               >
                 Franchise
               </Link>
@@ -254,27 +254,29 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
             <Link
               href="/calculator"
-              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+              className={`hidden 2xl:inline-flex px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Budget Calculator
             </Link>
 
             <Link
               href="/ShopNow"
-              className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Shop Now
             </Link>
           </div>
 
           {/* Right Side */}
-          <div className="hidden lg:flex items-center gap-1.5 xl:gap-3">
-            <GlobalSearch user={user} isDarkMode={isDarkMode} />
+          <div className="hidden xl:flex flex-shrink-0 items-center gap-1.5 2xl:gap-3">
+            <div className="hidden 2xl:block">
+              <GlobalSearch user={user} isDarkMode={isDarkMode} />
+            </div>
 
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className={`p-2 rounded-full transition-all ${
+              className={`nav-control p-2 rounded-full transition-all ${
                 isDarkMode
                   ? "text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800"
                   : "text-zinc-500 hover:text-zinc-800 hover:bg-gray-100"
@@ -303,7 +305,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             {!loading ? (
               user ? (
                 // Logged In User
-                <div className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border transition-all ${
+                <div className={`flex min-w-0 items-center gap-1.5 px-2 py-1.5 rounded-lg border transition-all ${
                   isDarkMode 
                     ? 'border-zinc-700 bg-zinc-900/50' 
                     : 'border-gray-200 bg-gray-50'
@@ -319,20 +321,17 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   >
                     {(user.name || user.shop_name || user.email || 'U')[0].toUpperCase()}
                   </div>
-                  <div className="flex flex-col text-xs">
-                    <span className="font-semibold text-sm truncate max-w-[80px] xl:max-w-[120px]" title={user.name || user.shop_name || user.email}>
+                  <div className="hidden 2xl:flex min-w-0 flex-col text-xs">
+                    <span className="font-semibold text-sm truncate max-w-[88px]" title={user.name || user.shop_name || user.email}>
                       {user.name || user.shop_name || user.email}
                     </span>
-                    <span className={`text-[10px] ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>
-                      {user.role === 'admin' ? '👨‍💼 Admin'
-                        : user.role === 'vendor' ? '🏪 Vendor'
-                        : user.role === 'supplier' ? '📦 Supplier'
-                        : '👤 User'}
+                    <span className={`text-[10px] capitalize ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>
+                      {user.role}
                     </span>
                   </div>
                   <button
                     onClick={handleDashboard}
-                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all whitespace-nowrap ml-2 ${
+                    className={`nav-control nav-dashboard px-2 2xl:px-3 py-1 text-[11px] 2xl:text-xs font-semibold rounded-md transition-all whitespace-nowrap 2xl:ml-1 ${
                       isDarkMode
                         ? 'border border-zinc-500 text-zinc-300 hover:bg-zinc-700'
                         : 'border border-gray-400 text-gray-700 hover:bg-gray-200'
@@ -342,7 +341,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   </button>
                   <button
                     onClick={handleLogout}
-                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
+                    className={`nav-control nav-logout px-2 2xl:px-3 py-1 text-[11px] 2xl:text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
                       isDarkMode
                         ? 'bg-red-600 text-white hover:bg-red-700'
                         : 'bg-red-500 text-white hover:bg-red-600'
@@ -376,7 +375,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           </div>
 
           {/* Mobile Hamburger */}
-          <div className="lg:hidden flex items-center gap-2 sm:gap-3">
+          <div className="xl:hidden flex items-center gap-2 sm:gap-3">
             {!loading && !user && (
               <div className="flex items-center gap-1.5 mr-1">
                 <Link
@@ -399,7 +398,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             )}
             <button
               onClick={toggleTheme}
-              className={`p-2 rounded-full ${
+              className={`nav-control p-2 rounded-full ${
                 isDarkMode ? 'text-zinc-400 hover:text-[var(--brand-blue)]' : 'text-zinc-500 hover:text-zinc-800'
               }`}
             >
@@ -407,7 +406,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 rounded-md ${
+              className={`nav-control p-2 rounded-md ${
                 isDarkMode
                   ? 'text-zinc-300 hover:bg-zinc-800'
                   : 'text-zinc-600 hover:bg-gray-100'
@@ -452,11 +451,11 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
         <div
           aria-label="Close navigation menu"
           onClick={closeMobileMenu}
-          className="lg:hidden fixed inset-x-0 top-16 bottom-0 z-[90] bg-black/50"
+          className="xl:hidden fixed inset-x-0 top-16 bottom-0 z-[90] bg-black/50"
         />
       )}
       <div
-        className={`lg:hidden fixed inset-x-0 top-16 z-[120] transition-all duration-300 ${
+        className={`xl:hidden fixed inset-x-0 top-16 z-[120] transition-all duration-300 ${
           isOpen
             ? 'visible translate-y-0 opacity-100'
             : 'invisible -translate-y-3 opacity-0 pointer-events-none'
@@ -621,7 +620,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 </div>
                 <button
                   onClick={handleDashboard}
-                  className={`w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
+                  className={`nav-control nav-dashboard w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
                     isDarkMode
                       ? 'border border-zinc-600 text-zinc-300 hover:bg-zinc-800'
                       : 'border border-gray-300 text-gray-600 hover:bg-gray-100'
@@ -631,7 +630,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 </button>
                 <button
                   onClick={handleLogout}
-                  className={`w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
+                  className={`nav-control nav-logout w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
                     isDarkMode
                       ? 'bg-red-600 text-white hover:bg-red-700'
                       : 'bg-red-500 text-white hover:bg-red-600'

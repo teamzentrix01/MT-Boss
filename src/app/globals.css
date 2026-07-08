@@ -153,6 +153,35 @@ button[aria-disabled="true"],
   color: #3f3f46 !important;
 }
 
+.site-navbar .nav-control {
+  background-color: transparent !important;
+  background-image: none !important;
+  color: inherit !important;
+  transform: none !important;
+  box-shadow: none !important;
+  will-change: auto !important;
+}
+
+.site-navbar .nav-control:hover,
+.site-navbar .nav-control:active {
+  background-color: transparent !important;
+  background-image: none !important;
+  color: inherit !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.site-navbar .nav-dashboard,
+.site-navbar .nav-dashboard:hover,
+.site-navbar .nav-dashboard:active,
+.site-navbar .nav-logout,
+.site-navbar .nav-logout:hover,
+.site-navbar .nav-logout:active {
+  background-color: var(--brand-blue) !important;
+  border-color: var(--brand-blue) !important;
+  color: #111 !important;
+}
+
 button[aria-expanded] {
   background: var(--brand-blue) !important;
   background-image: none !important;
