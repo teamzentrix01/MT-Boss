@@ -1,18 +1,8 @@
-import fs from 'fs';
-import path from 'path';
 import dotenv from 'dotenv';
 import { Pool } from 'pg';
 
-const envPaths = [
-  path.resolve(process.cwd(), '.env'),
-  path.resolve(process.cwd(), 'src', '.env'),
-];
-
-for (const envPath of envPaths) {
-  if (fs.existsSync(envPath)) {
-    dotenv.config({ path: envPath, override: false });
-  }
-}
+dotenv.config({ path: '.env', override: false, quiet: true });
+dotenv.config({ path: 'src/.env', override: false, quiet: true });
 
 const poolConfig = process.env.DATABASE_URL
   ? {
@@ -22,7 +12,9 @@ const poolConfig = process.env.DATABASE_URL
       },
       max: 20,
       idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 10000,
+      connectionTimeoutMillis: 5000,
+      query_timeout: 10000,
+      statement_timeout: 10000,
     }
   : {
       host: process.env.DB_HOST,
@@ -32,7 +24,9 @@ const poolConfig = process.env.DATABASE_URL
       database: process.env.DB_NAME,
       max: 20,
       idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 10000,
+      connectionTimeoutMillis: 5000,
+      query_timeout: 10000,
+      statement_timeout: 10000,
     };
 
 const pool = new Pool(poolConfig);

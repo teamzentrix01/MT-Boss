@@ -1,6 +1,26 @@
 import { NextResponse } from 'next/server';
 import pool from './db';
 
+export function isDatabaseConnectionError(error) {
+  const message = String(error?.message || error?.cause?.message || '').toLowerCase();
+  const code = error?.code || error?.cause?.code;
+
+  return (
+    message.includes('connect') ||
+    message.includes('connection terminated') ||
+    message.includes('connection timeout') ||
+    message.includes('control plane request failed') ||
+    message.includes('econnrefused') ||
+    message.includes('etimedout') ||
+    message.includes('ehostunreach') ||
+    message.includes('timeout') ||
+    code === 'ECONNREFUSED' ||
+    code === 'ETIMEDOUT' ||
+    code === 'EHOSTUNREACH' ||
+    code === 'XX000'
+  );
+}
+
 /**
  * Safe wrapper for API routes that ensures JSON responses
  * Prevents HTML error pages from being returned to clients
@@ -10,15 +30,7 @@ export function handleApiError(error) {
   console.error('API Error:', errorMsg);
 
   // Database connection errors
-  if (
-    errorMsg.includes('connect') ||
-    errorMsg.includes('ECONNREFUSED') ||
-    errorMsg.includes('ETIMEDOUT') ||
-    errorMsg.includes('EHOSTUNREACH') ||
-    errorMsg.includes('timeout') ||
-    error?.code === 'ECONNREFUSED' ||
-    error?.code === 'ETIMEDOUT'
-  ) {
+  if (isDatabaseConnectionError(error)) {
     return NextResponse.json(
       { success: false, error: 'Database connection unavailable' },
       { status: 503 }

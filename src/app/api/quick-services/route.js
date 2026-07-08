@@ -1,7 +1,7 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { handleApiError } from '@/lib/api-utils';
+import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 
 async function ensureQuickServiceSeoColumns() {
   try {
@@ -37,7 +37,10 @@ async function ensureQuickServiceSeoColumns() {
     `);
   } catch (error) {
     console.error('ensureQuickServiceSeoColumns error:', error.message);
-    // Don't throw - some columns may already exist
+    if (isDatabaseConnectionError(error)) {
+      throw error;
+    }
+    // Don't throw for non-connection schema drift; the main query may still work.
   }
 }
 

@@ -1,6 +1,7 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-utils';
 
 const CREATE_TABLE_SQL = `
   CREATE TABLE IF NOT EXISTS hero_banners (
@@ -23,7 +24,7 @@ async function ensureTable() {
     await pool.query(CREATE_TABLE_SQL);
   } catch (error) {
     console.error('ensureTable error:', error);
-    throw new Error('Failed to ensure table exists');
+    throw error;
   }
 }
 
@@ -37,12 +38,7 @@ export async function GET() {
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('GET hero-banners error:', error.message);
-    
-    if (error.message?.includes('connect') || error.code === 'ECONNREFUSED') {
-      return NextResponse.json({ success: false, error: 'Database connection unavailable' }, { status: 503 });
-    }
-    
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
@@ -72,12 +68,7 @@ export async function POST(req) {
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
     console.error('POST hero-banners error:', error.message);
-    
-    if (error.message?.includes('connect') || error.code === 'ECONNREFUSED') {
-      return NextResponse.json({ success: false, error: 'Database connection unavailable' }, { status: 503 });
-    }
-    
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
@@ -111,12 +102,7 @@ export async function PATCH(req) {
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
     console.error('PATCH hero-banners error:', error.message);
-    
-    if (error.message?.includes('connect') || error.code === 'ECONNREFUSED') {
-      return NextResponse.json({ success: false, error: 'Database connection unavailable' }, { status: 503 });
-    }
-    
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
@@ -132,6 +118,6 @@ export async function DELETE(req) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('DELETE hero-banners error:', error);
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+    return handleApiError(error);
   }
 }
