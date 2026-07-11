@@ -268,8 +268,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           </div>
 
           {/* Right Side */}
-          <div className="hidden xl:flex flex-shrink-0 items-center gap-1.5 2xl:gap-3">
-            <div className="block w-[180px] 2xl:w-[220px]">
+          <div className="hidden xl:flex min-w-0 flex-shrink-0 items-center gap-1.5 2xl:gap-3">
+            <div className="block w-[160px] 2xl:w-[220px]">
               <GlobalSearch user={user} isDarkMode={isDarkMode} />
             </div>
 
@@ -279,7 +279,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               type="button"
               aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               title={isDarkMode ? "Light mode" : "Dark mode"}
-              className={`nav-theme-toggle flex h-9 flex-shrink-0 items-center justify-center gap-1.5 rounded-md border px-2.5 transition-all ${
+              className={`nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md border transition-all ${
                 isDarkMode
                   ? "border-zinc-700 bg-zinc-900 text-zinc-200 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
                   : "border-gray-300 bg-white text-zinc-700 hover:border-zinc-500 hover:bg-gray-100"
@@ -302,9 +302,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
                 </svg>
               )}
-              <span className="whitespace-nowrap text-[11px] font-semibold">
-                {isDarkMode ? "Light" : "Dark"}
-              </span>
             </button>
 
             {/* User Info / Auth Buttons */}
