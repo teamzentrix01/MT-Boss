@@ -279,10 +279,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               type="button"
               aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               title={isDarkMode ? "Light mode" : "Dark mode"}
-              className={`nav-control nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-all ${
+              className={`nav-theme-toggle flex h-9 flex-shrink-0 items-center justify-center gap-1.5 rounded-md border px-2.5 transition-all ${
                 isDarkMode
-                  ? "nav-theme-toggle-dark text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800"
-                  : "nav-theme-toggle-light text-zinc-500 hover:text-zinc-800 hover:bg-gray-100"
+                  ? "border-zinc-700 bg-zinc-900 text-zinc-200 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
+                  : "border-gray-300 bg-white text-zinc-700 hover:border-zinc-500 hover:bg-gray-100"
               }`}
             >
               {isDarkMode ? (
@@ -302,6 +302,9 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
                 </svg>
               )}
+              <span className="whitespace-nowrap text-[11px] font-semibold">
+                {isDarkMode ? "Light" : "Dark"}
+              </span>
             </button>
 
             {/* User Info / Auth Buttons */}
@@ -404,8 +407,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               type="button"
               aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               title={isDarkMode ? "Light mode" : "Dark mode"}
-              className={`nav-control nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${
-                isDarkMode ? 'nav-theme-toggle-dark text-zinc-400 hover:text-[var(--brand-blue)]' : 'nav-theme-toggle-light text-zinc-500 hover:text-zinc-800'
+              className={`nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border ${
+                isDarkMode ? 'border-zinc-700 bg-zinc-900 text-zinc-200' : 'border-gray-300 bg-white text-zinc-700'
               }`}
             >
               {isDarkMode ? '☀️' : '🌙'}
