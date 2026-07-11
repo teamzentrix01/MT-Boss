@@ -144,8 +144,8 @@ export default function GlobalSearch({ user, isDarkMode, onNavigate }) {
   }
 
   return (
-    <div ref={wrapRef} className="relative w-full lg:w-[180px] xl:w-[220px]">
-      <div className={`flex items-center gap-2 border rounded-md px-3 py-2 transition-colors ${
+    <div ref={wrapRef} className="relative min-w-0 w-full max-w-full">
+      <div className={`flex min-w-0 w-full items-center gap-2 border rounded-md px-3 py-2 transition-colors ${
         isDarkMode ? "bg-zinc-950 border-zinc-800 text-white" : "bg-gray-50 border-gray-200 text-zinc-900"
       }`}>
         <svg className={isDarkMode ? "w-4 h-4 text-zinc-500" : "w-4 h-4 text-gray-400"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,7 +163,7 @@ export default function GlobalSearch({ user, isDarkMode, onNavigate }) {
             if (event.key === "Escape") setOpen(false);
           }}
           placeholder={role === "admin" ? "Search admin tools..." : role === "vendor" ? "Search vendor tools..." : "Search services..."}
-          className="w-full bg-transparent outline-none text-sm placeholder:text-zinc-400"
+          className="min-w-0 w-full bg-transparent outline-none text-sm placeholder:text-zinc-400"
         />
       </div>
 
