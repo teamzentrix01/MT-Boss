@@ -276,10 +276,13 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className={`nav-control p-2 rounded-full transition-all ${
+              type="button"
+              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+              title={isDarkMode ? "Light mode" : "Dark mode"}
+              className={`nav-control nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-all ${
                 isDarkMode
-                  ? "text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800"
-                  : "text-zinc-500 hover:text-zinc-800 hover:bg-gray-100"
+                  ? "nav-theme-toggle-dark text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800"
+                  : "nav-theme-toggle-light text-zinc-500 hover:text-zinc-800 hover:bg-gray-100"
               }`}
             >
               {isDarkMode ? (
@@ -398,8 +401,11 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             )}
             <button
               onClick={toggleTheme}
-              className={`nav-control p-2 rounded-full ${
-                isDarkMode ? 'text-zinc-400 hover:text-[var(--brand-blue)]' : 'text-zinc-500 hover:text-zinc-800'
+              type="button"
+              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+              title={isDarkMode ? "Light mode" : "Dark mode"}
+              className={`nav-control nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${
+                isDarkMode ? 'nav-theme-toggle-dark text-zinc-400 hover:text-[var(--brand-blue)]' : 'nav-theme-toggle-light text-zinc-500 hover:text-zinc-800'
               }`}
             >
               {isDarkMode ? '☀️' : '🌙'}
