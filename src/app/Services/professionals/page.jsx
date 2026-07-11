@@ -246,7 +246,7 @@ function ApplyModal({ isDark, onClose }) {
   const lbl = { fontSize:'10px',fontWeight:700,color:t.sub,textTransform:'uppercase',letterSpacing:'0.07em',display:'block',marginBottom:'4px' };
 
   return (
-    <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.8)',zIndex:9999,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'24px 16px',overflowY:'auto' }} onClick={onClose}>
+    <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.8)',zIndex:9999,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'24px 16px',overflowY:'auto' }}>
       <div style={{ background:t.card,border:`1px solid ${t.border}`,borderRadius:'4px',width:'100%',maxWidth:'620px',padding:'36px',position:'relative' }} onClick={e=>e.stopPropagation()}>
         <button onClick={onClose} style={{ position:'absolute',top:'12px',right:'12px',background:'none',border:`1px solid ${t.border}`,borderRadius:'2px',width:'28px',height:'28px',cursor:'pointer',color:t.sub,fontSize:'14px',display:'flex',alignItems:'center',justifyContent:'center' }}>✕</button>
 

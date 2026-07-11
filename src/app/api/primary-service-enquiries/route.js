@@ -4,6 +4,7 @@ import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { requireRole, unauthorized, verifyBearer } from '@/lib/auth';
+import { ensureAgentSchema } from '@/lib/agent-auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 
 const ADMIN_EMAIL =
@@ -78,6 +79,44 @@ async function ensureTable() {
   ];
   for (const sql of safeMigrations) {
     try { await pool.query(sql); } catch { /* column already exists */ }
+  }
+}
+
+async function syncEnquiryToLead(enquiry) {
+  try {
+    await ensureAgentSchema();
+    try { await pool.query(`ALTER TABLE agent_leads ALTER COLUMN agent_id DROP NOT NULL`); } catch {}
+
+    const alters = [
+      `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS assigned_by_role VARCHAR(40) DEFAULT 'admin'`,
+      `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS source_ref_table VARCHAR(80)`,
+      `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS source_ref_id INTEGER`,
+      `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS priority VARCHAR(30) DEFAULT 'Normal'`,
+    ];
+    for (const sql of alters) await pool.query(sql);
+
+    await pool.query(
+      `INSERT INTO agent_leads
+         (city, client_name, client_phone, client_email, service_type, lead_type, status,
+          notes, client_requirement, lead_source, source_ref_table, source_ref_id, assigned_by_role)
+       SELECT $1,$2,$3,$4,$5,'Primary Service','New',$6,$7,'primary-service','primary_service_enquiries',$8,'system'
+       WHERE NOT EXISTS (
+         SELECT 1 FROM agent_leads
+         WHERE source_ref_table = 'primary_service_enquiries' AND source_ref_id = $8
+       )`,
+      [
+        enquiry.address || 'Unassigned',
+        enquiry.name,
+        enquiry.phone,
+        enquiry.email || null,
+        enquiry.service_title,
+        enquiry.message || null,
+        [enquiry.budget, enquiry.carpet_area ? `${enquiry.carpet_area} sqft` : null].filter(Boolean).join(' | ') || null,
+        enquiry.id,
+      ]
+    );
+  } catch (error) {
+    console.warn('Primary service lead sync failed:', error.message);
   }
 }
 
@@ -248,6 +287,7 @@ export async function POST(req) {
     );
 
     const enquiry = result.rows[0];
+    await syncEnquiryToLead(enquiry);
     await sendAdminNotification(enquiry);
 
     return NextResponse.json(

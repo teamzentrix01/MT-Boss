@@ -11,10 +11,12 @@ export function isDatabaseConnectionError(error) {
     message.includes('connection timeout') ||
     message.includes('control plane request failed') ||
     message.includes('econnrefused') ||
+    message.includes('enotfound') ||
     message.includes('etimedout') ||
     message.includes('ehostunreach') ||
     message.includes('timeout') ||
     code === 'ECONNREFUSED' ||
+    code === 'ENOTFOUND' ||
     code === 'ETIMEDOUT' ||
     code === 'EHOSTUNREACH' ||
     code === 'XX000'

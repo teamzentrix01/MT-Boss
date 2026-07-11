@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import QuickServicesManager from '../components/QuickServicesManager';
 import PrimaryServicesManager from '../components/PrimaryServicesManager';
@@ -149,6 +149,25 @@ function AdminDashboard() {
     return () => observer.disconnect();
   }, []);
 
+  const fetchPrimaryServiceEnquiries = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const primaryEnquiryRes = await fetch('/api/primary-service-enquiries', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const primaryEnquiryData = await primaryEnquiryRes.json();
+      if (primaryEnquiryData.success) setPrimaryServiceEnquiries(primaryEnquiryData.data);
+    } catch (error) {
+      console.error('Error fetching primary service enquiries:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'primary-service-enquiries') {
+      fetchPrimaryServiceEnquiries();
+    }
+  }, [activeTab, fetchPrimaryServiceEnquiries]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -167,11 +186,7 @@ function AdminDashboard() {
         const calculatorQuotesData = await calculatorQuotesRes.json();
         if (calculatorQuotesData.success) setCalculatorQuotes(calculatorQuotesData.data || []);
 
-        const primaryEnquiryRes = await fetch('/api/primary-service-enquiries', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const primaryEnquiryData = await primaryEnquiryRes.json();
-        if (primaryEnquiryData.success) setPrimaryServiceEnquiries(primaryEnquiryData.data);
+        await fetchPrimaryServiceEnquiries();
 
         const careerEnquiryRes = await fetch('/api/career-enquiries', {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -256,7 +271,7 @@ function AdminDashboard() {
     };
 
     fetchData();
-  }, []);
+  }, [fetchPrimaryServiceEnquiries]);
 
   const stats = [
     { label: 'Pending Bookings', value: pendingBookings, icon: '⏳', color: 'a' },
@@ -894,6 +909,13 @@ function AdminDashboard() {
             <div>
               <div className="section-head">
                 <span className="section-head-title">Construction Enquiry</span>
+                <button
+                  type="button"
+                  className="dash-export-btn"
+                  onClick={fetchPrimaryServiceEnquiries}
+                >
+                  Refresh
+                </button>
                 <input
                   type="text"
                   placeholder="Search name, phone, alternate phone, service, email…"

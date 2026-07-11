@@ -1,6 +1,50 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { isDatabaseConnectionError } from '@/lib/api-utils';
+import { mkdir, readFile, writeFile } from 'fs/promises';
+import { existsSync } from 'fs';
+import { join } from 'path';
+
+export const runtime = 'nodejs';
+
+const fallbackDir = join(process.cwd(), '.tmp');
+const fallbackFile = join(fallbackDir, 'professional-service-applications.json');
+
+function normalizeArray(value) {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (!value) return [];
+  if (typeof value === 'string') return value.split(',').map((item) => item.trim()).filter(Boolean);
+  return [];
+}
+
+async function readFallbackApplications() {
+  try {
+    if (!existsSync(fallbackFile)) return [];
+    const raw = await readFile(fallbackFile, 'utf8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function saveFallbackApplication(application) {
+  await mkdir(fallbackDir, { recursive: true });
+  const rows = await readFallbackApplications();
+  const fallbackApplication = {
+    ...application,
+    id: `local-${Date.now()}`,
+    status: 'pending',
+    sort_order: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    fallback_storage: true,
+  };
+  rows.unshift(fallbackApplication);
+  await writeFile(fallbackFile, JSON.stringify(rows, null, 2));
+  return fallbackApplication;
+}
 
 // ── Auto-create tables on first request ─────────────────────────────────────
 let tablesReady = false;
@@ -88,20 +132,36 @@ export async function GET(req) {
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('GET professionals error:', error);
+    if (isDatabaseConnectionError(error)) {
+      const { searchParams } = new URL(req.url);
+      const isAdmin = searchParams.get('admin') === 'true';
+      if (isAdmin) {
+        if (!requireRole(req, 'admin')) return unauthorized();
+        return NextResponse.json({
+          success: true,
+          data: await readFallbackApplications(),
+          fallback: true,
+          message: 'Database connection unavailable. Showing locally queued applications.',
+        });
+      }
+      return NextResponse.json({ success: true, data: [], fallback: true });
+    }
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
 
 // ── POST ─────────────────────────────────────────────────────────────────────
 export async function POST(req) {
+  let payload;
   try {
+    payload = await req.json();
     await ensureTables();
     const {
       name, title, category, profile_picture, experience,
       description, specializations, portfolio_images,
       certifications, city, phone, email,
       website, instagram, linkedin,
-    } = await req.json();
+    } = payload;
 
     if (!name || !title || !category || !email || !phone || !city || !description) {
       return NextResponse.json(
@@ -163,7 +223,24 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error('POST professional error:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    if (payload && isDatabaseConnectionError(error)) {
+      const fallbackApplication = await saveFallbackApplication({
+        ...payload,
+        experience: parseInt(payload.experience) || 0,
+        specializations: normalizeArray(payload.specializations),
+        portfolio_images: normalizeArray(payload.portfolio_images),
+      });
+      return NextResponse.json(
+        {
+          success: true,
+          message: 'Application saved locally because the database is temporarily unavailable. Please restore the database connection before final approval.',
+          data: fallbackApplication,
+          fallback: true,
+        },
+        { status: 202 }
+      );
+    }
+    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
 

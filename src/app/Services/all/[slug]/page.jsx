@@ -162,7 +162,7 @@ export default function ServiceDetailPage() {
         body: payload,
       });
       const data = await res.json();
-      if (!data.success) { setSubmitError(data.error || "Something went wrong. Please try again."); return; }
+      if (!res.ok || !data.success) { setSubmitError(data.error || "Something went wrong. Please try again."); return; }
       setSubmitted(true);
     } catch {
       setSubmitError("Network error. Please try again.");
