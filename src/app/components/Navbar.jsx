@@ -281,8 +281,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               title={isDarkMode ? "Light mode" : "Dark mode"}
               className={`nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md border transition-all ${
                 isDarkMode
-                  ? "border-zinc-700 bg-zinc-900 text-zinc-200 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
-                  : "border-gray-300 bg-white text-zinc-700 hover:border-zinc-500 hover:bg-gray-100"
+                  ? "nav-theme-toggle-dark border-zinc-700 bg-zinc-900 text-zinc-200"
+                  : "nav-theme-toggle-light border-gray-300 bg-white text-zinc-700"
               }`}
             >
               {isDarkMode ? (
@@ -405,7 +405,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               title={isDarkMode ? "Light mode" : "Dark mode"}
               className={`nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border ${
-                isDarkMode ? 'border-zinc-700 bg-zinc-900 text-zinc-200' : 'border-gray-300 bg-white text-zinc-700'
+                isDarkMode ? 'nav-theme-toggle-dark border-zinc-700 bg-zinc-900 text-zinc-200' : 'nav-theme-toggle-light border-gray-300 bg-white text-zinc-700'
               }`}
             >
               {isDarkMode ? '☀️' : '🌙'}

@@ -176,6 +176,37 @@ button[aria-disabled="true"],
   outline-offset: 2px;
 }
 
+/* Keep the header theme control isolated from the site's generic button animation. */
+.site-navbar .nav-theme-toggle,
+.site-navbar .nav-theme-toggle:hover,
+.site-navbar .nav-theme-toggle:active {
+  width: 36px !important;
+  min-width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  background-image: none !important;
+  background-position: initial !important;
+  background-size: initial !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.site-navbar .nav-theme-toggle-dark,
+.site-navbar .nav-theme-toggle-dark:hover,
+.site-navbar .nav-theme-toggle-dark:active {
+  background-color: #18181b !important;
+  border-color: #3f3f46 !important;
+  color: var(--brand-blue) !important;
+}
+
+.site-navbar .nav-theme-toggle-light,
+.site-navbar .nav-theme-toggle-light:hover,
+.site-navbar .nav-theme-toggle-light:active {
+  background-color: #fff !important;
+  border-color: #d4d4d8 !important;
+  color: #3f3f46 !important;
+}
+
 .site-navbar .nav-dashboard,
 .site-navbar .nav-dashboard:hover,
 .site-navbar .nav-dashboard:active,
