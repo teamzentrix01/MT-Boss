@@ -166,16 +166,16 @@ export default function Footer() {
                 </p>
               </div>
               <a
-                href="mailto:info@mtboss.in"
+                href="mailto:mtboss2016@gmail.com"
                 className={`block text-sm font-black hover:text-[var(--brand-blue)] transition-colors ${isDark ? "text-white" : "text-zinc-900"}`}
               >
-                info@mtboss.in
+                mtboss2016@gmail.com
               </a>
               <a
-                href="tel:+919410225039"
+                href="tel:+919458410866"
                 className={`block text-sm font-black hover:text-[var(--brand-blue)] transition-colors ${isDark ? "text-white" : "text-zinc-900"}`}
               >
-                +91 94102 25039
+                +91 94584 10866 / +91 70888 11999
               </a>
             </div>
           </div>

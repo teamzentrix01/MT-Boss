@@ -212,7 +212,7 @@ export default function ServiceDetailPage() {
   const aboutBody     = service.about_body     || service.description;
   const ctaHeading    = service.cta_heading    || `Start Your ${service.title} Project`;
   const phone         = service.contact_phone  || "+91 98765 43210";
-  const email         = service.contact_email  || "hello@mtboss.in";
+  const email         = service.contact_email  || "mtboss2016@gmail.com";
 
   const today = new Date().toISOString().split("T")[0];
 

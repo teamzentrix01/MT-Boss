@@ -93,7 +93,7 @@ export default function FranchiseCTA() {
             </svg>
           </Link>
           <a
-            href="tel:+919410225039"
+            href="tel:+919458410866"
             className={`mt-3 flex items-center justify-center w-full px-6 py-3 border text-[10px] font-black uppercase tracking-widest ${
               dark ? "border-zinc-700 text-white" : "border-zinc-300 text-zinc-900"
             }`}

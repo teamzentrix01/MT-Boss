@@ -243,6 +243,9 @@ function ContactStrip({ dark }) {
             <a href={`tel:${COMPANY_CONTACT.phone.replace(/\s/g, "")}`} className={`px-6 py-3 border font-black uppercase text-[10px] tracking-widest ${dark ? "border-zinc-700 text-white" : "border-zinc-300 text-zinc-900"}`}>
               Call {COMPANY_CONTACT.phone}
             </a>
+            <a href={`tel:${COMPANY_CONTACT.alternatePhone.replace(/\s/g, "")}`} className={`px-6 py-3 border font-black uppercase text-[10px] tracking-widest ${dark ? "border-zinc-700 text-white" : "border-zinc-300 text-zinc-900"}`}>
+              Alternate {COMPANY_CONTACT.alternatePhone}
+            </a>
           </div>
         </div>
       </FadeIn>

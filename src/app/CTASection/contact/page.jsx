@@ -65,8 +65,8 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest mb-1">Email Support</p>
-                  <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>info@mtboss.in</p>
-                  <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>projects@mtboss.in</p>
+                  <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>mtboss2016@gmail.com</p>
+                  <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>Alt: +91 70888 11999</p>
                 </div>
               </div>
             </div>

@@ -543,7 +543,7 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                       </div>
                       <div className="ps-field">
                         <label className="ps-field-label">Email</label>
-                        <input className="ps-input" type="text" placeholder="hello@mtboss.in"
+                        <input className="ps-input" type="text" placeholder="mtboss2016@gmail.com"
                           value={formData.contact_email} onChange={e => set('contact_email', e.target.value)} />
                       </div>
                     </div>

@@ -247,7 +247,7 @@ export default function FranchisePage() {
     }
 
     // Also send email notification
-    await fetch("https://formsubmit.co/ajax/team.zentrix01@gmail.com", {
+    await fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
@@ -1242,7 +1242,7 @@ export default function FranchisePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="tel:+919410225039"
+              href="tel:+919458410866"
               className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1251,7 +1251,7 @@ export default function FranchisePage() {
               Call Now
             </a>
             <a
-              href="mailto:info@mtboss.in"
+              href="mailto:mtboss2016@gmail.com"
               className="inline-flex items-center justify-center gap-3 px-8 py-4 border-2 border-white text-white font-black uppercase text-xs tracking-widest hover:bg-white hover:text-zinc-800 transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

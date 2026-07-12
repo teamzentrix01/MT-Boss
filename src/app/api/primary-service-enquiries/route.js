@@ -10,7 +10,7 @@ import { cleanText, normalizePhone, validateContactFields } from '@/lib/validati
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
   process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-  'team.zentrix01@gmail.com';
+  'mtboss2016@gmail.com';
 
 export const runtime = 'nodejs';
 

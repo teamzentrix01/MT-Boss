@@ -74,7 +74,7 @@ const sections = [
   {
     title: "Contact",
     body: [
-      "For questions about these Terms and Conditions, payments, bookings, service requests, or construction-related support, contact us at info@mtboss.in or +91 94102 25039.",
+      "For questions about these Terms and Conditions, payments, bookings, service requests, or construction-related support, contact us at mtboss2016@gmail.com, +91 94584 10866, or +91 70888 11999.",
     ],
   },
 ];

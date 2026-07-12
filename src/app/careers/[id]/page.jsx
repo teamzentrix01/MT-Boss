@@ -131,7 +131,7 @@ export default function JobDetailPage() {
   };
 
   const openWhatsApp = (enquiry) => {
-    const num = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '919410225039';
+    const num = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '919458410866';
     const msg = [
       `💼 *New Job Application – MTBOSS*`,
       ``,

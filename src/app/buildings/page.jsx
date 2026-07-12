@@ -202,7 +202,7 @@ export default function BuildingsPage() {
     if (!phoneRegex.test(enquiryForm.phone)) { alert('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
     setEnquiryLoading(true);
     try {
-      const res = await fetch("https://formsubmit.co/ajax/team.zentrix01@gmail.com", {
+      const res = await fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({

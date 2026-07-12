@@ -85,7 +85,7 @@ export async function POST(req) {
     // Email the ADMIN (admin acts as middleman — client never contacts professional directly)
     try {
       const { sendMail } = await import('@/lib/email');
-      const adminEmail = process.env.SMTP_USER || 'team.zentrix01@gmail.com';
+      const adminEmail = process.env.SMTP_USER || 'mtboss2016@gmail.com';
       await sendMail({
         to: adminEmail,
         subject: `Professional Enquiry: ${enquirer_name} → ${professional.name} — MTBoss`,

@@ -39,7 +39,7 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
     setLoading(true);
 
     try {
-      const res = await fetch("https://formsubmit.co/ajax/pathakmansi608@gmail.com", {
+      const res = await fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

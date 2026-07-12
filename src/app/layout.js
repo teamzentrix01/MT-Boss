@@ -94,7 +94,7 @@ export default function RootLayout({ children }) {
 
         {/* Floating WhatsApp support button */}
         <a
-          href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '919410225039'}`}
+          href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '919458410866'}`}
           target="_blank"
           rel="noopener noreferrer"
           style={{
