@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const statuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
 const stages = ['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost'];
@@ -30,19 +30,18 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
   const [source, setSource] = useState('');
+  const [city, setCity] = useState('');
   const [form, setForm] = useState(emptyForm);
   const [selected, setSelected] = useState(null);
+  const searchInputRef = useRef(null);
+  const searchHostRef = useRef(null);
 
   const token = () => localStorage.getItem('token') || localStorage.getItem('admin-token');
 
   const loadLeads = useCallback(async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (search) params.set('search', search);
-      if (status) params.set('status', status);
-      if (source) params.set('source', source);
-      const res = await fetch(`/api/admin/lead-management?${params.toString()}`, {
+      const res = await fetch('/api/admin/lead-management', {
         headers: { Authorization: `Bearer ${token()}` },
       });
       const data = await res.json();
@@ -58,7 +57,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
     } finally {
       if (!silent) setLoading(false);
     }
-  }, [search, status, source]);
+  }, []);
 
   useEffect(() => { loadLeads(); }, [loadLeads]);
 
@@ -68,15 +67,45 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   }, [loadLeads]);
 
   const sources = useMemo(() => {
-    return [...new Set(leads.map((lead) => lead.lead_source).filter(Boolean))];
+    return [...new Set(leads.map((lead) => lead.lead_source?.trim()).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b));
   }, [leads]);
 
+  const cities = useMemo(() => {
+    return [...new Set(leads.map((lead) => lead.city?.trim()).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b));
+  }, [leads]);
+
+  const filteredLeads = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase();
+
+    return leads.filter((lead) => {
+      const matchesSearch = !query || [
+        lead.client_name,
+        lead.client_phone,
+        lead.client_email,
+        lead.city,
+        lead.service_type,
+        lead.lead_type,
+        lead.lead_source,
+        lead.agent_name,
+        lead.franchise_name,
+        lead.client_requirement,
+      ].some((value) => String(value ?? '').toLocaleLowerCase().includes(query));
+
+      return matchesSearch
+        && (!status || lead.status === status)
+        && (!source || lead.lead_source === source)
+        && (!city || lead.city === city);
+    });
+  }, [leads, search, status, source, city]);
+
   const stats = useMemo(() => ({
-    total: leads.length,
-    new: leads.filter((lead) => lead.status === 'New').length,
-    follow: leads.filter((lead) => lead.status === 'Follow-up').length,
-    converted: leads.filter((lead) => lead.status === 'Converted').length,
-  }), [leads]);
+    total: filteredLeads.length,
+    new: filteredLeads.filter((lead) => lead.status === 'New').length,
+    follow: filteredLeads.filter((lead) => lead.status === 'Follow-up').length,
+    converted: filteredLeads.filter((lead) => lead.status === 'Converted').length,
+  }), [filteredLeads]);
 
   async function createLead(event) {
     event.preventDefault();
@@ -116,7 +145,16 @@ export default function LeadManagementAdmin({ isDarkMode }) {
     if (search) params.set('search', search);
     if (status) params.set('status', status);
     if (source) params.set('source', source);
+    if (city) params.set('city', city);
     window.open(`/api/admin/lead-management?${params.toString()}`, '_blank');
+  }
+
+  function clearFilters() {
+    setSearch('');
+    setStatus('');
+    setSource('');
+    setCity('');
+    if (searchInputRef.current) searchInputRef.current.value = '';
   }
 
   const bg = isDarkMode ? '#0f0f0f' : '#fff';
@@ -126,6 +164,33 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   const muted = isDarkMode ? '#9ca3af' : '#64748b';
   const inputStyle = { background: surface, border: `1px solid ${border}`, color: text, borderRadius: 6, padding: '0.55rem 0.65rem', fontSize: '0.78rem', fontWeight: 700, width: '100%' };
   const labelStyle = { display: 'block', color: muted, fontSize: '0.64rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 5 };
+
+  useEffect(() => {
+    const host = searchHostRef.current;
+    if (!host) return undefined;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.inputMode = 'search';
+    input.autocomplete = 'off';
+    input.setAttribute('aria-label', 'Search leads');
+    input.placeholder = 'Search name, phone, email, city, service...';
+    Object.assign(input.style, inputStyle);
+    input.value = search;
+
+    const handleSearchInput = () => setSearch(input.value);
+    input.addEventListener('input', handleSearchInput);
+    host.replaceChildren(input);
+    searchInputRef.current = input;
+
+    return () => {
+      input.removeEventListener('input', handleSearchInput);
+      if (searchInputRef.current === input) searchInputRef.current = null;
+      input.remove();
+    };
+    // The native field is recreated only when the dashboard theme changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDarkMode]);
 
   return (
     <div style={{ display: 'grid', gap: '1rem' }}>
@@ -203,8 +268,12 @@ export default function LeadManagementAdmin({ isDarkMode }) {
       </form>
 
       <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 6, padding: '1rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', gap: 10, marginBottom: 12 }}>
-          <input style={inputStyle} placeholder="Search name, phone, city, service..." value={search} onChange={(e) => setSearch(e.target.value)} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px,2fr) repeat(3,minmax(130px,1fr)) auto', gap: 10, marginBottom: 12 }}>
+          <div ref={searchHostRef} />
+          <select aria-label="Filter leads by city" style={inputStyle} value={city} onChange={(e) => setCity(e.target.value)}>
+            <option value="">All cities</option>
+            {cities.map((item) => <option key={item} value={item}>{item}</option>)}
+          </select>
           <select style={inputStyle} value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="">All status</option>
             {statuses.map((item) => <option key={item} value={item}>{item}</option>)}
@@ -213,7 +282,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
             <option value="">All source</option>
             {sources.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
-          <button onClick={loadLeads} style={{ border: 0, background: surface, color: text, borderRadius: 6, padding: '0.55rem 1rem', fontWeight: 900, cursor: 'pointer' }}>Apply</button>
+          <button type="button" onClick={clearFilters} disabled={!search && !city && !status && !source} style={{ border: 0, background: surface, color: text, borderRadius: 6, padding: '0.55rem 1rem', fontWeight: 900, cursor: 'pointer' }}>Clear</button>
         </div>
 
         <div style={{ overflowX: 'auto' }}>
@@ -228,9 +297,9 @@ export default function LeadManagementAdmin({ isDarkMode }) {
             <tbody>
               {loading ? (
                 <tr><td colSpan={9} style={{ padding: '1rem', color: muted }}>Loading leads...</td></tr>
-              ) : leads.length === 0 ? (
+              ) : filteredLeads.length === 0 ? (
                 <tr><td colSpan={9} style={{ padding: '1rem', color: muted }}>No leads found.</td></tr>
-              ) : leads.map((lead) => (
+              ) : filteredLeads.map((lead) => (
                 <tr key={lead.id} style={{ borderTop: `1px solid ${border}` }}>
                   <td style={{ padding: '0.6rem', minWidth: 170 }}>
                     <div style={{ color: text, fontWeight: 800 }}>{lead.client_name}</div>

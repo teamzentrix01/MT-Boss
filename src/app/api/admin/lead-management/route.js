@@ -122,7 +122,7 @@ function csvCell(value) {
   return `"${text.replaceAll('"', '""')}"`;
 }
 
-async function getLeadRows({ search = '', status = '', source = '' } = {}) {
+async function getLeadRows({ search = '', status = '', source = '', city = '' } = {}) {
   const params = [];
   const filters = [];
 
@@ -143,6 +143,10 @@ async function getLeadRows({ search = '', status = '', source = '' } = {}) {
   if (source) {
     params.push(source);
     filters.push(`l.lead_source = $${params.length}`);
+  }
+  if (city) {
+    params.push(city);
+    filters.push(`LOWER(TRIM(COALESCE(l.city, ''))) = LOWER(TRIM($${params.length}::TEXT))`);
   }
 
   const where = filters.length ? `WHERE ${filters.join(' AND ')}` : '';
@@ -179,6 +183,7 @@ export async function GET(req) {
       search: searchParams.get('search') || '',
       status: searchParams.get('status') || '',
       source: searchParams.get('source') || '',
+      city: searchParams.get('city') || '',
     });
 
     if (exportType === 'csv' || exportType === 'xlsx' || exportType === 'excel') {
