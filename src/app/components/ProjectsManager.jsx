@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 const CATEGORIES = ['Commercial', 'Residential', 'Hospitality', 'Industrial', 'IT Infrastructure', 'Luxury Home'];
 const SIZES = [
@@ -15,6 +16,7 @@ const statusStyle = {
 };
 
 export default function ProjectsManager() {
+  const router = useRouter();
   const [projects, setProjects]       = useState([]);
   const [loading, setLoading]         = useState(true);
   const [showForm, setShowForm]       = useState(false);
@@ -188,9 +190,17 @@ export default function ProjectsManager() {
           gap: 0.75rem;
         }
         .pm-card {
-          background: var(--surface);
+          background: var(--surface) !important;
+          background-image: none !important;
           border: 1px solid var(--border);
           border-radius: 8px; overflow: hidden;
+          cursor: pointer;
+          transition: border-color .15s, transform .15s, box-shadow .15s;
+        }
+        .pm-card:hover {
+          border-color: var(--accent);
+          transform: translateY(-1px);
+          box-shadow: 0 10px 28px rgba(15, 23, 42, .08);
         }
         .pm-card-img {
           width: 100%; height: 160px;
@@ -399,13 +409,25 @@ export default function ProjectsManager() {
         {loading ? (
           <div className="pm-empty">Loading projects…</div>
         ) : projects.length === 0 ? (
-          <div className="pm-empty">No projects yet. Click "Add Project" to get started.</div>
+          <div className="pm-empty">No projects yet. Click Add Project to get started.</div>
         ) : (
           <div className="pm-grid">
             {projects.map(project => {
               const st = statusStyle[project.status] || statusStyle.published;
               return (
-                <div key={project.id} className="pm-card">
+                <div
+                  key={project.id}
+                  className="pm-card"
+                  tabIndex={0}
+                  onClick={() => router.push(`/dashboard/projects/${project.id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      router.push(`/dashboard/projects/${project.id}`);
+                    }
+                  }}
+                  title="Open project management"
+                >
                   {project.image_url
                     ? <img src={project.image_url} alt={project.title} className="pm-card-img" />
                     : <div className="pm-card-img-placeholder">🏗️</div>
@@ -425,14 +447,17 @@ export default function ProjectsManager() {
                       <span
                         className="pm-badge"
                         style={{ background: st.bg, color: st.tx, cursor: 'pointer' }}
-                        onClick={() => toggleStatus(project)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleStatus(project);
+                        }}
                         title="Click to toggle"
                       >
                         {project.status}
                       </span>
                       <div className="pm-actions">
-                        <button className="pm-edit-btn" onClick={() => openEdit(project)}>Edit</button>
-                        <button className="pm-del-btn" onClick={() => handleDelete(project.id, project.cloudinary_public_id)}>Delete</button>
+                        <button className="pm-edit-btn" onClick={(e) => { e.stopPropagation(); openEdit(project); }}>Edit</button>
+                        <button className="pm-del-btn" onClick={(e) => { e.stopPropagation(); handleDelete(project.id, project.cloudinary_public_id); }}>Delete</button>
                       </div>
                     </div>
                   </div>
