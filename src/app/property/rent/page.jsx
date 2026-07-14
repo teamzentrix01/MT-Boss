@@ -236,7 +236,8 @@ export default function RentPage() {
               <div className="flex gap-3">
                 {["owner","broker"].map(t => (
                   <button key={t} type="button" onClick={() => set("seller_type", t)}
-                    className={`flex-1 py-2.5 text-xs font-black uppercase tracking-widest border transition-all ${form.seller_type === t ? "bg-[var(--brand-blue)] text-black border-[var(--brand-blue)]" : dark ? "border-zinc-700 text-zinc-400 hover:border-zinc-500" : "border-gray-200 text-zinc-500 hover:border-zinc-500"}`}>
+                    aria-pressed={form.seller_type === t}
+                    className={`property-seller-choice flex-1 py-2.5 text-xs font-black uppercase tracking-widest border transition-all ${form.seller_type === t ? "property-seller-choice-active bg-[var(--brand-blue)] text-black border-[var(--brand-blue)]" : dark ? "property-seller-choice-dark border-zinc-700 text-zinc-400 hover:border-zinc-500" : "property-seller-choice-light border-gray-200 text-zinc-500 hover:border-zinc-500"}`}>
                     {t === "owner" ? "🏠 Owner" : "🤝 Broker / Agent"}
                   </button>
                 ))}

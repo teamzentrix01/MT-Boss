@@ -237,6 +237,36 @@ button[aria-expanded]:hover * {
   color: inherit !important;
 }
 
+/* Segmented property-form choices must show their actual pressed state. */
+.property-seller-choice,
+.property-seller-choice:hover,
+.property-seller-choice:active {
+  background-image: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.property-seller-choice-dark:not(.property-seller-choice-active) {
+  background-color: transparent !important;
+  border-color: #3f3f46 !important;
+  color: #a1a1aa !important;
+}
+
+.property-seller-choice-light:not(.property-seller-choice-active) {
+  background-color: transparent !important;
+  border-color: #e5e7eb !important;
+  color: #71717a !important;
+}
+
+.property-seller-choice-active,
+.property-seller-choice-active:hover,
+.property-seller-choice-active:active {
+  background-color: var(--brand-blue) !important;
+  border-color: var(--brand-blue) !important;
+  color: #111 !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-blue) 35%, transparent) !important;
+}
+
 .faq-trigger {
   background: #111 !important;
   background-image: none !important;
