@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { COMPANY_CONTACT } from "../../lib/company";
 
 export default function ContactPage() {
   const [isDark, setIsDark] = useState(false);
@@ -53,7 +54,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest mb-1">Call Us Directly</p>
-                  <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>+91 98765 43210</p>
+                  <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>{COMPANY_CONTACT.phone}</p>
                   <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>0120-456-7890</p>
                 </div>
               </div>
@@ -66,7 +67,7 @@ export default function ContactPage() {
                 <div>
                   <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest mb-1">Email Support</p>
                   <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>mtboss2016@gmail.com</p>
-                  <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>Alt: +91 70888 11999</p>
+                  <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>WhatsApp: {COMPANY_CONTACT.phone}</p>
                 </div>
               </div>
             </div>

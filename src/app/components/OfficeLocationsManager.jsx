@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { COMPANY_CONTACT } from '../lib/company';
 
 function theme(dark) {
   return {
@@ -18,7 +19,7 @@ function theme(dark) {
 const EMPTY = {
   city: '',
   address: '',
-  phone: '+91 94584 10866 / +91 70888 11999',
+  phone: COMPANY_CONTACT.phone,
   email: '',
   hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
   map_url: '',

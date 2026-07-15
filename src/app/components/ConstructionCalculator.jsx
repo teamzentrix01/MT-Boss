@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { COMPANY_CONTACT } from '../lib/company';
 import {
   Building2,
   Check,
@@ -407,7 +408,7 @@ function buildReportHtml(snapshot) {
             <div>
               <h1>MTBoss Construction</h1>
               <p>Construction, materials, site execution and property services</p>
-              <p>mtboss2016@gmail.com | +91 94584 10866 | Alt: +91 70888 11999</p>
+              <p>{COMPANY_CONTACT.email} | {COMPANY_CONTACT.phone}</p>
             </div>
           </div>
           <div class="meta">
@@ -477,7 +478,7 @@ function buildReportHtml(snapshot) {
           </div>
           <div>
             <strong>Contact Us</strong>
-            Phone: <a href="tel:+919458410866">+91 94584 10866</a> / <a href="tel:+917088811999">+91 70888 11999</a><br />
+            Phone: <a href={COMPANY_CONTACT.telHref}>{COMPANY_CONTACT.phone}</a><br />
             Email: <a href="mailto:mtboss2016@gmail.com">mtboss2016@gmail.com</a><br />
             Web: <a href="/contact">Contact Us</a>
           </div>

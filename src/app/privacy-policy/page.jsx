@@ -1,5 +1,5 @@
 import LegalPage from "../components/LegalPage";
-import { COMPANY_NAME } from "../lib/company";
+import { COMPANY_CONTACT, COMPANY_NAME } from "../lib/company";
 
 const sections = [
   {
@@ -73,7 +73,7 @@ const sections = [
   {
     title: "Contact",
     body: [
-      "For privacy questions, data requests, account support, or complaints, contact Mtboss construction private limited at mtboss2016@gmail.com, +91 94584 10866, or +91 70888 11999.",
+      `For privacy questions, data requests, account support, or complaints, contact ${COMPANY_NAME} at ${COMPANY_CONTACT.email} or ${COMPANY_CONTACT.phone}.`,
     ],
   },
 ];

@@ -1,6 +1,7 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { COMPANY_CONTACT } from '../../lib/company';
 
 const DEFAULT_OFFICES = [
   'Moradabad',
@@ -14,7 +15,7 @@ const DEFAULT_OFFICES = [
 ].map((city, index) => ({
   city,
   address: `MTBOSS Office, ${city}, India`,
-  phone: '+91 94584 10866 / +91 70888 11999',
+  phone: COMPANY_CONTACT.phone,
   email: `${city.toLowerCase()}@mtboss.com`,
   hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
   map_url: `https://www.google.com/maps?q=${encodeURIComponent(`${city}, India`)}&output=embed`,

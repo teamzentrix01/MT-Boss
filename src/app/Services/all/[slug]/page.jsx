@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { COMPANY_CONTACT } from "../../../lib/company";
 
 const fallbackProcess = [
   { step: "01", title: "Consultation & Brief",  desc: "We analyse your goals, site conditions, budget, and timeline before anything begins." },
@@ -211,7 +212,7 @@ export default function ServiceDetailPage() {
   const aboutHeading  = service.about_heading  || "Built with Precision";
   const aboutBody     = service.about_body     || service.description;
   const ctaHeading    = service.cta_heading    || `Start Your ${service.title} Project`;
-  const phone         = service.contact_phone  || "+91 98765 43210";
+  const phone         = service.contact_phone || COMPANY_CONTACT.phone;
   const email         = service.contact_email  || "mtboss2016@gmail.com";
 
   const today = new Date().toISOString().split("T")[0];

@@ -1,3 +1,9 @@
+import dotenv from "dotenv";
+
+// This project keeps its environment file under src/.env.
+// Load it before Next.js inlines NEXT_PUBLIC_* values into client bundles.
+dotenv.config({ path: "src/.env" });
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /* config options here */

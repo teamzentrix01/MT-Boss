@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { COMPANY_CONTACT } from "../lib/company";
 
 export default function Footer() {
   const [isDark, setIsDark] = useState(false);
@@ -166,16 +167,16 @@ export default function Footer() {
                 </p>
               </div>
               <a
-                href="mailto:mtboss2016@gmail.com"
+                href={`mailto:${COMPANY_CONTACT.email}`}
                 className={`block text-sm font-black hover:text-[var(--brand-blue)] transition-colors ${isDark ? "text-white" : "text-zinc-900"}`}
               >
-                mtboss2016@gmail.com
+                {COMPANY_CONTACT.email}
               </a>
               <a
-                href="tel:+919458410866"
+                href={COMPANY_CONTACT.telHref}
                 className={`block text-sm font-black hover:text-[var(--brand-blue)] transition-colors ${isDark ? "text-white" : "text-zinc-900"}`}
               >
-                +91 94584 10866 / +91 70888 11999
+                {COMPANY_CONTACT.phone}
               </a>
             </div>
           </div>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import "./globals.css";
 import Footer from "./components/Footer";
+import { COMPANY_CONTACT } from "./lib/company";
 
 export default function RootLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -94,7 +95,7 @@ export default function RootLayout({ children }) {
 
         {/* Floating WhatsApp support button */}
         <a
-          href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '919458410866'}`}
+          href={COMPANY_CONTACT.whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
           style={{

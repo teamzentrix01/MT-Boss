@@ -1,5 +1,5 @@
 import LegalPage from "../components/LegalPage";
-import { COMPANY_NAME } from "../lib/company";
+import { COMPANY_CONTACT, COMPANY_NAME } from "../lib/company";
 
 const sections = [
   {
@@ -74,7 +74,7 @@ const sections = [
   {
     title: "Contact",
     body: [
-      "For questions about these Terms and Conditions, payments, bookings, service requests, or construction-related support, contact us at mtboss2016@gmail.com, +91 94584 10866, or +91 70888 11999.",
+      `For questions about these Terms and Conditions, payments, bookings, service requests, or construction-related support, contact us at ${COMPANY_CONTACT.email} or ${COMPANY_CONTACT.phone}.`,
     ],
   },
 ];

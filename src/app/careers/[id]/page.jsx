@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { jobs as fallbackJobs } from "../data/jobs";
+import { COMPANY_CONTACT } from "../../lib/company";
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -131,7 +132,7 @@ export default function JobDetailPage() {
   };
 
   const openWhatsApp = (enquiry) => {
-    const num = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '919458410866';
+    const num = COMPANY_CONTACT.phoneDigits;
     const msg = [
       `💼 *New Job Application – MTBOSS*`,
       ``,
