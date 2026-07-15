@@ -53,7 +53,7 @@ export async function POST(req) {
     }
 
     const result = await pool.query(
-      'SELECT id, email, password, name FROM users WHERE LOWER(email) = $1',
+      'SELECT id, email, password, name, role FROM users WHERE LOWER(email) = $1',
       [normalizedEmail]
     );
 
@@ -67,16 +67,18 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
+    const userRole = user.role || 'user';
+
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: 'user' },
+      { id: user.id, email: user.email, role: userRole },
       getJwtSecret(),
       { expiresIn: process.env.JWT_EXPIRY || '7d' }
     );
 
     const response = NextResponse.json({
       token,
-      user: { id: user.id, email: user.email, name: user.name, role: 'user' },
-      redirectTo: '/userdashboard',
+      user: { id: user.id, email: user.email, name: user.name, role: userRole },
+      redirectTo: userRole === 'admin' ? '/dashboard' : '/userdashboard',
     }, { status: 200 });
     return setAuthCookie(response, 'auth-token', token);
   } catch (error) {
