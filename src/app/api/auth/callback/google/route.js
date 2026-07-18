@@ -3,8 +3,7 @@ import pool from '@/lib/db';
 import jwt from 'jsonwebtoken';
 import { getJwtSecret, setAuthCookie } from '@/lib/auth';
 import crypto from 'crypto';
-
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+import { isAdminEmail } from '@/lib/admin-email';
 
 function appUrl(req) {
   const configured = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || '').trim();
@@ -65,7 +64,7 @@ export async function GET(req) {
     );
 
     const user = result.rows[0];
-    const role = ADMIN_EMAIL && user.email === ADMIN_EMAIL ? 'admin' : 'user';
+    const role = isAdminEmail(user.email) ? 'admin' : 'user';
     const redirectTo = role === 'admin' ? '/dashboard' : '/userdashboard';
 
     const token = jwt.sign(

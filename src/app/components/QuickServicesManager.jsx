@@ -3,6 +3,13 @@
 import { useState, useEffect } from 'react';
 import QuickServiceIcon from './QuickServiceIcon';
 
+const INDIAN_CITIES = [
+  'Agra', 'Ahmedabad', 'Bengaluru', 'Bhopal', 'Chandigarh', 'Chennai',
+  'Dehradun', 'Delhi', 'Faridabad', 'Ghaziabad', 'Greater Noida', 'Gurgaon',
+  'Hyderabad', 'Jaipur', 'Kanpur', 'Kolkata', 'Lucknow', 'Meerut',
+  'Moradabad', 'Mumbai', 'Noida', 'Patna', 'Pune', 'Surat', 'Varanasi',
+];
+
 async function uploadQuickServiceIcon(file) {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -39,7 +46,7 @@ export default function QuickServicesManager({ isDarkMode }) {
 
   const [formData, setFormData] = useState({
     icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150',
-    main_category: '', sub_category: '',
+    main_category: '', sub_category: '', cities: [],
   });
 
   useEffect(() => { fetchServices(); }, []);
@@ -113,7 +120,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); setSuccess('');
-    if (!formData.icon || !formData.label || !formData.desc || !formData.duration) {
+    if (!formData.icon || !formData.label || !formData.desc || !formData.duration || formData.cities.length === 0) {
       setError('All fields are required'); return;
     }
     try {
@@ -128,7 +135,7 @@ export default function QuickServicesManager({ isDarkMode }) {
       const data = await res.json();
       if (data.success) {
         setSuccess(editingId ? 'Service updated!' : 'Service added!');
-        setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150', main_category: '', sub_category: '' });
+        setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150', main_category: '', sub_category: '', cities: [] });
         setEditingId(null); setShowForm(false);
         fetchServices();
       } else setError(data.error || 'Something went wrong');
@@ -159,6 +166,7 @@ export default function QuickServicesManager({ isDarkMode }) {
       desc: service.description, basePrice: '150', duration: service.duration,
       visiting_price: '150',
       main_category: service.main_category || '', sub_category: service.sub_category || '',
+      cities: Array.isArray(service.cities) ? service.cities : [],
     });
     setEditingId(service.id); setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -178,7 +186,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   };
 
   const resetForm = () => {
-    setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150', main_category: '', sub_category: '' });
+    setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150', main_category: '', sub_category: '', cities: [] });
     setEditingId(null); setShowForm(false);
   };
 
@@ -413,6 +421,30 @@ export default function QuickServicesManager({ isDarkMode }) {
                     value={formData.sub_category}
                     onChange={e => setFormData({ ...formData, sub_category: e.target.value })} />
                 </div>
+                <div className="qs-form-full">
+                  <label className="qs-label">Available Cities *</label>
+                  <select className="qs-input" value="" onChange={e => {
+                    const city = e.target.value;
+                    if (city && !formData.cities.includes(city)) {
+                      setFormData({ ...formData, cities: [...formData.cities, city] });
+                    }
+                  }}>
+                    <option value="">Select a city to add</option>
+                    {INDIAN_CITIES.filter(city => !formData.cities.includes(city)).map(city => (
+                      <option key={city} value={city}>{city}</option>
+                    ))}
+                  </select>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem' }}>
+                    {formData.cities.map(city => (
+                      <button key={city} type="button" className="qs-act qs-act-edit"
+                        onClick={() => setFormData({ ...formData, cities: formData.cities.filter(item => item !== city) })}
+                        title={`Remove ${city}`}>
+                        {city} ×
+                      </button>
+                    ))}
+                    {formData.cities.length === 0 && <span style={{ color: 'var(--qs-muted)', fontSize: '0.72rem' }}>No city selected</span>}
+                  </div>
+                </div>
               </div>
               <div className="qs-form-actions">
                 <button type="submit" className="qs-btn-primary" disabled={iconUploading}>
@@ -444,7 +476,7 @@ export default function QuickServicesManager({ isDarkMode }) {
               <thead>
                 <tr>
                   <th style={{ width: '2rem' }} />
-                  {['Icon', 'Service', 'Description', 'Main Category', 'Sub Category', 'Visiting Price', 'Duration', 'Actions'].map(col => (
+                  {['Icon', 'Service', 'Description', 'Cities', 'Main Category', 'Sub Category', 'Visiting Price', 'Duration', 'Actions'].map(col => (
                     <th key={col}>{col}</th>
                   ))}
                 </tr>
@@ -470,6 +502,7 @@ export default function QuickServicesManager({ isDarkMode }) {
                       className="qs-icon-cell" imageClassName="w-8 h-8 object-contain" /></td>
                     <td><span className="qs-name-cell">{service.label}</span></td>
                     <td><span className="qs-muted-cell">{service.description}</span></td>
+                    <td><span className="qs-muted-cell">{service.cities?.length ? service.cities.join(', ') : 'Vendor-based'}</span></td>
                     <td><span className="qs-muted-cell">{service.main_category || '—'}</span></td>
                     <td><span className="qs-muted-cell">{service.sub_category || '—'}</span></td>
                     <td><span className="qs-price-cell">₹{service.visiting_price || 150}</span></td>
@@ -483,7 +516,7 @@ export default function QuickServicesManager({ isDarkMode }) {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={10}>
+                    <td colSpan={11}>
                       <div className="qs-empty">No quick services yet. Add one to get started.</div>
                     </td>
                   </tr>

@@ -9,6 +9,8 @@ export default function QuickServiceIcon({ value, label = '', className = '', im
         <img
           src={value}
           alt={label ? `${label} icon` : 'Service icon'}
+          loading="lazy"
+          decoding="async"
           className={imageClassName || 'h-full w-full object-contain'}
         />
       </span>

@@ -2,6 +2,7 @@ import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { COMPANY_CONTACT } from '../../lib/company';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 const DEFAULT_OFFICES = [
   'Moradabad',
@@ -22,7 +23,7 @@ const DEFAULT_OFFICES = [
   sort_order: index,
 }));
 
-async function ensureTable() {
+const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS office_locations (
       id         SERIAL PRIMARY KEY,
@@ -50,7 +51,7 @@ async function ensureTable() {
       [office.city, office.address, office.phone, office.email, office.hours, office.map_url, office.sort_order]
     );
   }
-}
+});
 
 function hasToken(req) {
   return Boolean(requireRole(req, 'admin'));

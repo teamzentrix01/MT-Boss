@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { getJwtSecret, setAuthCookie } from '@/lib/auth';
+import { isAdminEmail } from '@/lib/admin-email';
 
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
@@ -69,7 +70,10 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    const userRole = 'user';
+    // Database-backed admin accounts must retain their admin role. Previously
+    // every row from `users` was forcibly downgraded to `user`, which sent the
+    // admin to /userdashboard and made the navbar Dashboard button do the same.
+    const userRole = isAdminEmail(user.email) ? 'admin' : 'user';
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: userRole },

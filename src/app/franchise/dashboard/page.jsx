@@ -70,10 +70,15 @@ export default function FranchiseDashboardPage() {
   }, [router]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      if (localStorage.getItem('franchise-token')) fetchLeads();
-    }, 20000);
-    return () => clearInterval(timer);
+    const refresh = () => {
+      if (document.visibilityState === 'visible' && localStorage.getItem('franchise-token')) fetchLeads();
+    };
+    const timer = setInterval(refresh, 20000);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', refresh);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -3,11 +3,12 @@ import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { ensureAgentSchema } from '@/lib/agent-auth';
 import { createXlsxWorkbook } from '@/lib/xlsx';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
 
-async function ensureLeadManagementSchema() {
+const ensureLeadManagementSchema = createInitializationGuard(async () => {
   await ensureAgentSchema();
   try { await pool.query(`ALTER TABLE agent_leads ALTER COLUMN agent_id DROP NOT NULL`); } catch { /* older db may already allow null */ }
   const alters = [
@@ -18,7 +19,7 @@ async function ensureLeadManagementSchema() {
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS priority VARCHAR(30) DEFAULT 'Normal'`,
   ];
   for (const sql of alters) await pool.query(sql);
-}
+});
 
 async function syncExternalLeads() {
   const syncs = [

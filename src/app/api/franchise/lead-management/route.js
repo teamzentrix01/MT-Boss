@@ -2,11 +2,12 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { ensureAgentSchema } from '@/lib/agent-auth';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
 
-async function ensureSchema() {
+const ensureSchema = createInitializationGuard(async () => {
   await ensureAgentSchema();
   try { await pool.query(`ALTER TABLE agent_leads ALTER COLUMN agent_id DROP NOT NULL`); } catch { /* ok */ }
   const alters = [
@@ -17,7 +18,7 @@ async function ensureSchema() {
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS priority VARCHAR(30) DEFAULT 'Normal'`,
   ];
   for (const sql of alters) await pool.query(sql);
-}
+});
 
 export async function GET(req) {
   try {

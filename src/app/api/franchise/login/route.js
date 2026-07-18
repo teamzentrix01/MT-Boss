@@ -3,8 +3,9 @@ import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { getJwtSecret, setAuthCookie } from '@/lib/auth';
+import { createInitializationGuard } from '@/lib/api-utils';
 
-async function ensureFranchiseColumns() {
+const ensureFranchiseColumns = createInitializationGuard(async () => {
   await pool.query(`
     ALTER TABLE franchises
       ADD COLUMN IF NOT EXISTS password_hash TEXT,
@@ -13,7 +14,7 @@ async function ensureFranchiseColumns() {
       ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ,
       ADD COLUMN IF NOT EXISTS login_enabled BOOLEAN DEFAULT FALSE
   `);
-}
+});
 
 export async function POST(req) {
   try {

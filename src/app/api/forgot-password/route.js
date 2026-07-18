@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { sendMail } from '@/lib/email';
 import { generateSixDigitOtp, hashOtp, PASSWORD_RESET_OTP_EXPIRY_MINUTES } from '@/lib/otp';
+import { createInitializationGuard } from '@/lib/api-utils';
 
-async function ensureTable() {
+const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS password_reset_otps (
       id         SERIAL PRIMARY KEY,
@@ -21,7 +22,7 @@ async function ensureTable() {
   await pool.query(`ALTER TABLE password_reset_otps ADD COLUMN IF NOT EXISTS otp_hash TEXT`);
   await pool.query(`ALTER TABLE password_reset_otps ADD COLUMN IF NOT EXISTS attempts INTEGER DEFAULT 0`);
   await pool.query(`CREATE INDEX IF NOT EXISTS idx_pro_email ON password_reset_otps (email, user_type)`);
-}
+});
 
 // POST — generate OTP and send to email
 export async function POST(req) {

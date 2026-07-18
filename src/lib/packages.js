@@ -1,4 +1,5 @@
 import pool from '@/lib/db';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 // Package definitions
 export const PACKAGES = [
@@ -7,7 +8,7 @@ export const PACKAGES = [
   { id: 'pkg_2y', name: '2 Years', duration_months: 24, price: 7999, label: '2 Year Plan' },
 ];
 
-export async function ensurePackageSchema() {
+export const ensurePackageSchema = createInitializationGuard(async () => {
   // Add package columns to vendors table
   const vendorAlters = [
     `ALTER TABLE vendors ADD COLUMN IF NOT EXISTS package_id TEXT`,
@@ -39,7 +40,7 @@ export async function ensurePackageSchema() {
   for (const sql of supplierAlters) {
     try { await pool.query(sql); } catch (_) { /* column might already exist */ }
   }
-}
+});
 
 export function getPackageById(packageId) {
   return PACKAGES.find(p => p.id === packageId) || null;

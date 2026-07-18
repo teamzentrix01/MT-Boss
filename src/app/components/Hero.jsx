@@ -131,6 +131,8 @@ export default function Hero() {
           <img
             src={slide.image_url || slide.image}
             alt={slide.title}
+            fetchPriority={i === current ? "high" : "low"}
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-center"
             style={{
               transform: i === current ? "scale(1.05)" : "scale(1)",

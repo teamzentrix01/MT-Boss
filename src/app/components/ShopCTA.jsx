@@ -60,6 +60,8 @@ function CategoryCard({ cat, dark, idx, visible }) {
           <img
             src={cat.image}
             alt={cat.name}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80"
           />
         ) : (

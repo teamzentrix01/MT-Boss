@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { createInitializationGuard } from '@/lib/api-utils';
 
-async function ensureTable() {
+const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS supplier_materials (
       id SERIAL PRIMARY KEY,
@@ -18,7 +19,7 @@ async function ensureTable() {
       updated_at TIMESTAMP DEFAULT NOW()
     )
   `);
-}
+});
 
 function uniq(values) {
   return [...new Set(values.map((v) => String(v || '').trim()).filter(Boolean))];

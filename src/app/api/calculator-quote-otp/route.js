@@ -6,11 +6,12 @@ import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { sendMail } from '@/lib/email';
 import { generateSixDigitOtp, hashOtp, verifyOtp } from '@/lib/otp';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 const EXPIRY_MINUTES = 10;
 const MAX_ATTEMPTS = 5;
 
-async function ensureTable() {
+const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS calculator_quote_otps (
       id SERIAL PRIMARY KEY,
@@ -32,7 +33,7 @@ async function ensureTable() {
   `);
   await pool.query(`ALTER TABLE calculator_quote_otps ADD COLUMN IF NOT EXISTS site_image_url TEXT`);
   await pool.query(`ALTER TABLE calculator_quote_otps ADD COLUMN IF NOT EXISTS site_image_name TEXT`);
-}
+});
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());

@@ -237,24 +237,32 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               Construction
             </Link>
 
+            <DropdownButton label="Agent" text={text} textHover={textHover} dropdownBg={dropdownBg}>
+              <div className="w-48">
+                <Link
+                  href="/agent"
+                  className={`block px-4 py-2.5 text-sm transition-colors ${dropdownTxt}`}
+                >
+                  Become an Agent
+                </Link>
+                <Link
+                  href="/agent/login"
+                  className={`block px-4 py-2.5 text-sm transition-colors ${dropdownTxt}`}
+                >
+                  Agent Login
+                </Link>
+              </div>
+            </DropdownButton>
             <Link
-              href="/agent"
+              href="/franchise"
               className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
-              Become an Agent
+              Franchise
             </Link>
-            {user && (
-              <Link
-                href="/franchise"
-                className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
-              >
-                Franchise
-              </Link>
-            )}
 
             <Link
               href="/calculator"
-              className={`hidden 2xl:inline-flex px-3 py-2 text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+              className={`inline-flex px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Budget Calculator
             </Link>
@@ -603,19 +611,28 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           >
             Become an Agent
           </Link>
-          {user && (
-            <Link
-              href="/franchise"
-              onClick={closeMobileMenu}
-              className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
-            >
-              Franchise
-            </Link>
-          )}
+          <Link
+            href="/agent/login"
+            onClick={closeMobileMenu}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
+              isDarkMode
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+            }`}
+          >
+            Agent Login
+          </Link>
+          <Link
+            href="/franchise"
+            onClick={closeMobileMenu}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
+              isDarkMode
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+            }`}
+          >
+            Franchise
+          </Link>
 
           {/* Mobile Auth */}
           <div className="pt-4 space-y-2 border-t" style={{ borderTopColor: isDarkMode ? '#27272a' : '#e5e7eb' }}>

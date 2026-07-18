@@ -40,6 +40,8 @@ const DEFAULT_SETTINGS = {
   },
 };
 
+let readyPromise;
+
 function hasAuth(req) {
   return Boolean(requireRole(req, 'admin'));
 }
@@ -125,7 +127,7 @@ function sanitizeSettings(input = {}) {
   };
 }
 
-async function ensureTable() {
+async function initializeTable() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS calculator_settings (
       id INTEGER PRIMARY KEY DEFAULT 1,
@@ -144,10 +146,32 @@ async function ensureTable() {
   );
 }
 
+function ensureTable() {
+  if (!readyPromise) {
+    readyPromise = initializeTable().catch((error) => {
+      readyPromise = undefined;
+      throw error;
+    });
+  }
+  return readyPromise;
+}
+
 export async function GET() {
   try {
-    await ensureTable();
-    const result = await pool.query('SELECT settings FROM calculator_settings WHERE id=1 LIMIT 1');
+    let result;
+    try {
+      result = await pool.query('SELECT settings FROM calculator_settings WHERE id=1 LIMIT 1');
+    } catch (error) {
+      if (error?.code !== '42P01' && error?.code !== '42703') throw error;
+      await ensureTable();
+      result = await pool.query('SELECT settings FROM calculator_settings WHERE id=1 LIMIT 1');
+    }
+
+    if (result.rows.length === 0) {
+      await ensureTable();
+      result = await pool.query('SELECT settings FROM calculator_settings WHERE id=1 LIMIT 1');
+    }
+
     const settings = mergeSettings(result.rows[0]?.settings || {});
     return NextResponse.json({ success: true, data: settings });
   } catch (error) {

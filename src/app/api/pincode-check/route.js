@@ -35,7 +35,12 @@ export async function GET(req) {
       let dbCheck;
       if (city) {
         dbCheck = await pool.query(
-          `SELECT DISTINCT v.city 
+          `SELECT qs.label, $1::text AS city
+           FROM quick_services qs
+           WHERE (LOWER(qs.slug) = LOWER($2) OR LOWER(qs.label) = LOWER($3) OR LOWER(qs.label) = LOWER($4))
+             AND EXISTS (SELECT 1 FROM unnest(COALESCE(qs.cities, '{}')) configured_city WHERE LOWER(configured_city) = LOWER($1))
+           UNION ALL
+           SELECT qs.label, v.city
            FROM vendors v
            JOIN vendor_services vs ON v.id = vs.vendor_id
            JOIN quick_services qs ON vs.quick_service_id = qs.id

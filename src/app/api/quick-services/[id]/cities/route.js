@@ -5,6 +5,22 @@ export async function GET(req, { params }) {
   try {
     const { id } = await params;
 
+    const configured = await pool.query(
+      `SELECT cities FROM quick_services WHERE id = $1 LIMIT 1`,
+      [id]
+    );
+    const configuredCities = configured.rows[0]?.cities || [];
+
+    // Explicit admin coverage is authoritative. Vendor-derived cities remain as
+    // a backward-compatible fallback for services that have not been edited yet.
+    if (configuredCities.length > 0) {
+      return NextResponse.json({
+        success: true,
+        cities: [...new Set(configuredCities.map(city => city.trim()).filter(Boolean))]
+          .sort((a, b) => a.localeCompare(b)),
+      });
+    }
+
     const result = await pool.query(
       `SELECT DISTINCT v.city 
        FROM vendors v

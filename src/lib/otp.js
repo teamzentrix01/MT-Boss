@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import pool from '@/lib/db';
 import { getJwtSecret } from '@/lib/auth';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 export const SERVICE_OTP_EXPIRY_MINUTES = 10;
 export const SERVICE_OTP_MAX_ATTEMPTS = 5;
@@ -11,7 +12,7 @@ function getOtpSecret() {
   return process.env.OTP_SECRET || getJwtSecret();
 }
 
-export async function ensureOtpSchema() {
+export const ensureOtpSchema = createInitializationGuard(async () => {
   const alters = [
     `ALTER TABLE service_bookings ADD COLUMN IF NOT EXISTS start_otp TEXT`,
     `ALTER TABLE service_bookings ADD COLUMN IF NOT EXISTS start_otp_verified BOOLEAN DEFAULT FALSE`,
@@ -28,7 +29,7 @@ export async function ensureOtpSchema() {
   for (const sql of alters) {
     try { await pool.query(sql); } catch (_) { /* already exists */ }
   }
-}
+});
 
 export function generateOtp() {
   return String(Math.floor(1000 + Math.random() * 9000)); // 4-digit OTP

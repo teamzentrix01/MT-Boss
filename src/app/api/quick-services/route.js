@@ -1,10 +1,10 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
+import { createInitializationGuard, handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 import { fallbackQuickServices, fallbackResponse } from '@/lib/public-fallbacks';
 
-async function ensureQuickServiceSeoColumns() {
+const ensureQuickServiceSeoColumns = createInitializationGuard(async () => {
   try {
     await pool.query(`
       ALTER TABLE quick_services
@@ -18,6 +18,7 @@ async function ensureQuickServiceSeoColumns() {
         ADD COLUMN IF NOT EXISTS seo_description TEXT,
         ADD COLUMN IF NOT EXISTS coverage_details TEXT,
         ADD COLUMN IF NOT EXISTS how_to_use TEXT,
+        ADD COLUMN IF NOT EXISTS cities TEXT[] NOT NULL DEFAULT '{}',
         ADD COLUMN IF NOT EXISTS main_category VARCHAR(200),
         ADD COLUMN IF NOT EXISTS sub_category VARCHAR(200),
         ADD COLUMN IF NOT EXISTS visiting_price DECIMAL(10,2)
@@ -43,7 +44,7 @@ async function ensureQuickServiceSeoColumns() {
     }
     // Don't throw for non-connection schema drift; the main query may still work.
   }
-}
+});
 
 // GET all quick services — public, no auth required
 export async function GET(req) {
@@ -112,11 +113,12 @@ export async function POST(req) {
       seo_description,
       coverage_details,
       how_to_use,
+      cities,
     } = await req.json();
 
-    if (!icon || !label || !desc || !basePrice || !duration) {
+    if (!icon || !label || !desc || !basePrice || !duration || !Array.isArray(cities) || cities.length === 0) {
       return NextResponse.json(
-        { error: 'All fields are required' },
+        { error: 'All fields and at least one city are required' },
         { status: 400 }
       );
     }
@@ -125,9 +127,9 @@ export async function POST(req) {
       `INSERT INTO quick_services (
         icon, label, description, base_price, duration, visiting_price,
         main_category, sub_category,
-        slug, video_url, seo_title, seo_description, coverage_details, how_to_use
+        slug, video_url, seo_title, seo_description, coverage_details, how_to_use, cities
       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
        RETURNING *`,
       [
         icon,
@@ -144,6 +146,7 @@ export async function POST(req) {
         seo_description || null,
         coverage_details || null,
         how_to_use || null,
+        Array.isArray(cities) ? [...new Set(cities.map(city => String(city).trim()).filter(Boolean))] : [],
       ]
     );
 
@@ -179,11 +182,12 @@ export async function PUT(req) {
       seo_description,
       coverage_details,
       how_to_use,
+      cities,
     } = await req.json();
 
-    if (!id || !icon || !label || !desc || !basePrice || !duration) {
+    if (!id || !icon || !label || !desc || !basePrice || !duration || !Array.isArray(cities) || cities.length === 0) {
       return NextResponse.json(
-        { error: 'All fields are required' },
+        { error: 'All fields and at least one city are required' },
         { status: 400 }
       );
     }
@@ -193,8 +197,8 @@ export async function PUT(req) {
        SET icon=$1, label=$2, description=$3, base_price=$4, duration=$5, visiting_price=$6,
            main_category=$7, sub_category=$8,
            slug=$9, video_url=$10, seo_title=$11, seo_description=$12,
-           coverage_details=$13, how_to_use=$14
-       WHERE id=$15
+           coverage_details=$13, how_to_use=$14, cities=$15
+       WHERE id=$16
        RETURNING *`,
       [
         icon,
@@ -211,6 +215,7 @@ export async function PUT(req) {
         seo_description || null,
         coverage_details || null,
         how_to_use || null,
+        Array.isArray(cities) ? [...new Set(cities.map(city => String(city).trim()).filter(Boolean))] : [],
         id,
       ]
     );

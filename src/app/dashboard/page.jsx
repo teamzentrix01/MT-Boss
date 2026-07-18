@@ -1,34 +1,52 @@
 'use client';
 
-import { useState, useEffect, Suspense, useCallback } from 'react';
+import { useState, useEffect, Suspense, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import QuickServicesManager from '../components/QuickServicesManager';
-import PrimaryServicesManager from '../components/PrimaryServicesManager';
-import ProfessionalServicesManager from '../components/ProfessionalServicesManager';
-import ProfessionalEnquiriesManager from '../components/ProfessionalEnquiriesManager';
-import ShopCategoriesManager from '../components/ShopCategoriesManager';
-import PropertiesManager from '../components/PropertiesManager';
-import ProjectsManager from '../components/ProjectsManager';
-import VendorManagementAdmin from '../components/VendorManagementAdmin';
-import SupplierHubAdmin from '../components/SupplierHubAdmin';
-import FranchisesManager from './franchises/page';
-import AgentsManager from './agents/page';
-import BookingsManager from '../components/BookingsManager';
-import FreeTimeSlotsManager from '../components/FreeTimeSlotsManager';
-import CalculatorManager from '../components/CalculatorManager';
-import RevenueManager from '../components/RevenueManager';
-import HeroBannersManager from '../components/HeroBannersManager';
-import JobsManager from '../components/JobsManager';
-import OfficeLocationsManager from '../components/OfficeLocationsManager';
-import LeadManagementAdmin from '../components/LeadManagementAdmin';
+import dynamic from 'next/dynamic';
+
+const managerLoading = () => <div className="empty-state">Loading section...</div>;
+const dynamicManager = (loader) => dynamic(loader, { loading: managerLoading });
+
+// Admin managers are large and only one is visible at a time. Loading the active
+// manager on demand keeps the initial dashboard bundle small without changing tabs.
+const QuickServicesManager = dynamicManager(() => import('../components/QuickServicesManager'));
+const PrimaryServicesManager = dynamicManager(() => import('../components/PrimaryServicesManager'));
+const ProfessionalServicesManager = dynamicManager(() => import('../components/ProfessionalServicesManager'));
+const ProfessionalEnquiriesManager = dynamicManager(() => import('../components/ProfessionalEnquiriesManager'));
+const ShopCategoriesManager = dynamicManager(() => import('../components/ShopCategoriesManager'));
+const PropertiesManager = dynamicManager(() => import('../components/PropertiesManager'));
+const ProjectsManager = dynamicManager(() => import('../components/ProjectsManager'));
+const VendorManagementAdmin = dynamicManager(() => import('../components/VendorManagementAdmin'));
+const SupplierHubAdmin = dynamicManager(() => import('../components/SupplierHubAdmin'));
+const FranchisesManager = dynamicManager(() => import('./franchises/page'));
+const AgentsManager = dynamicManager(() => import('./agents/page'));
+const BookingsManager = dynamicManager(() => import('../components/BookingsManager'));
+const FreeTimeSlotsManager = dynamicManager(() => import('../components/FreeTimeSlotsManager'));
+const CalculatorManager = dynamicManager(() => import('../components/CalculatorManager'));
+const RevenueManager = dynamicManager(() => import('../components/RevenueManager'));
+const HeroBannersManager = dynamicManager(() => import('../components/HeroBannersManager'));
+const JobsManager = dynamicManager(() => import('../components/JobsManager'));
+const OfficeLocationsManager = dynamicManager(() => import('../components/OfficeLocationsManager'));
+const LeadManagementAdmin = dynamicManager(() => import('../components/LeadManagementAdmin'));
+
+function hasResumeFile(resumeUrl) {
+  const value = String(resumeUrl || '').trim();
+  return Boolean(value) && !['not uploaded', 'null', 'undefined', 'n/a', '-'].includes(value.toLowerCase());
+}
 
 function getResumeActionUrl(resumeUrl, mode) {
-  if (!resumeUrl) return '';
+  if (!hasResumeFile(resumeUrl)) return '';
 
   try {
     if (typeof window === 'undefined') return resumeUrl;
-    const { pathname } = new URL(resumeUrl, window.location.origin);
+    const parsedUrl = new URL(resumeUrl, window.location.origin);
+    const { pathname } = parsedUrl;
     const marker = '/uploads/resumes/';
+
+    if (pathname.startsWith('/api/career-enquiries/resume/')) {
+      parsedUrl.searchParams.set('mode', mode);
+      return `${pathname}?${parsedUrl.searchParams.toString()}`;
+    }
 
     if (!pathname.startsWith(marker)) return resumeUrl;
 
@@ -78,6 +96,7 @@ function AdminDashboard() {
   const [pkgVendors, setPkgVendors] = useState([]);
   const [pkgSuppliers, setPkgSuppliers] = useState([]);
   const [pkgMsg, setPkgMsg] = useState('');
+  const loadedData = useRef(new Set());
   const router = useRouter();
 
   // Sync tab from URL when navigating via sidebar
@@ -163,106 +182,101 @@ function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    if (activeTab === 'primary-service-enquiries') {
-      fetchPrimaryServiceEnquiries();
-    }
-  }, [activeTab, fetchPrimaryServiceEnquiries]);
-
-  useEffect(() => {
     const fetchData = async () => {
+      const dataKey = ['overview', 'submissions', 'calculator-quotes', 'primary-service-enquiries', 'career-enquiries'].includes(activeTab)
+        ? activeTab
+        : null;
+
+      if (!dataKey || loadedData.current.has(dataKey)) {
+        setLoading(false);
+        return;
+      }
+
+      loadedData.current.add(dataKey);
+
       try {
         const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
-
-        // Fetch contact submissions
-        const contactRes = await fetch('/api/contact', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const contactData = await contactRes.json();
-        if (contactData.success) setSubmissions(contactData.data);
-
-        const calculatorQuotesRes = await fetch('/api/calculator-quote-otp', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const calculatorQuotesData = await calculatorQuotesRes.json();
-        if (calculatorQuotesData.success) setCalculatorQuotes(calculatorQuotesData.data || []);
-
-        await fetchPrimaryServiceEnquiries();
-
-        const careerEnquiryRes = await fetch('/api/career-enquiries', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const careerEnquiryData = await careerEnquiryRes.json();
-        if (careerEnquiryData.success) setCareerEnquiries(careerEnquiryData.data);
-
-        // Fetch properties
-        const propsRes = await fetch('/api/properties?status=all', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const propsData = await propsRes.json();
-        if (propsData.success) {
-          setPendingProperties(propsData.data.filter(p => p.status === 'pending').length);
-        }
-
-        // Fetch vendors
-        const vendorsRes = await fetch('/api/admin/vendors', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        // Fetch suppliers + commission summary
-        const suppliersRes = await fetch('/api/admin/suppliers', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const suppliersData = await suppliersRes.json();
-        if (suppliersData.success) {
-          setPendingSuppliers(suppliersData.data.filter(s => s.status === 'pending').length);
-        }
-
-        // Fetch supplier commission summary via PATCH
-        try {
-          const commRes = await fetch('/api/admin/suppliers', {
-            method: 'PATCH',
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          const commData = await commRes.json();
-          if (commData.success) {
-            setSupplierCommission({
-              total: parseFloat(commData.data.total_commission || 0),
-              today: parseFloat(commData.data.today_commission || 0),
-              fulfilled: parseInt(commData.data.total_fulfilled || 0),
-              open: parseInt(commData.data.open_enquiries || 0),
-            });
+        const headers = { 'Authorization': `Bearer ${token}` };
+        const requestJson = async (url, options = {}) => {
+          try {
+            const response = await fetch(url, { ...options, headers: { ...headers, ...options.headers } });
+            return await response.json();
+          } catch (error) {
+            console.error(`Error fetching ${url}:`, error);
+            return null;
           }
-        } catch { /* non-critical */ }
+        };
 
-        // Fetch bookings
-        const bookingsRes = await fetch('/api/admin/bookings', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const bookingsData = await bookingsRes.json();
-        if (bookingsData.success) {
-          const all = bookingsData.data;
-          const today = new Date().toISOString().split('T')[0];
-
-          setPendingBookings(all.filter(b => b.status === 'WAITING_FOR_VENDOR_ACCEPTANCE').length);
-          setCompletedBookings(all.filter(b => b.status === 'COMPLETED').length);
-          setActiveVendorBookings(all.filter(b => ['VENDOR_ACCEPTED', 'VENDOR_ON_WAY', 'IN_PROGRESS'].includes(b.status)).length);
-
-          const completed = all.filter(b => b.status === 'COMPLETED');
-          const calcCommission = b => Math.round((parseFloat(b.final_amount || b.total_amount || 0)) * 0.15);
-          const calcGST        = b => Math.round((parseFloat(b.final_amount || b.total_amount || 0)) * 0.18);
-
-          setTotalCommission(completed.reduce((s, b) => s + calcCommission(b), 0));
-          setTotalGST(completed.reduce((s, b) => s + calcGST(b), 0));
-          setTodayCommission(
-            completed
-              .filter(b => b.completed_at && b.completed_at.startsWith(today))
-              .reduce((s, b) => s + calcCommission(b), 0)
-          );
+        if (activeTab === 'submissions') {
+          const data = await requestJson('/api/contact');
+          if (data?.success) setSubmissions(data.data || []);
+          return;
         }
-        const vendorsData = await vendorsRes.json();
-        if (vendorsData.success) {
-          setPendingVendors(vendorsData.data.filter(v => v.verification_status === 'pending').length);
+
+        if (activeTab === 'calculator-quotes') {
+          const data = await requestJson('/api/calculator-quote-otp');
+          if (data?.success) setCalculatorQuotes(data.data || []);
+          return;
         }
+
+        if (activeTab === 'primary-service-enquiries') {
+          await fetchPrimaryServiceEnquiries();
+          return;
+        }
+
+        if (activeTab === 'career-enquiries') {
+          const data = await requestJson('/api/career-enquiries');
+          if (data?.success) setCareerEnquiries(data.data || []);
+          return;
+        }
+
+        // Overview requests are independent, so do them concurrently. Previously
+        // each slow endpoint delayed every endpoint after it and blocked the page.
+        setLoading(false);
+        await Promise.all([
+          requestJson('/api/contact').then((data) => {
+            if (data?.success) setSubmissions(data.data || []);
+          }),
+          requestJson('/api/properties?status=all').then((data) => {
+            if (data?.success) setPendingProperties((data.data || []).filter(p => p.status === 'pending').length);
+          }),
+          requestJson('/api/admin/vendors').then((data) => {
+            if (data?.success) setPendingVendors((data.data || []).filter(v => v.verification_status === 'pending').length);
+          }),
+          requestJson('/api/admin/suppliers').then((data) => {
+            if (data?.success) setPendingSuppliers((data.data || []).filter(s => s.status === 'pending').length);
+          }),
+          requestJson('/api/admin/suppliers', { method: 'PATCH' }).then((data) => {
+            if (data?.success) {
+              setSupplierCommission({
+                total: parseFloat(data.data.total_commission || 0),
+                today: parseFloat(data.data.today_commission || 0),
+                fulfilled: parseInt(data.data.total_fulfilled || 0),
+                open: parseInt(data.data.open_enquiries || 0),
+              });
+            }
+          }),
+          requestJson('/api/admin/bookings').then((data) => {
+            if (!data?.success) return;
+
+            const all = data.data || [];
+            const today = new Date().toISOString().split('T')[0];
+            const completed = all.filter(b => b.status === 'COMPLETED');
+            const calcCommission = b => Math.round((parseFloat(b.final_amount || b.total_amount || 0)) * 0.15);
+            const calcGST = b => Math.round((parseFloat(b.final_amount || b.total_amount || 0)) * 0.18);
+
+            setPendingBookings(all.filter(b => b.status === 'WAITING_FOR_VENDOR_ACCEPTANCE').length);
+            setCompletedBookings(completed.length);
+            setActiveVendorBookings(all.filter(b => ['VENDOR_ACCEPTED', 'VENDOR_ON_WAY', 'IN_PROGRESS'].includes(b.status)).length);
+            setTotalCommission(completed.reduce((sum, booking) => sum + calcCommission(booking), 0));
+            setTotalGST(completed.reduce((sum, booking) => sum + calcGST(booking), 0));
+            setTodayCommission(
+              completed
+                .filter(b => b.completed_at && b.completed_at.startsWith(today))
+                .reduce((sum, booking) => sum + calcCommission(booking), 0)
+            );
+          }),
+        ]);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -271,7 +285,7 @@ function AdminDashboard() {
     };
 
     fetchData();
-  }, [fetchPrimaryServiceEnquiries]);
+  }, [activeTab, fetchPrimaryServiceEnquiries]);
 
   const stats = [
     { label: 'Pending Bookings', value: pendingBookings, icon: '⏳', color: 'a' },
@@ -1632,9 +1646,13 @@ function AdminDashboard() {
 
               <div style={{ marginBottom: '1rem' }}>
                 <div className="modal-field-label">Resume</div>
-                <div className="modal-field-value">{selectedCareerEnquiry.resume_name || 'Not Uploaded'}</div>
+                <div className="modal-field-value">
+                  {hasResumeFile(selectedCareerEnquiry.resume_url)
+                    ? selectedCareerEnquiry.resume_name || 'Resume'
+                    : 'Not Uploaded'}
+                </div>
                 <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.625rem' }}>
-                  {selectedCareerEnquiry.resume_url ? (
+                  {hasResumeFile(selectedCareerEnquiry.resume_url) ? (
                     <>
                     <a
                       href={getResumeViewerUrl(selectedCareerEnquiry.resume_url, selectedCareerEnquiry.resume_name)}
@@ -1675,9 +1693,9 @@ function AdminDashboard() {
                     </>
                   )}
                 </div>
-                {!selectedCareerEnquiry.resume_url && selectedCareerEnquiry.resume_name && selectedCareerEnquiry.resume_name !== 'Not Uploaded' && (
+                {!hasResumeFile(selectedCareerEnquiry.resume_url) && (
                   <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--muted)' }}>
-                    Resume file is not available for this older submission. View and download will appear for new applications.
+                    No resume file was uploaded with this application.
                   </p>
                 )}
               </div>

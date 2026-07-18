@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { jobs as defaultJobs } from '@/app/careers/data/jobs';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 function toList(value) {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -13,7 +14,7 @@ function toList(value) {
   return [];
 }
 
-async function ensureTable() {
+const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS jobs (
       id SERIAL PRIMARY KEY,
@@ -36,9 +37,9 @@ async function ensureTable() {
 
   await pool.query(`ALTER TABLE jobs ADD COLUMN IF NOT EXISTS status VARCHAR(30) DEFAULT 'active'`);
   await pool.query(`ALTER TABLE jobs ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW()`);
-}
+});
 
-async function seedDefaultJobs() {
+const seedDefaultJobs = createInitializationGuard(async () => {
   const count = await pool.query('SELECT COUNT(*)::int AS count FROM jobs');
   if (count.rows[0]?.count > 0) return;
 
@@ -69,7 +70,7 @@ async function seedDefaultJobs() {
   }
 
   await pool.query(`SELECT setval(pg_get_serial_sequence('jobs', 'id'), COALESCE((SELECT MAX(id) FROM jobs), 1), true)`);
-}
+});
 
 function normalizeJob(row) {
   const createdAt = row.created_at ? new Date(row.created_at).getTime() : null;

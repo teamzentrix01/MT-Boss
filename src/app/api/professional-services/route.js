@@ -1,7 +1,7 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { isDatabaseConnectionError } from '@/lib/api-utils';
+import { createInitializationGuard, isDatabaseConnectionError } from '@/lib/api-utils';
 import { mkdir, readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
@@ -47,9 +47,7 @@ async function saveFallbackApplication(application) {
 }
 
 // ── Auto-create tables on first request ─────────────────────────────────────
-let tablesReady = false;
-async function ensureTables() {
-  if (tablesReady) return;
+const ensureTables = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS professional_services (
       id               SERIAL PRIMARY KEY,
@@ -89,8 +87,7 @@ async function ensureTables() {
       created_at         TIMESTAMP DEFAULT NOW()
     )
   `);
-  tablesReady = true;
-}
+});
 
 // ── GET ──────────────────────────────────────────────────────────────────────
 export async function GET(req) {

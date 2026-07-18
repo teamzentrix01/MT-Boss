@@ -84,6 +84,8 @@ export default function Footer() {
               <img
                 src="/logo.png"
                 alt="MTBOSS Logo"
+                loading="lazy"
+                decoding="async"
                 className={`h-10 w-auto transition-all ${isDark ? "brightness-200" : "brightness-100"}`}
               />
             </a>

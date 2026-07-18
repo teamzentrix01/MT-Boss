@@ -122,6 +122,8 @@ export default function RentBrowsePage() {
                         : "/placeholder.jpg"
                     }
                     alt={property.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover hover:scale-110 transition-transform"
                     onError={(e) => {
                       e.target.src = "/placeholder.jpg";
