@@ -1,8 +1,5 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import { join } from 'path';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
@@ -43,11 +40,21 @@ const ensureTable = createInitializationGuard(async () => {
 
   await pool.query(`
     ALTER TABLE career_enquiries
+    ADD COLUMN IF NOT EXISTS resume_data BYTEA
+  `);
+
+  await pool.query(`
+    ALTER TABLE career_enquiries
+    ADD COLUMN IF NOT EXISTS resume_content_type TEXT
+  `);
+
+  await pool.query(`
+    ALTER TABLE career_enquiries
     ADD COLUMN IF NOT EXISTS alternative_phone VARCHAR(50)
   `);
 });
 
-async function saveResume(file) {
+async function prepareResume(file) {
   if (!file || file.size === 0) return null;
 
   const validTypes = [
@@ -71,16 +78,13 @@ async function saveResume(file) {
   };
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName || `resume.${extMap[file.type]}`}`;
-  const uploadDir = join(process.cwd(), 'public', 'uploads', 'resumes');
 
-  if (!existsSync(uploadDir)) {
-    await mkdir(uploadDir, { recursive: true });
-  }
-
-  const bytes = await file.arrayBuffer();
-  await writeFile(join(uploadDir, filename), Buffer.from(bytes));
-
-  return `/uploads/resumes/${filename}`;
+  return {
+    data: Buffer.from(await file.arrayBuffer()),
+    contentType: file.type,
+    originalName: file.name,
+    url: `/uploads/resumes/${filename}`,
+  };
 }
 
 async function sendAdminNotification(enquiry) {
@@ -156,6 +160,13 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+
+    if (!resumeFile || typeof resumeFile.arrayBuffer !== 'function' || resumeFile.size === 0) {
+      return NextResponse.json(
+        { success: false, error: 'Please upload your resume in PDF or Word format' },
+        { status: 400 }
+      );
+    }
     const contactError = validateContactFields({ name: cleanName, email: cleanEmail, phone: cleanPhone });
     if (contactError) return NextResponse.json({ success: false, error: contactError }, { status: 400 });
 
@@ -165,15 +176,15 @@ export async function POST(req) {
     }
 
     await ensureTable();
-    const resumeUrl = await saveResume(resumeFile);
+    const resume = await prepareResume(resumeFile);
 
     const result = await pool.query(
       `INSERT INTO career_enquiries (
         job_id, position, department, job_location, name, email, phone, alternative_phone, experience,
         current_company, notice_period, current_salary, expected_salary, resume_name,
-        resume_url, cover_letter, status, created_at
+        resume_url, resume_data, resume_content_type, cover_letter, status, created_at
       ) VALUES (
-        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,NOW()
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,NOW()
       )
       RETURNING id, job_id, position, department, job_location, name, email, phone, alternative_phone,
         experience, current_company, notice_period, current_salary, expected_salary,
@@ -192,8 +203,10 @@ export async function POST(req) {
         notice_period || null,
         current_salary || null,
         expected_salary || null,
-        resumeFile?.name || resume_name || null,
-        resumeUrl,
+        resume.originalName || resume_name || null,
+        resume.url,
+        resume.data,
+        resume.contentType,
         cover_letter || null,
         'New',
       ]

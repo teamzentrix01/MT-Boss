@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 function useDarkMode() {
@@ -14,17 +14,6 @@ function useDarkMode() {
   return dark;
 }
 
-function useInView(threshold = 0.08) {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  return [ref, visible];
-}
-
 const FEATURES = [
   { icon: "📍", label: "Location-based pricing", desc: "City-wise labour & material rates" },
   { icon: "📐", label: "BOQ breakdown", desc: "Steel, cement, sand, bricks & more" },
@@ -34,16 +23,9 @@ const FEATURES = [
 
 export default function CalculatorCTA() {
   const dark = useDarkMode();
-  const [ref, visible] = useInView(0.08);
 
   return (
     <section
-      ref={ref}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(20px)",
-        transition: "opacity 0.6s ease, transform 0.6s ease",
-      }}
       className={`py-12 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-[var(--brand-blue-faint)]"}`}
     >
       <div className="max-w-6xl mx-auto">
@@ -62,10 +44,9 @@ export default function CalculatorCTA() {
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-7">
-              {FEATURES.map((f, i) => (
+              {FEATURES.map((f) => (
                 <div
                   key={f.label}
-                  style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(10px)", transition: `opacity 0.4s ease ${i * 70 + 200}ms, transform 0.4s ease ${i * 70 + 200}ms` }}
                   className={`flex items-start gap-3 p-3 border ${dark ? "border-zinc-800 bg-zinc-900" : "border-zinc-100 bg-zinc-50"}`}
                 >
                   <span className="text-xl shrink-0">{f.icon}</span>

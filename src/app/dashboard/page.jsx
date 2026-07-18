@@ -29,13 +29,24 @@ const JobsManager = dynamicManager(() => import('../components/JobsManager'));
 const OfficeLocationsManager = dynamicManager(() => import('../components/OfficeLocationsManager'));
 const LeadManagementAdmin = dynamicManager(() => import('../components/LeadManagementAdmin'));
 
+function hasResumeFile(resumeUrl) {
+  const value = String(resumeUrl || '').trim();
+  return Boolean(value) && !['not uploaded', 'null', 'undefined', 'n/a', '-'].includes(value.toLowerCase());
+}
+
 function getResumeActionUrl(resumeUrl, mode) {
-  if (!resumeUrl) return '';
+  if (!hasResumeFile(resumeUrl)) return '';
 
   try {
     if (typeof window === 'undefined') return resumeUrl;
-    const { pathname } = new URL(resumeUrl, window.location.origin);
+    const parsedUrl = new URL(resumeUrl, window.location.origin);
+    const { pathname } = parsedUrl;
     const marker = '/uploads/resumes/';
+
+    if (pathname.startsWith('/api/career-enquiries/resume/')) {
+      parsedUrl.searchParams.set('mode', mode);
+      return `${pathname}?${parsedUrl.searchParams.toString()}`;
+    }
 
     if (!pathname.startsWith(marker)) return resumeUrl;
 
@@ -1635,9 +1646,13 @@ function AdminDashboard() {
 
               <div style={{ marginBottom: '1rem' }}>
                 <div className="modal-field-label">Resume</div>
-                <div className="modal-field-value">{selectedCareerEnquiry.resume_name || 'Not Uploaded'}</div>
+                <div className="modal-field-value">
+                  {hasResumeFile(selectedCareerEnquiry.resume_url)
+                    ? selectedCareerEnquiry.resume_name || 'Resume'
+                    : 'Not Uploaded'}
+                </div>
                 <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.625rem' }}>
-                  {selectedCareerEnquiry.resume_url ? (
+                  {hasResumeFile(selectedCareerEnquiry.resume_url) ? (
                     <>
                     <a
                       href={getResumeViewerUrl(selectedCareerEnquiry.resume_url, selectedCareerEnquiry.resume_name)}
@@ -1678,9 +1693,9 @@ function AdminDashboard() {
                     </>
                   )}
                 </div>
-                {!selectedCareerEnquiry.resume_url && selectedCareerEnquiry.resume_name && selectedCareerEnquiry.resume_name !== 'Not Uploaded' && (
+                {!hasResumeFile(selectedCareerEnquiry.resume_url) && (
                   <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--muted)' }}>
-                    Resume file is not available for this older submission. View and download will appear for new applications.
+                    No resume file was uploaded with this application.
                   </p>
                 )}
               </div>

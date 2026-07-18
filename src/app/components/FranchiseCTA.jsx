@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { COMPANY_CONTACT } from "../lib/company";
 
@@ -18,27 +18,8 @@ function useDarkMode() {
   return dark;
 }
 
-function useInView(threshold = 0.08) {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setVisible(true);
-      },
-      { threshold },
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, [threshold]);
-
-  return [ref, visible];
-}
-
 export default function FranchiseCTA() {
   const dark = useDarkMode();
-  const [ref, visible] = useInView(0.08);
 
   const points = [
     "Territory-based construction business opportunity",
@@ -49,15 +30,9 @@ export default function FranchiseCTA() {
   return (
     <section className={`py-14 px-6 transition-colors duration-500 ${dark ? "bg-zinc-950" : "bg-[var(--brand-blue-faint)]"}`}>
       <div
-        ref={ref}
         className={`max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 items-center border p-6 sm:p-8 ${
           dark ? "bg-black border-zinc-800" : "bg-white border-zinc-100 shadow-sm"
         }`}
-        style={{
-          opacity: visible ? 1 : 0,
-          transform: visible ? "translateY(0)" : "translateY(20px)",
-          transition: "opacity 0.6s ease, transform 0.6s ease",
-        }}
       >
         <div>
           <p className={`text-[10px] font-black uppercase tracking-[0.4em] mb-3 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>
