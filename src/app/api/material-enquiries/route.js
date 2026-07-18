@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 // No `ready` flag — CREATE TABLE IF NOT EXISTS + ALTER IF NOT EXISTS are idempotent
 // and run in milliseconds when the table already exists. This makes the route resilient
 // to dev hot-reloads and any out-of-band DB resets.
-async function ensureTable() {
+const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS material_enquiries (
       id                      SERIAL PRIMARY KEY,
@@ -48,7 +49,7 @@ async function ensureTable() {
   for (const sql of migrations) {
     try { await pool.query(sql); } catch { /* already correct type or column exists */ }
   }
-}
+});
 
 // ── POST — submit enquiry from ShopNow page ───────────────────────────────────
 export async function POST(req) {

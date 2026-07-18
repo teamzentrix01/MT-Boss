@@ -71,9 +71,16 @@ function VendorDashboardContent() {
       return;
     }
  
-    fetchVendorData(token);
-    const interval = setInterval(() => fetchVendorData(token), 5000); // Poll every 5 seconds
-    return () => clearInterval(interval);
+    const refresh = () => {
+      if (document.visibilityState === 'visible') fetchVendorData(token);
+    };
+    refresh();
+    const interval = setInterval(refresh, 5000); // Poll every 5 seconds while visible
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', refresh);
+    };
   }, [router]);
 
   useEffect(() => {
@@ -93,10 +100,11 @@ function VendorDashboardContent() {
         fetch("/api/vendor/profile", { headers: { Authorization: `Bearer ${token}` } }),
       ]);
 
-      const notData = await notRes.json();
+      const [notData, bookData, compData, profData] = await Promise.all([
+        notRes.json(), bookRes.json(), compRes.json(), profRes.json(),
+      ]);
       if (notData.success) setNotifications(notData.notifications);
 
-      const bookData = await bookRes.json();
       let awaitingPaymentCount = 0;
       if (bookData.success && bookData.bookings.length > 0) {
         setActiveBooking(bookData.bookings[0]);
@@ -105,7 +113,6 @@ function VendorDashboardContent() {
         setActiveBooking(null);
       }
 
-      const compData = await compRes.json();
       if (compData.success) {
         setCompletedCount(compData.bookings.length + awaitingPaymentCount);
         setCompletedBookings(compData.bookings);
@@ -114,7 +121,6 @@ function VendorDashboardContent() {
         // Update stats card label too
       }
 
-      const profData = await profRes.json();
       if (profData.success) {
         setVendorProfile(profData.vendor);
         if (!editModeRef.current) {

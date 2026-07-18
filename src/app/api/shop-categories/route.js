@@ -1,12 +1,12 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
+import { createInitializationGuard, handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 import { fallbackResponse, fallbackShopCategories } from '@/lib/public-fallbacks';
 
 // No `ready` flag — all DDL statements are idempotent (IF NOT EXISTS).
 // This makes the route resilient to dev hot-reloads and out-of-band DB resets.
-async function ensureTable() {
+const ensureTable = createInitializationGuard(async () => {
   try {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS shop_categories (
@@ -34,7 +34,7 @@ async function ensureTable() {
     console.error('ensureTable error:', error.message);
     throw error;
   }
-}
+});
 
 // ── GET ──────────────────────────────────────────────────────────────────────
 export async function GET(req) {

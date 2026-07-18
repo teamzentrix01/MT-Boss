@@ -24,11 +24,13 @@ export default function BrowsePropertiesPage() {
       setLoading(true);
       try {
         // Fetch both buy and rent properties
-        const buyRes = await fetch("/api/properties?listing_type=buy");
-        const rentRes = await fetch("/api/properties?listing_type=rent");
-        
-        const buyData = await buyRes.json();
-        const rentData = await rentRes.json();
+        const [buyRes, rentRes] = await Promise.all([
+          fetch("/api/properties?listing_type=buy"),
+          fetch("/api/properties?listing_type=rent"),
+        ]);
+        const [buyData, rentData] = await Promise.all([
+          buyRes.json(), rentRes.json(),
+        ]);
 
         if (buyData.success && rentData.success) {
           const combined = [
@@ -210,6 +212,8 @@ export default function BrowsePropertiesPage() {
                         : "/placeholder.jpg"
                     }
                     alt={property.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover hover:scale-110 transition-transform"
                     onError={(e) => {
                       e.target.src = "/placeholder.jpg";

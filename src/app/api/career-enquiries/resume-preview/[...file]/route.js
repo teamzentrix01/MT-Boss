@@ -2,6 +2,7 @@ import { readFile } from 'fs/promises';
 import { basename, join, resolve } from 'path';
 import { inflateRawSync } from 'zlib';
 import { NextResponse } from 'next/server';
+import pool from '@/lib/db';
 
 function escapeHtml(value) {
   return value
@@ -93,6 +94,20 @@ function docxToHtml(buffer) {
   return html || null;
 }
 
+async function getStoredResume(filename) {
+  const result = await pool.query(
+    `SELECT resume_data
+     FROM career_enquiries
+     WHERE resume_data IS NOT NULL
+       AND RIGHT(SPLIT_PART(COALESCE(resume_url, ''), '?', 1), LENGTH($1) + 1) = '/' || $1
+     ORDER BY created_at DESC
+     LIMIT 1`,
+    [filename]
+  );
+
+  return result.rows[0]?.resume_data || null;
+}
+
 export async function GET(_req, context) {
   try {
     const params = await context.params;
@@ -110,7 +125,16 @@ export async function GET(_req, context) {
       return NextResponse.json({ success: false, error: 'Invalid file path' }, { status: 400 });
     }
 
-    const fileBuffer = await readFile(filePath);
+    let fileBuffer;
+    try {
+      fileBuffer = await readFile(filePath);
+    } catch (error) {
+      if (error?.code !== 'ENOENT') throw error;
+      fileBuffer = await getStoredResume(filename);
+      if (!fileBuffer) {
+        return NextResponse.json({ success: false, error: 'Resume not found' }, { status: 404 });
+      }
+    }
     const body = docxToHtml(fileBuffer);
 
     if (!body) {

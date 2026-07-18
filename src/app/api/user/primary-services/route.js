@@ -4,6 +4,7 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 export const runtime = 'nodejs';
 
@@ -21,7 +22,7 @@ function normalizeArray(value) {
   return [];
 }
 
-async function ensureSchema() {
+const ensureSchema = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS primary_service_enquiries (
       id SERIAL PRIMARY KEY,
@@ -59,7 +60,7 @@ async function ensureSchema() {
   for (const sql of migrations) {
     await pool.query(sql);
   }
-}
+});
 
 async function saveSiteImage(file) {
   if (!file || file.size === 0) return null;

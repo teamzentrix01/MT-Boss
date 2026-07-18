@@ -71,7 +71,7 @@ export default function AllServicesPage() {
           {services.length > 0 ? (
             services.map((s) => (
               <div key={s.id} className={`group relative h-[340px] overflow-hidden border transition-all duration-500 ${isDark ? "border-zinc-800" : "border-zinc-100"}`}>
-                <img src={s.image} alt={s.title} className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105" />
+                <img src={s.image} alt={s.title} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105" />
                 <div className={`absolute inset-0 bg-gradient-to-t ${isDark ? "from-black via-black/40" : "from-black/90 via-black/20"} to-transparent`} />
                 <div className="absolute inset-0 p-7 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-400">
                   <div className="w-8 h-0.5 bg-[var(--brand-blue)] mb-4 -translate-x-3 group-hover:translate-x-0 transition-transform duration-400" />

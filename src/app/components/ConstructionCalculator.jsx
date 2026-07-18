@@ -489,15 +489,14 @@ function buildReportHtml(snapshot) {
   </html>`;
 }
 
-export default function ConstructionCalculator() {
+export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
   const [products, setProducts] = useState([]);
   const [settings, setSettings] = useState(() => mergeCalculatorSettings());
   const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(false);
 
   // Authentication State
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(initialIsLoggedIn);
   const [currentUser, setCurrentUser] = useState(null);
 
   const [project, setProject] = useState({
@@ -525,8 +524,8 @@ export default function ConstructionCalculator() {
     const fetchCalculatorData = async () => {
       try {
         const [productRes, settingsRes] = await Promise.all([
-          fetch('/api/calculator-products', { cache: 'no-store' }),
-          fetch('/api/calculator-settings', { cache: 'no-store' }),
+          fetch('/api/calculator-products'),
+          fetch('/api/calculator-settings'),
         ]);
         const productData = await productRes.json();
         const settingsData = await settingsRes.json();
@@ -558,7 +557,6 @@ export default function ConstructionCalculator() {
           console.error('Error parsing user data:', e);
         }
       }
-      setCheckingAuth(false);
     };
     checkAuth();
   }, []);
@@ -804,14 +802,6 @@ export default function ConstructionCalculator() {
     reportWindow.document.write(buildReportHtml(snapshot));
     reportWindow.document.close();
   };
-
-  if (checkingAuth) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#0d0f0f', color: '#fff', fontFamily: 'Arial, sans-serif' }}>
-        Loading…
-      </div>
-    );
-  }
 
   if (!isLoggedIn) {
     return (
@@ -1260,10 +1250,8 @@ export default function ConstructionCalculator() {
                   </span>
                 </div>
 
-                {loading ? (
-                  <div className="boq-empty">Loading calculator rates...</div>
-                ) : (
-                  <div className="boq-items">
+                {loading && <div className="boq-empty">Updating calculator rates...</div>}
+                <div className="boq-items">
                     {CATEGORY_SPECS.map((spec) => {
                       const options = productsByCategory.get(spec.key) || [];
                       const item = estimate.lineItems.find((line) => line.spec.key === spec.key);
@@ -1315,8 +1303,7 @@ export default function ConstructionCalculator() {
                         </article>
                       );
                     })}
-                  </div>
-                )}
+                </div>
               </section>
             </div>
 

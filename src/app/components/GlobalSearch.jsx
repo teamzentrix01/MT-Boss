@@ -83,18 +83,19 @@ export default function GlobalSearch({ user, isDarkMode, onNavigate }) {
 
   const role = user?.role || "guest";
 
-  useEffect(() => {
-    let active = true;
+  const servicesRequested = useRef(false);
+  const loadQuickServices = () => {
+    if (servicesRequested.current) return;
+    servicesRequested.current = true;
     fetch("/api/quick-services")
       .then((res) => res.json())
       .then((data) => {
-        if (active && data.success) setQuickServices(data.data || []);
+        if (data.success) setQuickServices(data.data || []);
       })
-      .catch(() => {});
-    return () => {
-      active = false;
-    };
-  }, []);
+      .catch(() => {
+        servicesRequested.current = false;
+      });
+  };
 
   useEffect(() => {
     const onPointerDown = (event) => {
@@ -156,8 +157,12 @@ export default function GlobalSearch({ user, isDarkMode, onNavigate }) {
           onChange={(event) => {
             setQuery(event.target.value);
             setOpen(true);
+            loadQuickServices();
           }}
-          onFocus={() => setOpen(true)}
+          onFocus={() => {
+            setOpen(true);
+            loadQuickServices();
+          }}
           onKeyDown={(event) => {
             if (event.key === "Enter" && results[0]) goTo(results[0]);
             if (event.key === "Escape") setOpen(false);

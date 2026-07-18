@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import pool from '@/lib/db';
 import { getJwtSecret, requireRole } from '@/lib/auth';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 export function signAgentToken(agent) {
   return jwt.sign(
@@ -51,7 +52,7 @@ function quoteIdent(name) {
   return `"${String(name).replace(/"/g, '""')}"`;
 }
 
-export async function ensureAgentSchema() {
+export const ensureAgentSchema = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS agents (
       id SERIAL PRIMARY KEY,
@@ -158,4 +159,4 @@ export async function ensureAgentSchema() {
       updated_at TIMESTAMP DEFAULT NOW()
     )
   `);
-}
+});

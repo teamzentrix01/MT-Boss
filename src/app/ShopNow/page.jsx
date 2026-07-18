@@ -406,7 +406,7 @@ export default function ShopPage() {
                   {/* Image / Emoji hero */}
                   {cat.image ? (
                     <div className="relative w-full overflow-hidden" style={{ height: "160px" }}>
-                      <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={cat.image} alt={cat.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       {cat.label && (
                         <span className={`absolute top-3 left-3 text-[9px] font-extrabold tracking-widest uppercase px-2 py-1 rounded border ${style.bg} ${style.text} ${style.border}`}>

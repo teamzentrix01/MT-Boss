@@ -9,11 +9,12 @@ export default function FeaturedProjects() {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
+    if (!isVisible) return;
     fetch('/api/projects')
       .then(r => r.json())
       .then(data => { if (data.success) setProjects(data.data.slice(0, 3)); })
       .catch(console.error);
-  }, []);
+  }, [isVisible]);
 
   useEffect(() => {
     const checkTheme = () => setIsDark(document.documentElement.classList.contains("dark-mode"));
@@ -86,6 +87,8 @@ export default function FeaturedProjects() {
               <img
                 src={project.image_url}
                 alt={project.title}
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-40"
               />
 

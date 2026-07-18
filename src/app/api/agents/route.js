@@ -4,6 +4,7 @@ import pool from '@/lib/db';
 import { ensureAgentSchema, requireAdmin } from '@/lib/agent-auth';
 import { sendMail } from '@/lib/email';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 const AGENT_STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 
@@ -15,7 +16,7 @@ function quoteIdent(name) {
   return `"${String(name).replace(/"/g, '""')}"`;
 }
 
-async function ensureAgentPatchSchema() {
+const ensureAgentPatchSchema = createInitializationGuard(async () => {
   const patchAlters = [
     `ALTER TABLE agents ADD COLUMN IF NOT EXISTS login_enabled BOOLEAN DEFAULT FALSE`,
     `ALTER TABLE agents ADD COLUMN IF NOT EXISTS password_hash TEXT`,
@@ -51,7 +52,7 @@ async function ensureAgentPatchSchema() {
   } catch (error) {
     console.warn('Agent status constraint warning:', error.message);
   }
-}
+});
 
 export async function GET(req) {
   try {

@@ -1,10 +1,10 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
+import { createInitializationGuard, handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 import { fallbackQuickServices, fallbackResponse } from '@/lib/public-fallbacks';
 
-async function ensureQuickServiceSeoColumns() {
+const ensureQuickServiceSeoColumns = createInitializationGuard(async () => {
   try {
     await pool.query(`
       ALTER TABLE quick_services
@@ -43,7 +43,7 @@ async function ensureQuickServiceSeoColumns() {
     }
     // Don't throw for non-connection schema drift; the main query may still work.
   }
-}
+});
 
 // GET all quick services — public, no auth required
 export async function GET(req) {

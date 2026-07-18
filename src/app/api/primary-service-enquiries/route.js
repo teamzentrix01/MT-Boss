@@ -6,6 +6,7 @@ import { join } from 'path';
 import { requireRole, unauthorized, verifyBearer } from '@/lib/auth';
 import { ensureAgentSchema } from '@/lib/agent-auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
@@ -31,7 +32,7 @@ function normalizeArray(value) {
   return [];
 }
 
-async function ensureTable() {
+const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS primary_service_enquiries (
       id SERIAL PRIMARY KEY,
@@ -80,7 +81,7 @@ async function ensureTable() {
   for (const sql of safeMigrations) {
     try { await pool.query(sql); } catch { /* column already exists */ }
   }
-}
+});
 
 async function syncEnquiryToLead(enquiry) {
   try {

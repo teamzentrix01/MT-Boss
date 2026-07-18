@@ -162,6 +162,10 @@ export default function JobDetailPage() {
     setError('Enter a valid 10-digit alternative Indian mobile number.');
     return;
   }
+  if (!form.resume) {
+    setError('Please upload your resume in PDF or Word format.');
+    return;
+  }
   setLoading(true);
 
   try {
@@ -180,8 +184,8 @@ export default function JobDetailPage() {
     payload.append("current_salary", form.currentSalary);
     payload.append("expected_salary", form.expectedSalary);
     payload.append("cover_letter", form.coverLetter);
-    payload.append("resume_name", resumeName || "Not Uploaded");
-    if (form.resume) payload.append("resume", form.resume);
+    payload.append("resume_name", resumeName);
+    payload.append("resume", form.resume);
 
     const res = await fetch("/api/career-enquiries", {
       method: "POST",

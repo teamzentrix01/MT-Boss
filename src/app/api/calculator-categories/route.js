@@ -2,11 +2,13 @@ import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 
+let readyPromise;
+
 function hasAuth(req) {
   return Boolean(requireRole(req, 'admin'));
 }
 
-async function ensureCategoryTables() {
+async function initializeCategoryTables() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS calculator_products (
       id SERIAL PRIMARY KEY,
@@ -49,6 +51,16 @@ async function ensureCategoryTables() {
     GROUP BY category
     ON CONFLICT (name) DO NOTHING
   `);
+}
+
+function ensureCategoryTables() {
+  if (!readyPromise) {
+    readyPromise = initializeCategoryTables().catch((error) => {
+      readyPromise = undefined;
+      throw error;
+    });
+  }
+  return readyPromise;
 }
 
 export async function GET() {
