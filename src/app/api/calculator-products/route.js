@@ -150,18 +150,37 @@ function ensureTable() {
   return readyPromise;
 }
 
+function selectProducts(isAdmin) {
+  return pool.query(
+    `SELECT * FROM calculator_products
+     ${isAdmin ? '' : 'WHERE is_active = TRUE'}
+     ORDER BY sort_order ASC, id ASC`
+  );
+}
+
+function isMissingCalculatorSchema(error) {
+  return error?.code === '42P01' || error?.code === '42703';
+}
+
 export async function GET(req) {
   try {
-    await ensureTable();
     const { searchParams } = new URL(req.url);
     const isAdmin = searchParams.get('admin') === 'true';
     if (isAdmin && !requireRole(req, 'admin')) return unauthorized();
 
-    const result = await pool.query(
-      `SELECT * FROM calculator_products
-       ${isAdmin ? '' : 'WHERE is_active = TRUE'}
-       ORDER BY sort_order ASC, id ASC`
-    );
+    let result;
+    try {
+      result = await selectProducts(isAdmin);
+    } catch (error) {
+      if (!isMissingCalculatorSchema(error)) throw error;
+      await ensureTable();
+      result = await selectProducts(isAdmin);
+    }
+
+    if (result.rows.length === 0) {
+      await ensureTable();
+      result = await selectProducts(isAdmin);
+    }
 
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {

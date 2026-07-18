@@ -489,15 +489,14 @@ function buildReportHtml(snapshot) {
   </html>`;
 }
 
-export default function ConstructionCalculator() {
+export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
   const [products, setProducts] = useState([]);
   const [settings, setSettings] = useState(() => mergeCalculatorSettings());
   const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(false);
 
   // Authentication State
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(initialIsLoggedIn);
   const [currentUser, setCurrentUser] = useState(null);
 
   const [project, setProject] = useState({
@@ -558,7 +557,6 @@ export default function ConstructionCalculator() {
           console.error('Error parsing user data:', e);
         }
       }
-      setCheckingAuth(false);
     };
     checkAuth();
   }, []);
@@ -804,14 +802,6 @@ export default function ConstructionCalculator() {
     reportWindow.document.write(buildReportHtml(snapshot));
     reportWindow.document.close();
   };
-
-  if (checkingAuth) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#0d0f0f', color: '#fff', fontFamily: 'Arial, sans-serif' }}>
-        Loading…
-      </div>
-    );
-  }
 
   if (!isLoggedIn) {
     return (
