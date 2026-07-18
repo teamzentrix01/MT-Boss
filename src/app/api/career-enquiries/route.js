@@ -5,13 +5,14 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
   process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
   'mtboss2016@gmail.com';
 
-async function ensureTable() {
+const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS career_enquiries (
       id SERIAL PRIMARY KEY,
@@ -44,7 +45,7 @@ async function ensureTable() {
     ALTER TABLE career_enquiries
     ADD COLUMN IF NOT EXISTS alternative_phone VARCHAR(50)
   `);
-}
+});
 
 async function saveResume(file) {
   if (!file || file.size === 0) return null;

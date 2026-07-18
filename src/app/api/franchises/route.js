@@ -4,10 +4,11 @@ import bcrypt from 'bcryptjs';
 import { requireRole, randomPassword } from '@/lib/auth';
 import { sendMail } from '@/lib/email';
 import { normalizePhone, validateContactFields, isValidEmail } from '@/lib/validation';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 const STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 
-async function ensureFranchiseColumns() {
+const ensureFranchiseColumns = createInitializationGuard(async () => {
   await pool.query(`
     ALTER TABLE franchises
       ADD COLUMN IF NOT EXISTS password_hash TEXT,
@@ -16,7 +17,7 @@ async function ensureFranchiseColumns() {
       ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ,
       ADD COLUMN IF NOT EXISTS login_enabled BOOLEAN DEFAULT FALSE
   `);
-}
+});
 
 function clean(value) {
   return String(value || '').trim();

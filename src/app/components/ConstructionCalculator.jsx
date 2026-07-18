@@ -525,8 +525,8 @@ export default function ConstructionCalculator() {
     const fetchCalculatorData = async () => {
       try {
         const [productRes, settingsRes] = await Promise.all([
-          fetch('/api/calculator-products', { cache: 'no-store' }),
-          fetch('/api/calculator-settings', { cache: 'no-store' }),
+          fetch('/api/calculator-products'),
+          fetch('/api/calculator-settings'),
         ]);
         const productData = await productRes.json();
         const settingsData = await settingsRes.json();
@@ -1260,10 +1260,8 @@ export default function ConstructionCalculator() {
                   </span>
                 </div>
 
-                {loading ? (
-                  <div className="boq-empty">Loading calculator rates...</div>
-                ) : (
-                  <div className="boq-items">
+                {loading && <div className="boq-empty">Updating calculator rates...</div>}
+                <div className="boq-items">
                     {CATEGORY_SPECS.map((spec) => {
                       const options = productsByCategory.get(spec.key) || [];
                       const item = estimate.lineItems.find((line) => line.spec.key === spec.key);
@@ -1315,8 +1313,7 @@ export default function ConstructionCalculator() {
                         </article>
                       );
                     })}
-                  </div>
-                )}
+                </div>
               </section>
             </div>
 

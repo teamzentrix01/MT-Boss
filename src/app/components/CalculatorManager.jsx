@@ -128,18 +128,19 @@ export default function CalculatorManager({ isDarkMode }) {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
-      const productRes  = await fetch('/api/calculator-products?admin=true', {
+      const requestOptions = {
         headers: { Authorization: `Bearer ${token}` }, cache: 'no-store',
-      });
-      const categoryRes = await fetch('/api/calculator-categories', {
-        headers: { Authorization: `Bearer ${token}` }, cache: 'no-store',
-      });
-      const settingsRes = await fetch('/api/calculator-settings', {
-        headers: { Authorization: `Bearer ${token}` }, cache: 'no-store',
-      });
-      const productData  = await productRes.json();
-      const categoryData = await categoryRes.json();
-      const settingsData = await settingsRes.json();
+      };
+      const [productRes, categoryRes, settingsRes] = await Promise.all([
+        fetch('/api/calculator-products?admin=true', requestOptions),
+        fetch('/api/calculator-categories', requestOptions),
+        fetch('/api/calculator-settings', requestOptions),
+      ]);
+      const [productData, categoryData, settingsData] = await Promise.all([
+        productRes.json(),
+        categoryRes.json(),
+        settingsRes.json(),
+      ]);
       const nextProducts   = productData.success  ? productData.data  || [] : [];
       const nextCategories = categoryData.success ? categoryData.data || [] : [];
       setProducts(nextProducts);

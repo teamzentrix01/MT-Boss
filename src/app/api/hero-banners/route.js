@@ -1,7 +1,7 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
+import { createInitializationGuard, handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 import { fallbackHeroBanners, fallbackResponse } from '@/lib/public-fallbacks';
 
 const CREATE_TABLE_SQL = `
@@ -20,14 +20,14 @@ const CREATE_TABLE_SQL = `
   )
 `;
 
-async function ensureTable() {
+const ensureTable = createInitializationGuard(async () => {
   try {
     await pool.query(CREATE_TABLE_SQL);
   } catch (error) {
     console.error('ensureTable error:', error);
     throw error;
   }
-}
+});
 
 // Public — used by the home page Hero component
 export async function GET() {

@@ -1,6 +1,7 @@
 import pool from '@/lib/db';
+import { createInitializationGuard } from '@/lib/api-utils';
 
-export async function ensureProjectOpsSchema() {
+export const ensureProjectOpsSchema = createInitializationGuard(async () => {
   await pool.query(`
     ALTER TABLE projects
       ADD COLUMN IF NOT EXISTS franchise_id INTEGER,
@@ -89,7 +90,7 @@ export async function ensureProjectOpsSchema() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
-}
+});
 
 export async function getProjectSummaries(whereSql = '', params = []) {
   await ensureProjectOpsSchema();

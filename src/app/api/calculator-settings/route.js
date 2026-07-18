@@ -40,6 +40,8 @@ const DEFAULT_SETTINGS = {
   },
 };
 
+let readyPromise;
+
 function hasAuth(req) {
   return Boolean(requireRole(req, 'admin'));
 }
@@ -125,7 +127,7 @@ function sanitizeSettings(input = {}) {
   };
 }
 
-async function ensureTable() {
+async function initializeTable() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS calculator_settings (
       id INTEGER PRIMARY KEY DEFAULT 1,
@@ -142,6 +144,16 @@ async function ensureTable() {
      ON CONFLICT (id) DO NOTHING`,
     [JSON.stringify(DEFAULT_SETTINGS)]
   );
+}
+
+function ensureTable() {
+  if (!readyPromise) {
+    readyPromise = initializeTable().catch((error) => {
+      readyPromise = undefined;
+      throw error;
+    });
+  }
+  return readyPromise;
 }
 
 export async function GET() {

@@ -42,11 +42,14 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
     try {
       const token = localStorage.getItem(tokenKey) || localStorage.getItem('admin-token') || localStorage.getItem('token');
       
-      // Fetch free slots
-      const slotsRes = await fetch(`/api/free-slots${filterCity !== 'all' ? `?city=${encodeURIComponent(filterCity)}` : ''}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const slotsData = await slotsRes.json();
+      const requestOptions = { headers: { 'Authorization': `Bearer ${token}` } };
+      const [slotsRes, servicesRes] = await Promise.all([
+        fetch(`/api/free-slots${filterCity !== 'all' ? `?city=${encodeURIComponent(filterCity)}` : ''}`, requestOptions),
+        fetch('/api/quick-services', requestOptions),
+      ]);
+      const [slotsData, servicesData] = await Promise.all([
+        slotsRes.json(), servicesRes.json(),
+      ]);
       if (slotsData.success) {
         const nextSlots = slotsData.data || [];
         setSlots(nextSlots);
@@ -57,11 +60,6 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
         ])].sort((a, b) => a.localeCompare(b)));
       }
 
-      // Fetch services
-      const servicesRes = await fetch('/api/quick-services', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const servicesData = await servicesRes.json();
       if (servicesData.success) {
         setServices(servicesData.data || []);
       }

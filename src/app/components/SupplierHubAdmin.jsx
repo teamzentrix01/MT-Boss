@@ -82,14 +82,16 @@ export default function SupplierHubAdmin({ isDarkMode }) {
   const fetchSuppliers = useCallback(async () => {
     setLoadingSup(true);
     try {
-      const res  = await fetch('/api/admin/suppliers', { headers: { Authorization: `Bearer ${token()}` } });
-      const data = await res.json();
+      const headers = { Authorization: `Bearer ${token()}` };
+      const [res, cr] = await Promise.all([
+        fetch('/api/admin/suppliers', { headers }),
+        fetch('/api/admin/suppliers', { method: 'PATCH', headers }),
+      ]);
+      const [data, cd] = await Promise.all([res.json(), cr.json()]);
       if (data.success) setSuppliers(data.data || []);
       else setError(data.error || 'Failed to load suppliers');
 
       // commission summary
-      const cr  = await fetch('/api/admin/suppliers', { method: 'PATCH', headers: { Authorization: `Bearer ${token()}` } });
-      const cd  = await cr.json();
       if (cd.success) setCommission({
         total:     parseFloat(cd.data.total_commission || 0),
         today:     parseFloat(cd.data.today_commission || 0),

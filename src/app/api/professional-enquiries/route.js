@@ -2,12 +2,11 @@ import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
+import { createInitializationGuard } from '@/lib/api-utils';
 
 // Tables are guaranteed to exist by professional-services route (same ensureTables),
 // but guard here too so this route works standalone.
-let ready = false;
-async function ensureTable() {
-  if (ready) return;
+const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS professional_enquiries (
       id                 SERIAL PRIMARY KEY,
@@ -22,8 +21,7 @@ async function ensureTable() {
       created_at         TIMESTAMP DEFAULT NOW()
     )
   `);
-  ready = true;
-}
+});
 
 // POST — anyone can send an enquiry to a professional
 export async function POST(req) {

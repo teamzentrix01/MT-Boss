@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireAnyRole, unauthorized } from '@/lib/auth';
+import { createInitializationGuard } from '@/lib/api-utils';
 
-async function ensureFreeSlotsColumns() {
+const ensureFreeSlotsColumns = createInitializationGuard(async () => {
   await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS current_bookings INTEGER DEFAULT 0`);
   await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS max_bookings INTEGER DEFAULT 1`);
   await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS is_available BOOLEAN DEFAULT TRUE`);
   await pool.query(`UPDATE free_time_slots SET current_bookings = 0 WHERE current_bookings IS NULL`);
   await pool.query(`UPDATE free_time_slots SET max_bookings = 1 WHERE max_bookings IS NULL`);
-}
+});
 
 function hasToken(req) {
   return Boolean(requireAnyRole(req, ['admin', 'franchise']));

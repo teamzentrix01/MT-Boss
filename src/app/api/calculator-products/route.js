@@ -2,7 +2,7 @@ import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 
-let ready = false;
+let readyPromise;
 
 const seedProducts = [
   ['Steel', 'Mandatory', 'TATA Steel', 'FE 500D, dia as per calculation (6MM-24MM), bottom painted', '', 'kg', 68, 1],
@@ -32,9 +32,7 @@ const seedProducts = [
   ['Door', 'Door', 'Main Flush Door', '36MM flush door for main entrance', '', 'piece', 7200, 25],
 ];
 
-async function ensureTable() {
-  if (ready) return;
-
+async function initializeTables() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS calculator_products (
       id SERIAL PRIMARY KEY,
@@ -65,6 +63,8 @@ async function ensureTable() {
     )
   `);
 
+  await pool.query(`ALTER TABLE calculator_products ADD COLUMN IF NOT EXISTS city_prices JSONB DEFAULT '{}'`);
+
   await pool.query(
     `DELETE FROM calculator_products
      WHERE category = 'Cement'
@@ -83,30 +83,44 @@ async function ensureTable() {
        AND name IN ('Dulux Paint')`
   );
 
-  for (const item of seedProducts) {
-    const [category, , name] = item;
-    const exists = await pool.query(
-      'SELECT id FROM calculator_products WHERE LOWER(category)=LOWER($1) AND LOWER(name)=LOWER($2) LIMIT 1',
-      [category, name]
-    );
+  const seedData = seedProducts.map(([category, badge, name, description, image_url, unit, price, sort_order]) => ({
+    category, badge, name, description, image_url, unit, price, sort_order,
+  }));
 
-    if (exists.rows.length === 0) {
-      await pool.query(
-        `INSERT INTO calculator_products
-          (category, badge, name, description, image_url, unit, price, sort_order, is_active)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,TRUE)`,
-        item
-      );
-    } else {
-      await pool.query(
-        `UPDATE calculator_products
-         SET badge=$1, description=$2, image_url=COALESCE(NULLIF(image_url, ''), $3),
-             unit=$4, price=$5, sort_order=$6, updated_at=NOW()
-         WHERE id=$7`,
-        [item[1], item[3], item[4], item[5], item[6], item[7], exists.rows[0].id]
-      );
-    }
-  }
+  // Seed/update all defaults in one database round trip. The old implementation
+  // issued two sequential queries per product during every cold start.
+  await pool.query(
+    `WITH seed AS (
+       SELECT * FROM jsonb_to_recordset($1::jsonb) AS item(
+         category TEXT, badge TEXT, name TEXT, description TEXT, image_url TEXT,
+         unit TEXT, price NUMERIC, sort_order INTEGER
+       )
+     ), updated AS (
+       UPDATE calculator_products product
+       SET badge=seed.badge,
+           description=seed.description,
+           image_url=COALESCE(NULLIF(product.image_url, ''), seed.image_url),
+           unit=seed.unit,
+           price=seed.price,
+           sort_order=seed.sort_order,
+           updated_at=NOW()
+       FROM seed
+       WHERE LOWER(product.category)=LOWER(seed.category)
+         AND LOWER(product.name)=LOWER(seed.name)
+       RETURNING product.id
+     )
+     INSERT INTO calculator_products
+       (category, badge, name, description, image_url, unit, price, sort_order, is_active)
+     SELECT seed.category, seed.badge, seed.name, seed.description, seed.image_url,
+            seed.unit, seed.price, seed.sort_order, TRUE
+     FROM seed
+     WHERE NOT EXISTS (
+       SELECT 1 FROM calculator_products product
+       WHERE LOWER(product.category)=LOWER(seed.category)
+         AND LOWER(product.name)=LOWER(seed.name)
+     )`,
+    [JSON.stringify(seedData)]
+  );
 
   await pool.query(`
     INSERT INTO calculator_categories (name, badge, image_url, sort_order, is_active)
@@ -124,9 +138,16 @@ async function ensureTable() {
           updated_at = NOW()
   `);
 
-  await pool.query(`ALTER TABLE calculator_products ADD COLUMN IF NOT EXISTS city_prices JSONB DEFAULT '{}'`);
+}
 
-  ready = true;
+function ensureTable() {
+  if (!readyPromise) {
+    readyPromise = initializeTables().catch((error) => {
+      readyPromise = undefined;
+      throw error;
+    });
+  }
+  return readyPromise;
 }
 
 export async function GET(req) {

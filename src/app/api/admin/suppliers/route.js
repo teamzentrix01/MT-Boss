@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireAdmin } from '@/lib/agent-auth';
+import { createInitializationGuard } from '@/lib/api-utils';
 
-async function ensureIsActiveColumn() {
+const ensureSupplierColumns = createInitializationGuard(async () => {
   await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE`);
-}
+  await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS product_categories TEXT[] DEFAULT '{}'`);
+});
 
 // GET — list all suppliers with earnings summary
 export async function GET(req) {
@@ -12,8 +14,7 @@ export async function GET(req) {
     const admin = await requireAdmin(req);
     if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    await ensureIsActiveColumn();
-    await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS product_categories TEXT[] DEFAULT '{}'`);
+    await ensureSupplierColumns();
 
     const result = await pool.query(
       `SELECT
@@ -53,7 +54,7 @@ export async function PUT(req) {
     const admin = await requireAdmin(req);
     if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    await ensureIsActiveColumn();
+    await ensureSupplierColumns();
 
     const { supplier_id, action, rejection_reason } = await req.json();
     if (!supplier_id || !action) {

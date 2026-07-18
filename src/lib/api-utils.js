@@ -76,6 +76,37 @@ export async function ensureTableWithTimeout(createTableSQL, timeoutMs = 5000) {
 }
 
 /**
+ * Deduplicate schema/bootstrap work within a warm server process.
+ * The TTL keeps routes resilient to out-of-band schema resets while avoiding
+ * CREATE/ALTER queries on every normal request.
+ */
+export function createInitializationGuard(initializer, ttlMs = 5 * 60 * 1000) {
+  let inFlight = null;
+  let initializedAt = 0;
+
+  return async function runInitialization() {
+    if (initializedAt && Date.now() - initializedAt < ttlMs) return;
+
+    if (!inFlight) {
+      inFlight = Promise.resolve()
+        .then(initializer)
+        .then(() => {
+          initializedAt = Date.now();
+        })
+        .catch((error) => {
+          initializedAt = 0;
+          throw error;
+        })
+        .finally(() => {
+          inFlight = null;
+        });
+    }
+
+    return inFlight;
+  };
+}
+
+/**
  * Execute query with timeout and error handling
  */
 export async function queryWithTimeout(query, params = [], timeoutMs = 10000) {
