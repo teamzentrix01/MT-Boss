@@ -434,6 +434,14 @@ export default function CalculatorManager({ isDarkMode }) {
         .cm-category-card { width:100%; text-align:left; border:1px solid var(--cm-border); background:var(--cm-bg); color:var(--cm-text); border-radius:8px; padding:.8rem; cursor:pointer; transition:border-color .15s, transform .15s; }
         .cm-category-card:hover { transform:translateY(-1px); border-color:var(--cm-accent); }
         .cm-category-card.active { border-color:var(--cm-accent); box-shadow:0 0 0 1px var(--cm-accent) inset; }
+        .cm-category-select,
+        .cm-category-select:hover,
+        .cm-category-select:active {
+          display:block; width:100%; padding:0 !important; border:0 !important;
+          background:transparent !important; background-image:none !important;
+          color:inherit !important; text-align:left; cursor:pointer;
+          box-shadow:none !important; transform:none !important;
+        }
         .cm-category-top { display:flex; align-items:center; justify-content:space-between; gap:.65rem; }
         .cm-category-name { font-weight:900; font-size:.85rem; }
         .cm-category-meta { color:var(--cm-muted); font-size:.7rem; margin-top:.35rem; }
@@ -491,8 +499,7 @@ export default function CalculatorManager({ isDarkMode }) {
           <div className="cm-category-grid">
             {categories.map(category => (
               <div key={category.id} className={`cm-category-card${selectedCategory === category.name ? ' active' : ''}`}>
-                <button type="button" onClick={() => setSelectedCategory(category.name)}
-                  style={{ all:'unset', display:'block', width:'100%', cursor:'pointer' }}>
+                <button type="button" className="cm-category-select" onClick={() => setSelectedCategory(category.name)}>
                   <div className="cm-category-top">
                     <div>
                       <div className="cm-category-name">{category.name}</div>
