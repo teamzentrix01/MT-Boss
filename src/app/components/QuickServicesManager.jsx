@@ -51,6 +51,23 @@ export default function QuickServicesManager({ isDarkMode }) {
 
   useEffect(() => { fetchServices(); }, []);
 
+  useEffect(() => {
+    if (!showForm) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = event => {
+      if (event.key === 'Escape') {
+        setEditingId(null);
+        setShowForm(false);
+      }
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [showForm]);
+
   const fetchServices = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -169,7 +186,6 @@ export default function QuickServicesManager({ isDarkMode }) {
       cities: Array.isArray(service.cities) ? service.cities : [],
     });
     setEditingId(service.id); setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = async (id) => {
@@ -232,9 +248,22 @@ export default function QuickServicesManager({ isDarkMode }) {
 
         .qs-form-panel {
           background:var(--qs-surface); border:1px solid var(--qs-border);
-          border-radius:8px; padding:1.25rem; margin-bottom:0.875rem;
+          border-radius:10px; padding:1.25rem; width:min(760px, calc(100vw - 2rem));
+          max-height:calc(100vh - 3rem); overflow-y:auto; box-shadow:0 24px 70px rgba(0,0,0,.45);
         }
-        .qs-form-title { font-size:0.8125rem; font-weight:700; margin-bottom:0.875rem; }
+        .qs-modal-overlay {
+          position:fixed; inset:0; z-index:1000; padding:1.5rem 1rem;
+          display:flex; align-items:center; justify-content:center;
+          background:rgba(0,0,0,.72); backdrop-filter:blur(3px);
+        }
+        .qs-form-heading { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:0.875rem; }
+        .qs-form-title { font-size:0.95rem; font-weight:700; }
+        .qs-modal-close {
+          width:2rem; height:2rem; display:inline-flex; align-items:center; justify-content:center;
+          border:1px solid var(--qs-border); border-radius:6px; background:var(--qs-bg);
+          color:var(--qs-text); font-size:1.2rem; cursor:pointer;
+        }
+        .qs-modal-close:hover { border-color:var(--qs-accent); color:var(--qs-accent); }
         .qs-form-grid  { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
         .qs-form-full  { grid-column:1/-1; }
         .qs-label {
@@ -366,8 +395,15 @@ export default function QuickServicesManager({ isDarkMode }) {
 
         {/* Add / Edit form */}
         {showForm && (
-          <div className="qs-form-panel">
-            <div className="qs-form-title">{editingId ? 'Edit Service' : 'Add New Quick Service'}</div>
+          <div className="qs-modal-overlay" role="presentation" onMouseDown={e => {
+            if (e.target === e.currentTarget) resetForm();
+          }}>
+          <div className="qs-form-panel" role="dialog" aria-modal="true" aria-labelledby="quick-service-form-title">
+            <div className="qs-form-heading">
+              <div className="qs-form-title" id="quick-service-form-title">{editingId ? 'Edit Service Details' : 'Add New Quick Service'}</div>
+              <button type="button" className="qs-modal-close" onClick={resetForm} aria-label="Close">×</button>
+            </div>
+            {error && <div className="qs-alert qs-alert-err">{error}</div>}
             <form onSubmit={handleSubmit}>
               <div className="qs-form-grid">
                 <div>
@@ -453,6 +489,7 @@ export default function QuickServicesManager({ isDarkMode }) {
                 <button type="button" className="qs-btn-secondary" onClick={resetForm}>Cancel</button>
               </div>
             </form>
+          </div>
           </div>
         )}
 
