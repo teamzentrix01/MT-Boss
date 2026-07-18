@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { redirectToPayU } from '@/lib/payu-client';
 
 // ── Status config ──────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
@@ -17,25 +18,24 @@ const STATUS_CONFIG = {
 const PRIMARY_SERVICE_STAGES = ['Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
 
 // ── Payment Modal ─────────────────────────────────────────────────────────────
-function PaymentModal({ booking, isDark, onClose, onSuccess }) {
-  const [amount, setAmount] = useState(String(booking.final_amount || booking.total_amount || ''));
-  const [note, setNote] = useState('');
+function PaymentModal({ booking, isDark, onClose }) {
+  const [amount] = useState(String(booking.final_amount || booking.total_amount || ''));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   async function handleConfirm() {
-    if (!amount) { setError('Enter the amount you paid'); return; }
+    if (!amount) { setError('Payable amount is unavailable'); return; }
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/bookings/${booking.id}/confirm-payment`, {
+      const res = await fetch(`/api/bookings/${booking.id}/pay`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ user_paid_amount: parseFloat(amount), user_note: note }),
+        body: JSON.stringify({}),
       });
       const data = await res.json();
-      if (data.success) onSuccess();
-      else setError(data.error || 'Failed to confirm payment');
+      if (data.success) redirectToPayU(data.payment);
+      else setError(data.error || 'Failed to start payment');
     } catch { setError('Something went wrong. Try again.'); }
     finally { setLoading(false); }
   }
@@ -63,27 +63,21 @@ function PaymentModal({ booking, isDark, onClose, onSuccess }) {
           </div>
 
           <div>
-            <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>Amount You Paid (₹) *</label>
+            <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>Amount Payable via PayU (₹)</label>
             <input
               type="number"
               className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${inp}`}
               placeholder={`e.g. ${booking.final_amount || booking.total_amount}`}
               value={amount}
-              onChange={(e) => { setAmount(e.target.value); setError(''); }}
+              readOnly
             />
-          </div>
-
-          <div>
-            <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>Note (optional)</label>
-            <textarea rows={2} className={`w-full px-3 py-2.5 text-sm border outline-none resize-none transition-all ${inp}`}
-              placeholder="Any payment remarks..." value={note} onChange={(e) => setNote(e.target.value)} />
           </div>
 
           {error && <p className="text-[10px] text-red-500 font-bold">{error}</p>}
 
           <button onClick={handleConfirm} disabled={loading}
             className="w-full py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-[0.3em] hover:bg-[var(--brand-blue-light)] transition-all disabled:opacity-50">
-            {loading ? 'Confirming...' : 'Confirm Payment ✓'}
+            {loading ? 'Opening PayU...' : 'Pay Online with PayU'}
           </button>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import QuickServiceIcon, { isQuickServiceIconImage } from '../../components/QuickServiceIcon';
+import { redirectToPayU } from '@/lib/payu-client';
 
 const TIME_SLOTS = [
   '08:00 AM – 10:00 AM',
@@ -452,8 +453,8 @@ export default function QuickServiceSlugPage() {
         return;
       }
 
-      setBookingReference(String(Date.now()).slice(-8).toUpperCase());
-      setStep(3); // success
+      setBookingReference(data.booking?.booking_reference || '');
+      redirectToPayU(data.payment);
     } catch (error) {
       console.error('Booking error:', error);
       setErrors({ submit: error.message || 'Server error' });
@@ -907,7 +908,7 @@ export default function QuickServiceSlugPage() {
                   <div className="flex justify-between px-4 py-3 bg-[var(--brand-blue)]/5 text-xs">
                     <div>
                       <p className="font-black text-sm uppercase">Total Due Now</p>
-                      <p className={`text-[8px] mt-0.5 ${muted}`}>Payable on site or online after technician arrival</p>
+                      <p className={`text-[8px] mt-0.5 ${muted}`}>Secure online payment via PayU</p>
                     </div>
                     <p className="font-black text-base text-[var(--brand-blue)]">₹{totalAmount}</p>
                   </div>
@@ -933,7 +934,7 @@ export default function QuickServiceSlugPage() {
                     disabled={bookingLoading}
                     className="flex-1 py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-yellow-500 transition-all disabled:opacity-50"
                   >
-                    {bookingLoading ? 'Confirming Visit...' : 'Confirm Visit ✓'}
+                    {bookingLoading ? 'Opening PayU...' : 'Pay & Confirm Visit'}
                   </button>
                 </div>
               </div>

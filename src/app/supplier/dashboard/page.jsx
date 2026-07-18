@@ -2,6 +2,7 @@
 
 import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { redirectToPayU } from '@/lib/payu-client';
 
 export default function SupplierDashboard() {
   return (
@@ -200,8 +201,7 @@ function SupplierDashboardContent() {
       });
       const data = await res.json();
       if (data.success) {
-        setPkgMsg(data.message || 'Package selected!');
-        await loadPackages();
+        redirectToPayU(data.payment);
       } else {
         setPkgMsg(data.error || 'Failed to select package');
       }

@@ -6,6 +6,7 @@
 "use client";
 import { Suspense, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { redirectToPayU } from '@/lib/payu-client';
  
 export default function VendorDashboard() {
   return (
@@ -161,8 +162,7 @@ function VendorDashboardContent() {
       });
       const data = await res.json();
       if (data.success) {
-        setPkgMsg(data.message || 'Package selected!');
-        await loadPackages();
+        redirectToPayU(data.payment);
       } else {
         setPkgMsg(data.error || 'Failed to select package');
       }

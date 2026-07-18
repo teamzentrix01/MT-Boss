@@ -188,8 +188,8 @@ export async function POST(req) {
       fields.package_name = pkg.name;
       fields.package_price = pkg.price;
       fields.package_duration_months = pkg.duration_months;
-      fields.package_purchased_at = new Date().toISOString();
-      fields.package_status = 'pending';
+      fields.package_purchased_at = null;
+      fields.package_status = 'unpaid';
     }
 
     if (cols.has('shop_name'))     fields.shop_name     = email.split('@')[0];

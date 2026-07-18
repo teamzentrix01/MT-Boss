@@ -58,7 +58,7 @@ export async function POST(request) {
         $6, $7, $8, $9,
         $10, $11, 'pending',
         $12, $13, $14, $15,
-        NOW(), 'pending'
+        NULL, 'unpaid'
       )
       RETURNING id, email, shop_name, phone, status, created_at`,
       [

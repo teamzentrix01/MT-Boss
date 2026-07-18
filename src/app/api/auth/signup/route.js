@@ -1,13 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 
 export async function POST(req) {
   try {
     const { email, password, name } = await req.json();
+    const normalizedEmail = String(email || '').trim().toLowerCase();
 
     // Validate input
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
       return NextResponse.json(
         { error: 'Email and password are required' },
         { status: 400 }
@@ -16,7 +17,7 @@ export async function POST(req) {
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(normalizedEmail)) {
       return NextResponse.json(
         { error: 'Invalid email format' },
         { status: 400 }
@@ -37,7 +38,7 @@ export async function POST(req) {
     // Insert user into database
     const result = await pool.query(
       'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, email, name',
-      [name || '', email, hashedPassword]
+      [String(name || '').trim(), normalizedEmail, hashedPassword]
     );
 
     return NextResponse.json(

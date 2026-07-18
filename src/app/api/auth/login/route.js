@@ -53,7 +53,9 @@ export async function POST(req) {
     }
 
     const result = await pool.query(
-      'SELECT id, email, password, name, role FROM users WHERE LOWER(email) = $1',
+      `SELECT id, email, password, name, 'user'::TEXT AS role
+       FROM users
+       WHERE LOWER(email) = $1`,
       [normalizedEmail]
     );
 
@@ -67,7 +69,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    const userRole = user.role || 'user';
+    const userRole = 'user';
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: userRole },

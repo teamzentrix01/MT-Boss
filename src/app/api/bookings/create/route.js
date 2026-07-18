@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
+import { createPayURequest } from '@/lib/payu';
 
 function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
@@ -29,6 +30,21 @@ async function ensurePaidSlotsTable() {
     )
   `);
 }
+
+async function ensurePaymentColumns() {
+  await pool.query(`
+    ALTER TABLE service_bookings
+      ADD COLUMN IF NOT EXISTS payment_gateway TEXT,
+      ADD COLUMN IF NOT EXISTS payment_txnid TEXT,
+      ADD COLUMN IF NOT EXISTS payment_gateway_id TEXT,
+      ADD COLUMN IF NOT EXISTS payment_completed_at TIMESTAMPTZ
+  `);
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS service_bookings_payment_txnid_uidx
+    ON service_bookings (payment_txnid)
+    WHERE payment_txnid IS NOT NULL
+  `);
+}
  
 export async function POST(req) {
   try {
@@ -38,10 +54,12 @@ export async function POST(req) {
     }
  
     let userId;
+    let authenticatedEmail = null;
     try {
       const decoded = requireRole(req, 'user');
       if (!decoded) throw new Error('Invalid role');
       const rawId = decoded.id;
+      authenticatedEmail = decoded.email || null;
 
       // id = 0 means admin hardcoded login — not a real users table row
       if (!rawId || rawId === 0) {
@@ -75,7 +93,7 @@ export async function POST(req) {
     } = await req.json();
     const selectedCity = String(service_city || '').trim();
     const cleanUserName = cleanText(user_name);
-    const cleanUserEmail = user_email ? cleanText(user_email).toLowerCase() : null;
+    const cleanUserEmail = cleanText(user_email || authenticatedEmail || '').toLowerCase();
     const cleanUserPhone = normalizePhone(user_phone);
  
     // Validation
@@ -85,9 +103,9 @@ export async function POST(req) {
  
     const contactError = validateContactFields({
       name: cleanUserName,
-      email: cleanUserEmail || undefined,
+      email: cleanUserEmail,
       phone: cleanUserPhone,
-      emailRequired: false,
+      emailRequired: true,
       nameLabel: 'Customer name',
     });
     if (contactError) return NextResponse.json({ error: contactError }, { status: 400 });
@@ -167,7 +185,10 @@ export async function POST(req) {
       }
     }
  
-    // Create booking
+    await ensurePaymentColumns();
+    const paymentTxnId = `MTB${Date.now()}${Math.random().toString(36).slice(2, 8)}`.slice(0, 50);
+
+    // Create a reserved booking. Vendors are notified only after PayU verifies payment.
     const bookingResult = await pool.query(
       `INSERT INTO service_bookings (
         booking_reference, user_id, quick_service_id, user_name, user_phone, user_email,
@@ -177,9 +198,10 @@ export async function POST(req) {
         service_description,
         base_amount, visit_fee, tax_amount, total_amount,
         status, vendor_status, user_status, payment_status,
+        payment_gateway, payment_txnid,
         created_at
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, NOW()
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, NOW()
       ) RETURNING id, booking_reference, total_amount`,
       [
         bookingReference, userId || null, quick_service_id, cleanUserName, cleanUserPhone, cleanUserEmail,
@@ -188,7 +210,7 @@ export async function POST(req) {
         user_latitude, user_longitude, location_map_url,
         service_description,
         basePrice, visitFee, taxAmount, totalAmount,
-        'WAITING_FOR_VENDOR_ACCEPTANCE', null, 'PENDING', 'PENDING'
+        'PAYMENT_PENDING', null, 'PAYMENT_PENDING', 'PENDING', 'PAYU', paymentTxnId
       ]
     );
  
@@ -220,38 +242,32 @@ export async function POST(req) {
       }
     }
  
-    // Notify every approved vendor in the same city. The vendor dashboard
-    // locks contact/accept actions unless the vendor has an active package
-    // and serves this quick service.
-    const vendorsResult = await pool.query(
-      `SELECT DISTINCT v.id
-       FROM vendors v
-       WHERE LOWER(TRIM(v.city)) = LOWER(TRIM($1))
-         AND v.is_approved = TRUE
-         AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
-         AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')`,
-      [selectedCity]
-    );
- 
-    // Create notifications for each vendor
-    for (const vendor of vendorsResult.rows) {
-      await pool.query(
-        `INSERT INTO service_notifications (
-          booking_id, vendor_id, notification_type, title, message, is_read, created_at
-        ) VALUES ($1, $2, 'new_booking', 'New Service Request', $3, FALSE, NOW())`,
-        [bookingId, vendor.id, `New ${cleanUserName} booking in ${selectedCity}. Base: ₹${basePrice}`]
-      );
-    }
+    const configuredAppUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '');
+    const appUrl = configuredAppUrl || new URL(req.url).origin;
+    const callbackUrl = `${appUrl}/api/payu/callback`;
+    const payment = createPayURequest({
+      txnid: paymentTxnId,
+      amount: totalAmount,
+      productinfo: `MTBOSS service booking ${bookingReference}`,
+      firstname: cleanUserName.split(/\s+/)[0],
+      email: cleanUserEmail,
+      phone: cleanUserPhone,
+      surl: callbackUrl,
+      furl: callbackUrl,
+      udf1: String(bookingId),
+      udf2: bookingReference,
+    });
  
     return NextResponse.json({
       success: true,
-      message: 'Booking created successfully. Vendors notified.',
+      message: 'Booking reserved. Redirecting to PayU for payment.',
       booking: {
         id: bookingId,
         booking_reference: bookingReference,
         total_amount: totalAmount,
-        vendors_notified: vendorsResult.rows.length,
-      }
+        payment_status: 'PENDING',
+      },
+      payment,
     }, { status: 201 });
  
   } catch (error) {

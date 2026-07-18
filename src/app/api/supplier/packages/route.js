@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { PACKAGES, ensurePackageSchema, getPackageById, getPackageInfo } from '@/lib/packages';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { createPayURequest } from '@/lib/payu';
+import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
 
 // GET - list packages or get supplier's package status
 export async function GET(req) {
@@ -35,7 +37,7 @@ export async function GET(req) {
   }
 }
 
-// POST - supplier selects a package
+// POST - create PayU checkout for a supplier package
 export async function POST(req) {
   try {
     await ensurePackageSchema();
@@ -48,27 +50,29 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid package selected' }, { status: 400 });
     }
 
-    const result = await pool.query(
-      `UPDATE suppliers
-       SET package_id = $1,
-           package_name = $2,
-           package_price = $3,
-           package_duration_months = $4,
-           package_purchased_at = NOW(),
-           package_status = 'pending'
-       WHERE id = $5
-       RETURNING id, package_id, package_name, package_price, package_status`,
-      [pkg.id, pkg.name, pkg.price, pkg.duration_months, supplier.id]
+    const account = await pool.query(
+      `SELECT id, email, phone, COALESCE(shop_name, business_name, email) AS customer_name FROM suppliers WHERE id = $1`,
+      [supplier.id]
     );
-
-    if (result.rows.length === 0) {
+    if (account.rows.length === 0) {
       return NextResponse.json({ error: 'Supplier not found' }, { status: 404 });
     }
 
+    const customer = account.rows[0];
+    const txnid = newPayUTxnId('SPK');
+    await createPayUIntent({ txnid, purpose: 'supplier_package', entityId: supplier.id, packageId: pkg.id, amount: pkg.price });
+    const callbackUrl = getPayUCallbackUrl(req);
+    const payment = createPayURequest({
+      txnid, amount: pkg.price, productinfo: `MTBOSS supplier ${pkg.label}`,
+      firstname: String(customer.customer_name).split(/\s+/)[0], email: customer.email,
+      phone: customer.phone, surl: callbackUrl, furl: callbackUrl,
+      udf1: String(supplier.id), udf2: pkg.id, udf3: 'supplier_package',
+    });
+
     return NextResponse.json({
       success: true,
-      message: `${pkg.label} selected! Your package will be activated once approved by admin.`,
-      data: result.rows[0],
+      message: `Redirecting to PayU for ${pkg.label}.`,
+      payment,
     });
   } catch (error) {
     console.error('Supplier package selection error:', error);

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import QuickServiceIcon, { isQuickServiceIconImage } from '../components/QuickServiceIcon';
+import { redirectToPayU } from '@/lib/payu-client';
 
 const TIME_SLOTS = [
   '08:00 AM – 10:00 AM',
@@ -252,7 +253,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
         return;
       }
 
-      setStep(3);
+      redirectToPayU(data.payment);
     } catch (error) {
       console.error('Booking error:', error);
       setErrors({ submit: error.message });
@@ -752,7 +753,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
               </div>
 
               <p className={`text-[10px] leading-relaxed ${muted}`}>
-                ✅ You only pay after the technician visits &amp; you approve the repair quote. Zero hidden charges.
+                The visiting charge is paid securely through PayU. Repair charges remain separate and require your approval.
               </p>
 
               <div className="flex gap-3">
@@ -767,7 +768,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                   disabled={loading}
                   className={`flex-1 py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-light)] transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  {loading ? 'Confirming...' : 'Confirm Booking ✓'}
+                  {loading ? 'Opening PayU...' : 'Pay & Confirm'}
                 </button>
               </div>
             </div>

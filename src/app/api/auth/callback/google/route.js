@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import jwt from 'jsonwebtoken';
 import { getJwtSecret, setAuthCookie } from '@/lib/auth';
+import crypto from 'crypto';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
@@ -40,12 +41,19 @@ export async function GET(req) {
     });
 
     const tokens = await tokenRes.json();
+    if (!tokenRes.ok || !tokens.access_token) {
+      throw new Error(`Google token exchange failed: ${tokens.error_description || tokens.error || tokenRes.status}`);
+    }
 
     // Get user info from Google
     const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${tokens.access_token}` },
     });
     const googleUser = await userRes.json();
+    if (!userRes.ok || !googleUser.email) {
+      throw new Error(`Google user profile failed: ${googleUser.error?.message || userRes.status}`);
+    }
+    const normalizedEmail = String(googleUser.email).trim().toLowerCase();
 
     // Upsert user in DB
     const result = await pool.query(
@@ -53,7 +61,7 @@ export async function GET(req) {
        VALUES ($1, $2, '')
        ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name
        RETURNING id, email, name`,
-      [googleUser.email, googleUser.name]
+      [normalizedEmail, googleUser.name || normalizedEmail.split('@')[0]]
     );
 
     const user = result.rows[0];
@@ -66,8 +74,27 @@ export async function GET(req) {
       { expiresIn: '7d' }
     );
 
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS oauth_login_codes (
+        code_hash TEXT PRIMARY KEY,
+        token TEXT NOT NULL,
+        user_payload JSONB NOT NULL,
+        redirect_to TEXT NOT NULL,
+        expires_at TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await pool.query(`DELETE FROM oauth_login_codes WHERE expires_at <= NOW()`);
+    const exchangeCode = crypto.randomBytes(32).toString('hex');
+    const codeHash = crypto.createHash('sha256').update(exchangeCode).digest('hex');
+    await pool.query(
+      `INSERT INTO oauth_login_codes (code_hash, token, user_payload, redirect_to, expires_at)
+       VALUES ($1, $2, $3::JSONB, $4, NOW() + INTERVAL '2 minutes')`,
+      [codeHash, token, JSON.stringify({ ...user, role }), redirectTo]
+    );
+
     const response = NextResponse.redirect(
-      `${baseUrl}/auth/success?user=${encodeURIComponent(JSON.stringify({ ...user, role }))}&redirect=${encodeURIComponent(redirectTo)}`
+      `${baseUrl}/auth/success?code=${encodeURIComponent(exchangeCode)}`
     );
     return setAuthCookie(response, 'auth-token', token);
   } catch (err) {
