@@ -3,13 +3,6 @@
 import { useState, useEffect } from 'react';
 import QuickServiceIcon from './QuickServiceIcon';
 
-const INDIAN_CITIES = [
-  'Agra', 'Ahmedabad', 'Bengaluru', 'Bhopal', 'Chandigarh', 'Chennai',
-  'Dehradun', 'Delhi', 'Faridabad', 'Ghaziabad', 'Greater Noida', 'Gurgaon',
-  'Hyderabad', 'Jaipur', 'Kanpur', 'Kolkata', 'Lucknow', 'Meerut',
-  'Moradabad', 'Mumbai', 'Noida', 'Patna', 'Pune', 'Surat', 'Varanasi',
-];
-
 async function uploadQuickServiceIcon(file) {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -39,6 +32,13 @@ export default function QuickServicesManager({ isDarkMode }) {
   const [success, setSuccess] = useState('');
   const [iconUploading, setIconUploading] = useState(false);
   const [customCity, setCustomCity] = useState('');
+  const configuredCities = [...new Map(
+    services
+      .flatMap((service) => Array.isArray(service.cities) ? service.cities : [])
+      .map((city) => String(city).trim())
+      .filter(Boolean)
+      .map((city) => [city.toLowerCase(), city])
+  ).values()].sort((a, b) => a.localeCompare(b));
 
   // ── Drag & Drop state ──────────────────────────────────────────────────────
   const [dragIndex, setDragIndex] = useState(null);
@@ -474,7 +474,7 @@ export default function QuickServicesManager({ isDarkMode }) {
                     <input
                       className="qs-input"
                       type="text"
-                      placeholder="Type a city not listed below"
+                      placeholder="Add a new service city"
                       value={customCity}
                       onChange={e => setCustomCity(e.target.value)}
                       onKeyDown={e => {
@@ -493,7 +493,7 @@ export default function QuickServicesManager({ isDarkMode }) {
                     }
                   }}>
                     <option value="">Select a city to add</option>
-                    {INDIAN_CITIES.filter(city => !formData.cities.includes(city)).map(city => (
+                    {configuredCities.filter(city => !formData.cities.includes(city)).map(city => (
                       <option key={city} value={city}>{city}</option>
                     ))}
                   </select>

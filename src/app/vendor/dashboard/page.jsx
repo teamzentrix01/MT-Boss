@@ -232,10 +232,10 @@ function VendorDashboardContent() {
   async function loadAllServices() {
     if (allServices.length > 0) return;
     try {
-      const res = await fetch("/api/quick-services");
+      const res = await fetch("/api/service-cities", { cache: 'no-store' });
       const data = await res.json();
       if (data.success) {
-        const loadedServices = data.data || data.services || [];
+        const loadedServices = data.services || [];
         setAllServices(loadedServices);
         setProfileForm((form) => {
           const configuredCities = loadedServices.flatMap((service) => service.cities || []);

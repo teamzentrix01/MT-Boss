@@ -52,15 +52,52 @@ export async function getServiceCities(serviceId) {
   if (serviceId) params.push(serviceId);
 
   const result = await pool.query(
-    `SELECT DISTINCT TRIM(configured_city) AS city
+    `SELECT MIN(TRIM(configured_city)) AS city
        FROM quick_services qs
        CROSS JOIN LATERAL UNNEST(COALESCE(qs.cities, '{}')) configured_city
       WHERE NULLIF(TRIM(configured_city), '') IS NOT NULL
+        AND COALESCE(qs.is_service_active, TRUE) = TRUE
        ${serviceFilter}
-      ORDER BY city ASC`,
+      GROUP BY LOWER(TRIM(configured_city))
+      ORDER BY MIN(TRIM(configured_city)) ASC`,
     params
   );
   return result.rows.map((row) => row.city);
+}
+
+export async function getCityServiceCoverage() {
+  await ensureServiceCitiesSchema();
+  const result = await pool.query(
+    `SELECT qs.id, qs.label, qs.icon, qs.base_price, qs.duration,
+            ARRAY_AGG(TRIM(configured_city) ORDER BY TRIM(configured_city)) AS cities
+       FROM quick_services qs
+       CROSS JOIN LATERAL UNNEST(COALESCE(qs.cities, '{}')) configured_city
+      WHERE NULLIF(TRIM(configured_city), '') IS NOT NULL
+        AND COALESCE(qs.is_service_active, TRUE) = TRUE
+      GROUP BY qs.id, qs.label, qs.icon, qs.base_price, qs.duration
+      ORDER BY qs.label ASC`
+  );
+
+  const services = result.rows.map((service) => ({
+    ...service,
+    cities: normalizeCityList(service.cities),
+  }));
+  const cityMap = new Map();
+  for (const service of services) {
+    for (const city of service.cities) {
+      const key = cleanCity(city).toLocaleLowerCase('en-IN');
+      const current = cityMap.get(key) || { city, service_ids: [], services: [] };
+      current.service_ids.push(service.id);
+      current.services.push(service.label);
+      cityMap.set(key, current);
+    }
+  }
+
+  return {
+    cities: [...cityMap.values()].map((item) => item.city).sort((a, b) => a.localeCompare(b)),
+    mapping: [...cityMap.values()].sort((a, b) => a.city.localeCompare(b.city)),
+    services,
+  };
 }
 
 export async function resolveServiceCity(serviceId, city) {
@@ -77,6 +114,23 @@ export async function resolveServiceCity(serviceId, city) {
        AND COALESCE(qs.is_service_active, TRUE) = TRUE
      LIMIT 1`,
     [serviceId, cleanRequestedCity]
+  );
+  return result.rows[0]?.city || null;
+}
+
+export async function resolveConfiguredCity(city) {
+  await ensureServiceCitiesSchema();
+  const requestedCity = cleanCity(city);
+  if (!requestedCity) return null;
+  const result = await pool.query(
+    `SELECT MIN(TRIM(configured_city)) AS city
+       FROM quick_services qs
+       CROSS JOIN LATERAL UNNEST(COALESCE(qs.cities, '{}')) configured_city
+      WHERE LOWER(TRIM(configured_city)) = LOWER(TRIM($1))
+        AND COALESCE(qs.is_service_active, TRUE) = TRUE
+      GROUP BY LOWER(TRIM(configured_city))
+      LIMIT 1`,
+    [requestedCity]
   );
   return result.rows[0]?.city || null;
 }

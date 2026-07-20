@@ -2,6 +2,7 @@ import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
+import { resolveConfiguredCity } from '@/lib/service-cities';
 
 // GET — public. ?listing_type=buy|rent&status=verified for public pages.
 //       ?status=all for admin (requires token).
@@ -54,6 +55,10 @@ export async function POST(req) {
     if (!title || !type || !listing_type || !price || !price_raw || !location) {
       return NextResponse.json({ error: 'title, type, listing_type, price, price_raw and location are required' }, { status: 400 });
     }
+    const canonicalLocation = await resolveConfiguredCity(location);
+    if (!canonicalLocation) {
+      return NextResponse.json({ error: 'Select a location configured by admin' }, { status: 400 });
+    }
     const cleanSellerName = seller_name ? cleanText(seller_name) : null;
     const cleanSellerEmail = seller_email ? cleanText(seller_email).toLowerCase() : null;
     const cleanSellerPhone = seller_phone ? normalizePhone(seller_phone) : null;
@@ -76,7 +81,7 @@ export async function POST(req) {
        RETURNING *`,
       [
         title, type, listing_type, category || type.toLowerCase(),
-        price, price_raw, location, address || null,
+        price, price_raw, canonicalLocation, address || null,
         beds || null, baths || null, area || null, description || null,
         JSON.stringify(highlights || []),
         JSON.stringify(images || []),
@@ -130,6 +135,10 @@ export async function PUT(req) {
       highlights, images, tag,
       seller_type, seller_name, seller_phone, seller_email,
     } = body;
+    const canonicalLocation = await resolveConfiguredCity(location);
+    if (!canonicalLocation) {
+      return NextResponse.json({ error: 'Select a location configured by admin' }, { status: 400 });
+    }
     const cleanSellerName = seller_name ? cleanText(seller_name) : null;
     const cleanSellerEmail = seller_email ? cleanText(seller_email).toLowerCase() : null;
     const cleanSellerPhone = seller_phone ? normalizePhone(seller_phone) : null;
@@ -154,7 +163,7 @@ export async function PUT(req) {
        WHERE id=$20 RETURNING *`,
       [
         title, type, listing_type, category,
-        price, price_raw, location, address,
+        price, price_raw, canonicalLocation, address,
         beds, baths, area, description,
         JSON.stringify(highlights || []),
         JSON.stringify(images || []),

@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
-import { PROPERTY_LOCATIONS } from "@/lib/property-locations";
+import { useServiceCities } from "@/hooks/useServiceCities";
 
 export default function FilterBar({ isDarkMode, onFilter }) {
+  const { cities: serviceCities } = useServiceCities();
   const [filters, setFilters] = useState({
     type: "All",
     location: "",
@@ -14,7 +15,7 @@ export default function FilterBar({ isDarkMode, onFilter }) {
   const propertyTypes = ["All", "Residential", "Commercial", "Plots"];
   const bedOptions = ["Any", "1", "2", "3", "4", "5+"];
 
-  const locations = ["All Locations", ...PROPERTY_LOCATIONS];
+  const locations = ["All Locations", ...serviceCities];
 
   const handleChange = (key, value) => {
     const updated = { ...filters, [key]: value };

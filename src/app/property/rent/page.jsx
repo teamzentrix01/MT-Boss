@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { PROPERTY_LOCATIONS } from "@/lib/property-locations";
+import { useServiceCities } from "@/hooks/useServiceCities";
 
 const PROPERTY_TYPES = ["Residential", "Commercial", "Plots"];
 
@@ -12,6 +12,7 @@ const empty = {
 };
 
 export default function RentPage() {
+  const { cities: availableCities, loading: loadingCities, error: cityError } = useServiceCities();
   const [dark,      setDark]      = useState(true);
   const [form,      setForm]      = useState(empty);
   const [images,    setImages]    = useState([]);    // Cloudinary URLs
@@ -256,9 +257,10 @@ export default function RentPage() {
               <div>
                 <label className={lbl}>Location *</label>
                 <select className={inp} value={form.location} onChange={e=>set("location",e.target.value)}>
-                  <option value="">Select location</option>
-                  {PROPERTY_LOCATIONS.map(l => <option key={l}>{l}</option>)}
+                  <option value="">{loadingCities ? 'Loading locations...' : 'Select location'}</option>
+                  {availableCities.map(l => <option key={l}>{l}</option>)}
                 </select>
+                {cityError && <p className="mt-1 text-[10px] text-red-500">{cityError}</p>}
               </div>
             </div>
 

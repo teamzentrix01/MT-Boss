@@ -3,14 +3,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useServiceCities } from '@/hooks/useServiceCities';
 
 export default function VendorSignupPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [dark, setDark] = useState(false);
-  const [services, setServices] = useState([]);
-  const [loadingServices, setLoadingServices] = useState(true);
+  const { services, loading: loadingServices, error: serviceCityError } = useServiceCities();
   const [step, setStep] = useState(1);
   const [profilePreview, setProfilePreview] = useState(null);
   const [aadharPreview, setAadharPreview] = useState(null);
@@ -54,21 +54,6 @@ export default function VendorSignupPage() {
     const obs = new MutationObserver(update);
     obs.observe(html, { attributes: true, attributeFilter: ['class'] });
     return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const res = await fetch('/api/quick-services');
-        const data = await res.json();
-        if (data.success) setServices(data.data);
-      } catch (err) {
-        console.error('Error fetching services:', err);
-      } finally {
-        setLoadingServices(false);
-      }
-    };
-    fetchServices();
   }, []);
 
   const handleChange = (e) => {
@@ -637,6 +622,7 @@ const handleSubmit = async (e) => {
                         <option value="">{loadingServices ? 'Loading service cities...' : 'Select service city'}</option>
                         {availableCities.map((city) => <option key={city} value={city}>{city}</option>)}
                       </select>
+                      {serviceCityError && <div className="vs-error" style={{ marginTop: '0.35rem' }}>{serviceCityError}</div>}
                     </div>
                     <div className="vs-field">
                       <label className="vs-label">State *</label>
