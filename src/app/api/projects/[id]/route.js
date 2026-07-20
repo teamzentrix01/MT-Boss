@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { ensureProjectOpsSchema, getProjectOps, getProjectSummaries } from '@/lib/project-ops';
+import { ensureAgentSchema } from '@/lib/agent-auth';
 
 const PROJECT_STATUSES = new Set([
   'lead',
@@ -32,6 +33,7 @@ export async function GET(req, { params }) {
 
     if (manage) {
       if (!requireRole(req, 'admin')) return unauthorized();
+      await ensureAgentSchema();
 
       const rows = await getProjectSummaries('WHERE p.id = $1', [id]);
       const project = rows[0];
@@ -39,8 +41,11 @@ export async function GET(req, { params }) {
         return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
       }
 
-      const ops = await getProjectOps(id);
-      return NextResponse.json({ success: true, project, ...ops });
+      const [ops, agents] = await Promise.all([
+        getProjectOps(id),
+        pool.query(`SELECT id, name, city FROM agents WHERE status = 'Approved' ORDER BY name ASC`),
+      ]);
+      return NextResponse.json({ success: true, project, agents: agents.rows, ...ops });
     }
 
     const result = await pool.query('SELECT * FROM projects WHERE id = $1', [id]);
@@ -64,6 +69,16 @@ export async function PATCH(req, { params }) {
     const body = await req.json();
     const nextStatus = PROJECT_STATUSES.has(body.project_status) ? body.project_status : null;
 
+    if (body.assigned_agent_id) {
+      const agent = await pool.query(
+        `SELECT id FROM agents WHERE id = $1 AND status = 'Approved'`,
+        [body.assigned_agent_id]
+      );
+      if (!agent.rows[0]) {
+        return NextResponse.json({ success: false, error: 'Select a valid approved agent' }, { status: 400 });
+      }
+    }
+
     const result = await pool.query(
       `UPDATE projects
        SET project_status = COALESCE($1, project_status),
@@ -72,9 +87,10 @@ export async function PATCH(req, { params }) {
            client_phone = $4,
            client_email = $5,
            project_notes = $6,
+           assigned_agent_id = CASE WHEN $7::TEXT = '' THEN NULL ELSE COALESCE($7::INTEGER, assigned_agent_id) END,
            started_at = CASE WHEN $1 IN ('started', 'ongoing', 'running') THEN COALESCE(started_at, NOW()) ELSE started_at END,
            completed_at = CASE WHEN $1 = 'completed' THEN COALESCE(completed_at, NOW()) ELSE completed_at END
-       WHERE id = $7
+       WHERE id = $8
        RETURNING *`,
       [
         nextStatus,
@@ -83,6 +99,7 @@ export async function PATCH(req, { params }) {
         body.client_phone || null,
         body.client_email || null,
         body.project_notes || '',
+        body.assigned_agent_id === '' ? '' : body.assigned_agent_id || null,
         id,
       ]
     );

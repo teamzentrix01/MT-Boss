@@ -3,6 +3,8 @@ import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 import { fallbackProjects, fallbackResponse } from '@/lib/public-fallbacks';
+import { convertFinalLeadToProject, ensureProjectOpsSchema, getProjectSummaries } from '@/lib/project-ops';
+import { ensureAgentSchema } from '@/lib/agent-auth';
 
 export async function GET(req) {
   try {
@@ -11,11 +13,32 @@ export async function GET(req) {
 
     if (status === 'all' && !requireRole(req, 'admin')) return unauthorized();
 
-    const query = status === 'all'
-      ? 'SELECT * FROM projects ORDER BY created_at DESC'
-      : "SELECT * FROM projects WHERE status = 'published' ORDER BY created_at DESC";
+    if (status === 'all') {
+      await ensureAgentSchema();
+      await ensureProjectOpsSchema();
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        const finalLeads = await client.query(
+          `SELECT l.id
+             FROM agent_leads l
+             LEFT JOIN projects p ON p.source_lead_id = l.id
+            WHERE l.lead_stage = 'Final' AND p.id IS NULL`
+        );
+        for (const lead of finalLeads.rows) {
+          await convertFinalLeadToProject(client, lead.id);
+        }
+        await client.query('COMMIT');
+      } catch (error) {
+        await client.query('ROLLBACK').catch(() => {});
+        throw error;
+      } finally {
+        client.release();
+      }
+      return NextResponse.json({ success: true, data: await getProjectSummaries() });
+    }
 
-    const result = await pool.query(query);
+    const result = await pool.query("SELECT * FROM projects WHERE status = 'published' ORDER BY created_at DESC");
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('GET projects error:', error.message);

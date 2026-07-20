@@ -440,6 +440,13 @@ export default function ProjectsManager() {
                     {project.location && (
                       <div className="pm-card-meta">📍 {project.location} · {project.size}</div>
                     )}
+                    {(project.client_name || project.source_lead_id) && (
+                      <div className="pm-card-meta">
+                        {project.client_name ? `Client: ${project.client_name}` : ''}
+                        {project.client_name && project.assigned_agent_name ? ' · ' : ''}
+                        {project.assigned_agent_name ? `Assigned: ${project.assigned_agent_name}` : 'Unassigned'}
+                      </div>
+                    )}
                     {project.description && (
                       <div className="pm-card-desc">{project.description}</div>
                     )}

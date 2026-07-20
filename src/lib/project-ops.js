@@ -13,8 +13,15 @@ export const ensureProjectOpsSchema = createInitializationGuard(async () => {
       ADD COLUMN IF NOT EXISTS client_email TEXT,
       ADD COLUMN IF NOT EXISTS deal_amount NUMERIC DEFAULT 0,
       ADD COLUMN IF NOT EXISTS project_status TEXT DEFAULT 'lead',
+      ADD COLUMN IF NOT EXISTS source_lead_id INTEGER,
       ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ,
       ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ
+  `);
+
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS projects_source_lead_id_unique
+      ON projects (source_lead_id)
+      WHERE source_lead_id IS NOT NULL
   `);
 
   await pool.query(`
@@ -91,6 +98,56 @@ export const ensureProjectOpsSchema = createInitializationGuard(async () => {
     )
   `);
 });
+
+export async function convertFinalLeadToProject(db, leadId) {
+  const leadResult = await db.query(
+    `SELECT * FROM agent_leads WHERE id = $1 FOR UPDATE`,
+    [leadId]
+  );
+  const lead = leadResult.rows[0];
+  if (!lead || lead.lead_stage !== 'Final') return null;
+
+  const titleParts = [lead.client_name, lead.service_type].filter(Boolean);
+  const result = await db.query(
+    `INSERT INTO projects (
+       title, category, location, description, image_url, cloudinary_public_id,
+       size, status, franchise_id, assigned_agent_id, created_by_role,
+       project_notes, client_name, client_phone, client_email, deal_amount,
+       project_status, source_lead_id
+     )
+     VALUES ($1,$2,$3,$4,'/logo.png','', 'small','draft',$5,$6,$7,$8,$9,$10,$11,$12,'final',$13)
+     ON CONFLICT (source_lead_id) WHERE source_lead_id IS NOT NULL
+     DO UPDATE SET
+       franchise_id = EXCLUDED.franchise_id,
+       assigned_agent_id = COALESCE(projects.assigned_agent_id, EXCLUDED.assigned_agent_id),
+       client_name = EXCLUDED.client_name,
+       client_phone = EXCLUDED.client_phone,
+       client_email = EXCLUDED.client_email,
+       deal_amount = EXCLUDED.deal_amount
+     RETURNING *`,
+    [
+      titleParts.join(' - ') || `Lead ${lead.id}`,
+      lead.lead_type || lead.service_type || 'Converted Lead',
+      lead.city || '',
+      lead.client_requirement || lead.notes || '',
+      lead.assigned_franchise_id || null,
+      lead.agent_id || null,
+      lead.assigned_by_role || 'agent',
+      [lead.client_requirement, lead.notes].filter(Boolean).join('\n\n'),
+      lead.client_name,
+      lead.client_phone,
+      lead.client_email || null,
+      Number(lead.final_amount || 0),
+      lead.id,
+    ]
+  );
+
+  await db.query(
+    `UPDATE agent_leads SET status = 'Converted', updated_at = NOW() WHERE id = $1`,
+    [lead.id]
+  );
+  return result.rows[0];
+}
 
 export async function getProjectSummaries(whereSql = '', params = []) {
   await ensureProjectOpsSchema();

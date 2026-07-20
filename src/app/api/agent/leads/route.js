@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { ensureAgentSchema, requireAgent } from '@/lib/agent-auth';
+import { convertFinalLeadToProject, ensureProjectOpsSchema } from '@/lib/project-ops';
 
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const LEAD_STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
@@ -8,15 +9,18 @@ const LEAD_STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiatio
 export async function GET(req) {
   try {
     await ensureAgentSchema();
+    await ensureProjectOpsSchema();
     const agent = await requireAgent(req);
     if (!agent) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const result = await pool.query(
-      `SELECT * FROM agent_leads
-        WHERE agent_id = $1
-        ORDER BY COALESCE(follow_up_date, created_at::date) ASC, created_at DESC`,
+      `SELECT l.*, p.id AS project_id
+         FROM agent_leads l
+         LEFT JOIN projects p ON p.source_lead_id = l.id
+        WHERE l.agent_id = $1
+        ORDER BY COALESCE(l.follow_up_date, l.created_at::date) ASC, l.created_at DESC`,
       [agent.id]
     );
 
@@ -28,8 +32,10 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  let client;
   try {
     await ensureAgentSchema();
+    await ensureProjectOpsSchema();
     const agent = await requireAgent(req);
     if (!agent) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
@@ -45,7 +51,9 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Client name and phone are required' }, { status: 400 });
     }
 
-    const result = await pool.query(
+    client = await pool.connect();
+    await client.query('BEGIN');
+    const result = await client.query(
       `INSERT INTO agent_leads
         (agent_id, city, client_name, client_phone, client_email, service_type, lead_type,
          status, follow_up_date, notes,
@@ -74,16 +82,27 @@ export async function POST(req) {
       ]
     );
 
-    return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
+    const project = await convertFinalLeadToProject(client, result.rows[0].id);
+    await client.query('COMMIT');
+    return NextResponse.json({
+      success: true,
+      data: { ...result.rows[0], ...(project ? { status: 'Converted', project_id: project.id } : {}) },
+      project: project || undefined,
+    }, { status: 201 });
   } catch (error) {
+    if (client) await client.query('ROLLBACK').catch(() => {});
     console.error('Agent lead create error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+  } finally {
+    client?.release();
   }
 }
 
 export async function PATCH(req) {
+  let client;
   try {
     await ensureAgentSchema();
+    await ensureProjectOpsSchema();
     const agent = await requireAgent(req);
     if (!agent) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
@@ -99,7 +118,9 @@ export async function PATCH(req) {
       return NextResponse.json({ success: false, error: 'Lead id is required' }, { status: 400 });
     }
 
-    const result = await pool.query(
+    client = await pool.connect();
+    await client.query('BEGIN');
+    const result = await client.query(
       `UPDATE agent_leads
           SET client_name = COALESCE($1, client_name),
               client_phone = COALESCE($2, client_phone),
@@ -143,12 +164,22 @@ export async function PATCH(req) {
     );
 
     if (result.rows.length === 0) {
+      await client.query('ROLLBACK');
       return NextResponse.json({ success: false, error: 'Lead not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, data: result.rows[0] });
+    const project = await convertFinalLeadToProject(client, result.rows[0].id);
+    await client.query('COMMIT');
+    return NextResponse.json({
+      success: true,
+      data: { ...result.rows[0], ...(project ? { status: 'Converted', project_id: project.id } : {}) },
+      project: project || undefined,
+    });
   } catch (error) {
+    if (client) await client.query('ROLLBACK').catch(() => {});
     console.error('Agent lead update error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+  } finally {
+    client?.release();
   }
 }

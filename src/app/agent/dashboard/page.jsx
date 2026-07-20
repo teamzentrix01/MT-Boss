@@ -262,7 +262,8 @@ function AgentDashboardContent() {
         setLeads((prev) => prev.map((l) => l.id === editLead.id ? data.data : l));
         setLeadForm(resetLeadForm());
         setEditLead(null);
-        setMessage('Lead updated.');
+        setMessage(data.project ? 'Lead finalized and added to Projects.' : 'Lead updated.');
+        if (data.project) await loadProjects();
       } else {
         setMessage(data.error || 'Lead could not be updated.');
       }
@@ -278,7 +279,8 @@ function AgentDashboardContent() {
     if (data.success) {
       setLeads((prev) => [data.data, ...prev]);
       setLeadForm(resetLeadForm());
-      setMessage('Lead added for your assigned city.');
+      setMessage(data.project ? 'Lead finalized and added to Projects.' : 'Lead added for your assigned city.');
+      if (data.project) await loadProjects();
     } else {
       setMessage(data.error || 'Lead could not be saved.');
     }
@@ -310,7 +312,15 @@ function AgentDashboardContent() {
     });
     if (!res) return;
     const data = await res.json();
-    if (data.success) setLeads((prev) => prev.map((lead) => (lead.id === id ? data.data : lead)));
+    if (data.success) {
+      setLeads((prev) => prev.map((lead) => (lead.id === id ? data.data : lead)));
+      if (data.project) {
+        setMessage('Lead finalized and added to Projects.');
+        await loadProjects();
+      }
+    } else {
+      setMessage(data.error || 'Lead could not be updated.');
+    }
   }
 
   async function createTask(e) {

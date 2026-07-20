@@ -26,6 +26,7 @@ export default function AdminProjectManagementPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [project, setProject] = useState(null);
+  const [agents, setAgents] = useState([]);
   const [ops, setOps] = useState({ payments: [], labour: [], materials: [], expenses: [], media: [] });
   const [entryType, setEntryType] = useState('payment');
   const [entryForm, setEntryForm] = useState({});
@@ -36,6 +37,7 @@ export default function AdminProjectManagementPage() {
     client_phone: '',
     client_email: '',
     project_notes: '',
+    assigned_agent_id: '',
   });
   const [message, setMessage] = useState('');
 
@@ -72,6 +74,7 @@ export default function AdminProjectManagementPage() {
       }
 
       setProject(data.project);
+      setAgents(data.agents || []);
       setOps({
         payments: data.payments || [],
         labour: data.labour || [],
@@ -86,6 +89,7 @@ export default function AdminProjectManagementPage() {
         client_phone: data.project.client_phone || '',
         client_email: data.project.client_email || '',
         project_notes: data.project.project_notes || '',
+        assigned_agent_id: data.project.assigned_agent_id || '',
       });
     } catch (error) {
       console.error(error);
@@ -239,6 +243,13 @@ export default function AdminProjectManagementPage() {
               <label>
                 <span>Deal Amount</span>
                 <input className={input} type="number" value={form.deal_amount} onChange={(e) => setForm((f) => ({ ...f, deal_amount: e.target.value }))} />
+              </label>
+              <label className="wide">
+                <span>Assign Project To</span>
+                <select className={input} value={form.assigned_agent_id} onChange={(e) => setForm((f) => ({ ...f, assigned_agent_id: e.target.value }))}>
+                  <option value="">Unassigned</option>
+                  {agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name}{agent.city ? ` - ${agent.city}` : ''}</option>)}
+                </select>
               </label>
               <label>
                 <span>Client Name</span>
