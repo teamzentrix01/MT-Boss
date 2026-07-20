@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 const projectStatuses = ['lead', 'estimate_sent', 'final', 'started', 'ongoing', 'on_hold', 'completed', 'cancelled', 'lost'];
-const entryTypes = ['payment', 'labour', 'material', 'expense', 'media'];
+const entryTypes = ['payment', 'labour', 'material', 'expense', 'transport'];
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -27,7 +27,7 @@ export default function AdminProjectManagementPage() {
   const [saving, setSaving] = useState(false);
   const [project, setProject] = useState(null);
   const [agents, setAgents] = useState([]);
-  const [ops, setOps] = useState({ payments: [], labour: [], materials: [], expenses: [], media: [] });
+  const [ops, setOps] = useState({ payments: [], labour: [], materials: [], expenses: [], transport: [] });
   const [entryType, setEntryType] = useState('payment');
   const [entryForm, setEntryForm] = useState({});
   const [form, setForm] = useState({
@@ -80,7 +80,7 @@ export default function AdminProjectManagementPage() {
         labour: data.labour || [],
         materials: data.materials || [],
         expenses: data.expenses || [],
-        media: data.media || [],
+        transport: data.transport || [],
       });
       setForm({
         project_status: data.project.project_status || 'lead',
@@ -110,10 +110,11 @@ export default function AdminProjectManagementPage() {
     const labourPaid = Number(project?.labour_paid || 0);
     const material = Number(project?.material_cost || 0);
     const other = Number(project?.extra_expense || 0);
-    const spent = labour + material + other;
+    const transport = Number(project?.transport_cost || 0);
+    const spent = labour + material + other + transport;
     const profit = received - spent;
 
-    return { received, labour, labourPaid, material, other, spent, profit };
+    return { received, labour, labourPaid, material, other, transport, spent, profit };
   }, [project]);
 
   async function saveProject(event) {
@@ -220,6 +221,7 @@ export default function AdminProjectManagementPage() {
           <div className="ap-stat"><span>Material Expenses</span><strong>{money(totals.material)}</strong></div>
           <div className="ap-stat"><span>Labour Charge</span><strong>{money(totals.labour)}</strong></div>
           <div className="ap-stat"><span>Other Payments</span><strong>{money(totals.other)}</strong></div>
+          <div className="ap-stat"><span>Transport</span><strong>{money(totals.transport)}</strong></div>
           <div className="ap-stat"><span>Total Spent</span><strong>{money(totals.spent)}</strong></div>
           <div className={`ap-stat ${totals.profit >= 0 ? 'good' : 'bad'}`}><span>Left Profit</span><strong>{money(totals.profit)}</strong></div>
         </section>
@@ -276,7 +278,7 @@ export default function AdminProjectManagementPage() {
             <div className="ap-panel-head">
               <div>
                 <h2>Add Entry</h2>
-                <p>Record payments, purchase orders, labour, materials, and site media.</p>
+                <p>Record payments, purchase orders, labour, materials, expenses, and transport.</p>
               </div>
               <select className="ap-type" value={entryType} onChange={(e) => { setEntryType(e.target.value); setEntryForm({}); }}>
                 {entryTypes.map((type) => <option key={type} value={type}>{type}</option>)}
@@ -333,17 +335,23 @@ export default function AdminProjectManagementPage() {
               </div>
             )}
 
-            {entryType === 'media' && (
+            {entryType === 'transport' && (
               <div className="ap-form-grid">
-                <Field label="Media URL" value={entryForm.media_url} onChange={(value) => setEntryForm((f) => ({ ...f, media_url: value }))} required />
                 <label>
-                  <span>Type</span>
-                  <select className={input} value={entryForm.media_type || 'photo'} onChange={(e) => setEntryForm((f) => ({ ...f, media_type: e.target.value }))}>
-                    {['photo', 'video', 'bill'].map((type) => <option key={type}>{type}</option>)}
+                  <span>Transport Type</span>
+                  <select className={input} value={entryForm.transport_type || ''} onChange={(e) => setEntryForm((f) => ({ ...f, transport_type: e.target.value }))} required>
+                    <option value="">Select type</option>
+                    {['truck', 'tractor', 'tempo', 'loader', 'pickup', 'other'].map((type) => <option key={type}>{type}</option>)}
                   </select>
                 </label>
-                <Field label="Date" type="date" value={entryForm.media_date || todayIso()} onChange={(value) => setEntryForm((f) => ({ ...f, media_date: value }))} />
-                <Field label="Caption" className="wide" value={entryForm.caption} onChange={(value) => setEntryForm((f) => ({ ...f, caption: value }))} />
+                <Field label="Vehicle Number" value={entryForm.vehicle_number} onChange={(value) => setEntryForm((f) => ({ ...f, vehicle_number: value }))} />
+                <Field label="Driver Name" value={entryForm.driver_name} onChange={(value) => setEntryForm((f) => ({ ...f, driver_name: value }))} />
+                <Field label="Driver Phone" value={entryForm.driver_phone} onChange={(value) => setEntryForm((f) => ({ ...f, driver_phone: value }))} />
+                <Field label="From" value={entryForm.from_location} onChange={(value) => setEntryForm((f) => ({ ...f, from_location: value }))} />
+                <Field label="To" value={entryForm.to_location} onChange={(value) => setEntryForm((f) => ({ ...f, to_location: value }))} />
+                <Field label="Amount" type="number" value={entryForm.amount} onChange={(value) => setEntryForm((f) => ({ ...f, amount: value }))} />
+                <Field label="Date" type="date" value={entryForm.transport_date || todayIso()} onChange={(value) => setEntryForm((f) => ({ ...f, transport_date: value }))} />
+                <Field label="Note" className="wide" value={entryForm.notes} onChange={(value) => setEntryForm((f) => ({ ...f, notes: value }))} />
               </div>
             )}
 
@@ -380,11 +388,11 @@ export default function AdminProjectManagementPage() {
               {row.notes && <p>{row.notes}</p>}
             </>
           )} />
-          <History title="Site Media / Bills" type="media" rows={ops.media} onDelete={deleteEntry} render={(row) => (
+          <History title="Transport" type="transport" rows={ops.transport} onDelete={deleteEntry} render={(row) => (
             <>
-              <strong>{row.media_type} - {dateOnly(row.media_date)}</strong>
-              <span>{row.caption || row.media_url}</span>
-              {row.media_url && <a href={row.media_url} target="_blank" rel="noreferrer">Open file</a>}
+              <strong>{row.transport_type} - {money(row.amount)}</strong>
+              <span>{dateOnly(row.transport_date)} | {[row.from_location, row.to_location].filter(Boolean).join(' to ') || 'Route not set'}</span>
+              {(row.vehicle_number || row.driver_name || row.notes) && <p>{[row.vehicle_number, row.driver_name, row.notes].filter(Boolean).join(' | ')}</p>}
             </>
           )} />
         </section>
@@ -436,7 +444,7 @@ const pageStyles = `
   .ap-ghost{width:max-content;border:1px solid var(--border,#e5e7eb);background:var(--surface,#fff);color:var(--text,#111);border-radius:6px;padding:.5rem .85rem;font-size:.78rem;font-weight:800;cursor:pointer}
   .ap-status{border-radius:999px;background:var(--accent-lt,#eff6ff);color:var(--accent,#2563eb);padding:.35rem .75rem;font-size:.72rem;font-weight:900;text-transform:uppercase;white-space:nowrap}
   .ap-message{border:1px solid var(--border,#e5e7eb);background:var(--surface,#fff);border-left:4px solid var(--accent,#2563eb);border-radius:7px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.85rem;font-weight:700}
-  .ap-stats{display:grid;grid-template-columns:repeat(6,1fr);gap:.75rem;margin-bottom:1rem}
+  .ap-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:.75rem;margin-bottom:1rem}
   .ap-stat{background:var(--surface,#fff);border:1px solid var(--border,#e5e7eb);border-radius:8px;padding:.9rem}
   .ap-stat span{display:block;color:var(--muted,#6b7280);font-size:.67rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800}
   .ap-stat strong{display:block;margin-top:.3rem;font-size:1.1rem}

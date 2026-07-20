@@ -37,7 +37,7 @@ function AgentDashboardContent() {
   const [schedule, setSchedule] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [projectOps, setProjectOps] = useState({ payments: [], labour: [], materials: [], expenses: [], media: [] });
+  const [projectOps, setProjectOps] = useState({ payments: [], labour: [], materials: [], expenses: [], transport: [] });
   const [activeTab, setActiveTab] = useState('leads');
   const [message, setMessage] = useState('');
   const [editLead, setEditLead] = useState(null);
@@ -196,7 +196,7 @@ function AgentDashboardContent() {
         labour: data.labour || [],
         materials: data.materials || [],
         expenses: data.expenses || [],
-        media: data.media || [],
+        transport: data.transport || [],
       });
     }
   }
@@ -625,7 +625,7 @@ function AgentDashboardContent() {
                     <div className="flex items-center justify-between gap-3 mb-4">
                       <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">Daily Site Entry</p>
                       <select className={`border px-3 py-2 text-xs font-bold ${input}`} value={entryType} onChange={(e) => { setEntryType(e.target.value); setEntryForm({}); }}>
-                        {['payment', 'labour', 'material', 'expense', 'media'].map((type) => <option key={type} value={type}>{type}</option>)}
+                        {['payment', 'labour', 'material', 'expense', 'transport'].map((type) => <option key={type} value={type}>{type}</option>)}
                       </select>
                     </div>
 
@@ -669,13 +669,20 @@ function AgentDashboardContent() {
                       </div>
                     )}
 
-                    {entryType === 'media' && (
+                    {entryType === 'transport' && (
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Photo/video URL" value={entryForm.media_url || ''} onChange={(e) => setEntryForm((f) => ({ ...f, media_url: e.target.value }))} required />
-                        <select className={`border px-3 py-2 text-sm ${input}`} value={entryForm.media_type || 'photo'} onChange={(e) => setEntryForm((f) => ({ ...f, media_type: e.target.value }))}>
-                          {['photo', 'video', 'bill'].map((type) => <option key={type}>{type}</option>)}
+                        <select className={`border px-3 py-2 text-sm ${input}`} value={entryForm.transport_type || ''} onChange={(e) => setEntryForm((f) => ({ ...f, transport_type: e.target.value }))} required>
+                          <option value="">Transport type</option>
+                          {['truck', 'tractor', 'tempo', 'loader', 'pickup', 'other'].map((type) => <option key={type}>{type}</option>)}
                         </select>
-                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Caption" value={entryForm.caption || ''} onChange={(e) => setEntryForm((f) => ({ ...f, caption: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Vehicle number" value={entryForm.vehicle_number || ''} onChange={(e) => setEntryForm((f) => ({ ...f, vehicle_number: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Driver name" value={entryForm.driver_name || ''} onChange={(e) => setEntryForm((f) => ({ ...f, driver_name: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Driver phone" value={entryForm.driver_phone || ''} onChange={(e) => setEntryForm((f) => ({ ...f, driver_phone: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="From location" value={entryForm.from_location || ''} onChange={(e) => setEntryForm((f) => ({ ...f, from_location: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="To location" value={entryForm.to_location || ''} onChange={(e) => setEntryForm((f) => ({ ...f, to_location: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} type="number" placeholder="Transport amount" value={entryForm.amount || ''} onChange={(e) => setEntryForm((f) => ({ ...f, amount: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} type="date" value={entryForm.transport_date || todayIso()} onChange={(e) => setEntryForm((f) => ({ ...f, transport_date: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Notes" value={entryForm.notes || ''} onChange={(e) => setEntryForm((f) => ({ ...f, notes: e.target.value }))} />
                       </div>
                     )}
 
@@ -688,7 +695,7 @@ function AgentDashboardContent() {
                       ['Labour', projectOps.labour, (x) => `${x.work_date?.slice?.(0, 10) || ''} - ${x.labour_name} - Rs ${x.wage_amount}`],
                       ['Materials', projectOps.materials, (x) => `${x.entry_date?.slice?.(0, 10) || ''} - ${x.material_name} - ${x.quantity} ${x.unit || ''}`],
                       ['Expenses', projectOps.expenses, (x) => `${x.expense_date?.slice?.(0, 10) || ''} - ${x.expense_type} - Rs ${x.amount}`],
-                      ['Media', projectOps.media, (x) => `${x.media_date?.slice?.(0, 10) || ''} - ${x.media_type} - ${x.caption || x.media_url}`],
+                      ['Transport', projectOps.transport, (x) => `${x.transport_date?.slice?.(0, 10) || ''} - ${x.transport_type} - ${x.vehicle_number || ''} - Rs ${x.amount || 0}`],
                     ].map(([title, rows, render]) => (
                       <div key={title} className={`border ${card} p-4`}>
                         <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] mb-3">{title}</p>

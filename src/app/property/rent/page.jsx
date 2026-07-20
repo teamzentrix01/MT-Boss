@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
+import { PROPERTY_LOCATIONS } from "@/lib/property-locations";
 
 const PROPERTY_TYPES = ["Residential", "Commercial", "Plots"];
-const LOCATIONS      = ["Delhi", "Noida", "Gurgaon", "Faridabad", "Ghaziabad", "Greater Noida", "Bulandshahr", "Other"];
 
 const empty = {
   title: "", type: "Residential", location: "", address: "",
@@ -257,7 +257,7 @@ export default function RentPage() {
                 <label className={lbl}>Location *</label>
                 <select className={inp} value={form.location} onChange={e=>set("location",e.target.value)}>
                   <option value="">Select location</option>
-                  {LOCATIONS.map(l => <option key={l}>{l}</option>)}
+                  {PROPERTY_LOCATIONS.map(l => <option key={l}>{l}</option>)}
                 </select>
               </div>
             </div>

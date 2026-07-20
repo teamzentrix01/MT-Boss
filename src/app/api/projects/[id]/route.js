@@ -22,7 +22,7 @@ const ENTRY_TABLES = {
   labour: 'project_labour_entries',
   material: 'project_material_entries',
   expense: 'project_expenses',
-  media: 'project_media',
+  transport: 'project_transport_entries',
 };
 
 export async function GET(req, { params }) {
@@ -242,12 +242,29 @@ export async function POST(req, { params }) {
          VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
         [id, project.assigned_agent_id || null, body.expense_type, amount, body.expense_date || new Date(), body.notes || null]
       );
-    } else if (entryType === 'media') {
-      if (!body.media_url) return NextResponse.json({ success: false, error: 'Media URL is required' }, { status: 400 });
+    } else if (entryType === 'transport') {
+      const amount = Number(body.amount || 0);
+      if (!body.transport_type) {
+        return NextResponse.json({ success: false, error: 'Transport type is required' }, { status: 400 });
+      }
       result = await pool.query(
-        `INSERT INTO project_media (project_id, agent_id, media_type, media_url, caption, media_date)
-         VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-        [id, project.assigned_agent_id || null, body.media_type || 'photo', body.media_url, body.caption || null, body.media_date || new Date()]
+        `INSERT INTO project_transport_entries
+          (project_id, agent_id, transport_type, vehicle_number, driver_name, driver_phone,
+           from_location, to_location, amount, transport_date, notes)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+        [
+          id,
+          project.assigned_agent_id || null,
+          body.transport_type,
+          body.vehicle_number || null,
+          body.driver_name || null,
+          body.driver_phone || null,
+          body.from_location || null,
+          body.to_location || null,
+          amount,
+          body.transport_date || new Date(),
+          body.notes || null,
+        ]
       );
     } else {
       return NextResponse.json({ success: false, error: 'Unknown entry type' }, { status: 400 });
