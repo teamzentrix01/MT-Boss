@@ -269,8 +269,7 @@ function AgentDashboardContent() {
         setLeads((prev) => prev.map((l) => l.id === editLead.id ? data.data : l));
         setLeadForm(resetLeadForm());
         setEditLead(null);
-        setMessage(data.project ? 'Lead finalized and added to Projects.' : 'Lead updated.');
-        if (data.project) await loadProjects();
+        setMessage(data.project ? 'Lead finalized and sent to admin for project assignment.' : 'Lead updated.');
       } else {
         setMessage(data.error || 'Lead could not be updated.');
       }
@@ -286,8 +285,7 @@ function AgentDashboardContent() {
     if (data.success) {
       setLeads((prev) => [data.data, ...prev]);
       setLeadForm(resetLeadForm());
-      setMessage(data.project ? 'Lead finalized and added to Projects.' : 'Lead added for your assigned city.');
-      if (data.project) await loadProjects();
+      setMessage(data.project ? 'Lead finalized and sent to admin for project assignment.' : 'Lead added for your assigned city.');
     } else {
       setMessage(data.error || 'Lead could not be saved.');
     }
@@ -322,8 +320,7 @@ function AgentDashboardContent() {
     if (data.success) {
       setLeads((prev) => prev.map((lead) => (lead.id === id ? data.data : lead)));
       if (data.project) {
-        setMessage('Lead finalized and added to Projects.');
-        await loadProjects();
+        setMessage('Lead finalized and sent to admin for project assignment.');
       }
     } else {
       setMessage(data.error || 'Lead could not be updated.');
@@ -415,7 +412,10 @@ function AgentDashboardContent() {
             {['leads', 'projects', 'schedule', 'profile'].map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => {
+                  setActiveTab(tab);
+                  if (tab === 'projects') loadProjects();
+                }}
                 className={`px-5 py-2.5 border text-[10px] font-black uppercase tracking-widest ${activeTab === tab ? 'bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black' : `${card} ${muted}`}`}
               >
                 {tab}

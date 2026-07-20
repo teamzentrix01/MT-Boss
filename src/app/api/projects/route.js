@@ -10,10 +10,12 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
+    const kind = searchParams.get('kind');
+    const isAdminView = status === 'all' || kind === 'operational';
 
-    if (status === 'all' && !requireRole(req, 'admin')) return unauthorized();
+    if (isAdminView && !requireRole(req, 'admin')) return unauthorized();
 
-    if (status === 'all') {
+    if (kind === 'operational') {
       await ensureAgentSchema();
       await ensureProjectOpsSchema();
       const client = await pool.connect();
@@ -35,16 +37,35 @@ export async function GET(req) {
       } finally {
         client.release();
       }
-      return NextResponse.json({ success: true, data: await getProjectSummaries() });
+      const [data, agents] = await Promise.all([
+        getProjectSummaries("WHERE p.project_kind = 'operational'"),
+        pool.query(`SELECT id, name, city FROM agents WHERE status = 'Approved' ORDER BY name ASC`),
+      ]);
+      return NextResponse.json({ success: true, data, agents: agents.rows });
     }
 
-    const result = await pool.query("SELECT * FROM projects WHERE status = 'published' ORDER BY created_at DESC");
+    if (status === 'all') {
+      await ensureProjectOpsSchema();
+      return NextResponse.json({
+        success: true,
+        data: await getProjectSummaries("WHERE p.project_kind = 'portfolio'"),
+      });
+    }
+
+    await ensureProjectOpsSchema();
+    const result = await pool.query(
+      `SELECT id, title, category, location, description, image_url, cloudinary_public_id,
+              size, status, created_at
+         FROM projects
+        WHERE project_kind = 'portfolio' AND status = 'published'
+        ORDER BY created_at DESC`
+    );
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('GET projects error:', error.message);
     if (isDatabaseConnectionError(error)) {
       const { searchParams } = new URL(req.url);
-      if (searchParams.get('status') === 'all') {
+      if (searchParams.get('status') === 'all' || searchParams.get('kind') === 'operational') {
         return handleApiError(error);
       }
       return NextResponse.json(fallbackResponse(fallbackProjects));
@@ -63,9 +84,10 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Title, category and image are required' }, { status: 400 });
     }
 
+    await ensureProjectOpsSchema();
     const result = await pool.query(
-      `INSERT INTO projects (title, category, location, description, image_url, cloudinary_public_id, size, status)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+      `INSERT INTO projects (title, category, location, description, image_url, cloudinary_public_id, size, status, project_kind)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'portfolio') RETURNING *`,
       [title, category, location || '', description || '', image_url, cloudinary_public_id || '', size || 'small', status || 'published']
     );
 
@@ -79,13 +101,14 @@ export async function POST(req) {
 export async function PATCH(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
+    await ensureProjectOpsSchema();
 
     const { id, title, category, location, description, image_url, cloudinary_public_id, size, status } = await req.json();
 
     const result = await pool.query(
       `UPDATE projects SET title=$1, category=$2, location=$3, description=$4,
        image_url=$5, cloudinary_public_id=$6, size=$7, status=$8
-       WHERE id=$9 RETURNING *`,
+       WHERE id=$9 AND project_kind='portfolio' RETURNING *`,
       [title, category, location, description, image_url, cloudinary_public_id, size, status, id]
     );
 
@@ -101,6 +124,15 @@ export async function DELETE(req) {
 
     const { id, cloudinary_public_id } = await req.json();
 
+    await ensureProjectOpsSchema();
+    const portfolioProject = await pool.query(
+      "SELECT id FROM projects WHERE id = $1 AND project_kind = 'portfolio'",
+      [id]
+    );
+    if (!portfolioProject.rows[0]) {
+      return NextResponse.json({ success: false, error: 'Portfolio project not found' }, { status: 404 });
+    }
+
     // Delete from Cloudinary if public_id exists
     if (cloudinary_public_id) {
       await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/destroy`, {
@@ -114,7 +146,7 @@ export async function DELETE(req) {
       });
     }
 
-    await pool.query('DELETE FROM projects WHERE id = $1', [id]);
+    await pool.query("DELETE FROM projects WHERE id = $1 AND project_kind = 'portfolio'", [id]);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });

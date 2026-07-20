@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 
 const CATEGORIES = ['Commercial', 'Residential', 'Hospitality', 'Industrial', 'IT Infrastructure', 'Luxury Home'];
 const SIZES = [
@@ -16,7 +15,6 @@ const statusStyle = {
 };
 
 export default function ProjectsManager() {
-  const router = useRouter();
   const [projects, setProjects]       = useState([]);
   const [loading, setLoading]         = useState(true);
   const [showForm, setShowForm]       = useState(false);
@@ -37,7 +35,7 @@ export default function ProjectsManager() {
 
   const fetchProjects = async () => {
     try {
-      const res = await fetch('/api/projects?status=all');
+      const res = await fetch('/api/projects?status=all&kind=portfolio');
       const data = await res.json();
       if (data.success) setProjects(data.data);
     } catch (err) {
@@ -418,15 +416,6 @@ export default function ProjectsManager() {
                 <div
                   key={project.id}
                   className="pm-card"
-                  tabIndex={0}
-                  onClick={() => router.push(`/dashboard/projects/${project.id}`)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      router.push(`/dashboard/projects/${project.id}`);
-                    }
-                  }}
-                  title="Open project management"
                 >
                   {project.image_url
                     ? <img src={project.image_url} alt={project.title} className="pm-card-img" />

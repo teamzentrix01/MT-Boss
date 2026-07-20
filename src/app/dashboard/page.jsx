@@ -16,6 +16,7 @@ const ProfessionalEnquiriesManager = dynamicManager(() => import('../components/
 const ShopCategoriesManager = dynamicManager(() => import('../components/ShopCategoriesManager'));
 const PropertiesManager = dynamicManager(() => import('../components/PropertiesManager'));
 const ProjectsManager = dynamicManager(() => import('../components/ProjectsManager'));
+const OperationalProjectsManager = dynamicManager(() => import('../components/OperationalProjectsManager'));
 const VendorManagementAdmin = dynamicManager(() => import('../components/VendorManagementAdmin'));
 const SupplierHubAdmin = dynamicManager(() => import('../components/SupplierHubAdmin'));
 const FranchisesManager = dynamicManager(() => import('./franchises/page'));
@@ -326,7 +327,8 @@ function AdminDashboard() {
     { id: 'primary-service-enquiries',  label: 'Construction Enquiry',      icon: '✉'  },
     { id: 'professional-enquiries',     label: 'Professional Enquiries',    icon: '💬' },
     { id: 'professionals',              label: 'Professional Services',     icon: '👔' },
-    { id: 'projects',                   label: 'Projects',                  icon: '🏗️' },
+    { id: 'project-management',         label: 'Project Management',       icon: '📋' },
+    { id: 'projects',                   label: 'Portfolio Projects',        icon: '🏗️' },
     { id: 'properties',                 label: 'Properties',                icon: '⌂'  },
     { id: 'quick-services',             label: 'Quick Services',            icon: '⚡' },
     { id: 'revenue',                    label: 'Revenue & Earnings',        icon: '💸' },
@@ -1208,6 +1210,7 @@ function AdminDashboard() {
           {activeTab === 'agents' && <AgentsManager />}
           {activeTab === 'franchises' && <FranchisesManager />}
           {activeTab === 'projects' && <ProjectsManager />}
+          {activeTab === 'project-management' && <OperationalProjectsManager />}
           {activeTab === 'shop-categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'revenue' && <RevenueManager isDarkMode={isDarkMode} />}

@@ -35,7 +35,7 @@ export async function GET(req, { params }) {
       if (!requireRole(req, 'admin')) return unauthorized();
       await ensureAgentSchema();
 
-      const rows = await getProjectSummaries('WHERE p.id = $1', [id]);
+      const rows = await getProjectSummaries("WHERE p.id = $1 AND p.project_kind = 'operational'", [id]);
       const project = rows[0];
       if (!project) {
         return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
@@ -43,12 +43,26 @@ export async function GET(req, { params }) {
 
       const [ops, agents] = await Promise.all([
         getProjectOps(id),
-        pool.query(`SELECT id, name, city FROM agents WHERE status = 'Approved' ORDER BY name ASC`),
+        pool.query(
+          `SELECT id, name, city
+             FROM agents
+            WHERE status = 'Approved'
+              AND ($1 = '' OR LOWER(TRIM(COALESCE(city, ''))) = LOWER(TRIM($1)))
+            ORDER BY name ASC`,
+          [String(project.location || '').trim()]
+        ),
       ]);
       return NextResponse.json({ success: true, project, agents: agents.rows, ...ops });
     }
 
-    const result = await pool.query('SELECT * FROM projects WHERE id = $1', [id]);
+    await ensureProjectOpsSchema();
+    const result = await pool.query(
+      `SELECT id, title, category, location, description, image_url,
+              cloudinary_public_id, size, status, created_at
+         FROM projects
+        WHERE id = $1 AND project_kind = 'portfolio' AND status = 'published'`,
+      [id]
+    );
     if (result.rows.length === 0) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
@@ -62,20 +76,39 @@ export async function GET(req, { params }) {
 
 export async function PATCH(req, { params }) {
   try {
-    if (!requireRole(req, 'admin')) return unauthorized();
+    const admin = requireRole(req, 'admin');
+    if (!admin) return unauthorized();
     await ensureProjectOpsSchema();
 
     const { id } = await params;
     const body = await req.json();
     const nextStatus = PROJECT_STATUSES.has(body.project_status) ? body.project_status : null;
+    const assignmentProvided = Object.prototype.hasOwnProperty.call(body, 'assigned_agent_id');
+    const currentResult = await pool.query(
+      "SELECT id, location, assigned_agent_id FROM projects WHERE id = $1 AND project_kind = 'operational'",
+      [id]
+    );
+    const current = currentResult.rows[0];
+    if (!current) {
+      return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
+    }
 
-    if (body.assigned_agent_id) {
+    if (assignmentProvided && body.assigned_agent_id) {
       const agent = await pool.query(
-        `SELECT id FROM agents WHERE id = $1 AND status = 'Approved'`,
+        `SELECT id, name, city FROM agents WHERE id = $1 AND status = 'Approved'`,
         [body.assigned_agent_id]
       );
-      if (!agent.rows[0]) {
+      const selectedAgent = agent.rows[0];
+      if (!selectedAgent) {
         return NextResponse.json({ success: false, error: 'Select a valid approved agent' }, { status: 400 });
+      }
+      const projectCity = String(current.location || '').trim().toLowerCase();
+      const agentCity = String(selectedAgent.city || '').trim().toLowerCase();
+      if (projectCity && projectCity !== agentCity) {
+        return NextResponse.json(
+          { success: false, error: `Agent city must match project city (${current.location})` },
+          { status: 400 }
+        );
       }
     }
 
@@ -83,23 +116,35 @@ export async function PATCH(req, { params }) {
       `UPDATE projects
        SET project_status = COALESCE($1, project_status),
            deal_amount = COALESCE($2, deal_amount),
-           client_name = $3,
-           client_phone = $4,
-           client_email = $5,
-           project_notes = $6,
-           assigned_agent_id = CASE WHEN $7::TEXT = '' THEN NULL ELSE COALESCE($7::INTEGER, assigned_agent_id) END,
+           client_name = CASE WHEN $3::BOOLEAN THEN $4 ELSE client_name END,
+           client_phone = CASE WHEN $5::BOOLEAN THEN $6 ELSE client_phone END,
+           client_email = CASE WHEN $7::BOOLEAN THEN $8 ELSE client_email END,
+           project_notes = CASE WHEN $9::BOOLEAN THEN $10 ELSE project_notes END,
+           assigned_agent_id = CASE
+             WHEN $11::BOOLEAN THEN NULLIF($12::TEXT, '')::INTEGER
+             ELSE assigned_agent_id
+           END,
+           assigned_by_role = CASE WHEN $11::BOOLEAN THEN 'admin' ELSE assigned_by_role END,
+           assigned_by_id = CASE WHEN $11::BOOLEAN THEN $13 ELSE assigned_by_id END,
+           assigned_at = CASE WHEN $11::BOOLEAN AND assigned_agent_id IS DISTINCT FROM NULLIF($12::TEXT, '')::INTEGER THEN NOW() ELSE assigned_at END,
            started_at = CASE WHEN $1 IN ('started', 'ongoing', 'running') THEN COALESCE(started_at, NOW()) ELSE started_at END,
            completed_at = CASE WHEN $1 = 'completed' THEN COALESCE(completed_at, NOW()) ELSE completed_at END
-       WHERE id = $8
+       WHERE id = $14 AND project_kind = 'operational'
        RETURNING *`,
       [
         nextStatus,
         body.deal_amount === '' || body.deal_amount === undefined ? null : Number(body.deal_amount || 0),
-        body.client_name || null,
-        body.client_phone || null,
-        body.client_email || null,
-        body.project_notes || '',
-        body.assigned_agent_id === '' ? '' : body.assigned_agent_id || null,
+        Object.prototype.hasOwnProperty.call(body, 'client_name'),
+        body.client_name ?? null,
+        Object.prototype.hasOwnProperty.call(body, 'client_phone'),
+        body.client_phone ?? null,
+        Object.prototype.hasOwnProperty.call(body, 'client_email'),
+        body.client_email ?? null,
+        Object.prototype.hasOwnProperty.call(body, 'project_notes'),
+        body.project_notes ?? '',
+        assignmentProvided,
+        body.assigned_agent_id ?? '',
+        Number(admin.id || 0) || null,
         id,
       ]
     );
@@ -108,7 +153,7 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
 
-    const rows = await getProjectSummaries('WHERE p.id = $1', [id]);
+    const rows = await getProjectSummaries("WHERE p.id = $1 AND p.project_kind = 'operational'", [id]);
     return NextResponse.json({ success: true, data: rows[0] || result.rows[0] });
   } catch (error) {
     console.error('Admin project update error:', error);
@@ -125,7 +170,10 @@ export async function POST(req, { params }) {
     const body = await req.json();
     const entryType = body.entry_type;
 
-    const exists = await pool.query('SELECT id, assigned_agent_id FROM projects WHERE id = $1', [id]);
+    const exists = await pool.query(
+      "SELECT id, assigned_agent_id FROM projects WHERE id = $1 AND project_kind = 'operational'",
+      [id]
+    );
     const project = exists.rows[0];
     if (!project) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
@@ -222,6 +270,14 @@ export async function DELETE(req, { params }) {
     const table = ENTRY_TABLES[entry_type];
     if (!table || !id) {
       return NextResponse.json({ success: false, error: 'Entry type and id are required' }, { status: 400 });
+    }
+
+    const project = await pool.query(
+      "SELECT id FROM projects WHERE id = $1 AND project_kind = 'operational'",
+      [projectId]
+    );
+    if (!project.rows[0]) {
+      return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
 
     const result = await pool.query(

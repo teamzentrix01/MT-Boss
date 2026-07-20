@@ -11,7 +11,10 @@ import {
 const PROJECT_STATUSES = new Set(['lead', 'estimate_sent', 'final', 'started', 'running', 'completed', 'cancelled', 'lost']);
 
 async function getAssignedProject(projectId, agentId) {
-  const rows = await getProjectSummaries('WHERE p.id = $1 AND p.assigned_agent_id = $2', [projectId, agentId]);
+  const rows = await getProjectSummaries(
+    "WHERE p.id = $1 AND p.assigned_agent_id = $2 AND p.project_kind = 'operational'",
+    [projectId, agentId]
+  );
   return rows[0] || null;
 }
 
@@ -36,7 +39,10 @@ export async function GET(req) {
       return NextResponse.json({ success: true, project, ...ops });
     }
 
-    const projects = await getProjectSummaries('WHERE p.assigned_agent_id = $1', [agent.id]);
+    const projects = await getProjectSummaries(
+      "WHERE p.assigned_agent_id = $1 AND p.project_kind = 'operational'",
+      [agent.id]
+    );
     return NextResponse.json({ success: true, data: projects });
   } catch (error) {
     console.error('Agent projects fetch error:', error);
@@ -74,7 +80,7 @@ export async function PATCH(req) {
            project_notes = COALESCE($6, project_notes),
            started_at = CASE WHEN $1 IN ('started', 'running') THEN COALESCE(started_at, NOW()) ELSE started_at END,
            completed_at = CASE WHEN $1 = 'completed' THEN COALESCE(completed_at, NOW()) ELSE completed_at END
-       WHERE id = $7 AND assigned_agent_id = $8
+       WHERE id = $7 AND assigned_agent_id = $8 AND project_kind = 'operational'
        RETURNING *`,
       [
         nextStatus,

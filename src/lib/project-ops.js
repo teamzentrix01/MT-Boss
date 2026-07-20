@@ -14,8 +14,35 @@ export const ensureProjectOpsSchema = createInitializationGuard(async () => {
       ADD COLUMN IF NOT EXISTS deal_amount NUMERIC DEFAULT 0,
       ADD COLUMN IF NOT EXISTS project_status TEXT DEFAULT 'lead',
       ADD COLUMN IF NOT EXISTS source_lead_id INTEGER,
+      ADD COLUMN IF NOT EXISTS project_kind TEXT NOT NULL DEFAULT 'portfolio',
+      ADD COLUMN IF NOT EXISTS assigned_by_role TEXT,
+      ADD COLUMN IF NOT EXISTS assigned_by_id INTEGER,
+      ADD COLUMN IF NOT EXISTS assigned_at TIMESTAMPTZ,
       ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ,
       ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ
+  `);
+
+  await pool.query(`
+    UPDATE projects
+       SET project_kind = 'operational'
+     WHERE source_lead_id IS NOT NULL
+        OR created_by_role IN ('agent', 'franchise')
+  `);
+
+  // Finalized leads must enter the admin assignment queue. Legacy automatic
+  // assignments have no assignment audit metadata, so clear only those rows.
+  await pool.query(`
+    UPDATE projects
+       SET assigned_agent_id = NULL
+     WHERE project_kind = 'operational'
+       AND source_lead_id IS NOT NULL
+       AND assigned_agent_id IS NOT NULL
+       AND assigned_by_role IS NULL
+  `);
+
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS projects_project_kind_idx
+      ON projects (project_kind)
   `);
 
   await pool.query(`
@@ -113,13 +140,13 @@ export async function convertFinalLeadToProject(db, leadId) {
        title, category, location, description, image_url, cloudinary_public_id,
        size, status, franchise_id, assigned_agent_id, created_by_role,
        project_notes, client_name, client_phone, client_email, deal_amount,
-       project_status, source_lead_id
+       project_status, source_lead_id, project_kind
      )
-     VALUES ($1,$2,$3,$4,'/logo.png','', 'small','draft',$5,$6,$7,$8,$9,$10,$11,$12,'final',$13)
+     VALUES ($1,$2,$3,$4,'/logo.png','', 'small','draft',$5,NULL,$6,$7,$8,$9,$10,$11,'final',$12,'operational')
      ON CONFLICT (source_lead_id) WHERE source_lead_id IS NOT NULL
      DO UPDATE SET
        franchise_id = EXCLUDED.franchise_id,
-       assigned_agent_id = COALESCE(projects.assigned_agent_id, EXCLUDED.assigned_agent_id),
+       project_kind = 'operational',
        client_name = EXCLUDED.client_name,
        client_phone = EXCLUDED.client_phone,
        client_email = EXCLUDED.client_email,
@@ -131,7 +158,6 @@ export async function convertFinalLeadToProject(db, leadId) {
       lead.city || '',
       lead.client_requirement || lead.notes || '',
       lead.assigned_franchise_id || null,
-      lead.agent_id || null,
       lead.assigned_by_role || 'agent',
       [lead.client_requirement, lead.notes].filter(Boolean).join('\n\n'),
       lead.client_name,

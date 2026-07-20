@@ -202,7 +202,7 @@ export default function AdminProjectManagementPage() {
 
       <div className="ap-wrap">
         <div className="ap-head">
-          <button className="ap-ghost" onClick={() => router.push('/dashboard?tab=projects')}>Back to Projects</button>
+          <button className="ap-ghost" onClick={() => router.push('/dashboard?tab=project-management')}>Back to Project Management</button>
           <div className="ap-title-row">
             <div>
               <p className="ap-kicker">Project Management</p>
