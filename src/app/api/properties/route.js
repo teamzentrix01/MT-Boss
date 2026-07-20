@@ -76,8 +76,8 @@ export async function POST(req) {
       `INSERT INTO properties
         (title, type, listing_type, category, price, price_raw, location, address,
          beds, baths, area, description, highlights, images, tag,
-         seller_type, seller_name, seller_phone, seller_email, status)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,'pending')
+         seller_type, seller_name, seller_phone, seller_email, status, verified_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,'verified',NOW())
        RETURNING *`,
       [
         title, type, listing_type, category || type.toLowerCase(),

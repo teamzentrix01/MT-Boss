@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useServiceCities } from "@/hooks/useServiceCities";
+import { uploadPropertyImages } from "@/lib/property-image-upload";
 
 const PROPERTY_TYPES = ["Residential", "Commercial", "Plots"];
 
@@ -39,31 +40,6 @@ export default function RentPage() {
     setImages([]); // Clear previous URLs, will be filled after upload
   };
 
-  const uploadToCloudinary = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
-    formData.append("cloud_name", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME);
-
-    try {
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      const data = await res.json();
-      if (data.secure_url) {
-        return data.secure_url;
-      }
-      throw new Error(data.error?.message || "Upload failed");
-    } catch (err) {
-      console.error("Cloudinary upload error:", err);
-      throw err;
-    }
-  };
-
   const uploadAllImages = async () => {
     if (imageFiles.length === 0) {
       setImages([]);
@@ -75,15 +51,8 @@ export default function RentPage() {
     setError("");
 
     try {
-      const uploadedUrls = [];
-      
-      for (let i = 0; i < imageFiles.length; i++) {
-        const url = await uploadToCloudinary(imageFiles[i]);
-        uploadedUrls.push(url);
-        setUploadProgress(Math.round(((i + 1) / imageFiles.length) * 100));
-        setImages([...uploadedUrls]);
-      }
-
+      const uploadedUrls = await uploadPropertyImages(imageFiles, setUploadProgress);
+      setImages(uploadedUrls);
       return uploadedUrls;
     } catch (err) {
       setError("Image upload failed: " + err.message);
@@ -405,7 +374,7 @@ export default function RentPage() {
             <p className="text-6xl">🎉</p>
             <h2 className="text-xl font-black uppercase tracking-tight text-[var(--brand-blue)]">Rental Listing Submitted!</h2>
             <p className={`text-sm leading-relaxed ${muted}`}>
-              Your rental property has been submitted for review. Our admin team will verify it within <strong className={dark ? "text-white":"text-zinc-800"}>24–48 hours</strong>. Once approved, it will appear live on the Rent page.
+              Your rental property has been published successfully and is now available on the Rent Properties page. Admin can still review or moderate the listing.
             </p>
             <div className={`border rounded p-4 text-left space-y-1 ${dark ? "border-zinc-800":"border-gray-100"}`}>
               <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>What happens next</p>

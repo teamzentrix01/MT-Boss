@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import FilterBar from "../../components/buy-sale/FilterBar";
 
@@ -7,7 +7,7 @@ export default function BrowsePropertiesPage() {
   const [dark, setDark] = useState(true);
   const [mode, setMode] = useState("buy"); // buy | rent | all
   const [allProps, setAllProps] = useState([]);
-  const [filtered, setFiltered] = useState([]);
+  const [filters, setFilters] = useState({ type: 'All', location: '', minPrice: '', maxPrice: '', beds: 'Any' });
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -38,7 +38,6 @@ export default function BrowsePropertiesPage() {
             ...rentData.data.map(p => ({ ...p, listing_type: "rent" }))
           ];
           setAllProps(combined);
-          setFiltered(combined);
         }
       } catch (e) {
         console.error(e);
@@ -48,7 +47,7 @@ export default function BrowsePropertiesPage() {
     })();
   }, []);
 
-  const handleFilter = (filters) => {
+  const filtered = useMemo(() => {
     let result = [...allProps];
 
     // Filter by mode (buy/rent/all)
@@ -86,8 +85,10 @@ export default function BrowsePropertiesPage() {
       }
     }
 
-    setFiltered(result);
-  };
+    return result;
+  }, [allProps, filters, mode]);
+
+  const handleFilter = (nextFilters) => setFilters(nextFilters);
 
   const goToDetail = (propertyId) => {
     router.push(`/property/details/${propertyId}`);
@@ -122,7 +123,7 @@ export default function BrowsePropertiesPage() {
         {/* Mode Toggle */}
         <div className="flex justify-center gap-3 mt-8">
           <button
-            onClick={() => { setMode("buy"); handleFilter({}); }}
+            onClick={() => setMode("buy")}
             className={`px-6 py-2.5 text-xs font-black uppercase tracking-widest transition-all rounded-sm ${
               mode === "buy"
                 ? "bg-[var(--brand-blue)] text-black"
@@ -132,7 +133,7 @@ export default function BrowsePropertiesPage() {
             🏠 Buy Properties ({buyCount})
           </button>
           <button
-            onClick={() => { setMode("rent"); handleFilter({}); }}
+            onClick={() => setMode("rent")}
             className={`px-6 py-2.5 text-xs font-black uppercase tracking-widest transition-all rounded-sm ${
               mode === "rent"
                 ? "bg-blue-500 text-white"
@@ -142,7 +143,7 @@ export default function BrowsePropertiesPage() {
             🔑 Rent Properties ({rentCount})
           </button>
           <button
-            onClick={() => { setMode("all"); handleFilter({}); }}
+            onClick={() => setMode("all")}
             className={`px-6 py-2.5 text-xs font-black uppercase tracking-widest transition-all rounded-sm ${
               mode === "all"
                 ? "bg-purple-500 text-white"
