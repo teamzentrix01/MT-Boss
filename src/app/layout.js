@@ -38,10 +38,10 @@ export default function RootLayout({ children }) {
       }
       if (phoneLike(el)) {
         const rawDigits = value.replace(/\D/g, '');
-        let digits = rawDigits.length > 10 ? rawDigits.slice(-10) : rawDigits.slice(0, 10);
-        if (digits && !/^[6-9]/.test(digits)) digits = '';
-        if (el.value !== digits) el.value = digits;
-        el.setCustomValidity(!digits || /^[6-9]\d{9}$/.test(digits) ? '' : 'Enter a valid 10-digit mobile number starting with 6, 7, 8 or 9.');
+        const digits = rawDigits.length > 10 ? rawDigits.slice(-10) : rawDigits;
+        // Do not write to el.value here. React owns controlled input values, and
+        // changing the DOM from this global listener can make typed digits vanish.
+        el.setCustomValidity(/^[6-9]\d{9}$/.test(digits) ? '' : 'Enter a valid 10-digit mobile number starting with 6, 7, 8 or 9.');
         return !el.validationMessage;
       }
       if (el.type === 'email') {

@@ -38,6 +38,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [iconUploading, setIconUploading] = useState(false);
+  const [customCity, setCustomCity] = useState('');
 
   // ── Drag & Drop state ──────────────────────────────────────────────────────
   const [dragIndex, setDragIndex] = useState(null);
@@ -203,7 +204,17 @@ export default function QuickServicesManager({ isDarkMode }) {
 
   const resetForm = () => {
     setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150', main_category: '', sub_category: '', cities: [] });
+    setCustomCity('');
     setEditingId(null); setShowForm(false);
+  };
+
+  const addCustomCity = () => {
+    const city = customCity.trim().replace(/\s+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+    if (!city) return;
+    if (!formData.cities.some((item) => item.toLowerCase() === city.toLowerCase())) {
+      setFormData({ ...formData, cities: [...formData.cities, city] });
+    }
+    setCustomCity('');
   };
 
   if (loading) return <div style={{ color: 'var(--qs-muted)', fontSize: '0.8125rem' }}>Loading…</div>;
@@ -459,6 +470,22 @@ export default function QuickServicesManager({ isDarkMode }) {
                 </div>
                 <div className="qs-form-full">
                   <label className="qs-label">Available Cities *</label>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <input
+                      className="qs-input"
+                      type="text"
+                      placeholder="Type a city not listed below"
+                      value={customCity}
+                      onChange={e => setCustomCity(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addCustomCity();
+                        }
+                      }}
+                    />
+                    <button type="button" className="qs-act qs-act-edit" onClick={addCustomCity}>Add City</button>
+                  </div>
                   <select className="qs-input" value="" onChange={e => {
                     const city = e.target.value;
                     if (city && !formData.cities.includes(city)) {

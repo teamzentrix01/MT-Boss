@@ -3,8 +3,10 @@ import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { createInitializationGuard, handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 import { fallbackQuickServices, fallbackResponse } from '@/lib/public-fallbacks';
+import { ensureServiceCitiesSchema, normalizeCityList } from '@/lib/service-cities';
 
 const ensureQuickServiceSeoColumns = createInitializationGuard(async () => {
+  await ensureServiceCitiesSchema();
   try {
     await pool.query(`
       ALTER TABLE quick_services
@@ -122,6 +124,10 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+    const normalizedCities = normalizeCityList(cities);
+    if (normalizedCities.length === 0) {
+      return NextResponse.json({ error: 'At least one valid city is required' }, { status: 400 });
+    }
 
     const result = await pool.query(
       `INSERT INTO quick_services (
@@ -146,7 +152,7 @@ export async function POST(req) {
         seo_description || null,
         coverage_details || null,
         how_to_use || null,
-        Array.isArray(cities) ? [...new Set(cities.map(city => String(city).trim()).filter(Boolean))] : [],
+        normalizedCities,
       ]
     );
 
@@ -191,6 +197,10 @@ export async function PUT(req) {
         { status: 400 }
       );
     }
+    const normalizedCities = normalizeCityList(cities);
+    if (normalizedCities.length === 0) {
+      return NextResponse.json({ error: 'At least one valid city is required' }, { status: 400 });
+    }
 
     const result = await pool.query(
       `UPDATE quick_services
@@ -215,7 +225,7 @@ export async function PUT(req) {
         seo_description || null,
         coverage_details || null,
         how_to_use || null,
-        Array.isArray(cities) ? [...new Set(cities.map(city => String(city).trim()).filter(Boolean))] : [],
+        normalizedCities,
         id,
       ]
     );
@@ -223,6 +233,22 @@ export async function PUT(req) {
     if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Service not found' }, { status: 404 });
     }
+
+    // Removing a service city also removes that service from vendors operating
+    // outside the remaining coverage, so stale assignments cannot receive jobs.
+    await pool.query(
+      `UPDATE vendor_services vs
+          SET is_active = FALSE
+         FROM vendors v
+        WHERE vs.vendor_id = v.id
+          AND vs.quick_service_id = $1
+          AND vs.is_active = TRUE
+          AND NOT EXISTS (
+            SELECT 1 FROM UNNEST($2::text[]) configured_city
+            WHERE LOWER(TRIM(configured_city)) = LOWER(TRIM(v.city))
+          )`,
+      [id, normalizedCities]
+    );
 
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {

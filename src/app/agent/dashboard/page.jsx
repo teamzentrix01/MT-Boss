@@ -8,6 +8,13 @@ const leadStages = ['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Fina
 const scheduleStatuses = ['Planned', 'Done', 'Cancelled'];
 const projectStatuses = ['lead', 'estimate_sent', 'final', 'started', 'running', 'completed', 'cancelled', 'lost'];
 
+function phoneInputValue(value) {
+  const digits = String(value || '').replace(/\D/g, '');
+  return digits.length > 10 && digits.startsWith('91')
+    ? digits.slice(2, 12)
+    : digits.slice(0, 10);
+}
+
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -462,7 +469,24 @@ function AgentDashboardContent() {
               ].map(([label, key, type]) => (
                 <div key={key} className="mb-3">
                   <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>{label}</label>
-                  <input className={`w-full border px-3 py-2 text-sm outline-none ${input}`} type={type} value={leadForm[key]} onChange={(e) => setLeadForm((f) => ({ ...f, [key]: e.target.value }))} required={key === 'clientName' || key === 'clientPhone'} />
+                  <input
+                    className={`w-full border px-3 py-2 text-sm outline-none ${input}`}
+                    type={type}
+                    name={key}
+                    value={leadForm[key]}
+                    onChange={(e) => {
+                      const value = key === 'clientPhone' ? phoneInputValue(e.target.value) : e.target.value;
+                      setLeadForm((f) => ({ ...f, [key]: value }));
+                    }}
+                    required={key === 'clientName' || key === 'clientPhone'}
+                    {...(key === 'clientPhone' ? {
+                      inputMode: 'numeric',
+                      // Allow a pasted +91 value; onChange stores only 10 digits.
+                      maxLength: 16,
+                      pattern: '[6-9][0-9]{9}',
+                      placeholder: '10-digit mobile number',
+                    } : {})}
+                  />
                 </div>
               ))}
               <div className="grid grid-cols-2 gap-3 mb-3">

@@ -16,7 +16,6 @@ const TIME_SLOTS = [
 ];
 
 const PROPERTY_TYPES = ['Apartment', 'Independent House', 'Villa', 'Office / Commercial', 'Shop / Showroom', 'Other'];
-const SUPPORTED_CITIES = ['Moradabad', 'Bareilly', 'Meerut', 'Noida', 'Delhi', 'Gurgaon', 'Haldwani', 'Dehradun'];
 
 function getTodayStr() {
   return new Date().toISOString().split('T')[0];
@@ -583,7 +582,7 @@ export default function QuickServiceSlugPage() {
                       }}
                     >
                       <option value="">Select a city</option>
-                      {SUPPORTED_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                      {(service.cities || []).map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                     <button
                       type="button"

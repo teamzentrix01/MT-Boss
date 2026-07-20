@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireAnyRole, unauthorized } from '@/lib/auth';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { resolveServiceCity } from '@/lib/service-cities';
 
 const ensureFreeSlotsColumns = createInitializationGuard(async () => {
   await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS current_bookings INTEGER DEFAULT 0`);
@@ -87,13 +88,17 @@ export async function POST(req) {
     if (!quick_service_id || !slot_date || !slot_start || !slot_end || !city) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
+    const canonicalCity = await resolveServiceCity(quick_service_id, city);
+    if (!canonicalCity) {
+      return NextResponse.json({ error: 'This city is not configured for the selected service' }, { status: 400 });
+    }
 
     const result = await pool.query(
       `INSERT INTO free_time_slots
          (quick_service_id, slot_date, slot_start, slot_end, city, max_bookings, current_bookings, is_available, created_at)
        VALUES ($1, $2::DATE, $3, $4, $5, $6, 0, TRUE, NOW())
        RETURNING *, TO_CHAR(slot_date::DATE, 'YYYY-MM-DD') AS slot_date`,
-      [quick_service_id, slot_date, slot_start, slot_end, city.trim(), Math.max(Number(max_bookings) || 1, 1)]
+      [quick_service_id, slot_date, slot_start, slot_end, canonicalCity, Math.max(Number(max_bookings) || 1, 1)]
     );
 
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });

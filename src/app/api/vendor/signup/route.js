@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { ensurePackageSchema, getPackageById } from '@/lib/packages';
 import { cleanText, normalizePhone, isValidEmail, isValidIndianMobile } from '@/lib/validation';
+import { cleanCity, ensureServiceCitiesSchema } from '@/lib/service-cities';
 
 export async function POST(req) {
   let client;
@@ -67,6 +68,7 @@ export async function POST(req) {
     email = cleanText(email).toLowerCase();
     phone = normalizePhone(phone);
     postal_code = cleanText(postal_code);
+    city = cleanCity(city);
 
     console.log('✅ [SIGNUP] Data parsed:', { email, phone, city, services: services.length });
 
@@ -106,6 +108,39 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+
+    const serviceIds = [...new Set(
+      services
+        .map((serviceId) => Number(serviceId))
+        .filter((serviceId) => Number.isInteger(serviceId) && serviceId > 0)
+    )];
+    if (serviceIds.length !== services.length) {
+      return NextResponse.json({ error: 'Invalid service selection' }, { status: 400 });
+    }
+
+    await ensureServiceCitiesSchema();
+    const coveredServices = await pool.query(
+      `SELECT qs.id, qs.label, configured_city AS canonical_city
+       FROM quick_services qs
+       CROSS JOIN LATERAL (
+         SELECT TRIM(city_name) AS configured_city
+         FROM UNNEST(COALESCE(qs.cities, '{}')) city_name
+         WHERE LOWER(TRIM(city_name)) = LOWER(TRIM($1))
+         LIMIT 1
+       ) coverage
+       WHERE qs.id = ANY($2::int[])
+         AND COALESCE(qs.is_service_active, TRUE) = TRUE`,
+      [city, serviceIds]
+    );
+    if (coveredServices.rows.length !== serviceIds.length) {
+      return NextResponse.json(
+        { error: 'Every selected service must be available in the selected city. Please select the city again.' },
+        { status: 400 }
+      );
+    }
+
+    city = coveredServices.rows[0].canonical_city;
+    services = serviceIds;
 
     // ════════════════════════════════════════════════════════════════
     // CHECK DUPLICATE EMAIL

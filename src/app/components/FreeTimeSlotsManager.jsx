@@ -25,6 +25,8 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
     city: defaultCity || '',
     max_bookings: 1,
   });
+  const selectedService = services.find((service) => String(service.id) === String(formData.quick_service_id));
+  const formCityOptions = selectedService?.cities || [];
 
   useEffect(() => {
     fetchData();
@@ -320,7 +322,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
                 <select
                   className="form-select"
                   value={formData.quick_service_id}
-                  onChange={(e) => setFormData({ ...formData, quick_service_id: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, quick_service_id: e.target.value, city: '' })}
                 >
                   <option value="">Select Service</option>
                   {services.map((service) => (
@@ -333,13 +335,15 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
 
               <div className="form-group">
                 <label className="form-label">City *</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="e.g., Moradabad"
+                <select
+                  className="form-select"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                />
+                  disabled={!formData.quick_service_id}
+                >
+                  <option value="">Select configured service city</option>
+                  {formCityOptions.map((city) => <option key={city} value={city}>{city}</option>)}
+                </select>
               </div>
 
               <div className="form-group">

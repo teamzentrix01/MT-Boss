@@ -808,14 +808,24 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
   );
 }
 
-const SUPPORTED_CITIES = ['Moradabad', 'Bareilly', 'Meerut', 'Noida', 'Delhi', 'Gurgaon', 'Haldwani', 'Dehradun'];
-
 // ─── Location Check Modal ──────────────────────────────────────────────────────
 function LocationCheckModal({ service, isDark, onClose, onProceed }) {
   const [selectedCity, setSelectedCity] = useState('');
+  const [serviceCities, setServiceCities] = useState(
+    Array.isArray(service.cities) ? service.cities : []
+  );
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState('');
   const [available, setAvailable] = useState(null);
+
+  useEffect(() => {
+    fetch(`/api/quick-services/${service.id}/cities`, { cache: 'no-store' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) setServiceCities(data.cities || []);
+      })
+      .catch(() => {});
+  }, [service.id]);
 
   const handleVerify = async (val) => {
     const cityVal = val || selectedCity;
@@ -904,7 +914,7 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
                 }}
               >
                 <option value="">Select a city</option>
-                {SUPPORTED_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                {serviceCities.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
               <button
                 type="button"

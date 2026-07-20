@@ -9,6 +9,14 @@ export default function VendorManagementAdmin({ isDarkMode }) {
   const [filter, setFilter] = useState('all'); // all, pending, verified, active, inactive
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [allServices, setAllServices] = useState([]);
+  const [selectedServiceIds, setSelectedServiceIds] = useState([]);
+  const [serviceSaving, setServiceSaving] = useState(false);
+  const vendorCityServices = selectedVendor
+    ? allServices.filter((service) => (service.cities || []).some(
+        (city) => String(city).trim().toLowerCase() === String(selectedVendor.city || '').trim().toLowerCase()
+      ))
+    : [];
 
   // Fetch vendors
   useEffect(() => {
@@ -55,6 +63,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
       if (data.success) {
         const vendorList = data.data || [];
         setVendors(vendorList);
+        setAllServices(data.available_services || []);
         console.log('✅ Vendors loaded successfully:', vendorList.length);
       } else {
         const errorMsg = data.error || 'Unknown error';
@@ -67,6 +76,39 @@ export default function VendorManagementAdmin({ isDarkMode }) {
       console.error('❌ Fetch Error:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openVendor = (vendor) => {
+    setSelectedVendor(vendor);
+    setSelectedServiceIds((vendor.services || []).map((service) => Number(service.id)));
+  };
+
+  const handleSaveServices = async () => {
+    if (!selectedVendor) return;
+    setServiceSaving(true);
+    try {
+      const res = await fetch('/api/admin/vendors', {
+        method: 'PUT',
+        headers: getAdminHeaders('application/json'),
+        body: JSON.stringify({
+          vendor_id: selectedVendor.id,
+          action: 'update_services',
+          services: selectedServiceIds,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Services could not be updated');
+
+      const services = data.services || [];
+      setVendors((current) => current.map((vendor) =>
+        vendor.id === selectedVendor.id ? { ...vendor, services } : vendor
+      ));
+      setSelectedVendor((current) => current ? { ...current, services } : current);
+    } catch (err) {
+      setError(err.message || 'Services could not be updated');
+    } finally {
+      setServiceSaving(false);
     }
   };
 
@@ -589,6 +631,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
               <th>Shop Name</th>
               <th>Email</th>
               <th>City</th>
+              <th>Services</th>
               <th>Verification</th>
               <th>Status</th>
               <th>Action</th>
@@ -603,6 +646,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
                 </td>
                 <td className="vendor-meta">{vendor.email}</td>
                 <td className="vendor-meta">{vendor.city}</td>
+                <td className="vendor-meta">{vendor.services?.length || 0}</td>
                 <td>
                   <span className={`badge badge-${vendor.verification_status}`}>
                     {vendor.verification_status}
@@ -616,7 +660,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
                 <td>
                   <button
                     className="action-btn"
-                    onClick={() => setSelectedVendor(vendor)}
+                    onClick={() => openVendor(vendor)}
                   >
                     View Details
                   </button>
@@ -673,6 +717,44 @@ export default function VendorManagementAdmin({ isDarkMode }) {
                   <div className="modal-value">{selectedVendor.postal_code || '—'}</div>
                 </div>
               </div>
+            </div>
+
+            {/* Assigned quick services */}
+            <div className="modal-section">
+              <div className="modal-section-title">Assigned Services</div>
+              {allServices.length === 0 ? (
+                <div className="modal-value">No active quick services are available.</div>
+              ) : vendorCityServices.length === 0 ? (
+                <div className="modal-value">No services are configured for {selectedVendor.city}.</div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.5rem' }}>
+                  {vendorCityServices.map((service) => {
+                    const serviceId = Number(service.id);
+                    const checked = selectedServiceIds.includes(serviceId);
+                    return (
+                      <label key={service.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem', border: `1px solid ${isDarkMode ? '#333' : '#e2e2e7'}`, borderRadius: 6, cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => setSelectedServiceIds((current) =>
+                            checked ? current.filter((id) => id !== serviceId) : [...current, serviceId]
+                          )}
+                        />
+                        <span className="modal-value">{service.icon ? `${service.icon} ` : ''}{service.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+              <button
+                type="button"
+                className="modal-btn modal-btn-approve"
+                style={{ marginTop: '0.75rem', width: '100%' }}
+                disabled={serviceSaving}
+                onClick={handleSaveServices}
+              >
+                {serviceSaving ? 'Saving Services...' : `Save Assigned Services (${selectedServiceIds.length})`}
+              </button>
             </div>
 
             {/* Aadhaar */}

@@ -33,6 +33,20 @@ export default function VendorSignupPage() {
     package_id: 'pkg_6m',
   });
 
+  const availableCities = [...new Map(
+    services
+      .flatMap((service) => Array.isArray(service.cities) ? service.cities : [])
+      .map((city) => String(city).trim())
+      .filter(Boolean)
+      .map((city) => [city.toLowerCase(), city])
+  ).values()].sort((a, b) => a.localeCompare(b));
+
+  const cityServices = formData.city
+    ? services.filter((service) => (service.cities || []).some(
+        (city) => String(city).trim().toLowerCase() === formData.city.trim().toLowerCase()
+      ))
+    : [];
+
   useEffect(() => {
     const html = document.documentElement;
     const update = () => setDark(html.classList.contains('dark-mode'));
@@ -62,6 +76,8 @@ export default function VendorSignupPage() {
     if (name === 'phone') {
       const rawDigits = value.replace(/\D/g, '');
       setFormData(prev => ({ ...prev, phone: rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '' }));
+    } else if (name === 'city') {
+      setFormData(prev => ({ ...prev, city: value, services: [] }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -611,14 +627,16 @@ const handleSubmit = async (e) => {
                   <div className="vs-row">
                     <div className="vs-field">
                       <label className="vs-label">City *</label>
-                      <input
+                      <select
                         className="vs-input"
-                        type="text"
                         name="city"
                         value={formData.city}
                         onChange={handleChange}
-                        placeholder="Delhi"
-                      />
+                        disabled={loadingServices}
+                      >
+                        <option value="">{loadingServices ? 'Loading service cities...' : 'Select service city'}</option>
+                        {availableCities.map((city) => <option key={city} value={city}>{city}</option>)}
+                      </select>
                     </div>
                     <div className="vs-field">
                       <label className="vs-label">State *</label>
@@ -734,9 +752,9 @@ const handleSubmit = async (e) => {
                     <div style={{ textAlign: 'center', padding: '2rem', color: dark ? '#555' : '#aaa', fontSize: '0.85rem' }}>
                       Loading services...
                     </div>
-                  ) : services.length > 0 ? (
+                  ) : cityServices.length > 0 ? (
                     <div className="vs-services">
-                      {services.map(service => (
+                      {cityServices.map(service => (
                         <label
                           key={service.id}
                           className={`vs-service-card ${formData.services.includes(service.id) ? 'selected' : ''}`}
@@ -755,7 +773,7 @@ const handleSubmit = async (e) => {
                     </div>
                   ) : (
                     <div style={{ textAlign: 'center', padding: '2rem', color: dark ? '#555' : '#aaa', fontSize: '0.85rem' }}>
-                      No services available
+                      No services are configured for {formData.city || 'the selected city'}. Please go back and choose another city.
                     </div>
                   )}
                   {formData.services.length > 0 && (

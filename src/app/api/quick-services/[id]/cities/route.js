@@ -1,15 +1,12 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { getServiceCities } from '@/lib/service-cities';
 
 export async function GET(req, { params }) {
   try {
     const { id } = await params;
 
-    const configured = await pool.query(
-      `SELECT cities FROM quick_services WHERE id = $1 LIMIT 1`,
-      [id]
-    );
-    const configuredCities = configured.rows[0]?.cities || [];
+    const configuredCities = await getServiceCities(id);
 
     // Explicit admin coverage is authoritative. Vendor-derived cities remain as
     // a backward-compatible fallback for services that have not been edited yet.

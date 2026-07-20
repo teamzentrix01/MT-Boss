@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireAnyRole, unauthorized } from '@/lib/auth';
+import { resolveServiceCity } from '@/lib/service-cities';
 
 function hasToken(req) {
   return Boolean(requireAnyRole(req, ['admin', 'franchise']));
@@ -15,6 +16,18 @@ export async function PATCH(req, { params }) {
 
     const { id } = await params;
     const body = await req.json();
+    const current = await pool.query(
+      `SELECT quick_service_id, city FROM free_time_slots WHERE id = $1`,
+      [id]
+    );
+    if (current.rows.length === 0) {
+      return NextResponse.json({ error: 'Slot not found' }, { status: 404 });
+    }
+    const serviceId = body.quick_service_id || current.rows[0].quick_service_id;
+    const canonicalCity = await resolveServiceCity(serviceId, body.city || current.rows[0].city);
+    if (!canonicalCity) {
+      return NextResponse.json({ error: 'This city is not configured for the selected service' }, { status: 400 });
+    }
 
     const result = await pool.query(
       `UPDATE free_time_slots
@@ -32,7 +45,7 @@ export async function PATCH(req, { params }) {
         body.slot_date || null,
         body.slot_start || null,
         body.slot_end || null,
-        body.city || null,
+        canonicalCity,
         body.max_bookings === undefined ? null : Number(body.max_bookings),
         body.is_available,
         id,

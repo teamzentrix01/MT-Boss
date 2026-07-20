@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireAdmin } from '@/lib/agent-auth';
+import { ensureServiceCitiesSchema } from '@/lib/service-cities';
 
 // ═══════════════════════════════════════════════════════════════════════
 // VERIFY ADMIN TOKEN
@@ -19,22 +20,44 @@ export async function GET(req) {
         { status: 401 }
       );
     }
+    await ensureServiceCitiesSchema();
 
     const result = await pool.query(
       `SELECT
-        id, email, shop_name, phone,
-        city, state, country, postal_code,
-        aadhar_number,
-        (profile_photo IS NOT NULL) AS profile_photo,
-        (aadhar_image  IS NOT NULL) AS aadhar_image,
-        status, verification_status, is_approved, created_at, updated_at
-       FROM vendors
-       ORDER BY created_at DESC`
+        v.id, v.email, v.shop_name, v.phone,
+        v.city, v.state, v.country, v.postal_code,
+        v.aadhar_number,
+        (v.profile_photo IS NOT NULL) AS profile_photo,
+        (v.aadhar_image  IS NOT NULL) AS aadhar_image,
+        v.status, v.verification_status, v.is_approved, v.created_at, v.updated_at,
+        COALESCE(assigned.services, '[]'::json) AS services
+       FROM vendors v
+       LEFT JOIN LATERAL (
+         SELECT json_agg(
+           json_build_object(
+             'id', qs.id,
+             'label', qs.label,
+             'icon', qs.icon
+           ) ORDER BY qs.label
+         ) AS services
+         FROM vendor_services vs
+         JOIN quick_services qs ON qs.id = vs.quick_service_id
+         WHERE vs.vendor_id = v.id AND vs.is_active = TRUE
+       ) assigned ON TRUE
+       ORDER BY v.created_at DESC`
+    );
+
+    const servicesResult = await pool.query(
+      `SELECT id, label, icon, cities
+       FROM quick_services
+       WHERE COALESCE(is_service_active, TRUE) = TRUE
+       ORDER BY label ASC`
     );
 
     return NextResponse.json({
       success: true,
-      data: result.rows
+      data: result.rows,
+      available_services: servicesResult.rows,
     });
 
   } catch (error) {
@@ -77,6 +100,7 @@ export async function PUT(req) {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+      await ensureServiceCitiesSchema();
 
       if (action === 'approve') {
         // Approve vendor and assign services
@@ -89,14 +113,6 @@ export async function PUT(req) {
   WHERE id = $1
   RETURNING *
 `, [vendor_id]);
-
-// ✅ Send approval email to vendor
-try {
-  await sendApprovalEmail(vendor.email, vendor.shop_name);
-  console.log('✅ Approval email sent');
-} catch (err) {
-  console.warn('⚠ Email failed (non-critical)');
-}
 
         if (vendorResult.rows.length === 0) {
           await client.query('ROLLBACK');
@@ -214,6 +230,73 @@ try {
           success: true,
           message: 'Vendor deactivated successfully',
           data: vendorResult.rows[0]
+        });
+      } else if (action === 'update_services') {
+        const serviceIds = [...new Set(
+          (Array.isArray(services) ? services : [])
+            .map((serviceId) => Number(serviceId))
+            .filter((serviceId) => Number.isInteger(serviceId) && serviceId > 0)
+        )];
+        if (serviceIds.length === 0) {
+          await client.query('ROLLBACK');
+          return NextResponse.json({ error: 'Assign at least one service available in the vendor city' }, { status: 400 });
+        }
+
+        const vendorResult = await client.query(
+          `SELECT id, city FROM vendors WHERE id = $1 FOR UPDATE`,
+          [vendor_id]
+        );
+        if (vendorResult.rows.length === 0) {
+          await client.query('ROLLBACK');
+          return NextResponse.json({ error: 'Vendor not found' }, { status: 404 });
+        }
+
+        if (serviceIds.length > 0) {
+          const validServices = await client.query(
+            `SELECT qs.id
+             FROM quick_services qs
+             WHERE qs.id = ANY($1::int[])
+               AND COALESCE(qs.is_service_active, TRUE) = TRUE
+               AND EXISTS (
+                 SELECT 1 FROM UNNEST(COALESCE(qs.cities, '{}')) configured_city
+                 WHERE LOWER(TRIM(configured_city)) = LOWER(TRIM($2))
+               )`,
+            [serviceIds, vendorResult.rows[0].city]
+          );
+          if (validServices.rows.length !== serviceIds.length) {
+            await client.query('ROLLBACK');
+            return NextResponse.json({ error: 'One or more services are not available in the vendor city' }, { status: 400 });
+          }
+        }
+
+        await client.query(
+          `UPDATE vendor_services SET is_active = FALSE WHERE vendor_id = $1`,
+          [vendor_id]
+        );
+        for (const serviceId of serviceIds) {
+          await client.query(
+            `INSERT INTO vendor_services (vendor_id, quick_service_id, is_active)
+             VALUES ($1, $2, TRUE)
+             ON CONFLICT (vendor_id, quick_service_id)
+             DO UPDATE SET is_active = TRUE`,
+            [vendor_id, serviceId]
+          );
+        }
+
+        const updatedServices = await client.query(
+          `SELECT qs.id, qs.label, qs.icon
+           FROM vendor_services vs
+           JOIN quick_services qs ON qs.id = vs.quick_service_id
+           WHERE vs.vendor_id = $1 AND vs.is_active = TRUE
+           ORDER BY qs.label ASC`,
+          [vendor_id]
+        );
+
+        await client.query('COMMIT');
+        return NextResponse.json({
+          success: true,
+          message: 'Vendor services updated successfully',
+          services: updatedServices.rows,
         });
       } else {
         return NextResponse.json(

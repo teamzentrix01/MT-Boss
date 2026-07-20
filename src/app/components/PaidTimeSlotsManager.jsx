@@ -56,10 +56,9 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
   }, [defaultCity]);
 
   const cityOptions = useMemo(() => {
-    const values = new Set(rules.map((rule) => rule.city).filter(Boolean));
-    if (defaultCity) values.add(defaultCity);
-    return [...values].sort((a, b) => a.localeCompare(b));
-  }, [rules, defaultCity]);
+    const service = services.find((item) => String(item.id) === String(form.quick_service_id));
+    return [...new Set(service?.cities || [])].sort((a, b) => a.localeCompare(b));
+  }, [services, form.quick_service_id]);
 
   async function saveRule(event) {
     event?.preventDefault();
@@ -166,15 +165,17 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
       <form className="psm-form" onSubmit={saveRule}>
         <div className="psm-field">
           <label>Service</label>
-          <select className="psm-input" value={form.quick_service_id} onChange={(e) => setForm(f => ({ ...f, quick_service_id: e.target.value }))}>
+          <select className="psm-input" value={form.quick_service_id} onChange={(e) => setForm(f => ({ ...f, quick_service_id: e.target.value, city: '' }))}>
             <option value="">Select service</option>
             {services.map((service) => <option key={service.id} value={service.id}>{service.label}</option>)}
           </select>
         </div>
         <div className="psm-field">
           <label>City</label>
-          <input className="psm-input" value={form.city} list="paid-slot-cities" onChange={(e) => setForm(f => ({ ...f, city: e.target.value }))} placeholder="e.g. Moradabad" />
-          <datalist id="paid-slot-cities">{cityOptions.map((city) => <option key={city} value={city} />)}</datalist>
+          <select className="psm-input" value={form.city} onChange={(e) => setForm(f => ({ ...f, city: e.target.value }))} disabled={!form.quick_service_id}>
+            <option value="">Select configured service city</option>
+            {cityOptions.map((city) => <option key={city} value={city}>{city}</option>)}
+          </select>
         </div>
         <div className="psm-field">
           <label>Date</label>

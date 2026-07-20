@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
+import { cleanCity, ensureServiceCitiesSchema } from '@/lib/service-cities';
 
 function getVendorId(req) {
   return requireRole(req, 'vendor')?.id || null;
@@ -53,6 +54,56 @@ export async function PUT(req) {
 
     const { shop_name, phone, city, state, description, services } = await req.json();
 
+    await ensureServiceCitiesSchema();
+    const currentResult = await pool.query(
+      `SELECT city FROM vendors WHERE id = $1`,
+      [vendorId]
+    );
+    if (currentResult.rows.length === 0) {
+      return NextResponse.json({ error: 'Vendor not found' }, { status: 404 });
+    }
+
+    const currentServicesResult = await pool.query(
+      `SELECT quick_service_id AS id
+       FROM vendor_services
+       WHERE vendor_id = $1 AND is_active = TRUE`,
+      [vendorId]
+    );
+    const serviceIds = Array.isArray(services)
+      ? [...new Set(services.map(Number).filter((id) => Number.isInteger(id) && id > 0))]
+      : currentServicesResult.rows.map((row) => Number(row.id));
+    if (Array.isArray(services) && serviceIds.length !== services.length) {
+      return NextResponse.json({ error: 'Invalid service selection' }, { status: 400 });
+    }
+    if (serviceIds.length === 0) {
+      return NextResponse.json({ error: 'Select at least one service for your operating city' }, { status: 400 });
+    }
+
+    const requestedCity = cleanCity(city || currentResult.rows[0].city);
+    let canonicalCity = requestedCity;
+    if (serviceIds.length > 0) {
+      const coveredServices = await pool.query(
+        `SELECT qs.id, configured_city AS canonical_city
+         FROM quick_services qs
+         CROSS JOIN LATERAL (
+           SELECT TRIM(city_name) AS configured_city
+           FROM UNNEST(COALESCE(qs.cities, '{}')) city_name
+           WHERE LOWER(TRIM(city_name)) = LOWER(TRIM($1))
+           LIMIT 1
+         ) coverage
+         WHERE qs.id = ANY($2::int[])
+           AND COALESCE(qs.is_service_active, TRUE) = TRUE`,
+        [requestedCity, serviceIds]
+      );
+      if (coveredServices.rows.length !== serviceIds.length) {
+        return NextResponse.json(
+          { error: 'Selected services are not all available in this city.' },
+          { status: 400 }
+        );
+      }
+      canonicalCity = coveredServices.rows[0].canonical_city;
+    }
+
     const vendorResult = await pool.query(
       `UPDATE vendors
        SET shop_name = COALESCE($1, shop_name),
@@ -63,7 +114,7 @@ export async function PUT(req) {
            updated_at = NOW()
        WHERE id = $6
        RETURNING id, email, shop_name, phone, city, state, description, status, is_approved`,
-      [shop_name || null, phone || null, city || null, state || null, description || null, vendorId]
+      [shop_name || null, phone || null, canonicalCity || null, state || null, description || null, vendorId]
     );
 
     if (vendorResult.rows.length === 0) {
@@ -72,12 +123,6 @@ export async function PUT(req) {
 
     // Update services if provided
     if (Array.isArray(services)) {
-      const serviceIds = [...new Set(
-        services
-          .map((serviceId) => Number(serviceId))
-          .filter((serviceId) => Number.isInteger(serviceId) && serviceId > 0)
-      )];
-
       const client = await pool.connect();
       try {
         await client.query('BEGIN');

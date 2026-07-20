@@ -62,6 +62,13 @@ export async function GET(req) {
           AND (sn.expires_at IS NULL OR sn.expires_at > NOW())
           AND sb.status = 'WAITING_FOR_VENDOR_ACCEPTANCE'
           AND LOWER(TRIM(v.city)) = LOWER(TRIM(sb.service_city))
+          AND EXISTS (
+            SELECT 1
+            FROM vendor_services eligible_service
+            WHERE eligible_service.vendor_id = v.id
+              AND eligible_service.quick_service_id = sb.quick_service_id
+              AND eligible_service.is_active = TRUE
+          )
           AND v.is_approved = TRUE
           AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
           AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')

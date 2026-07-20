@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { ensureServiceCitiesSchema } from '@/lib/service-cities';
 
 // Pincode availability mapping - Add your service/product available pincodes here
 const PINCODE_MAPPING = {
@@ -31,21 +32,21 @@ export async function GET(req) {
     }
 
     if (type === 'service') {
+      await ensureServiceCitiesSchema();
       const cleanName = String(name || '').trim();
       let dbCheck;
       if (city) {
         dbCheck = await pool.query(
-          `SELECT qs.label, $1::text AS city
-           FROM quick_services qs
-           WHERE (LOWER(qs.slug) = LOWER($2) OR LOWER(qs.label) = LOWER($3) OR LOWER(qs.label) = LOWER($4))
-             AND EXISTS (SELECT 1 FROM unnest(COALESCE(qs.cities, '{}')) configured_city WHERE LOWER(configured_city) = LOWER($1))
-           UNION ALL
-           SELECT qs.label, v.city
+          `SELECT qs.label, v.city
            FROM vendors v
            JOIN vendor_services vs ON v.id = vs.vendor_id
            JOIN quick_services qs ON vs.quick_service_id = qs.id
-           WHERE LOWER(v.city) = LOWER($1)
+           WHERE LOWER(TRIM(v.city)) = LOWER(TRIM($1))
              AND (LOWER(qs.slug) = LOWER($2) OR LOWER(qs.label) = LOWER($3) OR LOWER(qs.label) = LOWER($4))
+             AND EXISTS (
+               SELECT 1 FROM UNNEST(COALESCE(qs.cities, '{}')) configured_city
+               WHERE LOWER(TRIM(configured_city)) = LOWER(TRIM($1))
+             )
              AND vs.is_active = TRUE
              AND v.is_approved = TRUE
              AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
@@ -61,6 +62,10 @@ export async function GET(req) {
            JOIN quick_services qs ON vs.quick_service_id = qs.id
            WHERE v.postal_code = $1
              AND (LOWER(qs.slug) = LOWER($2) OR LOWER(qs.label) = LOWER($3) OR LOWER(qs.label) = LOWER($4))
+             AND EXISTS (
+               SELECT 1 FROM UNNEST(COALESCE(qs.cities, '{}')) configured_city
+               WHERE LOWER(TRIM(configured_city)) = LOWER(TRIM(v.city))
+             )
              AND vs.is_active = TRUE
              AND v.is_approved = TRUE
              AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')

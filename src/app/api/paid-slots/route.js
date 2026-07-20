@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireAnyRole, unauthorized } from '@/lib/auth';
+import { resolveServiceCity } from '@/lib/service-cities';
 
 export const dynamic = 'force-dynamic';
 
@@ -113,6 +114,10 @@ export async function POST(req) {
     if (!quick_service_id || !slot_date || !city || !normalizedSlot) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
     }
+    const canonicalCity = await resolveServiceCity(quick_service_id, city);
+    if (!canonicalCity) {
+      return NextResponse.json({ success: false, error: 'This city is not configured for the selected service' }, { status: 400 });
+    }
 
     await pool.query(
       `DELETE FROM paid_time_slot_availability
@@ -121,7 +126,7 @@ export async function POST(req) {
           AND LOWER(TRIM(city)) = LOWER(TRIM($3))
           AND TRIM(REGEXP_REPLACE(REGEXP_REPLACE(time_slot, '[–—]', '-', 'g'), '\\s+', ' ', 'g')) = $4
           AND NOT (city = TRIM($3) AND time_slot = $4)`,
-      [quick_service_id, slot_date, city, normalizedSlot]
+      [quick_service_id, slot_date, canonicalCity, normalizedSlot]
     );
 
     const result = await pool.query(
@@ -134,7 +139,7 @@ export async function POST(req) {
                      updated_by_id = EXCLUDED.updated_by_id,
                      updated_at = NOW()
        RETURNING *, TO_CHAR(slot_date::DATE, 'YYYY-MM-DD') AS slot_date`,
-      [quick_service_id, slot_date, city, normalizedSlot, Boolean(is_available), user.role, user.id || null]
+      [quick_service_id, slot_date, canonicalCity, normalizedSlot, Boolean(is_available), user.role, user.id || null]
     );
 
     return NextResponse.json({ success: true, data: result.rows[0] }, {

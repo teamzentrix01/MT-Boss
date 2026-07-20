@@ -8,6 +8,7 @@ import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createPayURequest } from '@/lib/payu';
+import { hasVendorForServiceCity, resolveServiceCity } from '@/lib/service-cities';
 
 function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
@@ -91,7 +92,7 @@ export async function POST(req) {
       location_map_url,
       service_description,
     } = await req.json();
-    const selectedCity = String(service_city || '').trim();
+    let selectedCity = String(service_city || '').trim();
     const cleanUserName = cleanText(user_name);
     const cleanUserEmail = cleanText(user_email || authenticatedEmail || '').toLowerCase();
     const cleanUserPhone = normalizePhone(user_phone);
@@ -111,6 +112,15 @@ export async function POST(req) {
     if (contactError) return NextResponse.json({ error: contactError }, { status: 400 });
     if (!/^\d{6}$/.test(String(service_pincode || '').trim())) {
       return NextResponse.json({ error: 'Pincode must be exactly 6 digits' }, { status: 400 });
+    }
+
+    const canonicalCity = await resolveServiceCity(quick_service_id, selectedCity);
+    if (!canonicalCity) {
+      return NextResponse.json({ error: 'Selected city is not available for this service.' }, { status: 400 });
+    }
+    selectedCity = canonicalCity;
+    if (!await hasVendorForServiceCity(quick_service_id, selectedCity)) {
+      return NextResponse.json({ error: 'No approved vendor is currently available for this service in the selected city.' }, { status: 409 });
     }
  
     // ── Ensure user_id is nullable (safe to run repeatedly, idempotent) ──

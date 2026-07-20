@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
+import { hasVendorForServiceCity, resolveServiceCity } from '@/lib/service-cities';
 
 function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
@@ -45,7 +46,7 @@ export async function POST(req) {
       user_longitude,
       location_map_url,
     } = await req.json();
-    const selectedCity = String(service_city || '').trim();
+    let selectedCity = String(service_city || '').trim();
     const cleanUserName = cleanText(user_name);
     const cleanUserEmail = user_email ? cleanText(user_email).toLowerCase() : null;
     const cleanUserPhone = normalizePhone(user_phone);
@@ -67,6 +68,14 @@ export async function POST(req) {
     if (contactError) return NextResponse.json({ error: contactError }, { status: 400 });
     if (!/^\d{6}$/.test(String(service_pincode || '').trim())) {
       return NextResponse.json({ error: 'Pincode must be exactly 6 digits' }, { status: 400 });
+    }
+    const canonicalCity = await resolveServiceCity(quick_service_id, selectedCity);
+    if (!canonicalCity) {
+      return NextResponse.json({ error: 'Selected city is not available for this service.' }, { status: 400 });
+    }
+    selectedCity = canonicalCity;
+    if (!await hasVendorForServiceCity(quick_service_id, selectedCity)) {
+      return NextResponse.json({ error: 'No approved vendor is currently available for this service in the selected city.' }, { status: 409 });
     }
 
     // Generate booking reference
@@ -148,16 +157,19 @@ export async function POST(req) {
         );
       }
 
-      // Notify every approved vendor in the same city. Full details and
-      // accept actions are gated later by package + service eligibility.
+      // Notify only approved vendors that serve this service in this city.
       const vendorResult = await client.query(
         `SELECT DISTINCT v.id, v.email, v.phone, v.shop_name 
          FROM vendors v
+         JOIN vendor_services vs
+           ON vs.vendor_id = v.id
+          AND vs.quick_service_id = $2
+          AND vs.is_active = TRUE
          WHERE LOWER(TRIM(v.city)) = LOWER(TRIM($1))
          AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
          AND v.is_approved = TRUE
          AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')`,
-        [selectedCity]
+        [selectedCity, quick_service_id]
       );
 
       const vendors = vendorResult.rows;

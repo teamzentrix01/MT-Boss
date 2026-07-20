@@ -51,6 +51,18 @@ function VendorDashboardContent() {
   const [pkgLoading, setPkgLoading] = useState(false);
   const [pkgMsg, setPkgMsg] = useState('');
   const [requestMsg, setRequestMsg] = useState('');
+  const profileCities = [...new Map(
+    allServices
+      .flatMap((service) => Array.isArray(service.cities) ? service.cities : [])
+      .map((city) => String(city).trim())
+      .filter(Boolean)
+      .map((city) => [city.toLowerCase(), city])
+  ).values()].sort((a, b) => a.localeCompare(b));
+  const profileCityServices = profileForm.city
+    ? allServices.filter((service) => (service.cities || []).some(
+        (city) => String(city).trim().toLowerCase() === profileForm.city.trim().toLowerCase()
+      ))
+    : [];
  
   useEffect(() => {
     const check = () => setIsDark(document.documentElement.classList.contains("dark-mode"));
@@ -222,7 +234,17 @@ function VendorDashboardContent() {
     try {
       const res = await fetch("/api/quick-services");
       const data = await res.json();
-      if (data.success) setAllServices(data.data || data.services || []);
+      if (data.success) {
+        const loadedServices = data.data || data.services || [];
+        setAllServices(loadedServices);
+        setProfileForm((form) => {
+          const configuredCities = loadedServices.flatMap((service) => service.cities || []);
+          const canonicalCity = configuredCities.find(
+            (city) => String(city).trim().toLowerCase() === form.city.trim().toLowerCase()
+          );
+          return canonicalCity ? { ...form, city: canonicalCity } : form;
+        });
+      }
     } catch {
       console.error("Failed to load services list");
     }
@@ -590,7 +612,6 @@ function VendorDashboardContent() {
                 {[
                   { label: "Shop Name", key: "shop_name", placeholder: "Your business name" },
                   { label: "Phone", key: "phone", placeholder: "10-digit mobile number" },
-                  { label: "City", key: "city", placeholder: "Operating city" },
                   { label: "State", key: "state", placeholder: "State" },
                 ].map(({ label, key, placeholder }) => (
                   <div key={key}>
@@ -604,6 +625,20 @@ function VendorDashboardContent() {
                     />
                   </div>
                 ))}
+                <div>
+                  <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>Operating City</label>
+                  <select
+                    className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${isDark ? "bg-zinc-900 border-zinc-700 text-white" : "bg-zinc-50 border-zinc-300 text-zinc-900"}`}
+                    value={profileForm.city}
+                    onChange={(e) => {
+                      setProfileForm((form) => ({ ...form, city: e.target.value }));
+                      setSelectedServices([]);
+                    }}
+                  >
+                    <option value="">Select service city</option>
+                    {profileCities.map((city) => <option key={city} value={city}>{city}</option>)}
+                  </select>
+                </div>
                 <div>
                   <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>About / Description</label>
                   <textarea
@@ -620,9 +655,11 @@ function VendorDashboardContent() {
                   <label className={`block text-[9px] font-black uppercase tracking-widest mb-2 ${muted}`}>Services You Provide</label>
                   {allServices.length === 0 ? (
                     <p className={`text-xs ${muted}`}>Loading services...</p>
+                  ) : profileCityServices.length === 0 ? (
+                    <p className={`text-xs ${muted}`}>No services are configured for the selected city.</p>
                   ) : (
                     <div className="grid grid-cols-2 gap-2">
-                      {allServices.map((svc) => (
+                      {profileCityServices.map((svc) => (
                         <label
                           key={svc.id}
                           className={`flex items-center gap-2 p-2 border cursor-pointer transition-all ${

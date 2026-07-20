@@ -98,7 +98,7 @@ export async function POST(req) {
     }
 
     const bookingResult = await client.query(
-      `SELECT id, booking_reference, user_name, service_city, base_amount,
+      `SELECT id, booking_reference, user_name, service_city, quick_service_id, base_amount,
               total_amount, slot_type, time_slot_id, payment_status
        FROM service_bookings
        WHERE payment_txnid = $1
@@ -135,11 +135,15 @@ export async function POST(req) {
         const vendors = await client.query(
           `SELECT DISTINCT v.id
            FROM vendors v
+           JOIN vendor_services vs
+             ON vs.vendor_id = v.id
+            AND vs.quick_service_id = $2
+            AND vs.is_active = TRUE
            WHERE LOWER(TRIM(v.city)) = LOWER(TRIM($1))
              AND v.is_approved = TRUE
              AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
              AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')`,
-          [booking.service_city]
+          [booking.service_city, booking.quick_service_id]
         );
 
         for (const vendor of vendors.rows) {
