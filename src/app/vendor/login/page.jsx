@@ -65,11 +65,39 @@ export default function VendorLoginPage() {
   const inputBg = dark ? '#111' : '#f9f9fb';
 
   return (
-    <div style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', fontFamily: "'DM Sans', system-ui, sans-serif", transition: 'background 0.3s' }}>
-      <div style={{ display: 'flex', width: '100%', maxWidth: 820, background: surface, border: `1px solid ${border}`, borderRadius: 12, overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,.08)', transition: 'background 0.3s, border-color 0.3s' }}>
+    <div className="vendor-login-page" style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', fontFamily: "'DM Sans', system-ui, sans-serif", transition: 'background 0.3s' }}>
+      <style>{`
+        .vendor-login-page { width: 100%; box-sizing: border-box; }
+        .vendor-login-card, .vendor-login-form { min-width: 0; }
+
+        @media (max-width: 639px) {
+          .vendor-login-page {
+            min-height: calc(100svh - 64px) !important;
+            padding: 1rem !important;
+            align-items: flex-start !important;
+          }
+          .vendor-login-card {
+            width: 100% !important;
+            max-width: 420px !important;
+            margin: auto;
+          }
+          .vendor-login-brand { display: none !important; }
+          .vendor-login-form {
+            width: 100% !important;
+            padding: 1.75rem 1.25rem !important;
+            box-sizing: border-box;
+          }
+        }
+
+        @media (max-width: 359px) {
+          .vendor-login-page { padding: 0.75rem !important; }
+          .vendor-login-form { padding: 1.5rem 1rem !important; }
+        }
+      `}</style>
+      <div className="vendor-login-card" style={{ display: 'flex', width: '100%', maxWidth: 820, background: surface, border: `1px solid ${border}`, borderRadius: 12, overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,.08)', transition: 'background 0.3s, border-color 0.3s' }}>
 
         {/* Brand Panel */}
-        <div style={{ flex: '0 0 300px', background: dark ? '#111' : '#111113', padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} className="hidden sm:flex">
+        <div style={{ flex: '0 0 300px', background: dark ? '#111' : '#111113', padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} className="vendor-login-brand">
           <div>
             <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: '2rem' }}>
               MT<span style={{ color: 'var(--brand-blue)' }}>BOSS</span>
@@ -86,7 +114,7 @@ export default function VendorLoginPage() {
         </div>
 
         {/* Form Panel */}
-        <div style={{ flex: 1, padding: '2.25rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: surface, transition: 'background 0.3s' }}>
+        <div className="vendor-login-form" style={{ flex: 1, padding: '2.25rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: surface, transition: 'background 0.3s' }}>
 
           {/* Back to user login */}
           <Link href="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.75rem', fontWeight: 600, color: muted, textDecoration: 'none', marginBottom: '1.5rem', transition: 'color 0.2s' }}
