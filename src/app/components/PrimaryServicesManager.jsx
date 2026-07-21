@@ -13,7 +13,7 @@ const defaultForm = {
   stat2_value: '', stat2_label: '',
   stat3_value: '', stat3_label: '',
   stat4_value: '', stat4_label: '',
-  process: [], benefits: [], projects: [],
+  process: [], benefits: [], projects: [], cities: [],
   cta_heading: '', contact_phone: '', contact_email: '',
 };
 
@@ -91,6 +91,8 @@ export default function PrimaryServicesManager({ isDarkMode }) {
   const [error,     setError]     = useState('');
   const [success,   setSuccess]   = useState('');
   const [formData,  setFormData]  = useState(defaultForm);
+  const [cityOptions, setCityOptions] = useState([]);
+  const [customCity, setCustomCity] = useState('');
 
   // ── Drag & Drop state ──────────────────────────────────────────────────────
   const [dragIndex,     setDragIndex]     = useState(null);
@@ -102,9 +104,16 @@ export default function PrimaryServicesManager({ isDarkMode }) {
   const fetchServices = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res   = await fetch('/api/primary-services', { headers: { 'Authorization': `Bearer ${token}` } });
-      const data  = await res.json();
-      if (data.success) setServices(data.data);
+      const [res, citiesRes] = await Promise.all([
+        fetch('/api/primary-services', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch('/api/service-cities'),
+      ]);
+      const [data, citiesData] = await Promise.all([res.json(), citiesRes.json()]);
+      if (data.success) {
+        setServices(data.data);
+        const constructionCities = data.data.flatMap(service => Array.isArray(service.cities) ? service.cities : []);
+        setCityOptions([...new Set([...(citiesData.cities || []), ...constructionCities])].sort((a, b) => a.localeCompare(b)));
+      }
     } catch { setError('Error fetching services'); }
     finally  { setLoading(false); }
   };
@@ -172,8 +181,8 @@ export default function PrimaryServicesManager({ isDarkMode }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); setSuccess('');
-    if (!formData.slug || !formData.title || !formData.description || !formData.image) {
-      setError('Slug, title, description and image are required'); return;
+    if (!formData.slug || !formData.title || !formData.description || !formData.image || formData.cities.length === 0) {
+      setError('Slug, title, description, image and at least one city are required'); return;
     }
     try {
       const token  = localStorage.getItem('token');
@@ -200,10 +209,11 @@ export default function PrimaryServicesManager({ isDarkMode }) {
       process:  Array.isArray(s.process)  ? s.process  : [],
       benefits: Array.isArray(s.benefits) ? s.benefits : [],
       projects: Array.isArray(s.projects) ? s.projects : [],
+      cities: Array.isArray(s.cities) ? s.cities : [],
       cta_heading: s.cta_heading || '', contact_phone: s.contact_phone || '', contact_email: s.contact_email || '',
     });
+    setCustomCity('');
     setEditingId(s.id); setShowForm(true); setActiveTab('basic');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = async (id) => {
@@ -217,7 +227,20 @@ export default function PrimaryServicesManager({ isDarkMode }) {
     } catch { setError('Error deleting'); }
   };
 
-  const resetForm = () => { setFormData(defaultForm); setEditingId(null); setShowForm(false); setActiveTab('basic'); };
+  const resetForm = () => { setFormData(defaultForm); setCustomCity(''); setEditingId(null); setShowForm(false); setActiveTab('basic'); };
+
+  const addCity = (value = customCity) => {
+    const city = String(value || '').trim().replace(/\s+/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+    if (!city) return;
+    setFormData(current => ({
+      ...current,
+      cities: current.cities.some(item => item.toLowerCase() === city.toLowerCase())
+        ? current.cities
+        : [...current.cities, city],
+    }));
+    setCityOptions(current => [...new Set([...current, city])].sort((a, b) => a.localeCompare(b)));
+    setCustomCity('');
+  };
 
   if (loading) return <div style={{ color: 'var(--ps-muted)', fontSize: '0.8125rem' }}>Loading…</div>;
 
@@ -265,8 +288,12 @@ export default function PrimaryServicesManager({ isDarkMode }) {
 
         .ps-form-panel {
           background:var(--ps-surface); border:1px solid var(--ps-border);
-          border-radius:8px; overflow:hidden; margin-bottom:0.875rem;
+          border-radius:8px; overflow:hidden; width:min(1100px, calc(100vw - 2rem));
+          max-height:90vh; overflow-y:auto; box-shadow:0 24px 80px rgba(0,0,0,.45);
         }
+        .ps-modal-backdrop { position:fixed; inset:0; z-index:10000; padding:1rem; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.72); backdrop-filter:blur(4px); }
+        .ps-form-title-line { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+        .ps-modal-close { border:0; background:none; color:var(--ps-muted); cursor:pointer; font-size:1.25rem; line-height:1; }
         .ps-form-head { padding:0.875rem 1.25rem; border-bottom:1px solid var(--ps-border); }
         .ps-form-title { font-size:0.8125rem; font-weight:700; margin-bottom:0.625rem; }
         .ps-tabs { display:flex; overflow-x:auto; gap:0; scrollbar-width:none; border-bottom:1px solid var(--ps-border); }
@@ -437,9 +464,9 @@ export default function PrimaryServicesManager({ isDarkMode }) {
         {/* Header */}
         <div className="ps-header">
           <span className="ps-title">Construction Services</span>
-          <button className={`ps-add-btn${showForm ? ' cancel' : ''}`}
-            onClick={() => { resetForm(); setShowForm(!showForm); }}>
-            {showForm ? '✕ Cancel' : '+ Add Service'}
+          <button className="ps-add-btn"
+            onClick={() => { resetForm(); setShowForm(true); }}>
+            + Add Service
           </button>
         </div>
 
@@ -448,9 +475,13 @@ export default function PrimaryServicesManager({ isDarkMode }) {
 
         {/* Form */}
         {showForm && (
-          <div className="ps-form-panel">
+          <div className="ps-modal-backdrop" onMouseDown={e => { if (e.target === e.currentTarget) resetForm(); }}>
+          <div className="ps-form-panel" role="dialog" aria-modal="true" aria-label={editingId ? 'Edit construction service' : 'Add construction service'}>
             <div className="ps-form-head">
-              <div className="ps-form-title">{editingId ? 'Edit Service' : 'Add New Primary Service'}</div>
+              <div className="ps-form-title-line">
+                <div className="ps-form-title">{editingId ? 'Edit Service' : 'Add New Primary Service'}</div>
+                <button type="button" className="ps-modal-close" onClick={resetForm} aria-label="Close">×</button>
+              </div>
               <div className="ps-tabs">
                 {[['basic','① Basic'],['details','② Details'],['process','③ Process'],['benefits','④ Benefits'],['projects','⑤ Projects']].map(([id, label]) => (
                   <button key={id} className={`ps-tab${activeTab === id ? ' active' : ''}`} onClick={() => setActiveTab(id)}>{label}</button>
@@ -486,6 +517,28 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                       <label className="ps-field-label">Hero Subtitle</label>
                       <textarea className="ps-textarea" rows={2} placeholder="Longer line below heading on detail page…"
                         value={formData.hero_subtitle} onChange={e => set('hero_subtitle', e.target.value)} />
+                    </div>
+                    <div className="ps-field">
+                      <label className="ps-field-label">Available Cities *</label>
+                      <div className="ps-upload-line">
+                        <input className="ps-input" list="primary-service-city-options" type="text"
+                          placeholder="Select or type a city" value={customCity}
+                          onChange={e => setCustomCity(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCity(); } }} />
+                        <datalist id="primary-service-city-options">
+                          {cityOptions.filter(city => !formData.cities.some(item => item.toLowerCase() === city.toLowerCase()))
+                            .map(city => <option key={city} value={city} />)}
+                        </datalist>
+                        <button type="button" className="ps-local-upload-btn" onClick={() => addCity()}>Add City</button>
+                      </div>
+                      <div style={{ display:'flex', flexWrap:'wrap', gap:'0.4rem', marginTop:'0.5rem' }}>
+                        {formData.cities.map(city => (
+                          <button key={city} type="button" className="ps-tag" style={{ border:'none', cursor:'pointer' }}
+                            onClick={() => set('cities', formData.cities.filter(item => item !== city))}
+                            title={`Remove ${city}`}>{city} ×</button>
+                        ))}
+                        {formData.cities.length === 0 && <span className="ps-hint">No city selected.</span>}
+                      </div>
                     </div>
                     <div className="ps-field">
                       <label className="ps-field-label">Hero Image URL or Upload *</label>
@@ -553,7 +606,7 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                 {/* PROCESS */}
                 {activeTab === 'process' && (
                   <>
-                    <p className="ps-hint">Up to 6 steps for the "How We Work" section.</p>
+                    <p className="ps-hint">Up to 6 steps for the &quot;How We Work&quot; section.</p>
                     {formData.process.map((row, i) => (
                       <div key={i} className="ps-sub-card">
                         <div className="ps-sub-head">
@@ -579,7 +632,7 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                 {/* BENEFITS */}
                 {activeTab === 'benefits' && (
                   <>
-                    <p className="ps-hint">Up to 6 cards for the "Why Choose Us" section.</p>
+                    <p className="ps-hint">Up to 6 cards for the &quot;Why Choose Us&quot; section.</p>
                     {formData.benefits.map((row, i) => (
                       <div key={i} className="ps-sub-card">
                         <div className="ps-sub-head">
@@ -654,6 +707,7 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                 <button type="button" className="ps-cancel-btn" onClick={resetForm}>Cancel</button>
               </div>
             </form>
+          </div>
           </div>
         )}
 

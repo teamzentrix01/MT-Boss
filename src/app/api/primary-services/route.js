@@ -1,12 +1,18 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
+import { createInitializationGuard, handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 import { fallbackPrimaryServices, fallbackResponse } from '@/lib/public-fallbacks';
+import { normalizeCityList } from '@/lib/service-cities';
+
+const ensurePrimaryServiceCities = createInitializationGuard(async () => {
+  await pool.query(`ALTER TABLE primary_services ADD COLUMN IF NOT EXISTS cities TEXT[] NOT NULL DEFAULT '{}'`);
+});
 
 // GET — public, no auth. Supports ?slug=xyz for single record.
 export async function GET(req) {
   try {
+    await ensurePrimaryServiceCities();
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get('slug');
 
@@ -53,6 +59,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
+    await ensurePrimaryServiceCities();
 
     const {
       slug, title, description, image,
@@ -60,11 +67,12 @@ export async function POST(req) {
       stat1_value, stat1_label, stat2_value, stat2_label,
       stat3_value, stat3_label, stat4_value, stat4_label,
       process, benefits, projects,
-      cta_heading, contact_phone, contact_email,
+      cta_heading, contact_phone, contact_email, cities,
     } = await req.json();
 
-    if (!slug || !title || !description || !image) {
-      return NextResponse.json({ error: 'slug, title, description and image are required' }, { status: 400 });
+    const normalizedCities = normalizeCityList(cities);
+    if (!slug || !title || !description || !image || normalizedCities.length === 0) {
+      return NextResponse.json({ error: 'Slug, title, description, image and at least one city are required' }, { status: 400 });
     }
 
     const result = await pool.query(
@@ -74,8 +82,8 @@ export async function POST(req) {
         stat1_value, stat1_label, stat2_value, stat2_label,
         stat3_value, stat3_label, stat4_value, stat4_label,
         process, benefits, projects,
-        cta_heading, contact_phone, contact_email
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
+        cta_heading, contact_phone, contact_email, cities
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)
       RETURNING *`,
       [
         slug, title, description, image,
@@ -87,7 +95,7 @@ export async function POST(req) {
         JSON.stringify(process || []),
         JSON.stringify(benefits || []),
         JSON.stringify(projects || []),
-        cta_heading || null, contact_phone || null, contact_email || null,
+        cta_heading || null, contact_phone || null, contact_email || null, normalizedCities,
       ]
     );
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
@@ -101,6 +109,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
+    await ensurePrimaryServiceCities();
 
     const {
       id, slug, title, description, image,
@@ -108,11 +117,12 @@ export async function PUT(req) {
       stat1_value, stat1_label, stat2_value, stat2_label,
       stat3_value, stat3_label, stat4_value, stat4_label,
       process, benefits, projects,
-      cta_heading, contact_phone, contact_email,
+      cta_heading, contact_phone, contact_email, cities,
     } = await req.json();
 
-    if (!id || !slug || !title || !description || !image) {
-      return NextResponse.json({ error: 'id, slug, title, description and image are required' }, { status: 400 });
+    const normalizedCities = normalizeCityList(cities);
+    if (!id || !slug || !title || !description || !image || normalizedCities.length === 0) {
+      return NextResponse.json({ error: 'ID, slug, title, description, image and at least one city are required' }, { status: 400 });
     }
 
     const result = await pool.query(
@@ -124,9 +134,9 @@ export async function PUT(req) {
         stat3_value=$12, stat3_label=$13,
         stat4_value=$14, stat4_label=$15,
         process=$16, benefits=$17, projects=$18,
-        cta_heading=$19, contact_phone=$20, contact_email=$21,
+        cta_heading=$19, contact_phone=$20, contact_email=$21, cities=$22,
         updated_at=NOW()
-       WHERE id=$22 RETURNING *`,
+       WHERE id=$23 RETURNING *`,
       [
         slug, title, description, image,
         hero_subtitle || null, about_heading || null, about_body || null,
@@ -137,7 +147,7 @@ export async function PUT(req) {
         JSON.stringify(process || []),
         JSON.stringify(benefits || []),
         JSON.stringify(projects || []),
-        cta_heading || null, contact_phone || null, contact_email || null,
+        cta_heading || null, contact_phone || null, contact_email || null, normalizedCities,
         id,
       ]
     );
