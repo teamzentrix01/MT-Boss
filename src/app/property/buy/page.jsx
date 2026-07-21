@@ -25,8 +25,8 @@ export default function BrowsePropertiesPage() {
       try {
         // Fetch both buy and rent properties
         const [buyRes, rentRes] = await Promise.all([
-          fetch("/api/properties?listing_type=buy"),
-          fetch("/api/properties?listing_type=rent"),
+          fetch("/api/properties?listing_type=buy", { cache: "no-store" }),
+          fetch("/api/properties?listing_type=rent", { cache: "no-store" }),
         ]);
         const [buyData, rentData] = await Promise.all([
           buyRes.json(), rentRes.json(),
@@ -270,7 +270,9 @@ export default function BrowsePropertiesPage() {
                     {property.area && (
                       <div className="text-center">
                         <p className={`text-sm font-black ${dark ? "text-white" : "text-zinc-800"}`}>{property.area}</p>
-                        <p className={`text-[8px] font-black uppercase ${dark ? "text-zinc-500" : "text-zinc-400"}`}>Sqft</p>
+                        <p className={`text-[8px] font-black uppercase ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
+                          {{ sqft: 'Sq. Ft.', sqm: 'Sq. Meter', sqyd: 'Sq. Yard' }[property.area_unit] || 'Sq. Ft.'}
+                        </p>
                       </div>
                     )}
                   </div>

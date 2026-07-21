@@ -234,7 +234,7 @@ export default function PropertyDetailPage() {
                 {[
                   { label: "Type", value: property.type },
                   { label: "Location", value: property.location },
-                  { label: "Area", value: property.area ? `${property.area} sqft` : "N/A" },
+                  { label: "Area", value: property.area ? `${property.area} ${{ sqft: 'sq.ft', sqm: 'sq.meter', sqyd: 'sq.yard' }[property.area_unit] || 'sq.ft'}` : "N/A" },
                   { label: "Price", value: `₹ ${property.price}` },
                   { label: "Status", value: property.tag || "N/A" },
                 ].map((item) => (

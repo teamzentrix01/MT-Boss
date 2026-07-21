@@ -7,7 +7,7 @@ const PROPERTY_TYPES = ["Residential", "Commercial", "Plots"];
 
 const empty = {
   title: "", type: "Residential", location: "", address: "",
-  price: "", price_raw: "", beds: "", baths: "", area: "",
+  price: "", price_raw: "", beds: "", baths: "", area: "", area_unit: "sqm",
   description: "", highlights: "",
   seller_type: "owner", seller_name: "", seller_phone: "", seller_email: "",
 };
@@ -136,6 +136,7 @@ export default function SellPage() {
         beds:         form.type === "Plots" ? null : (form.beds ? parseInt(form.beds) : null),
         baths:        form.type === "Plots" ? null : (form.baths ? parseInt(form.baths) : null),
         area:         form.area   ? parseInt(form.area)   : null,
+        area_unit:    form.area_unit,
         description:  form.description,
         highlights:   form.highlights.split("\n").map(h=>h.trim()).filter(Boolean),
         images:       images, // These are now real Cloudinary URLs
@@ -266,12 +267,29 @@ export default function SellPage() {
               <div className="grid grid-cols-3 gap-4">
                 <div><label className={lbl}>Beds</label><input type="number" className={inp} placeholder="4" value={form.beds} onChange={e=>set("beds",e.target.value)} /></div>
                 <div><label className={lbl}>Baths</label><input type="number" className={inp} placeholder="3" value={form.baths} onChange={e=>set("baths",e.target.value)} /></div>
-                <div><label className={lbl}>Area (sqft) *</label><input type="number" className={inp} placeholder="1200" value={form.area} onChange={e=>set("area",e.target.value)} /></div>
+                <div>
+                  <label className={lbl}>Area *</label>
+                  <div className="flex gap-2">
+                    <input type="number" className={inp} placeholder="1200" value={form.area} onChange={e=>set("area",e.target.value)} />
+                    <select className={`${inp} max-w-32`} value={form.area_unit} onChange={e=>set("area_unit",e.target.value)}>
+                      <option value="sqm">Sq. Meter</option>
+                      <option value="sqft">Sq. Ft.</option>
+                      <option value="sqyd">Sq. Yard</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             ) : (
               <div>
-                <label className={lbl}>Area (sqft) *</label>
-                <input type="number" className={inp} placeholder="1200" value={form.area} onChange={e=>set("area",e.target.value)} />
+                <label className={lbl}>Area *</label>
+                <div className="flex gap-2">
+                  <input type="number" className={inp} placeholder="1200" value={form.area} onChange={e=>set("area",e.target.value)} />
+                  <select className={`${inp} max-w-32`} value={form.area_unit} onChange={e=>set("area_unit",e.target.value)}>
+                    <option value="sqm">Sq. Meter</option>
+                    <option value="sqft">Sq. Ft.</option>
+                    <option value="sqyd">Sq. Yard</option>
+                  </select>
+                </div>
               </div>
             )}
 
@@ -376,7 +394,7 @@ export default function SellPage() {
                 <p><strong>Type:</strong> {form.type}</p>
                 <p><strong>Location:</strong> {form.location}</p>
                 <p><strong>Price:</strong> ₹{form.price}</p>
-                <p><strong>Area:</strong> {form.area} sqft</p>
+                <p><strong>Area:</strong> {form.area} {{ sqft: 'sq.ft', sqm: 'sq.meter', sqyd: 'sq.yard' }[form.area_unit]}</p>
               </div>
             </div>
 

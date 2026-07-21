@@ -412,7 +412,7 @@ export default function PropertiesManager({ isDarkMode }) {
                     ['Type',     selected.type],
                     ['Location', selected.location],
                     ['Price',    `₹${selected.price}`],
-                    ['Area',     selected.area ? `${selected.area} sqft` : '—'],
+                    ['Area',     selected.area ? `${selected.area} ${{ sqft: 'sq.ft', sqm: 'sq.meter', sqyd: 'sq.yard' }[selected.area_unit] || 'sq.ft'}` : '—'],
                     ['Beds',     selected.beds  || '—'],
                     ['Baths',    selected.baths || '—'],
                   ].map(([k,v]) => (

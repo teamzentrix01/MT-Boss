@@ -3,11 +3,17 @@ import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { resolveConfiguredCity } from '@/lib/service-cities';
+import { createInitializationGuard } from '@/lib/api-utils';
+
+const ensurePropertiesSchema = createInitializationGuard(async () => {
+  await pool.query(`ALTER TABLE properties ADD COLUMN IF NOT EXISTS area_unit VARCHAR(20) NOT NULL DEFAULT 'sqft'`);
+});
 
 // GET — public. ?listing_type=buy|rent&status=verified for public pages.
 //       ?status=all for admin (requires token).
 export async function GET(req) {
   try {
+    await ensurePropertiesSchema();
     const { searchParams } = new URL(req.url);
     const listing_type = searchParams.get('listing_type'); // buy | rent | null = all
     const status       = searchParams.get('status');       // verified | pending | rejected | all
@@ -44,10 +50,11 @@ export async function GET(req) {
 // POST — public (seller submits listing)
 export async function POST(req) {
   try {
+    await ensurePropertiesSchema();
     const {
       title, type, listing_type, category,
       price, price_raw, location, address,
-      beds, baths, area, description,
+      beds, baths, area, area_unit, description,
       highlights, images, tag,
       seller_type, seller_name, seller_phone, seller_email,
     } = await req.json();
@@ -75,14 +82,16 @@ export async function POST(req) {
     const result = await pool.query(
       `INSERT INTO properties
         (title, type, listing_type, category, price, price_raw, location, address,
-         beds, baths, area, description, highlights, images, tag,
+         beds, baths, area, area_unit, description, highlights, images, tag,
          seller_type, seller_name, seller_phone, seller_email, status, verified_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,'verified',NOW())
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,'verified',NOW())
        RETURNING *`,
       [
         title, type, listing_type, category || type.toLowerCase(),
         price, price_raw, canonicalLocation, address || null,
-        beds || null, baths || null, area || null, description || null,
+        beds || null, baths || null, area || null,
+        ['sqft', 'sqm', 'sqyd'].includes(area_unit) ? area_unit : 'sqft',
+        description || null,
         JSON.stringify(highlights || []),
         JSON.stringify(images || []),
         tag || 'New',
@@ -101,6 +110,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
+    await ensurePropertiesSchema();
 
     const body = await req.json();
     const { id, action } = body;
@@ -131,7 +141,7 @@ export async function PUT(req) {
     const {
       title, type, listing_type, category,
       price, price_raw, location, address,
-      beds, baths, area, description,
+      beds, baths, area, area_unit, description,
       highlights, images, tag,
       seller_type, seller_name, seller_phone, seller_email,
     } = body;
@@ -156,15 +166,17 @@ export async function PUT(req) {
       `UPDATE properties SET
         title=$1, type=$2, listing_type=$3, category=$4,
         price=$5, price_raw=$6, location=$7, address=$8,
-        beds=$9, baths=$10, area=$11, description=$12,
-        highlights=$13, images=$14, tag=$15,
-        seller_type=$16, seller_name=$17, seller_phone=$18, seller_email=$19,
+        beds=$9, baths=$10, area=$11, area_unit=$12, description=$13,
+        highlights=$14, images=$15, tag=$16,
+        seller_type=$17, seller_name=$18, seller_phone=$19, seller_email=$20,
         updated_at=NOW()
-       WHERE id=$20 RETURNING *`,
+       WHERE id=$21 RETURNING *`,
       [
         title, type, listing_type, category,
         price, price_raw, canonicalLocation, address,
-        beds, baths, area, description,
+        beds, baths, area,
+        ['sqft', 'sqm', 'sqyd'].includes(area_unit) ? area_unit : 'sqft',
+        description,
         JSON.stringify(highlights || []),
         JSON.stringify(images || []),
         tag, seller_type, cleanSellerName, cleanSellerPhone, cleanSellerEmail,
