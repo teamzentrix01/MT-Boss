@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireAnyRole, unauthorized } from '@/lib/auth';
-import { resolveServiceCity } from '@/lib/service-cities';
+import { addServiceCity, resolveServiceCity } from '@/lib/service-cities';
 
 export const dynamic = 'force-dynamic';
 
@@ -114,7 +114,10 @@ export async function POST(req) {
     if (!quick_service_id || !slot_date || !city || !normalizedSlot) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
     }
-    const canonicalCity = await resolveServiceCity(quick_service_id, city);
+    let canonicalCity = await resolveServiceCity(quick_service_id, city);
+    if (!canonicalCity && user.role === 'admin') {
+      canonicalCity = await addServiceCity(quick_service_id, city);
+    }
     if (!canonicalCity) {
       return NextResponse.json({ success: false, error: 'This city is not configured for the selected service' }, { status: 400 });
     }

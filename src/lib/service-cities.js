@@ -118,6 +118,27 @@ export async function resolveServiceCity(serviceId, city) {
   return result.rows[0]?.city || null;
 }
 
+export async function addServiceCity(serviceId, city) {
+  await ensureServiceCitiesSchema();
+  const requestedCity = cleanCity(city);
+  if (!serviceId || !requestedCity) return null;
+
+  const result = await pool.query(
+    `UPDATE quick_services
+        SET cities = CASE
+          WHEN EXISTS (
+            SELECT 1 FROM UNNEST(COALESCE(cities, '{}')) configured_city
+            WHERE LOWER(TRIM(configured_city)) = LOWER(TRIM($2))
+          ) THEN cities
+          ELSE ARRAY_APPEND(COALESCE(cities, '{}'), $2)
+        END
+      WHERE id = $1
+      RETURNING $2::TEXT AS city`,
+    [serviceId, requestedCity]
+  );
+  return result.rows[0]?.city || null;
+}
+
 export async function resolveConfiguredCity(city) {
   await ensureServiceCitiesSchema();
   const requestedCity = cleanCity(city);

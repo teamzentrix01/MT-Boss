@@ -583,19 +583,22 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                     const available = INDIAN_CITIES.filter(c => !Object.prototype.hasOwnProperty.call(cityPrices, c));
                     return (
                       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
-                        <select
+                        <input
+                          list="shop-city-options"
                           value={pendingCity}
                           onChange={e => setPendingCity(e.target.value)}
+                          placeholder="Select or type a city"
                           style={{ ...inp, flex: 1 }}
-                        >
-                          <option value="">— Select city to add —</option>
-                          {available.map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
+                        />
+                        <datalist id="shop-city-options">
+                          {available.map(c => <option key={c} value={c} />)}
+                        </datalist>
                         <button
                           type="button"
                           onClick={() => {
-                            if (!pendingCity) return;
-                            setCityPrices(prev => ({ ...prev, [pendingCity]: { price_range: '', unit: '' } }));
+                            const city = pendingCity.trim().replace(/\s+/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+                            if (!city) return;
+                            setCityPrices(prev => ({ ...prev, [city]: prev[city] || { price_range: '', unit: '' } }));
                             setPendingCity('');
                           }}
                           style={{ padding: '9px 16px', background: t.accent, color: t.accentFg, border: 'none', borderRadius: '4px', fontSize: '11px', fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap' }}

@@ -20,6 +20,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
   const [formData, setFormData] = useState({
     quick_service_id: '',
     slot_date: '',
+    slot_end_date: '',
     slot_start: '08:00',
     slot_end: '10:00',
     city: defaultCity || '',
@@ -91,12 +92,13 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
 
       const data = await res.json();
       if (data.success) {
-        alert(editingSlot ? 'Free slot updated successfully!' : 'Free slot created successfully!');
+        alert(editingSlot ? 'Free slot updated successfully!' : `${data.count || 0} free slot(s) created successfully!`);
         setShowForm(false);
         setEditingSlot(null);
         setFormData({
           quick_service_id: '',
           slot_date: '',
+          slot_end_date: '',
           slot_start: '08:00',
           slot_end: '10:00',
           city: defaultCity || '',
@@ -161,6 +163,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
     setFormData({
       quick_service_id: String(slot.quick_service_id || ''),
       slot_date: slot.slot_date ? String(slot.slot_date).split('T')[0] : '',
+      slot_end_date: '',
       slot_start: String(slot.slot_start || '08:00').slice(0, 5),
       slot_end: String(slot.slot_end || '10:00').slice(0, 5),
       city: slot.city || defaultCity || '',
@@ -175,6 +178,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
     setFormData({
       quick_service_id: '',
       slot_date: '',
+      slot_end_date: '',
       slot_start: '08:00',
       slot_end: '10:00',
       city: defaultCity || '',
@@ -335,15 +339,18 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
 
               <div className="form-group">
                 <label className="form-label">City *</label>
-                <select
+                <input
+                  list="free-slot-city-options"
                   className="form-select"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   disabled={!formData.quick_service_id}
-                >
-                  <option value="">Select configured service city</option>
-                  {formCityOptions.map((city) => <option key={city} value={city}>{city}</option>)}
-                </select>
+                  placeholder="Select or type a city"
+                />
+                <datalist id="free-slot-city-options">
+                  {formCityOptions.map((city) => <option key={city} value={city} />)}
+                </datalist>
+                <small style={{ color: 'var(--muted)' }}>Admins can type a new city; it will be added to this service.</small>
               </div>
 
               <div className="form-group">
@@ -367,6 +374,20 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
                   onChange={(e) => setFormData({ ...formData, max_bookings: parseInt(e.target.value) || 1 })}
                 />
               </div>
+
+              {!editingSlot && (
+                <div className="form-group">
+                  <label className="form-label">Repeat Daily Until</label>
+                  <input
+                    type="date"
+                    className="form-input"
+                    min={formData.slot_date || getTodayStr()}
+                    value={formData.slot_end_date}
+                    onChange={(e) => setFormData({ ...formData, slot_end_date: e.target.value })}
+                  />
+                  <small style={{ color: 'var(--muted)' }}>Optional. Leave blank to create only one day.</small>
+                </div>
+              )}
 
               <div className="form-group">
                 <label className="form-label">Start Time</label>

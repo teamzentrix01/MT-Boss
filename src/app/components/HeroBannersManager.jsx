@@ -41,6 +41,7 @@ export default function HeroBannersManager({ isDarkMode }) {
   const [saving, setSaving]       = useState(false);
   const [deleteId, setDeleteId]   = useState(null);
   const [urlMode, setUrlMode]     = useState(false); // toggle between upload vs paste URL
+  const [imageMessage, setImageMessage] = useState('');
   const fileRef = useRef(null);
 
   const token = () =>
@@ -94,6 +95,30 @@ export default function HeroBannersManager({ isDarkMode }) {
   const handleUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    e.target.value = '';
+    setImageMessage('');
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setImageMessage('Please choose a JPG, PNG or WEBP image.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setImageMessage('Image is larger than 5 MB. Please compress it and try again.');
+      return;
+    }
+    const dimensions = await new Promise(resolve => {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      img.onload = () => { URL.revokeObjectURL(objectUrl); resolve({ width: img.naturalWidth, height: img.naturalHeight }); };
+      img.onerror = () => { URL.revokeObjectURL(objectUrl); resolve(null); };
+      img.src = objectUrl;
+    });
+    if (!dimensions) {
+      setImageMessage('This image could not be read. Please choose another file.');
+      return;
+    }
+    setImageMessage(dimensions.width < 1200 || dimensions.height < 675
+      ? `Selected image is ${dimensions.width}×${dimensions.height}. At least 1200×675 is recommended to avoid blur.`
+      : `Selected image: ${dimensions.width}×${dimensions.height}.`);
     setUploading(true);
     try {
       const fd = new FormData();
@@ -110,11 +135,11 @@ export default function HeroBannersManager({ isDarkMode }) {
         setForm(f => ({ ...f, image_url: data.secure_url, cloudinary_public_id: data.public_id }));
         setPreview(data.secure_url);
       } else {
-        alert('Upload failed. Check Cloudinary config.');
+        setImageMessage(data.error?.message || data.error || 'Upload failed. Check the Cloudinary upload preset.');
       }
     } catch (err) {
       console.error('Cloudinary upload error:', err);
-      alert('Upload failed. Check console.');
+      setImageMessage('Upload failed. Check your connection and Cloudinary configuration.');
     } finally {
       setUploading(false);
     }
@@ -124,6 +149,7 @@ export default function HeroBannersManager({ isDarkMode }) {
   const handleSave = async () => {
     if (!form.title.trim()) { alert('Title is required.'); return; }
     if (!form.image_url.trim()) { alert('Banner image is required.'); return; }
+    if (!/^(https?:\/\/|\/)/i.test(form.image_url.trim())) { alert('Enter a valid image URL beginning with http://, https:// or /.'); return; }
     setSaving(true);
     try {
       const method = editing ? 'PATCH' : 'POST';
@@ -339,7 +365,7 @@ export default function HeroBannersManager({ isDarkMode }) {
 
             {/* Label */}
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Accent Label <span style={{ color: t.muted }}>(e.g. "Engineering Excellence")</span></label>
+              <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Accent Label <span style={{ color: t.muted }}>(e.g. &quot;Engineering Excellence&quot;)</span></label>
               <input {...inp('label')} placeholder="Engineering Excellence" />
             </div>
 
@@ -366,6 +392,9 @@ export default function HeroBannersManager({ isDarkMode }) {
             {/* Image */}
             <div style={{ marginBottom: '20px' }}>
               <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>Banner Image <span style={{ color: '#ef4444' }}>*</span></label>
+              <p style={{ color: t.sub, fontSize: '11px', lineHeight: 1.5, margin: '0 0 10px' }}>
+                Recommended: 1920×1080 (16:9), minimum 1200×675, maximum 5 MB. Keep important content near the center because edges may crop on mobile.
+              </p>
 
               {/* Toggle tabs */}
               <div style={{ display: 'flex', gap: '0', marginBottom: '10px', border: `1px solid ${t.border}`, borderRadius: '4px', overflow: 'hidden', width: 'fit-content' }}>
@@ -380,7 +409,7 @@ export default function HeroBannersManager({ isDarkMode }) {
               {urlMode ? (
                 <input
                   value={form.image_url}
-                  onChange={e => { setForm(f => ({ ...f, image_url: e.target.value, cloudinary_public_id: '' })); setPreview(e.target.value); }}
+                  onChange={e => { setForm(f => ({ ...f, image_url: e.target.value.trim(), cloudinary_public_id: '' })); setPreview(e.target.value.trim()); setImageMessage(''); }}
                   placeholder="https://images.unsplash.com/…"
                   style={{ width: '100%', boxSizing: 'border-box', background: t.inputBg, color: t.text, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '9px 12px', fontSize: '13px', outline: 'none' }}
                 />
@@ -394,10 +423,15 @@ export default function HeroBannersManager({ isDarkMode }) {
                 </div>
               )}
 
+              {imageMessage && <p style={{ color: /failed|could not|larger/i.test(imageMessage) ? '#ef4444' : t.sub, fontSize: '11px', margin: '8px 0 0' }}>{imageMessage}</p>}
+
               {/* Preview */}
               {preview && (
-                <div style={{ marginTop: '10px', borderRadius: '4px', overflow: 'hidden', border: `1px solid ${t.border}`, maxHeight: '160px' }}>
-                  <img src={preview} alt="preview" style={{ width: '100%', height: '160px', objectFit: 'cover', display: 'block' }} />
+                <div style={{ marginTop: '10px', borderRadius: '4px', overflow: 'hidden', border: `1px solid ${t.border}` }}>
+                  <img src={preview} alt="Banner preview"
+                    onError={() => setImageMessage('Image URL could not be loaded. Use a direct public image link.')}
+                    onLoad={e => setImageMessage(current => current || `Image loaded: ${e.currentTarget.naturalWidth}×${e.currentTarget.naturalHeight}.`)}
+                    style={{ width: '100%', aspectRatio: '16 / 9', objectFit: 'cover', display: 'block' }} />
                 </div>
               )}
             </div>

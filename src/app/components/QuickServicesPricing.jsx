@@ -21,7 +21,7 @@ export default function QuickServicesPricing({ isDarkMode }) {
   async function fetchServices() {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       const res = await fetch('/api/quick-services', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -43,7 +43,7 @@ export default function QuickServicesPricing({ isDarkMode }) {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       const res = await fetch(`/api/quick-services/${serviceId}`, {
         method: 'PATCH',
         headers: {
@@ -71,7 +71,7 @@ export default function QuickServicesPricing({ isDarkMode }) {
 
   async function handleToggleService(serviceId, currentStatus) {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       const res = await fetch(`/api/quick-services/${serviceId}`, {
         method: 'PATCH',
         headers: {
@@ -304,12 +304,12 @@ export default function QuickServicesPricing({ isDarkMode }) {
                         ) : (
                           <>
                             <span className="price-display">
-                              ₹{service.admin_base_price || service.base_price || 199}
+                              ₹{service.admin_base_price ?? service.base_price ?? 150}
                             </span>
                             <button
                               onClick={() => {
                                 setEditingId(service.id);
-                                setEditingPrice(service.admin_base_price || service.base_price || 199);
+                                setEditingPrice(service.admin_base_price ?? service.base_price ?? 150);
                               }}
                               className="btn-edit"
                             >
@@ -343,7 +343,7 @@ export default function QuickServicesPricing({ isDarkMode }) {
 
         <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--bg)', borderRadius: '6px', fontSize: '0.8125rem', color: 'var(--muted)' }}>
           <p style={{ marginBottom: '0.5rem' }}>
-            <strong>Note:</strong> Default base price is ₹199 for 15 minutes. You can customize per service.
+            <strong>Note:</strong> Default base price is ₹150 for 15 minutes. You can customize it per service.
           </p>
           <p>
             <strong>Formula:</strong> Base Price + Tax (18%) = Total Charge

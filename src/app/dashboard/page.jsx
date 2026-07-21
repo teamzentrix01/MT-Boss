@@ -23,6 +23,7 @@ const FranchisesManager = dynamicManager(() => import('./franchises/page'));
 const AgentsManager = dynamicManager(() => import('./agents/page'));
 const BookingsManager = dynamicManager(() => import('../components/BookingsManager'));
 const FreeTimeSlotsManager = dynamicManager(() => import('../components/FreeTimeSlotsManager'));
+const QuickServicesPricing = dynamicManager(() => import('../components/QuickServicesPricing'));
 const CalculatorManager = dynamicManager(() => import('../components/CalculatorManager'));
 const RevenueManager = dynamicManager(() => import('../components/RevenueManager'));
 const HeroBannersManager = dynamicManager(() => import('../components/HeroBannersManager'));
@@ -1215,6 +1216,7 @@ function AdminDashboard() {
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'revenue' && <RevenueManager isDarkMode={isDarkMode} />}
           {activeTab === 'free-slots' && <FreeTimeSlotsManager isDarkMode={isDarkMode} />}
+          {activeTab === 'quick-services-pricing' && <QuickServicesPricing isDarkMode={isDarkMode} />}
           {activeTab === 'calculator' && <CalculatorManager isDarkMode={isDarkMode} />}
 
           {activeTab === 'calculator-quotes' && (

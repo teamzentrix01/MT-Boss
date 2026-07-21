@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 export async function PATCH(req, { params }) {
   try {
+    if (!requireRole(req, 'admin')) return unauthorized();
     const { id } = await params;
     const body = await req.json();
 
@@ -11,7 +13,7 @@ export async function PATCH(req, { params }) {
     let i = 1;
 
     if (body.admin_base_price !== undefined) {
-      updates.push(`admin_base_price = $${i++}`);
+      updates.push(`admin_base_price = $${i}`, `base_price = $${i++}`);
       values.push(body.admin_base_price);
     }
     if (body.is_service_active !== undefined) {
@@ -42,6 +44,7 @@ export async function PATCH(req, { params }) {
 
 export async function DELETE(req, { params }) {
   try {
+    if (!requireRole(req, 'admin')) return unauthorized();
     const { id } = await params;
 
     const result = await pool.query(

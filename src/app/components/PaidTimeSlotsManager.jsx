@@ -172,10 +172,12 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
         </div>
         <div className="psm-field">
           <label>City</label>
-          <select className="psm-input" value={form.city} onChange={(e) => setForm(f => ({ ...f, city: e.target.value }))} disabled={!form.quick_service_id}>
-            <option value="">Select configured service city</option>
-            {cityOptions.map((city) => <option key={city} value={city}>{city}</option>)}
-          </select>
+          <input className="psm-input" list="paid-slot-city-options" value={form.city}
+            onChange={(e) => setForm(f => ({ ...f, city: e.target.value }))}
+            disabled={!form.quick_service_id} placeholder="Select or type a city" />
+          <datalist id="paid-slot-city-options">
+            {cityOptions.map((city) => <option key={city} value={city} />)}
+          </datalist>
         </div>
         <div className="psm-field">
           <label>Date</label>

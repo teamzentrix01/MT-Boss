@@ -32,13 +32,6 @@ const ensureQuickServiceSeoColumns = createInitializationGuard(async () => {
        WHERE slug IS NULL OR TRIM(slug) = ''
     `);
 
-    // Ensure all services have a flat base_price and visiting_price of 150
-    await pool.query(`
-      UPDATE quick_services
-         SET base_price = 150.00,
-             visiting_price = 150.00
-       WHERE COALESCE(base_price, 0) != 150.00 OR COALESCE(visiting_price, 0) != 150.00
-    `);
   } catch (error) {
     console.error('ensureQuickServiceSeoColumns error:', error.message);
     if (isDatabaseConnectionError(error)) {

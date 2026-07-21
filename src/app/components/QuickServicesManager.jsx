@@ -181,8 +181,8 @@ export default function QuickServicesManager({ isDarkMode }) {
   const handleEdit = (service) => {
     setFormData({
       icon: service.icon, label: service.label,
-      desc: service.description, basePrice: '150', duration: service.duration,
-      visiting_price: '150',
+      desc: service.description, basePrice: String(service.base_price ?? 150), duration: service.duration,
+      visiting_price: String(service.visiting_price ?? 150),
       main_category: service.main_category || '', sub_category: service.sub_category || '',
       cities: Array.isArray(service.cities) ? service.cities : [],
     });
