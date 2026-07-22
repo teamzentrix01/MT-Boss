@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { redirectToPayU } from '@/lib/payu-client';
+import QuickServiceIcon from '../components/QuickServiceIcon';
 
 // ── Status config ──────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
@@ -428,7 +429,9 @@ function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
       {/* Header row */}
       <div className="flex items-start justify-between mb-4 gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-2xl flex-shrink-0">{booking.service_icon || '🔧'}</span>
+          <QuickServiceIcon value={booking.service_icon} label={booking.service_label}
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden"
+            imageClassName="h-10 w-10 object-contain" />
           <div className="min-w-0">
             <h3 className={`font-black uppercase tracking-tight text-sm truncate ${isDark ? 'text-white' : 'text-zinc-900'}`}>{booking.service_label}</h3>
             <p className={`text-[10px] ${muted}`}>#{booking.booking_reference}</p>
@@ -662,7 +665,7 @@ export default function UserDashboard() {
     return () => clearInterval(interval);
   }, [router, fetchBookings]);
 
-  const activeBookings  = bookings.filter((b) => !['COMPLETED', 'CANCELLED'].includes(b.status));
+  const activeBookings  = bookings.filter((b) => b.payment_status === 'PAID' && !['COMPLETED', 'CANCELLED'].includes(b.status));
   const historyBookings = bookings.filter((b) =>  ['COMPLETED', 'CANCELLED'].includes(b.status));
   const displayed       = tab === 'active' ? activeBookings : tab === 'history' ? historyBookings : primaryServices;
 

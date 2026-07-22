@@ -34,6 +34,7 @@ export async function GET(req) {
         sb.status,
         sb.vendor_status,
         sb.user_status,
+        sb.payment_status,
         sb.urgency,
         sb.service_address,
         sb.service_city,
@@ -76,6 +77,7 @@ export async function GET(req) {
          ($1::INTEGER IS NOT NULL AND sb.user_id = $1)
          OR ($2::TEXT IS NOT NULL AND LOWER(sb.user_email) = LOWER($2))
        )
+       AND sb.payment_status = 'PAID'
        ORDER BY sb.created_at DESC`;
     const queryParams = [userId, userEmail];
 
