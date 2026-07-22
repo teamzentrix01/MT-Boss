@@ -401,21 +401,21 @@ export default function BookingsManager({ isDarkMode }) {
 
           {selectedBooking.status === 'ADMIN_ACCEPTED' && !selectedBooking.vendor_id && (
             <div style={{ marginBottom: '1rem', padding: '0.9rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px' }}>
-              <div className="detail-label">Assign Paid Vendor</div>
-              <p className="detail-value" style={{ margin: '0.4rem 0 0.75rem' }}>Only active paid vendors matching this service and city are listed.</p>
+              <div className="detail-label">Assign Vendor</div>
+              <p className="detail-value" style={{ margin: '0.4rem 0 0.75rem' }}>Approved vendors matching this service and city are listed. Admin paid ya unpaid vendor dono ko manually assign kar sakta hai.</p>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <select value={selectedVendorId} onChange={event => setSelectedVendorId(event.target.value)}
                   style={{ flex: 1, minWidth: 180, padding: '0.55rem', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', borderRadius: 6 }}>
-                  <option value="">Select eligible paid vendor</option>
+                  <option value="">Select matching vendor</option>
                   {(selectedBooking.eligible_vendors || []).map(vendor => (
-                    <option key={vendor.vendor_id} value={vendor.vendor_id}>{vendor.shop_name} · {vendor.city} · {vendor.package_name || 'Paid'}</option>
+                    <option key={vendor.vendor_id} value={vendor.vendor_id}>{vendor.shop_name} · {vendor.city} · {vendor.package_status === 'active' ? (vendor.package_name || 'Paid') : 'Unpaid'}</option>
                   ))}
                 </select>
                 <button className="filter-btn active" disabled={actionLoading || !selectedVendorId} onClick={() => runAdminAction('assign_vendor')}>
                   {actionLoading ? 'Assigning...' : 'Assign Vendor'}
                 </button>
               </div>
-              {(selectedBooking.eligible_vendors || []).length === 0 && <p style={{ color: 'var(--muted)', fontSize: '0.75rem', marginTop: '0.6rem' }}>Abhi koi matching active paid vendor available nahi hai. Vendor paid hone ke baad Refresh karke assign karein.</p>}
+              {(selectedBooking.eligible_vendors || []).length === 0 && <p style={{ color: 'var(--muted)', fontSize: '0.75rem', marginTop: '0.6rem' }}>Abhi koi approved matching vendor available nahi hai. Vendor add/approve hone ke baad Refresh karke assign karein.</p>}
             </div>
           )}
 

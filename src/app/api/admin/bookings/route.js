@@ -81,7 +81,7 @@ export async function GET(req) {
       LEFT JOIN LATERAL (
         SELECT json_agg(json_build_object(
           'vendor_id', ev.id, 'shop_name', ev.shop_name, 'phone', ev.phone,
-          'city', ev.city, 'package_name', ev.package_name,
+          'city', ev.city, 'package_name', ev.package_name, 'package_status', ev.package_status,
           'package_expires_at', ev.package_expires_at
         ) ORDER BY ev.shop_name) AS eligible_vendors
         FROM vendors ev
@@ -91,8 +91,6 @@ export async function GET(req) {
           AND ev.is_approved = TRUE
           AND LOWER(COALESCE(ev.status, 'active')) IN ('active', 'approved')
           AND COALESCE(ev.verification_status, 'verified') IN ('verified', 'approved')
-          AND ev.package_status = 'active'
-          AND ev.package_expires_at > NOW()
       ) eligible ON TRUE
     `;
 
@@ -155,12 +153,11 @@ export async function PATCH(req) {
              AND v.is_approved=TRUE
              AND LOWER(COALESCE(v.status,'active')) IN ('active','approved')
              AND COALESCE(v.verification_status,'verified') IN ('verified','approved')
-             AND v.package_status='active' AND v.package_expires_at>NOW()
          ) RETURNING *`, [vendor_id, id]
     );
     if (!result.rows.length) {
       await client.query('ROLLBACK');
-      return NextResponse.json({ error: 'Selected vendor is not eligible or booking is not admin-accepted' }, { status: 409 });
+      return NextResponse.json({ error: 'Selected vendor does not match this service/city or booking is not admin-accepted' }, { status: 409 });
     }
     await client.query(`UPDATE service_notifications SET expires_at=NOW() WHERE booking_id=$1`, [id]);
     await client.query('COMMIT');
