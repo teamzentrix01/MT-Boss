@@ -8,7 +8,7 @@ import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createPayURequest } from '@/lib/payu';
-import { hasVendorForServiceCity, resolveServiceCity } from '@/lib/service-cities';
+import { resolveServiceCity } from '@/lib/service-cities';
 
 function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
@@ -119,9 +119,6 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Selected city is not available for this service.' }, { status: 400 });
     }
     selectedCity = canonicalCity;
-    if (!await hasVendorForServiceCity(quick_service_id, selectedCity)) {
-      return NextResponse.json({ error: 'No approved vendor is currently available for this service in the selected city.' }, { status: 409 });
-    }
  
     // ── Ensure user_id is nullable (safe to run repeatedly, idempotent) ──
     try {

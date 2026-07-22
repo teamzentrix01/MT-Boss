@@ -1,8 +1,5 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import { join } from 'path';
 import { requireRole, unauthorized, verifyBearer } from '@/lib/auth';
 import { ensureAgentSchema } from '@/lib/agent-auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
@@ -133,23 +130,25 @@ async function savePropertyImage(file) {
     throw new Error('Image too large. Max 5MB.');
   }
 
-  const extMap = {
-    'image/jpeg': 'jpg',
-    'image/png': 'png',
-    'image/webp': 'webp',
-  };
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
-  const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName || `property.${extMap[file.type]}`}`;
-  const uploadDir = join(process.cwd(), 'public', 'uploads', 'primary-service-properties');
-
-  if (!existsSync(uploadDir)) {
-    await mkdir(uploadDir, { recursive: true });
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+  if (!cloudName || !uploadPreset) {
+    throw new Error('Image upload configuration is missing. Please contact support.');
   }
 
-  const bytes = await file.arrayBuffer();
-  await writeFile(join(uploadDir, filename), Buffer.from(bytes));
-
-  return `/uploads/primary-service-properties/${filename}`;
+  const uploadData = new FormData();
+  uploadData.append('file', file);
+  uploadData.append('upload_preset', uploadPreset);
+  uploadData.append('folder', 'mtboss/primary-service-properties');
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: 'POST',
+    body: uploadData,
+  });
+  const result = await response.json();
+  if (!response.ok || !result.secure_url) {
+    throw new Error(result.error?.message || 'Property image upload failed. Please try again.');
+  }
+  return result.secure_url;
 }
 
 async function savePropertyImages(files) {
@@ -301,8 +300,11 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error('Primary services enquiry error:', error);
+    const publicError = /image|upload|maximum|5mb|jpg|png|webp/i.test(error.message || '')
+      ? error.message
+      : 'Server error. Please try again.';
     return NextResponse.json(
-      { success: false, error: 'Server error. Please try again.' },
+      { success: false, error: publicError },
       { status: 500 }
     );
   }

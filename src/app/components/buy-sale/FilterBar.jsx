@@ -12,7 +12,7 @@ export default function FilterBar({ isDarkMode, onFilter }) {
     beds: "Any",
   });
 
-  const propertyTypes = ["All", "Residential", "Commercial", "Plots"];
+  const propertyTypes = ["All", "Residential", "Commercial", "Industrial", "Plots"];
   const bedOptions = ["Any", "1", "2", "3", "4", "5+"];
 
   const locations = ["All Locations", ...serviceCities];

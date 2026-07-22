@@ -37,20 +37,12 @@ export async function GET(req) {
       let dbCheck;
       if (city) {
         dbCheck = await pool.query(
-          `SELECT qs.label, v.city
-           FROM vendors v
-           JOIN vendor_services vs ON v.id = vs.vendor_id
-           JOIN quick_services qs ON vs.quick_service_id = qs.id
-           WHERE LOWER(TRIM(v.city)) = LOWER(TRIM($1))
+          `SELECT qs.label, TRIM(configured_city) AS city
+           FROM quick_services qs
+           CROSS JOIN LATERAL UNNEST(COALESCE(qs.cities, '{}')) configured_city
+           WHERE LOWER(TRIM(configured_city)) = LOWER(TRIM($1))
              AND (LOWER(qs.slug) = LOWER($2) OR LOWER(qs.label) = LOWER($3) OR LOWER(qs.label) = LOWER($4))
-             AND EXISTS (
-               SELECT 1 FROM UNNEST(COALESCE(qs.cities, '{}')) configured_city
-               WHERE LOWER(TRIM(configured_city)) = LOWER(TRIM($1))
-             )
-             AND vs.is_active = TRUE
-             AND v.is_approved = TRUE
-             AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
-             AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
+             AND COALESCE(qs.is_service_active, TRUE) = TRUE
            LIMIT 1`,
           [city.trim(), cleanName, cleanName, cleanName.replace(/-/g, ' ')]
         );

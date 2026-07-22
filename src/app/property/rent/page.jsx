@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useServiceCities } from "@/hooks/useServiceCities";
 import { uploadPropertyImages } from "@/lib/property-image-upload";
 
-const PROPERTY_TYPES = ["Residential", "Commercial", "Plots"];
+const PROPERTY_TYPES = ["Residential", "Commercial", "Industrial", "Plots"];
 
 const empty = {
   title: "", type: "Residential", location: "", address: "",
@@ -219,9 +219,12 @@ export default function RentPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className={lbl}>Property Type *</label>
-                <select className={inp} value={form.type} onChange={e=>set("type",e.target.value)}>
-                  {PROPERTY_TYPES.map(t => <option key={t}>{t}</option>)}
-                </select>
+                <input className={inp} list="rent-property-types" value={form.type}
+                  onChange={e=>set("type",e.target.value)} placeholder="Select or type property type" />
+                <datalist id="rent-property-types">
+                  {PROPERTY_TYPES.map(t => <option key={t} value={t} />)}
+                </datalist>
+                <p className={`mt-1 text-[10px] ${muted}`}>Select an option or type a custom property type.</p>
               </div>
               <div>
                 <label className={lbl}>Location *</label>
