@@ -27,6 +27,15 @@ const fallbackProjects = [
   { name: "Urban Nest, Greater Noida",       type: "Mixed-Use",         area: "240 Units",  status: "Ongoing",   img: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=600&q=80" },
 ];
 
+const INDIA_STATES = [
+  'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar',
+  'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa',
+  'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka',
+  'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya',
+  'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim',
+  'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+];
+
 const TIME_SLOTS = [
   "Morning (9AM – 12PM)",
   "Afternoon (12PM – 4PM)",
@@ -44,7 +53,7 @@ export default function ServiceDetailPage() {
 
   const [form, setForm] = useState({
     name: "", phone: "", alternatePhone: "", email: "", message: "",
-    budget: "", carpetArea: "", timeSlot: "", meetingDate: "", address: "",
+    budget: "", carpetArea: "", timeSlot: "", meetingDate: "", state: "", city: "", address: "",
   });
 
   const [gpsCoords,    setGpsCoords]    = useState(null);
@@ -101,7 +110,17 @@ export default function ServiceDetailPage() {
             { headers: { 'Accept-Language': 'en' } }
           );
           const d = await r.json();
-          if (d.display_name) setForm(f => ({ ...f, address: d.display_name }));
+          const location = d.address || {};
+          const detectedCity = location.city || location.town || location.village || location.municipality || location.county || '';
+          const detectedState = location.state || location.state_district || '';
+          if (d.display_name || detectedCity || detectedState) {
+            setForm(f => ({
+              ...f,
+              address: d.display_name || f.address,
+              city: detectedCity || f.city,
+              state: INDIA_STATES.find(item => item.toLowerCase() === detectedState.toLowerCase()) || f.state,
+            }));
+          }
         } catch {}
         setFetchingGps(false);
       },
@@ -152,6 +171,8 @@ export default function ServiceDetailPage() {
       payload.append("carpet_area", form.carpetArea);
       payload.append("time_slot", form.timeSlot);
       payload.append("meeting_date", form.meetingDate);
+      payload.append("state", form.state);
+      payload.append("city", form.city);
       payload.append("gps_location", gpsCoords ? `${gpsCoords.lat.toFixed(6)},${gpsCoords.lng.toFixed(6)}` : "");
       payload.append("address", form.address);
       propertyImages.forEach(file => payload.append("property_images", file));
@@ -400,6 +421,22 @@ export default function ServiceDetailPage() {
               </div>
 
               {/* Live Location */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>State / UT *</label>
+                  <select required className={inp} value={form.state} onChange={e => setForm({ ...form, state: e.target.value })}>
+                    <option value="">Select state or union territory</option>
+                    {INDIA_STATES.map(state => <option key={state} value={state}>{state}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>City *</label>
+                  <input required type="text" className={inp} placeholder="Type any city in India"
+                    value={form.city} onChange={e => setForm({ ...form, city: e.target.value })} />
+                </div>
+              </div>
+
+              {/* Live Location */}
               <div>
                 <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Your Location</label>
                 <button type="button" onClick={fetchLiveLocation} disabled={fetchingGps}
@@ -418,7 +455,7 @@ export default function ServiceDetailPage() {
               {/* Address */}
               <div>
                 <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Full Address</label>
-                <textarea rows={2} className={inp}
+                <textarea required rows={2} className={inp}
                   placeholder="Street, City, State, PIN — auto-filled if you use live location"
                   value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} />
               </div>

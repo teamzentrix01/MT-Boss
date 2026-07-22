@@ -403,15 +403,15 @@ function VendorDashboardContent() {
   }
  
   return (
-    <main className={`min-h-screen font-serif ${bg} p-6`}>
+    <main className={`min-h-screen font-serif ${bg} px-4 py-6 sm:p-6`}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h1 className="text-4xl font-black uppercase">Vendor Dashboard</h1>
+        <div className="flex flex-col gap-5 mb-6 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-3xl sm:text-4xl font-black uppercase break-words">Vendor Dashboard</h1>
             <p className={`text-sm ${muted} mt-1`}>{vendorProfile?.shop_name || "My Shop"} · {vendorProfile?.city || ""}</p>
           </div>
-          <div className={`flex border ${isDark ? "border-zinc-800" : "border-zinc-200"} flex-wrap`}>
+          <div className={`grid w-full grid-cols-2 border ${isDark ? "border-zinc-800" : "border-zinc-200"} sm:flex sm:w-auto sm:flex-wrap`}>
             {[
               { key: "notifications", label: "📬 Bookings" },
               { key: "history", label: "📋 History" },
@@ -421,7 +421,7 @@ function VendorDashboardContent() {
               <button
                 key={tab.key}
                 onClick={() => { setActiveTab(tab.key); if (tab.key === 'packages') loadPackages(); }}
-                className={`px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all ${
+                className={`min-w-0 px-3 py-2.5 text-[10px] font-black uppercase tracking-wider transition-all sm:px-5 sm:tracking-widest ${
                   activeTab === tab.key
                     ? "bg-[var(--brand-blue)] text-black"
                     : isDark ? "text-zinc-400 hover:text-white" : "text-zinc-500 hover:text-zinc-900"

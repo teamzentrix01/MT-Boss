@@ -962,6 +962,8 @@ function AdminDashboard() {
                             item.alternate_phone?.includes(q) ||
                             item.email?.toLowerCase().includes(q) ||
                             item.service_title?.toLowerCase().includes(q) ||
+                            item.city?.toLowerCase().includes(q) ||
+                            item.state?.toLowerCase().includes(q) ||
                             item.address?.toLowerCase().includes(q);
                         })
                         .map((item) => {
@@ -978,6 +980,7 @@ function AdminDashboard() {
                               </td>
                               <td style={{ padding: '0.6rem 0.875rem', minWidth: '160px' }}>
                                 <div style={{ fontWeight: 600 }}>{item.service_title}</div>
+                                {(item.city || item.state) && <div style={{ color: 'var(--muted)', fontSize: '0.72rem' }}>📍 {[item.city, item.state].filter(Boolean).join(', ')}</div>}
                                 {item.address && (
                                   <div style={{ color: 'var(--muted)', fontSize: '0.7rem', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                     📍 {item.address}
@@ -1474,6 +1477,8 @@ function AdminDashboard() {
                       ['Alternative Phone', enq.alternate_phone || '—'],
                       ['Email', enq.email || '—'],
                       ['Service', enq.service_title],
+                      ['State', enq.state || '—'],
+                      ['City', enq.city || '—'],
                       ['Status', enq.status],
                       ['Submitted', new Date(enq.created_at).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })],
                     ].map(([label, value]) => (

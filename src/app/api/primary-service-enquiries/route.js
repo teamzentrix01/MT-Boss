@@ -68,6 +68,8 @@ const ensureTable = createInitializationGuard(async () => {
     `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS meeting_date DATE`,
     `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS gps_location VARCHAR(100)`,
     `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS address TEXT`,
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS state VARCHAR(120)`,
+    `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS city VARCHAR(120)`,
     `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS rating_stars INTEGER`,
     `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS review_text TEXT`,
     `ALTER TABLE primary_service_enquiries ADD COLUMN IF NOT EXISTS site_image_names JSONB`,
@@ -103,7 +105,7 @@ async function syncEnquiryToLead(enquiry) {
          WHERE source_ref_table = 'primary_service_enquiries' AND source_ref_id = $8
        )`,
       [
-        enquiry.address || 'Unassigned',
+        [enquiry.city, enquiry.state].filter(Boolean).join(', ') || enquiry.address || 'Unassigned',
         enquiry.name,
         enquiry.phone,
         enquiry.email || null,
@@ -188,6 +190,8 @@ async function sendAdminNotification(enquiry) {
         'Preferred Time Slot': enquiry.time_slot || 'Not Provided',
         'Meeting Date': enquiry.meeting_date || 'Not Provided',
         'GPS Location': enquiry.gps_location || 'Not Provided',
+        State: enquiry.state || 'Not Provided',
+        City: enquiry.city || 'Not Provided',
         Address: enquiry.address || 'Not Provided',
         'Project Details': enquiry.message || 'Not Provided',
         'Property Images': Array.isArray(enquiry.property_image_urls) && enquiry.property_image_urls.length > 0
@@ -227,16 +231,18 @@ export async function POST(req) {
 
     const {
       service_slug, service_title, name, phone, alternate_phone, email, message, property_image_name,
-      budget, carpet_area, time_slot, meeting_date, gps_location, address,
+      budget, carpet_area, time_slot, meeting_date, gps_location, address, state, city,
     } = body;
     const cleanName = cleanText(name);
     const cleanEmail = email ? cleanText(email).toLowerCase() : null;
     const cleanPhone = normalizePhone(phone);
     const cleanAlternatePhone = normalizePhone(alternate_phone);
+    const cleanState = cleanText(state);
+    const cleanCity = cleanText(city);
 
-    if (!service_title || !cleanName || !cleanPhone) {
+    if (!service_title || !cleanName || !cleanPhone || !cleanState || !cleanCity || !cleanText(address)) {
       return NextResponse.json(
-        { success: false, error: 'Service, name, and main phone are required' },
+        { success: false, error: 'Service, name, main phone, state, city and full address are required' },
         { status: 400 }
       );
     }
@@ -259,9 +265,9 @@ export async function POST(req) {
     const result = await pool.query(
       `INSERT INTO primary_service_enquiries
         (service_slug, service_title, user_id, name, phone, alternate_phone, email, message,
-         budget, carpet_area, time_slot, meeting_date, gps_location, address,
+         budget, carpet_area, time_slot, meeting_date, gps_location, address, state, city,
          property_image_name, property_image_url, property_image_names, property_image_urls, status, created_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17::jsonb,$18::jsonb,$19,NOW())
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19::jsonb,$20::jsonb,$21,NOW())
        RETURNING *`,
       [
         service_slug || null,
@@ -278,6 +284,8 @@ export async function POST(req) {
         meeting_date || null,
         gps_location || null,
         address || null,
+        cleanState,
+        cleanCity,
         propertyImageData.names[0] || property_image_name || null,
         propertyImageData.urls[0] || null,
         JSON.stringify(propertyImageData.names),
@@ -337,7 +345,7 @@ export async function GET(req) {
 
     const result = await pool.query(
       `SELECT id, service_slug, service_title, user_id, name, phone, alternate_phone, email, message,
-              budget, carpet_area, time_slot, meeting_date, gps_location, address,
+              budget, carpet_area, time_slot, meeting_date, gps_location, address, state, city,
               property_image_name, property_image_url, property_image_names, property_image_urls,
               rating_stars, review_text, site_image_names, site_image_urls, reviewed_at,
               status, created_at
