@@ -144,6 +144,20 @@ export const ensureAgentSchema = createInitializationGuard(async () => {
     await pool.query(sql);
   }
 
+  // Older deployments may still have a restrictive status CHECK that does not
+  // include the newer Follow-up value. The API validates allowed statuses, so
+  // remove stale database constraints that otherwise make the dropdown fail.
+  const leadStatusChecks = await pool.query(`
+    SELECT conname
+      FROM pg_constraint
+     WHERE conrelid = 'agent_leads'::regclass
+       AND contype = 'c'
+       AND pg_get_constraintdef(oid) ILIKE '%status%'
+  `);
+  for (const row of leadStatusChecks.rows) {
+    await pool.query(`ALTER TABLE agent_leads DROP CONSTRAINT IF EXISTS ${quoteIdent(row.conname)}`);
+  }
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS agent_schedule (
       id SERIAL PRIMARY KEY,

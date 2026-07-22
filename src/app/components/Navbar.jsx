@@ -99,9 +99,12 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   }, [pathname]); // re-check on every route change too
 
   useEffect(() => {
-    setIsOpen(false);
-    setPropertyOpen(false);
-    setServicesOpen(false);
+    const frame = requestAnimationFrame(() => {
+      setIsOpen(false);
+      setPropertyOpen(false);
+      setServicesOpen(false);
+    });
+    return () => cancelAnimationFrame(frame);
   }, [pathname]);
 
   useEffect(() => {
@@ -265,6 +268,13 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               className={`inline-flex px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
               Budget Calculator
+            </Link>
+
+            <Link
+              href="/FeaturedProjects/ProjectGallery"
+              className={`inline-flex px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+            >
+              Portfolio
             </Link>
 
             <Link
@@ -488,6 +498,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             { label: 'Home', href: '/' },
             { label: 'Construction', href: '/Services/all' },
             { label: 'Budget Calculator', href: '/calculator' },
+            { label: 'Portfolio', href: '/FeaturedProjects/ProjectGallery' },
             { label: 'Shop Now', href: '/ShopNow' },
             { label: 'Careers', href: '/careers' },
             { label: 'Contact', href: '/contact' },

@@ -319,6 +319,7 @@ function AgentDashboardContent() {
     const data = await res.json();
     if (data.success) {
       setLeads((prev) => prev.map((lead) => (lead.id === id ? data.data : lead)));
+      setMessage(status ? `Lead status changed to ${data.data.status}.` : `Lead stage changed to ${data.data.lead_stage}.`);
       if (data.project) {
         setMessage('Lead finalized and sent to admin for project assignment.');
       }
@@ -552,6 +553,10 @@ function AgentDashboardContent() {
                       {lead.notes && <p className="text-sm mt-2">{lead.notes}</p>}
                     </div>
                     <div className="flex flex-wrap gap-2 items-center">
+                      <select aria-label="Lead status" className={`border px-3 py-2 text-xs font-bold ${input}`}
+                        value={lead.status || 'New'} onChange={(e) => updateLead(lead.id, e.target.value, null)}>
+                        {leadStatuses.map((s) => <option key={s}>{s}</option>)}
+                      </select>
                       <select className={`border px-3 py-2 text-xs font-bold ${input}`} value={lead.lead_stage || 'New'} onChange={(e) => updateLead(lead.id, null, e.target.value)}>
                         {leadStages.map((s) => <option key={s}>{s}</option>)}
                       </select>

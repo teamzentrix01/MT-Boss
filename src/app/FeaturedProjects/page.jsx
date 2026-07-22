@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 
 
 
@@ -58,7 +59,7 @@ export default function FeaturedProjects() {
               Featured <br /> <span style={{ color: isDark ? 'var(--brand-blue)' : 'inherit' }}>Portfolio</span>
             </h2>
           </div>
-          <button className={`group flex items-center gap-3 px-8 py-4 border-2 font-black uppercase text-xs tracking-widest transition-all ${
+          <Link href="/FeaturedProjects/ProjectGallery" className={`group flex items-center gap-3 px-8 py-4 border-2 font-black uppercase text-xs tracking-widest transition-all ${
             isDark 
             ? 'border-zinc-800 text-white hover:bg-[var(--brand-blue)] hover:text-black hover:border-[var(--brand-blue)]' 
             : 'border-zinc-200 text-zinc-900 hover:bg-black hover:text-white hover:border-black'
@@ -67,7 +68,7 @@ export default function FeaturedProjects() {
             <svg className="w-4 h-4 transition-transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
-          </button>
+          </Link>
         </div>
 
         {/* Projects Grid */}
@@ -84,7 +85,7 @@ export default function FeaturedProjects() {
             >
               {/* Image */}
               <img 
-                src={project.image} 
+                src={project.image_url || project.image}
                 alt={project.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-1 opacity-70 group-hover:opacity-40"
               />
@@ -100,9 +101,9 @@ export default function FeaturedProjects() {
                 
                 {/* Expandable Button on Hover */}
                 <div className="h-0 group-hover:h-12 overflow-hidden transition-all duration-500">
-                  <button className="bg-[var(--brand-blue)] text-black px-6 py-3 text-[10px] font-black uppercase tracking-tighter hover:bg-white transition-colors">
+                  <Link href={`/projects/${project.id}`} className="inline-block bg-[var(--brand-blue)] text-black px-6 py-3 text-[10px] font-black uppercase tracking-tighter hover:bg-white transition-colors">
                     Explore Details
-                  </button>
+                  </Link>
                 </div>
               </div>
 

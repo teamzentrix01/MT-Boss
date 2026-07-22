@@ -96,6 +96,11 @@ const filteredProjects = filter === "All"
               </div>
             </div>
           ))}
+          {filteredProjects.length === 0 && (
+            <p className={`md:col-span-4 text-center py-16 font-bold ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+              No published portfolio projects found in this category.
+            </p>
+          )}
         </div>
 
         {/* View All CTA */}
