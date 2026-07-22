@@ -8,6 +8,8 @@ import QuickServiceIcon from '../components/QuickServiceIcon';
 // ── Status config ──────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
   WAITING_FOR_VENDOR_ACCEPTANCE: { label: 'Searching Vendor', color: 'text-[var(--brand-blue)] border-[var(--brand-blue)]', bg: 'bg-sky-500/10', pulse: true },
+  WAITING_FOR_ADMIN_ASSIGNMENT:  { label: 'Admin Assigning Vendor', color: 'text-orange-500 border-orange-500', bg: 'bg-orange-500/10', pulse: true },
+  ADMIN_ACCEPTED:                { label: 'Accepted by Admin', color: 'text-orange-500 border-orange-500', bg: 'bg-orange-500/10', pulse: true },
   VENDOR_ACCEPTED:               { label: 'Vendor On The Way', color: 'text-green-500 border-green-500',  bg: 'bg-green-500/10',  pulse: false },
   VENDOR_ON_WAY:                 { label: 'Vendor On The Way', color: 'text-green-500 border-green-500',  bg: 'bg-green-500/10',  pulse: false },
   IN_PROGRESS:                   { label: 'Work In Progress',  color: 'text-blue-500 border-blue-500',    bg: 'bg-blue-500/10',   pulse: false },

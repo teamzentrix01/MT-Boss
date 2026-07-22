@@ -121,17 +121,6 @@ export async function POST(req) {
     const succeeded = fields.status === 'success' && fields.unmappedstatus !== 'failed';
     if (succeeded) {
       if (booking.payment_status !== 'PAID') {
-        await client.query(
-          `UPDATE service_bookings
-           SET status = 'WAITING_FOR_VENDOR_ACCEPTANCE',
-               user_status = 'PENDING',
-               payment_status = 'PAID',
-               payment_gateway_id = $1,
-               payment_completed_at = NOW()
-           WHERE id = $2`,
-          [String(fields.mihpayid || ''), booking.id]
-        );
-
         const vendors = await client.query(
           `SELECT DISTINCT v.id
            FROM vendors v
@@ -142,8 +131,21 @@ export async function POST(req) {
            WHERE LOWER(TRIM(v.city)) = LOWER(TRIM($1))
              AND v.is_approved = TRUE
              AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
-             AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')`,
+             AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
+             AND v.package_status = 'active'
+             AND v.package_expires_at > NOW()`,
           [booking.service_city, booking.quick_service_id]
+        );
+
+        const nextStatus = vendors.rows.length > 0
+          ? 'WAITING_FOR_VENDOR_ACCEPTANCE'
+          : 'WAITING_FOR_ADMIN_ASSIGNMENT';
+        await client.query(
+          `UPDATE service_bookings
+           SET status = $1, user_status = $2, payment_status = 'PAID',
+               payment_gateway_id = $3, payment_completed_at = NOW()
+           WHERE id = $4`,
+          [nextStatus, nextStatus, String(fields.mihpayid || ''), booking.id]
         );
 
         for (const vendor of vendors.rows) {

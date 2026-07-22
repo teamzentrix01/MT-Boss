@@ -12,6 +12,9 @@ export default function BookingsManager({ isDarkMode }) {
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [selectedVendorId, setSelectedVendorId] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
+  const [actionError, setActionError] = useState('');
 
   useEffect(() => {
     fetchBookings();
@@ -35,8 +38,32 @@ export default function BookingsManager({ isDarkMode }) {
     }
   }
 
+  async function runAdminAction(action) {
+    setActionLoading(true);
+    setActionError('');
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch('/api/admin/bookings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id: selectedBooking.id, action, vendor_id: selectedVendorId || undefined }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Action failed');
+      setSelectedVendorId('');
+      setSelectedBooking(null);
+      await fetchBookings();
+    } catch (error) {
+      setActionError(error.message);
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
   const statusColors = {
     'WAITING_FOR_VENDOR_ACCEPTANCE': { bg: '#fff7ed', text: '#9a3412', label: 'Waiting' },
+    'WAITING_FOR_ADMIN_ASSIGNMENT': { bg: '#fee2e2', text: '#991b1b', label: 'Admin Queue' },
+    'ADMIN_ACCEPTED': { bg: '#fef3c7', text: '#92400e', label: 'Admin Accepted' },
     'VENDOR_ACCEPTED': { bg: '#dbeafe', text: '#1e40af', label: 'Accepted' },
     'VENDOR_ON_WAY': { bg: 'var(--brand-blue-soft)', text: '#92400e', label: 'On Way' },
     'IN_PROGRESS': { bg: '#ffe4e6', text: '#831843', label: 'In Progress' },
@@ -191,7 +218,7 @@ export default function BookingsManager({ isDarkMode }) {
             <h3 style={{ fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>Service Bookings</h3>
             
             <div className="booking-filter">
-              {['all', 'WAITING_FOR_VENDOR_ACCEPTANCE', 'VENDOR_ACCEPTED', 'IN_PROGRESS', 'COMPLETED'].map((status) => (
+              {['all', 'WAITING_FOR_ADMIN_ASSIGNMENT', 'ADMIN_ACCEPTED', 'WAITING_FOR_VENDOR_ACCEPTANCE', 'VENDOR_ACCEPTED', 'IN_PROGRESS', 'COMPLETED'].map((status) => (
                 <button
                   key={status}
                   onClick={() => setFilterStatus(status)}
@@ -361,6 +388,38 @@ export default function BookingsManager({ isDarkMode }) {
               </div>
             </div>
           )}
+
+          {['WAITING_FOR_ADMIN_ASSIGNMENT', 'WAITING_FOR_VENDOR_ACCEPTANCE'].includes(selectedBooking.status) && !selectedBooking.vendor_id && (
+            <div style={{ marginBottom: '1rem', padding: '0.9rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px' }}>
+              <div className="detail-label">Admin Fallback</div>
+              <p className="detail-value" style={{ margin: '0.4rem 0 0.75rem' }}>No paid vendor has accepted this booking. Accept it into the admin queue first.</p>
+              <button className="filter-btn active" disabled={actionLoading} onClick={() => runAdminAction('admin_accept')}>
+                {actionLoading ? 'Accepting...' : 'Accept by Admin'}
+              </button>
+            </div>
+          )}
+
+          {selectedBooking.status === 'ADMIN_ACCEPTED' && !selectedBooking.vendor_id && (
+            <div style={{ marginBottom: '1rem', padding: '0.9rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px' }}>
+              <div className="detail-label">Assign Paid Vendor</div>
+              <p className="detail-value" style={{ margin: '0.4rem 0 0.75rem' }}>Only active paid vendors matching this service and city are listed.</p>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <select value={selectedVendorId} onChange={event => setSelectedVendorId(event.target.value)}
+                  style={{ flex: 1, minWidth: 180, padding: '0.55rem', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', borderRadius: 6 }}>
+                  <option value="">Select eligible paid vendor</option>
+                  {(selectedBooking.eligible_vendors || []).map(vendor => (
+                    <option key={vendor.vendor_id} value={vendor.vendor_id}>{vendor.shop_name} · {vendor.city} · {vendor.package_name || 'Paid'}</option>
+                  ))}
+                </select>
+                <button className="filter-btn active" disabled={actionLoading || !selectedVendorId} onClick={() => runAdminAction('assign_vendor')}>
+                  {actionLoading ? 'Assigning...' : 'Assign Vendor'}
+                </button>
+              </div>
+              {(selectedBooking.eligible_vendors || []).length === 0 && <p style={{ color: 'var(--muted)', fontSize: '0.75rem', marginTop: '0.6rem' }}>Abhi koi matching active paid vendor available nahi hai. Vendor paid hone ke baad Refresh karke assign karein.</p>}
+            </div>
+          )}
+
+          {actionError && <p style={{ color: '#ef4444', fontSize: '0.78rem', fontWeight: 700, marginBottom: '1rem' }}>{actionError}</p>}
 
           {selectedBooking.user_notes && (
             <div style={{ marginBottom: '1rem', padding: '0.75rem', background: 'var(--bg)', borderRadius: '6px' }}>

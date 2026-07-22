@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import QuickServiceIcon from './QuickServiceIcon';
 
 export default function VendorManagementAdmin({ isDarkMode }) {
   const [vendors, setVendors] = useState([]);
@@ -456,6 +457,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
           width: 100%;
           max-height: 90vh;
           overflow-y: auto;
+          overflow-x: hidden;
           padding: 1.5rem;
           box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
@@ -727,12 +729,12 @@ export default function VendorManagementAdmin({ isDarkMode }) {
               ) : vendorCityServices.length === 0 ? (
                 <div className="modal-value">No services are configured for {selectedVendor.city}.</div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(190px, 100%), 1fr))', gap: '0.5rem', width: '100%' }}>
                   {vendorCityServices.map((service) => {
                     const serviceId = Number(service.id);
                     const checked = selectedServiceIds.includes(serviceId);
                     return (
-                      <label key={service.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem', border: `1px solid ${isDarkMode ? '#333' : '#e2e2e7'}`, borderRadius: 6, cursor: 'pointer' }}>
+                      <label key={service.id} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', minWidth: 0, overflow: 'hidden', padding: '0.6rem', border: `1px solid ${isDarkMode ? '#333' : '#e2e2e7'}`, borderRadius: 6, cursor: 'pointer' }}>
                         <input
                           type="checkbox"
                           checked={checked}
@@ -740,7 +742,10 @@ export default function VendorManagementAdmin({ isDarkMode }) {
                             checked ? current.filter((id) => id !== serviceId) : [...current, serviceId]
                           )}
                         />
-                        <span className="modal-value">{service.icon ? `${service.icon} ` : ''}{service.label}</span>
+                        <QuickServiceIcon value={service.icon} label={service.label}
+                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded"
+                          imageClassName="h-9 w-9 object-cover" />
+                        <span className="modal-value" style={{ minWidth: 0, overflowWrap: 'anywhere' }}>{service.label}</span>
                       </label>
                     );
                   })}
