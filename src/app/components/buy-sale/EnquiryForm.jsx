@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export default function EnquiryForm({ isDarkMode, propertyTitle }) {
+export default function EnquiryForm({ isDarkMode, propertyId, propertyTitle }) {
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -39,7 +39,7 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
     setLoading(true);
 
     try {
-      const res = await fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
+      const res = await fetch("/api/property-enquiries", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,17 +50,16 @@ export default function EnquiryForm({ isDarkMode, propertyTitle }) {
           phone: form.phone,
           email: form.email,
           message: form.message,
-          property: propertyTitle,
-          _subject: `New Property Enquiry - ${propertyTitle}`,
+          property_id: propertyId,
         }),
       });
 
       const data = await res.json();
-      if (data.success === "true" || data.success === true) {
+      if (res.ok && data.success === true) {
         setSubmitted(true);
         setForm({ name: "", phone: "", email: "", message: "" });
       } else {
-        alert("Something went wrong. Please try again.");
+        alert(data.error || "Something went wrong. Please try again.");
       }
     } catch (err) {
       alert("Network error. Please try again.");

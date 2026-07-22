@@ -249,7 +249,7 @@ export default function PropertyDetailPage() {
               </div>
 
               {/* Enquiry Form */}
-              <EnquiryForm isDarkMode={dark} propertyTitle={property.title} />
+              <EnquiryForm isDarkMode={dark} propertyId={property.id} propertyTitle={property.title} />
 
             </div>
           </div>

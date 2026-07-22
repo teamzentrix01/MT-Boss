@@ -30,6 +30,7 @@ const HeroBannersManager = dynamicManager(() => import('../components/HeroBanner
 const JobsManager = dynamicManager(() => import('../components/JobsManager'));
 const OfficeLocationsManager = dynamicManager(() => import('../components/OfficeLocationsManager'));
 const LeadManagementAdmin = dynamicManager(() => import('../components/LeadManagementAdmin'));
+const PropertyEnquiriesManager = dynamicManager(() => import('../components/PropertyEnquiriesManager'));
 
 function hasResumeFile(resumeUrl) {
   const value = String(resumeUrl || '').trim();
@@ -1204,6 +1205,7 @@ function AdminDashboard() {
             </div>
           )}
           {activeTab === 'properties' && <PropertiesManager isDarkMode={isDarkMode} />}
+          {activeTab === 'property-enquiries' && <PropertyEnquiriesManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services' && <QuickServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'primary-services' && <PrimaryServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'professionals' && <ProfessionalServicesManager isDarkMode={isDarkMode} />}

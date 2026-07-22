@@ -57,6 +57,7 @@ export default function DashboardLayout({ children }) {
     { label: 'Project Management',       icon: '📋', tab: 'project-management' },
     { label: 'Portfolio Projects',       icon: '🏗️', tab: 'projects' },
     { label: 'Properties',               icon: '🏠', tab: 'properties' },
+    { label: 'Property Enquiries',       icon: '📨', tab: 'property-enquiries' },
     { label: 'Quick Services',           icon: '⚡', tab: 'quick-services' },
     { label: 'Revenue & Earnings',       icon: '💸', tab: 'revenue' },
     { label: 'Service Bookings',         icon: '📝', tab: 'bookings' },
