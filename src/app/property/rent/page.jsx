@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useServiceCities } from "@/hooks/useServiceCities";
 import { uploadPropertyImages } from "@/lib/property-image-upload";
 
-const PROPERTY_TYPES = ["Residential", "Commercial", "Industrial", "Plots"];
+const PROPERTY_TYPES = ["Residential", "Apartment", "Independent House", "Villa", "Farm House", "Commercial", "Office", "Shop / Showroom", "Industrial", "Warehouse", "Plots", "Agricultural Land"];
 
 const empty = {
   title: "", type: "Residential", location: "", address: "",
@@ -228,10 +228,9 @@ export default function RentPage() {
               </div>
               <div>
                 <label className={lbl}>Location *</label>
-                <select className={inp} value={form.location} onChange={e=>set("location",e.target.value)}>
-                  <option value="">{loadingCities ? 'Loading locations...' : 'Select location'}</option>
-                  {availableCities.map(l => <option key={l}>{l}</option>)}
-                </select>
+                <input className={inp} list="rent-property-locations" value={form.location} onChange={e=>set("location",e.target.value)} placeholder="Select or type location" />
+                <datalist id="rent-property-locations">{availableCities.map(l => <option key={l} value={l} />)}</datalist>
+                <p className={`mt-1 text-[10px] ${muted}`}>{loadingCities ? 'Loading suggestions...' : 'Select a suggestion or type any property location.'}</p>
                 {cityError && <p className="mt-1 text-[10px] text-red-500">{cityError}</p>}
               </div>
             </div>

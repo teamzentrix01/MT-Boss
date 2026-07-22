@@ -232,7 +232,7 @@ export default function QuickServiceSlugPage() {
     );
   }
 
-  const basePrice = 150;
+  const basePrice = Number(service.admin_base_price ?? service.base_price ?? 150);
   const taxAmount = Math.round((basePrice * 18) / 100);
   const totalAmount = basePrice + taxAmount;
 
@@ -258,7 +258,7 @@ export default function QuickServiceSlugPage() {
     : "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1200&q=80";
 
   const stats = [
-    ["₹150", "Visiting / Inspection Price"],
+    [`₹${basePrice}`, "Visiting / Inspection Price"],
     [service.duration || "15 mins", "Duration"],
     [service.main_category || "Home Services", "Category"],
     ["On-Site", "Service Location"]

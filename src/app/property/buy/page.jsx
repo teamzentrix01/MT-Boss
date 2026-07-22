@@ -170,7 +170,9 @@ export default function BrowsePropertiesPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <FilterBar isDarkMode={dark} onFilter={handleFilter} />
+      <FilterBar isDarkMode={dark} onFilter={handleFilter}
+        propertyLocations={allProps.map(property => property.location)}
+        propertyTypes={allProps.map(property => property.type)} />
 
         <div className="flex items-center justify-between mb-6">
           <p className={`text-xs font-black uppercase tracking-widest ${dark ? "text-zinc-500" : "text-zinc-400"}`}>

@@ -63,7 +63,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
     : form.timeSlot;
 
   // Flat ₹150 visiting charge for all quick services
-  const basePrice = 150;
+  const basePrice = Number(service?.admin_base_price ?? service?.base_price ?? 150);
   const taxAmount = Math.round((basePrice * 18) / 100);
   const totalAmount = basePrice + taxAmount;
 
@@ -1096,7 +1096,7 @@ export default function AllQuickServicesPage() {
                 )}
 
                 <p className={`text-[10px] font-black mb-3 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  Visiting Charge: <span className="text-[var(--brand-blue)]">₹150</span>
+                  Visiting Charge: <span className="text-[var(--brand-blue)]">₹{Number(s.admin_base_price ?? s.base_price ?? 150)}</span>
                 </p>
 
                 <div className="flex gap-2">

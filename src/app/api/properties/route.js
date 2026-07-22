@@ -2,7 +2,7 @@ import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
-import { resolveConfiguredCity } from '@/lib/service-cities';
+import { cleanCity } from '@/lib/service-cities';
 import { createInitializationGuard } from '@/lib/api-utils';
 
 const ensurePropertiesSchema = createInitializationGuard(async () => {
@@ -62,9 +62,9 @@ export async function POST(req) {
     if (!title || !type || !listing_type || !price || !price_raw || !location) {
       return NextResponse.json({ error: 'title, type, listing_type, price, price_raw and location are required' }, { status: 400 });
     }
-    const canonicalLocation = await resolveConfiguredCity(location);
+    const canonicalLocation = cleanCity(location);
     if (!canonicalLocation) {
-      return NextResponse.json({ error: 'Select a location configured by admin' }, { status: 400 });
+      return NextResponse.json({ error: 'Enter a valid property location' }, { status: 400 });
     }
     const cleanSellerName = seller_name ? cleanText(seller_name) : null;
     const cleanSellerEmail = seller_email ? cleanText(seller_email).toLowerCase() : null;
@@ -145,9 +145,9 @@ export async function PUT(req) {
       highlights, images, tag,
       seller_type, seller_name, seller_phone, seller_email,
     } = body;
-    const canonicalLocation = await resolveConfiguredCity(location);
+    const canonicalLocation = cleanCity(location);
     if (!canonicalLocation) {
-      return NextResponse.json({ error: 'Select a location configured by admin' }, { status: 400 });
+      return NextResponse.json({ error: 'Enter a valid property location' }, { status: 400 });
     }
     const cleanSellerName = seller_name ? cleanText(seller_name) : null;
     const cleanSellerEmail = seller_email ? cleanText(seller_email).toLowerCase() : null;
