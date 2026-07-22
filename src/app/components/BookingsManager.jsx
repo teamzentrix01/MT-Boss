@@ -402,7 +402,7 @@ export default function BookingsManager({ isDarkMode }) {
           {selectedBooking.status === 'ADMIN_ACCEPTED' && !selectedBooking.vendor_id && (
             <div style={{ marginBottom: '1rem', padding: '0.9rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px' }}>
               <div className="detail-label">Assign Vendor</div>
-              <p className="detail-value" style={{ margin: '0.4rem 0 0.75rem' }}>Approved vendors matching this service and city are listed. Admin paid ya unpaid vendor dono ko manually assign kar sakta hai.</p>
+              <p className="detail-value" style={{ margin: '0.4rem 0 0.75rem' }}>Approved vendors matching this service and city are listed. The admin can manually assign either a paid or unpaid vendor.</p>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <select value={selectedVendorId} onChange={event => setSelectedVendorId(event.target.value)}
                   style={{ flex: 1, minWidth: 180, padding: '0.55rem', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', borderRadius: 6 }}>
@@ -415,7 +415,7 @@ export default function BookingsManager({ isDarkMode }) {
                   {actionLoading ? 'Assigning...' : 'Assign Vendor'}
                 </button>
               </div>
-              {(selectedBooking.eligible_vendors || []).length === 0 && <p style={{ color: 'var(--muted)', fontSize: '0.75rem', marginTop: '0.6rem' }}>Abhi koi approved matching vendor available nahi hai. Vendor add/approve hone ke baad Refresh karke assign karein.</p>}
+              {(selectedBooking.eligible_vendors || []).length === 0 && <p style={{ color: 'var(--muted)', fontSize: '0.75rem', marginTop: '0.6rem' }}>No approved matching vendor is currently available. Add or approve a vendor, then refresh and assign the booking.</p>}
             </div>
           )}
 

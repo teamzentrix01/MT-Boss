@@ -85,9 +85,13 @@ export async function GET(req) {
           'package_expires_at', ev.package_expires_at
         ) ORDER BY ev.shop_name) AS eligible_vendors
         FROM vendors ev
-        JOIN vendor_services evs ON evs.vendor_id = ev.id
-          AND evs.quick_service_id = sb.quick_service_id AND evs.is_active = TRUE
+        JOIN vendor_services evs ON evs.vendor_id = ev.id AND evs.is_active = TRUE
+        JOIN quick_services evqs ON evqs.id = evs.quick_service_id
         WHERE LOWER(TRIM(ev.city)) = LOWER(TRIM(sb.service_city))
+          AND (
+            evs.quick_service_id = sb.quick_service_id
+            OR LOWER(TRIM(evqs.label)) = LOWER(TRIM(qs.label))
+          )
           AND ev.is_approved = TRUE
           AND LOWER(COALESCE(ev.status, 'active')) IN ('active', 'approved')
           AND COALESCE(ev.verification_status, 'verified') IN ('verified', 'approved')
@@ -147,8 +151,12 @@ export async function PATCH(req) {
            user_status='VENDOR_ACCEPTED', accepted_at=NOW()
        WHERE sb.id=$2 AND sb.status='ADMIN_ACCEPTED' AND sb.payment_status='PAID'
          AND sb.vendor_id IS NULL AND EXISTS (
-           SELECT 1 FROM vendors v JOIN vendor_services vs ON vs.vendor_id=v.id
-           WHERE v.id=$1 AND vs.quick_service_id=sb.quick_service_id AND vs.is_active=TRUE
+           SELECT 1 FROM vendors v
+           JOIN vendor_services vs ON vs.vendor_id=v.id AND vs.is_active=TRUE
+           JOIN quick_services assigned_qs ON assigned_qs.id=vs.quick_service_id
+           JOIN quick_services booked_qs ON booked_qs.id=sb.quick_service_id
+           WHERE v.id=$1
+             AND (vs.quick_service_id=sb.quick_service_id OR LOWER(TRIM(assigned_qs.label))=LOWER(TRIM(booked_qs.label)))
              AND LOWER(TRIM(v.city))=LOWER(TRIM(sb.service_city))
              AND v.is_approved=TRUE
              AND LOWER(COALESCE(v.status,'active')) IN ('active','approved')
