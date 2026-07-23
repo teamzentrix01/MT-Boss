@@ -41,6 +41,8 @@ function AgentDashboardContent() {
   const [activeTab, setActiveTab] = useState('leads');
   const [message, setMessage] = useState('');
   const [editLead, setEditLead] = useState(null);
+  const [leadSaving, setLeadSaving] = useState(false);
+  const [deletingLeadId, setDeletingLeadId] = useState(null);
   const [leadForm, setLeadForm] = useState({
     clientName: '',
     clientPhone: '',
@@ -256,38 +258,50 @@ function AgentDashboardContent() {
 
   async function createLead(e) {
     e.preventDefault();
+    if (leadSaving) return;
+    setLeadSaving(true);
     setMessage('');
-    if (editLead) {
+    try {
+      if (editLead) {
+        const res = await authFetch('/api/agent/leads', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: editLead.id, ...leadForm }),
+        });
+        if (!res) return;
+        const data = await res.json();
+        if (data.success) {
+          setLeads((prev) => prev.map((l) => l.id === editLead.id ? data.data : l));
+          setLeadForm(resetLeadForm());
+          setEditLead(null);
+          setMessage(data.project ? 'Lead finalized and sent to admin for project assignment.' : 'Lead updated.');
+        } else {
+          setMessage(data.error || 'Lead could not be updated.');
+        }
+        return;
+      }
       const res = await authFetch('/api/agent/leads', {
-        method: 'PATCH',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: editLead.id, ...leadForm }),
+        body: JSON.stringify(leadForm),
       });
       if (!res) return;
       const data = await res.json();
       if (data.success) {
-        setLeads((prev) => prev.map((l) => l.id === editLead.id ? data.data : l));
+        setLeads((prev) => data.duplicate
+          ? prev.some((lead) => lead.id === data.data.id) ? prev : [data.data, ...prev]
+          : [data.data, ...prev]
+        );
         setLeadForm(resetLeadForm());
-        setEditLead(null);
-        setMessage(data.project ? 'Lead finalized and sent to admin for project assignment.' : 'Lead updated.');
+        setMessage(data.duplicate
+          ? 'This lead was already saved; duplicate entry was prevented.'
+          : data.project ? 'Lead finalized and sent to admin for project assignment.' : 'Lead added for your assigned city.'
+        );
       } else {
-        setMessage(data.error || 'Lead could not be updated.');
+        setMessage(data.error || 'Lead could not be saved.');
       }
-      return;
-    }
-    const res = await authFetch('/api/agent/leads', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(leadForm),
-    });
-    if (!res) return;
-    const data = await res.json();
-    if (data.success) {
-      setLeads((prev) => [data.data, ...prev]);
-      setLeadForm(resetLeadForm());
-      setMessage(data.project ? 'Lead finalized and sent to admin for project assignment.' : 'Lead added for your assigned city.');
-    } else {
-      setMessage(data.error || 'Lead could not be saved.');
+    } finally {
+      setLeadSaving(false);
     }
   }
 
@@ -325,6 +339,29 @@ function AgentDashboardContent() {
       }
     } else {
       setMessage(data.error || 'Lead could not be updated.');
+    }
+  }
+
+  async function deleteLead(lead) {
+    if (!window.confirm(`Delete lead for ${lead.client_name}? This action cannot be undone.`)) return;
+    setDeletingLeadId(lead.id);
+    setMessage('');
+    try {
+      const res = await authFetch(`/api/agent/leads?id=${lead.id}`, { method: 'DELETE' });
+      if (!res) return;
+      const data = await res.json();
+      if (data.success) {
+        setLeads((prev) => prev.filter((item) => item.id !== lead.id));
+        if (editLead?.id === lead.id) {
+          setEditLead(null);
+          setLeadForm(resetLeadForm());
+        }
+        setMessage('Lead deleted.');
+      } else {
+        setMessage(data.error || 'Lead could not be deleted.');
+      }
+    } finally {
+      setDeletingLeadId(null);
     }
   }
 
@@ -529,7 +566,9 @@ function AgentDashboardContent() {
                 <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={2} placeholder="Today's visit notes" value={leadForm.daily_visit_notes} onChange={(e) => setLeadForm((f) => ({ ...f, daily_visit_notes: e.target.value }))} />
               </div>
               <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={2} placeholder="General notes" value={leadForm.notes} onChange={(e) => setLeadForm((f) => ({ ...f, notes: e.target.value }))} />
-              <button className="w-full mt-4 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">{editLead ? 'Update Lead' : 'Save Lead'}</button>
+              <button disabled={leadSaving} className="w-full mt-4 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest disabled:cursor-not-allowed disabled:opacity-60">
+                {leadSaving ? 'Saving...' : editLead ? 'Update Lead' : 'Save Lead'}
+              </button>
             </form>
 
             <div className="lg:col-span-2 space-y-3">
@@ -561,6 +600,14 @@ function AgentDashboardContent() {
                         {leadStages.map((s) => <option key={s}>{s}</option>)}
                       </select>
                       <button type="button" onClick={() => startEditLead(lead)} className={`px-3 py-2 border text-xs font-bold ${input}`}>Edit</button>
+                      <button
+                        type="button"
+                        onClick={() => deleteLead(lead)}
+                        disabled={deletingLeadId === lead.id}
+                        className="px-3 py-2 border border-red-500/50 text-xs font-bold text-red-500 hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {deletingLeadId === lead.id ? 'Deleting...' : 'Delete'}
+                      </button>
                     </div>
                   </div>
                   {lead.follow_up_date && <p className="text-xs text-[var(--brand-blue)] font-black mt-3">Follow-up: {new Date(lead.follow_up_date).toLocaleDateString('en-IN')}</p>}

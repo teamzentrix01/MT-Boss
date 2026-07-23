@@ -53,6 +53,36 @@ export async function POST(req) {
 
     client = await pool.connect();
     await client.query('BEGIN');
+
+    // Serialize rapid submissions for the same agent/customer. This prevents
+    // double-clicks or network retries from creating duplicate lead rows.
+    const normalizedPhone = String(clientPhone).replace(/\D/g, '');
+    await client.query(
+      `SELECT pg_advisory_xact_lock(hashtext($1))`,
+      [`agent-lead:${agent.id}:${normalizedPhone}`]
+    );
+    const duplicate = await client.query(
+      `SELECT l.*, p.id AS project_id
+         FROM agent_leads l
+         LEFT JOIN projects p ON p.source_lead_id = l.id
+        WHERE l.agent_id = $1
+          AND REGEXP_REPLACE(l.client_phone, '[^0-9]', '', 'g') = $2
+          AND LOWER(TRIM(l.client_name)) = LOWER(TRIM($3))
+          AND l.created_at > NOW() - INTERVAL '5 minutes'
+        ORDER BY l.created_at DESC
+        LIMIT 1`,
+      [agent.id, normalizedPhone, clientName]
+    );
+    if (duplicate.rows.length > 0) {
+      await client.query('COMMIT');
+      return NextResponse.json({
+        success: true,
+        data: duplicate.rows[0],
+        duplicate: true,
+        message: 'This lead was already saved.',
+      });
+    }
+
     const result = await client.query(
       `INSERT INTO agent_leads
         (agent_id, city, client_name, client_phone, client_email, service_type, lead_type,
@@ -181,5 +211,47 @@ export async function PATCH(req) {
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   } finally {
     client?.release();
+  }
+}
+
+export async function DELETE(req) {
+  try {
+    await ensureAgentSchema();
+    await ensureProjectOpsSchema();
+    const agent = await requireAgent(req);
+    if (!agent) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const id = Number(new URL(req.url).searchParams.get('id'));
+    if (!Number.isInteger(id) || id <= 0) {
+      return NextResponse.json({ success: false, error: 'Valid lead id is required' }, { status: 400 });
+    }
+
+    const project = await pool.query(
+      `SELECT id FROM projects WHERE source_lead_id = $1 LIMIT 1`,
+      [id]
+    );
+    if (project.rows.length > 0) {
+      return NextResponse.json(
+        { success: false, error: 'Finalized lead cannot be deleted because its project already exists.' },
+        { status: 409 }
+      );
+    }
+
+    const result = await pool.query(
+      `DELETE FROM agent_leads
+        WHERE id = $1 AND agent_id = $2
+        RETURNING id`,
+      [id, agent.id]
+    );
+    if (result.rows.length === 0) {
+      return NextResponse.json({ success: false, error: 'Lead not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, deleted_id: result.rows[0].id });
+  } catch (error) {
+    console.error('Agent lead delete error:', error);
+    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
