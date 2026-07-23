@@ -7,6 +7,28 @@
 import { Suspense, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { redirectToPayU } from '@/lib/payu-client';
+
+function ServiceIcon({ icon, className = "h-8 w-8" }) {
+  const value = String(icon || "").trim();
+  const isImage = /^(https?:\/\/|data:image\/)/i.test(value);
+
+  if (isImage) {
+    return (
+      <img
+        src={value}
+        alt=""
+        loading="lazy"
+        className={`${className} shrink-0 rounded-sm object-cover`}
+      />
+    );
+  }
+
+  return (
+    <span aria-hidden="true" className="shrink-0 text-xl leading-none">
+      {value || "🛠️"}
+    </span>
+  );
+}
  
 export default function VendorDashboard() {
   return (
@@ -35,6 +57,8 @@ function VendorDashboardContent() {
   const [vendorProfile, setVendorProfile] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const editModeRef = useRef(false);
+  const incomingBookingsRef = useRef(null);
+  const activeBookingRef = useRef(null);
   const [profileForm, setProfileForm] = useState({ shop_name: "", phone: "", city: "", state: "", description: "" });
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileMsg, setProfileMsg] = useState("");
@@ -281,6 +305,19 @@ function VendorDashboardContent() {
       prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
     );
   }
+
+  function openBookings() {
+    setActiveTab("notifications");
+
+    // "Bookings" is the default tab, so setting the same tab alone has no
+    // visible effect. Move the vendor to the assigned booking/request details.
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        const target = activeBooking ? activeBookingRef.current : incomingBookingsRef.current;
+        target?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }
  
   async function acceptBooking(bookingId) {
     if (selectedNotification && !selectedNotification.can_accept) {
@@ -420,7 +457,14 @@ function VendorDashboardContent() {
             ].map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => { setActiveTab(tab.key); if (tab.key === 'packages') loadPackages(); }}
+                onClick={() => {
+                  if (tab.key === "notifications") {
+                    openBookings();
+                    return;
+                  }
+                  setActiveTab(tab.key);
+                  if (tab.key === "packages") loadPackages();
+                }}
                 className={`min-w-0 px-3 py-2.5 text-[10px] font-black uppercase tracking-wider transition-all sm:px-5 sm:tracking-widest ${
                   activeTab === tab.key
                     ? "bg-[var(--brand-blue)] text-black"
@@ -466,7 +510,7 @@ function VendorDashboardContent() {
                       <div className="flex-1 space-y-3">
                         {/* Header */}
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl">{b.icon}</span>
+                          <ServiceIcon icon={b.icon} className="h-9 w-9" />
                           <div>
                             <p className="font-black text-sm">{b.label}</p>
                             <p className={`text-[10px] ${muted}`}>{b.booking_reference} · {b.service_city}</p>
@@ -658,11 +702,11 @@ function VendorDashboardContent() {
                   ) : profileCityServices.length === 0 ? (
                     <p className={`text-xs ${muted}`}>No services are configured for the selected city.</p>
                   ) : (
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       {profileCityServices.map((svc) => (
                         <label
                           key={svc.id}
-                          className={`flex items-center gap-2 p-2 border cursor-pointer transition-all ${
+                          className={`flex min-w-0 items-center gap-2 p-2.5 border cursor-pointer transition-all ${
                             selectedServices.includes(svc.id)
                               ? "border-[var(--brand-blue)] bg-[var(--brand-blue)]/10"
                               : isDark ? "border-zinc-800 hover:border-zinc-600" : "border-zinc-200 hover:border-zinc-300"
@@ -672,9 +716,10 @@ function VendorDashboardContent() {
                             type="checkbox"
                             checked={selectedServices.includes(svc.id)}
                             onChange={() => toggleService(svc.id)}
-                            className="accent-[var(--brand-blue)]"
+                            className="shrink-0 accent-[var(--brand-blue)]"
                           />
-                          <span className="text-xs">{svc.icon} {svc.label}</span>
+                          <ServiceIcon icon={svc.icon} className="h-8 w-8" />
+                          <span className="min-w-0 break-words text-xs leading-4">{svc.label}</span>
                         </label>
                       ))}
                     </div>
@@ -728,9 +773,10 @@ function VendorDashboardContent() {
                       {vendorProfile.services.map((svc) => (
                         <span
                           key={svc.id}
-                          className={`px-3 py-1 text-xs font-medium border ${isDark ? "border-zinc-700 bg-zinc-900" : "border-zinc-200 bg-zinc-50"}`}
+                          className={`flex min-w-0 max-w-full items-center gap-2 px-3 py-2 text-xs font-medium border ${isDark ? "border-zinc-700 bg-zinc-900" : "border-zinc-200 bg-zinc-50"}`}
                         >
-                          {svc.icon} {svc.label}
+                          <ServiceIcon icon={svc.icon} className="h-7 w-7" />
+                          <span className="break-words">{svc.label}</span>
                         </span>
                       ))}
                     </div>
@@ -759,11 +805,15 @@ function VendorDashboardContent() {
             <p className={`text-[10px] ${muted} mt-1`}>Incoming requests</p>
           </div>
  
-          <div className={`p-6 border ${card}`}>
+          <button
+            type="button"
+            onClick={openBookings}
+            className={`p-6 border ${card} text-left cursor-pointer hover:border-[var(--brand-blue)] transition-colors`}
+          >
             <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Active</p>
             <p className="text-3xl font-black mt-2">{activeBooking ? 1 : 0}</p>
             <p className={`text-[10px] ${muted} mt-1`}>Current booking</p>
-          </div>
+          </button>
  
           <div className={`p-6 border ${card}`}>
             <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Completed</p>
@@ -778,7 +828,7 @@ function VendorDashboardContent() {
           </div>
         </div>
  
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div ref={incomingBookingsRef} className="grid grid-cols-1 lg:grid-cols-3 gap-6 scroll-mt-6">
           {/* Notifications / Incoming Requests */}
           <div className="lg:col-span-2">
             <div className={`border ${card} p-6`}>
@@ -813,7 +863,7 @@ function VendorDashboardContent() {
                             </p>
                           )}
                         </div>
-                        <span className="text-2xl">{notif.icon}</span>
+                        <ServiceIcon icon={notif.icon} className="h-9 w-9" />
                       </div>
                     </button>
                   ))}
@@ -893,7 +943,7 @@ function VendorDashboardContent() {
  
         {/* Active Booking */}
         {activeBooking && (
-          <div className={`border ${card} p-6 mt-6`}>
+          <div ref={activeBookingRef} className={`border ${card} p-6 mt-6 scroll-mt-6`}>
             <h2 className="text-xl font-black uppercase mb-4">🚀 Active Booking</h2>
  
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -910,9 +960,19 @@ function VendorDashboardContent() {
                 <div>
                   <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Address</p>
                   <p className="text-sm">{activeBooking.service_address}</p>
-                  <a href={activeBooking.location_map_url} target="_blank" className="text-[10px] text-[var(--brand-blue)] hover:underline mt-1 inline-block">
-                    📍 Open in Maps
-                  </a>
+                  {activeBooking.location_map_url && (
+                    <a href={activeBooking.location_map_url} target="_blank" rel="noreferrer" className="text-[10px] text-[var(--brand-blue)] hover:underline mt-1 inline-block">
+                      📍 Open in Maps
+                    </a>
+                  )}
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Service Details</p>
+                  <p className="text-sm">{activeBooking.service_description || activeBooking.user_notes || "No additional details provided"}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Date &amp; Time</p>
+                  <p className="text-sm">{activeBooking.booking_date || "-"} · {activeBooking.booking_time || "-"}</p>
                 </div>
               </div>
  

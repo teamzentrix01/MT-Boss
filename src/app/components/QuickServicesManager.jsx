@@ -238,7 +238,10 @@ export default function QuickServicesManager({ isDarkMode }) {
           --qs-ok-tx:    ${isDarkMode ? '#86efac' : '#14532d'};
           --qs-ok-br:    ${isDarkMode ? '#166534' : '#86efac'};
         }
-        .qs-root { color: var(--qs-text); }
+        .qs-root {
+          color:var(--qs-text); width:100%; max-width:100%; min-width:0;
+          overflow:hidden;
+        }
 
         .qs-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.875rem; }
         .qs-title  { font-size:0.875rem; font-weight:700; }
@@ -331,27 +334,50 @@ export default function QuickServicesManager({ isDarkMode }) {
         .qs-panel {
           background:var(--qs-surface); border:1px solid var(--qs-border);
           border-radius:8px; overflow:hidden; margin-bottom:0.75rem;
+          width:100%; max-width:100%; min-width:0;
         }
-        .qs-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+        .qs-table-wrap {
+          position:relative; width:100%; max-width:100%; overflow-x:auto; overflow-y:hidden;
+          overscroll-behavior-x:contain; scrollbar-gutter:stable;
+          -webkit-overflow-scrolling:touch;
+        }
+        .qs-root .qs-table {
+          display:table; width:82rem; min-width:100%; table-layout:fixed;
+          border-collapse:separate; border-spacing:0; font-size:0.8rem;
+        }
         .qs-table th {
           padding:0.5rem 0.875rem; text-align:left;
           font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
           color:var(--qs-muted); background:var(--qs-bg); border-bottom:1px solid var(--qs-border);
+          white-space:nowrap;
         }
         .qs-table td {
           padding:0.6rem 0.875rem; border-bottom:1px solid var(--qs-border);
-          color:var(--qs-text); vertical-align:middle;
+          color:var(--qs-text); vertical-align:middle; overflow:hidden; white-space:normal;
         }
+        .qs-table th:nth-child(1) { width:2.5rem; }
+        .qs-table th:nth-child(2) { width:3.5rem; }
+        .qs-table th:nth-child(3) { width:7rem; }
+        .qs-table th:nth-child(4) { width:17rem; }
+        .qs-table th:nth-child(5) { width:8rem; }
+        .qs-table th:nth-child(6) { width:8rem; }
+        .qs-table th:nth-child(7) { width:14rem; }
+        .qs-table th:nth-child(8) { width:7rem; }
+        .qs-table th:nth-child(9) { width:6rem; }
+        .qs-table th:nth-child(10) { width:8.5rem; }
         .qs-table tr:last-child td { border-bottom:none; }
         .qs-table tbody tr { transition:background .12s; }
         .qs-table tbody tr:hover td { background:var(--qs-row-hov); }
 
         .qs-icon-cell  { font-size:1.25rem; line-height:1; }
-        .qs-name-cell  { font-weight:600; }
-        .qs-muted-cell { color:var(--qs-muted); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .qs-name-cell  { display:block; font-weight:600; overflow-wrap:anywhere; }
+        .qs-muted-cell {
+          display:block; width:100%; min-width:0; color:var(--qs-muted);
+          overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+        }
         .qs-price-cell { font-weight:600; }
 
-        .qs-row-actions { display:flex; gap:0.25rem; }
+        .qs-row-actions { display:flex; gap:0.25rem; white-space:nowrap; }
         .qs-act {
           padding:0.2rem 0.5rem; font-size:0.65rem; font-weight:700;
           border-radius:4px; border:none; cursor:pointer; transition:opacity .15s;
@@ -359,6 +385,14 @@ export default function QuickServicesManager({ isDarkMode }) {
         .qs-act:hover { opacity:.75; }
         .qs-act-edit   { background:var(--qs-bg); color:var(--qs-accent); border:1px solid var(--qs-border); }
         .qs-act-delete { background:${isDarkMode ? '#2a0f0f' : '#fff1f2'}; color:${isDarkMode ? '#f87171' : '#9f1239'}; }
+        .qs-table th:last-child,
+        .qs-table td:last-child {
+          position:sticky; right:0; z-index:2;
+          background:var(--qs-surface);
+          box-shadow:-8px 0 12px -12px rgba(0,0,0,.75);
+        }
+        .qs-table th:last-child { z-index:3; background:var(--qs-bg); }
+        .qs-table tbody tr:hover td:last-child { background:var(--qs-row-hov); }
 
         .qs-empty  { text-align:center; padding:2.5rem; font-size:0.8125rem; color:var(--qs-muted); }
         .qs-footer { font-size:0.75rem; color:var(--qs-muted); }
@@ -387,6 +421,22 @@ export default function QuickServicesManager({ isDarkMode }) {
 
         /* Drop target indicator — top border highlight */
         .qs-row-drag-over td { border-top:2px solid var(--qs-accent) !important; }
+
+        @media (max-width: 900px) {
+          .qs-root .qs-table { width:48rem; min-width:48rem; }
+          .qs-table th:nth-child(4), .qs-table td:nth-child(4),
+          .qs-table th:nth-child(6), .qs-table td:nth-child(6),
+          .qs-table th:nth-child(7), .qs-table td:nth-child(7) { display:none; }
+          .qs-table th:nth-child(5) { width:9rem; }
+        }
+        @media (max-width: 640px) {
+          .qs-header { align-items:flex-start; gap:0.75rem; }
+          .qs-root .qs-table { width:31rem; min-width:31rem; }
+          .qs-table th:nth-child(5), .qs-table td:nth-child(5),
+          .qs-table th:nth-child(9), .qs-table td:nth-child(9) { display:none; }
+          .qs-table th:nth-child(3) { width:9rem; }
+          .qs-table th:nth-child(10) { width:8.5rem; }
+        }
       `}</style>
 
       <div className="qs-root">
@@ -524,7 +574,7 @@ export default function QuickServicesManager({ isDarkMode }) {
         {services.length > 1 && !showForm && (
           <div className="qs-order-hint">
             <span style={{ fontSize: '1rem' }}>⠿</span>
-            Drag rows to reorder • order is saved instantly and reflects on the frontend
+            Drag rows to reorder • scroll sideways for more columns • actions stay pinned
             {orderSaving && (
               <span style={{ marginLeft: 'auto', color: 'var(--qs-accent)', fontStyle: 'italic' }}>
                 saving…
@@ -535,7 +585,7 @@ export default function QuickServicesManager({ isDarkMode }) {
 
         {/* Table */}
         <div className="qs-panel">
-          <div style={{ overflowX: 'auto' }}>
+          <div className="qs-table-wrap" role="region" aria-label="Quick services list" tabIndex={0}>
             <table className="qs-table">
               <thead>
                 <tr>
@@ -580,7 +630,7 @@ export default function QuickServicesManager({ isDarkMode }) {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={11}>
+                    <td colSpan={10}>
                       <div className="qs-empty">No quick services yet. Add one to get started.</div>
                     </td>
                   </tr>

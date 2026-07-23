@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import PortfolioProjectCard from "../../components/PortfolioProjectCard";
 
 
 
@@ -62,39 +63,15 @@ const filteredProjects = filter === "All"
           </div>
         </div>
 
-        {/* Bento Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[250px]">
-          {filteredProjects.map((project) => (
-            <div
+        {/* Consistent modular project cards */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredProjects.map((project, index) => (
+            <PortfolioProjectCard
               key={project.id}
-              className={`group relative overflow-hidden rounded-sm cursor-pointer transition-all duration-700 ${
-                project.size === "large" ? "md:col-span-2 md:row-span-2" : 
-                project.size === "medium" ? "md:col-span-2" : ""
-              }`}
-            >
-              <img
-                src={project.image_url}
-
-                alt={project.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-              />
-              
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
-              {/* Content */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.3em] mb-2">
-                  {project.category}
-                </span>
-                <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-4">
-                  {project.title}
-                </h3>
-                <Link href={`/projects/${project.id}`} className="text-white text-[10px] font-bold uppercase tracking-widest border-b-2 border-[var(--brand-blue)] w-fit hover:text-[var(--brand-blue)] transition-colors">
-                  View Project
-                </Link>
-              </div>
-            </div>
+              project={project}
+              index={index}
+              isDark={isDark}
+            />
           ))}
           {filteredProjects.length === 0 && (
             <p className={`md:col-span-4 text-center py-16 font-bold ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import PortfolioProjectCard from "../components/PortfolioProjectCard";
 
 
 
@@ -72,46 +73,15 @@ export default function FeaturedProjects() {
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, idx) => (
-            <div 
+            <PortfolioProjectCard
               key={project.id}
-              className="group relative h-[500px] overflow-hidden bg-zinc-800 transition-all duration-700"
-              style={{ 
-                transitionDelay: `${idx * 150}ms`,
-                opacity: isVisible ? 1 : 0,
-                transform: isVisible ? 'translateY(0)' : 'translateY(40px)'
-              }}
-            >
-              {/* Image */}
-              <img 
-                src={project.image_url || project.image}
-                alt={project.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-1 opacity-70 group-hover:opacity-40"
-              />
-
-              {/* Overlay Info */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-8 group-hover:translate-y-0 transition-transform duration-500">
-                <p className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-widest mb-2 opacity-0 group-hover:opacity-100 transition-opacity delay-100">
-                  {project.category} — {project.location}
-                </p>
-                <h3 className="text-white text-3xl font-black uppercase leading-none mb-6">
-                  {project.title}
-                </h3>
-                
-                {/* Expandable Button on Hover */}
-                <div className="h-0 group-hover:h-12 overflow-hidden transition-all duration-500">
-                  <Link href={`/projects/${project.id}`} className="inline-block bg-[var(--brand-blue)] text-black px-6 py-3 text-[10px] font-black uppercase tracking-tighter hover:bg-white transition-colors">
-                    Explore Details
-                  </Link>
-                </div>
-              </div>
-
-              {/* Decorative Number */}
-              <span className="absolute top-8 right-8 text-white/10 text-6xl font-black italic group-hover:text-[var(--brand-blue)]/20 transition-colors">
-                0{idx + 1}
-              </span>
-            </div>
+              project={project}
+              index={idx}
+              isDark={isDark}
+              isVisible={isVisible}
+            />
           ))}
         </div>
 

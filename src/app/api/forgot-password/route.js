@@ -90,18 +90,47 @@ export async function POST(req) {
       try {
         await sendMail({
           to: email,
-          subject: 'Your MTbosspassword reset OTP',
+          subject: 'Your MTBoss password reset code',
+          text: [
+            'MTBoss password reset',
+            '',
+            `Your one-time password is: ${otp}`,
+            `This code expires in ${PASSWORD_RESET_OTP_EXPIRY_MINUTES} minutes.`,
+            '',
+            'If you did not request a password reset, you can safely ignore this email.',
+            'For your security, do not share this code with anyone.',
+            '',
+            'MTBoss',
+          ].join('\n'),
           html: `
-            <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;">
-              <h2 style="color:#111;margin-bottom:8px;">Password Reset OTP</h2>
-              <p style="color:#555;line-height:1.6;margin-bottom:20px;">
-                Use the code below to reset your password. It expires in <strong>${PASSWORD_RESET_OTP_EXPIRY_MINUTES} minutes</strong>.
-              </p>
-              <div style="background:#f5f5f7;border-radius:10px;padding:24px;text-align:center;margin-bottom:20px;">
-                <div style="font-size:36px;font-weight:900;letter-spacing:12px;color:#111;">${otp}</div>
-              </div>
-              <p style="color:#999;font-size:12px;">If you didn't request this, ignore this email.</p>
-            </div>
+            <!doctype html>
+            <html lang="en">
+              <body style="margin:0;padding:0;background:#f4f4f5;color:#18181b;">
+                <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+                  Use this one-time code to reset your MTBoss password.
+                </div>
+                <div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:32px 20px;">
+                  <div style="background:#ffffff;border:1px solid #e4e4e7;padding:28px;">
+                    <p style="margin:0 0 20px;color:#111827;font-size:20px;font-weight:700;">MTBoss</p>
+                    <h1 style="color:#18181b;font-size:24px;line-height:1.3;margin:0 0 12px;">Reset your password</h1>
+                    <p style="color:#52525b;font-size:15px;line-height:1.6;margin:0 0 20px;">
+                      Enter this one-time code on the MTBoss password reset screen. It expires in
+                      <strong>${PASSWORD_RESET_OTP_EXPIRY_MINUTES} minutes</strong>.
+                    </p>
+                    <div style="background:#f4f4f5;border:1px solid #e4e4e7;padding:22px;text-align:center;margin:0 0 20px;">
+                      <div style="font-size:34px;font-weight:700;letter-spacing:10px;color:#18181b;">${otp}</div>
+                    </div>
+                    <p style="color:#52525b;font-size:13px;line-height:1.6;margin:0;">
+                      If you did not request this, you can safely ignore this email. For your security,
+                      do not share this code with anyone.
+                    </p>
+                  </div>
+                  <p style="color:#71717a;font-size:11px;line-height:1.5;text-align:center;margin:16px 0 0;">
+                    This transactional email was sent because a password reset was requested for your MTBoss account.
+                  </p>
+                </div>
+              </body>
+            </html>
           `,
         });
       } catch (err) {

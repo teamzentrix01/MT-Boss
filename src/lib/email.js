@@ -1,12 +1,13 @@
 // Email utility — configure SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM in .env
 // Falls back to console.log if not configured.
 
-export async function sendMail({ to, subject, html }) {
+export async function sendMail({ to, subject, html, text, replyTo }) {
   const host = process.env.SMTP_HOST;
   const port = parseInt(process.env.SMTP_PORT || '587');
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
   const from = process.env.SMTP_FROM || user || 'noreply@mtboss.in';
+  const configuredReplyTo = replyTo || process.env.SMTP_REPLY_TO || user;
 
   if (!host || !user || !pass) {
     console.log(`[EMAIL — not configured] To: ${to} | Subject: ${subject}`);
@@ -16,9 +17,25 @@ export async function sendMail({ to, subject, html }) {
   // Dynamic import so build doesn't fail if nodemailer isn't installed
   try {
     const nodemailer = (await import('nodemailer')).default;
-    const transporter = nodemailer.createTransport({ host, port, secure: port === 465, auth: { user, pass } });
-    await transporter.sendMail({ from, to, subject, html });
-    console.log(`[EMAIL sent] To: ${to} | Subject: ${subject}`);
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      requireTLS: port !== 465,
+      auth: { user, pass },
+    });
+    const info = await transporter.sendMail({
+      from,
+      to,
+      subject,
+      text,
+      html,
+      replyTo: configuredReplyTo,
+      // Keep the SMTP envelope aligned with the authenticated sender. This
+      // avoids SPF failures when SMTP_FROM is a display name or alias.
+      envelope: { from: user, to },
+    });
+    console.log(`[EMAIL sent] To: ${to} | Subject: ${subject} | Message-ID: ${info.messageId}`);
   } catch (err) {
     console.warn(`[EMAIL failed] ${err.message}`);
     throw err;

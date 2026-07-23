@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import PortfolioProjectCard from "./PortfolioProjectCard";
 
 export default function FeaturedProjects() {
   const [isDark, setIsDark] = useState(false);
@@ -72,47 +73,15 @@ export default function FeaturedProjects() {
         )}
 
         {/* Projects grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, idx) => (
-            <div
+            <PortfolioProjectCard
               key={project.id}
-              className="group relative overflow-hidden bg-zinc-800"
-              style={{
-                height: 240,
-                opacity: isVisible ? 1 : 0,
-                transform: isVisible ? "translateY(0)" : "translateY(24px)",
-                transition: `opacity 0.55s ease ${idx * 120}ms, transform 0.55s ease ${idx * 120}ms`,
-              }}
-            >
-              <img
-                src={project.image_url}
-                alt={project.title}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-40"
-              />
-
-              {/* Overlay */}
-              <div className="absolute inset-0 p-4 flex flex-col justify-end">
-                <p className="text-[var(--brand-blue)] text-[8px] font-black uppercase tracking-widest mb-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  {project.category}{project.location ? ` — ${project.location}` : ""}
-                </p>
-                <h3 className="text-white text-sm font-black uppercase leading-tight mb-2">{project.title}</h3>
-                <div className="h-0 group-hover:h-8 overflow-hidden transition-all duration-500">
-                  <Link
-                    href={`/projects/${project.id}`}
-                    className="inline-block bg-[var(--brand-blue)] text-black px-4 py-1.5 text-[8px] font-black uppercase tracking-widest hover:bg-white transition-colors"
-                  >
-                    Explore Details
-                  </Link>
-                </div>
-              </div>
-
-              {/* Number watermark */}
-              <span className="absolute top-3 right-3 text-white/10 text-3xl font-black italic group-hover:text-[var(--brand-blue)]/20 transition-colors">
-                0{idx + 1}
-              </span>
-            </div>
+              project={project}
+              index={idx}
+              isDark={isDark}
+              isVisible={isVisible}
+            />
           ))}
         </div>
 

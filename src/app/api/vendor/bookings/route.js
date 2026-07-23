@@ -17,6 +17,8 @@ export async function GET(req) {
       SELECT
         sb.id, sb.booking_reference, sb.user_name, sb.user_phone,
         sb.service_address, sb.service_city, sb.booking_date, sb.booking_time,
+        sb.service_description, sb.user_latitude, sb.user_longitude,
+        sb.location_map_url, sb.start_otp_verified, sb.finish_otp_verified,
         sb.base_amount, sb.visit_fee, sb.tax_amount, sb.total_amount,
         sb.final_amount, sb.user_paid_amount,
         COALESCE(sb.extra_amount, 0)  AS extra_amount,
