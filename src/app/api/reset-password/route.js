@@ -11,6 +11,7 @@ export async function POST(req) {
     if (!email || !user_type || !otp || !new_password) {
       return NextResponse.json({ success: false, error: 'All fields are required' }, { status: 400 });
     }
+    const normalizedEmail = String(email).trim().toLowerCase();
     if (new_password.length < 6) {
       return NextResponse.json({ success: false, error: 'Password must be at least 6 characters' }, { status: 400 });
     }
@@ -22,7 +23,7 @@ export async function POST(req) {
          AND used = FALSE AND expires_at > NOW()
        ORDER BY created_at DESC
        LIMIT 1`,
-      [email, user_type]
+      [normalizedEmail, user_type]
     );
 
     if (otpRes.rows.length === 0) {
@@ -52,22 +53,22 @@ export async function POST(req) {
     // Update password based on user type
     if (user_type === 'supplier') {
       await pool.query(
-        `UPDATE suppliers SET password_hash = crypt($1, gen_salt('bf')), updated_at = NOW() WHERE email = $2`,
-        [new_password, email]
+        `UPDATE suppliers SET password_hash = crypt($1, gen_salt('bf')), updated_at = NOW() WHERE LOWER(TRIM(email)) = $2`,
+        [new_password, normalizedEmail]
       );
     } else {
       const hash = await bcrypt.hash(new_password, 10);
       if (user_type === 'vendor') {
         // vendors use password_hash column
         await pool.query(
-          `UPDATE vendors SET password_hash = $1, updated_at = NOW() WHERE email = $2`,
-          [hash, email]
+          `UPDATE vendors SET password_hash = $1, updated_at = NOW() WHERE LOWER(TRIM(email)) = $2`,
+          [hash, normalizedEmail]
         );
       } else {
         // users table uses 'password' column (not password_hash)
         await pool.query(
-          `UPDATE users SET password = $1 WHERE email = $2`,
-          [hash, email]
+          `UPDATE users SET password = $1 WHERE LOWER(TRIM(email)) = $2`,
+          [hash, normalizedEmail]
         );
       }
     }

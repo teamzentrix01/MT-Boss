@@ -4,8 +4,9 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-export default function ForgotPasswordForm({ userType, loginHref, accentColor }) {
+export default function ForgotPasswordForm({ userType, loginHref, accentColor, allowAccountTypeSelection = false }) {
   const router = useRouter();
+  const [selectedUserType, setSelectedUserType] = useState(userType);
   const [dark, setDark] = useState(false);
   const [step, setStep] = useState(1); // 1=email, 2=otp+password
   const [email, setEmail] = useState('');
@@ -46,7 +47,7 @@ export default function ForgotPasswordForm({ userType, loginHref, accentColor })
       const res = await fetch('/api/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, user_type: userType }),
+        body: JSON.stringify({ email: email.trim(), user_type: selectedUserType }),
       });
       const data = await res.json();
       if (data.success) {
@@ -101,12 +102,15 @@ export default function ForgotPasswordForm({ userType, loginHref, accentColor })
       const res = await fetch('/api/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, user_type: userType, otp: otpString, new_password: newPassword }),
+        body: JSON.stringify({ email: email.trim(), user_type: selectedUserType, otp: otpString, new_password: newPassword }),
       });
       const data = await res.json();
       if (data.success) {
         setDone(true);
-        setTimeout(() => router.push(loginHref), 3000);
+        const destination = allowAccountTypeSelection
+          ? selectedUserType === 'vendor' ? '/vendor/login' : selectedUserType === 'supplier' ? '/supplier/login' : '/login'
+          : loginHref;
+        setTimeout(() => router.push(destination), 3000);
       } else {
         setError(data.error || 'Failed to reset password');
       }
@@ -207,6 +211,20 @@ export default function ForgotPasswordForm({ userType, loginHref, accentColor })
             {/* STEP 1 — Email */}
             {step === 1 && (
               <>
+                {allowAccountTypeSelection && (
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: muted, marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Account Type</label>
+                    <select
+                      value={selectedUserType}
+                      onChange={e => { setSelectedUserType(e.target.value); setError(''); }}
+                      style={inputStyle}
+                    >
+                      <option value="user">Customer</option>
+                      <option value="vendor">Vendor</option>
+                      <option value="supplier">Supplier</option>
+                    </select>
+                  </div>
+                )}
                 <div style={{ marginBottom: '1.25rem' }}>
                   <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: muted, marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email Address</label>
                   <input type="email" value={email} onChange={e => { setEmail(e.target.value); setError(''); }} placeholder="your@email.com" required
@@ -289,7 +307,7 @@ export default function ForgotPasswordForm({ userType, loginHref, accentColor })
                     onBlur={e => e.target.style.borderColor = border}
                   />
                   {confirmPassword && newPassword !== confirmPassword && (
-                    <div style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.35rem' }}>Passwords don't match</div>
+                    <div style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.35rem' }}>Passwords do not match</div>
                   )}
                 </div>
 

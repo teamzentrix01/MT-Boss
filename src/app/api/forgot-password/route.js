@@ -32,14 +32,19 @@ export async function POST(req) {
     if (!email || !user_type) {
       return NextResponse.json({ success: false, error: 'Email and user type required' }, { status: 400 });
     }
+    const normalizedEmail = String(email).trim().toLowerCase();
 
     await ensureTable();
 
     // Check user exists in the right table
     const table = user_type === 'supplier' ? 'suppliers' : user_type === 'vendor' ? 'vendors' : 'users';
-    const userRes = await pool.query(`SELECT id, email FROM ${table} WHERE email = $1`, [email]);
+    const userRes = await pool.query(
+      `SELECT id, email FROM ${table} WHERE LOWER(TRIM(email)) = $1`,
+      [normalizedEmail]
+    );
 
     if (userRes.rows.length === 0) {
+      console.info(`[PASSWORD RESET skipped] No registered ${user_type} account matched the submitted email.`);
       // Generic message — don't reveal if email exists
       return NextResponse.json({ success: true, message: 'If that email is registered, an OTP has been sent.' });
     }
@@ -48,7 +53,7 @@ export async function POST(req) {
       `SELECT COUNT(*)::INTEGER AS count
        FROM password_reset_otps
        WHERE email = $1 AND user_type = $2 AND created_at > NOW() - INTERVAL '1 hour'`,
-      [email, user_type]
+      [normalizedEmail, user_type]
     );
 
     if (Number(recentCount.rows[0]?.count || 0) >= 5) {
@@ -63,12 +68,12 @@ export async function POST(req) {
 
     await pool.query(
       `UPDATE password_reset_otps SET used = TRUE WHERE email = $1 AND user_type = $2 AND used = FALSE`,
-      [email, user_type]
+      [normalizedEmail, user_type]
     );
 
     await pool.query(
       `INSERT INTO password_reset_otps (email, user_type, otp_hash, expires_at) VALUES ($1, $2, $3, $4)`,
-      [email, user_type, hashOtp(otp), expiresAt]
+      [normalizedEmail, user_type, hashOtp(otp), expiresAt]
     );
 
     // Check if SMTP is actually configured
@@ -82,7 +87,7 @@ export async function POST(req) {
     if (!smtpConfigured && isProduction) {
       await pool.query(
         `UPDATE password_reset_otps SET used = TRUE WHERE email = $1 AND user_type = $2 AND used = FALSE`,
-        [email, user_type]
+        [normalizedEmail, user_type]
       );
       return NextResponse.json(
         { success: false, error: 'Email service is not configured. Please contact support.' },
@@ -93,7 +98,7 @@ export async function POST(req) {
     if (smtpConfigured) {
       try {
         await sendMail({
-          to: email,
+          to: userRes.rows[0].email,
           subject: 'Your MTBoss password reset code',
           text: [
             'MTBoss password reset',
@@ -141,7 +146,7 @@ export async function POST(req) {
         console.error('Email send failed:', err.message);
         await pool.query(
           `UPDATE password_reset_otps SET used = TRUE WHERE email = $1 AND user_type = $2 AND used = FALSE`,
-          [email, user_type]
+          [normalizedEmail, user_type]
         );
         return NextResponse.json({ success: false, error: 'Failed to send OTP email. Please try again.' }, { status: 502 });
       }
