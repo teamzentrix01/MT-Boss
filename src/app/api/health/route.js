@@ -27,6 +27,13 @@ export async function GET() {
       database_url_configured: !!process.env.DATABASE_URL,
       node_env: process.env.NODE_ENV,
       cloudinary_configured: !!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+      email_configured: !!(
+        (process.env.SMTP_HOST || process.env.EMAIL_HOST)
+        && (process.env.SMTP_USER || process.env.EMAIL_USER)
+        && (process.env.SMTP_PASS || process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD)
+      ),
+      email_transport: (process.env.SMTP_HOST || process.env.EMAIL_HOST) ? 'smtp' : 'none',
+      email_port: Number(process.env.SMTP_PORT || 587),
     });
   } catch (error) {
     console.error('Health check error:', error.message);

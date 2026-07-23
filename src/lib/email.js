@@ -2,11 +2,11 @@
 // Falls back to console.log if not configured.
 
 export async function sendMail({ to, subject, html, text, replyTo }) {
-  const host = process.env.SMTP_HOST;
+  const host = process.env.SMTP_HOST || process.env.EMAIL_HOST;
   const port = parseInt(process.env.SMTP_PORT || '587');
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const from = process.env.SMTP_FROM || user || 'noreply@mtboss.in';
+  const user = process.env.SMTP_USER || process.env.EMAIL_USER;
+  const pass = process.env.SMTP_PASS || process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD;
+  const from = process.env.SMTP_FROM || process.env.EMAIL_FROM || user || 'noreply@mtboss.in';
   const configuredReplyTo = replyTo || process.env.SMTP_REPLY_TO || user;
 
   if (!host || !user || !pass) {
@@ -14,32 +14,53 @@ export async function sendMail({ to, subject, html, text, replyTo }) {
     return;
   }
 
-  // Dynamic import so build doesn't fail if nodemailer isn't installed
-  try {
-    const nodemailer = (await import('nodemailer')).default;
+  const nodemailer = (await import('nodemailer')).default;
+  const ports = [port];
+  if (/gmail\.com$/i.test(host) && port === 587) ports.push(465);
+  if (/gmail\.com$/i.test(host) && port === 465) ports.push(587);
+
+  let lastError;
+  for (const candidatePort of ports) {
     const transporter = nodemailer.createTransport({
       host,
-      port,
-      secure: port === 465,
-      requireTLS: port !== 465,
+      port: candidatePort,
+      secure: candidatePort === 465,
+      requireTLS: candidatePort !== 465,
       auth: { user, pass },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 20000,
     });
-    const info = await transporter.sendMail({
-      from,
-      to,
-      subject,
-      text,
-      html,
-      replyTo: configuredReplyTo,
-      // Keep the SMTP envelope aligned with the authenticated sender. This
-      // avoids SPF failures when SMTP_FROM is a display name or alias.
-      envelope: { from: user, to },
-    });
-    console.log(`[EMAIL sent] To: ${to} | Subject: ${subject} | Message-ID: ${info.messageId}`);
-  } catch (err) {
-    console.warn(`[EMAIL failed] ${err.message}`);
-    throw err;
+
+    try {
+      const info = await transporter.sendMail({
+        from,
+        to,
+        subject,
+        text,
+        html,
+        replyTo: configuredReplyTo,
+        // Keep the SMTP envelope aligned with the authenticated sender. This
+        // avoids SPF failures when SMTP_FROM is a display name or alias.
+        envelope: { from: user, to },
+      });
+      if (!info.accepted?.length || info.rejected?.length) {
+        throw new Error(`SMTP did not accept the recipient (${info.response || 'no response'})`);
+      }
+      console.log(`[EMAIL sent] To: ${to} | Subject: ${subject} | Message-ID: ${info.messageId} | Port: ${candidatePort}`);
+      transporter.close();
+      return info;
+    } catch (error) {
+      transporter.close();
+      lastError = error;
+      const retryable = ['ETIMEDOUT', 'ECONNECTION', 'ESOCKET', 'ECONNRESET', 'EHOSTUNREACH'].includes(error.code);
+      if (!retryable || candidatePort === ports.at(-1)) break;
+      console.warn(`[EMAIL retry] SMTP port ${candidatePort} failed (${error.code}); trying alternate Gmail port.`);
+    }
   }
+
+  console.warn(`[EMAIL failed] ${lastError?.message || 'Unknown SMTP error'}`);
+  throw lastError || new Error('Email delivery failed');
 }
 
 export async function sendEnquiryAcceptedEmail({ to, userName, shopName, categoryName, phone }) {
