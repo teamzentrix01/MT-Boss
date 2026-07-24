@@ -496,12 +496,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
           {[
             { label: 'Home', href: '/' },
-            { label: 'Construction', href: '/Services/all' },
-            { label: 'Budget Calculator', href: '/calculator' },
-            { label: 'Portfolio', href: '/FeaturedProjects/ProjectGallery' },
-            { label: 'Shop Now', href: '/ShopNow' },
-            { label: 'Careers', href: '/careers' },
-            { label: 'Contact', href: '/contact' },
           ].map((link) => (
             <Link
               key={link.label}
@@ -610,6 +604,28 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               </div>
             )}
           </div>
+
+          {[
+            { label: 'Construction', href: '/Services/all' },
+            { label: 'Budget Calculator', href: '/calculator' },
+            { label: 'Portfolio', href: '/FeaturedProjects/ProjectGallery' },
+            { label: 'Shop Now', href: '/ShopNow' },
+            { label: 'Careers', href: '/careers' },
+            { label: 'Contact', href: '/contact' },
+          ].map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              onClick={closeMobileMenu}
+              className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
+                isDarkMode
+                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
 
           <Link
             href="/agent"
