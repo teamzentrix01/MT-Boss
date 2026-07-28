@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import QuickServiceIcon, { isQuickServiceIconImage } from '../../components/QuickServiceIcon';
 import { redirectToPayU } from '@/lib/payu-client';
+import { getQuickServiceTax, getQuickServiceTotal } from '@/lib/quick-service-pricing';
 
 const TIME_SLOTS = [
   '08:00 AM – 10:00 AM',
@@ -233,8 +234,8 @@ export default function QuickServiceSlugPage() {
   }
 
   const basePrice = Number(service.admin_base_price ?? service.base_price ?? 150);
-  const taxAmount = Math.round((basePrice * 18) / 100);
-  const totalAmount = basePrice + taxAmount;
+  const taxAmount = getQuickServiceTax(basePrice);
+  const totalAmount = getQuickServiceTotal(basePrice);
 
   const bg = dark ? 'bg-black text-white' : 'bg-white text-zinc-900';
   const border = dark ? 'border-zinc-800' : 'border-zinc-200';
@@ -258,7 +259,7 @@ export default function QuickServiceSlugPage() {
     : "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1200&q=80";
 
   const stats = [
-    [`₹${basePrice}`, "Visiting / Inspection Price"],
+    [`₹${totalAmount}`, "Visiting Price (Incl. GST)"],
     [service.duration || "15 mins", "Duration"],
     [service.main_category || "Home Services", "Category"],
     ["On-Site", "Service Location"]
@@ -628,7 +629,7 @@ export default function QuickServiceSlugPage() {
                 <div className={`p-4 border ${border} rounded text-left ${dark ? 'bg-zinc-900/50' : 'bg-sky-50'}`}>
                   <p className="text-xs font-black uppercase text-[var(--brand-blue)]">Visit Fee Clarification</p>
                   <p className={`text-xs leading-relaxed mt-1 ${muted}`}>
-                    The visit/inspection fee is <strong>₹{basePrice}</strong>. 
+                    The visit/inspection fee is <strong>₹{totalAmount}, inclusive of 18% GST</strong>.
                     Technicians will diagnose the issue and provide a separate quote for repairs. You pay only after you approve the quote.
                   </p>
                 </div>

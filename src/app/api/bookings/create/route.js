@@ -8,6 +8,7 @@ import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createPayURequest } from '@/lib/payu';
+import { getQuickServiceTax, getQuickServiceTotal } from '@/lib/quick-service-pricing';
 import { resolveServiceCity } from '@/lib/service-cities';
 
 function normalizeTimeSlot(slot) {
@@ -145,8 +146,8 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Service price is not configured correctly' }, { status: 400 });
     }
     const visitFee = 0;
-    const taxAmount = Math.round((basePrice * 18) / 100);
-    const totalAmount = basePrice + visitFee + taxAmount;
+    const taxAmount = getQuickServiceTax(basePrice);
+    const totalAmount = getQuickServiceTotal(basePrice, visitFee);
 
     // Generate booking reference
     const bookingReference = `BK${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`;

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import QuickServiceIcon, { isQuickServiceIconImage } from '../components/QuickServiceIcon';
 import { redirectToPayU } from '@/lib/payu-client';
+import { getQuickServiceTax, getQuickServiceTotal } from '@/lib/quick-service-pricing';
 
 const TIME_SLOTS = [
   '08:00 AM – 10:00 AM',
@@ -62,10 +63,10 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
     ? selectedFreeSlot ? `${selectedFreeSlot.slot_start?.slice(0, 5)} - ${selectedFreeSlot.slot_end?.slice(0, 5)}` : ''
     : form.timeSlot;
 
-  // Flat ₹150 visiting charge for all quick services
+  // Display the same GST-inclusive total that the payment API charges.
   const basePrice = Number(service?.admin_base_price ?? service?.base_price ?? 150);
-  const taxAmount = Math.round((basePrice * 18) / 100);
-  const totalAmount = basePrice + taxAmount;
+  const taxAmount = getQuickServiceTax(basePrice);
+  const totalAmount = getQuickServiceTotal(basePrice);
 
   const overlay = isDark ? 'bg-black/80' : 'bg-zinc-900/60';
   const modal = isDark ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-white border-zinc-200 text-zinc-900';
@@ -396,7 +397,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                 <div className={`flex items-center justify-between px-4 py-3 ${isDark ? 'bg-zinc-900' : 'bg-sky-50'}`}>
                   <div>
                     <p className={`text-[8px] uppercase tracking-widest font-black mb-0.5 ${muted}`}>Visit / Inspection Charge</p>
-                    <p className="text-xl font-black text-[var(--brand-blue)]">₹{basePrice} <span className={`text-[10px] font-bold ${muted}`}>only</span></p>
+                    <p className="text-xl font-black text-[var(--brand-blue)]">₹{totalAmount} <span className={`text-[10px] font-bold ${muted}`}>(incl. GST)</span></p>
                   </div>
                   <div className="text-right">
                     <p className={`text-[8px] uppercase tracking-widest font-black mb-0.5 ${muted}`}>Duration</p>
@@ -408,7 +409,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                   <span className="text-base shrink-0 mt-0.5">⚠️</span>
                   <div>
                     <p className={`text-[10px] font-black uppercase tracking-wide mb-0.5 ${isDark ? 'text-[var(--brand-blue-light)]' : 'text-[var(--brand-blue-deep)]'}`}>
-                      ₹{basePrice} is the visit/inspection fee only
+                      ₹{totalAmount} is the final visit fee, including 18% GST
                     </p>
                     <p className={`text-[10px] leading-relaxed ${isDark ? 'text-zinc-400' : 'text-[var(--brand-blue-deeper)]'}`}>
                       Actual repair &amp; work charges are <strong>separate</strong> and will be quoted by the technician <strong>after on-site inspection</strong>. You decide before any work begins.
@@ -728,7 +729,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                 <span className="text-base shrink-0">⚠️</span>
                 <div>
                   <p className={`text-[10px] font-black uppercase tracking-wide mb-0.5 ${isDark ? 'text-[var(--brand-blue-light)]' : 'text-[var(--brand-blue-deep)]'}`}>
-                    Visit fee — ₹{basePrice} only
+                    Visit fee — ₹{totalAmount}, inclusive of 18% GST
                   </p>
                   <p className={`text-[10px] leading-relaxed ${isDark ? 'text-zinc-400' : 'text-[var(--brand-blue-deeper)]'}`}>
                     This covers the technician&apos;s visit &amp; inspection. <strong>Repair / work charges are separate</strong> and will be communicated on-site before any work starts.
@@ -1096,7 +1097,11 @@ export default function AllQuickServicesPage() {
                 )}
 
                 <p className={`text-[10px] font-black mb-3 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  Visiting Charge: <span className="text-[var(--brand-blue)]">₹{Number(s.admin_base_price ?? s.base_price ?? 150)}</span>
+                  Visiting Charge:{' '}
+                  <span className="text-[var(--brand-blue)]">
+                    ₹{getQuickServiceTotal(s.admin_base_price ?? s.base_price ?? 150)}
+                  </span>{' '}
+                  <span className="font-semibold">(incl. GST)</span>
                 </p>
 
                 <div className="flex gap-2">
