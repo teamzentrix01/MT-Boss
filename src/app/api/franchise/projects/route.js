@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole } from '@/lib/auth';
 import { ensureProjectOpsSchema, getProjectSummaries } from '@/lib/project-ops';
+import { franchiseAccessResponse, getFranchiseAccess } from '@/lib/franchise-access';
 
 async function ensureProjectColumns() {
   await ensureProjectOpsSchema();
@@ -18,19 +18,40 @@ async function ensureAgentIsApproved(agentId, city = '') {
   return result.rows[0] || null;
 }
 
+const FINANCIAL_FIELDS = [
+  'deal_amount',
+  'total_received',
+  'payment_count',
+  'labour_cost',
+  'labour_paid',
+  'material_cost',
+  'extra_expense',
+  'transport_cost',
+  'transport_count',
+  'agent_commission',
+  'profit_loss',
+];
+
+function hideFinancials(project) {
+  const visible = { ...project };
+  for (const field of FINANCIAL_FIELDS) delete visible[field];
+  return visible;
+}
+
 export async function GET(req) {
   try {
-    const franchise = requireRole(req, 'franchise');
-    if (!franchise) {
-      return NextResponse.json({ success: false, error: 'Franchise access required' }, { status: 403 });
-    }
+    const access = await getFranchiseAccess(req, 'projects.view');
+    if (!access.allowed) return franchiseAccessResponse(access);
 
     const data = await getProjectSummaries(
       "WHERE p.franchise_id = $1 AND p.project_kind = 'operational'",
-      [franchise.id]
+      [access.user.id]
     );
 
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json({
+      success: true,
+      data: access.permissions['financials.view'] ? data : data.map(hideFinancials),
+    });
   } catch (error) {
     console.error('Franchise projects fetch error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
@@ -39,16 +60,14 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const franchise = requireRole(req, 'franchise');
-    if (!franchise) {
-      return NextResponse.json({ success: false, error: 'Franchise access required' }, { status: 403 });
-    }
+    const access = await getFranchiseAccess(req, 'projects.create');
+    if (!access.allowed) return franchiseAccessResponse(access);
+    const franchise = access.user;
 
     await ensureProjectColumns();
     const {
       title,
       category,
-      location,
       description,
       image_url,
       cloudinary_public_id,
@@ -67,7 +86,11 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Title, category and image are required' }, { status: 400 });
     }
 
-    const projectCity = location || franchise.city || '';
+    if (assigned_agent_id && !access.permissions['agents.assign']) {
+      return NextResponse.json({ success: false, error: 'Permission denied: agents.assign' }, { status: 403 });
+    }
+
+    const projectCity = franchise.city || '';
     if (assigned_agent_id && !(await ensureAgentIsApproved(assigned_agent_id, projectCity))) {
       return NextResponse.json({ success: false, error: 'Select an approved agent from the project city' }, { status: 400 });
     }
@@ -87,7 +110,7 @@ export async function POST(req) {
       [
         title,
         category,
-        location || franchise.city || '',
+        projectCity,
         description || '',
         image_url,
         cloudinary_public_id || '',
@@ -99,7 +122,7 @@ export async function POST(req) {
         client_name || null,
         client_phone || null,
         client_email || null,
-        Number(deal_amount || 0),
+        access.permissions['financials.view'] ? Number(deal_amount || 0) : 0,
         project_status || 'lead',
       ]
     );
@@ -113,17 +136,15 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   try {
-    const franchise = requireRole(req, 'franchise');
-    if (!franchise) {
-      return NextResponse.json({ success: false, error: 'Franchise access required' }, { status: 403 });
-    }
+    const access = await getFranchiseAccess(req, 'projects.edit');
+    if (!access.allowed) return franchiseAccessResponse(access);
+    const franchise = access.user;
 
     await ensureProjectColumns();
     const {
       id,
       title,
       category,
-      location,
       description,
       image_url,
       cloudinary_public_id,
@@ -142,7 +163,24 @@ export async function PATCH(req) {
       return NextResponse.json({ success: false, error: 'Project id, title, category and image are required' }, { status: 400 });
     }
 
-    if (assigned_agent_id && !(await ensureAgentIsApproved(assigned_agent_id, location || franchise.city || ''))) {
+    const currentProjectResult = await pool.query(
+      `SELECT assigned_agent_id, deal_amount
+         FROM projects
+        WHERE id = $1 AND franchise_id = $2 AND project_kind = 'operational'`,
+      [id, franchise.id]
+    );
+    const currentProject = currentProjectResult.rows[0];
+    if (!currentProject) {
+      return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
+    }
+
+    const requestedAgentId = assigned_agent_id || null;
+    const currentAgentId = currentProject.assigned_agent_id || null;
+    if (String(requestedAgentId || '') !== String(currentAgentId || '') && !access.permissions['agents.assign']) {
+      return NextResponse.json({ success: false, error: 'Permission denied: agents.assign' }, { status: 403 });
+    }
+
+    if (assigned_agent_id && !(await ensureAgentIsApproved(assigned_agent_id, franchise.city || ''))) {
       return NextResponse.json({ success: false, error: 'Select an approved agent from the project city' }, { status: 400 });
     }
 
@@ -161,7 +199,7 @@ export async function PATCH(req) {
       [
         title,
         category,
-        location || '',
+        franchise.city || '',
         description || '',
         image_url,
         cloudinary_public_id || '',
@@ -172,7 +210,7 @@ export async function PATCH(req) {
         client_name || null,
         client_phone || null,
         client_email || null,
-        Number(deal_amount || 0),
+        access.permissions['financials.view'] ? Number(deal_amount || 0) : Number(currentProject.deal_amount || 0),
         project_status || 'lead',
         id,
         franchise.id,
@@ -192,10 +230,9 @@ export async function PATCH(req) {
 
 export async function DELETE(req) {
   try {
-    const franchise = requireRole(req, 'franchise');
-    if (!franchise) {
-      return NextResponse.json({ success: false, error: 'Franchise access required' }, { status: 403 });
-    }
+    const access = await getFranchiseAccess(req, 'projects.delete');
+    if (!access.allowed) return franchiseAccessResponse(access);
+    const franchise = access.user;
 
     await ensureProjectColumns();
     const { id } = await req.json();

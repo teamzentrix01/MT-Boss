@@ -4,16 +4,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { getJwtSecret, setAuthCookie } from '@/lib/auth';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { ensureFranchiseAccessColumns } from '@/lib/franchise-access';
+import { normalizeFranchisePermissions } from '@/lib/franchise-permissions';
 
 const ensureFranchiseColumns = createInitializationGuard(async () => {
-  await pool.query(`
-    ALTER TABLE franchises
-      ADD COLUMN IF NOT EXISTS password_hash TEXT,
-      ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ,
-      ADD COLUMN IF NOT EXISTS approved_by_email TEXT,
-      ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ,
-      ADD COLUMN IF NOT EXISTS login_enabled BOOLEAN DEFAULT FALSE
-  `);
+  await ensureFranchiseAccessColumns();
 });
 
 export async function POST(req) {
@@ -26,7 +21,7 @@ export async function POST(req) {
     }
 
     const result = await pool.query(
-      `SELECT id, name, email, phone, city, state, status, login_enabled, password_hash
+      `SELECT id, name, email, phone, city, state, status, login_enabled, password_hash, permissions
        FROM franchises
        WHERE LOWER(email) = LOWER($1)
        ORDER BY created_at DESC
@@ -76,6 +71,7 @@ export async function POST(req) {
         city: franchise.city,
         state: franchise.state,
         status: franchise.status,
+        permissions: normalizeFranchisePermissions(franchise.permissions),
         role: 'franchise',
       },
     });

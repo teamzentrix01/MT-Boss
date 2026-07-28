@@ -1,6 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import {
+  EMPTY_FRANCHISE_PERMISSIONS,
+  FRANCHISE_PERMISSION_DEFINITIONS,
+  LEGACY_FRANCHISE_PERMISSIONS,
+  normalizeFranchisePermissions,
+} from '@/lib/franchise-permissions';
 
 const STATUS_OPTIONS = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 
@@ -34,8 +40,14 @@ export default function FranchisesPage() {
   const [updating, setUpdating]     = useState(false);
   const [section, setSection]       = useState('personal');
   const [notice, setNotice]         = useState({ type: '', text: '' });
+  const [permissionDraft, setPermissionDraft] = useState({ ...EMPTY_FRANCHISE_PERMISSIONS });
 
   useEffect(() => { fetchFranchises(); }, []);
+  useEffect(() => {
+    if (selected) {
+      setPermissionDraft(normalizeFranchisePermissions(selected.permissions));
+    }
+  }, [selected]);
 
   const fetchFranchises = async () => {
     try {
@@ -104,6 +116,38 @@ export default function FranchisesPage() {
     }
   };
 
+  const savePermissions = async () => {
+    if (!selected?.id) return;
+    setUpdating(true);
+    setNotice({ type: '', text: '' });
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/franchises', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          id: selected.id,
+          action: 'updatePermissions',
+          permissions: permissionDraft,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        setNotice({ type: 'error', text: data.error || 'Could not update permissions.' });
+        return;
+      }
+
+      setFranchises(prev => prev.map(f => f.id === selected.id ? data.data : f));
+      setSelected(data.data);
+      setPermissionDraft(normalizeFranchisePermissions(data.data.permissions));
+      setNotice({ type: 'success', text: data.message || 'Franchise permissions updated.' });
+    } catch {
+      setNotice({ type: 'error', text: 'Could not update permissions. Please try again.' });
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const models = ['All', 'Associate Partner', 'Regional Franchise', 'Master Franchise'];
 
   const filtered = franchises.filter(f => {
@@ -132,6 +176,7 @@ export default function FranchisesPage() {
     { id: 'banking',   label: 'Banking' },
     { id: 'franchise', label: 'Franchise' },
     { id: 'office',    label: 'Office' },
+    { id: 'permissions', label: 'Permissions' },
   ];
 
   return (
@@ -339,6 +384,19 @@ export default function FranchisesPage() {
           padding-bottom: 0.5rem;
           border-bottom: 1px solid var(--border);
         }
+        .fr-permission-group { margin-bottom: 1.25rem; }
+        .fr-permission-grid { display:grid; grid-template-columns:1fr 1fr; gap:.65rem; }
+        .fr-permission-card {
+          display:flex; align-items:flex-start; gap:.7rem; padding:.8rem;
+          border:1px solid var(--border); border-radius:8px;
+          background:var(--surface); cursor:pointer; transition:border-color .15s, background .15s;
+        }
+        .fr-permission-card.on { border-color:var(--accent); background:color-mix(in srgb, var(--accent) 8%, var(--surface)); }
+        .fr-permission-card input { margin-top:.15rem; accent-color:var(--accent); }
+        .fr-permission-card strong { display:block; color:var(--text); font-size:.78rem; }
+        .fr-permission-card small { display:block; color:var(--muted); font-size:.68rem; line-height:1.4; margin-top:.2rem; }
+        .fr-permission-actions { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+        @media(max-width:700px){ .fr-permission-grid { grid-template-columns:1fr; } }
         .fr-notice {
           margin: 0 1.5rem 1rem;
           padding: 0.7rem 0.85rem;
@@ -590,6 +648,70 @@ export default function FranchisesPage() {
                     <Field label="Office Size (sqft)"  value={selected.office_area_sqft} />
                     <Field label="Office Type"         value={selected.office_type} />
                   </div>
+                </>
+              )}
+
+              {section === 'permissions' && (
+                <>
+                  <div className="fr-section-title">Franchise Dashboard Permissions</div>
+                  <div className="fr-modal-msg" style={{ marginBottom: '1rem' }}>
+                    Only enabled features will appear in this franchise&apos;s dashboard. Access is also enforced by the server on every request.
+                  </div>
+                  <div className="fr-permission-actions">
+                    <button
+                      type="button"
+                      className="fr-status-opt"
+                      disabled={updating}
+                      onClick={() => setPermissionDraft({ ...LEGACY_FRANCHISE_PERMISSIONS })}
+                    >
+                      Select All
+                    </button>
+                    <button
+                      type="button"
+                      className="fr-status-opt"
+                      disabled={updating}
+                      onClick={() => setPermissionDraft({ ...EMPTY_FRANCHISE_PERMISSIONS })}
+                    >
+                      Clear All
+                    </button>
+                    <button
+                      type="button"
+                      className="fr-status-opt sel"
+                      style={{ background: 'var(--accent)', borderColor: 'var(--accent)' }}
+                      disabled={updating}
+                      onClick={savePermissions}
+                    >
+                      {updating ? 'Saving...' : 'Save Permissions'}
+                    </button>
+                  </div>
+
+                  {[...new Set(FRANCHISE_PERMISSION_DEFINITIONS.map(item => item.group))].map(group => (
+                    <div className="fr-permission-group" key={group}>
+                      <div className="fr-section-title">{group}</div>
+                      <div className="fr-permission-grid">
+                        {FRANCHISE_PERMISSION_DEFINITIONS.filter(item => item.group === group).map(item => (
+                          <label
+                            key={item.key}
+                            className={`fr-permission-card${permissionDraft[item.key] ? ' on' : ''}`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={permissionDraft[item.key] === true}
+                              disabled={updating}
+                              onChange={event => setPermissionDraft(current => ({
+                                ...current,
+                                [item.key]: event.target.checked,
+                              }))}
+                            />
+                            <span>
+                              <strong>{item.label}</strong>
+                              <small>{item.description}</small>
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </>
               )}
 

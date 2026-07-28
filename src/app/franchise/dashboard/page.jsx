@@ -3,6 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import FreeTimeSlotsManager from '@/app/components/FreeTimeSlotsManager';
+import {
+  EMPTY_FRANCHISE_PERMISSIONS,
+  normalizeFranchisePermissions,
+} from '@/lib/franchise-permissions';
 
 const CATEGORIES = ['Commercial', 'Residential', 'Hospitality', 'Industrial', 'IT Infrastructure', 'Luxury Home'];
 const leadStatuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
@@ -35,6 +39,7 @@ export default function FranchiseDashboardPage() {
   const router = useRouter();
   const fileRef = useRef(null);
   const [franchise, setFranchise] = useState(null);
+  const [permissions, setPermissions] = useState({ ...EMPTY_FRANCHISE_PERMISSIONS });
   const [projects, setProjects] = useState([]);
   const [leads, setLeads] = useState([]);
   const [agents, setAgents] = useState([]);
@@ -50,28 +55,81 @@ export default function FranchiseDashboardPage() {
   const [message, setMessage] = useState({ type: '', text: '' });
 
   const token = () => localStorage.getItem('franchise-token');
+  const can = (permission) => permissions[permission] === true;
 
   useEffect(() => {
-    const stored = localStorage.getItem('franchise');
     const tok = localStorage.getItem('franchise-token');
-    if (!stored || !tok) {
+    if (!tok) {
       router.push('/franchise/login');
       return;
     }
 
-    try {
-      setFranchise(JSON.parse(stored));
-    } catch {
-      router.push('/franchise/login');
-      return;
+    async function initialize() {
+      try {
+        const res = await fetch('/api/franchise/profile', {
+          headers: { Authorization: `Bearer ${tok}` },
+          cache: 'no-store',
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          localStorage.removeItem('franchise-token');
+          localStorage.removeItem('franchise');
+          router.push('/franchise/login');
+          return;
+        }
+
+        const currentPermissions = normalizeFranchisePermissions(data.data.permissions);
+        setFranchise(data.data);
+        setPermissions(currentPermissions);
+        localStorage.setItem('franchise', JSON.stringify(data.data));
+
+        const requests = [];
+        if (currentPermissions['projects.view']) requests.push(fetchProjects(tok));
+        if (currentPermissions['agents.view']) requests.push(fetchAgents(tok));
+        if (currentPermissions['leads.view']) requests.push(fetchLeads(tok));
+        await Promise.all(requests);
+      } catch {
+        setMessage({ type: 'error', text: 'Could not verify franchise access.' });
+      } finally {
+        setLoading(false);
+      }
     }
 
-    Promise.all([fetchProjects(tok), fetchAgents(tok), fetchLeads(tok)]).finally(() => setLoading(false));
+    initialize();
   }, [router]);
 
   useEffect(() => {
-    const refresh = () => {
-      if (document.visibilityState === 'visible' && localStorage.getItem('franchise-token')) fetchLeads();
+    const refresh = async () => {
+      const tok = localStorage.getItem('franchise-token');
+      if (document.visibilityState !== 'visible' || !tok) return;
+
+      try {
+        const res = await fetch('/api/franchise/profile', {
+          headers: { Authorization: `Bearer ${tok}` },
+          cache: 'no-store',
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          localStorage.removeItem('franchise-token');
+          localStorage.removeItem('franchise');
+          router.push('/franchise/login');
+          return;
+        }
+
+        const currentPermissions = normalizeFranchisePermissions(data.data.permissions);
+        setFranchise(data.data);
+        setPermissions(currentPermissions);
+        localStorage.setItem('franchise', JSON.stringify(data.data));
+
+        if (currentPermissions['projects.view']) await fetchProjects(tok);
+        else setProjects([]);
+        if (currentPermissions['agents.view']) await fetchAgents(tok);
+        else setAgents([]);
+        if (currentPermissions['leads.view']) await fetchLeads(tok);
+        else setLeads([]);
+      } catch {
+        // Keep the current screen during a temporary network failure.
+      }
     };
     const timer = setInterval(refresh, 20000);
     document.addEventListener('visibilitychange', refresh);
@@ -79,8 +137,10 @@ export default function FranchiseDashboardPage() {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', refresh);
     };
+    // Access is revalidated periodically so admin changes take effect without
+    // requiring the franchise user to sign in again.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [permissions, router]);
 
   const fetchProjects = async (tok = token()) => {
     const res = await fetch('/api/franchise/projects', {
@@ -355,12 +415,20 @@ export default function FranchiseDashboardPage() {
       </header>
 
       <section className="fd-body">
+        {!can('projects.view') && !can('leads.view') && !can('slots.manage') && (
+          <div className="fd-empty">
+            No dashboard features have been assigned to this franchise. Please contact the administrator.
+          </div>
+        )}
+
+        {can('projects.view') && (
+        <>
         <div className="fd-head">
           <div>
             <h1 className="fd-title">Projects</h1>
             <p className="fd-sub">Create projects for your approved franchise territory and assign an admin-approved agent.</p>
           </div>
-          <button className="fd-btn" onClick={openAdd}>Add Project</button>
+          {can('projects.create') && <button className="fd-btn" onClick={openAdd}>Add Project</button>}
         </div>
 
         <div className="fd-stats">
@@ -389,23 +457,27 @@ export default function FranchiseDashboardPage() {
                     <div className="fd-muted">Client: <strong>{project.client_name || '-'}</strong> {project.client_phone ? `(${project.client_phone})` : ''}</div>
                   )}
                   {project.assigned_agent_name && <div className="fd-muted">Assigned agent: <strong>{project.assigned_agent_name}</strong></div>}
-                  <div className="fd-money">
+                  {can('financials.view') && <div className="fd-money">
                     <div>Received<strong>Rs {Number(project.total_received || 0).toLocaleString('en-IN')}</strong></div>
                     <div>Agent 2%<strong>Rs {Number(project.agent_commission || 0).toLocaleString('en-IN')}</strong></div>
                     <div>Costs<strong>Rs {Number(Number(project.labour_cost || 0) + Number(project.material_cost || 0) + Number(project.extra_expense || 0)).toLocaleString('en-IN')}</strong></div>
                     <div>Profit/Loss<strong>Rs {Number(project.profit_loss || 0).toLocaleString('en-IN')}</strong></div>
-                  </div>
-                  <div className="fd-actions">
-                    <button className="fd-btn secondary" onClick={() => openEdit(project)}>Edit</button>
-                    <button className="fd-btn danger" onClick={() => deleteProject(project)}>Delete</button>
-                  </div>
+                  </div>}
+                  {(can('projects.edit') || can('projects.delete')) && (
+                    <div className="fd-actions">
+                      {can('projects.edit') && <button className="fd-btn secondary" onClick={() => openEdit(project)}>Edit</button>}
+                      {can('projects.delete') && <button className="fd-btn danger" onClick={() => deleteProject(project)}>Delete</button>}
+                    </div>
+                  )}
                 </div>
               </article>
             ))}
           </div>
         )}
+        </>
+        )}
 
-        <section className="fd-section">
+        {can('leads.view') && <section className="fd-section">
           <div className="fd-section-head">
             <div>
               <div className="fd-card-title">Assigned Leads</div>
@@ -436,32 +508,32 @@ export default function FranchiseDashboardPage() {
                     </td>
                     <td>{lead.lead_source || '-'}</td>
                     <td>
-                      <select className="fd-mini-select" value={lead.status || 'New'} onChange={e => updateLead(lead.id, { status: e.target.value })}>
+                      <select disabled={!can('leads.manage')} className="fd-mini-select" value={lead.status || 'New'} onChange={e => updateLead(lead.id, { status: e.target.value })}>
                         {leadStatuses.map(s => <option key={s} value={s}>{s}</option>)}
                       </select>
                     </td>
                     <td>
-                      <select className="fd-mini-select" value={lead.lead_stage || 'New'} onChange={e => updateLead(lead.id, { lead_stage: e.target.value })}>
+                      <select disabled={!can('leads.manage')} className="fd-mini-select" value={lead.lead_stage || 'New'} onChange={e => updateLead(lead.id, { lead_stage: e.target.value })}>
                         {leadStages.map(s => <option key={s} value={s}>{s}</option>)}
                       </select>
                     </td>
                     <td>
-                      <select className="fd-mini-select" value={lead.agent_id || ''} onChange={e => updateLead(lead.id, { agent_id: e.target.value })}>
+                      <select disabled={!can('leads.manage') || !can('agents.assign')} className="fd-mini-select" value={lead.agent_id || ''} onChange={e => updateLead(lead.id, { agent_id: e.target.value })}>
                         <option value="">Not assigned</option>
                         {agents.map(agent => <option key={agent.id} value={agent.id}>{agent.name} - {agent.city || agent.email}</option>)}
                       </select>
                     </td>
                     <td>
-                      <input className="fd-mini-select" type="date" value={lead.follow_up_date ? String(lead.follow_up_date).slice(0, 10) : ''} onChange={e => updateLead(lead.id, { follow_up_date: e.target.value })} />
+                      <input disabled={!can('leads.manage')} className="fd-mini-select" type="date" value={lead.follow_up_date ? String(lead.follow_up_date).slice(0, 10) : ''} onChange={e => updateLead(lead.id, { follow_up_date: e.target.value })} />
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </section>
+        </section>}
 
-        <section className="fd-section fd-slot-section">
+        {can('slots.manage') && <section className="fd-section fd-slot-section">
           <div className="fd-section-head">
             <div>
               <div className="fd-card-title">Quick-Service Slots</div>
@@ -471,7 +543,7 @@ export default function FranchiseDashboardPage() {
           <div style={{ padding: '1rem' }}>
             <FreeTimeSlotsManager tokenKey="franchise-token" defaultCity={franchise?.city || ''} compact />
           </div>
-        </section>
+        </section>}
       </section>
 
       {showForm && (
@@ -513,10 +585,10 @@ export default function FranchiseDashboardPage() {
                   <label className="fd-label">Client email</label>
                   <input className="fd-input" value={form.client_email} onChange={e => setForm(f => ({ ...f, client_email: e.target.value }))} />
                 </div>
-                <div>
+                {can('financials.view') && <div>
                   <label className="fd-label">Deal amount</label>
                   <input className="fd-input" type="number" value={form.deal_amount} onChange={e => setForm(f => ({ ...f, deal_amount: e.target.value }))} />
-                </div>
+                </div>}
               </div>
 
               <div className="fd-row">
@@ -529,7 +601,7 @@ export default function FranchiseDashboardPage() {
                 </div>
                 <div>
                   <label className="fd-label">Location</label>
-                  <input className="fd-input" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} />
+                  <input className="fd-input" value={franchise?.city || form.location} readOnly />
                 </div>
               </div>
 
@@ -539,7 +611,7 @@ export default function FranchiseDashboardPage() {
               </div>
 
               <div className="fd-row">
-                <div>
+                {can('agents.assign') && <div>
                   <label className="fd-label">Assign approved agent</label>
                   <select className="fd-input" value={form.assigned_agent_id} onChange={e => setForm(f => ({ ...f, assigned_agent_id: e.target.value }))}>
                     <option value="">No agent assigned</option>
@@ -549,7 +621,7 @@ export default function FranchiseDashboardPage() {
                       </option>
                     ))}
                   </select>
-                </div>
+                </div>}
                 <div>
                   <label className="fd-label">Status</label>
                   <select className="fd-input" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>

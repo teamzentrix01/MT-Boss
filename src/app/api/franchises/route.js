@@ -5,18 +5,13 @@ import { requireRole, randomPassword } from '@/lib/auth';
 import { sendMail } from '@/lib/email';
 import { normalizePhone, validateContactFields, isValidEmail } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { ensureFranchiseAccessColumns } from '@/lib/franchise-access';
+import { resolveFranchisePermissionDependencies } from '@/lib/franchise-permissions';
 
 const STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 
 const ensureFranchiseColumns = createInitializationGuard(async () => {
-  await pool.query(`
-    ALTER TABLE franchises
-      ADD COLUMN IF NOT EXISTS password_hash TEXT,
-      ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ,
-      ADD COLUMN IF NOT EXISTS approved_by_email TEXT,
-      ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ,
-      ADD COLUMN IF NOT EXISTS login_enabled BOOLEAN DEFAULT FALSE
-  `);
+  await ensureFranchiseAccessColumns();
 });
 
 function clean(value) {
@@ -154,11 +149,11 @@ export async function POST(req) {
         account_number, ifsc_code, model, investment, territory, referral_source,
         start_date, service_category, office_area, office_district, premises_ownership,
         lease_duration, office_area_sqft, office_type, message, other_franchise,
-        training_willing, password_hash, login_enabled
+        training_willing, password_hash, login_enabled, permissions
       ) VALUES (
         $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,
         $19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,
-        $35,$36,$37,$38,$39,$40,$41,$42,$43,FALSE
+        $35,$36,$37,$38,$39,$40,$41,$42,$43,FALSE,'{}'::jsonb
       ) RETURNING *`,
       [
         cleanName, fatherName, dob, gender, maritalStatus, cleanPhone, cleanEmail,
@@ -187,7 +182,31 @@ export async function PATCH(req) {
     }
 
     await ensureFranchiseColumns();
-    const { id, status, action } = await req.json();
+    const { id, status, action, permissions } = await req.json();
+    if (action === 'updatePermissions') {
+      if (!id) {
+        return NextResponse.json({ success: false, error: 'Franchise id is required' }, { status: 400 });
+      }
+
+      const normalizedPermissions = resolveFranchisePermissionDependencies(permissions);
+      const result = await pool.query(
+        `UPDATE franchises
+            SET permissions = $1::jsonb
+          WHERE id = $2
+          RETURNING *`,
+        [JSON.stringify(normalizedPermissions), id]
+      );
+      if (!result.rows[0]) {
+        return NextResponse.json({ success: false, error: 'Franchise not found' }, { status: 404 });
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: result.rows[0],
+        message: 'Franchise permissions updated successfully.',
+      });
+    }
+
     if (action === 'resendCredentials') {
       if (!id) {
         return NextResponse.json({ success: false, error: 'Franchise id is required' }, { status: 400 });

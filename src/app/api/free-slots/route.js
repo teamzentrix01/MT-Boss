@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireAnyRole, unauthorized } from '@/lib/auth';
+import { requireRole } from '@/lib/auth';
 import { createInitializationGuard } from '@/lib/api-utils';
 import { addServiceCity, resolveServiceCity } from '@/lib/service-cities';
+import { franchiseAccessResponse, getFranchiseAccess } from '@/lib/franchise-access';
 
 const ensureFreeSlotsColumns = createInitializationGuard(async () => {
   await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS current_bookings INTEGER DEFAULT 0`);
@@ -12,8 +13,13 @@ const ensureFreeSlotsColumns = createInitializationGuard(async () => {
   await pool.query(`UPDATE free_time_slots SET max_bookings = 1 WHERE max_bookings IS NULL`);
 });
 
-function hasToken(req) {
-  return Boolean(requireAnyRole(req, ['admin', 'franchise']));
+async function getSlotManager(req) {
+  const admin = requireRole(req, 'admin');
+  if (admin) return { allowed: true, isAdmin: true, user: admin };
+
+  const access = await getFranchiseAccess(req, 'slots.manage');
+  if (!access.allowed) return access;
+  return { ...access, isAdmin: false };
 }
 
 // GET — user mode: city + service_id; admin mode: no params
@@ -51,20 +57,26 @@ export async function GET(req) {
         LIMIT 10`;
       params = [city, serviceId, today];
     } else if (city && city !== 'all') {
-      if (!hasToken(req)) {
-        return unauthorized();
-      }
+      const manager = await getSlotManager(req);
+      if (!manager.allowed) return franchiseAccessResponse(manager);
+      const managedCity = manager.isAdmin ? city : manager.franchise.city;
       query = `${baseSelect}
         WHERE LOWER(TRIM(fts.city)) = LOWER(TRIM($1))
         ORDER BY fts.slot_date DESC, fts.slot_start ASC`;
-      params = [city];
+      params = [managedCity];
     } else {
-      if (!hasToken(req)) {
-        return unauthorized();
+      const manager = await getSlotManager(req);
+      if (!manager.allowed) return franchiseAccessResponse(manager);
+      if (manager.isAdmin) {
+        query = `${baseSelect}
+          ORDER BY fts.slot_date DESC, fts.slot_start ASC`;
+        params = [];
+      } else {
+        query = `${baseSelect}
+          WHERE LOWER(TRIM(fts.city)) = LOWER(TRIM($1))
+          ORDER BY fts.slot_date DESC, fts.slot_start ASC`;
+        params = [manager.franchise.city];
       }
-      query = `${baseSelect}
-        ORDER BY fts.slot_date DESC, fts.slot_start ASC`;
-      params = [];
     }
 
     const result = await pool.query(query, params);
@@ -78,10 +90,8 @@ export async function GET(req) {
 // POST — admin creates a new free slot
 export async function POST(req) {
   try {
-    const user = requireAnyRole(req, ['admin', 'franchise']);
-    if (!user) {
-      return unauthorized();
-    }
+    const manager = await getSlotManager(req);
+    if (!manager.allowed) return franchiseAccessResponse(manager);
     await ensureFreeSlotsColumns();
 
     const { quick_service_id, slot_date, slot_end_date, slot_start, slot_end, city, max_bookings = 1 } = await req.json();
@@ -89,8 +99,13 @@ export async function POST(req) {
     if (!quick_service_id || !slot_date || !slot_start || !slot_end || !city) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
-    let canonicalCity = await resolveServiceCity(quick_service_id, city);
-    if (!canonicalCity && user.role === 'admin') {
+    const requestedCity = manager.isAdmin ? city : manager.franchise.city;
+    if (!manager.isAdmin && String(city).trim().toLowerCase() !== String(manager.franchise.city).trim().toLowerCase()) {
+      return NextResponse.json({ error: 'Slots can only be managed in the franchise city' }, { status: 403 });
+    }
+
+    let canonicalCity = await resolveServiceCity(quick_service_id, requestedCity);
+    if (!canonicalCity && manager.isAdmin) {
       canonicalCity = await addServiceCity(quick_service_id, city);
     }
     if (!canonicalCity) {

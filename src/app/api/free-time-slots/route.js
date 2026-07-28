@@ -1,5 +1,16 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { requireRole } from '@/lib/auth';
+import { franchiseAccessResponse, getFranchiseAccess } from '@/lib/franchise-access';
+
+async function getSlotManager(req) {
+  const admin = requireRole(req, 'admin');
+  if (admin) return { allowed: true, isAdmin: true, user: admin };
+
+  const access = await getFranchiseAccess(req, 'slots.manage');
+  if (!access.allowed) return access;
+  return { ...access, isAdmin: false };
+}
 
 // GET - Fetch free time slots
 export async function GET(req) {
@@ -57,6 +68,9 @@ export async function GET(req) {
 // POST - Create free time slot (Admin only)
 export async function POST(req) {
   try {
+    const manager = await getSlotManager(req);
+    if (!manager.allowed) return franchiseAccessResponse(manager);
+
     const {
       quick_service_id,
       slot_start,
@@ -73,6 +87,12 @@ export async function POST(req) {
       );
     }
 
+    if (!manager.isAdmin
+      && String(city).trim().toLowerCase() !== String(manager.franchise.city).trim().toLowerCase()) {
+      return NextResponse.json({ error: 'Slots can only be managed in the franchise city' }, { status: 403 });
+    }
+
+    const managedCity = manager.isAdmin ? city : manager.franchise.city;
     const result = await pool.query(
       `INSERT INTO free_time_slots (
         quick_service_id, slot_start, slot_end, slot_date, city, max_bookings, current_bookings, is_available
@@ -88,7 +108,7 @@ export async function POST(req) {
         max_bookings,
         current_bookings,
         CONCAT(TO_CHAR(slot_start, 'HH12:MI AM'), ' – ', TO_CHAR(slot_end, 'HH12:MI AM')) as slot_display`,
-      [quick_service_id, slot_start, slot_end, slot_date, city, max_bookings]
+      [quick_service_id, slot_start, slot_end, slot_date, managedCity, max_bookings]
     );
 
     return NextResponse.json({
@@ -109,6 +129,9 @@ export async function POST(req) {
 // DELETE - Delete free time slot
 export async function DELETE(req) {
   try {
+    const manager = await getSlotManager(req);
+    if (!manager.allowed) return franchiseAccessResponse(manager);
+
     const { searchParams } = new URL(req.url);
     const slot_id = searchParams.get('slot_id');
 
@@ -119,10 +142,18 @@ export async function DELETE(req) {
       );
     }
 
-    const result = await pool.query(
-      `DELETE FROM free_time_slots WHERE id = $1 RETURNING id`,
-      [slot_id]
-    );
+    const result = manager.isAdmin
+      ? await pool.query(
+        `DELETE FROM free_time_slots WHERE id = $1 RETURNING id`,
+        [slot_id]
+      )
+      : await pool.query(
+        `DELETE FROM free_time_slots
+          WHERE id = $1
+            AND LOWER(TRIM(city)) = LOWER(TRIM($2))
+          RETURNING id`,
+        [slot_id, manager.franchise.city]
+      );
 
     if (result.rows.length === 0) {
       return NextResponse.json(

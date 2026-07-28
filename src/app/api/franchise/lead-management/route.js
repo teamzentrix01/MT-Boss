@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole } from '@/lib/auth';
 import { ensureAgentSchema } from '@/lib/agent-auth';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { franchiseAccessResponse, getFranchiseAccess } from '@/lib/franchise-access';
 
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
@@ -22,30 +22,28 @@ const ensureSchema = createInitializationGuard(async () => {
 
 export async function GET(req) {
   try {
-    const franchise = requireRole(req, 'franchise');
-    if (!franchise) {
-      return NextResponse.json({ success: false, error: 'Franchise access required' }, { status: 403 });
-    }
+    const access = await getFranchiseAccess(req, 'leads.view');
+    if (!access.allowed) return franchiseAccessResponse(access);
+    const franchise = access.user;
     await ensureSchema();
 
-    const [leads, agents] = await Promise.all([
-      pool.query(
+    const leads = await pool.query(
         `SELECT l.*, a.name AS agent_name
          FROM agent_leads l
          LEFT JOIN agents a ON a.id = l.agent_id
          WHERE l.assigned_franchise_id = $1
          ORDER BY l.created_at DESC`,
         [franchise.id]
-      ),
-      pool.query(
-        `SELECT id, name, email, phone, city, state
-         FROM agents
-         WHERE status = 'Approved'
-         ORDER BY name ASC`
-      ),
-    ]);
+      );
 
-    return NextResponse.json({ success: true, data: leads.rows, agents: agents.rows });
+    const data = access.permissions['financials.view']
+      ? leads.rows
+      : leads.rows.map((lead) => {
+        const visible = { ...lead };
+        delete visible.final_amount;
+        return visible;
+      });
+    return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error('Franchise lead management GET error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
@@ -54,15 +52,32 @@ export async function GET(req) {
 
 export async function PATCH(req) {
   try {
-    const franchise = requireRole(req, 'franchise');
-    if (!franchise) {
-      return NextResponse.json({ success: false, error: 'Franchise access required' }, { status: 403 });
-    }
+    const access = await getFranchiseAccess(req, 'leads.manage');
+    if (!access.allowed) return franchiseAccessResponse(access);
+    const franchise = access.user;
     await ensureSchema();
 
     const { id, agent_id, status, lead_stage, follow_up_date, notes } = await req.json();
     if (!id) {
       return NextResponse.json({ success: false, error: 'Lead id is required' }, { status: 400 });
+    }
+
+    if (agent_id !== undefined && !access.permissions['agents.assign']) {
+      return NextResponse.json({ success: false, error: 'Permission denied: agents.assign' }, { status: 403 });
+    }
+
+    if (agent_id) {
+      const approvedAgent = await pool.query(
+        `SELECT id
+           FROM agents
+          WHERE id = $1
+            AND status = 'Approved'
+            AND LOWER(TRIM(COALESCE(city, ''))) = LOWER(TRIM($2))`,
+        [agent_id, access.franchise.city]
+      );
+      if (!approvedAgent.rows[0]) {
+        return NextResponse.json({ success: false, error: 'Select an approved agent from the franchise city' }, { status: 400 });
+      }
     }
 
     const result = await pool.query(

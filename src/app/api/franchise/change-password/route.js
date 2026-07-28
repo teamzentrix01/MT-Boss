@@ -1,26 +1,23 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
-import { requireRole } from '@/lib/auth';
+import {
+  ensureFranchiseAccessColumns,
+  franchiseAccessResponse,
+  getFranchiseAccess,
+} from '@/lib/franchise-access';
 import { createInitializationGuard } from '@/lib/api-utils';
 
 const ensureFranchiseColumns = createInitializationGuard(async () => {
-  await pool.query(`
-    ALTER TABLE franchises
-      ADD COLUMN IF NOT EXISTS password_hash TEXT,
-      ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ,
-      ADD COLUMN IF NOT EXISTS login_enabled BOOLEAN DEFAULT FALSE
-  `);
+  await ensureFranchiseAccessColumns();
 });
 
 export async function PATCH(req) {
   try {
-    const franchiseUser = requireRole(req, 'franchise');
-    if (!franchiseUser) {
-      return NextResponse.json({ success: false, error: 'Franchise access required' }, { status: 403 });
-    }
-
     await ensureFranchiseColumns();
+    const access = await getFranchiseAccess(req);
+    if (!access.allowed) return franchiseAccessResponse(access);
+    const franchiseUser = access.user;
     const { currentPassword, newPassword, confirmPassword } = await req.json();
 
     if (!currentPassword || !newPassword || !confirmPassword) {

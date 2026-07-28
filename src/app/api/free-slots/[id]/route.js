@@ -1,18 +1,23 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireAnyRole, unauthorized } from '@/lib/auth';
+import { requireRole } from '@/lib/auth';
 import { resolveServiceCity } from '@/lib/service-cities';
+import { franchiseAccessResponse, getFranchiseAccess } from '@/lib/franchise-access';
 
-function hasToken(req) {
-  return Boolean(requireAnyRole(req, ['admin', 'franchise']));
+async function getSlotManager(req) {
+  const admin = requireRole(req, 'admin');
+  if (admin) return { allowed: true, isAdmin: true, user: admin };
+
+  const access = await getFranchiseAccess(req, 'slots.manage');
+  if (!access.allowed) return access;
+  return { ...access, isAdmin: false };
 }
 
 // PATCH - admin edits slot details and opens/closes availability.
 export async function PATCH(req, { params }) {
   try {
-    if (!hasToken(req)) {
-      return unauthorized();
-    }
+    const manager = await getSlotManager(req);
+    if (!manager.allowed) return franchiseAccessResponse(manager);
 
     const { id } = await params;
     const body = await req.json();
@@ -23,8 +28,15 @@ export async function PATCH(req, { params }) {
     if (current.rows.length === 0) {
       return NextResponse.json({ error: 'Slot not found' }, { status: 404 });
     }
+    if (!manager.isAdmin
+      && String(current.rows[0].city).trim().toLowerCase() !== String(manager.franchise.city).trim().toLowerCase()) {
+      return NextResponse.json({ error: 'Slots can only be managed in the franchise city' }, { status: 403 });
+    }
     const serviceId = body.quick_service_id || current.rows[0].quick_service_id;
-    const canonicalCity = await resolveServiceCity(serviceId, body.city || current.rows[0].city);
+    const requestedCity = manager.isAdmin
+      ? body.city || current.rows[0].city
+      : manager.franchise.city;
+    const canonicalCity = await resolveServiceCity(serviceId, requestedCity);
     if (!canonicalCity) {
       return NextResponse.json({ error: 'This city is not configured for the selected service' }, { status: 400 });
     }
@@ -66,11 +78,22 @@ export async function PATCH(req, { params }) {
 // DELETE - admin removes slot.
 export async function DELETE(req, { params }) {
   try {
-    if (!hasToken(req)) {
-      return unauthorized();
-    }
+    const manager = await getSlotManager(req);
+    if (!manager.allowed) return franchiseAccessResponse(manager);
 
     const { id } = await params;
+
+    const current = await pool.query(
+      `SELECT city FROM free_time_slots WHERE id = $1`,
+      [id]
+    );
+    if (!current.rows[0]) {
+      return NextResponse.json({ error: 'Slot not found' }, { status: 404 });
+    }
+    if (!manager.isAdmin
+      && String(current.rows[0].city).trim().toLowerCase() !== String(manager.franchise.city).trim().toLowerCase()) {
+      return NextResponse.json({ error: 'Slots can only be managed in the franchise city' }, { status: 403 });
+    }
 
     const booked = await pool.query(
       `SELECT COUNT(*)::INT AS count FROM service_bookings WHERE time_slot_id = $1`,

@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import PaidTimeSlotsManager from './PaidTimeSlotsManager';
 
 export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', defaultCity = '', compact = false }) {
+  const lockedCity = tokenKey === 'franchise-token' && Boolean(defaultCity);
   const [slots, setSlots] = useState([]);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -326,7 +327,11 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
                 <select
                   className="form-select"
                   value={formData.quick_service_id}
-                  onChange={(e) => setFormData({ ...formData, quick_service_id: e.target.value, city: '' })}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    quick_service_id: e.target.value,
+                    city: lockedCity ? defaultCity : '',
+                  })}
                 >
                   <option value="">Select Service</option>
                   {services.map((service) => (
@@ -344,13 +349,15 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
                   className="form-select"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  disabled={!formData.quick_service_id}
+                  disabled={!formData.quick_service_id || lockedCity}
                   placeholder="Select or type a city"
                 />
                 <datalist id="free-slot-city-options">
                   {formCityOptions.map((city) => <option key={city} value={city} />)}
                 </datalist>
-                <small style={{ color: 'var(--muted)' }}>Admins can type a new city; it will be added to this service.</small>
+                <small style={{ color: 'var(--muted)' }}>
+                  {lockedCity ? 'Restricted to your approved franchise city.' : 'Admins can type a new city; it will be added to this service.'}
+                </small>
               </div>
 
               <div className="form-group">
@@ -423,9 +430,10 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
               className="form-select"
               value={filterCity}
               onChange={(e) => setFilterCity(e.target.value)}
+              disabled={lockedCity}
               style={{ width: '200px' }}
             >
-              <option value="all">All Cities</option>
+              <option value="all">{lockedCity ? defaultCity : 'All Cities'}</option>
               {cityOptions.map((city) => (
                 <option key={city} value={city}>{city}</option>
               ))}

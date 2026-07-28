@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireAnyRole, unauthorized } from '@/lib/auth';
+import { requireRole } from '@/lib/auth';
 import { addServiceCity, resolveServiceCity } from '@/lib/service-cities';
+import { franchiseAccessResponse, getFranchiseAccess } from '@/lib/franchise-access';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,8 +37,13 @@ function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
 }
 
-function manager(req) {
-  return requireAnyRole(req, ['admin', 'franchise']);
+async function getSlotManager(req) {
+  const admin = requireRole(req, 'admin');
+  if (admin) return { allowed: true, isAdmin: true, user: admin };
+
+  const access = await getFranchiseAccess(req, 'slots.manage');
+  if (!access.allowed) return access;
+  return { ...access, isAdmin: false };
 }
 
 export async function GET(req) {
@@ -68,7 +74,8 @@ export async function GET(req) {
       });
     }
 
-    if (!manager(req)) return unauthorized();
+    const manager = await getSlotManager(req);
+    if (!manager.allowed) return franchiseAccessResponse(manager);
 
     const clauses = [];
     const params = [];
@@ -76,8 +83,11 @@ export async function GET(req) {
       params.push(quickServiceId);
       clauses.push(`p.quick_service_id = $${params.length}`);
     }
-    if (city && city !== 'all') {
-      params.push(city);
+    const managedCity = manager.isAdmin
+      ? (city && city !== 'all' ? city : '')
+      : manager.franchise.city;
+    if (managedCity) {
+      params.push(managedCity);
       clauses.push(`LOWER(TRIM(p.city)) = LOWER(TRIM($${params.length}))`);
     }
 
@@ -104,8 +114,8 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const user = manager(req);
-    if (!user) return unauthorized();
+    const manager = await getSlotManager(req);
+    if (!manager.allowed) return franchiseAccessResponse(manager);
     await ensurePaidSlotsTable();
 
     const { quick_service_id, slot_date, city, time_slot, is_available = true } = await req.json();
@@ -114,8 +124,13 @@ export async function POST(req) {
     if (!quick_service_id || !slot_date || !city || !normalizedSlot) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
     }
-    let canonicalCity = await resolveServiceCity(quick_service_id, city);
-    if (!canonicalCity && user.role === 'admin') {
+    const requestedCity = manager.isAdmin ? city : manager.franchise.city;
+    if (!manager.isAdmin && String(city).trim().toLowerCase() !== String(manager.franchise.city).trim().toLowerCase()) {
+      return NextResponse.json({ success: false, error: 'Slots can only be managed in the franchise city' }, { status: 403 });
+    }
+
+    let canonicalCity = await resolveServiceCity(quick_service_id, requestedCity);
+    if (!canonicalCity && manager.isAdmin) {
       canonicalCity = await addServiceCity(quick_service_id, city);
     }
     if (!canonicalCity) {
@@ -142,7 +157,15 @@ export async function POST(req) {
                      updated_by_id = EXCLUDED.updated_by_id,
                      updated_at = NOW()
        RETURNING *, TO_CHAR(slot_date::DATE, 'YYYY-MM-DD') AS slot_date`,
-      [quick_service_id, slot_date, canonicalCity, normalizedSlot, Boolean(is_available), user.role, user.id || null]
+      [
+        quick_service_id,
+        slot_date,
+        canonicalCity,
+        normalizedSlot,
+        Boolean(is_available),
+        manager.isAdmin ? 'admin' : 'franchise',
+        manager.user.id || null,
+      ]
     );
 
     return NextResponse.json({ success: true, data: result.rows[0] }, {
