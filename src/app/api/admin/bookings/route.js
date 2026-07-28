@@ -2,11 +2,15 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { ensurePackageSchema } from '@/lib/packages';
+import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
+import { ensureOtpSchema } from '@/lib/otp';
 
 export async function GET(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
     await ensurePackageSchema();
+    await ensureOtpSchema();
+    await ensureServiceBookingSubcategorySchema();
 
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
@@ -23,6 +27,7 @@ export async function GET(req) {
         sb.service_address,
         sb.service_city,
         sb.service_pincode,
+        sb.service_subcategory,
         sb.property_type,
         sb.booking_date,
         sb.booking_time,
@@ -120,6 +125,7 @@ export async function PATCH(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
     await ensurePackageSchema();
+    await ensureOtpSchema();
     const { id, action, vendor_id } = await req.json();
     if (!id || !['admin_accept', 'assign_vendor'].includes(action)) {
       return NextResponse.json({ error: 'Valid booking id and action are required' }, { status: 400 });
@@ -148,9 +154,15 @@ export async function PATCH(req) {
     const result = await client.query(
       `UPDATE service_bookings sb
        SET vendor_id=$1, status='VENDOR_ACCEPTED', vendor_status='ACCEPTED',
-           user_status='VENDOR_ACCEPTED', accepted_at=NOW()
-       WHERE sb.id=$2 AND sb.status='ADMIN_ACCEPTED' AND sb.payment_status='PAID'
-         AND sb.vendor_id IS NULL AND EXISTS (
+           user_status='VENDOR_ACCEPTED', accepted_at=NOW(),
+           start_otp=NULL, start_otp_verified=FALSE,
+           start_otp_generated_at=NULL, start_otp_attempts=0
+       WHERE sb.id=$2
+         AND sb.status IN ('ADMIN_ACCEPTED', 'VENDOR_ACCEPTED', 'VENDOR_ON_WAY')
+         AND sb.payment_status='PAID'
+         AND sb.vendor_id IS DISTINCT FROM $1
+         AND COALESCE(sb.start_otp_verified, FALSE)=FALSE
+         AND EXISTS (
            SELECT 1 FROM vendors v
            JOIN vendor_services vs ON vs.vendor_id=v.id AND vs.is_active=TRUE
            JOIN quick_services assigned_qs ON assigned_qs.id=vs.quick_service_id
@@ -165,7 +177,13 @@ export async function PATCH(req) {
     );
     if (!result.rows.length) {
       await client.query('ROLLBACK');
-      return NextResponse.json({ error: 'Selected vendor does not match this service/city or booking is not admin-accepted' }, { status: 409 });
+      return NextResponse.json({
+        error: 'Vendor cannot be changed. Select a different eligible vendor and make sure the service has not started.',
+      }, { status: 409 });
+    }
+    const locationsTable = await client.query(`SELECT to_regclass('public.vendor_locations') AS table_name`);
+    if (locationsTable.rows[0]?.table_name) {
+      await client.query(`DELETE FROM vendor_locations WHERE booking_id=$1`, [id]);
     }
     await client.query(`UPDATE service_notifications SET expires_at=NOW() WHERE booking_id=$1`, [id]);
     await client.query('COMMIT');

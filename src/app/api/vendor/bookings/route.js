@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
 
 export async function GET(req) {
   try {
     const vendor = requireRole(req, 'vendor');
     if (!vendor) return unauthorized();
+    await ensureServiceBookingSubcategorySchema();
 
     const { searchParams } = new URL(req.url);
     const type = searchParams.get('type') || 'active';
@@ -17,6 +19,7 @@ export async function GET(req) {
       SELECT
         sb.id, sb.booking_reference, sb.user_name, sb.user_phone,
         sb.service_address, sb.service_city, sb.booking_date, sb.booking_time,
+        sb.service_subcategory,
         sb.service_description, sb.user_latitude, sb.user_longitude,
         sb.location_map_url, sb.start_otp_verified, sb.finish_otp_verified,
         sb.base_amount, sb.visit_fee, sb.tax_amount, sb.total_amount,

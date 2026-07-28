@@ -36,6 +36,10 @@ function AgentDashboardContent() {
   const [leads, setLeads] = useState([]);
   const [schedule, setSchedule] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [activityLoading, setActivityLoading] = useState(false);
+  const [activityFilter, setActivityFilter] = useState('all');
+  const [unreadActivityCount, setUnreadActivityCount] = useState(0);
   const [selectedProject, setSelectedProject] = useState(null);
   const [projectOps, setProjectOps] = useState({ payments: [], labour: [], materials: [], expenses: [], transport: [] });
   const [activeTab, setActiveTab] = useState('leads');
@@ -73,7 +77,7 @@ function AgentDashboardContent() {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (['leads', 'projects', 'schedule', 'profile'].includes(tab)) {
+    if (['leads', 'projects', 'schedule', 'activity', 'profile'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
@@ -105,7 +109,10 @@ function AgentDashboardContent() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (localStorage.getItem('agent-token')) refreshLeads();
+      if (localStorage.getItem('agent-token')) {
+        refreshLeads();
+        loadActivities(true);
+      }
     }, 20000);
     return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,10 +148,11 @@ function AgentDashboardContent() {
   async function loadData() {
     setLoading(true);
     try {
-      const [profileRes, leadsRes, scheduleRes] = await Promise.all([
+      const [profileRes, leadsRes, scheduleRes, activityRes] = await Promise.all([
         authFetch('/api/agent/profile'),
         authFetch('/api/agent/leads'),
         authFetch('/api/agent/schedule'),
+        authFetch('/api/agent/activity'),
       ]);
 
       if (!profileRes || !leadsRes || !scheduleRes) return;
@@ -152,6 +160,7 @@ function AgentDashboardContent() {
       const profileData = await profileRes.json();
       const leadsData = await leadsRes.json();
       const scheduleData = await scheduleRes.json();
+      const activityData = activityRes ? await activityRes.json() : null;
 
       if (profileData.success) {
         setAgent(profileData.agent);
@@ -160,6 +169,10 @@ function AgentDashboardContent() {
       }
       if (leadsData.success) setLeads(leadsData.data || []);
       if (scheduleData.success) setSchedule(scheduleData.data || []);
+      if (activityData?.success) {
+        setActivities(activityData.data || []);
+        setUnreadActivityCount(activityData.unread_count || 0);
+      }
       await loadProjects();
     } finally {
       setLoading(false);
@@ -305,6 +318,58 @@ function AgentDashboardContent() {
       }
     } finally {
       setLeadSaving(false);
+    }
+  }
+
+  async function loadActivities(silent = false) {
+    if (!silent) setActivityLoading(true);
+    try {
+      const res = await authFetch('/api/agent/activity');
+      if (!res) return;
+      const data = await res.json();
+      if (data.success) {
+        setActivities(data.data || []);
+        setUnreadActivityCount(data.unread_count || 0);
+      } else if (!silent) {
+        setMessage(data.error || 'Activity could not be loaded.');
+      }
+    } finally {
+      if (!silent) setActivityLoading(false);
+    }
+  }
+
+  async function markActivityRead(id) {
+    const item = activities.find((activity) => activity.id === id);
+    if (!item || item.is_read) return;
+    const res = await authFetch('/api/agent/activity', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    if (!res) return;
+    const data = await res.json();
+    if (data.success) {
+      setActivities((current) => current.map((activity) => (
+        activity.id === id ? { ...activity, is_read: true, read_at: new Date().toISOString() } : activity
+      )));
+      setUnreadActivityCount(data.unread_count || 0);
+    }
+  }
+
+  async function markAllActivitiesRead() {
+    const res = await authFetch('/api/agent/activity', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mark_all_read: true }),
+    });
+    if (!res) return;
+    const data = await res.json();
+    if (data.success) {
+      const readAt = new Date().toISOString();
+      setActivities((current) => current.map((activity) => (
+        activity.is_read ? activity : { ...activity, is_read: true, read_at: readAt }
+      )));
+      setUnreadActivityCount(0);
     }
   }
 
@@ -493,6 +558,9 @@ function AgentDashboardContent() {
   const card = dark ? 'bg-zinc-950 border-zinc-800' : 'bg-white border-zinc-200';
   const muted = dark ? 'text-zinc-500' : 'text-zinc-500';
   const input = dark ? 'bg-zinc-900 border-zinc-700 text-white' : 'bg-white border-zinc-300 text-zinc-900';
+  const visibleActivities = activityFilter === 'unread'
+    ? activities.filter((activity) => !activity.is_read)
+    : activities;
 
   if (loading) {
     return <main className={`min-h-screen flex items-center justify-center ${bg}`}>Loading agent dashboard...</main>;
@@ -511,17 +579,23 @@ function AgentDashboardContent() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            {['leads', 'projects', 'schedule', 'profile'].map((tab) => (
+            {['leads', 'projects', 'schedule', 'activity', 'profile'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => {
                   setActiveTab(tab);
                   if (tab === 'projects') loadProjects();
+                  if (tab === 'activity') loadActivities();
                 }}
                 disabled={agent?.must_change_password && tab !== 'profile'}
                 className={`px-5 py-2.5 border text-[10px] font-black uppercase tracking-widest ${activeTab === tab ? 'bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black' : `${card} ${muted}`}`}
               >
-                {tab}
+                {tab === 'activity' ? 'Activity Track' : tab}
+                {tab === 'activity' && unreadActivityCount > 0 && (
+                  <span className="ml-2 inline-flex min-w-5 h-5 px-1 items-center justify-center rounded-full bg-red-500 text-white text-[9px]">
+                    {unreadActivityCount > 99 ? '99+' : unreadActivityCount}
+                  </span>
+                )}
               </button>
             ))}
             <button onClick={logout} className="px-5 py-2.5 border border-red-500 text-red-500 text-[10px] font-black uppercase tracking-widest">
@@ -886,6 +960,122 @@ function AgentDashboardContent() {
                   </div>
                 </div>
               ))}
+            </div>
+          </section>
+        )}
+
+        {activeTab === 'activity' && (
+          <section className={`border ${card}`}>
+            <div className={`p-5 border-b ${dark ? 'border-zinc-800' : 'border-zinc-200'} flex flex-col sm:flex-row sm:items-center justify-between gap-3`}>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">Activity Track</p>
+                <h2 className="text-xl font-black uppercase mt-1">Your Notifications</h2>
+                <p className={`text-xs mt-1 ${muted}`}>
+                  Account, lead, and project updates recorded for your agent profile.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {['all', 'unread'].map((filter) => (
+                  <button
+                    key={filter}
+                    type="button"
+                    onClick={() => setActivityFilter(filter)}
+                    className={`px-4 py-2 border text-[9px] font-black uppercase tracking-widest ${
+                      activityFilter === filter
+                        ? 'bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black'
+                        : `${card} ${muted}`
+                    }`}
+                  >
+                    {filter}{filter === 'unread' ? ` (${unreadActivityCount})` : ''}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => loadActivities()}
+                  disabled={activityLoading}
+                  className={`px-4 py-2 border text-[9px] font-black uppercase tracking-widest ${card} ${muted} disabled:opacity-50`}
+                >
+                  {activityLoading ? 'Refreshing...' : 'Refresh'}
+                </button>
+                <button
+                  type="button"
+                  onClick={markAllActivitiesRead}
+                  disabled={unreadActivityCount === 0}
+                  className="px-4 py-2 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-widest disabled:opacity-40"
+                >
+                  Mark all read
+                </button>
+              </div>
+            </div>
+
+            <div className="p-5">
+              {activityLoading && activities.length === 0 ? (
+                <div className={`p-10 text-center ${muted}`}>Loading activity...</div>
+              ) : visibleActivities.length === 0 ? (
+                <div className={`p-10 text-center ${muted}`}>
+                  {activityFilter === 'unread' ? 'No unread notifications.' : 'No activity has been recorded yet.'}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {visibleActivities.map((activity) => {
+                    const isLead = activity.entity_type === 'lead';
+                    const isProject = activity.entity_type === 'project';
+                    const accent = activity.type === 'account_status'
+                      ? 'border-green-500/40'
+                      : isLead
+                        ? 'border-blue-500/40'
+                        : isProject
+                          ? 'border-purple-500/40'
+                          : 'border-[var(--brand-blue)]/40';
+                    return (
+                      <button
+                        key={activity.id}
+                        type="button"
+                        onClick={() => markActivityRead(activity.id)}
+                        className={`w-full text-left border ${accent} p-4 transition-colors ${
+                          activity.is_read
+                            ? `${card} opacity-75`
+                            : dark
+                              ? 'bg-zinc-900'
+                              : 'bg-sky-50'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <span className={`mt-1 h-2.5 w-2.5 rounded-full shrink-0 ${activity.is_read ? 'bg-zinc-500' : 'bg-[var(--brand-blue)] animate-pulse'}`} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                              <p className="font-black text-sm">{activity.title}</p>
+                              <time className={`text-[10px] font-bold ${muted}`}>
+                                {new Date(activity.created_at).toLocaleString('en-IN', {
+                                  day: '2-digit',
+                                  month: 'short',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </time>
+                            </div>
+                            <p className={`text-sm mt-1 leading-relaxed ${muted}`}>{activity.message}</p>
+                            <div className="flex items-center gap-2 mt-3">
+                              <span className="text-[9px] font-black uppercase tracking-widest text-[var(--brand-blue)]">
+                                {activity.type.replaceAll('_', ' ')}
+                              </span>
+                              {activity.entity_type && (
+                                <span className={`text-[9px] font-bold uppercase ${muted}`}>
+                                  {activity.entity_type}{activity.entity_id ? ` #${activity.entity_id}` : ''}
+                                </span>
+                              )}
+                              {!activity.is_read && (
+                                <span className="ml-auto text-[9px] font-black uppercase text-[var(--brand-blue)]">Click to mark read</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </section>
         )}

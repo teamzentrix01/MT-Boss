@@ -110,7 +110,7 @@ export default function VendorLoginPage() {
               Manage bookings, track earnings, and serve customers — all from your vendor dashboard.
             </p>
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#4b5563' }}>© {new Date().getFullYear()} MT-BOSS. All rights reserved.</div>
+          <div style={{ fontSize: '0.7rem', color: '#4b5563' }}>© {new Date().getFullYear()} MTBoss. All rights reserved.</div>
         </div>
 
         {/* Form Panel */}

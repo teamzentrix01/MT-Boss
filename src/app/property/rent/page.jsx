@@ -232,7 +232,7 @@ export default function RentPage() {
                   <option value="">{loadingCities ? 'Loading cities...' : 'Select city'}</option>
                   {availableCities.map(l => <option key={l} value={l}>{l}</option>)}
                 </select>
-                <p className={`mt-1 text-[10px] ${muted}`}>Only cities enabled by MT-BOSS are available.</p>
+                <p className={`mt-1 text-[10px] ${muted}`}>Only cities enabled by MTBoss are available.</p>
                 {cityError && <p className="mt-1 text-[10px] text-red-500">{cityError}</p>}
               </div>
             </div>

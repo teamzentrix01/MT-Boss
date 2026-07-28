@@ -845,7 +845,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
             lineHeight: '1.6',
             marginBottom: '32px'
           }}>
-            Please log in to unlock the MT-Boss Budget Calculator. Get live cost updates, customized material specifications, and download professional engineering reports.
+            Please log in to unlock the MTBoss Budget Calculator. Get live cost updates, customized material specifications, and download professional engineering reports.
           </p>
           <a
             href="/login?redirect=/calculator"

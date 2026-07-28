@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { ensureOtpSchema } from '@/lib/otp';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
 
 function verifyToken(req) {
   return requireRole(req, 'user');
@@ -15,6 +16,7 @@ export async function GET(req) {
     if (!decoded) {
       return unauthorized();
     }
+    await ensureServiceBookingSubcategorySchema();
 
     const userId = decoded.id && decoded.id !== 0 ? decoded.id : null;
     const userEmail = decoded.email || null;
@@ -39,6 +41,7 @@ export async function GET(req) {
         sb.service_address,
         sb.service_city,
         sb.service_pincode,
+        sb.service_subcategory,
         sb.property_type,
         sb.service_description,
         sb.user_notes,

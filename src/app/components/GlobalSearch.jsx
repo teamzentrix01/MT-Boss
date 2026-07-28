@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const PUBLIC_RESULTS = [
-  { title: "Home", subtitle: "MT-BOSS homepage", href: "/", keywords: "home main" },
+  { title: "Home", subtitle: "MTBoss homepage", href: "/", keywords: "home main" },
   { title: "Quick Services", subtitle: "Book home repair and maintenance", href: "/quick", keywords: "quick service plumber electrician repair booking" },
   { title: "Construction Services", subtitle: "Construction and core services", href: "/Services/all", keywords: "primary construction services" },
   { title: "Professional Services", subtitle: "Architects, engineers and consultants", href: "/Services/professionals", keywords: "professional architect engineer consultant" },
@@ -13,10 +13,10 @@ const PUBLIC_RESULTS = [
   { title: "Rent Property", subtitle: "Find or list rental property", href: "/property/rent", keywords: "rent rental property tenant" },
   { title: "Budget Calculator", subtitle: "Estimate construction cost", href: "/calculator", keywords: "calculator estimate budget boq cost" },
   { title: "Shop Now", subtitle: "Browse shop categories", href: "/ShopNow", keywords: "shop material products store" },
-  { title: "Become an Agent", subtitle: "Apply as MT-BOSS agent", href: "/agent", keywords: "agent apply lead work" },
+  { title: "Become an Agent", subtitle: "Apply as MTBoss agent", href: "/agent", keywords: "agent apply lead work" },
   { title: "Franchise", subtitle: "Apply for franchise", href: "/franchise", keywords: "franchise partner business" },
   { title: "Careers", subtitle: "Open job roles", href: "/careers", keywords: "career jobs hiring" },
-  { title: "Contact", subtitle: "Contact MT-BOSS", href: "/contact", keywords: "contact support office" },
+  { title: "Contact", subtitle: "Contact MTBoss", href: "/contact", keywords: "contact support office" },
 ];
 
 const ROLE_RESULTS = {

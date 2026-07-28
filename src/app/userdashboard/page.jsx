@@ -457,6 +457,10 @@ function BookingCard({ booking, isDark, onPayment, onRate, onRefresh }) {
           <p className={`${text} truncate`}>{booking.booking_time || '—'}</p>
         </div>
         <div className="col-span-2">
+          <span className="font-black uppercase">Sub Category</span>
+          <p className={text}>{booking.service_subcategory || '—'}</p>
+        </div>
+        <div className="col-span-2">
           <span className="font-black uppercase">Address</span>
           <p className={text}>{booking.service_address}, {booking.service_city}</p>
         </div>

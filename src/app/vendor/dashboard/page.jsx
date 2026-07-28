@@ -895,6 +895,11 @@ function VendorDashboardContent() {
                 </div>
  
                 <div>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Sub Category</p>
+                  <p className="text-sm">{selectedNotification.service_subcategory || "Not specified"}</p>
+                </div>
+
+                <div>
                   <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Details</p>
                   <p className="text-sm">{selectedNotification.service_description || "No description"}</p>
                 </div>
@@ -963,6 +968,10 @@ function VendorDashboardContent() {
                       📍 Open in Maps
                     </a>
                   )}
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Sub Category</p>
+                  <p className="text-sm">{activeBooking.service_subcategory || "Not specified"}</p>
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase text-[var(--brand-blue)]">Service Details</p>

@@ -417,7 +417,7 @@ export default function LoginPage() {
               <div className="lp-brand-heading">Manage your properties with confidence.</div>
               <p className="lp-brand-sub">Sign in to access the admin dashboard — properties, services, enquiries and more, all in one place.</p>
             </div>
-            <div className="lp-brand-footer">© {new Date().getFullYear()} MT-BOSS. All rights reserved.</div>
+            <div className="lp-brand-footer">© {new Date().getFullYear()} MTBoss. All rights reserved.</div>
           </div>
 
           {/* Form side */}

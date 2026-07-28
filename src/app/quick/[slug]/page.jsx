@@ -83,6 +83,7 @@ export default function QuickServiceSlugPage() {
     address: '',
     city: '',
     pincode: '',
+    subCategory: '',
     propertyType: '',
     propertyTypeOther: '',
     date: '',
@@ -147,7 +148,11 @@ export default function QuickServiceSlugPage() {
         const pending = JSON.parse(pendingStr);
         if (pending.service.id === service.id) {
           localStorage.removeItem('pendingBooking');
-          setForm(pending.form);
+          setForm((current) => ({
+            ...current,
+            ...pending.form,
+            subCategory: pending.form.subCategory || '',
+          }));
           setSlotType(pending.slotType);
           setSelectedFreeSlot(pending.selectedFreeSlot);
           setStep(pending.step);
@@ -236,6 +241,12 @@ export default function QuickServiceSlugPage() {
   }
 
   const basePrice = Number(service.admin_base_price ?? service.base_price ?? 150);
+  const subCategoryOptions = [...new Set(
+    String(service.sub_category || '')
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean)
+  )];
   const taxAmount = getQuickServiceTax(basePrice);
   const totalAmount = getQuickServiceTotal(basePrice);
 
@@ -310,6 +321,7 @@ export default function QuickServiceSlugPage() {
     if (form.email && !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Invalid email';
     if (!form.address.trim()) e.address = 'Address is required';
     if (!/^\d{6}$/.test(form.pincode)) e.pincode = 'Valid 6-digit pincode required';
+    if (!form.subCategory.trim()) e.subCategory = 'Select a sub category';
     if (!form.propertyType) e.propertyType = 'Select property type';
     if (slotType === 'free') {
       if (!selectedFreeSlot) e.freeSlot = 'Select a free slot';
@@ -410,6 +422,7 @@ export default function QuickServiceSlugPage() {
         service_address: form.address,
         service_city: form.city,
         service_pincode: form.pincode,
+        service_subcategory: form.subCategory,
         property_type: form.propertyType === 'Other' ? (form.propertyTypeOther.trim() || 'Other') : form.propertyType,
         booking_date: bookingDate,
         booking_time: bookingTime,
@@ -555,7 +568,7 @@ export default function QuickServiceSlugPage() {
                     setAvailable(false);
                     setSelectedCity('');
                     setForm({
-                      name: '', phone: '', email: '', address: '', city: '', pincode: '',
+                      name: '', phone: '', email: '', address: '', city: '', pincode: '', subCategory: '',
                       propertyType: '', propertyTypeOther: '', date: '', timeSlot: '',
                       description: '', latitude: null, longitude: null, locationUrl: ''
                     });
@@ -638,6 +651,31 @@ export default function QuickServiceSlugPage() {
                     Technicians will diagnose the issue and provide a separate quote for repairs. You pay only after you approve the quote.
                   </p>
                 </div>
+
+                <SectionTitle isDark={dark}>Service Details</SectionTitle>
+
+                <Field label="Sub Category *" error={errors.subCategory} isDark={dark}>
+                  {subCategoryOptions.length > 0 ? (
+                    <select
+                      className={inputCls}
+                      value={form.subCategory}
+                      onChange={(e) => setField('subCategory', e.target.value)}
+                    >
+                      <option value="">Select a sub category</option>
+                      {subCategoryOptions.map((subCategory) => (
+                        <option key={subCategory} value={subCategory}>{subCategory}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      className={inputCls}
+                      placeholder="Describe the service you need"
+                      value={form.subCategory}
+                      onChange={(e) => setField('subCategory', e.target.value)}
+                    />
+                  )}
+                </Field>
 
                 <SectionTitle isDark={dark}>Personal Information</SectionTitle>
 
@@ -883,6 +921,7 @@ export default function QuickServiceSlugPage() {
                 <div className={`border divide-y ${border} text-left rounded overflow-hidden`}>
                   {[
                     ['Service', service.label],
+                    ['Sub Category', form.subCategory],
                     ['Client Name', form.name],
                     ['Phone', form.phone],
                     ['Email', form.email || '—'],

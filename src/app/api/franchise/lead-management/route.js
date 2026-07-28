@@ -4,6 +4,7 @@ import { ensureAgentSchema } from '@/lib/agent-auth';
 import { createInitializationGuard } from '@/lib/api-utils';
 import { franchiseAccessResponse, getFranchiseAccess } from '@/lib/franchise-access';
 import { convertFinalLeadToProject, ensureProjectOpsSchema } from '@/lib/project-ops';
+import { ensureAgentNotificationsSchema } from '@/lib/agent-notifications';
 
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
@@ -75,6 +76,7 @@ export async function PATCH(req) {
     const franchise = access.user;
     await ensureSchema();
     await ensureProjectOpsSchema();
+    await ensureAgentNotificationsSchema();
 
     const body = await req.json();
     const { id, agent_id, status, lead_stage, follow_up_date, notes } = body;

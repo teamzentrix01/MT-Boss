@@ -5,6 +5,7 @@ import { ensureAgentSchema } from '@/lib/agent-auth';
 import { createXlsxWorkbook } from '@/lib/xlsx';
 import { createInitializationGuard } from '@/lib/api-utils';
 import { convertFinalLeadToProject, ensureProjectOpsSchema } from '@/lib/project-ops';
+import { ensureAgentNotificationsSchema } from '@/lib/agent-notifications';
 
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
@@ -249,6 +250,7 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
     }
     await ensureLeadManagementSchema();
+    await ensureAgentNotificationsSchema();
 
     const body = await req.json();
     const {
@@ -314,6 +316,7 @@ export async function PATCH(req) {
     }
     await ensureLeadManagementSchema();
     await ensureProjectOpsSchema();
+    await ensureAgentNotificationsSchema();
 
     const body = await req.json();
     const { id } = body;

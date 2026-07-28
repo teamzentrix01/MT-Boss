@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import pool from '@/lib/db';
 import { ensureAgentSchema } from '@/lib/agent-auth';
 import { getFranchiseAccess, franchiseAccessResponse } from '@/lib/franchise-access';
+import { ensureAgentNotificationsSchema } from '@/lib/agent-notifications';
 
 const RESOURCES = new Set(['construction_services', 'quick_services', 'vendors', 'agents']);
 const clean = (value) => String(value || '').trim();
@@ -280,6 +281,7 @@ export async function PATCH(req) {
     }
 
     if (resource === 'agents') {
+      await ensureAgentNotificationsSchema();
       const currentResult = await pool.query(
         `SELECT * FROM agents WHERE id=$1 AND LOWER(TRIM(COALESCE(city,'')))=LOWER(TRIM($2))`,
         [body.id, city]

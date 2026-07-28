@@ -5,6 +5,7 @@ import { ensureAgentSchema, requireAdmin } from '@/lib/agent-auth';
 import { sendMail } from '@/lib/email';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { resolveManagedCity } from '@/lib/cities';
+import { ensureAgentNotificationsSchema } from '@/lib/agent-notifications';
 
 const AGENT_STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 const AGENT_SAFE_COLUMNS = `
@@ -99,6 +100,7 @@ export async function POST(req) {
 export async function PATCH(req) {
   try {
     await ensureAgentSchema();
+    await ensureAgentNotificationsSchema();
     const admin = requireAdmin(req);
     if (!admin) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
@@ -171,10 +173,10 @@ export async function PATCH(req) {
         const appUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000').replace(/\/$/, '');
         await sendMail({
           to: agent.email,
-          subject: resetPassword ? 'Your MT-BOSS Agent Password Was Reset' : 'Your MT-BOSS Agent Login',
+          subject: resetPassword ? 'Your MTBoss Agent Password Was Reset' : 'Your MTBoss Agent Login',
           html: `
             <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;border:1px solid #eee;">
-              <h2 style="margin:0 0 12px;color:#111;">${resetPassword ? 'Agent password reset' : 'Welcome to MT-BOSS Agent Network'}</h2>
+              <h2 style="margin:0 0 12px;color:#111;">${resetPassword ? 'Agent password reset' : 'Welcome to MTBoss Agent Network'}</h2>
               <p style="color:#444;line-height:1.6;">Your agent access is active for <strong>${agent.city}, ${agent.state || ''}</strong>.</p>
               <div style="background:#f8f8f8;padding:16px;margin:18px 0;border-radius:6px;">
                 <p style="margin:0 0 8px;"><strong>Login URL:</strong> <a href="${appUrl}/agent/login">${appUrl}/agent/login</a></p>

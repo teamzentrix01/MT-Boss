@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { ensurePackageSchema } from '@/lib/packages';
+import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
  
 export async function GET(req) {
   try {
@@ -14,6 +15,7 @@ export async function GET(req) {
     if (!vendor) return unauthorized();
 
     await ensurePackageSchema();
+    await ensureServiceBookingSubcategorySchema();
  
     // Get pending notifications that still match this vendor's city.
     // Contact details and accept action stay locked unless the vendor has
@@ -39,6 +41,7 @@ export async function GET(req) {
           sb.location_map_url,
           sb.base_amount,
           sb.total_amount,
+          sb.service_subcategory,
           sb.service_description,
           v.package_status,
           v.package_expires_at,
@@ -92,6 +95,7 @@ export async function GET(req) {
         CASE WHEN has_active_package AND serves_service THEN location_map_url ELSE NULL END AS location_map_url,
         base_amount,
         total_amount,
+        service_subcategory,
         service_description,
         has_active_package,
         serves_service,

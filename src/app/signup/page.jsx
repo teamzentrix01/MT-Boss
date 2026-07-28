@@ -107,7 +107,7 @@ export default function SignupPage() {
               Join thousands of happy customers.
             </div>
             <p style={{ fontSize: '0.8125rem', color: '#9ca3af', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-              Book home services, track orders, manage properties — your MT-BOSS account gives you access to everything.
+              Book home services, track orders, manage properties — your MTBoss account gives you access to everything.
             </p>
             {['Free to create', 'Instant booking', 'Verified vendors', 'Secure payments'].map(f => (
               <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
@@ -116,13 +116,13 @@ export default function SignupPage() {
               </div>
             ))}
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#4b5563' }}>© {new Date().getFullYear()} MT-BOSS. All rights reserved.</div>
+          <div style={{ fontSize: '0.7rem', color: '#4b5563' }}>© {new Date().getFullYear()} MTBoss. All rights reserved.</div>
         </div>
 
         {/* Form Panel */}
         <div style={{ flex: 1, padding: '2rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: surface, transition: 'background 0.3s' }}>
           <div style={{ fontSize: '1.125rem', fontWeight: 700, color: text, marginBottom: '0.2rem' }}>Create Account</div>
-          <div style={{ fontSize: '0.8125rem', color: muted, marginBottom: '1.25rem' }}>Sign up to get started with MT-BOSS</div>
+          <div style={{ fontSize: '0.8125rem', color: muted, marginBottom: '1.25rem' }}>Sign up to get started with MTBoss</div>
 
           {error && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem 0.875rem', background: dark ? '#3f1515' : '#fff1f2', border: `1px solid ${dark ? '#dc2626' : '#fca5a5'}`, borderRadius: 6, fontSize: '0.8125rem', color: dark ? '#fca5a5' : '#9f1239', marginBottom: '0.875rem' }}>

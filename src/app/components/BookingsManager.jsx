@@ -39,6 +39,11 @@ export default function BookingsManager({ isDarkMode }) {
   }
 
   async function runAdminAction(action) {
+    const isReassignment = action === 'assign_vendor' && Boolean(selectedBooking?.vendor_id);
+    if (isReassignment && !window.confirm(
+      `Reassign this booking from ${selectedBooking.vendor_name || 'the current vendor'} to the selected vendor?`
+    )) return;
+
     setActionLoading(true);
     setActionError('');
     try {
@@ -272,7 +277,11 @@ export default function BookingsManager({ isDarkMode }) {
                         </td>
                         <td>
                           <button
-                            onClick={() => setSelectedBooking(booking)}
+                            onClick={() => {
+                              setSelectedBooking(booking);
+                              setSelectedVendorId('');
+                              setActionError('');
+                            }}
                             style={{
                               background: 'none',
                               border: 'none',
@@ -339,6 +348,10 @@ export default function BookingsManager({ isDarkMode }) {
               <div className="detail-value">{selectedBooking.user_phone}</div>
             </div>
             <div className="detail-field">
+              <div className="detail-label">Sub Category</div>
+              <div className="detail-value">{selectedBooking.service_subcategory || 'Not Specified'}</div>
+            </div>
+            <div className="detail-field">
               <div className="detail-label">Property Type</div>
               <div className="detail-value">{selectedBooking.property_type || 'Not Specified'}</div>
             </div>
@@ -399,23 +412,36 @@ export default function BookingsManager({ isDarkMode }) {
             </div>
           )}
 
-          {selectedBooking.status === 'ADMIN_ACCEPTED' && !selectedBooking.vendor_id && (
+          {(
+            (selectedBooking.status === 'ADMIN_ACCEPTED' && !selectedBooking.vendor_id)
+            || (['VENDOR_ACCEPTED', 'VENDOR_ON_WAY'].includes(selectedBooking.status) && selectedBooking.vendor_id)
+          ) && (
             <div style={{ marginBottom: '1rem', padding: '0.9rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px' }}>
-              <div className="detail-label">Assign Vendor</div>
-              <p className="detail-value" style={{ margin: '0.4rem 0 0.75rem' }}>Approved vendors matching this service and city are listed. The admin can manually assign either a paid or unpaid vendor.</p>
+              <div className="detail-label">{selectedBooking.vendor_id ? 'Change Assigned Vendor' : 'Assign Vendor'}</div>
+              <p className="detail-value" style={{ margin: '0.4rem 0 0.75rem' }}>
+                {selectedBooking.vendor_id
+                  ? 'Choose another approved matching vendor. Reassignment is available only before the service starts.'
+                  : 'Approved vendors matching this service and city are listed. The admin can manually assign either a paid or unpaid vendor.'}
+              </p>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <select value={selectedVendorId} onChange={event => setSelectedVendorId(event.target.value)}
                   style={{ flex: 1, minWidth: 180, padding: '0.55rem', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', borderRadius: 6 }}>
-                  <option value="">Select matching vendor</option>
-                  {(selectedBooking.eligible_vendors || []).map(vendor => (
+                  <option value="">{selectedBooking.vendor_id ? 'Select replacement vendor' : 'Select matching vendor'}</option>
+                  {(selectedBooking.eligible_vendors || [])
+                    .filter(vendor => Number(vendor.vendor_id) !== Number(selectedBooking.vendor_id))
+                    .map(vendor => (
                     <option key={vendor.vendor_id} value={vendor.vendor_id}>{vendor.shop_name} · {vendor.city} · {vendor.package_status === 'active' ? (vendor.package_name || 'Paid') : 'Unpaid'}</option>
                   ))}
                 </select>
                 <button className="filter-btn active" disabled={actionLoading || !selectedVendorId} onClick={() => runAdminAction('assign_vendor')}>
-                  {actionLoading ? 'Assigning...' : 'Assign Vendor'}
+                  {actionLoading ? 'Updating...' : selectedBooking.vendor_id ? 'Update Vendor' : 'Assign Vendor'}
                 </button>
               </div>
-              {(selectedBooking.eligible_vendors || []).length === 0 && <p style={{ color: 'var(--muted)', fontSize: '0.75rem', marginTop: '0.6rem' }}>No approved matching vendor is currently available. Add or approve a vendor, then refresh and assign the booking.</p>}
+              {(selectedBooking.eligible_vendors || []).filter(vendor => Number(vendor.vendor_id) !== Number(selectedBooking.vendor_id)).length === 0 && (
+                <p style={{ color: 'var(--muted)', fontSize: '0.75rem', marginTop: '0.6rem' }}>
+                  No other approved matching vendor is currently available. Add or approve another vendor, then refresh the booking.
+                </p>
+              )}
             </div>
           )}
 

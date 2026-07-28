@@ -42,7 +42,7 @@ export async function GET(req) {
           return NextResponse.json({
             success: true,
             available: false,
-            message: `${city} is not enabled by MT-BOSS.`,
+            message: `${city} is not enabled by MTBoss.`,
           });
         }
         dbCheck = await pool.query(

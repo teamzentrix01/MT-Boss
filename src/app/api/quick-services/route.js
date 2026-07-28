@@ -6,6 +6,15 @@ import { fallbackQuickServices, fallbackResponse } from '@/lib/public-fallbacks'
 import { ensureServiceCitiesSchema, normalizeCityList } from '@/lib/service-cities';
 import { normalizeManagedCityList } from '@/lib/cities';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+function jsonWithoutCache(body, init = {}) {
+  const response = NextResponse.json(body, init);
+  response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  return response;
+}
+
 const ensureQuickServiceSeoColumns = createInitializationGuard(async () => {
   await ensureServiceCitiesSchema();
   try {
@@ -44,9 +53,12 @@ const ensureQuickServiceSeoColumns = createInitializationGuard(async () => {
 
 // GET all quick services — public, no auth required
 export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const adminView = searchParams.get('admin') === '1';
+  if (adminView && !requireRole(req, 'admin')) return unauthorized();
+
   try {
     await ensureQuickServiceSeoColumns();
-    const { searchParams } = new URL(req.url);
     const slug = searchParams.get('slug');
 
     if (slug) {
@@ -55,9 +67,9 @@ export async function GET(req) {
         [slug]
       );
       if (result.rows.length === 0) {
-        return NextResponse.json({ success: false, error: 'Service not found' }, { status: 404 });
+        return jsonWithoutCache({ success: false, error: 'Service not found' }, { status: 404 });
       }
-      return NextResponse.json({ success: true, data: result.rows[0] });
+      return jsonWithoutCache({ success: true, data: result.rows[0] });
     }
 
     // Order by sort_order if the column exists, fall back to id
@@ -69,20 +81,30 @@ export async function GET(req) {
     } catch {
       result = await pool.query(`SELECT * FROM quick_services ORDER BY id ASC`);
     }
-    return NextResponse.json({ success: true, data: result.rows });
+    return jsonWithoutCache({
+      success: true,
+      data: result.rows,
+      total: result.rowCount,
+    });
   } catch (error) {
     console.error('GET quick-services error:', error.message);
     if (isDatabaseConnectionError(error)) {
-      const { searchParams } = new URL(req.url);
+      if (adminView) {
+        return jsonWithoutCache(
+          { success: false, error: 'Quick services database is unavailable' },
+          { status: 503 }
+        );
+      }
       const slug = searchParams.get('slug');
       if (slug) {
         const service = fallbackQuickServices.find((item) => item.slug.toLowerCase() === slug.toLowerCase());
         if (!service) {
-          return NextResponse.json({ success: false, error: 'Service not found' }, { status: 404 });
+          return jsonWithoutCache({ success: false, error: 'Service not found' }, { status: 404 });
         }
-        return NextResponse.json(fallbackResponse(service));
+        return jsonWithoutCache(fallbackResponse(service));
       }
-      return NextResponse.json(fallbackResponse(fallbackQuickServices));
+      const fallback = fallbackResponse(fallbackQuickServices);
+      return jsonWithoutCache({ ...fallback, total: fallbackQuickServices.length });
     }
     return handleApiError(error);
   }

@@ -10,6 +10,7 @@ import { cleanText, normalizePhone, validateContactFields } from '@/lib/validati
 import { createPayURequest } from '@/lib/payu';
 import { getQuickServiceTax, getQuickServiceTotal } from '@/lib/quick-service-pricing';
 import { resolveManagedCity } from '@/lib/cities';
+import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
 
 function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
@@ -74,6 +75,8 @@ export async function POST(req) {
     } catch (err) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
+
+    await ensureServiceBookingSubcategorySchema();
  
     const {
       quick_service_id,
@@ -83,6 +86,7 @@ export async function POST(req) {
       service_address,
       service_city,
       service_pincode,
+      service_subcategory,
       property_type,
       booking_date,
       booking_time,
@@ -97,9 +101,10 @@ export async function POST(req) {
     const cleanUserName = cleanText(user_name);
     const cleanUserEmail = cleanText(user_email || authenticatedEmail || '').toLowerCase();
     const cleanUserPhone = normalizePhone(user_phone);
+    const cleanServiceSubcategory = cleanText(service_subcategory);
  
     // Validation
-    if (!cleanUserName || !cleanUserPhone || !service_address || !selectedCity || !service_pincode) {
+    if (!cleanUserName || !cleanUserPhone || !service_address || !selectedCity || !service_pincode || !cleanServiceSubcategory) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
  
@@ -132,13 +137,25 @@ export async function POST(req) {
 
     // Get service base price
     const serviceResult = await pool.query(
-      'SELECT admin_base_price, base_price FROM quick_services WHERE id = $1',
+      'SELECT admin_base_price, base_price, sub_category FROM quick_services WHERE id = $1',
       [quick_service_id]
     );
 
     if (serviceResult.rows.length === 0) {
       return NextResponse.json({ error: 'Service not found' }, { status: 404 });
     }
+
+    const configuredSubcategories = String(serviceResult.rows[0].sub_category || '')
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+    const matchedSubcategory = configuredSubcategories.find(
+      (item) => item.toLowerCase() === cleanServiceSubcategory.toLowerCase()
+    );
+    if (configuredSubcategories.length > 0 && !matchedSubcategory) {
+      return NextResponse.json({ error: 'Invalid sub category selected for this service' }, { status: 400 });
+    }
+    const selectedSubcategory = matchedSubcategory || cleanServiceSubcategory;
 
     const configuredPrice = serviceResult.rows[0].admin_base_price ?? serviceResult.rows[0].base_price;
     const basePrice = Number(configuredPrice);
@@ -204,7 +221,7 @@ export async function POST(req) {
     const bookingResult = await pool.query(
       `INSERT INTO service_bookings (
         booking_reference, user_id, quick_service_id, user_name, user_phone, user_email,
-        service_address, service_city, service_pincode, property_type,
+        service_address, service_city, service_pincode, service_subcategory, property_type,
         booking_date, booking_time, slot_type, time_slot_id,
         user_latitude, user_longitude, location_map_url,
         service_description,
@@ -213,11 +230,11 @@ export async function POST(req) {
         payment_gateway, payment_txnid,
         created_at
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, NOW()
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, NOW()
       ) RETURNING id, booking_reference, total_amount`,
       [
         bookingReference, userId || null, quick_service_id, cleanUserName, cleanUserPhone, cleanUserEmail,
-        service_address, selectedCity, service_pincode, property_type,
+        service_address, selectedCity, service_pincode, selectedSubcategory, property_type,
         booking_date, booking_time, slot_type, time_slot_id,
         user_latitude, user_longitude, location_map_url,
         service_description,

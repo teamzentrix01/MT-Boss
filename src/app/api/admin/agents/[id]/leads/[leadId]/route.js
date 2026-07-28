@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireAdmin, ensureAgentSchema } from '@/lib/agent-auth';
 import { ensureProjectOpsSchema } from '@/lib/project-ops';
+import { ensureAgentNotificationsSchema } from '@/lib/agent-notifications';
 
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 
@@ -9,6 +10,7 @@ export async function PATCH(req, { params }) {
   try {
     await ensureAgentSchema();
     await ensureProjectOpsSchema();
+    await ensureAgentNotificationsSchema();
     const admin = await requireAdmin(req);
     if (!admin) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });

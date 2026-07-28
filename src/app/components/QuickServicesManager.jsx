@@ -32,6 +32,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   const [success, setSuccess] = useState('');
   const [iconUploading, setIconUploading] = useState(false);
   const [configuredCities, setConfiguredCities] = useState([]);
+  const [serviceTotal, setServiceTotal] = useState(0);
 
   // ── Drag & Drop state ──────────────────────────────────────────────────────
   const [dragIndex, setDragIndex] = useState(null);
@@ -63,16 +64,29 @@ export default function QuickServicesManager({ isDarkMode }) {
   }, [showForm]);
 
   const fetchServices = async () => {
+    setError('');
+    setLoading(true);
     try {
       const token = localStorage.getItem('token');
       const [res, cityRes] = await Promise.all([
-        fetch('/api/quick-services', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`/api/quick-services?admin=1&admin_refresh=${Date.now()}`, {
+          cache: 'no-store',
+          headers: { 'Authorization': `Bearer ${token}` },
+        }),
         fetch('/api/cities', { cache: 'no-store' }),
       ]);
       const [data, cityData] = await Promise.all([res.json(), cityRes.json()]);
-      if (data.success) setServices(data.data);
+      if (!res.ok || !data.success || !Array.isArray(data.data)) {
+        throw new Error(data.error || 'Unable to load quick services');
+      }
+      setServices(data.data);
+      setServiceTotal(Number.isFinite(Number(data.total)) ? Number(data.total) : data.data.length);
       if (cityData.success) setConfiguredCities(cityData.cities || []);
-    } catch { setError('Error fetching services'); }
+    } catch (fetchError) {
+      setServices([]);
+      setServiceTotal(0);
+      setError(fetchError.message || 'Error fetching services');
+    }
     finally { setLoading(false); }
   };
 
@@ -614,9 +628,9 @@ export default function QuickServicesManager({ isDarkMode }) {
           </div>
         </div>
 
-        <p className="qs-footer">
-          Total Services: <strong>{services.length}</strong>
-        </p>
+          <p className="qs-footer">
+            Total Services: <strong>{serviceTotal}</strong>
+          </p>
       </div>
     </>
   );

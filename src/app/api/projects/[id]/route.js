@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { ensureProjectOpsSchema, getProjectOps, getProjectSummaries } from '@/lib/project-ops';
 import { ensureAgentSchema } from '@/lib/agent-auth';
+import { ensureAgentNotificationsSchema } from '@/lib/agent-notifications';
 
 const PROJECT_STATUSES = new Set([
   'lead',
@@ -82,6 +83,7 @@ export async function PATCH(req, { params }) {
     const admin = requireRole(req, 'admin');
     if (!admin) return unauthorized();
     await ensureProjectOpsSchema();
+    await ensureAgentNotificationsSchema();
 
     const { id } = await params;
     const body = await req.json();
