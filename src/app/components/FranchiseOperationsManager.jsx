@@ -259,7 +259,8 @@ export default function FranchiseOperationsManager({ permissions }) {
           if (!file) return;
           try {
             setSaving(true);
-            setForm((current) => ({ ...current, image: await uploadFile(file) }));
+            const image = await uploadFile(file);
+            setForm((current) => ({ ...current, image }));
           } catch (error) {
             setMessage(error.message);
           } finally {
