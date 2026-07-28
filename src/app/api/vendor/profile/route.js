@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { cleanCity, ensureServiceCitiesSchema } from '@/lib/service-cities';
+import { resolveManagedCity } from '@/lib/cities';
 
 function getVendorId(req) {
   return requireRole(req, 'vendor')?.id || null;
@@ -80,20 +81,17 @@ export async function PUT(req) {
     }
 
     const requestedCity = cleanCity(city || currentResult.rows[0].city);
-    let canonicalCity = requestedCity;
+    let canonicalCity = await resolveManagedCity(requestedCity);
+    if (!canonicalCity) {
+      return NextResponse.json({ error: 'Select an active city from the city list' }, { status: 400 });
+    }
     if (serviceIds.length > 0) {
       const coveredServices = await pool.query(
-        `SELECT qs.id, configured_city AS canonical_city
+        `SELECT qs.id, $1::TEXT AS canonical_city
          FROM quick_services qs
-         CROSS JOIN LATERAL (
-           SELECT TRIM(city_name) AS configured_city
-           FROM UNNEST(COALESCE(qs.cities, '{}')) city_name
-           WHERE LOWER(TRIM(city_name)) = LOWER(TRIM($1))
-           LIMIT 1
-         ) coverage
          WHERE qs.id = ANY($2::int[])
            AND COALESCE(qs.is_service_active, TRUE) = TRUE`,
-        [requestedCity, serviceIds]
+        [canonicalCity, serviceIds]
       );
       if (coveredServices.rows.length !== serviceIds.length) {
         return NextResponse.json(
@@ -101,7 +99,6 @@ export async function PUT(req) {
           { status: 400 }
         );
       }
-      canonicalCity = coveredServices.rows[0].canonical_city;
     }
 
     const vendorResult = await pool.query(

@@ -142,6 +142,24 @@ export const ensureProjectOpsSchema = createInitializationGuard(async () => {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS project_contractor_entries (
+      id SERIAL PRIMARY KEY,
+      project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+      agent_id INTEGER REFERENCES agents(id) ON DELETE SET NULL,
+      contractor_name TEXT NOT NULL,
+      company_name TEXT,
+      work_description TEXT,
+      contract_amount NUMERIC NOT NULL DEFAULT 0,
+      paid_amount NUMERIC NOT NULL DEFAULT 0,
+      payment_date DATE NOT NULL DEFAULT CURRENT_DATE,
+      payment_mode TEXT,
+      invoice_number TEXT,
+      notes TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
 });
 
 export async function convertFinalLeadToProject(db, leadId) {
@@ -216,6 +234,9 @@ export async function getProjectSummaries(whereSql = '', params = []) {
       COALESCE(exp.extra_expense, 0) AS extra_expense,
       COALESCE(transport.transport_cost, 0) AS transport_cost,
       COALESCE(transport.transport_count, 0) AS transport_count,
+      COALESCE(contractor.contractor_cost, 0) AS contractor_cost,
+      COALESCE(contractor.contract_value, 0) AS contractor_contract_value,
+      COALESCE(contractor.contractor_count, 0) AS contractor_count,
       ROUND(COALESCE(pay.total_received, 0) * 0.02, 2) AS agent_commission,
       ROUND(
         COALESCE(pay.total_received, 0)
@@ -223,6 +244,7 @@ export async function getProjectSummaries(whereSql = '', params = []) {
         - COALESCE(mat.material_cost, 0)
         - COALESCE(exp.extra_expense, 0)
         - COALESCE(transport.transport_cost, 0)
+        - COALESCE(contractor.contractor_cost, 0)
         - (COALESCE(pay.total_received, 0) * 0.02),
         2
       ) AS profit_loss
@@ -254,6 +276,14 @@ export async function getProjectSummaries(whereSql = '', params = []) {
       FROM project_transport_entries
       GROUP BY project_id
     ) transport ON transport.project_id = p.id
+    LEFT JOIN (
+      SELECT project_id,
+             SUM(paid_amount) AS contractor_cost,
+             SUM(contract_amount) AS contract_value,
+             COUNT(*) AS contractor_count
+      FROM project_contractor_entries
+      GROUP BY project_id
+    ) contractor ON contractor.project_id = p.id
     ${whereSql}
     ORDER BY p.created_at DESC
     `,
@@ -265,12 +295,13 @@ export async function getProjectSummaries(whereSql = '', params = []) {
 
 export async function getProjectOps(projectId) {
   await ensureProjectOpsSchema();
-  const [payments, labour, materials, expenses, transport] = await Promise.all([
+  const [payments, labour, materials, expenses, transport, contractors] = await Promise.all([
     pool.query('SELECT * FROM project_payments WHERE project_id = $1 ORDER BY payment_date DESC, created_at DESC', [projectId]),
     pool.query('SELECT * FROM project_labour_entries WHERE project_id = $1 ORDER BY work_date DESC, created_at DESC', [projectId]),
     pool.query('SELECT * FROM project_material_entries WHERE project_id = $1 ORDER BY entry_date DESC, created_at DESC', [projectId]),
     pool.query('SELECT * FROM project_expenses WHERE project_id = $1 ORDER BY expense_date DESC, created_at DESC', [projectId]),
     pool.query('SELECT * FROM project_transport_entries WHERE project_id = $1 ORDER BY transport_date DESC, created_at DESC', [projectId]),
+    pool.query('SELECT * FROM project_contractor_entries WHERE project_id = $1 ORDER BY payment_date DESC, created_at DESC', [projectId]),
   ]);
 
   return {
@@ -279,6 +310,7 @@ export async function getProjectOps(projectId) {
     materials: materials.rows,
     expenses: expenses.rows,
     transport: transport.rows,
+    contractors: contractors.rows,
   };
 }
 

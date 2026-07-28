@@ -8,8 +8,9 @@
 import { useState, useEffect } from 'react';
 import PaidTimeSlotsManager from './PaidTimeSlotsManager';
 
-export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', defaultCity = '', compact = false }) {
+export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', defaultCity = '', compact = false, permissions = null }) {
   const lockedCity = tokenKey === 'franchise-token' && Boolean(defaultCity);
+  const canSlot = (key) => !permissions || permissions['slots.manage'] || permissions[key];
   const [slots, setSlots] = useState([]);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -310,9 +311,9 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
       <div>
         <div className="section-header">
           <h3 style={{ fontSize: '0.875rem', fontWeight: '700' }}>Free Time Slots Management</h3>
-          <button onClick={() => showForm ? resetForm() : setShowForm(true)} className="btn-primary">
+          {canSlot('slots.free.create') && <button onClick={() => showForm ? resetForm() : setShowForm(true)} className="btn-primary">
             {showForm ? '✕ Cancel' : '+ Create Slot'}
-          </button>
+          </button>}
         </div>
 
         {showForm && (
@@ -344,19 +345,17 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
 
               <div className="form-group">
                 <label className="form-label">City *</label>
-                <input
-                  list="free-slot-city-options"
+                <select
                   className="form-select"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   disabled={!formData.quick_service_id || lockedCity}
-                  placeholder="Select or type a city"
-                />
-                <datalist id="free-slot-city-options">
-                  {formCityOptions.map((city) => <option key={city} value={city} />)}
-                </datalist>
+                >
+                  <option value="">Select city</option>
+                  {formCityOptions.map((city) => <option key={city} value={city}>{city}</option>)}
+                </select>
                 <small style={{ color: 'var(--muted)' }}>
-                  {lockedCity ? 'Restricted to your approved franchise city.' : 'Admins can type a new city; it will be added to this service.'}
+                  {lockedCity ? 'Restricted to your approved franchise city.' : 'Configure cities in City Management and Quick Services.'}
                 </small>
               </div>
 
@@ -485,24 +484,24 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
                       </td>
                       <td>
                         <div className="action-buttons">
-                          <button
+                          {canSlot('slots.free.edit') && <button
                             onClick={() => handleToggleAvailability(slot.id, slot.is_available)}
                             className="btn-small btn-toggle"
                           >
                             {slot.is_available ? 'Close' : 'Open'}
-                          </button>
-                          <button
+                          </button>}
+                          {canSlot('slots.free.edit') && <button
                             onClick={() => handleEditSlot(slot)}
                             className="btn-small btn-toggle"
                           >
                             Edit
-                          </button>
-                          <button
+                          </button>}
+                          {canSlot('slots.free.delete') && <button
                             onClick={() => handleDeleteSlot(slot.id)}
                             className="btn-small btn-delete"
                           >
                             Delete
-                          </button>
+                          </button>}
                         </div>
                       </td>
                     </tr>
@@ -512,7 +511,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
             </div>
           )}
         </div>
-        <PaidTimeSlotsManager tokenKey={tokenKey} defaultCity={defaultCity} compact={compact} />
+        <PaidTimeSlotsManager tokenKey={tokenKey} defaultCity={defaultCity} compact={compact} permissions={permissions} />
       </div>
     </>
   );

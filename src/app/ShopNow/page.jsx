@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useCities } from "@/hooks/useCities";
 
 // Dark-mode watcher
 function useDarkMode() {
@@ -15,8 +16,6 @@ function useDarkMode() {
   }, []);
   return dark;
 }
-
-const SUPPORTED_CITIES = ['Moradabad', 'Bareilly', 'Meerut', 'Noida', 'Delhi', 'Gurgaon', 'Haldwani', 'Dehradun'];
 
 // ── Inline SVG icons ──────────────────────────────────────────────────────────
 const X = ({ size = 20 }) => (
@@ -64,20 +63,9 @@ function SectionLabel({ children, isDark }) {
   );
 }
 
-const CITIES = [
-  'Agra','Ahmedabad','Ajmer','Aligarh','Allahabad','Amritsar','Aurangabad',
-  'Bangalore','Bareilly','Bhopal','Bhubaneswar','Chandigarh','Chennai',
-  'Coimbatore','Dehradun','Delhi','Dhanbad','Faridabad','Ghaziabad',
-  'Guwahati','Gwalior','Howrah','Hubli-Dharwad','Hyderabad','Indore',
-  'Jabalpur','Jaipur','Jalandhar','Jodhpur','Kanpur','Kochi','Kolkata',
-  'Kota','Lucknow','Ludhiana','Madurai','Mangalore','Meerut','Moradabad',
-  'Mumbai','Mysore','Nagpur','Nashik','Noida','Patna','Pune','Raipur',
-  'Rajkot','Ranchi','Srinagar','Surat','Thane','Thiruvananthapuram',
-  'Varanasi','Vijayawada','Visakhapatnam','Vadodara',
-];
-
 export default function ShopPage() {
   const isDarkMode = useDarkMode();
+  const { cities: supportedCities } = useCities();
 
   // ── category list ──────────────────────────────────────────────────────────
   const [categories, setCategories] = useState([]);
@@ -519,7 +507,7 @@ export default function ShopPage() {
                       }}
                     >
                       <option value="">Select a city</option>
-                      {SUPPORTED_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                      {supportedCities.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                     {selectedCity && (
                       <button

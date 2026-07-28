@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --brand-blue: #facc15;
+  --brand-blue: #2196F3;
   --brand-blue-dark: color-mix(in srgb, var(--brand-blue) 86%, black);
   --brand-blue-deep: color-mix(in srgb, var(--brand-blue) 78%, black);
   --brand-blue-deeper: color-mix(in srgb, var(--brand-blue) 64%, black);

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { resolveManagedCity } from '@/lib/cities';
 
 // No `ready` flag — CREATE TABLE IF NOT EXISTS + ALTER IF NOT EXISTS are idempotent
 // and run in milliseconds when the table already exists. This makes the route resilient
@@ -81,6 +82,10 @@ export async function POST(req) {
       emailRequired: false,
     });
     if (contactError) return NextResponse.json({ success: false, error: contactError }, { status: 400 });
+    const canonicalCity = await resolveManagedCity(selected_city);
+    if (!canonicalCity) {
+      return NextResponse.json({ success: false, error: 'Select an active delivery city' }, { status: 400 });
+    }
 
     const result = await pool.query(
       `INSERT INTO material_enquiries
@@ -97,7 +102,7 @@ export async function POST(req) {
         material_type || null, subcategory_name || null, brand_company || null,
         quantity_text || null, order_unit || null, delivery_date || null,
         delivery_address || null, latitude || null, longitude || null,
-        message || null, selected_city || null,
+        message || null, canonicalCity,
       ]
     );
 

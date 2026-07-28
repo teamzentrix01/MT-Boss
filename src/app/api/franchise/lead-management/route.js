@@ -8,6 +8,28 @@ import { convertFinalLeadToProject, ensureProjectOpsSchema } from '@/lib/project
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
 
+function filterLead(lead, permissions) {
+  const visible = { ...lead };
+  const can = (...keys) => keys.some((key) => permissions[key]);
+  if (!can('leads.view_contact_details')) {
+    delete visible.client_phone;
+    delete visible.client_email;
+  }
+  if (!can('leads.view_service_details')) {
+    delete visible.service_type;
+    delete visible.lead_type;
+    delete visible.city;
+  }
+  if (!can('leads.view_source')) delete visible.lead_source;
+  if (!can('leads.view_notes', 'leads.edit_notes', 'leads.manage')) delete visible.notes;
+  if (!can('financials.view', 'financials.view_deal', 'financials.edit_deal')) delete visible.final_amount;
+  if (!can('leads.view_assigned_agent', 'agents.assign', 'agents.assign_leads')) {
+    delete visible.agent_name;
+    delete visible.agent_id;
+  }
+  return visible;
+}
+
 const ensureSchema = createInitializationGuard(async () => {
   await ensureAgentSchema();
   try { await pool.query(`ALTER TABLE agent_leads ALTER COLUMN agent_id DROP NOT NULL`); } catch { /* ok */ }
@@ -37,13 +59,7 @@ export async function GET(req) {
         [franchise.id]
       );
 
-    const data = access.permissions['financials.view']
-      ? leads.rows
-      : leads.rows.map((lead) => {
-        const visible = { ...lead };
-        delete visible.final_amount;
-        return visible;
-      });
+    const data = leads.rows.map((lead) => filterLead(lead, access.permissions));
     return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error('Franchise lead management GET error:', error);
@@ -54,7 +70,7 @@ export async function GET(req) {
 export async function PATCH(req) {
   let client;
   try {
-    const access = await getFranchiseAccess(req, 'leads.manage');
+    const access = await getFranchiseAccess(req, 'leads.view');
     if (!access.allowed) return franchiseAccessResponse(access);
     const franchise = access.user;
     await ensureSchema();
@@ -66,9 +82,21 @@ export async function PATCH(req) {
       return NextResponse.json({ success: false, error: 'Lead id is required' }, { status: 400 });
     }
 
-    if (agent_id !== undefined && !access.permissions['agents.assign']) {
-      return NextResponse.json({ success: false, error: 'Permission denied: agents.assign' }, { status: 403 });
-    }
+    const permits = (...keys) => keys.some((key) => access.permissions[key]);
+    const denied = (permission) => NextResponse.json(
+      { success: false, error: `Permission denied: ${permission}` },
+      { status: 403 }
+    );
+    if (Object.prototype.hasOwnProperty.call(body, 'agent_id')
+      && !permits('agents.assign', 'agents.assign_leads')) return denied('agents.assign_leads');
+    if (Object.prototype.hasOwnProperty.call(body, 'status')
+      && !permits('leads.manage', 'leads.update_status')) return denied('leads.update_status');
+    if (Object.prototype.hasOwnProperty.call(body, 'lead_stage')
+      && !permits('leads.manage', 'leads.update_stage')) return denied('leads.update_stage');
+    if (Object.prototype.hasOwnProperty.call(body, 'follow_up_date')
+      && !permits('leads.manage', 'leads.update_follow_up')) return denied('leads.update_follow_up');
+    if (Object.prototype.hasOwnProperty.call(body, 'notes')
+      && !permits('leads.manage', 'leads.edit_notes')) return denied('leads.edit_notes');
 
     client = await pool.connect();
     await client.query('BEGIN');
@@ -90,6 +118,11 @@ export async function PATCH(req) {
     const nextStage = has('lead_stage') ? lead_stage : current.lead_stage;
     const requestedStatus = has('status') ? status : current.status;
     const nextStatus = nextStage === 'Final' ? 'Converted' : requestedStatus;
+    if (((has('lead_stage') && lead_stage === 'Final') || (has('status') && status === 'Converted'))
+      && !permits('leads.manage', 'leads.convert')) {
+      await client.query('ROLLBACK');
+      return denied('leads.convert');
+    }
     if (has('lead_stage') && !STAGES.has(lead_stage)) {
       await client.query('ROLLBACK');
       return NextResponse.json({ success: false, error: 'Invalid lead stage.' }, { status: 400 });
@@ -151,7 +184,11 @@ export async function PATCH(req) {
 
     const project = await convertFinalLeadToProject(client, id);
     await client.query('COMMIT');
-    return NextResponse.json({ success: true, data: result.rows[0], project: project || undefined });
+    return NextResponse.json({
+      success: true,
+      data: filterLead(result.rows[0], access.permissions),
+      project: project ? { id: project.id } : undefined,
+    });
   } catch (error) {
     if (client) await client.query('ROLLBACK').catch(() => {});
     console.error('Franchise lead management PATCH error:', error);

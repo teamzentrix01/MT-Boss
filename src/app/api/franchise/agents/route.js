@@ -18,7 +18,10 @@ export async function GET(req) {
       [access.franchise.city]
     );
 
-    return NextResponse.json({ success: true, data: result.rows });
+    const data = access.permissions['agents.view_contact_details']
+      ? result.rows
+      : result.rows.map(({ email, phone, ...agent }) => agent);
+    return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error('Franchise agents fetch error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });

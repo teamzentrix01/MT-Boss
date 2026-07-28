@@ -4,11 +4,11 @@ import { requireRole } from '@/lib/auth';
 import { resolveServiceCity } from '@/lib/service-cities';
 import { franchiseAccessResponse, getFranchiseAccess } from '@/lib/franchise-access';
 
-async function getSlotManager(req) {
+async function getSlotManager(req, permission) {
   const admin = requireRole(req, 'admin');
   if (admin) return { allowed: true, isAdmin: true, user: admin };
 
-  const access = await getFranchiseAccess(req, 'slots.manage');
+  const access = await getFranchiseAccess(req, permission);
   if (!access.allowed) return access;
   return { ...access, isAdmin: false };
 }
@@ -16,7 +16,7 @@ async function getSlotManager(req) {
 // PATCH - admin edits slot details and opens/closes availability.
 export async function PATCH(req, { params }) {
   try {
-    const manager = await getSlotManager(req);
+    const manager = await getSlotManager(req, 'slots.free.edit');
     if (!manager.allowed) return franchiseAccessResponse(manager);
 
     const { id } = await params;
@@ -78,7 +78,7 @@ export async function PATCH(req, { params }) {
 // DELETE - admin removes slot.
 export async function DELETE(req, { params }) {
   try {
-    const manager = await getSlotManager(req);
+    const manager = await getSlotManager(req, 'slots.free.delete');
     if (!manager.allowed) return franchiseAccessResponse(manager);
 
     const { id } = await params;

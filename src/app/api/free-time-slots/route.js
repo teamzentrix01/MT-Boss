@@ -3,11 +3,11 @@ import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { franchiseAccessResponse, getFranchiseAccess } from '@/lib/franchise-access';
 
-async function getSlotManager(req) {
+async function getSlotManager(req, permission) {
   const admin = requireRole(req, 'admin');
   if (admin) return { allowed: true, isAdmin: true, user: admin };
 
-  const access = await getFranchiseAccess(req, 'slots.manage');
+  const access = await getFranchiseAccess(req, permission);
   if (!access.allowed) return access;
   return { ...access, isAdmin: false };
 }
@@ -68,7 +68,7 @@ export async function GET(req) {
 // POST - Create free time slot (Admin only)
 export async function POST(req) {
   try {
-    const manager = await getSlotManager(req);
+    const manager = await getSlotManager(req, 'slots.free.create');
     if (!manager.allowed) return franchiseAccessResponse(manager);
 
     const {
@@ -129,7 +129,7 @@ export async function POST(req) {
 // DELETE - Delete free time slot
 export async function DELETE(req) {
   try {
-    const manager = await getSlotManager(req);
+    const manager = await getSlotManager(req, 'slots.free.delete');
     if (!manager.allowed) return franchiseAccessResponse(manager);
 
     const { searchParams } = new URL(req.url);

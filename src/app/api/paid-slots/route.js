@@ -37,11 +37,11 @@ function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
 }
 
-async function getSlotManager(req) {
+async function getSlotManager(req, permission = null) {
   const admin = requireRole(req, 'admin');
   if (admin) return { allowed: true, isAdmin: true, user: admin };
 
-  const access = await getFranchiseAccess(req, 'slots.manage');
+  const access = await getFranchiseAccess(req, permission);
   if (!access.allowed) return access;
   return { ...access, isAdmin: false };
 }
@@ -74,7 +74,7 @@ export async function GET(req) {
       });
     }
 
-    const manager = await getSlotManager(req);
+    const manager = await getSlotManager(req, 'slots.view');
     if (!manager.allowed) return franchiseAccessResponse(manager);
 
     const clauses = [];
@@ -135,6 +135,24 @@ export async function POST(req) {
     }
     if (!canonicalCity) {
       return NextResponse.json({ success: false, error: 'This city is not configured for the selected service' }, { status: 400 });
+    }
+
+    if (!manager.isAdmin) {
+      const existing = await pool.query(
+        `SELECT id FROM paid_time_slot_availability
+          WHERE quick_service_id = $1 AND slot_date = $2::DATE
+            AND LOWER(TRIM(city)) = LOWER(TRIM($3))
+            AND TRIM(REGEXP_REPLACE(REGEXP_REPLACE(time_slot, '[â€“â€”]', '-', 'g'), '\\s+', ' ', 'g')) = $4
+          LIMIT 1`,
+        [quick_service_id, slot_date, canonicalCity, normalizedSlot]
+      );
+      const requiredPermission = existing.rows[0] ? 'slots.paid.edit' : 'slots.paid.create';
+      if (!manager.permissions[requiredPermission]) {
+        return NextResponse.json(
+          { success: false, error: `Permission denied: ${requiredPermission}`, permission: requiredPermission },
+          { status: 403 }
+        );
+      }
     }
 
     await pool.query(

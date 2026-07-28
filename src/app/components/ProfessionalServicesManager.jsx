@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
+import { useCities } from '@/hooks/useCities';
 
 // ─── Cloudinary uploader ──────────────────────────────────────────────────────
 async function uploadToCloudinary(file) {
@@ -143,6 +144,7 @@ function toFormState(pro) {
 }
 
 export default function ProfessionalServicesManager({ isDarkMode }) {
+  const { cities } = useCities();
   const th = t(isDarkMode);
   const [professionals, setProfessionals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -312,7 +314,10 @@ export default function ProfessionalServicesManager({ isDarkMode }) {
                 </select>
               </div>
               <div><label style={lbl}>Experience (years)</label><input style={inp} type="number" min="0" value={form.experience} onChange={set('experience')} /></div>
-              <div><label style={lbl}>City *</label><input style={inp} value={form.city} onChange={set('city')} required /></div>
+              <div><label style={lbl}>City *</label><select style={inp} value={form.city} onChange={set('city')} required>
+                <option value="">Select city</option>
+                {cities.map(city => <option key={city} value={city}>{city}</option>)}
+              </select></div>
               <div><label style={lbl}>Phone *</label><input style={inp} value={form.phone} onChange={set('phone')} required /></div>
               <div style={{ gridColumn:'span 2' }}><label style={lbl}>Email *</label><input style={inp} type="email" value={form.email} onChange={set('email')} required /></div>
               <div style={{ gridColumn:'span 2' }}>

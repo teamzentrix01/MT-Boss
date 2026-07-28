@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 const projectStatuses = ['lead', 'estimate_sent', 'final', 'started', 'ongoing', 'running', 'on_hold', 'completed', 'cancelled', 'lost'];
-const entryTypes = ['payment', 'labour', 'material', 'expense', 'transport'];
+const entryTypes = ['payment', 'labour', 'contractor', 'material', 'expense', 'transport'];
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -27,7 +27,7 @@ export default function AdminProjectManagementPage() {
   const [saving, setSaving] = useState(false);
   const [project, setProject] = useState(null);
   const [agents, setAgents] = useState([]);
-  const [ops, setOps] = useState({ payments: [], labour: [], materials: [], expenses: [], transport: [] });
+  const [ops, setOps] = useState({ payments: [], labour: [], contractors: [], materials: [], expenses: [], transport: [] });
   const [entryType, setEntryType] = useState('payment');
   const [entryForm, setEntryForm] = useState({});
   const [form, setForm] = useState({
@@ -78,6 +78,7 @@ export default function AdminProjectManagementPage() {
       setOps({
         payments: data.payments || [],
         labour: data.labour || [],
+        contractors: data.contractors || [],
         materials: data.materials || [],
         expenses: data.expenses || [],
         transport: data.transport || [],
@@ -111,10 +112,11 @@ export default function AdminProjectManagementPage() {
     const material = Number(project?.material_cost || 0);
     const other = Number(project?.extra_expense || 0);
     const transport = Number(project?.transport_cost || 0);
-    const spent = labour + material + other + transport;
+    const contractor = Number(project?.contractor_cost || 0);
+    const spent = labour + contractor + material + other + transport;
     const profit = received - spent;
 
-    return { received, labour, labourPaid, material, other, transport, spent, profit };
+    return { received, labour, labourPaid, contractor, material, other, transport, spent, profit };
   }, [project]);
 
   async function saveProject(event) {
@@ -220,6 +222,7 @@ export default function AdminProjectManagementPage() {
           <div className="ap-stat"><span>Received From Client</span><strong>{money(totals.received)}</strong></div>
           <div className="ap-stat"><span>Material Expenses</span><strong>{money(totals.material)}</strong></div>
           <div className="ap-stat"><span>Labour Charge</span><strong>{money(totals.labour)}</strong></div>
+          <div className="ap-stat"><span>Contractor Payments</span><strong>{money(totals.contractor)}</strong></div>
           <div className="ap-stat"><span>Other Payments</span><strong>{money(totals.other)}</strong></div>
           <div className="ap-stat"><span>Transport</span><strong>{money(totals.transport)}</strong></div>
           <div className="ap-stat"><span>Total Spent</span><strong>{money(totals.spent)}</strong></div>
@@ -278,7 +281,7 @@ export default function AdminProjectManagementPage() {
             <div className="ap-panel-head">
               <div>
                 <h2>Add Entry</h2>
-                <p>Record payments, purchase orders, labour, materials, expenses, and transport.</p>
+                <p>Record client receipts, contractor payments, labour, materials, expenses, and transport.</p>
               </div>
               <select className="ap-type" value={entryType} onChange={(e) => { setEntryType(e.target.value); setEntryForm({}); }}>
                 {entryTypes.map((type) => <option key={type} value={type}>{type}</option>)}
@@ -308,6 +311,20 @@ export default function AdminProjectManagementPage() {
                 <Field label="Wage Amount" type="number" value={entryForm.wage_amount} onChange={(value) => setEntryForm((f) => ({ ...f, wage_amount: value }))} />
                 <Field label="Paid Amount" type="number" value={entryForm.paid_amount} onChange={(value) => setEntryForm((f) => ({ ...f, paid_amount: value }))} />
                 <Field label="Labour Note" className="wide" value={entryForm.notes} onChange={(value) => setEntryForm((f) => ({ ...f, notes: value }))} />
+              </div>
+            )}
+
+            {entryType === 'contractor' && (
+              <div className="ap-form-grid">
+                <Field label="Contractor Name" value={entryForm.contractor_name} onChange={(value) => setEntryForm((f) => ({ ...f, contractor_name: value }))} required />
+                <Field label="Company / Firm" value={entryForm.company_name} onChange={(value) => setEntryForm((f) => ({ ...f, company_name: value }))} />
+                <Field label="Contract Value" type="number" value={entryForm.contract_amount} onChange={(value) => setEntryForm((f) => ({ ...f, contract_amount: value }))} />
+                <Field label="Payment Amount" type="number" value={entryForm.paid_amount} onChange={(value) => setEntryForm((f) => ({ ...f, paid_amount: value }))} required />
+                <Field label="Payment Date" type="date" value={entryForm.payment_date || todayIso()} onChange={(value) => setEntryForm((f) => ({ ...f, payment_date: value }))} />
+                <Field label="Payment Mode" value={entryForm.payment_mode} onChange={(value) => setEntryForm((f) => ({ ...f, payment_mode: value }))} />
+                <Field label="Invoice / Reference No." value={entryForm.invoice_number} onChange={(value) => setEntryForm((f) => ({ ...f, invoice_number: value }))} />
+                <Field label="Work Description" className="wide" value={entryForm.work_description} onChange={(value) => setEntryForm((f) => ({ ...f, work_description: value }))} />
+                <Field label="Note" className="wide" value={entryForm.notes} onChange={(value) => setEntryForm((f) => ({ ...f, notes: value }))} />
               </div>
             )}
 
@@ -372,6 +389,22 @@ export default function AdminProjectManagementPage() {
               <strong>{row.labour_name} - {money(row.wage_amount)}</strong>
               <span>{dateOnly(row.work_date)} | paid {money(row.paid_amount)} | {row.attendance_status}</span>
               {row.notes && <p>{row.notes}</p>}
+            </>
+          )} />
+          <History title="Contractor Payments" type="contractor" rows={ops.contractors} onDelete={deleteEntry} render={(row) => (
+            <>
+              <strong>{row.contractor_name} - paid {money(row.paid_amount)}</strong>
+              <span>
+                {dateOnly(row.payment_date)}
+                {row.company_name ? ` | ${row.company_name}` : ''}
+                {row.payment_mode ? ` | ${row.payment_mode}` : ''}
+              </span>
+              <p>
+                Contract {money(row.contract_amount)}
+                {' | '}Balance {money(Math.max(Number(row.contract_amount || 0) - Number(row.paid_amount || 0), 0))}
+                {row.invoice_number ? ` | Ref: ${row.invoice_number}` : ''}
+              </p>
+              {(row.work_description || row.notes) && <p>{[row.work_description, row.notes].filter(Boolean).join(' | ')}</p>}
             </>
           )} />
           <History title="Material / Purchase Orders" type="material" rows={ops.materials} onDelete={deleteEntry} render={(row) => (

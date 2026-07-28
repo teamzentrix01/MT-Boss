@@ -19,8 +19,9 @@ const emptyForm = (defaultCity = '') => ({
   is_available: false,
 });
 
-export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity = '', compact = false }) {
+export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity = '', compact = false, permissions = null }) {
   const lockedCity = tokenKey === 'franchise-token' && Boolean(defaultCity);
+  const canSlot = (key) => !permissions || permissions['slots.manage'] || permissions[key];
   const [services, setServices] = useState([]);
   const [rules, setRules] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -163,7 +164,7 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
         <button type="button" className="psm-btn secondary" onClick={load}>Refresh</button>
       </div>
 
-      <form className="psm-form" onSubmit={saveRule}>
+      {canSlot('slots.paid.create') && <form className="psm-form" onSubmit={saveRule}>
         <div className="psm-field">
           <label>Service</label>
           <select className="psm-input" value={form.quick_service_id} onChange={(e) => setForm(f => ({
@@ -177,12 +178,12 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
         </div>
         <div className="psm-field">
           <label>City</label>
-          <input className="psm-input" list="paid-slot-city-options" value={form.city}
+          <select className="psm-input" value={form.city}
             onChange={(e) => setForm(f => ({ ...f, city: e.target.value }))}
-            disabled={!form.quick_service_id || lockedCity} placeholder="Select or type a city" />
-          <datalist id="paid-slot-city-options">
-            {cityOptions.map((city) => <option key={city} value={city} />)}
-          </datalist>
+            disabled={!form.quick_service_id || lockedCity}>
+            <option value="">Select city</option>
+            {cityOptions.map((city) => <option key={city} value={city}>{city}</option>)}
+          </select>
         </div>
         <div className="psm-field">
           <label>Date</label>
@@ -209,7 +210,7 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
         >
           {saving ? 'Saving...' : form.is_available ? 'Mark Open' : 'Mark Closed'}
         </button>
-      </form>
+      </form>}
 
       {message && <div className="psm-message">{message}</div>}
 
@@ -241,9 +242,9 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
                   <td><span className={`psm-badge ${rule.is_available ? 'open' : 'closed'}`}>{rule.is_available ? 'Open' : 'Closed'}</span></td>
                   <td>{rule.updated_by_role || '-'}</td>
                   <td>
-                    <button type="button" className={`psm-btn ${rule.is_available ? 'close' : 'open'}`} onClick={() => toggleRule(rule)}>
+                    {canSlot('slots.paid.edit') && <button type="button" className={`psm-btn ${rule.is_available ? 'close' : 'open'}`} onClick={() => toggleRule(rule)}>
                       {rule.is_available ? 'Close' : 'Open'}
-                    </button>
+                    </button>}
                   </td>
                 </tr>
               ))}

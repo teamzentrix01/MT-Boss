@@ -700,7 +700,7 @@ function AgentDashboardContent() {
                   <div className="grid grid-cols-2 gap-2 mt-3 text-xs">
                     <span>Received: <strong>Rs {Number(project.total_received || 0).toLocaleString('en-IN')}</strong></span>
                     <span>Commission: <strong>Rs {Number(project.agent_commission || 0).toLocaleString('en-IN')}</strong></span>
-                    <span>Costs: <strong>Rs {Number((Number(project.labour_cost || 0) + Number(project.material_cost || 0) + Number(project.extra_expense || 0))).toLocaleString('en-IN')}</strong></span>
+                    <span>Costs: <strong>Rs {Number((Number(project.labour_cost || 0) + Number(project.contractor_cost || 0) + Number(project.material_cost || 0) + Number(project.extra_expense || 0) + Number(project.transport_cost || 0))).toLocaleString('en-IN')}</strong></span>
                     <span>P/L: <strong>Rs {Number(project.profit_loss || 0).toLocaleString('en-IN')}</strong></span>
                   </div>
                   <p className="text-[10px] text-[var(--brand-blue)] font-black uppercase mt-3">{project.project_status || 'lead'}</p>

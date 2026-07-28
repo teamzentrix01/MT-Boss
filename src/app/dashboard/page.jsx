@@ -31,6 +31,7 @@ const JobsManager = dynamicManager(() => import('../components/JobsManager'));
 const OfficeLocationsManager = dynamicManager(() => import('../components/OfficeLocationsManager'));
 const LeadManagementAdmin = dynamicManager(() => import('../components/LeadManagementAdmin'));
 const PropertyEnquiriesManager = dynamicManager(() => import('../components/PropertyEnquiriesManager'));
+const CitiesManager = dynamicManager(() => import('../components/CitiesManager'));
 
 function hasResumeFile(resumeUrl) {
   const value = String(resumeUrl || '').trim();
@@ -322,6 +323,7 @@ function AdminDashboard() {
     { id: 'jobs',                       label: 'New Jobs',                  icon: '💼' },
     { id: 'lead-management',            label: 'Lead Management',           icon: '📋' },
     { id: 'office-locations',           label: 'Office Locations',          icon: 'LOC' },
+    { id: 'cities',                     label: 'Cities',                    icon: 'CITY' },
     { id: 'submissions',                label: 'Contact Forms',             icon: '✉'  },
     { id: 'franchises',                 label: 'Franchises',                icon: '🏢' },
     { id: 'free-slots',                 label: 'Free Time Slots',           icon: '📅' },
@@ -1208,6 +1210,7 @@ function AdminDashboard() {
             </div>
           )}
           {activeTab === 'properties' && <PropertiesManager isDarkMode={isDarkMode} />}
+          {activeTab === 'cities' && <CitiesManager />}
           {activeTab === 'property-enquiries' && <PropertyEnquiriesManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services' && <QuickServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'primary-services' && <PrimaryServicesManager isDarkMode={isDarkMode} />}

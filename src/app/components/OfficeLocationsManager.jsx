@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { COMPANY_CONTACT } from '../lib/company';
+import { useCities } from '@/hooks/useCities';
 
 function theme(dark) {
   return {
@@ -35,6 +36,7 @@ function authToken() {
 
 export default function OfficeLocationsManager({ isDarkMode }) {
   const t = theme(isDarkMode);
+  const { cities } = useCities();
   const [offices, setOffices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -200,13 +202,18 @@ export default function OfficeLocationsManager({ isDarkMode }) {
             ].map(([label, field, type, required]) => (
               <label key={field}>
                 <div style={labelStyle}>{label}</div>
-                <input
-                  type={type}
-                  required={Boolean(required)}
-                  value={form[field]}
-                  onChange={(e) => setForm((prev) => ({ ...prev, [field]: e.target.value }))}
-                  style={inputStyle}
-                />
+                {field === 'city' ? (
+                  <select required value={form.city}
+                    onChange={(e) => setForm((prev) => ({ ...prev, city: e.target.value }))}
+                    style={inputStyle}>
+                    <option value="">Select city</option>
+                    {cities.map(city => <option key={city} value={city}>{city}</option>)}
+                  </select>
+                ) : (
+                  <input type={type} required={Boolean(required)} value={form[field]}
+                    onChange={(e) => setForm((prev) => ({ ...prev, [field]: e.target.value }))}
+                    style={inputStyle} />
+                )}
               </label>
             ))}
 

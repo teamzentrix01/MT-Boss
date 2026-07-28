@@ -251,9 +251,11 @@ export default function SellPage() {
               </div>
               <div>
                 <label className={lbl}>Location *</label>
-                <input className={inp} list="sell-property-locations" value={form.location} onChange={e=>set("location",e.target.value)} placeholder="Select or type location" />
-                <datalist id="sell-property-locations">{availableCities.map(l => <option key={l} value={l} />)}</datalist>
-                <p className={`mt-1 text-[10px] ${muted}`}>{loadingCities ? 'Loading suggestions...' : 'Select a suggestion or type any property location.'}</p>
+                <select className={inp} value={form.location} onChange={e=>set("location",e.target.value)} required disabled={loadingCities}>
+                  <option value="">{loadingCities ? 'Loading cities...' : 'Select city'}</option>
+                  {availableCities.map(l => <option key={l} value={l}>{l}</option>)}
+                </select>
+                <p className={`mt-1 text-[10px] ${muted}`}>Only cities enabled by MT-BOSS are available.</p>
                 {cityError && <p className="mt-1 text-[10px] text-red-500">{cityError}</p>}
               </div>
             </div>

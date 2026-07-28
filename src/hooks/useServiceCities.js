@@ -11,12 +11,16 @@ export function useServiceCities() {
 
   useEffect(() => {
     let active = true;
-    fetch('/api/service-cities', { cache: 'no-store' })
-      .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok || !data.success) throw new Error(data.error || 'Could not load service cities');
+    Promise.all([
+      fetch('/api/service-cities', { cache: 'no-store' }),
+      fetch('/api/cities', { cache: 'no-store' }),
+    ])
+      .then(async ([coverageResponse, citiesResponse]) => {
+        const [data, cityData] = await Promise.all([coverageResponse.json(), citiesResponse.json()]);
+        if (!coverageResponse.ok || !data.success) throw new Error(data.error || 'Could not load service cities');
+        if (!citiesResponse.ok || !cityData.success) throw new Error(cityData.error || 'Could not load cities');
         if (!active) return;
-        setCities(data.cities || []);
+        setCities(cityData.cities || []);
         setServices(data.services || []);
         setMapping(data.mapping || []);
       })

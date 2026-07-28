@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { COMPANY_CONTACT } from '../../lib/company';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { resolveManagedCity } from '@/lib/cities';
 
 const DEFAULT_OFFICES = [
   'Moradabad',
@@ -89,6 +90,10 @@ export async function POST(req) {
     if (!city?.trim() || !address?.trim()) {
       return NextResponse.json({ success: false, error: 'City and address are required' }, { status: 400 });
     }
+    const canonicalCity = await resolveManagedCity(city);
+    if (!canonicalCity) {
+      return NextResponse.json({ success: false, error: 'Select an active city from City Management' }, { status: 400 });
+    }
 
     await ensureTable();
     const result = await pool.query(
@@ -96,7 +101,7 @@ export async function POST(req) {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
        RETURNING *`,
       [
-        city.trim(),
+        canonicalCity,
         address.trim(),
         phone || null,
         email || null,
@@ -127,6 +132,10 @@ export async function PATCH(req) {
     if (!city?.trim() || !address?.trim()) {
       return NextResponse.json({ success: false, error: 'City and address are required' }, { status: 400 });
     }
+    const canonicalCity = await resolveManagedCity(city);
+    if (!canonicalCity) {
+      return NextResponse.json({ success: false, error: 'Select an active city from City Management' }, { status: 400 });
+    }
 
     await ensureTable();
     const result = await pool.query(
@@ -136,7 +145,7 @@ export async function PATCH(req) {
        WHERE id=$9
        RETURNING *`,
       [
-        city.trim(),
+        canonicalCity,
         address.trim(),
         phone || null,
         email || null,

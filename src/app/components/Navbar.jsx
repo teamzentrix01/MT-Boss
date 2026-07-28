@@ -154,7 +154,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
   const serviceDropdown = [
     { label: "Quick Services", href: "/quick" },
-    { label: "Construction Services", href: "/Services/all" },
     { label: "Professional Services", href: "/Services/professionals" },
   ];
 
@@ -183,7 +182,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             <img
               src="/logo.png"
               alt="MTBOSS"
-              className="h-12 2xl:h-14 w-auto object-contain"
+              className="h-[58px] w-auto object-contain"
             />
           </Link>
 

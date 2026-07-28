@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
-import { hasVendorForServiceCity, resolveServiceCity } from '@/lib/service-cities';
+import { hasVendorForServiceCity } from '@/lib/service-cities';
+import { resolveManagedCity } from '@/lib/cities';
 
 function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
@@ -69,7 +70,7 @@ export async function POST(req) {
     if (!/^\d{6}$/.test(String(service_pincode || '').trim())) {
       return NextResponse.json({ error: 'Pincode must be exactly 6 digits' }, { status: 400 });
     }
-    const canonicalCity = await resolveServiceCity(quick_service_id, selectedCity);
+    const canonicalCity = await resolveManagedCity(selectedCity);
     if (!canonicalCity) {
       return NextResponse.json({ error: 'Selected city is not available for this service.' }, { status: 400 });
     }

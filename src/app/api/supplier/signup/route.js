@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { ensurePackageSchema, getPackageById } from '@/lib/packages';
 import { cleanText, normalizePhone, isValidEmail, isValidIndianMobile } from '@/lib/validation';
+import { resolveManagedCity } from '@/lib/cities';
 
 export async function POST(request) {
   try {
@@ -10,8 +11,9 @@ export async function POST(request) {
     email = cleanText(email).toLowerCase();
     phone = normalizePhone(phone);
     postal_code = cleanText(postal_code);
+    const canonicalCity = await resolveManagedCity(city);
 
-    if (!email || !password || !shop_name || !phone) {
+    if (!email || !password || !shop_name || !phone || !canonicalCity) {
       return NextResponse.json({ error: 'Required fields missing' }, { status: 400 });
     }
     if (!isValidEmail(email)) {
@@ -64,7 +66,7 @@ export async function POST(request) {
       [
         email, password,
         shop_name, shop_name, phone,
-        city || null, state || null, country || 'India', postal_code || null,
+        canonicalCity, state || null, country || 'India', postal_code || null,
         aadhaar_number.replace(/\s/g, ''),
         product_categories,
         pkg.id, pkg.name, pkg.price, pkg.duration_months

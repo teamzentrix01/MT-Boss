@@ -13,11 +13,11 @@ const ensureFreeSlotsColumns = createInitializationGuard(async () => {
   await pool.query(`UPDATE free_time_slots SET max_bookings = 1 WHERE max_bookings IS NULL`);
 });
 
-async function getSlotManager(req) {
+async function getSlotManager(req, permission) {
   const admin = requireRole(req, 'admin');
   if (admin) return { allowed: true, isAdmin: true, user: admin };
 
-  const access = await getFranchiseAccess(req, 'slots.manage');
+  const access = await getFranchiseAccess(req, permission);
   if (!access.allowed) return access;
   return { ...access, isAdmin: false };
 }
@@ -57,7 +57,7 @@ export async function GET(req) {
         LIMIT 10`;
       params = [city, serviceId, today];
     } else if (city && city !== 'all') {
-      const manager = await getSlotManager(req);
+      const manager = await getSlotManager(req, 'slots.view');
       if (!manager.allowed) return franchiseAccessResponse(manager);
       const managedCity = manager.isAdmin ? city : manager.franchise.city;
       query = `${baseSelect}
@@ -65,7 +65,7 @@ export async function GET(req) {
         ORDER BY fts.slot_date DESC, fts.slot_start ASC`;
       params = [managedCity];
     } else {
-      const manager = await getSlotManager(req);
+      const manager = await getSlotManager(req, 'slots.view');
       if (!manager.allowed) return franchiseAccessResponse(manager);
       if (manager.isAdmin) {
         query = `${baseSelect}
@@ -90,7 +90,7 @@ export async function GET(req) {
 // POST — admin creates a new free slot
 export async function POST(req) {
   try {
-    const manager = await getSlotManager(req);
+    const manager = await getSlotManager(req, 'slots.free.create');
     if (!manager.allowed) return franchiseAccessResponse(manager);
     await ensureFreeSlotsColumns();
 

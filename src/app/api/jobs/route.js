@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { jobs as defaultJobs } from '@/app/careers/data/jobs';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { requireRole, unauthorized } from '@/lib/auth';
+import { resolveManagedCity } from '@/lib/cities';
 
 function toList(value) {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -112,6 +114,7 @@ export async function GET(req) {
       return NextResponse.json({ success: true, data: normalizeJob(result.rows[0]) });
     }
 
+    if (status === 'all' && !requireRole(req, 'admin')) return unauthorized();
     const result = status === 'all'
       ? await pool.query('SELECT * FROM jobs ORDER BY created_at DESC')
       : await pool.query("SELECT * FROM jobs WHERE status = 'active' ORDER BY urgent DESC, created_at DESC");
@@ -125,6 +128,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    if (!requireRole(req, 'admin')) return unauthorized();
     await ensureTable();
     const body = await req.json();
     const {
@@ -149,6 +153,10 @@ export async function POST(req) {
       );
     }
 
+    const canonicalLocation = await resolveManagedCity(location);
+    if (!canonicalLocation) {
+      return NextResponse.json({ success: false, error: 'Select an active city from City Management' }, { status: 400 });
+    }
     const result = await pool.query(
       `INSERT INTO jobs (
         title, department, location, type, experience, salary, description,
@@ -159,7 +167,7 @@ export async function POST(req) {
       [
         title.trim(),
         department.trim(),
-        location.trim(),
+        canonicalLocation,
         type?.trim() || 'Full Time',
         experience.trim(),
         salary?.trim() || '',
@@ -181,6 +189,7 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   try {
+    if (!requireRole(req, 'admin')) return unauthorized();
     await ensureTable();
     const body = await req.json();
     const {
@@ -206,6 +215,10 @@ export async function PATCH(req) {
       );
     }
 
+    const canonicalLocation = await resolveManagedCity(location);
+    if (!canonicalLocation) {
+      return NextResponse.json({ success: false, error: 'Select an active city from City Management' }, { status: 400 });
+    }
     const result = await pool.query(
       `UPDATE jobs SET
         title=$1,
@@ -226,7 +239,7 @@ export async function PATCH(req) {
       [
         title.trim(),
         department.trim(),
-        location.trim(),
+        canonicalLocation,
         type?.trim() || 'Full Time',
         experience.trim(),
         salary?.trim() || '',
@@ -253,6 +266,7 @@ export async function PATCH(req) {
 
 export async function DELETE(req) {
   try {
+    if (!requireRole(req, 'admin')) return unauthorized();
     await ensureTable();
     const { id } = await req.json();
 

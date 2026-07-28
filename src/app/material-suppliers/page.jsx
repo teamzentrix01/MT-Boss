@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { COMPANY_CONTACT } from "../lib/company";
+import { useCities } from "@/hooks/useCities";
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -123,6 +124,7 @@ const faqs = [
 ];
 
 export default function MaterialSuppliersPage() {
+  const { cities, loading: citiesLoading } = useCities();
   const dark = useDarkMode();
   const [activeFaq, setActiveFaq] = useState(null);
   const [submitted, setSubmitted] = useState(false);
@@ -489,7 +491,10 @@ export default function MaterialSuppliersPage() {
               <div>
                 <p className={`text-[10px] font-black uppercase tracking-widest mb-4 pb-2 border-b ${dark ? "text-zinc-500 border-zinc-700" : "text-zinc-400 border-gray-200"}`}>Location</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div><label className={labelClass}>City *</label><input type="text" name="city" required placeholder="Your city" value={form.city} onChange={handleChange} className={inputClass} /></div>
+                  <div><label className={labelClass}>City *</label><select name="city" required value={form.city} onChange={handleChange} className={inputClass} disabled={citiesLoading}>
+                    <option value="">{citiesLoading ? "Loading cities..." : "Select city"}</option>
+                    {cities.map(city => <option key={city} value={city}>{city}</option>)}
+                  </select></div>
                   <div>
                     <label className={labelClass}>State *</label>
                     <select name="state" required value={form.state} onChange={handleChange} className={inputClass}>

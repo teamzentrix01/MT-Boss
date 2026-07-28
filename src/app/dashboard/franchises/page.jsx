@@ -38,6 +38,7 @@ export default function FranchisesPage() {
   const [filter, setFilter]         = useState('All');
   const [modelFilter, setModelFilter] = useState('All');
   const [updating, setUpdating]     = useState(false);
+  const [resendingCredentials, setResendingCredentials] = useState(false);
   const [section, setSection]       = useState('personal');
   const [notice, setNotice]         = useState({ type: '', text: '' });
   const [permissionDraft, setPermissionDraft] = useState({ ...EMPTY_FRANCHISE_PERMISSIONS });
@@ -92,7 +93,9 @@ export default function FranchisesPage() {
   };
 
   const resendCredentials = async (id) => {
+    if (!confirm('Generate a new temporary password and email it to this franchise? Their current password will stop working.')) return;
     setUpdating(true);
+    setResendingCredentials(true);
     setNotice({ type: '', text: '' });
     try {
       const token = localStorage.getItem('token');
@@ -113,6 +116,7 @@ export default function FranchisesPage() {
       setNotice({ type: 'error', text: 'Could not resend credentials. Please try again.' });
     } finally {
       setUpdating(false);
+      setResendingCredentials(false);
     }
   };
 
@@ -741,7 +745,7 @@ export default function FranchisesPage() {
                   className="fr-status-opt"
                   onClick={() => resendCredentials(selected.id)}
                 >
-                  Resend Credentials
+                  {resendingCredentials ? 'Sending Credentials...' : 'Resend Credentials'}
                 </button>
               )}
             </div>

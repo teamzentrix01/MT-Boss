@@ -7,6 +7,7 @@ import { normalizePhone, validateContactFields, isValidEmail } from '@/lib/valid
 import { createInitializationGuard } from '@/lib/api-utils';
 import { ensureFranchiseAccessColumns } from '@/lib/franchise-access';
 import { resolveFranchisePermissionDependencies } from '@/lib/franchise-permissions';
+import { resolveManagedCity } from '@/lib/cities';
 
 const STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 
@@ -69,6 +70,27 @@ function approvalEmail({ name, email, password, city }) {
   `;
 }
 
+function credentialsEmail({ name, email, password, city }) {
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000').replace(/\/$/, '');
+  return `
+    <div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;padding:24px;color:#111;">
+      <h2 style="margin:0 0 12px;">Your MTBoss Franchise Login Credentials</h2>
+      <p style="line-height:1.6;">Hello ${name || 'Franchise Partner'},</p>
+      <p style="line-height:1.6;">
+        Fresh login credentials were requested for your approved franchise in <strong>${city || 'your territory'}</strong>.
+        Your previous password has been replaced by the temporary password below.
+      </p>
+      <div style="background:#f5f5f5;border:1px solid #e5e5e5;border-radius:8px;padding:16px;margin:20px 0;">
+        <p style="margin:0 0 8px;"><strong>Login URL:</strong> <a href="${appUrl}/franchise/login">${appUrl}/franchise/login</a></p>
+        <p style="margin:0 0 8px;"><strong>Email:</strong> ${email}</p>
+        <p style="margin:0;"><strong>Temporary Password:</strong> ${password}</p>
+      </div>
+      <p style="line-height:1.6;">Sign in using this temporary password and change it from the franchise dashboard.</p>
+      <p style="font-size:12px;color:#777;margin-top:24px;">MTBoss Construction</p>
+    </div>
+  `;
+}
+
 export async function GET(req) {
   try {
     const admin = requireRole(req, 'admin');
@@ -106,8 +128,9 @@ export async function POST(req) {
     const cleanName = clean(name);
     const cleanEmail = clean(email).toLowerCase();
     const cleanPhone = normalizePhone(phone);
+    const canonicalCity = await resolveManagedCity(city);
 
-    if (!cleanName || !cleanEmail || !cleanPhone || !clean(model) || !clean(city)) {
+    if (!cleanName || !cleanEmail || !cleanPhone || !clean(model) || !canonicalCity) {
       return NextResponse.json({ success: false, error: 'Name, email, phone, city and franchise model are required' }, { status: 400 });
     }
     const contactError = validateContactFields({ name: cleanName, email: cleanEmail, phone: cleanPhone });
@@ -130,7 +153,7 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Password and confirm password do not match' }, { status: 400 });
     }
 
-    const existingCity = await cityTaken(city);
+    const existingCity = await cityTaken(canonicalCity);
     if (existingCity) {
       return NextResponse.json({
         success: false,
@@ -158,7 +181,7 @@ export async function POST(req) {
       [
         cleanName, fatherName, dob, gender, maritalStatus, cleanPhone, cleanEmail,
         occupation, qualification, annualIncome, idType, idNumber, pan,
-        address, district, city, state, pinCode, currentBusiness, experience,
+        address, district, canonicalCity, state, pinCode, currentBusiness, experience,
         constructionExp, employees, network, bankName, branchName,
         accountNumber, ifscCode, model, investment, territory, referralSource,
         startDate, serviceCategory, officeArea, officeDistrict, premisesOwnership,
@@ -211,45 +234,74 @@ export async function PATCH(req) {
       if (!id) {
         return NextResponse.json({ success: false, error: 'Franchise id is required' }, { status: 400 });
       }
-
-      const currentResult = await pool.query('SELECT * FROM franchises WHERE id = $1', [id]);
-      const current = currentResult.rows[0];
-      if (!current) {
-        return NextResponse.json({ success: false, error: 'Franchise not found' }, { status: 404 });
-      }
-      if (current.status !== 'Approved') {
-        return NextResponse.json({ success: false, error: 'Only approved franchises can receive login credentials' }, { status: 400 });
-      }
-
-      const generatedPassword = randomPassword();
-      const passwordHash = await bcrypt.hash(generatedPassword, 10);
-      const result = await pool.query(
-        `UPDATE franchises
-         SET password_hash = $1, login_enabled = TRUE,
-             approved_at = COALESCE(approved_at, NOW()),
-             approved_by_email = COALESCE(approved_by_email, $2)
-         WHERE id = $3
-         RETURNING *`,
-        [passwordHash, admin.email, id]
+      const smtpConfigured = Boolean(
+        (process.env.SMTP_HOST || process.env.EMAIL_HOST)
+        && (process.env.SMTP_USER || process.env.EMAIL_USER)
+        && (process.env.SMTP_PASS || process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD)
       );
+      if (!smtpConfigured) {
+        return NextResponse.json(
+          { success: false, error: 'Email service is not configured. Credentials were not reset.' },
+          { status: 503 }
+        );
+      }
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        const currentResult = await client.query(
+          'SELECT * FROM franchises WHERE id = $1 FOR UPDATE',
+          [id]
+        );
+        const current = currentResult.rows[0];
+        if (!current) {
+          await client.query('ROLLBACK');
+          return NextResponse.json({ success: false, error: 'Franchise not found' }, { status: 404 });
+        }
+        if (current.status !== 'Approved') {
+          await client.query('ROLLBACK');
+          return NextResponse.json({ success: false, error: 'Only approved franchises can receive login credentials' }, { status: 400 });
+        }
+        if (!isValidEmail(clean(current.email))) {
+          await client.query('ROLLBACK');
+          return NextResponse.json({ success: false, error: 'The franchise registered email address is invalid' }, { status: 400 });
+        }
 
-      await sendMail({
-        to: current.email,
-        subject: 'Your MTBoss franchise login credentials',
-        html: approvalEmail({
-          name: current.name,
-          email: current.email,
-          password: generatedPassword,
-          city: current.city,
-        }),
-      });
+        const generatedPassword = randomPassword();
+        const passwordHash = await bcrypt.hash(generatedPassword, 10);
+        const result = await client.query(
+          `UPDATE franchises
+           SET password_hash = $1, login_enabled = TRUE,
+               approved_at = COALESCE(approved_at, NOW()),
+               approved_by_email = COALESCE(approved_by_email, $2)
+           WHERE id = $3
+           RETURNING *`,
+          [passwordHash, admin.email, id]
+        );
 
-      return NextResponse.json({
-        success: true,
-        data: result.rows[0],
-        credentialsEmailed: true,
-        message: `Fresh credentials sent to ${current.email}`,
-      });
+        await sendMail({
+          to: current.email,
+          subject: 'Your MTBoss franchise login credentials',
+          html: credentialsEmail({
+            name: current.name,
+            email: current.email,
+            password: generatedPassword,
+            city: current.city,
+          }),
+        });
+        await client.query('COMMIT');
+
+        return NextResponse.json({
+          success: true,
+          data: result.rows[0],
+          credentialsEmailed: true,
+          message: `Fresh credentials sent to ${current.email}`,
+        });
+      } catch (error) {
+        await client.query('ROLLBACK').catch(() => {});
+        throw error;
+      } finally {
+        client.release();
+      }
     }
 
     if (!id || !STATUSES.includes(status)) {

@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { COMPANY_CONTACT } from "../lib/company";
+import { useCities } from "@/hooks/useCities";
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -89,6 +90,7 @@ const faqs = [
 
 export default function AgentPage() {
   const dark = useDarkMode();
+  const { cities, loading: citiesLoading, error: citiesError } = useCities();
   const [activeFaq, setActiveFaq] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -594,7 +596,11 @@ export default function AgentPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className={labelClass}>City *</label>
-                    <input type="text" name="city" required placeholder="Your city" value={form.city} onChange={handleChange} className={inputClass} />
+                    <select name="city" required value={form.city} onChange={handleChange} className={inputClass} disabled={citiesLoading}>
+                      <option value="">{citiesLoading ? "Loading cities..." : "Select city"}</option>
+                      {cities.map(city => <option key={city} value={city}>{city}</option>)}
+                    </select>
+                    {citiesError && <p className="mt-1 text-xs text-red-500">{citiesError}</p>}
                   </div>
                   <div>
                     <label className={labelClass}>State *</label>

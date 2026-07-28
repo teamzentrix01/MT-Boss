@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { ensureServiceCitiesSchema } from '@/lib/service-cities';
+import { resolveManagedCity } from '@/lib/cities';
 
 // Pincode availability mapping - Add your service/product available pincodes here
 const PINCODE_MAPPING = {
@@ -36,15 +37,21 @@ export async function GET(req) {
       const cleanName = String(name || '').trim();
       let dbCheck;
       if (city) {
+        const canonicalCity = await resolveManagedCity(city);
+        if (!canonicalCity) {
+          return NextResponse.json({
+            success: true,
+            available: false,
+            message: `${city} is not enabled by MT-BOSS.`,
+          });
+        }
         dbCheck = await pool.query(
-          `SELECT qs.label, TRIM(configured_city) AS city
+          `SELECT qs.label, $1::TEXT AS city
            FROM quick_services qs
-           CROSS JOIN LATERAL UNNEST(COALESCE(qs.cities, '{}')) configured_city
-           WHERE LOWER(TRIM(configured_city)) = LOWER(TRIM($1))
-             AND (LOWER(qs.slug) = LOWER($2) OR LOWER(qs.label) = LOWER($3) OR LOWER(qs.label) = LOWER($4))
+           WHERE (LOWER(qs.slug) = LOWER($2) OR LOWER(qs.label) = LOWER($3) OR LOWER(qs.label) = LOWER($4))
              AND COALESCE(qs.is_service_active, TRUE) = TRUE
            LIMIT 1`,
-          [city.trim(), cleanName, cleanName, cleanName.replace(/-/g, ' ')]
+          [canonicalCity, cleanName, cleanName, cleanName.replace(/-/g, ' ')]
         );
       } else {
         dbCheck = await pool.query(

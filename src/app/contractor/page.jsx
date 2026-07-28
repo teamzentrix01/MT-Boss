@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { COMPANY_CONTACT } from "../lib/company";
+import { useCities } from "@/hooks/useCities";
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -157,6 +158,7 @@ const faqs = [
 ];
 
 export default function ContractorPage() {
+  const { cities, loading: citiesLoading } = useCities();
   const dark = useDarkMode();
   const [activeFaq, setActiveFaq] = useState(null);
   const [submitted, setSubmitted] = useState(false);
@@ -702,7 +704,10 @@ export default function ContractorPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className={labelClass}>City *</label>
-                    <input type="text" name="city" required placeholder="Your city" value={form.city} onChange={handleChange} className={inputClass} />
+                    <select name="city" required value={form.city} onChange={handleChange} className={inputClass} disabled={citiesLoading}>
+                      <option value="">{citiesLoading ? "Loading cities..." : "Select city"}</option>
+                      {cities.map(city => <option key={city} value={city}>{city}</option>)}
+                    </select>
                   </div>
                   <div>
                     <label className={labelClass}>State *</label>

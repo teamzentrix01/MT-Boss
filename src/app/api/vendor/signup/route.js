@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { ensurePackageSchema, getPackageById } from '@/lib/packages';
 import { cleanText, normalizePhone, isValidEmail, isValidIndianMobile } from '@/lib/validation';
 import { cleanCity, ensureServiceCitiesSchema } from '@/lib/service-cities';
+import { resolveManagedCity } from '@/lib/cities';
 
 export async function POST(req) {
   let client;
@@ -69,6 +70,7 @@ export async function POST(req) {
     phone = normalizePhone(phone);
     postal_code = cleanText(postal_code);
     city = cleanCity(city);
+    const canonicalManagedCity = await resolveManagedCity(city);
 
     console.log('✅ [SIGNUP] Data parsed:', { email, phone, city, services: services.length });
 
@@ -76,7 +78,7 @@ export async function POST(req) {
     // VALIDATION
     // ════════════════════════════════════════════════════════════════
 
-    if (!email || !password || !phone || !city || !state || !postal_code) {
+    if (!email || !password || !phone || !canonicalManagedCity || !state || !postal_code) {
       console.warn('❌ [SIGNUP] Missing required fields');
       return NextResponse.json(
         { error: 'Missing required fields: email, password, phone, city, state, postal_code' },
@@ -120,17 +122,11 @@ export async function POST(req) {
 
     await ensureServiceCitiesSchema();
     const coveredServices = await pool.query(
-      `SELECT qs.id, qs.label, configured_city AS canonical_city
+      `SELECT qs.id, qs.label, $1::TEXT AS canonical_city
        FROM quick_services qs
-       CROSS JOIN LATERAL (
-         SELECT TRIM(city_name) AS configured_city
-         FROM UNNEST(COALESCE(qs.cities, '{}')) city_name
-         WHERE LOWER(TRIM(city_name)) = LOWER(TRIM($1))
-         LIMIT 1
-       ) coverage
        WHERE qs.id = ANY($2::int[])
          AND COALESCE(qs.is_service_active, TRUE) = TRUE`,
-      [city, serviceIds]
+      [canonicalManagedCity, serviceIds]
     );
     if (coveredServices.rows.length !== serviceIds.length) {
       return NextResponse.json(
@@ -139,7 +135,7 @@ export async function POST(req) {
       );
     }
 
-    city = coveredServices.rows[0].canonical_city;
+    city = canonicalManagedCity;
     services = serviceIds;
 
     // ════════════════════════════════════════════════════════════════

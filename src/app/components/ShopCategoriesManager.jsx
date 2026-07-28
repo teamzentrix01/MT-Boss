@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { useCities } from '@/hooks/useCities';
 
 /* ── theme ──────────────────────────────────────────────────────────────────── */
 function th(d) {
@@ -225,18 +226,6 @@ const COLOR_OPTIONS = [
 
 const EMPTY = { name: '', emoji: '🛒', label: '', label_color: 'yellow', price_range: '', unit: '' };
 
-const INDIAN_CITIES = [
-  'Agra','Ahmedabad','Ajmer','Aligarh','Allahabad','Amritsar','Aurangabad',
-  'Bangalore','Bareilly','Bhopal','Bhubaneswar','Chandigarh','Chennai',
-  'Coimbatore','Dehradun','Delhi','Dhanbad','Faridabad','Ghaziabad',
-  'Guwahati','Gwalior','Howrah','Hubli-Dharwad','Hyderabad','Indore',
-  'Jabalpur','Jaipur','Jalandhar','Jodhpur','Kanpur','Kochi','Kolkata',
-  'Kota','Lucknow','Ludhiana','Madurai','Mangalore','Meerut','Moradabad',
-  'Mumbai','Mysore','Nagpur','Nashik','Noida','Patna','Pune','Raipur',
-  'Rajkot','Ranchi','Srinagar','Surat','Thane','Thiruvananthapuram',
-  'Varanasi','Vijayawada','Visakhapatnam','Vadodara',
-];
-
 const SKU_UNITS = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -244,6 +233,7 @@ const SKU_UNITS = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft'
 ══════════════════════════════════════════════════════════════════════════ */
 export default function ShopCategoriesManager({ isDarkMode }) {
   const t = th(isDarkMode);
+  const { cities } = useCities();
 
   const [cats, setCats]             = useState([]);
   const [loading, setLoading]       = useState(true);
@@ -580,19 +570,17 @@ export default function ShopCategoriesManager({ isDarkMode }) {
 
                   {/* Add city row */}
                   {(() => {
-                    const available = INDIAN_CITIES.filter(c => !Object.prototype.hasOwnProperty.call(cityPrices, c));
+                    const available = cities.filter(c => !Object.prototype.hasOwnProperty.call(cityPrices, c));
                     return (
                       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
-                        <input
-                          list="shop-city-options"
+                        <select
                           value={pendingCity}
                           onChange={e => setPendingCity(e.target.value)}
-                          placeholder="Select or type a city"
                           style={{ ...inp, flex: 1 }}
-                        />
-                        <datalist id="shop-city-options">
-                          {available.map(c => <option key={c} value={c} />)}
-                        </datalist>
+                        >
+                          <option value="">Select city</option>
+                          {available.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
                         <button
                           type="button"
                           onClick={() => {

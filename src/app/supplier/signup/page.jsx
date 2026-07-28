@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useCities } from '@/hooks/useCities';
 
 export default function SupplierSignupPage() {
   const router = useRouter();
+  const { cities, loading: citiesLoading, error: citiesError } = useCities();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [dark, setDark] = useState(false);
@@ -232,7 +234,11 @@ export default function SupplierSignupPage() {
                 <div className="ss-row">
                   <div className="ss-field">
                     <label className="ss-label">City *</label>
-                    <input className="ss-input" type="text" name="city" value={formData.city} onChange={handleChange} placeholder="Delhi" required />
+                    <select className="ss-input" name="city" value={formData.city} onChange={handleChange} required disabled={citiesLoading}>
+                      <option value="">{citiesLoading ? 'Loading cities...' : 'Select city'}</option>
+                      {cities.map(city => <option key={city} value={city}>{city}</option>)}
+                    </select>
+                    {citiesError && <div className="ss-error">{citiesError}</div>}
                   </div>
                   <div className="ss-field">
                     <label className="ss-label">State *</label>

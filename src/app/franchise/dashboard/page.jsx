@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import FreeTimeSlotsManager from '@/app/components/FreeTimeSlotsManager';
+import FranchiseOperationsManager from '@/app/components/FranchiseOperationsManager';
 import {
   EMPTY_FRANCHISE_PERMISSIONS,
   normalizeFranchisePermissions,
@@ -56,6 +57,12 @@ export default function FranchiseDashboardPage() {
 
   const token = () => localStorage.getItem('franchise-token');
   const can = (permission) => permissions[permission] === true;
+  const canAny = (...keys) => keys.some((key) => can(key));
+  const canEditProject = canAny(
+    'projects.edit', 'projects.publish', 'projects.manage_stage', 'projects.manage_clients',
+    'projects.manage_notes', 'projects.manage_images', 'financials.edit_deal',
+    'agents.assign', 'agents.assign_projects'
+  );
 
   useEffect(() => {
     const tok = localStorage.getItem('franchise-token');
@@ -189,7 +196,11 @@ export default function FranchiseDashboardPage() {
 
   const openAdd = () => {
     setEditProject(null);
-    setForm({ ...emptyForm, location: franchise?.city || '' });
+    setForm({
+      ...emptyForm,
+      location: franchise?.city || '',
+      status: can('projects.publish') ? 'published' : 'draft',
+    });
     setMessage({ type: '', text: '' });
     setShowForm(true);
   };
@@ -409,13 +420,15 @@ export default function FranchiseDashboardPage() {
                 <span className="fd-user-meta">{franchise?.city}, {franchise?.state}</span>
               </div>
             </div>
-            <button className="fd-btn secondary" onClick={openPasswordForm}>Change Password</button>
+            {can('profile.change_password') && <button className="fd-btn secondary" onClick={openPasswordForm}>Change Password</button>}
           </div>
         </div>
       </header>
 
       <section className="fd-body">
-        {!can('projects.view') && !can('leads.view') && !can('slots.manage') && (
+        {!can('projects.view') && !can('leads.view') && !can('slots.view')
+          && !can('construction_services.view') && !can('quick_services.view')
+          && !can('vendors.view') && !can('agents.manage_directory') && (
           <div className="fd-empty">
             No dashboard features have been assigned to this franchise. Please contact the administrator.
           </div>
@@ -431,12 +444,12 @@ export default function FranchiseDashboardPage() {
           {can('projects.create') && <button className="fd-btn" onClick={openAdd}>Add Project</button>}
         </div>
 
-        <div className="fd-stats">
+        {can('dashboard.view_statistics') && <div className="fd-stats">
           <div className="fd-stat"><div className="fd-stat-label">Total</div><div className="fd-stat-value">{stats.total}</div></div>
           <div className="fd-stat"><div className="fd-stat-label">Published</div><div className="fd-stat-value">{stats.published}</div></div>
           <div className="fd-stat"><div className="fd-stat-label">Draft</div><div className="fd-stat-value">{stats.draft}</div></div>
           <div className="fd-stat"><div className="fd-stat-label">Assigned Leads</div><div className="fd-stat-value">{stats.leads}</div></div>
-        </div>
+        </div>}
 
         {message.text && <div className={`fd-notice ${message.type}`}>{message.text}</div>}
 
@@ -453,19 +466,24 @@ export default function FranchiseDashboardPage() {
                   {project.description && <div className="fd-muted">{project.description}</div>}
                   <span className="fd-pill">{project.status}</span>
                   <span className="fd-pill">{project.project_status || 'lead'}</span>
-                  {(project.client_name || project.client_phone) && (
+                  {canAny('projects.view_client_details', 'projects.manage_clients') && (project.client_name || project.client_phone) && (
                     <div className="fd-muted">Client: <strong>{project.client_name || '-'}</strong> {project.client_phone ? `(${project.client_phone})` : ''}</div>
                   )}
-                  {project.assigned_agent_name && <div className="fd-muted">Assigned agent: <strong>{project.assigned_agent_name}</strong></div>}
-                  {can('financials.view') && <div className="fd-money">
-                    <div>Received<strong>Rs {Number(project.total_received || 0).toLocaleString('en-IN')}</strong></div>
-                    <div>Agent 2%<strong>Rs {Number(project.agent_commission || 0).toLocaleString('en-IN')}</strong></div>
-                    <div>Costs<strong>Rs {Number(Number(project.labour_cost || 0) + Number(project.material_cost || 0) + Number(project.extra_expense || 0)).toLocaleString('en-IN')}</strong></div>
-                    <div>Profit/Loss<strong>Rs {Number(project.profit_loss || 0).toLocaleString('en-IN')}</strong></div>
+                  {canAny('projects.view_notes', 'projects.manage_notes') && project.project_notes && <div className="fd-muted">Notes: {project.project_notes}</div>}
+                  {canAny('projects.view_assigned_agent', 'agents.assign', 'agents.assign_projects') && project.assigned_agent_name && <div className="fd-muted">Assigned agent: <strong>{project.assigned_agent_name}</strong></div>}
+                  {canAny(
+                    'financials.view', 'financials.view_deal', 'financials.view_payments',
+                    'financials.view_costs', 'financials.view_commission', 'financials.view_profit_loss'
+                  ) && <div className="fd-money">
+                    {canAny('financials.view', 'financials.view_deal') && <div>Deal<strong>Rs {Number(project.deal_amount || 0).toLocaleString('en-IN')}</strong></div>}
+                    {canAny('financials.view', 'financials.view_payments') && <div>Received<strong>Rs {Number(project.total_received || 0).toLocaleString('en-IN')}</strong></div>}
+                    {canAny('financials.view', 'financials.view_commission') && <div>Agent 2%<strong>Rs {Number(project.agent_commission || 0).toLocaleString('en-IN')}</strong></div>}
+                    {canAny('financials.view', 'financials.view_costs') && <div>Costs<strong>Rs {Number(Number(project.labour_cost || 0) + Number(project.contractor_cost || 0) + Number(project.material_cost || 0) + Number(project.extra_expense || 0) + Number(project.transport_cost || 0)).toLocaleString('en-IN')}</strong></div>}
+                    {canAny('financials.view', 'financials.view_profit_loss') && <div>Profit/Loss<strong>Rs {Number(project.profit_loss || 0).toLocaleString('en-IN')}</strong></div>}
                   </div>}
-                  {(can('projects.edit') || can('projects.delete')) && (
+                  {(canEditProject || can('projects.delete')) && (
                     <div className="fd-actions">
-                      {can('projects.edit') && <button className="fd-btn secondary" onClick={() => openEdit(project)}>Edit</button>}
+                      {canEditProject && <button className="fd-btn secondary" onClick={() => openEdit(project)}>Edit</button>}
                       {can('projects.delete') && <button className="fd-btn danger" onClick={() => deleteProject(project)}>Delete</button>}
                     </div>
                   )}
@@ -489,42 +507,49 @@ export default function FranchiseDashboardPage() {
             <table className="fd-table">
               <thead>
                 <tr>
-                  {['Client', 'Service', 'Source', 'Status', 'Stage', 'Agent / Sub-agent', 'Follow Up'].map(h => <th key={h}>{h}</th>)}
+                  {['Client', 'Service', 'Source', 'Status', 'Stage', 'Agent / Sub-agent', 'Follow Up', 'Notes'].map(h => <th key={h}>{h}</th>)}
                 </tr>
               </thead>
               <tbody>
                 {leads.length === 0 ? (
-                  <tr><td colSpan={7} className="fd-muted">No assigned leads yet.</td></tr>
+                  <tr><td colSpan={8} className="fd-muted">No assigned leads yet.</td></tr>
                 ) : leads.map(lead => (
                   <tr key={lead.id}>
                     <td>
                       <strong>{lead.client_name}</strong>
-                      <div className="fd-muted">{lead.client_phone}</div>
-                      {lead.client_email && <div className="fd-muted">{lead.client_email}</div>}
+                      {can('leads.view_contact_details') && <div className="fd-muted">{lead.client_phone}</div>}
+                      {can('leads.view_contact_details') && lead.client_email && <div className="fd-muted">{lead.client_email}</div>}
                     </td>
                     <td>
-                      {lead.service_type || '-'}
-                      <div className="fd-muted">{lead.city}</div>
+                      {can('leads.view_service_details') ? lead.service_type || '-' : 'Restricted'}
+                      {can('leads.view_service_details') && <div className="fd-muted">{lead.city}</div>}
                     </td>
-                    <td>{lead.lead_source || '-'}</td>
+                    <td>{can('leads.view_source') ? lead.lead_source || '-' : 'Restricted'}</td>
                     <td>
-                      <select disabled={!can('leads.manage')} className="fd-mini-select" value={lead.status || 'New'} onChange={e => updateLead(lead.id, { status: e.target.value })}>
-                        {leadStatuses.map(s => <option key={s} value={s}>{s}</option>)}
+                      <select disabled={!canAny('leads.manage', 'leads.update_status')} className="fd-mini-select" value={lead.status || 'New'} onChange={e => updateLead(lead.id, { status: e.target.value })}>
+                        {leadStatuses.filter(s => s !== 'Converted' || lead.status === s || canAny('leads.manage', 'leads.convert')).map(s => <option key={s} value={s}>{s}</option>)}
                       </select>
                     </td>
                     <td>
-                      <select disabled={!can('leads.manage')} className="fd-mini-select" value={lead.lead_stage || 'New'} onChange={e => updateLead(lead.id, { lead_stage: e.target.value })}>
-                        {leadStages.map(s => <option key={s} value={s}>{s}</option>)}
+                      <select disabled={!canAny('leads.manage', 'leads.update_stage')} className="fd-mini-select" value={lead.lead_stage || 'New'} onChange={e => updateLead(lead.id, { lead_stage: e.target.value })}>
+                        {leadStages.filter(s => s !== 'Final' || lead.lead_stage === s || canAny('leads.manage', 'leads.convert')).map(s => <option key={s} value={s}>{s}</option>)}
                       </select>
                     </td>
                     <td>
-                      <select disabled={!can('leads.manage') || !can('agents.assign')} className="fd-mini-select" value={lead.agent_id || ''} onChange={e => updateLead(lead.id, { agent_id: e.target.value })}>
+                      <select disabled={!canAny('agents.assign', 'agents.assign_leads')} className="fd-mini-select" value={lead.agent_id || ''} onChange={e => updateLead(lead.id, { agent_id: e.target.value })}>
                         <option value="">Not assigned</option>
+                        {lead.agent_id && lead.agent_name && !agents.some(agent => String(agent.id) === String(lead.agent_id))
+                          && <option value={lead.agent_id}>{lead.agent_name}</option>}
                         {agents.map(agent => <option key={agent.id} value={agent.id}>{agent.name} - {agent.city || agent.email}</option>)}
                       </select>
                     </td>
                     <td>
-                      <input disabled={!can('leads.manage')} className="fd-mini-select" type="date" value={lead.follow_up_date ? String(lead.follow_up_date).slice(0, 10) : ''} onChange={e => updateLead(lead.id, { follow_up_date: e.target.value })} />
+                      <input disabled={!canAny('leads.manage', 'leads.update_follow_up')} className="fd-mini-select" type="date" value={lead.follow_up_date ? String(lead.follow_up_date).slice(0, 10) : ''} onChange={e => updateLead(lead.id, { follow_up_date: e.target.value })} />
+                    </td>
+                    <td>
+                      {canAny('leads.view_notes', 'leads.edit_notes', 'leads.manage')
+                        ? <input disabled={!canAny('leads.manage', 'leads.edit_notes')} className="fd-mini-select" value={lead.notes || ''} onChange={e => setLeads(prev => prev.map(item => item.id === lead.id ? { ...item, notes: e.target.value } : item))} onBlur={e => updateLead(lead.id, { notes: e.target.value })} />
+                        : 'Restricted'}
                     </td>
                   </tr>
                 ))}
@@ -533,7 +558,7 @@ export default function FranchiseDashboardPage() {
           </div>
         </section>}
 
-        {can('slots.manage') && <section className="fd-section fd-slot-section">
+        {can('slots.view') && <section className="fd-section fd-slot-section">
           <div className="fd-section-head">
             <div>
               <div className="fd-card-title">Quick-Service Slots</div>
@@ -541,9 +566,12 @@ export default function FranchiseDashboardPage() {
             </div>
           </div>
           <div style={{ padding: '1rem' }}>
-            <FreeTimeSlotsManager tokenKey="franchise-token" defaultCity={franchise?.city || ''} compact />
+            <FreeTimeSlotsManager tokenKey="franchise-token" defaultCity={franchise?.city || ''} compact permissions={permissions} />
           </div>
         </section>}
+
+        {canAny('construction_services.view', 'quick_services.view', 'vendors.view', 'agents.manage_directory')
+          && <FranchiseOperationsManager permissions={permissions} />}
       </section>
 
       {showForm && (
@@ -560,41 +588,41 @@ export default function FranchiseDashboardPage() {
               <div>
                 <label className="fd-label">Project image *</label>
                 {form.image_url && <img className="fd-preview" src={form.image_url} alt="Project preview" />}
-                <input ref={fileRef} type="file" accept="image/*" onChange={uploadImage} className="fd-input fd-file" disabled={uploading} />
+                <input ref={fileRef} type="file" accept="image/*" onChange={uploadImage} className="fd-input fd-file" disabled={uploading || (Boolean(editProject) && !can('projects.manage_images'))} />
                 {uploading && <div className="fd-muted">Uploading image...</div>}
               </div>
 
               <div>
                 <label className="fd-label">Title *</label>
-                <input className="fd-input" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+                <input className="fd-input" disabled={Boolean(editProject) && !can('projects.edit')} value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
               </div>
 
               <div className="fd-row">
                 <div>
                   <label className="fd-label">Client name</label>
-                  <input className="fd-input" value={form.client_name} onChange={e => setForm(f => ({ ...f, client_name: e.target.value }))} />
+                  <input className="fd-input" disabled={!can('projects.manage_clients')} value={form.client_name} onChange={e => setForm(f => ({ ...f, client_name: e.target.value }))} />
                 </div>
                 <div>
                   <label className="fd-label">Client phone</label>
-                  <input className="fd-input" value={form.client_phone} onChange={e => setForm(f => ({ ...f, client_phone: e.target.value }))} />
+                  <input className="fd-input" disabled={!can('projects.manage_clients')} value={form.client_phone} onChange={e => setForm(f => ({ ...f, client_phone: e.target.value }))} />
                 </div>
               </div>
 
               <div className="fd-row">
                 <div>
                   <label className="fd-label">Client email</label>
-                  <input className="fd-input" value={form.client_email} onChange={e => setForm(f => ({ ...f, client_email: e.target.value }))} />
+                  <input className="fd-input" disabled={!can('projects.manage_clients')} value={form.client_email} onChange={e => setForm(f => ({ ...f, client_email: e.target.value }))} />
                 </div>
-                {can('financials.view') && <div>
+                {canAny('financials.view', 'financials.view_deal', 'financials.edit_deal') && <div>
                   <label className="fd-label">Deal amount</label>
-                  <input className="fd-input" type="number" value={form.deal_amount} onChange={e => setForm(f => ({ ...f, deal_amount: e.target.value }))} />
+                  <input className="fd-input" disabled={!can('financials.edit_deal')} type="number" value={form.deal_amount} onChange={e => setForm(f => ({ ...f, deal_amount: e.target.value }))} />
                 </div>}
               </div>
 
               <div className="fd-row">
                 <div>
                   <label className="fd-label">Category *</label>
-                  <select className="fd-input" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+                  <select className="fd-input" disabled={Boolean(editProject) && !can('projects.edit')} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
                     <option value="">Select category</option>
                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
@@ -607,11 +635,11 @@ export default function FranchiseDashboardPage() {
 
               <div>
                 <label className="fd-label">Description</label>
-                <textarea className="fd-input fd-textarea" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
+                <textarea className="fd-input fd-textarea" disabled={Boolean(editProject) && !can('projects.edit')} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
               </div>
 
               <div className="fd-row">
-                {can('agents.assign') && <div>
+                {canAny('agents.assign', 'agents.assign_projects') && <div>
                   <label className="fd-label">Assign approved agent</label>
                   <select className="fd-input" value={form.assigned_agent_id} onChange={e => setForm(f => ({ ...f, assigned_agent_id: e.target.value }))}>
                     <option value="">No agent assigned</option>
@@ -624,7 +652,7 @@ export default function FranchiseDashboardPage() {
                 </div>}
                 <div>
                   <label className="fd-label">Status</label>
-                  <select className="fd-input" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
+                  <select className="fd-input" disabled={!can('projects.publish')} value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
                     <option value="published">Published</option>
                     <option value="draft">Draft</option>
                   </select>
@@ -634,13 +662,13 @@ export default function FranchiseDashboardPage() {
               <div className="fd-row">
                 <div>
                   <label className="fd-label">Gallery size</label>
-                  <select className="fd-input" value={form.size} onChange={e => setForm(f => ({ ...f, size: e.target.value }))}>
+                  <select className="fd-input" disabled={Boolean(editProject) && !can('projects.edit')} value={form.size} onChange={e => setForm(f => ({ ...f, size: e.target.value }))}>
                     {SIZES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="fd-label">Project stage</label>
-                  <select className="fd-input" value={form.project_status} onChange={e => setForm(f => ({ ...f, project_status: e.target.value }))}>
+                  <select className="fd-input" disabled={!can('projects.manage_stage')} value={form.project_status} onChange={e => setForm(f => ({ ...f, project_status: e.target.value }))}>
                     {['lead', 'estimate_sent', 'final', 'started', 'ongoing', 'running', 'on_hold', 'completed', 'cancelled', 'lost'].map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
@@ -648,7 +676,7 @@ export default function FranchiseDashboardPage() {
 
               <div>
                 <label className="fd-label">Internal notes</label>
-                <input className="fd-input" value={form.project_notes} onChange={e => setForm(f => ({ ...f, project_notes: e.target.value }))} />
+                <input className="fd-input" disabled={!can('projects.manage_notes')} value={form.project_notes} onChange={e => setForm(f => ({ ...f, project_notes: e.target.value }))} />
               </div>
             </div>
 

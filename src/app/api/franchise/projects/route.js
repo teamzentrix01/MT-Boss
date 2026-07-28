@@ -18,27 +18,42 @@ async function ensureAgentIsApproved(agentId, city = '') {
   return result.rows[0] || null;
 }
 
-const FINANCIAL_FIELDS = [
-  'deal_amount',
-  'total_received',
-  'payment_count',
-  'labour_cost',
-  'labour_paid',
-  'material_cost',
-  'extra_expense',
-  'transport_cost',
-  'transport_count',
-  'agent_commission',
-  'profit_loss',
-];
 const PROJECT_STATUSES = new Set([
   'lead', 'estimate_sent', 'final', 'started', 'ongoing', 'running',
   'on_hold', 'completed', 'cancelled', 'lost',
 ]);
 
-function hideFinancials(project) {
+function filterProject(project, permissions) {
   const visible = { ...project };
-  for (const field of FINANCIAL_FIELDS) delete visible[field];
+  const can = (...keys) => keys.some((key) => permissions[key]);
+  if (!can('projects.view_client_details', 'projects.manage_clients')) {
+    delete visible.client_name;
+    delete visible.client_phone;
+    delete visible.client_email;
+  }
+  if (!can('projects.view_notes', 'projects.manage_notes')) delete visible.project_notes;
+  if (!can('projects.view_assigned_agent', 'agents.assign', 'agents.assign_projects')) {
+    delete visible.assigned_agent_id;
+    delete visible.assigned_agent_name;
+    delete visible.assigned_agent_email;
+    delete visible.assigned_agent_phone;
+  }
+  if (!can('financials.view', 'financials.view_deal', 'financials.edit_deal')) delete visible.deal_amount;
+  if (!can('financials.view', 'financials.view_payments')) {
+    delete visible.total_received;
+    delete visible.payment_count;
+  }
+  if (!can('financials.view', 'financials.view_costs')) {
+    for (const field of [
+      'labour_cost', 'labour_paid', 'material_cost', 'extra_expense',
+      'transport_cost', 'transport_count', 'contractor_cost',
+      'contractor_contract_value', 'contractor_count',
+    ]) {
+      delete visible[field];
+    }
+  }
+  if (!can('financials.view', 'financials.view_commission')) delete visible.agent_commission;
+  if (!can('financials.view', 'financials.view_profit_loss')) delete visible.profit_loss;
   return visible;
 }
 
@@ -54,7 +69,7 @@ export async function GET(req) {
 
     return NextResponse.json({
       success: true,
-      data: access.permissions['financials.view'] ? data : data.map(hideFinancials),
+      data: data.map((project) => filterProject(project, access.permissions)),
     });
   } catch (error) {
     console.error('Franchise projects fetch error:', error);
@@ -90,8 +105,8 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Title, category and image are required' }, { status: 400 });
     }
 
-    if (assigned_agent_id && !access.permissions['agents.assign']) {
-      return NextResponse.json({ success: false, error: 'Permission denied: agents.assign' }, { status: 403 });
+    if (assigned_agent_id && !access.permissions['agents.assign'] && !access.permissions['agents.assign_projects']) {
+      return NextResponse.json({ success: false, error: 'Permission denied: agents.assign_projects' }, { status: 403 });
     }
     if (project_status && !PROJECT_STATUSES.has(project_status)) {
       return NextResponse.json({ success: false, error: 'Invalid project status' }, { status: 400 });
@@ -126,19 +141,22 @@ export async function POST(req) {
         image_url,
         cloudinary_public_id || '',
         size || 'small',
-        status === 'draft' ? 'draft' : 'published',
+        access.permissions['projects.publish'] && status !== 'draft' ? 'published' : 'draft',
         franchise.id,
         assigned_agent_id || null,
-        project_notes || '',
-        client_name || null,
-        client_phone || null,
-        client_email || null,
-        access.permissions['financials.view'] ? parsedDealAmount : 0,
-        project_status || 'lead',
+        access.permissions['projects.manage_notes'] ? project_notes || '' : '',
+        access.permissions['projects.manage_clients'] ? client_name || null : null,
+        access.permissions['projects.manage_clients'] ? client_phone || null : null,
+        access.permissions['projects.manage_clients'] ? client_email || null : null,
+        access.permissions['financials.edit_deal'] ? parsedDealAmount : 0,
+        access.permissions['projects.manage_stage'] ? project_status || 'lead' : 'lead',
       ]
     );
 
-    return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
+    return NextResponse.json(
+      { success: true, data: filterProject(result.rows[0], access.permissions) },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Franchise project create error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
@@ -147,7 +165,7 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   try {
-    const access = await getFranchiseAccess(req, 'projects.edit');
+    const access = await getFranchiseAccess(req, 'projects.view');
     if (!access.allowed) return franchiseAccessResponse(access);
     const franchise = access.user;
 
@@ -177,12 +195,12 @@ export async function PATCH(req) {
       return NextResponse.json({ success: false, error: 'Invalid project status' }, { status: 400 });
     }
     const parsedDealAmount = Number(deal_amount || 0);
-    if (access.permissions['financials.view'] && (!Number.isFinite(parsedDealAmount) || parsedDealAmount < 0)) {
+    if (access.permissions['financials.edit_deal'] && (!Number.isFinite(parsedDealAmount) || parsedDealAmount < 0)) {
       return NextResponse.json({ success: false, error: 'Deal amount must be a valid non-negative number' }, { status: 400 });
     }
 
     const currentProjectResult = await pool.query(
-      `SELECT assigned_agent_id, deal_amount
+      `SELECT *
          FROM projects
         WHERE id = $1 AND franchise_id = $2 AND project_kind = 'operational'`,
       [id, franchise.id]
@@ -192,10 +210,40 @@ export async function PATCH(req) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
 
+    const permits = (...keys) => keys.some((key) => access.permissions[key]);
+    const changed = (key, next) => String(currentProject[key] ?? '') !== String(next ?? '');
+    const deny = (permission) => NextResponse.json(
+      { success: false, error: `Permission denied: ${permission}` },
+      { status: 403 }
+    );
+    const currentCore = {
+      title: currentProject.title || '',
+      category: currentProject.category || '',
+      description: currentProject.description || '',
+      size: currentProject.size || 'small',
+    };
+    const requestedCore = { title, category, description: description || '', size: size || 'small' };
+    if (Object.keys(requestedCore).some((key) => String(currentCore[key]) !== String(requestedCore[key] ?? ''))
+      && !permits('projects.edit')) return deny('projects.edit');
+    if ((changed('image_url', image_url) || changed('cloudinary_public_id', cloudinary_public_id || ''))
+      && !permits('projects.manage_images')) return deny('projects.manage_images');
+    if (String(currentProject.status || 'published') !== (status === 'draft' ? 'draft' : 'published')
+      && !permits('projects.publish')) return deny('projects.publish');
+    if (String(currentProject.project_status || 'lead') !== String(project_status || 'lead')
+      && !permits('projects.manage_stage')) return deny('projects.manage_stage');
+    if ([
+      ['client_name', client_name || null], ['client_phone', client_phone || null],
+      ['client_email', client_email || null],
+    ].some(([key, value]) => changed(key, value)) && !permits('projects.manage_clients')) return deny('projects.manage_clients');
+    if (changed('project_notes', project_notes || '') && !permits('projects.manage_notes')) return deny('projects.manage_notes');
+    if (Number(currentProject.deal_amount || 0) !== parsedDealAmount
+      && !permits('financials.edit_deal')) return deny('financials.edit_deal');
+
     const requestedAgentId = assigned_agent_id || null;
     const currentAgentId = currentProject.assigned_agent_id || null;
-    if (String(requestedAgentId || '') !== String(currentAgentId || '') && !access.permissions['agents.assign']) {
-      return NextResponse.json({ success: false, error: 'Permission denied: agents.assign' }, { status: 403 });
+    if (String(requestedAgentId || '') !== String(currentAgentId || '')
+      && !permits('agents.assign', 'agents.assign_projects')) {
+      return deny('agents.assign_projects');
     }
 
     if (assigned_agent_id && !(await ensureAgentIsApproved(assigned_agent_id, franchise.city || ''))) {
@@ -228,7 +276,7 @@ export async function PATCH(req) {
         client_name || null,
         client_phone || null,
         client_email || null,
-        access.permissions['financials.view'] ? parsedDealAmount : Number(currentProject.deal_amount || 0),
+        access.permissions['financials.edit_deal'] ? parsedDealAmount : Number(currentProject.deal_amount || 0),
         project_status || 'lead',
         id,
         franchise.id,
@@ -239,7 +287,7 @@ export async function PATCH(req) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, data: result.rows[0] });
+    return NextResponse.json({ success: true, data: filterProject(result.rows[0], access.permissions) });
   } catch (error) {
     console.error('Franchise project update error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });

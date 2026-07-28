@@ -46,6 +46,7 @@ export default function DashboardLayout({ children }) {
     { label: 'New Jobs',                 icon: '💼', tab: 'jobs' },
     { label: 'Lead Management',          icon: '📋', tab: 'lead-management' },
     { label: 'Office Locations',         icon: '📍', tab: 'office-locations' },
+    { label: 'Cities',                    icon: '🏙️', tab: 'cities' },
     { label: 'Contact Forms',            icon: '✉️', tab: 'submissions' },
     { label: 'Franchises',               icon: '🏢', tab: 'franchises' },
     { label: 'Free Time Slots',          icon: '📅', tab: 'free-slots' },

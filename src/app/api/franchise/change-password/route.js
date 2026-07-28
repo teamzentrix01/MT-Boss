@@ -15,7 +15,7 @@ const ensureFranchiseColumns = createInitializationGuard(async () => {
 export async function PATCH(req) {
   try {
     await ensureFranchiseColumns();
-    const access = await getFranchiseAccess(req);
+    const access = await getFranchiseAccess(req, 'profile.change_password');
     if (!access.allowed) return franchiseAccessResponse(access);
     const franchiseUser = access.user;
     const { currentPassword, newPassword, confirmPassword } = await req.json();

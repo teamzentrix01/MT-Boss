@@ -4,6 +4,7 @@ import { requireRole, unauthorized } from '@/lib/auth';
 import { createInitializationGuard, handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 import { fallbackQuickServices, fallbackResponse } from '@/lib/public-fallbacks';
 import { ensureServiceCitiesSchema, normalizeCityList } from '@/lib/service-cities';
+import { normalizeManagedCityList } from '@/lib/cities';
 
 const ensureQuickServiceSeoColumns = createInitializationGuard(async () => {
   await ensureServiceCitiesSchema();
@@ -117,9 +118,10 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-    const normalizedCities = normalizeCityList(cities);
-    if (normalizedCities.length === 0) {
-      return NextResponse.json({ error: 'At least one valid city is required' }, { status: 400 });
+    const requestedCities = normalizeCityList(cities);
+    const normalizedCities = await normalizeManagedCityList(requestedCities);
+    if (normalizedCities.length !== requestedCities.length) {
+      return NextResponse.json({ error: 'Select cities from City Management only' }, { status: 400 });
     }
 
     const result = await pool.query(
@@ -190,9 +192,10 @@ export async function PUT(req) {
         { status: 400 }
       );
     }
-    const normalizedCities = normalizeCityList(cities);
-    if (normalizedCities.length === 0) {
-      return NextResponse.json({ error: 'At least one valid city is required' }, { status: 400 });
+    const requestedCities = normalizeCityList(cities);
+    const normalizedCities = await normalizeManagedCityList(requestedCities);
+    if (normalizedCities.length !== requestedCities.length) {
+      return NextResponse.json({ error: 'Select cities from City Management only' }, { status: 400 });
     }
 
     const result = await pool.query(

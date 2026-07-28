@@ -1,7 +1,9 @@
 import pool from './db';
 import { createInitializationGuard } from './api-utils';
+import { ensureCitiesSchema, getManagedCities, resolveManagedCity } from './cities';
 
 export const ensureServiceCitiesSchema = createInitializationGuard(async () => {
+  await ensureCitiesSchema();
   await pool.query(`
     ALTER TABLE quick_services
     ADD COLUMN IF NOT EXISTS cities TEXT[] NOT NULL DEFAULT '{}'
@@ -47,40 +49,33 @@ export function normalizeCityList(cities) {
 
 export async function getServiceCities(serviceId) {
   await ensureServiceCitiesSchema();
-  const params = [];
-  const serviceFilter = serviceId ? 'AND qs.id = $1' : '';
-  if (serviceId) params.push(serviceId);
-
-  const result = await pool.query(
-    `SELECT MIN(TRIM(configured_city)) AS city
-       FROM quick_services qs
-       CROSS JOIN LATERAL UNNEST(COALESCE(qs.cities, '{}')) configured_city
-      WHERE NULLIF(TRIM(configured_city), '') IS NOT NULL
-        AND COALESCE(qs.is_service_active, TRUE) = TRUE
-       ${serviceFilter}
-      GROUP BY LOWER(TRIM(configured_city))
-      ORDER BY MIN(TRIM(configured_city)) ASC`,
-    params
-  );
-  return result.rows.map((row) => row.city);
+  if (serviceId) {
+    const service = await pool.query(
+      `SELECT 1 FROM quick_services
+        WHERE id = $1 AND COALESCE(is_service_active, TRUE) = TRUE`,
+      [serviceId]
+    );
+    if (!service.rows.length) return [];
+  }
+  return (await getManagedCities()).map((city) => city.name);
 }
 
 export async function getCityServiceCoverage() {
   await ensureServiceCitiesSchema();
-  const result = await pool.query(
-    `SELECT qs.id, qs.label, qs.icon, qs.base_price, qs.duration,
-            ARRAY_AGG(TRIM(configured_city) ORDER BY TRIM(configured_city)) AS cities
-       FROM quick_services qs
-       CROSS JOIN LATERAL UNNEST(COALESCE(qs.cities, '{}')) configured_city
-      WHERE NULLIF(TRIM(configured_city), '') IS NOT NULL
-        AND COALESCE(qs.is_service_active, TRUE) = TRUE
-      GROUP BY qs.id, qs.label, qs.icon, qs.base_price, qs.duration
-      ORDER BY qs.label ASC`
-  );
+  const [result, managedCities] = await Promise.all([
+    pool.query(
+      `SELECT id, label, icon, base_price, duration
+         FROM quick_services
+        WHERE COALESCE(is_service_active, TRUE) = TRUE
+        ORDER BY label ASC`
+    ),
+    getManagedCities(),
+  ]);
+  const activeCities = managedCities.map((city) => city.name);
 
   const services = result.rows.map((service) => ({
     ...service,
-    cities: normalizeCityList(service.cities),
+    cities: activeCities,
   }));
   const cityMap = new Map();
   for (const service of services) {
@@ -102,25 +97,19 @@ export async function getCityServiceCoverage() {
 
 export async function resolveServiceCity(serviceId, city) {
   await ensureServiceCitiesSchema();
-  const cleanRequestedCity = cleanCity(city);
-  if (!serviceId || !cleanRequestedCity) return null;
-
-  const result = await pool.query(
-    `SELECT TRIM(configured_city) AS city
-     FROM quick_services qs
-     CROSS JOIN LATERAL UNNEST(COALESCE(qs.cities, '{}')) configured_city
-     WHERE qs.id = $1
-       AND LOWER(TRIM(configured_city)) = LOWER(TRIM($2))
-       AND COALESCE(qs.is_service_active, TRUE) = TRUE
-     LIMIT 1`,
-    [serviceId, cleanRequestedCity]
+  const canonicalCity = await resolveManagedCity(city);
+  if (!serviceId || !canonicalCity) return null;
+  const service = await pool.query(
+    `SELECT 1 FROM quick_services
+      WHERE id = $1 AND COALESCE(is_service_active, TRUE) = TRUE`,
+    [serviceId]
   );
-  return result.rows[0]?.city || null;
+  return service.rows.length ? canonicalCity : null;
 }
 
 export async function addServiceCity(serviceId, city) {
   await ensureServiceCitiesSchema();
-  const requestedCity = cleanCity(city);
+  const requestedCity = await resolveManagedCity(city);
   if (!serviceId || !requestedCity) return null;
 
   const result = await pool.query(
@@ -140,20 +129,7 @@ export async function addServiceCity(serviceId, city) {
 }
 
 export async function resolveConfiguredCity(city) {
-  await ensureServiceCitiesSchema();
-  const requestedCity = cleanCity(city);
-  if (!requestedCity) return null;
-  const result = await pool.query(
-    `SELECT MIN(TRIM(configured_city)) AS city
-       FROM quick_services qs
-       CROSS JOIN LATERAL UNNEST(COALESCE(qs.cities, '{}')) configured_city
-      WHERE LOWER(TRIM(configured_city)) = LOWER(TRIM($1))
-        AND COALESCE(qs.is_service_active, TRUE) = TRUE
-      GROUP BY LOWER(TRIM(configured_city))
-      LIMIT 1`,
-    [requestedCity]
-  );
-  return result.rows[0]?.city || null;
+  return resolveManagedCity(city);
 }
 
 export async function hasVendorForServiceCity(serviceId, city) {

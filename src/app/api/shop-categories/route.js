@@ -3,6 +3,18 @@ import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { createInitializationGuard, handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 import { fallbackResponse, fallbackShopCategories } from '@/lib/public-fallbacks';
+import { normalizeManagedCityList } from '@/lib/cities';
+
+async function canonicalCityPrices(value) {
+  const prices = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  const requested = Object.keys(prices);
+  const cities = await normalizeManagedCityList(requested);
+  if (cities.length !== requested.length) return null;
+  return Object.fromEntries(cities.map((city) => {
+    const original = requested.find((name) => name.trim().toLowerCase() === city.trim().toLowerCase());
+    return [city, prices[original]];
+  }));
+}
 
 // No `ready` flag — all DDL statements are idempotent (IF NOT EXISTS).
 // This makes the route resilient to dev hot-reloads and out-of-band DB resets.
@@ -70,6 +82,8 @@ export async function POST(req) {
 
     const { name, image, emoji, emoji_image, label, label_color, price_range, unit, types, subcategories, city_prices } = await req.json();
     if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 });
+    const normalizedCityPrices = await canonicalCityPrices(city_prices);
+    if (!normalizedCityPrices) return NextResponse.json({ error: 'City prices must use active managed cities' }, { status: 400 });
 
     const { rows: [{ max }] } = await pool.query(`SELECT COALESCE(MAX(sort_order),0) AS max FROM shop_categories`);
 
@@ -84,7 +98,7 @@ export async function POST(req) {
         price_range || '', unit || '', parseInt(max) + 1,
         JSON.stringify(Array.isArray(types) ? types : []),
         JSON.stringify(Array.isArray(subcategories) ? subcategories : []),
-        JSON.stringify(city_prices && typeof city_prices === 'object' ? city_prices : {}),
+        JSON.stringify(normalizedCityPrices),
       ]
     );
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
@@ -105,6 +119,8 @@ export async function PUT(req) {
       price_range, unit, is_active, types, subcategories, city_prices,
     } = await req.json();
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
+    const normalizedCityPrices = await canonicalCityPrices(city_prices);
+    if (!normalizedCityPrices) return NextResponse.json({ error: 'City prices must use active managed cities' }, { status: 400 });
 
     const result = await pool.query(
       `UPDATE shop_categories
@@ -118,7 +134,7 @@ export async function PUT(req) {
         price_range || '', unit || '', is_active ?? true,
         JSON.stringify(Array.isArray(types) ? types : []),
         JSON.stringify(Array.isArray(subcategories) ? subcategories : []),
-        JSON.stringify(city_prices && typeof city_prices === 'object' ? city_prices : {}),
+        JSON.stringify(normalizedCityPrices),
         id,
       ]
     );

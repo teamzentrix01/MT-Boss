@@ -10,7 +10,7 @@ export default function VendorSignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [dark, setDark] = useState(false);
-  const { services, loading: loadingServices, error: serviceCityError } = useServiceCities();
+  const { cities: managedCities, services, loading: loadingServices, error: serviceCityError } = useServiceCities();
   const [step, setStep] = useState(1);
   const [profilePreview, setProfilePreview] = useState(null);
   const [aadharPreview, setAadharPreview] = useState(null);
@@ -33,13 +33,7 @@ export default function VendorSignupPage() {
     package_id: 'pkg_6m',
   });
 
-  const availableCities = [...new Map(
-    services
-      .flatMap((service) => Array.isArray(service.cities) ? service.cities : [])
-      .map((city) => String(city).trim())
-      .filter(Boolean)
-      .map((city) => [city.toLowerCase(), city])
-  ).values()].sort((a, b) => a.localeCompare(b));
+  const availableCities = managedCities;
 
   const cityServices = formData.city
     ? services.filter((service) => (service.cities || []).some(

@@ -20,8 +20,6 @@ import {
   X,
 } from 'lucide-react';
 
-const CITIES = ['Moradabad', 'Noida', 'Delhi', 'Gurgaon', 'Ghaziabad', 'Lucknow', 'Agra', 'Mumbai'];
-
 const CITY_RATES = {
   Moradabad: { labour: 310, transport: 18, multiplier: 0.94 },
   Noida: { labour: 380, transport: 24, multiplier: 1.08 },
@@ -1144,14 +1142,9 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                 <MapPin size={14} /> Location
               </label>
               <div className="boq-select-wrap">
-                <select className="boq-select" value={project.city} onChange={(e) => updateProject('city', e.target.value)}>
-                  {CITIES.map((city) => (
-                    <option key={city} value={city}>
-                      {city}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="boq-select-icon" size={16} />
+                <input className="boq-input" value={project.city}
+                  onChange={(e) => updateProject('city', e.target.value)}
+                  placeholder="Any city in India" />
               </div>
             </div>
             <div className="boq-field">

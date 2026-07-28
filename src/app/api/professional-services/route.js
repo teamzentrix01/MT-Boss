@@ -5,6 +5,7 @@ import { createInitializationGuard, isDatabaseConnectionError } from '@/lib/api-
 import { mkdir, readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
+import { resolveManagedCity } from '@/lib/cities';
 
 export const runtime = 'nodejs';
 
@@ -166,6 +167,10 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+    const canonicalCity = await resolveManagedCity(city);
+    if (!canonicalCity) {
+      return NextResponse.json({ error: 'Select an active city from the city list' }, { status: 400 });
+    }
 
     const result = await pool.query(
       `INSERT INTO professional_services
@@ -182,7 +187,7 @@ export async function POST(req) {
         JSON.stringify(Array.isArray(specializations) ? specializations : []),
         JSON.stringify(Array.isArray(portfolio_images) ? portfolio_images : []),
         certifications || null,
-        city, phone, email,
+        canonicalCity, phone, email,
         website || null, instagram || null, linkedin || null,
       ]
     );
@@ -200,7 +205,7 @@ export async function POST(req) {
               <h2 style="color:#111;margin-bottom:4px;">New Professional Application</h2>
               <p style="color:#6b7280;font-size:13px;margin-bottom:20px;">Submitted on ${new Date().toLocaleString('en-IN')}</p>
               <table style="width:100%;border-collapse:collapse;font-size:14px;">
-                ${[['Name',name],['Title',title],['Category',category],['City',city],['Phone',phone],['Email',email],['Experience',`${experience} years`]].map(
+                ${[['Name',name],['Title',title],['Category',category],['City',canonicalCity],['Phone',phone],['Email',email],['Experience',`${experience} years`]].map(
                   ([k,v]) => `<tr><td style="padding:6px 0;color:#6b7280;width:110px;">${k}</td><td style="padding:6px 0;font-weight:600;color:#111;">${v}</td></tr>`
                 ).join('')}
               </table>
@@ -266,6 +271,10 @@ export async function PUT(req) {
       specializations, portfolio_images, certifications,
       city, phone, email, website, instagram, linkedin,
     } = fields;
+    const canonicalCity = await resolveManagedCity(city);
+    if (!canonicalCity) {
+      return NextResponse.json({ error: 'Select an active city from the city list' }, { status: 400 });
+    }
 
     const result = await pool.query(
       `UPDATE professional_services SET
@@ -278,7 +287,7 @@ export async function PUT(req) {
         name, title, category, profile_picture || null, parseInt(experience) || 0, description,
         JSON.stringify(Array.isArray(specializations) ? specializations : []),
         JSON.stringify(Array.isArray(portfolio_images) ? portfolio_images : []),
-        certifications || null, city, phone, email,
+        certifications || null, canonicalCity, phone, email,
         website || null, instagram || null, linkedin || null,
         status || null, id,
       ]

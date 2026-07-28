@@ -6,6 +6,7 @@ import Link from 'next/link';
 import QuickServiceIcon, { isQuickServiceIconImage } from '../../components/QuickServiceIcon';
 import { redirectToPayU } from '@/lib/payu-client';
 import { getQuickServiceTax, getQuickServiceTotal } from '@/lib/quick-service-pricing';
+import { useCities } from '@/hooks/useCities';
 
 const TIME_SLOTS = [
   '08:00 AM – 10:00 AM',
@@ -60,6 +61,7 @@ function Field({ label, error, isDark, children }) {
 
 export default function QuickServiceSlugPage() {
   const dark = useDarkMode();
+  const { cities: availableCities, loading: citiesLoading, error: managedCitiesError } = useCities();
   const { slug } = useParams();
   const router = useRouter();
 
@@ -583,12 +585,12 @@ export default function QuickServiceSlugPage() {
                       }}
                     >
                       <option value="">Select a city</option>
-                      {(service.cities || []).map(c => <option key={c} value={c}>{c}</option>)}
+                      {availableCities.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                     <button
                       type="button"
                       onClick={() => handleVerifyCity(selectedCity)}
-                      disabled={checkingCity || !selectedCity}
+                      disabled={checkingCity || citiesLoading || !selectedCity}
                       className="px-6 py-2.5 text-xs font-black uppercase tracking-widest bg-[var(--brand-blue)] text-black transition-all disabled:opacity-50"
                     >
                       {checkingCity ? 'Checking...' : 'Verify'}
@@ -600,6 +602,9 @@ export default function QuickServiceSlugPage() {
                   <p className="text-xs text-red-500 font-bold text-left">
                     ⚠️ {cityError}
                   </p>
+                )}
+                {managedCitiesError && !cityError && (
+                  <p className="text-xs text-red-500 font-bold text-left">{managedCitiesError}</p>
                 )}
               </div>
             )}

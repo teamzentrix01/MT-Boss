@@ -31,14 +31,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [iconUploading, setIconUploading] = useState(false);
-  const [customCity, setCustomCity] = useState('');
-  const configuredCities = [...new Map(
-    services
-      .flatMap((service) => Array.isArray(service.cities) ? service.cities : [])
-      .map((city) => String(city).trim())
-      .filter(Boolean)
-      .map((city) => [city.toLowerCase(), city])
-  ).values()].sort((a, b) => a.localeCompare(b));
+  const [configuredCities, setConfiguredCities] = useState([]);
 
   // ── Drag & Drop state ──────────────────────────────────────────────────────
   const [dragIndex, setDragIndex] = useState(null);
@@ -72,11 +65,13 @@ export default function QuickServicesManager({ isDarkMode }) {
   const fetchServices = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/quick-services', {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-      const data = await res.json();
+      const [res, cityRes] = await Promise.all([
+        fetch('/api/quick-services', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch('/api/cities', { cache: 'no-store' }),
+      ]);
+      const [data, cityData] = await Promise.all([res.json(), cityRes.json()]);
       if (data.success) setServices(data.data);
+      if (cityData.success) setConfiguredCities(cityData.cities || []);
     } catch { setError('Error fetching services'); }
     finally { setLoading(false); }
   };
@@ -204,17 +199,7 @@ export default function QuickServicesManager({ isDarkMode }) {
 
   const resetForm = () => {
     setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150', main_category: '', sub_category: '', cities: [] });
-    setCustomCity('');
     setEditingId(null); setShowForm(false);
-  };
-
-  const addCustomCity = () => {
-    const city = customCity.trim().replace(/\s+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
-    if (!city) return;
-    if (!formData.cities.some((item) => item.toLowerCase() === city.toLowerCase())) {
-      setFormData({ ...formData, cities: [...formData.cities, city] });
-    }
-    setCustomCity('');
   };
 
   if (loading) return <div style={{ color: 'var(--qs-muted)', fontSize: '0.8125rem' }}>Loading…</div>;
@@ -337,34 +322,34 @@ export default function QuickServicesManager({ isDarkMode }) {
           width:100%; max-width:100%; min-width:0;
         }
         .qs-table-wrap {
-          position:relative; width:100%; max-width:100%; overflow-x:auto; overflow-y:hidden;
+          position:relative; width:100%; max-width:100%; overflow-x:hidden; overflow-y:hidden;
           overscroll-behavior-x:contain; scrollbar-gutter:stable;
           -webkit-overflow-scrolling:touch;
         }
         .qs-root .qs-table {
-          display:table; width:82rem; min-width:100%; table-layout:fixed;
+          display:table; width:100%; min-width:0; table-layout:fixed;
           border-collapse:separate; border-spacing:0; font-size:0.8rem;
         }
         .qs-table th {
-          padding:0.5rem 0.875rem; text-align:left;
+          box-sizing:border-box; padding:0.5rem 0.45rem; text-align:left;
           font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
           color:var(--qs-muted); background:var(--qs-bg); border-bottom:1px solid var(--qs-border);
           white-space:nowrap;
         }
         .qs-table td {
-          padding:0.6rem 0.875rem; border-bottom:1px solid var(--qs-border);
+          box-sizing:border-box; padding:0.6rem 0.45rem; border-bottom:1px solid var(--qs-border);
           color:var(--qs-text); vertical-align:middle; overflow:hidden; white-space:normal;
         }
-        .qs-table th:nth-child(1) { width:2.5rem; }
-        .qs-table th:nth-child(2) { width:3.5rem; }
-        .qs-table th:nth-child(3) { width:7rem; }
-        .qs-table th:nth-child(4) { width:17rem; }
-        .qs-table th:nth-child(5) { width:8rem; }
-        .qs-table th:nth-child(6) { width:8rem; }
-        .qs-table th:nth-child(7) { width:14rem; }
-        .qs-table th:nth-child(8) { width:7rem; }
-        .qs-table th:nth-child(9) { width:6rem; }
-        .qs-table th:nth-child(10) { width:8.5rem; }
+        .qs-table th:nth-child(1) { width:2.5%; }
+        .qs-table th:nth-child(2) { width:4.5%; }
+        .qs-table th:nth-child(3) { width:10%; }
+        .qs-table th:nth-child(4) { width:22%; }
+        .qs-table th:nth-child(5) { width:11%; }
+        .qs-table th:nth-child(6) { width:10%; }
+        .qs-table th:nth-child(7) { width:10%; }
+        .qs-table th:nth-child(8) { width:8%; }
+        .qs-table th:nth-child(9) { width:8%; }
+        .qs-table th:nth-child(10) { width:14%; }
         .qs-table tr:last-child td { border-bottom:none; }
         .qs-table tbody tr { transition:background .12s; }
         .qs-table tbody tr:hover td { background:var(--qs-row-hov); }
@@ -377,9 +362,9 @@ export default function QuickServicesManager({ isDarkMode }) {
         }
         .qs-price-cell { font-weight:600; }
 
-        .qs-row-actions { display:flex; gap:0.25rem; white-space:nowrap; }
+        .qs-row-actions { display:flex; gap:0.2rem; white-space:nowrap; }
         .qs-act {
-          padding:0.2rem 0.5rem; font-size:0.65rem; font-weight:700;
+          padding:0.2rem 0.38rem; font-size:0.62rem; font-weight:700;
           border-radius:4px; border:none; cursor:pointer; transition:opacity .15s;
         }
         .qs-act:hover { opacity:.75; }
@@ -423,7 +408,7 @@ export default function QuickServicesManager({ isDarkMode }) {
         .qs-row-drag-over td { border-top:2px solid var(--qs-accent) !important; }
 
         @media (max-width: 900px) {
-          .qs-root .qs-table { width:48rem; min-width:48rem; }
+          .qs-root .qs-table { width:100%; min-width:0; }
           .qs-table th:nth-child(4), .qs-table td:nth-child(4),
           .qs-table th:nth-child(6), .qs-table td:nth-child(6),
           .qs-table th:nth-child(7), .qs-table td:nth-child(7) { display:none; }
@@ -431,11 +416,11 @@ export default function QuickServicesManager({ isDarkMode }) {
         }
         @media (max-width: 640px) {
           .qs-header { align-items:flex-start; gap:0.75rem; }
-          .qs-root .qs-table { width:31rem; min-width:31rem; }
+          .qs-root .qs-table { width:100%; min-width:0; }
           .qs-table th:nth-child(5), .qs-table td:nth-child(5),
           .qs-table th:nth-child(9), .qs-table td:nth-child(9) { display:none; }
           .qs-table th:nth-child(3) { width:9rem; }
-          .qs-table th:nth-child(10) { width:8.5rem; }
+          .qs-table th:nth-child(10) { width:26%; }
         }
       `}</style>
 
@@ -520,22 +505,6 @@ export default function QuickServicesManager({ isDarkMode }) {
                 </div>
                 <div className="qs-form-full">
                   <label className="qs-label">Available Cities *</label>
-                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    <input
-                      className="qs-input"
-                      type="text"
-                      placeholder="Add a new service city"
-                      value={customCity}
-                      onChange={e => setCustomCity(e.target.value)}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          addCustomCity();
-                        }
-                      }}
-                    />
-                    <button type="button" className="qs-act qs-act-edit" onClick={addCustomCity}>Add City</button>
-                  </div>
                   <select className="qs-input" value="" onChange={e => {
                     const city = e.target.value;
                     if (city && !formData.cities.includes(city)) {
@@ -547,6 +516,11 @@ export default function QuickServicesManager({ isDarkMode }) {
                       <option key={city} value={city}>{city}</option>
                     ))}
                   </select>
+                  {configuredCities.length === 0 && (
+                    <div style={{ color: 'var(--qs-err-tx)', fontSize: '0.72rem', marginTop: 6 }}>
+                      Add an active city in City Management first.
+                    </div>
+                  )}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem' }}>
                     {formData.cities.map(city => (
                       <button key={city} type="button" className="qs-act qs-act-edit"
@@ -574,7 +548,7 @@ export default function QuickServicesManager({ isDarkMode }) {
         {services.length > 1 && !showForm && (
           <div className="qs-order-hint">
             <span style={{ fontSize: '1rem' }}>⠿</span>
-            Drag rows to reorder • scroll sideways for more columns • actions stay pinned
+            Drag rows to reorder • all columns fit within the table • actions stay pinned
             {orderSaving && (
               <span style={{ marginLeft: 'auto', color: 'var(--qs-accent)', fontStyle: 'italic' }}>
                 saving…

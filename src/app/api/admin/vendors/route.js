@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireAdmin } from '@/lib/agent-auth';
 import { ensureServiceCitiesSchema } from '@/lib/service-cities';
+import { getManagedCities } from '@/lib/cities';
 
 // ═══════════════════════════════════════════════════════════════════════
 // VERIFY ADMIN TOKEN
@@ -47,17 +48,21 @@ export async function GET(req) {
        ORDER BY v.created_at DESC`
     );
 
-    const servicesResult = await pool.query(
+    const [servicesResult, managedCities] = await Promise.all([
+      pool.query(
       `SELECT id, label, icon, cities
        FROM quick_services
        WHERE COALESCE(is_service_active, TRUE) = TRUE
        ORDER BY label ASC`
-    );
+      ),
+      getManagedCities(),
+    ]);
+    const cityNames = managedCities.map((city) => city.name);
 
     return NextResponse.json({
       success: true,
       data: result.rows,
-      available_services: servicesResult.rows,
+      available_services: servicesResult.rows.map((service) => ({ ...service, cities: cityNames })),
     });
 
   } catch (error) {
@@ -256,12 +261,8 @@ export async function PUT(req) {
             `SELECT qs.id
              FROM quick_services qs
              WHERE qs.id = ANY($1::int[])
-               AND COALESCE(qs.is_service_active, TRUE) = TRUE
-               AND EXISTS (
-                 SELECT 1 FROM UNNEST(COALESCE(qs.cities, '{}')) configured_city
-                 WHERE LOWER(TRIM(configured_city)) = LOWER(TRIM($2))
-               )`,
-            [serviceIds, vendorResult.rows[0].city]
+               AND COALESCE(qs.is_service_active, TRUE) = TRUE`,
+            [serviceIds]
           );
           if (validServices.rows.length !== serviceIds.length) {
             await client.query('ROLLBACK');

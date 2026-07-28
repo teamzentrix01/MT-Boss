@@ -53,13 +53,19 @@ export default function JobsManager({ isDarkMode }) {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(EMPTY_JOB);
+  const [cities, setCities] = useState([]);
+  const adminHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}` });
 
   const loadJobs = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/jobs?status=all');
-      const data = await res.json();
+      const [res, cityRes] = await Promise.all([
+        fetch('/api/jobs?status=all', { headers: adminHeaders() }),
+        fetch('/api/cities', { cache: 'no-store' }),
+      ]);
+      const [data, cityData] = await Promise.all([res.json(), cityRes.json()]);
       if (data.success) setJobs(data.data);
+      if (cityData.success) setCities(cityData.cities || []);
     } catch (error) {
       console.error('Jobs load failed:', error);
     } finally {
@@ -122,7 +128,7 @@ export default function JobsManager({ isDarkMode }) {
       const body = editing ? { ...payload(), id: editing.id } : payload();
       const res = await fetch('/api/jobs', {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...adminHeaders() },
         body: JSON.stringify(body),
       });
       const data = await res.json();
@@ -149,7 +155,7 @@ export default function JobsManager({ isDarkMode }) {
     const nextStatus = job.status === 'active' ? 'draft' : 'active';
     const res = await fetch('/api/jobs', {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...adminHeaders() },
       body: JSON.stringify({ ...job, status: nextStatus }),
     });
     const data = await res.json();
@@ -160,7 +166,7 @@ export default function JobsManager({ isDarkMode }) {
     if (!confirm(`Delete "${job.title}"?`)) return;
     const res = await fetch('/api/jobs', {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...adminHeaders() },
       body: JSON.stringify({ id: job.id }),
     });
     const data = await res.json();
@@ -275,7 +281,10 @@ export default function JobsManager({ isDarkMode }) {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
                 <div>
                   <label style={labelStyle}>Location *</label>
-                  <input style={fieldStyle} value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Delhi, IN" />
+                  <select style={fieldStyle} value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))}>
+                    <option value="">Select city</option>
+                    {cities.map(city => <option key={city} value={city}>{city}</option>)}
+                  </select>
                 </div>
                 <div>
                   <label style={labelStyle}>Job Type</label>

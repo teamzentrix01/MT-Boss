@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCities } from '@/hooks/useCities';
 
 const CATEGORIES = ['All', 'Interior Designer', 'Architect', 'Landscape Designer',
   'Civil Engineer', 'Vastu Consultant', 'Home Stager', 'Other'];
@@ -204,6 +205,7 @@ function EnquiryModal({ professional, isDark, onClose }) {
 // ─── Apply Modal ──────────────────────────────────────────────────────────────
 function ApplyModal({ isDark, onClose }) {
   const t = th(isDark);
+  const { cities, loading: citiesLoading } = useCities();
   const [form, setForm] = useState({
     name:'', title:'', category:'Interior Designer', experience:'',
     city:'', phone:'', email:'', description:'', certifications:'',
@@ -275,7 +277,10 @@ function ApplyModal({ isDark, onClose }) {
                   </select>
                 </div>
                 <div><label style={lbl}>Years of Experience *</label><input style={inp} type="number" min="0" value={form.experience} onChange={set('experience')} placeholder="5" /></div>
-                <div><label style={lbl}>City *</label><input style={inp} value={form.city} onChange={set('city')} placeholder="Mumbai" /></div>
+                <div><label style={lbl}>City *</label><select style={inp} value={form.city} onChange={set('city')} disabled={citiesLoading}>
+                  <option value="">{citiesLoading ? 'Loading cities...' : 'Select city'}</option>
+                  {cities.map(city => <option key={city} value={city}>{city}</option>)}
+                </select></div>
                 <div><label style={lbl}>Phone *</label><input style={inp} value={form.phone} onChange={set('phone')} placeholder="+91 98765 43210" /></div>
                 <div style={{ gridColumn:'span 2' }}><label style={lbl}>Email *</label><input style={inp} type="email" value={form.email} onChange={set('email')} placeholder="you@example.com" /></div>
                 <div style={{ gridColumn:'span 2' }}>

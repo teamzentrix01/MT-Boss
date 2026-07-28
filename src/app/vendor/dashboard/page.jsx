@@ -63,6 +63,7 @@ function VendorDashboardContent() {
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileMsg, setProfileMsg] = useState("");
   const [allServices, setAllServices] = useState([]);
+  const [managedCities, setManagedCities] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [completedBookings, setCompletedBookings] = useState([]);
   const [totalEarning, setTotalEarning] = useState(0);
@@ -75,13 +76,7 @@ function VendorDashboardContent() {
   const [pkgLoading, setPkgLoading] = useState(false);
   const [pkgMsg, setPkgMsg] = useState('');
   const [requestMsg, setRequestMsg] = useState('');
-  const profileCities = [...new Map(
-    allServices
-      .flatMap((service) => Array.isArray(service.cities) ? service.cities : [])
-      .map((city) => String(city).trim())
-      .filter(Boolean)
-      .map((city) => [city.toLowerCase(), city])
-  ).values()].sort((a, b) => a.localeCompare(b));
+  const profileCities = managedCities;
   const profileCityServices = profileForm.city
     ? allServices.filter((service) => (service.cities || []).some(
         (city) => String(city).trim().toLowerCase() === profileForm.city.trim().toLowerCase()
@@ -256,14 +251,17 @@ function VendorDashboardContent() {
   async function loadAllServices() {
     if (allServices.length > 0) return;
     try {
-      const res = await fetch("/api/service-cities", { cache: 'no-store' });
-      const data = await res.json();
+      const [res, cityRes] = await Promise.all([
+        fetch("/api/service-cities", { cache: 'no-store' }),
+        fetch("/api/cities", { cache: 'no-store' }),
+      ]);
+      const [data, cityData] = await Promise.all([res.json(), cityRes.json()]);
       if (data.success) {
         const loadedServices = data.services || [];
         setAllServices(loadedServices);
+        setManagedCities(cityData.cities || []);
         setProfileForm((form) => {
-          const configuredCities = loadedServices.flatMap((service) => service.cities || []);
-          const canonicalCity = configuredCities.find(
+          const canonicalCity = (cityData.cities || []).find(
             (city) => String(city).trim().toLowerCase() === form.city.trim().toLowerCase()
           );
           return canonicalCity ? { ...form, city: canonicalCity } : form;
