@@ -4,6 +4,7 @@ import { requireRole } from '@/lib/auth';
 import { ensureAgentSchema } from '@/lib/agent-auth';
 import { createXlsxWorkbook } from '@/lib/xlsx';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { convertFinalLeadToProject, ensureProjectOpsSchema } from '@/lib/project-ops';
 
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
@@ -259,6 +260,20 @@ export async function POST(req) {
     if (!client_name || !client_phone || !city) {
       return NextResponse.json({ success: false, error: 'Client name, phone and city are required' }, { status: 400 });
     }
+    if (agent_id) {
+      const approvedAgent = await pool.query(
+        `SELECT id FROM agents
+          WHERE id = $1
+            AND status = 'Approved'
+            AND login_enabled = TRUE
+            AND must_change_password = FALSE
+            AND LOWER(TRIM(COALESCE(city, ''))) = LOWER(TRIM($2))`,
+        [agent_id, city]
+      );
+      if (!approvedAgent.rows[0]) {
+        return NextResponse.json({ success: false, error: 'Select an active approved agent from the lead city.' }, { status: 400 });
+      }
+    }
 
     const result = await pool.query(
       `INSERT INTO agent_leads
@@ -292,59 +307,121 @@ export async function POST(req) {
 }
 
 export async function PATCH(req) {
+  let client;
   try {
     if (!requireRole(req, 'admin')) {
       return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
     }
     await ensureLeadManagementSchema();
+    await ensureProjectOpsSchema();
 
     const body = await req.json();
-    const {
-      id, agent_id, assigned_franchise_id, status, lead_stage, follow_up_date,
-      notes, client_requirement, priority, final_amount, meeting_done, estimate_sent,
-    } = body;
+    const { id } = body;
     if (!id) {
       return NextResponse.json({ success: false, error: 'Lead id is required' }, { status: 400 });
     }
 
-    const result = await pool.query(
-      `UPDATE agent_leads
-          SET agent_id = CASE WHEN $1::TEXT = '__clear__' THEN NULL ELSE COALESCE($1::INTEGER, agent_id) END,
-              assigned_franchise_id = CASE WHEN $2::TEXT = '__clear__' THEN NULL ELSE COALESCE($2::INTEGER, assigned_franchise_id) END,
-              status = COALESCE($3, status),
-              lead_stage = COALESCE($4, lead_stage),
-              follow_up_date = COALESCE($5, follow_up_date),
-              notes = COALESCE($6, notes),
-              client_requirement = COALESCE($7, client_requirement),
-              priority = COALESCE($8, priority),
-              final_amount = COALESCE($9, final_amount),
-              meeting_done = COALESCE($10, meeting_done),
-              estimate_sent = COALESCE($11, estimate_sent),
-              updated_at = NOW()
-        WHERE id = $12
-        RETURNING *`,
-      [
-        agent_id === '' ? '__clear__' : agent_id || null,
-        assigned_franchise_id === '' ? '__clear__' : assigned_franchise_id || null,
-        STATUSES.has(status) ? status : null,
-        STAGES.has(lead_stage) ? lead_stage : null,
-        follow_up_date || null,
-        notes || null,
-        client_requirement || null,
-        priority || null,
-        final_amount !== undefined && final_amount !== '' ? Number(final_amount) : null,
-        meeting_done === true || meeting_done === false ? meeting_done : null,
-        estimate_sent === true || estimate_sent === false ? estimate_sent : null,
-        id,
-      ]
+    client = await pool.connect();
+    await client.query('BEGIN');
+    const currentResult = await client.query(
+      `SELECT l.*, p.id AS project_id
+         FROM agent_leads l
+         LEFT JOIN projects p ON p.source_lead_id = l.id AND p.project_kind = 'operational'
+        WHERE l.id = $1
+        FOR UPDATE OF l`,
+      [id]
     );
-
-    if (result.rows.length === 0) {
+    const current = currentResult.rows[0];
+    if (!current) {
+      await client.query('ROLLBACK');
       return NextResponse.json({ success: false, error: 'Lead not found' }, { status: 404 });
     }
-    return NextResponse.json({ success: true, data: result.rows[0] });
+
+    const has = (key) => Object.prototype.hasOwnProperty.call(body, key);
+    const nextStage = has('lead_stage') ? body.lead_stage : current.lead_stage;
+    const requestedStatus = has('status') ? body.status : current.status;
+    const nextStatus = nextStage === 'Final' ? 'Converted' : requestedStatus;
+    if (has('lead_stage') && !STAGES.has(body.lead_stage)) {
+      await client.query('ROLLBACK');
+      return NextResponse.json({ success: false, error: 'Invalid lead stage.' }, { status: 400 });
+    }
+    if (has('status') && !STATUSES.has(body.status)) {
+      await client.query('ROLLBACK');
+      return NextResponse.json({ success: false, error: 'Invalid lead status.' }, { status: 400 });
+    }
+    if (current.project_id && (
+      nextStage !== 'Final'
+      || (has('status') && body.status !== 'Converted')
+    )) {
+      await client.query('ROLLBACK');
+      return NextResponse.json({ success: false, error: 'Finalized leads must remain Final / Converted.' }, { status: 409 });
+    }
+    if (nextStatus === 'Converted' && nextStage !== 'Final') {
+      await client.query('ROLLBACK');
+      return NextResponse.json({ success: false, error: 'Only a Final-stage lead can be converted.' }, { status: 400 });
+    }
+
+    if (has('agent_id') && body.agent_id) {
+      const approvedAgent = await client.query(
+        `SELECT id FROM agents
+          WHERE id = $1
+            AND status = 'Approved'
+            AND login_enabled = TRUE
+            AND must_change_password = FALSE
+            AND LOWER(TRIM(COALESCE(city, ''))) = LOWER(TRIM($2))`,
+        [body.agent_id, current.city]
+      );
+      if (!approvedAgent.rows[0]) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Select an active approved agent from the lead city.' }, { status: 400 });
+      }
+    }
+
+    const sets = [];
+    const values = [];
+    const add = (column, value) => {
+      values.push(value);
+      sets.push(`${column} = $${values.length}`);
+    };
+    if (has('agent_id')) add('agent_id', body.agent_id || null);
+    if (has('assigned_franchise_id')) add('assigned_franchise_id', body.assigned_franchise_id || null);
+    if (has('lead_stage')) add('lead_stage', body.lead_stage);
+    if (has('status') || nextStage === 'Final') add('status', nextStatus);
+    if (has('follow_up_date')) add('follow_up_date', body.follow_up_date || null);
+    if (has('notes')) add('notes', String(body.notes || '').trim() || null);
+    if (has('client_requirement')) add('client_requirement', String(body.client_requirement || '').trim() || null);
+    if (has('priority')) add('priority', String(body.priority || '').trim() || null);
+    if (has('final_amount')) {
+      const amount = body.final_amount === '' || body.final_amount === null ? 0 : Number(body.final_amount);
+      if (!Number.isFinite(amount) || amount < 0) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Final amount must be a valid non-negative number.' }, { status: 400 });
+      }
+      add('final_amount', amount);
+    }
+    if (has('meeting_done')) add('meeting_done', body.meeting_done === true);
+    if (has('estimate_sent')) add('estimate_sent', body.estimate_sent === true);
+    sets.push('updated_at = NOW()');
+    values.push(id);
+
+    const result = await client.query(
+      `UPDATE agent_leads SET ${sets.join(', ')}
+        WHERE id = $${values.length}
+        RETURNING *`,
+      values
+    );
+    const project = await convertFinalLeadToProject(client, id);
+    await client.query('COMMIT');
+    return NextResponse.json({
+      success: true,
+      data: result.rows[0],
+      project: project || undefined,
+    });
   } catch (error) {
+    if (client) await client.query('ROLLBACK').catch(() => {});
     console.error('Lead management PATCH error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+  } finally {
+    client?.release();
   }
 }

@@ -39,7 +39,7 @@ export async function GET(req) {
       }
       const [data, agents] = await Promise.all([
         getProjectSummaries("WHERE p.project_kind = 'operational'"),
-        pool.query(`SELECT id, name, city FROM agents WHERE status = 'Approved' ORDER BY name ASC`),
+        pool.query(`SELECT id, name, city FROM agents WHERE status = 'Approved' AND login_enabled = TRUE AND must_change_password = FALSE ORDER BY name ASC`),
       ]);
       return NextResponse.json({ success: true, data, agents: agents.rows });
     }

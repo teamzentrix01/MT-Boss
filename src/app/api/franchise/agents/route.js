@@ -11,6 +11,8 @@ export async function GET(req) {
       `SELECT id, name, email, phone, city, state, agent_type
        FROM agents
        WHERE status = 'Approved'
+         AND login_enabled = TRUE
+         AND must_change_password = FALSE
          AND LOWER(TRIM(COALESCE(city, ''))) = LOWER(TRIM($1))
        ORDER BY name ASC`,
       [access.franchise.city]

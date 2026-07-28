@@ -4,55 +4,17 @@ import pool from '@/lib/db';
 import { ensureAgentSchema, requireAdmin } from '@/lib/agent-auth';
 import { sendMail } from '@/lib/email';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
-import { createInitializationGuard } from '@/lib/api-utils';
 
 const AGENT_STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
+const AGENT_SAFE_COLUMNS = `
+  id, name, email, phone, city, state, occupation, agent_type, experience,
+  network, message, status, login_enabled, must_change_password, approved_at,
+  approved_by, auth_version, last_login_at, created_at, updated_at
+`;
 
 function makeTemporaryPassword() {
   return `Agent@${Math.random().toString(36).slice(2, 8)}${Math.floor(10 + Math.random() * 90)}`;
 }
-
-function quoteIdent(name) {
-  return `"${String(name).replace(/"/g, '""')}"`;
-}
-
-const ensureAgentPatchSchema = createInitializationGuard(async () => {
-  const patchAlters = [
-    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS login_enabled BOOLEAN DEFAULT FALSE`,
-    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS password_hash TEXT`,
-    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS must_change_password BOOLEAN DEFAULT FALSE`,
-    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS approved_at TIMESTAMP`,
-    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS approved_by VARCHAR(255)`,
-    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW()`,
-    `ALTER TABLE agents ALTER COLUMN password_hash DROP NOT NULL`,
-    `ALTER TABLE agents ALTER COLUMN approved_at DROP NOT NULL`,
-    `ALTER TABLE agents ALTER COLUMN approved_by DROP NOT NULL`,
-  ];
-
-  for (const sql of patchAlters) {
-    try {
-      await pool.query(sql);
-    } catch (error) {
-      console.warn('Agent PATCH schema warning:', error.message);
-    }
-  }
-
-  try {
-    const statusChecks = await pool.query(`
-      SELECT conname
-        FROM pg_constraint
-       WHERE conrelid = 'agents'::regclass
-         AND contype = 'c'
-         AND pg_get_constraintdef(oid) ILIKE '%status%'
-    `);
-
-    for (const row of statusChecks.rows) {
-      await pool.query(`ALTER TABLE agents DROP CONSTRAINT IF EXISTS ${quoteIdent(row.conname)}`);
-    }
-  } catch (error) {
-    console.warn('Agent status constraint warning:', error.message);
-  }
-});
 
 export async function GET(req) {
   try {
@@ -64,7 +26,7 @@ export async function GET(req) {
 
     const result = await pool.query(
       `SELECT
-        a.*,
+        ${AGENT_SAFE_COLUMNS.split(',').map((column) => `a.${column.trim()}`).join(', ')},
         COUNT(DISTINCT l.id)::INT AS leads_count,
         COUNT(DISTINCT s.id)::INT AS schedule_count
        FROM agents a
@@ -98,29 +60,49 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: contactError }, { status: 400 });
     }
 
+    const existing = await pool.query(
+      `SELECT id FROM agents
+        WHERE LOWER(TRIM(email)) = LOWER(TRIM($1))
+          AND status <> 'Rejected'
+        LIMIT 1`,
+      [cleanEmail]
+    );
+    if (existing.rows.length > 0) {
+      return NextResponse.json(
+        { success: false, error: 'An active agent application already exists for this email.' },
+        { status: 409 }
+      );
+    }
+
     const result = await pool.query(
       `INSERT INTO agents (name, email, phone, city, state, occupation, agent_type, experience, network, message)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
-       RETURNING *`,
+       RETURNING ${AGENT_SAFE_COLUMNS}`,
       [cleanName, cleanEmail, cleanPhone, city, state, occupation, agentType, experience || null, network || null, message || null]
     );
 
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
     console.error('Agent submit error:', error);
+    if (error.code === '23505') {
+      return NextResponse.json(
+        { success: false, error: 'An active agent application already exists for this email.' },
+        { status: 409 }
+      );
+    }
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
 
 export async function PATCH(req) {
   try {
-    await ensureAgentPatchSchema();
+    await ensureAgentSchema();
     const admin = requireAdmin(req);
     if (!admin) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id, status, createLogin } = await req.json();
+    const { id, status, createLogin, action } = await req.json();
     if (!id || !status) {
       return NextResponse.json({ success: false, error: 'Agent id and status are required' }, { status: 400 });
     }
@@ -129,22 +111,40 @@ export async function PATCH(req) {
       return NextResponse.json({ success: false, error: 'Invalid agent status' }, { status: 400 });
     }
 
-    const agentResult = await pool.query('SELECT * FROM agents WHERE id = $1', [id]);
+    const agentResult = await pool.query(
+      `SELECT ${AGENT_SAFE_COLUMNS}, password_hash FROM agents WHERE id = $1`,
+      [id]
+    );
     const agent = agentResult.rows[0];
     if (!agent) {
       return NextResponse.json({ success: false, error: 'Agent not found' }, { status: 404 });
     }
 
-    if (agent.status === 'Approved' && status !== 'Approved') {
-      return NextResponse.json({
-        success: false,
-        error: 'Approved agent is locked. No further status changes are allowed.',
-      }, { status: 409 });
+    const resetPassword = action === 'reset_password';
+    if (resetPassword && agent.status !== 'Approved') {
+      return NextResponse.json(
+        { success: false, error: 'Only an approved agent password can be reset.' },
+        { status: 409 }
+      );
     }
 
-    if (createLogin || (status === 'Approved' && !agent.login_enabled)) {
+    if (resetPassword || createLogin || (status === 'Approved' && !agent.login_enabled)) {
       if (!agent.city) {
         return NextResponse.json({ success: false, error: 'Agent city is required before approval' }, { status: 400 });
+      }
+      const duplicateActive = await pool.query(
+        `SELECT id FROM agents
+          WHERE id <> $1
+            AND LOWER(TRIM(email)) = LOWER(TRIM($2))
+            AND status <> 'Rejected'
+          LIMIT 1`,
+        [id, agent.email]
+      );
+      if (duplicateActive.rows[0]) {
+        return NextResponse.json(
+          { success: false, error: 'Another active agent account already uses this email.' },
+          { status: 409 }
+        );
       }
 
       const temporaryPassword = makeTemporaryPassword();
@@ -155,24 +155,27 @@ export async function PATCH(req) {
                 login_enabled = TRUE,
                 password_hash = $1,
                 must_change_password = TRUE,
+                auth_version = auth_version + 1,
                 approved_at = NOW(),
                 approved_by = $2,
                 updated_at = NOW()
           WHERE id = $3
-          RETURNING *`,
+          RETURNING ${AGENT_SAFE_COLUMNS}`,
         [passwordHash, admin.email || 'admin', id]
       );
 
+      let emailSent = true;
       try {
+        const appUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000').replace(/\/$/, '');
         await sendMail({
           to: agent.email,
-          subject: 'Your MT-BOSS Agent Login',
+          subject: resetPassword ? 'Your MT-BOSS Agent Password Was Reset' : 'Your MT-BOSS Agent Login',
           html: `
             <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;border:1px solid #eee;">
-              <h2 style="margin:0 0 12px;color:#111;">Welcome to MT-BOSS Agent Network</h2>
-              <p style="color:#444;line-height:1.6;">Your agent application has been approved for <strong>${agent.city}, ${agent.state || ''}</strong>.</p>
+              <h2 style="margin:0 0 12px;color:#111;">${resetPassword ? 'Agent password reset' : 'Welcome to MT-BOSS Agent Network'}</h2>
+              <p style="color:#444;line-height:1.6;">Your agent access is active for <strong>${agent.city}, ${agent.state || ''}</strong>.</p>
               <div style="background:#f8f8f8;padding:16px;margin:18px 0;border-radius:6px;">
-                <p style="margin:0 0 8px;"><strong>Login URL:</strong> /agent/login</p>
+                <p style="margin:0 0 8px;"><strong>Login URL:</strong> <a href="${appUrl}/agent/login">${appUrl}/agent/login</a></p>
                 <p style="margin:0 0 8px;"><strong>Email:</strong> ${agent.email}</p>
                 <p style="margin:0;"><strong>Temporary Password:</strong> ${temporaryPassword}</p>
               </div>
@@ -182,33 +185,42 @@ export async function PATCH(req) {
         });
       } catch (mailError) {
         console.error('Agent approval email error:', mailError);
+        emailSent = false;
       }
 
       return NextResponse.json({
         success: true,
         data: result.rows[0],
         temporaryPassword,
-        message: 'Agent approved and login created.',
+        emailSent,
+        message: resetPassword ? 'Agent password reset.' : 'Agent approved and login created.',
       });
     }
 
     const result = await pool.query(
       `UPDATE agents
           SET status = $1::VARCHAR,
-              login_enabled = CASE WHEN $1::VARCHAR = 'Rejected' THEN FALSE ELSE login_enabled END,
-              password_hash = CASE WHEN $1::VARCHAR = 'Rejected' THEN NULL ELSE password_hash END,
-              must_change_password = CASE WHEN $1::VARCHAR = 'Rejected' THEN FALSE ELSE must_change_password END,
-              approved_at = CASE WHEN $1::VARCHAR = 'Rejected' THEN NULL ELSE approved_at END,
-              approved_by = CASE WHEN $1::VARCHAR = 'Rejected' THEN NULL ELSE approved_by END,
+              login_enabled = CASE WHEN $1::VARCHAR = 'Approved' THEN login_enabled ELSE FALSE END,
+              password_hash = CASE WHEN $1::VARCHAR = 'Approved' THEN password_hash ELSE NULL END,
+              must_change_password = CASE WHEN $1::VARCHAR = 'Approved' THEN must_change_password ELSE FALSE END,
+              auth_version = CASE WHEN $1::VARCHAR = 'Approved' THEN auth_version ELSE auth_version + 1 END,
+              approved_at = CASE WHEN $1::VARCHAR = 'Approved' THEN approved_at ELSE NULL END,
+              approved_by = CASE WHEN $1::VARCHAR = 'Approved' THEN approved_by ELSE NULL END,
               updated_at = NOW()
         WHERE id = $2
-        RETURNING *`,
+        RETURNING ${AGENT_SAFE_COLUMNS}`,
       [status, id]
     );
 
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
     console.error('Agent update error:', error);
+    if (error.code === '23505') {
+      return NextResponse.json(
+        { success: false, error: 'Another active agent account already uses this email.' },
+        { status: 409 }
+      );
+    }
     return NextResponse.json(
       {
         success: false,

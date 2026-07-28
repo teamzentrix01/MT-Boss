@@ -6,6 +6,14 @@ import { convertFinalLeadToProject, ensureProjectOpsSchema } from '@/lib/project
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const LEAD_STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
 
+function passwordGate(agent) {
+  if (!agent?.must_change_password) return null;
+  return NextResponse.json(
+    { success: false, error: 'Change your temporary password before accessing leads.', mustChangePassword: true },
+    { status: 428 }
+  );
+}
+
 export async function GET(req) {
   try {
     await ensureAgentSchema();
@@ -14,6 +22,8 @@ export async function GET(req) {
     if (!agent) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const gate = passwordGate(agent);
+    if (gate) return gate;
 
     const result = await pool.query(
       `SELECT l.*, p.id AS project_id
@@ -40,6 +50,8 @@ export async function POST(req) {
     if (!agent) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const gate = passwordGate(agent);
+    if (gate) return gate;
 
     const {
       clientName, clientPhone, clientEmail, serviceType, leadType,
@@ -83,6 +95,20 @@ export async function POST(req) {
       });
     }
 
+    const parsedFinalAmount = Number(final_amount || 0);
+    if (!Number.isFinite(parsedFinalAmount) || parsedFinalAmount < 0) {
+      await client.query('ROLLBACK');
+      return NextResponse.json({ success: false, error: 'Final amount must be a valid non-negative number.' }, { status: 400 });
+    }
+    const requestedStage = LEAD_STAGES.has(lead_stage) ? lead_stage : 'New';
+    const requestedStatus = requestedStage === 'Final'
+      ? 'Converted'
+      : STATUSES.has(status) ? status : 'New';
+    if (requestedStatus === 'Converted' && requestedStage !== 'Final') {
+      await client.query('ROLLBACK');
+      return NextResponse.json({ success: false, error: 'A lead can be converted only after its stage is Final.' }, { status: 400 });
+    }
+
     const result = await client.query(
       `INSERT INTO agent_leads
         (agent_id, city, client_name, client_phone, client_email, service_type, lead_type,
@@ -99,13 +125,13 @@ export async function POST(req) {
         clientEmail || null,
         serviceType || null,
         leadType || null,
-        STATUSES.has(status) ? status : 'New',
+        requestedStatus,
         followUpDate || null,
         notes || null,
-        LEAD_STAGES.has(lead_stage) ? lead_stage : 'New',
+        requestedStage,
         meeting_done === true || meeting_done === 'true' ? true : false,
         estimate_sent === true || estimate_sent === 'true' ? true : false,
-        Number(final_amount || 0),
+        parsedFinalAmount,
         daily_visit_notes || null,
         client_requirement || null,
         lead_source || 'offline',
@@ -137,66 +163,123 @@ export async function PATCH(req) {
     if (!agent) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const gate = passwordGate(agent);
+    if (gate) return gate;
 
-    const {
-      id, clientName, clientPhone, clientEmail, serviceType, leadType,
-      status, followUpDate, notes,
-      lead_stage, meeting_done, estimate_sent, final_amount,
-      daily_visit_notes, client_requirement, lead_source,
-    } = await req.json();
+    const body = await req.json();
+    const { id } = body;
     if (!id) {
       return NextResponse.json({ success: false, error: 'Lead id is required' }, { status: 400 });
     }
 
     client = await pool.connect();
     await client.query('BEGIN');
-    const result = await client.query(
-      `UPDATE agent_leads
-          SET client_name = COALESCE($1, client_name),
-              client_phone = COALESCE($2, client_phone),
-              client_email = COALESCE($3, client_email),
-              service_type = COALESCE($4, service_type),
-              lead_type = COALESCE($5, lead_type),
-              status = COALESCE($6, status),
-              follow_up_date = COALESCE($7, follow_up_date),
-              notes = COALESCE($8, notes),
-              city = $9,
-              lead_stage = COALESCE($12, lead_stage),
-              meeting_done = COALESCE($13, meeting_done),
-              estimate_sent = COALESCE($14, estimate_sent),
-              final_amount = COALESCE($15, final_amount),
-              daily_visit_notes = COALESCE($16, daily_visit_notes),
-              client_requirement = COALESCE($17, client_requirement),
-              lead_source = COALESCE($18, lead_source),
-              updated_at = NOW()
-        WHERE id = $10 AND agent_id = $11
-        RETURNING *`,
-      [
-        clientName || null,
-        clientPhone || null,
-        clientEmail || null,
-        serviceType || null,
-        leadType || null,
-        STATUSES.has(status) ? status : null,
-        followUpDate || null,
-        notes || null,
-        agent.city,
-        id,
-        agent.id,
-        LEAD_STAGES.has(lead_stage) ? lead_stage : null,
-        meeting_done === true || meeting_done === 'true' ? true : meeting_done === false || meeting_done === 'false' ? false : null,
-        estimate_sent === true || estimate_sent === 'true' ? true : estimate_sent === false || estimate_sent === 'false' ? false : null,
-        final_amount !== undefined && final_amount !== '' ? Number(final_amount) : null,
-        daily_visit_notes || null,
-        client_requirement || null,
-        lead_source || null,
-      ]
-    );
 
-    if (result.rows.length === 0) {
+    const currentResult = await client.query(
+      `SELECT l.*, p.id AS project_id
+         FROM agent_leads l
+         LEFT JOIN projects p ON p.source_lead_id = l.id AND p.project_kind = 'operational'
+        WHERE l.id = $1 AND l.agent_id = $2
+        FOR UPDATE OF l`,
+      [id, agent.id]
+    );
+    const current = currentResult.rows[0];
+    if (!current) {
       await client.query('ROLLBACK');
       return NextResponse.json({ success: false, error: 'Lead not found' }, { status: 404 });
     }
+
+    const has = (key) => Object.prototype.hasOwnProperty.call(body, key);
+    const requestedStage = has('lead_stage') ? body.lead_stage : current.lead_stage;
+    const requestedStatus = has('status') ? body.status : current.status;
+    const effectiveStatus = requestedStage === 'Final' ? 'Converted' : requestedStatus;
+    if (has('lead_stage') && !LEAD_STAGES.has(body.lead_stage)) {
+      await client.query('ROLLBACK');
+      return NextResponse.json({ success: false, error: 'Invalid lead stage.' }, { status: 400 });
+    }
+    if (has('status') && !STATUSES.has(body.status)) {
+      await client.query('ROLLBACK');
+      return NextResponse.json({ success: false, error: 'Invalid lead status.' }, { status: 400 });
+    }
+    if (current.project_id && (
+      requestedStage !== 'Final'
+      || (has('status') && body.status !== 'Converted')
+    )) {
+      await client.query('ROLLBACK');
+      return NextResponse.json(
+        { success: false, error: 'A finalized lead is locked to Final / Converted because its project already exists.' },
+        { status: 409 }
+      );
+    }
+    if (!current.project_id && effectiveStatus === 'Converted' && requestedStage !== 'Final') {
+      await client.query('ROLLBACK');
+      return NextResponse.json(
+        { success: false, error: 'A lead can be converted only after its stage is Final.' },
+        { status: 400 }
+      );
+    }
+
+    const sets = [];
+    const values = [];
+    const add = (column, value) => {
+      values.push(value);
+      sets.push(`${column} = $${values.length}`);
+    };
+
+    if (has('clientName')) {
+      if (!String(body.clientName || '').trim()) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Client name is required.' }, { status: 400 });
+      }
+      add('client_name', String(body.clientName).trim());
+    }
+    if (has('clientPhone')) {
+      if (!String(body.clientPhone || '').trim()) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Client phone is required.' }, { status: 400 });
+      }
+      add('client_phone', String(body.clientPhone).trim());
+    }
+
+    const nullableTextFields = {
+      clientEmail: 'client_email',
+      serviceType: 'service_type',
+      leadType: 'lead_type',
+      notes: 'notes',
+      daily_visit_notes: 'daily_visit_notes',
+      client_requirement: 'client_requirement',
+      lead_source: 'lead_source',
+    };
+    for (const [key, column] of Object.entries(nullableTextFields)) {
+      if (has(key)) add(column, String(body[key] || '').trim() || null);
+    }
+    if (has('followUpDate')) add('follow_up_date', body.followUpDate || null);
+    if (has('meeting_done')) add('meeting_done', body.meeting_done === true || body.meeting_done === 'true');
+    if (has('estimate_sent')) add('estimate_sent', body.estimate_sent === true || body.estimate_sent === 'true');
+    if (has('final_amount')) {
+      const amount = body.final_amount === '' || body.final_amount === null ? 0 : Number(body.final_amount);
+      if (!Number.isFinite(amount) || amount < 0) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Final amount must be a valid non-negative number.' }, { status: 400 });
+      }
+      add('final_amount', amount);
+    }
+    if (has('lead_stage')) add('lead_stage', body.lead_stage);
+    if (has('status') || requestedStage === 'Final') add('status', effectiveStatus);
+    if (requestedStage === 'Final') {
+      if (!has('lead_stage')) add('lead_stage', 'Final');
+    }
+    add('city', agent.city);
+    sets.push('updated_at = NOW()');
+    values.push(id, agent.id);
+
+    const result = await client.query(
+      `UPDATE agent_leads
+          SET ${sets.join(', ')}
+        WHERE id = $${values.length - 1} AND agent_id = $${values.length}
+        RETURNING *`,
+      values
+    );
 
     const project = await convertFinalLeadToProject(client, result.rows[0].id);
     await client.query('COMMIT');
@@ -222,6 +305,8 @@ export async function DELETE(req) {
     if (!agent) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const gate = passwordGate(agent);
+    if (gate) return gate;
 
     const id = Number(new URL(req.url).searchParams.get('id'));
     if (!Number.isInteger(id) || id <= 0) {

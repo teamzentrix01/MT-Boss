@@ -163,8 +163,13 @@ export async function convertFinalLeadToProject(db, leadId) {
      VALUES ($1,$2,$3,$4,'/logo.png','', 'small','draft',$5,NULL,$6,$7,$8,$9,$10,$11,'final',$12,'operational')
      ON CONFLICT (source_lead_id) WHERE source_lead_id IS NOT NULL
      DO UPDATE SET
+       title = EXCLUDED.title,
+       category = EXCLUDED.category,
+       location = EXCLUDED.location,
+       description = EXCLUDED.description,
        franchise_id = EXCLUDED.franchise_id,
        project_kind = 'operational',
+       project_notes = EXCLUDED.project_notes,
        client_name = EXCLUDED.client_name,
        client_phone = EXCLUDED.client_phone,
        client_email = EXCLUDED.client_email,

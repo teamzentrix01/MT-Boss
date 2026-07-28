@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import pool from '@/lib/db';
-import { ensureAgentSchema, requireAgent } from '@/lib/agent-auth';
+import { setAuthCookie } from '@/lib/auth';
+import { ensureAgentSchema, requireAgent, signAgentToken } from '@/lib/agent-auth';
 
 export async function GET(req) {
   try {
@@ -26,11 +27,17 @@ export async function PUT(req) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { phone, occupation, currentPassword, newPassword } = await req.json();
+    const body = await req.json();
+    const { phone, occupation, currentPassword, newPassword } = body;
+    const hasPhone = Object.prototype.hasOwnProperty.call(body, 'phone');
+    const hasOccupation = Object.prototype.hasOwnProperty.call(body, 'occupation');
+    if (hasPhone && !String(phone || '').trim()) {
+      return NextResponse.json({ success: false, error: 'Phone cannot be empty' }, { status: 400 });
+    }
 
     if (newPassword) {
-      if (newPassword.length < 6) {
-        return NextResponse.json({ success: false, error: 'Password must be at least 6 characters' }, { status: 400 });
+      if (newPassword.length < 8) {
+        return NextResponse.json({ success: false, error: 'Password must be at least 8 characters' }, { status: 400 });
       }
 
       const authResult = await pool.query('SELECT password_hash FROM agents WHERE id = $1', [agent.id]);
@@ -42,34 +49,49 @@ export async function PUT(req) {
       const passwordHash = await bcrypt.hash(newPassword, 10);
       await pool.query(
         `UPDATE agents
-            SET phone = COALESCE($1, phone),
-                occupation = COALESCE($2, occupation),
-                password_hash = $3,
+            SET phone = CASE WHEN $1::BOOLEAN THEN $2 ELSE phone END,
+                occupation = CASE WHEN $3::BOOLEAN THEN $4 ELSE occupation END,
+                password_hash = $5,
                 must_change_password = FALSE,
+                auth_version = auth_version + 1,
                 updated_at = NOW()
-          WHERE id = $4`,
-        [phone || null, occupation || null, passwordHash, agent.id]
+          WHERE id = $6`,
+        [
+          hasPhone, String(phone || '').trim(),
+          hasOccupation, String(occupation || '').trim() || null,
+          passwordHash, agent.id,
+        ]
       );
     } else {
       await pool.query(
         `UPDATE agents
-            SET phone = COALESCE($1, phone),
-                occupation = COALESCE($2, occupation),
+            SET phone = CASE WHEN $1::BOOLEAN THEN $2 ELSE phone END,
+                occupation = CASE WHEN $3::BOOLEAN THEN $4 ELSE occupation END,
                 updated_at = NOW()
-          WHERE id = $3`,
-        [phone || null, occupation || null, agent.id]
+          WHERE id = $5`,
+        [
+          hasPhone, String(phone || '').trim(),
+          hasOccupation, String(occupation || '').trim() || null,
+          agent.id,
+        ]
       );
     }
 
     const updated = await pool.query(
       `SELECT id, name, email, phone, city, state, occupation, agent_type,
-              status, login_enabled, must_change_password, last_login_at, created_at
+              status, login_enabled, must_change_password, auth_version, last_login_at, created_at
          FROM agents
         WHERE id = $1`,
       [agent.id]
     );
 
-    return NextResponse.json({ success: true, agent: updated.rows[0] });
+    const updatedAgent = updated.rows[0];
+    if (newPassword) {
+      const token = signAgentToken(updatedAgent);
+      const response = NextResponse.json({ success: true, agent: updatedAgent, token });
+      return setAuthCookie(response, 'agent-auth-token', token);
+    }
+    return NextResponse.json({ success: true, agent: updatedAgent });
   } catch (error) {
     console.error('Agent profile update error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });

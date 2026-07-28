@@ -641,7 +641,7 @@ export default function FranchiseDashboardPage() {
                 <div>
                   <label className="fd-label">Project stage</label>
                   <select className="fd-input" value={form.project_status} onChange={e => setForm(f => ({ ...f, project_status: e.target.value }))}>
-                    {['lead', 'estimate_sent', 'final', 'started', 'running', 'completed', 'cancelled', 'lost'].map(s => <option key={s} value={s}>{s}</option>)}
+                    {['lead', 'estimate_sent', 'final', 'started', 'ongoing', 'running', 'on_hold', 'completed', 'cancelled', 'lost'].map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
               </div>

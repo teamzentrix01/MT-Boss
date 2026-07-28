@@ -8,19 +8,21 @@ export async function POST(req) {
   try {
     await ensureAgentSchema();
     const { email, password } = await req.json();
+    const normalizedEmail = String(email || '').trim().toLowerCase();
 
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
     const result = await pool.query(
       `SELECT id, name, email, phone, city, state, occupation, agent_type,
-              status, login_enabled, password_hash, must_change_password
+              status, login_enabled, password_hash, must_change_password, auth_version
          FROM agents
-        WHERE email = $1
-        ORDER BY id DESC
+        WHERE LOWER(TRIM(email)) = $1
+          AND status = 'Approved'
+          AND login_enabled = TRUE
         LIMIT 1`,
-      [email]
+      [normalizedEmail]
     );
 
     const agent = result.rows[0];
@@ -31,10 +33,6 @@ export async function POST(req) {
     const valid = await bcrypt.compare(password, agent.password_hash);
     if (!valid) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
-    }
-
-    if (agent.status !== 'Approved' || !agent.login_enabled) {
-      return NextResponse.json({ error: 'Your agent account is not approved yet.' }, { status: 403 });
     }
 
     await pool.query('UPDATE agents SET last_login_at = NOW() WHERE id = $1', [agent.id]);

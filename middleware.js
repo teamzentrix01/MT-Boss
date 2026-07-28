@@ -35,12 +35,6 @@ export function middleware(request) {
     }
   }
 
-  if (request.nextUrl.pathname === '/agent/login') {
-    if (agentToken) {
-      return NextResponse.redirect(new URL('/agent/dashboard', request.url));
-    }
-  }
-
   return NextResponse.next();
 }
 

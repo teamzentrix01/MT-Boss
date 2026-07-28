@@ -52,7 +52,7 @@ export default function AgentsPage() {
     }
   };
 
-  const updateStatus = async (id, status) => {
+  const updateStatus = async (id, status, action = '') => {
     setUpdating(true);
     setTempLogin(null);
     setError('');
@@ -64,6 +64,7 @@ export default function AgentsPage() {
         body: JSON.stringify({
           id,
           status,
+          action,
           createLogin: status === 'Approved' && !agents.find(a => a.id === id)?.login_enabled,
         }),
       });
@@ -83,6 +84,8 @@ export default function AgentsPage() {
             email: data.data.email,
             password: data.temporaryPassword,
             city: data.data.city,
+            emailSent: data.emailSent !== false,
+            reset: action === 'reset_password',
           });
         }
       }
@@ -126,11 +129,16 @@ export default function AgentsPage() {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
+    if (!res.ok || !data.success) {
+      setError(data.error || 'Could not update lead status.');
+      return;
+    }
     if (data.success) {
       setWorkspace(prev => prev ? {
         ...prev,
         leads: prev.leads.map(lead => lead.id === leadId ? data.data : lead),
       } : prev);
+      setSelectedLead(prev => prev?.id === leadId ? data.data : prev);
     }
   };
 
@@ -544,11 +552,11 @@ export default function AgentsPage() {
 
             {tempLogin && (
               <div style={{ marginBottom: '1rem', padding: '0.875rem', border: '1px solid var(--brand-blue)', borderRadius: 6, background: 'color-mix(in srgb, var(--brand-blue) 8%, transparent)' }}>
-                <div className="ag-field-label" style={{ color: 'var(--brand-blue-deep)' }}>Agent Login Created</div>
+                <div className="ag-field-label" style={{ color: 'var(--brand-blue-deep)' }}>{tempLogin.reset ? 'Agent Password Reset' : 'Agent Login Created'}</div>
                 <div className="ag-field-value" style={{ marginTop: 4 }}>Email: {tempLogin.email}</div>
                 <div className="ag-field-value">Temporary Password: {tempLogin.password}</div>
                 <div className="ag-muted" style={{ marginTop: 6 }}>
-                  City locked to {tempLogin.city}. Email is sent when SMTP is configured.
+                  City locked to {tempLogin.city}. {tempLogin.emailSent ? 'Credentials were emailed successfully.' : 'Email delivery failed; securely share the temporary password shown above.'}
                 </div>
               </div>
             )}
@@ -556,20 +564,17 @@ export default function AgentsPage() {
             {/* Status Changer */}
             <div className="ag-status-row">
               <span className="ag-status-label">Status:</span>
-              {selected.status === 'Approved' && (
-                <span className="ag-status-label" style={{ color: '#22c55e', fontWeight: 700 }}>
-                  Approved agents are locked
-                </span>
-              )}
+              <span className="ag-status-label" style={{ color: selected.login_enabled ? '#22c55e' : 'var(--muted)', fontWeight: 700 }}>
+                Access {selected.login_enabled ? 'enabled' : 'disabled'}
+              </span>
               {STATUS_OPTIONS.map(s => {
                 const st = statusStyle[s];
                 const isSelected = selected.status === s;
                 const isPending = pendingStatus === s;
-                const locked = selected.status === 'Approved' && s !== 'Approved';
                 return (
                   <button
                     key={s}
-                    disabled={updating || locked}
+                    disabled={updating}
                     className={`ag-status-opt${isSelected ? ' sel' : ''}${isPending ? ' pending' : ''}`}
                     style={isSelected ? { background: st.tx, borderColor: st.tx } : {}}
                     onClick={() => setPendingStatus(s)}
@@ -579,6 +584,32 @@ export default function AgentsPage() {
                 );
               })}
             </div>
+
+            {selected.status === 'Approved' && selected.login_enabled && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.875rem' }}>
+                <button
+                  type="button"
+                  className="ag-close-btn"
+                  disabled={updating}
+                  onClick={() => {
+                    if (window.confirm('Reset this agent password and invalidate the old password?')) {
+                      updateStatus(selected.id, 'Approved', 'reset_password');
+                    }
+                  }}
+                >
+                  Reset Password
+                </button>
+                <button
+                  type="button"
+                  className="ag-close-btn"
+                  disabled={updating}
+                  onClick={() => setPendingStatus('Reviewing')}
+                  style={{ color: '#b91c1c', borderColor: '#ef4444' }}
+                >
+                  Disable Access
+                </button>
+              </div>
+            )}
 
             {pendingStatus && pendingStatus !== selected.status && (
               <div className="ag-confirm">
@@ -611,7 +642,7 @@ export default function AgentsPage() {
             ) : workspace && (
               <div style={{ marginTop: '1rem' }}>
                 <div className="ag-field-label" style={{ marginBottom: '0.5rem' }}>Agent Workspace Preview</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.875rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '0.875rem' }}>
                   <div className="ag-stat">
                     <div className="ag-stat-label">Leads</div>
                     <div className="ag-stat-value">{workspace.leads?.length || 0}</div>
@@ -619,6 +650,10 @@ export default function AgentsPage() {
                   <div className="ag-stat">
                     <div className="ag-stat-label">Schedule</div>
                     <div className="ag-stat-value">{workspace.schedule?.length || 0}</div>
+                  </div>
+                  <div className="ag-stat">
+                    <div className="ag-stat-label">Projects</div>
+                    <div className="ag-stat-value">{workspace.projects?.length || 0}</div>
                   </div>
                 </div>
 
@@ -696,6 +731,17 @@ export default function AgentsPage() {
                     {workspace.schedule.slice(0, 4).map(item => (
                       <div key={item.id} style={{ marginTop: 6 }}>
                         {item.title} - {new Date(item.schedule_date).toLocaleDateString()} {item.schedule_time || ''} - {item.status}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {(workspace.projects?.length || 0) > 0 && (
+                  <div className="ag-modal-msg">
+                    <strong>Assigned Projects:</strong>
+                    {workspace.projects.slice(0, 4).map(project => (
+                      <div key={project.id} style={{ marginTop: 6 }}>
+                        {project.title} - {project.project_status || 'lead'} - {project.location || 'City not set'}
                       </div>
                     ))}
                   </div>

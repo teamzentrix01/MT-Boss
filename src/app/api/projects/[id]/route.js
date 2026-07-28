@@ -45,8 +45,10 @@ export async function GET(req, { params }) {
         getProjectOps(id),
         pool.query(
           `SELECT id, name, city
-             FROM agents
+            FROM agents
             WHERE status = 'Approved'
+              AND login_enabled = TRUE
+              AND must_change_password = FALSE
               AND ($1 = '' OR LOWER(TRIM(COALESCE(city, ''))) = LOWER(TRIM($1)))
             ORDER BY name ASC`,
           [String(project.location || '').trim()]
@@ -84,6 +86,11 @@ export async function PATCH(req, { params }) {
     const body = await req.json();
     const nextStatus = PROJECT_STATUSES.has(body.project_status) ? body.project_status : null;
     const assignmentProvided = Object.prototype.hasOwnProperty.call(body, 'assigned_agent_id');
+    const dealAmountProvided = Object.prototype.hasOwnProperty.call(body, 'deal_amount');
+    const parsedDealAmount = body.deal_amount === '' || body.deal_amount === null ? 0 : Number(body.deal_amount);
+    if (dealAmountProvided && (!Number.isFinite(parsedDealAmount) || parsedDealAmount < 0)) {
+      return NextResponse.json({ success: false, error: 'Deal amount must be a valid non-negative number' }, { status: 400 });
+    }
     const currentResult = await pool.query(
       "SELECT id, location, assigned_agent_id FROM projects WHERE id = $1 AND project_kind = 'operational'",
       [id]
@@ -95,7 +102,7 @@ export async function PATCH(req, { params }) {
 
     if (assignmentProvided && body.assigned_agent_id) {
       const agent = await pool.query(
-        `SELECT id, name, city FROM agents WHERE id = $1 AND status = 'Approved'`,
+        `SELECT id, name, city FROM agents WHERE id = $1 AND status = 'Approved' AND login_enabled = TRUE AND must_change_password = FALSE`,
         [body.assigned_agent_id]
       );
       const selectedAgent = agent.rows[0];
@@ -133,7 +140,7 @@ export async function PATCH(req, { params }) {
        RETURNING *`,
       [
         nextStatus,
-        body.deal_amount === '' || body.deal_amount === undefined ? null : Number(body.deal_amount || 0),
+        dealAmountProvided ? parsedDealAmount : null,
         Object.prototype.hasOwnProperty.call(body, 'client_name'),
         body.client_name ?? null,
         Object.prototype.hasOwnProperty.call(body, 'client_phone'),

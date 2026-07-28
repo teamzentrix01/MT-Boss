@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
-const projectStatuses = ['lead', 'estimate_sent', 'final', 'started', 'ongoing', 'on_hold', 'completed', 'cancelled', 'lost'];
+const projectStatuses = ['lead', 'estimate_sent', 'final', 'started', 'ongoing', 'running', 'on_hold', 'completed', 'cancelled', 'lost'];
 const entryTypes = ['payment', 'labour', 'material', 'expense', 'transport'];
 
 function todayIso() {

@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 const leadStatuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
 const leadStages = ['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost'];
 const scheduleStatuses = ['Planned', 'Done', 'Cancelled'];
-const projectStatuses = ['lead', 'estimate_sent', 'final', 'started', 'running', 'completed', 'cancelled', 'lost'];
+const projectStatuses = ['lead', 'estimate_sent', 'final', 'started', 'ongoing', 'running', 'on_hold', 'completed', 'cancelled', 'lost'];
 
 function phoneInputValue(value) {
   const digits = String(value || '').replace(/\D/g, '');
@@ -68,6 +68,8 @@ function AgentDashboardContent() {
     status: 'Planned',
     notes: '',
   });
+  const [editTask, setEditTask] = useState(null);
+  const [deletingTaskId, setDeletingTaskId] = useState(null);
 
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -154,6 +156,7 @@ function AgentDashboardContent() {
       if (profileData.success) {
         setAgent(profileData.agent);
         localStorage.setItem('agent', JSON.stringify(profileData.agent));
+        if (profileData.agent.must_change_password) setActiveTab('profile');
       }
       if (leadsData.success) setLeads(leadsData.data || []);
       if (scheduleData.success) setSchedule(scheduleData.data || []);
@@ -342,6 +345,26 @@ function AgentDashboardContent() {
     }
   }
 
+  async function deleteProjectEntry(entryTypeName, entry) {
+    if (!selectedProject || !window.confirm(`Delete this ${entryTypeName} entry?`)) return;
+    const singularType = entryTypeName === 'materials' ? 'material' : entryTypeName.replace(/s$/, '');
+    const params = new URLSearchParams({
+      project_id: String(selectedProject.id),
+      entry_type: singularType,
+      entry_id: String(entry.id),
+    });
+    const res = await authFetch(`/api/agent/projects?${params.toString()}`, { method: 'DELETE' });
+    if (!res) return;
+    const data = await res.json();
+    if (data.success) {
+      setMessage('Project entry deleted.');
+      await loadProjects();
+      await openProject(selectedProject);
+    } else {
+      setMessage(data.error || 'Project entry could not be deleted.');
+    }
+  }
+
   async function deleteLead(lead) {
     if (!window.confirm(`Delete lead for ${lead.client_name}? This action cannot be undone.`)) return;
     setDeletingLeadId(lead.id);
@@ -369,19 +392,59 @@ function AgentDashboardContent() {
     e.preventDefault();
     setMessage('');
     const res = await authFetch('/api/agent/schedule', {
-      method: 'POST',
+      method: editTask ? 'PATCH' : 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(taskForm),
+      body: JSON.stringify(editTask ? { id: editTask.id, ...taskForm } : taskForm),
     });
     if (!res) return;
     const data = await res.json();
     if (data.success) {
-      setSchedule((prev) => [...prev, data.data].sort((a, b) => String(a.schedule_date).localeCompare(String(b.schedule_date))));
+      setSchedule((prev) => {
+        const rows = editTask
+          ? prev.map((item) => item.id === editTask.id ? data.data : item)
+          : [...prev, data.data];
+        return rows.sort((a, b) => String(a.schedule_date).localeCompare(String(b.schedule_date)));
+      });
       setTaskForm({ title: '', scheduleDate: todayIso(), scheduleTime: '', type: 'Follow-up', status: 'Planned', notes: '' });
-      setMessage('Schedule item added.');
+      setEditTask(null);
+      setMessage(editTask ? 'Schedule item updated.' : 'Schedule item added.');
     } else {
       setMessage(data.error || 'Schedule item could not be saved.');
     }
+  }
+
+  function startEditTask(item) {
+    setEditTask(item);
+    setTaskForm({
+      title: item.title || '',
+      scheduleDate: item.schedule_date ? String(item.schedule_date).slice(0, 10) : todayIso(),
+      scheduleTime: item.schedule_time || '',
+      type: item.type || '',
+      status: item.status || 'Planned',
+      notes: item.notes || '',
+    });
+  }
+
+  async function deleteTask(item) {
+    if (!window.confirm(`Delete schedule item "${item.title}"?`)) return;
+    setDeletingTaskId(item.id);
+    const res = await authFetch(`/api/agent/schedule?id=${item.id}`, { method: 'DELETE' });
+    if (!res) {
+      setDeletingTaskId(null);
+      return;
+    }
+    const data = await res.json();
+    if (data.success) {
+      setSchedule((prev) => prev.filter((row) => row.id !== item.id));
+      if (editTask?.id === item.id) {
+        setEditTask(null);
+        setTaskForm({ title: '', scheduleDate: todayIso(), scheduleTime: '', type: 'Follow-up', status: 'Planned', notes: '' });
+      }
+      setMessage('Schedule item deleted.');
+    } else {
+      setMessage(data.error || 'Schedule item could not be deleted.');
+    }
+    setDeletingTaskId(null);
   }
 
   async function updateTask(id, status) {
@@ -406,6 +469,7 @@ function AgentDashboardContent() {
     if (!res) return;
     const data = await res.json();
     if (data.success) {
+      if (data.token) localStorage.setItem('agent-token', data.token);
       setAgent(data.agent);
       setPasswordForm({ currentPassword: '', newPassword: '' });
       setMessage('Password updated.');
@@ -454,6 +518,7 @@ function AgentDashboardContent() {
                   setActiveTab(tab);
                   if (tab === 'projects') loadProjects();
                 }}
+                disabled={agent?.must_change_password && tab !== 'profile'}
                 className={`px-5 py-2.5 border text-[10px] font-black uppercase tracking-widest ${activeTab === tab ? 'bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black' : `${card} ${muted}`}`}
               >
                 {tab}
@@ -467,7 +532,7 @@ function AgentDashboardContent() {
 
         {agent?.must_change_password && (
           <div className={`border border-[var(--brand-blue)] ${dark ? 'bg-[var(--brand-blue)]/10' : 'bg-sky-50'} p-4 mb-5 text-sm font-bold`}>
-            Please change your temporary password from the Profile tab.
+            Change your temporary password to unlock leads, projects, and schedule access.
           </div>
         )}
 
@@ -530,7 +595,7 @@ function AgentDashboardContent() {
               <div className="grid grid-cols-2 gap-3 mb-3">
                 <div>
                   <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Lead Stage</label>
-                  <select className={`w-full border px-3 py-2 text-sm ${input}`} value={leadForm.lead_stage} onChange={(e) => setLeadForm((f) => ({ ...f, lead_stage: e.target.value }))}>
+                  <select disabled={Boolean(editLead?.project_id)} className={`w-full border px-3 py-2 text-sm ${input}`} value={leadForm.lead_stage} onChange={(e) => setLeadForm((f) => ({ ...f, lead_stage: e.target.value }))}>
                     {leadStages.map((s) => <option key={s}>{s}</option>)}
                   </select>
                 </div>
@@ -593,10 +658,11 @@ function AgentDashboardContent() {
                     </div>
                     <div className="flex flex-wrap gap-2 items-center">
                       <select aria-label="Lead status" className={`border px-3 py-2 text-xs font-bold ${input}`}
+                        disabled={Boolean(lead.project_id)}
                         value={lead.status || 'New'} onChange={(e) => updateLead(lead.id, e.target.value, null)}>
                         {leadStatuses.map((s) => <option key={s}>{s}</option>)}
                       </select>
-                      <select className={`border px-3 py-2 text-xs font-bold ${input}`} value={lead.lead_stage || 'New'} onChange={(e) => updateLead(lead.id, null, e.target.value)}>
+                      <select disabled={Boolean(lead.project_id)} className={`border px-3 py-2 text-xs font-bold ${input}`} value={lead.lead_stage || 'New'} onChange={(e) => updateLead(lead.id, null, e.target.value)}>
                         {leadStages.map((s) => <option key={s}>{s}</option>)}
                       </select>
                       <button type="button" onClick={() => startEditLead(lead)} className={`px-3 py-2 border text-xs font-bold ${input}`}>Edit</button>
@@ -743,16 +809,21 @@ function AgentDashboardContent() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      ['Payments', projectOps.payments, (x) => `${x.payment_date?.slice?.(0, 10) || ''} - Rs ${x.amount}`],
-                      ['Labour', projectOps.labour, (x) => `${x.work_date?.slice?.(0, 10) || ''} - ${x.labour_name} - Rs ${x.wage_amount}`],
-                      ['Materials', projectOps.materials, (x) => `${x.entry_date?.slice?.(0, 10) || ''} - ${x.material_name} - ${x.quantity} ${x.unit || ''}`],
-                      ['Expenses', projectOps.expenses, (x) => `${x.expense_date?.slice?.(0, 10) || ''} - ${x.expense_type} - Rs ${x.amount}`],
-                      ['Transport', projectOps.transport, (x) => `${x.transport_date?.slice?.(0, 10) || ''} - ${x.transport_type} - ${x.vehicle_number || ''} - Rs ${x.amount || 0}`],
-                    ].map(([title, rows, render]) => (
+                      ['Payments', 'payments', projectOps.payments, (x) => `${x.payment_date?.slice?.(0, 10) || ''} - Rs ${x.amount}`],
+                      ['Labour', 'labour', projectOps.labour, (x) => `${x.work_date?.slice?.(0, 10) || ''} - ${x.labour_name} - Rs ${x.wage_amount}`],
+                      ['Materials', 'materials', projectOps.materials, (x) => `${x.entry_date?.slice?.(0, 10) || ''} - ${x.material_name} - ${x.quantity} ${x.unit || ''}`],
+                      ['Expenses', 'expenses', projectOps.expenses, (x) => `${x.expense_date?.slice?.(0, 10) || ''} - ${x.expense_type} - Rs ${x.amount}`],
+                      ['Transport', 'transport', projectOps.transport, (x) => `${x.transport_date?.slice?.(0, 10) || ''} - ${x.transport_type} - ${x.vehicle_number || ''} - Rs ${x.amount || 0}`],
+                    ].map(([title, type, rows, render]) => (
                       <div key={title} className={`border ${card} p-4`}>
                         <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] mb-3">{title}</p>
                         {rows.length === 0 ? <p className={`text-xs ${muted}`}>No entries yet.</p> : rows.slice(0, 6).map((row) => (
-                          <p key={row.id} className={`text-xs border-b py-2 ${dark ? 'border-zinc-800' : 'border-zinc-200'}`}>{render(row)}</p>
+                          <div key={row.id} className={`flex items-center justify-between gap-2 text-xs border-b py-2 ${dark ? 'border-zinc-800' : 'border-zinc-200'}`}>
+                            <span>{render(row)}</span>
+                            {Number(row.agent_id) === Number(agent?.id) && (
+                              <button type="button" className="text-red-500 font-bold" onClick={() => deleteProjectEntry(type, row)}>Delete</button>
+                            )}
+                          </div>
                         ))}
                       </div>
                     ))}
@@ -766,13 +837,27 @@ function AgentDashboardContent() {
         {activeTab === 'schedule' && (
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <form onSubmit={createTask} className={`border ${card} p-5 h-fit`}>
-              <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] mb-4">Plan Day in {agent?.city}</p>
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">{editTask ? 'Edit Schedule' : 'Plan Day'} in {agent?.city}</p>
+                {editTask && (
+                  <button
+                    type="button"
+                    className={`text-[10px] font-black uppercase ${muted}`}
+                    onClick={() => {
+                      setEditTask(null);
+                      setTaskForm({ title: '', scheduleDate: todayIso(), scheduleTime: '', type: 'Follow-up', status: 'Planned', notes: '' });
+                    }}
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} placeholder="Title" value={taskForm.title} onChange={(e) => setTaskForm((f) => ({ ...f, title: e.target.value }))} required />
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="date" value={taskForm.scheduleDate} onChange={(e) => setTaskForm((f) => ({ ...f, scheduleDate: e.target.value }))} required />
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="time" value={taskForm.scheduleTime} onChange={(e) => setTaskForm((f) => ({ ...f, scheduleTime: e.target.value }))} />
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} placeholder="Type" value={taskForm.type} onChange={(e) => setTaskForm((f) => ({ ...f, type: e.target.value }))} />
               <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={3} placeholder="Notes" value={taskForm.notes} onChange={(e) => setTaskForm((f) => ({ ...f, notes: e.target.value }))} />
-              <button className="w-full mt-4 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">Add Schedule</button>
+              <button className="w-full mt-4 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">{editTask ? 'Update Schedule' : 'Add Schedule'}</button>
             </form>
 
             <div className="lg:col-span-2 space-y-3">
@@ -785,9 +870,20 @@ function AgentDashboardContent() {
                     <p className={`text-xs ${muted}`}>{new Date(item.schedule_date).toLocaleDateString('en-IN')} {item.schedule_time || ''} - {item.city}</p>
                     {item.notes && <p className="text-sm mt-2">{item.notes}</p>}
                   </div>
-                  <select className={`border px-3 py-2 text-xs font-bold ${input}`} value={item.status} onChange={(e) => updateTask(item.id, e.target.value)}>
-                    {scheduleStatuses.map((status) => <option key={status}>{status}</option>)}
-                  </select>
+                  <div className="flex flex-wrap gap-2">
+                    <select className={`border px-3 py-2 text-xs font-bold ${input}`} value={item.status} onChange={(e) => updateTask(item.id, e.target.value)}>
+                      {scheduleStatuses.map((status) => <option key={status}>{status}</option>)}
+                    </select>
+                    <button type="button" className={`border px-3 py-2 text-xs font-bold ${input}`} onClick={() => startEditTask(item)}>Edit</button>
+                    <button
+                      type="button"
+                      disabled={deletingTaskId === item.id}
+                      className="border border-red-500/50 px-3 py-2 text-xs font-bold text-red-500 disabled:opacity-50"
+                      onClick={() => deleteTask(item)}
+                    >
+                      {deletingTaskId === item.id ? 'Deleting...' : 'Delete'}
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -814,7 +910,7 @@ function AgentDashboardContent() {
             <form onSubmit={changePassword} className="mt-6">
               <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] mb-3">Change Password</p>
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="password" placeholder="Current password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm((f) => ({ ...f, currentPassword: e.target.value }))} required />
-              <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="password" placeholder="New password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm((f) => ({ ...f, newPassword: e.target.value }))} required />
+              <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="password" minLength={8} placeholder="New password (minimum 8 characters)" value={passwordForm.newPassword} onChange={(e) => setPasswordForm((f) => ({ ...f, newPassword: e.target.value }))} required />
               <button className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">Update Password</button>
             </form>
           </section>

@@ -11,7 +11,7 @@ async function ensureAgentIsApproved(agentId, city = '') {
   if (!agentId) return null;
   const result = await pool.query(
     `SELECT id FROM agents
-      WHERE id = $1 AND status = 'Approved'
+      WHERE id = $1 AND status = 'Approved' AND login_enabled = TRUE AND must_change_password = FALSE
         AND ($2 = '' OR LOWER(TRIM(COALESCE(city, ''))) = LOWER(TRIM($2)))`,
     [agentId, String(city || '').trim()]
   );
@@ -31,6 +31,10 @@ const FINANCIAL_FIELDS = [
   'agent_commission',
   'profit_loss',
 ];
+const PROJECT_STATUSES = new Set([
+  'lead', 'estimate_sent', 'final', 'started', 'ongoing', 'running',
+  'on_hold', 'completed', 'cancelled', 'lost',
+]);
 
 function hideFinancials(project) {
   const visible = { ...project };
@@ -89,6 +93,13 @@ export async function POST(req) {
     if (assigned_agent_id && !access.permissions['agents.assign']) {
       return NextResponse.json({ success: false, error: 'Permission denied: agents.assign' }, { status: 403 });
     }
+    if (project_status && !PROJECT_STATUSES.has(project_status)) {
+      return NextResponse.json({ success: false, error: 'Invalid project status' }, { status: 400 });
+    }
+    const parsedDealAmount = Number(deal_amount || 0);
+    if (!Number.isFinite(parsedDealAmount) || parsedDealAmount < 0) {
+      return NextResponse.json({ success: false, error: 'Deal amount must be a valid non-negative number' }, { status: 400 });
+    }
 
     const projectCity = franchise.city || '';
     if (assigned_agent_id && !(await ensureAgentIsApproved(assigned_agent_id, projectCity))) {
@@ -122,7 +133,7 @@ export async function POST(req) {
         client_name || null,
         client_phone || null,
         client_email || null,
-        access.permissions['financials.view'] ? Number(deal_amount || 0) : 0,
+        access.permissions['financials.view'] ? parsedDealAmount : 0,
         project_status || 'lead',
       ]
     );
@@ -161,6 +172,13 @@ export async function PATCH(req) {
 
     if (!id || !title || !category || !image_url) {
       return NextResponse.json({ success: false, error: 'Project id, title, category and image are required' }, { status: 400 });
+    }
+    if (project_status && !PROJECT_STATUSES.has(project_status)) {
+      return NextResponse.json({ success: false, error: 'Invalid project status' }, { status: 400 });
+    }
+    const parsedDealAmount = Number(deal_amount || 0);
+    if (access.permissions['financials.view'] && (!Number.isFinite(parsedDealAmount) || parsedDealAmount < 0)) {
+      return NextResponse.json({ success: false, error: 'Deal amount must be a valid non-negative number' }, { status: 400 });
     }
 
     const currentProjectResult = await pool.query(
@@ -210,7 +228,7 @@ export async function PATCH(req) {
         client_name || null,
         client_phone || null,
         client_email || null,
-        access.permissions['financials.view'] ? Number(deal_amount || 0) : Number(currentProject.deal_amount || 0),
+        access.permissions['financials.view'] ? parsedDealAmount : Number(currentProject.deal_amount || 0),
         project_status || 'lead',
         id,
         franchise.id,
