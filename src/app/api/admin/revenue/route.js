@@ -69,6 +69,8 @@ export async function GET(req) {
         COALESCE(sb.total_amount, 0)      AS total_amount,
         COALESCE(sb.final_amount, 0)      AS final_amount,
         COALESCE(sb.user_paid_amount, 0)  AS user_paid_amount,
+        COALESCE(sb.extra_amount, 0)      AS extra_amount,
+        COALESCE(sb.is_quick_job, TRUE)   AS is_quick_job,
         sb.vendor_notes,
         sb.user_notes,
         sb.created_at,
@@ -99,14 +101,21 @@ export async function GET(req) {
       // Use user_paid_amount if filled, else final_amount, else total_amount
       const effectiveAmt = paidAmt > 0 ? paidAmt : finalAmt > 0 ? finalAmt : totalAmt;
 
-      const adminCommission = Math.round(effectiveAmt * 0.15 * 100) / 100;
-      const vendorPayout    = Math.round(effectiveAmt * 0.85 * 100) / 100;
-      const gstAmount       = Math.round(parseFloat(b.tax_amount) * 100) / 100;
+      const baseAmount      = parseFloat(b.base_amount) || 0;
+      const extraAmount     = parseFloat(b.extra_amount) || 0;
+      const isQuickJob      = b.is_quick_job === true;
+      const gstAmount       = isQuickJob ? 0 : Math.round(extraAmount * 0.18 * 100) / 100;
+      const companyProfit   = isQuickJob
+        ? Math.round(baseAmount * 0.50 * 100) / 100
+        : Math.round((baseAmount + extraAmount * 0.06) * 100) / 100;
+      const vendorPayout    = isQuickJob
+        ? Math.round(baseAmount * 0.50 * 100) / 100
+        : Math.round(extraAmount * 0.76 * 100) / 100;
 
       return {
         ...b,
         effective_amount:   effectiveAmt,
-        admin_commission:   adminCommission,
+        admin_commission:   companyProfit,
         vendor_payout:      vendorPayout,
         gst_amount:         gstAmount,
       };

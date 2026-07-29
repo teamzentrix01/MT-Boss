@@ -3,10 +3,15 @@ import pool from '@/lib/db';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { hasVendorForServiceCity } from '@/lib/service-cities';
 import { resolveManagedCity } from '@/lib/cities';
+import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
 
 function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
 }
+
+const PAID_TIME_SLOTS = new Set([
+  '08:00 AM - 10:00 AM', '12:00 PM - 02:00 PM', '04:00 PM - 06:00 PM',
+]);
 
 async function ensurePaidSlotsTable(client = pool) {
   await client.query(`
@@ -37,6 +42,7 @@ export async function POST(req) {
       service_address,
       service_city,
       service_pincode,
+      service_subcategory,
       property_type,
       booking_date,
       booking_time,
@@ -51,9 +57,10 @@ export async function POST(req) {
     const cleanUserName = cleanText(user_name);
     const cleanUserEmail = user_email ? cleanText(user_email).toLowerCase() : null;
     const cleanUserPhone = normalizePhone(user_phone);
+    const cleanSubcategory = cleanText(service_subcategory);
 
     // Validation
-    if (!quick_service_id || !cleanUserName || !cleanUserPhone || !service_address || !selectedCity || !service_pincode) {
+    if (!quick_service_id || !cleanUserName || !cleanUserPhone || !service_address || !selectedCity || !service_pincode || !cleanSubcategory) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -78,6 +85,7 @@ export async function POST(req) {
     if (!await hasVendorForServiceCity(quick_service_id, selectedCity)) {
       return NextResponse.json({ error: 'No approved vendor is currently available for this service in the selected city.' }, { status: 409 });
     }
+    await ensureServiceBookingSubcategorySchema();
 
     // Generate booking reference
     const booking_reference = `BK${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
@@ -102,6 +110,11 @@ export async function POST(req) {
       await client.query('BEGIN');
 
       if (slot_type !== 'free') {
+        const normalizedBookingTime = normalizeTimeSlot(booking_time);
+        if (!PAID_TIME_SLOTS.has(normalizedBookingTime)) {
+          await client.query('ROLLBACK');
+          return NextResponse.json({ error: 'Select one of the three available service time slots.' }, { status: 400 });
+        }
         await ensurePaidSlotsTable(client);
         const paidSlotCheck = await client.query(
           `SELECT is_available
@@ -111,7 +124,7 @@ export async function POST(req) {
              AND LOWER(TRIM(city)) = LOWER(TRIM($3))
              AND time_slot = $4
            LIMIT 1`,
-          [quick_service_id, booking_date, selectedCity, normalizeTimeSlot(booking_time)]
+          [quick_service_id, booking_date, selectedCity, normalizedBookingTime]
         );
 
         if (paidSlotCheck.rows[0]?.is_available === false) {
@@ -128,17 +141,17 @@ export async function POST(req) {
         `INSERT INTO service_bookings (
           booking_reference, quick_service_id,
           user_name, user_phone, user_email,
-          service_address, service_city, service_pincode, property_type,
+          service_address, service_city, service_pincode, service_subcategory, property_type,
           booking_date, booking_time, slot_type, time_slot_id,
           urgency, visit_charge, service_description,
           user_latitude, user_longitude, location_map_url,
           base_amount, visit_fee, total_amount, status, vendor_status, user_status
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)
         RETURNING *`,
         [
           booking_reference, quick_service_id,
           cleanUserName, cleanUserPhone, cleanUserEmail,
-          service_address, selectedCity, service_pincode, property_type,
+          service_address, selectedCity, service_pincode, cleanSubcategory, property_type,
           booking_date, booking_time, slot_type, time_slot_id,
           'normal', visit_fee, service_description,
           user_latitude, user_longitude, location_map_url,

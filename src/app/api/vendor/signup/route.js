@@ -6,13 +6,14 @@ import { ensurePackageSchema, getPackageById } from '@/lib/packages';
 import { cleanText, normalizePhone, isValidEmail, isValidIndianMobile } from '@/lib/validation';
 import { cleanCity, ensureServiceCitiesSchema } from '@/lib/service-cities';
 import { resolveManagedCity } from '@/lib/cities';
+import { verifyOtp } from '@/lib/otp';
 
 export async function POST(req) {
   let client;
   try {
     let email, password, phone, city, state, country, postal_code,
         aadhar_number, services, profilePhotoBuffer, profilePhotoMime,
-        aadharImageBuffer, aadharImageMime, package_id;
+        aadharImageBuffer, aadharImageMime, package_id, registration_otp;
 
     const contentType = req.headers.get('content-type') || '';
 
@@ -37,6 +38,7 @@ export async function POST(req) {
       aadhar_number = (fd.get('aadhar_number') || '').replace(/\s/g, '');
       services      = JSON.parse(fd.get('services') || '[]');
       package_id    = fd.get('package_id');
+      registration_otp = fd.get('registration_otp');
 
       const profileFile = fd.get('profile_photo');
       const aadharFile  = fd.get('aadhar_image');
@@ -64,6 +66,7 @@ export async function POST(req) {
       aadhar_number = (body.aadhar_number || '').replace(/\s/g, '');
       services      = body.services || [];
       package_id    = body.package_id;
+      registration_otp = body.registration_otp;
     }
 
     email = cleanText(email).toLowerCase();
@@ -84,6 +87,28 @@ export async function POST(req) {
         { error: 'Missing required fields: email, password, phone, city, state, postal_code' },
         { status: 400 }
       );
+    }
+    if (!/^\d{6}$/.test(String(registration_otp || '').trim())) {
+      return NextResponse.json({ error: 'Enter the 6-digit email verification OTP.' }, { status: 400 });
+    }
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS vendor_signup_otps (
+        id SERIAL PRIMARY KEY, email VARCHAR(255) NOT NULL, otp_hash TEXT NOT NULL,
+        attempts INTEGER NOT NULL DEFAULT 0, expires_at TIMESTAMPTZ NOT NULL,
+        used BOOLEAN NOT NULL DEFAULT FALSE, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    const signupOtp = await pool.query(
+      `SELECT id, otp_hash, attempts FROM vendor_signup_otps
+       WHERE email = $1 AND used = FALSE AND attempts < 5 AND expires_at > NOW()
+       ORDER BY created_at DESC LIMIT 1`,
+      [email]
+    );
+    if (!signupOtp.rows[0] || !verifyOtp(String(registration_otp).trim(), signupOtp.rows[0].otp_hash)) {
+      if (signupOtp.rows[0]) {
+        await pool.query(`UPDATE vendor_signup_otps SET attempts = attempts + 1 WHERE id = $1`, [signupOtp.rows[0].id]);
+      }
+      return NextResponse.json({ error: 'Invalid or expired registration OTP.' }, { status: 400 });
     }
     if (!isValidEmail(email)) {
       return NextResponse.json({ error: 'Enter a valid email address' }, { status: 400 });
@@ -327,6 +352,7 @@ export async function POST(req) {
     // ════════════════════════════════════════════════════════════════
 
     console.log('🔄 [SIGNUP] Committing transaction...');
+    await client.query(`UPDATE vendor_signup_otps SET used = TRUE WHERE email = $1 AND used = FALSE`, [email]);
     await client.query('COMMIT');
     console.log('✅ [SIGNUP] Transaction committed successfully');
 

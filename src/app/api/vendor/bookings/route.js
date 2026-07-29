@@ -14,7 +14,7 @@ export async function GET(req) {
 
     // Earnings logic:
     //   Quick job (≤15 min): base_amount split 50/50 — vendor gets 50%, admin gets 50%
-    //   Extended job (>15 min): base 100% to admin + extra follows: 18% GST, 15% commission, 67% vendor
+    //   Extended job (>15 min): base 100% to admin + extra follows: 18% GST, 6% company profit, 76% vendor
     const baseSelect = `
       SELECT
         sb.id, sb.booking_reference, sb.user_name, sb.user_phone,
@@ -32,12 +32,12 @@ export async function GET(req) {
         CASE
           WHEN COALESCE(sb.is_quick_job, FALSE) = TRUE
             THEN ROUND(sb.base_amount * 0.50)
-          ELSE ROUND(COALESCE(sb.extra_amount, 0) * 0.67)
+          ELSE ROUND(COALESCE(sb.extra_amount, 0) * 0.76)
         END AS vendor_earning,
         CASE
           WHEN COALESCE(sb.is_quick_job, FALSE) = TRUE
             THEN ROUND(sb.base_amount * 0.50)
-          ELSE sb.base_amount + ROUND(COALESCE(sb.extra_amount, 0) * 0.15)
+          ELSE sb.base_amount + ROUND(COALESCE(sb.extra_amount, 0) * 0.06)
         END AS admin_commission,
         CASE
           WHEN COALESCE(sb.is_quick_job, FALSE) = TRUE THEN 0

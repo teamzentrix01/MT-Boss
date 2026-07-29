@@ -95,7 +95,7 @@ async function syncExternalLeads() {
        (city, client_name, client_phone, client_email, service_type, lead_type, status,
         notes, client_requirement, lead_source, source_ref_table, source_ref_id, assigned_by_role)
      SELECT
-       'Unassigned',
+       COALESCE(NULLIF(city, ''), 'Unassigned'),
        name,
        phone,
        email,
@@ -166,7 +166,13 @@ async function getLeadRows({ search = '', status = '', source = '', city = '' } 
      LEFT JOIN agents a ON a.id = l.agent_id
      LEFT JOIN franchises f ON f.id = l.assigned_franchise_id
      ${where}
-     ORDER BY l.created_at DESC`,
+     ORDER BY
+       CASE
+         WHEN l.status = 'Lost' OR l.lead_stage = 'Lost' THEN 2
+         WHEN l.status = 'New' OR l.lead_stage = 'New' THEN 0
+         ELSE 1
+       END ASC,
+       l.created_at DESC`,
     params
   );
   return result.rows;

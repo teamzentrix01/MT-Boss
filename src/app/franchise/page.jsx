@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { COMPANY_CONTACT } from "../lib/company";
 import { useCities } from "@/hooks/useCities";
 import { redirectToPayU } from "@/lib/payu-client";
@@ -124,7 +125,16 @@ const faqs = [
 ];
 
 export default function FranchisePage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen flex items-center justify-center">Loading franchise page...</main>}>
+      <FranchisePageContent />
+    </Suspense>
+  );
+}
+
+function FranchisePageContent() {
   const dark = useDarkMode();
+  const searchParams = useSearchParams();
   const { cities, loading: citiesLoading, error: citiesError } = useCities();
   const [activeTab, setActiveTab] = useState("Associate Partner");
   const [activeFaq, setActiveFaq] = useState(null);
@@ -134,6 +144,8 @@ export default function FranchisePage() {
   const [formStep, setFormStep] = useState(1);
   const [registrationFee, setRegistrationFee] = useState(null);
   const [feeLoading, setFeeLoading] = useState(false);
+  const paymentStatus = searchParams.get("payment");
+  const paymentMessage = searchParams.get("message");
 
  const [form, setForm] = useState({
   // Personal
@@ -301,7 +313,6 @@ export default function FranchisePage() {
     });
 
     redirectToPayU(dbData.payment);
-    setSubmitted(true);
   } catch (err) {
     setError("Network error. Please try again.");
   } finally {
@@ -685,6 +696,28 @@ export default function FranchisePage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <p className="text-red-400 text-[11px] font-bold">{error}</p>
+        </div>
+      )}
+
+      {paymentStatus && (
+        <div
+          className={`mx-8 mt-8 p-4 rounded-sm border flex items-start gap-3 ${
+            paymentStatus === "success"
+              ? "bg-green-500/10 border-green-500/30"
+              : "bg-red-500/10 border-red-500/30"
+          }`}
+        >
+          <p
+            className={`text-[11px] font-bold ${
+              paymentStatus === "success" ? "text-green-500" : "text-red-400"
+            }`}
+          >
+            {paymentMessage || (
+              paymentStatus === "success"
+                ? "Payment received. Your franchise application is pending admin approval."
+                : "Payment was not completed. Please submit again to retry payment."
+            )}
+          </p>
         </div>
       )}
 

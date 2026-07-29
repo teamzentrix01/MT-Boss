@@ -17,6 +17,15 @@ export async function POST(req) {
     if (!booking_id || !latitude || !longitude) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
+    const assignedBooking = await pool.query(
+      `SELECT id FROM service_bookings
+       WHERE id = $1 AND vendor_id = $2
+         AND status IN ('VENDOR_ACCEPTED', 'VENDOR_ON_WAY', 'IN_PROGRESS')`,
+      [booking_id, vendor.id]
+    );
+    if (!assignedBooking.rows[0]) {
+      return NextResponse.json({ error: 'This active booking is not assigned to the vendor.' }, { status: 403 });
+    }
  
     // Insert location update
     await pool.query(
@@ -29,8 +38,8 @@ export async function POST(req) {
     await pool.query(
       `UPDATE service_bookings 
        SET status = 'VENDOR_ON_WAY', vendor_status = 'ON_WAY', started_at = NOW()
-       WHERE id = $1 AND status = 'VENDOR_ACCEPTED'`,
-      [booking_id]
+       WHERE id = $1 AND vendor_id = $2 AND status = 'VENDOR_ACCEPTED'`,
+      [booking_id, vendor.id]
     );
  
     return NextResponse.json({

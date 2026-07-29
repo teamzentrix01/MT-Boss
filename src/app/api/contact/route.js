@@ -3,33 +3,49 @@ import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { handleApiError } from '@/lib/api-utils';
+import { resolveManagedCity } from '@/lib/cities';
+
+async function ensureContactCityColumn() {
+  await pool.query(`ALTER TABLE contact_submissions ADD COLUMN IF NOT EXISTS city VARCHAR(120)`);
+}
 
 export async function POST(req) {
   try {
-    const { name, email, phone, department, subject, message } = await req.json();
+    await ensureContactCityColumn();
+    const { name, email, phone, city, department, subject, message } = await req.json();
     const cleanName = cleanText(name);
     const cleanEmail = cleanText(email).toLowerCase();
     const cleanPhone = normalizePhone(phone);
 
     // Validate required fields
-    if (!cleanName || !cleanEmail || !cleanPhone || !department || !subject || !message) {
+    if (!cleanName || !cleanPhone || !city || !department || !subject || !message) {
       return NextResponse.json(
-        { error: 'All fields are required' },
+        { error: 'Name, phone, city, department, subject and message are required' },
         { status: 400 }
       );
     }
 
-    const contactError = validateContactFields({ name: cleanName, email: cleanEmail, phone: cleanPhone });
+    const contactError = validateContactFields({
+      name: cleanName,
+      email: cleanEmail || undefined,
+      phone: cleanPhone,
+      emailRequired: false,
+    });
     if (contactError) {
       return NextResponse.json({ error: contactError }, { status: 400 });
     }
 
+    const canonicalCity = await resolveManagedCity(city);
+    if (!canonicalCity) {
+      return NextResponse.json({ error: 'Please select an active city' }, { status: 400 });
+    }
+
     // Insert into database
     const result = await pool.query(
-      `INSERT INTO contact_submissions (name, email, phone, department, subject, message, status, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+      `INSERT INTO contact_submissions (name, email, phone, city, department, subject, message, status, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
        RETURNING id, name, email, created_at`,
-      [cleanName, cleanEmail, cleanPhone, department, subject, message, 'New']
+      [cleanName, cleanEmail || null, cleanPhone, canonicalCity, department, subject, message, 'New']
     );
 
     return NextResponse.json(
@@ -50,9 +66,10 @@ export async function POST(req) {
 export async function GET(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
+    await ensureContactCityColumn();
 
     const result = await pool.query(
-      `SELECT id, name, email, phone, department, subject, message, status, created_at
+      `SELECT id, name, email, phone, city, department, subject, message, status, created_at
        FROM contact_submissions
        ORDER BY created_at DESC
        LIMIT 100`

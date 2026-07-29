@@ -76,11 +76,13 @@ export default function ContactPage() {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [offices, setOffices] = useState(DEFAULT_OFFICES);
+  const [cities, setCities] = useState([]);
 
   const [form, setForm] = useState({
     name: '',
     email: '',
     phone: '',
+    city: '',
     department: '',
     subject: '',
     message: '',
@@ -112,6 +114,15 @@ export default function ContactPage() {
     return () => { ignore = true; };
   }, []);
 
+  useEffect(() => {
+    fetch('/api/cities', { cache: 'no-store' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.cities)) setCities(data.cities);
+      })
+      .catch((err) => console.error('Cities load error:', err));
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'phone') {
@@ -131,12 +142,12 @@ export default function ContactPage() {
     const phoneRegex = /^[6-9]\d{9}$/;
     const newErrors = {};
     if (!form.name.trim()) newErrors.name = 'Full name is required.';
-    if (!form.email) newErrors.email = 'Email address is required.';
-    else if (!emailRegex.test(form.email)) newErrors.email = 'Please enter a valid email address.';
+    if (form.email && !emailRegex.test(form.email)) newErrors.email = 'Please enter a valid email address.';
     if (!form.phone) newErrors.phone = 'Phone number is required.';
     else if (!phoneRegex.test(form.phone)) newErrors.phone = 'Enter a valid 10-digit Indian mobile number (starts with 6-9).';
     if (!form.subject.trim()) newErrors.subject = 'Subject is required.';
     if (!form.department) newErrors.department = 'Please select a department.';
+    if (!form.city) newErrors.city = 'Please select a city.';
     if (!form.message.trim()) newErrors.message = 'Message is required.';
     if (Object.keys(newErrors).length > 0) { setFieldErrors(newErrors); return; }
     setFieldErrors({});
@@ -157,7 +168,7 @@ export default function ContactPage() {
         setSubmitted(true);
         // Reset form after 3 seconds
         setTimeout(() => {
-          setForm({ name: '', email: '', phone: '', department: '', subject: '', message: '' });
+          setForm({ name: '', email: '', phone: '', city: '', department: '', subject: '', message: '' });
           setSubmitted(false);
         }, 3000);
       } else {
@@ -290,17 +301,40 @@ export default function ContactPage() {
                       <button
                         key={dept.value}
                         type="button"
+                        aria-pressed={form.department === dept.label}
                         onClick={() => { setForm({ ...form, department: dept.label }); setFieldErrors(prev => ({ ...prev, department: '' })); }}
-                        className={`p-3 rounded-lg border-2 text-left transition-all duration-200 ${
+                        style={{
+                          backgroundColor: form.department === dept.label
+                            ? 'var(--brand-blue)'
+                            : dark ? '#050505' : '#ffffff',
+                          borderColor: form.department === dept.label
+                            ? '#ffffff'
+                            : 'var(--brand-blue)',
+                          boxShadow: form.department === dept.label
+                            ? '0 0 0 3px var(--brand-blue), 0 8px 22px rgba(0, 153, 255, 0.28)'
+                            : 'none',
+                          transform: form.department === dept.label ? 'translateY(-2px)' : 'none',
+                        }}
+                        className={`relative p-3 rounded-lg border-2 text-left transition-all duration-200 ${
                           form.department === dept.label
-                            ? dark ? 'border-[var(--brand-blue-light)] bg-[var(--brand-blue)]/10' : 'border-[var(--brand-blue)] bg-sky-50'
-                            : dark ? 'border-[var(--brand-blue-deep)] hover:border-[var(--brand-blue-light)]' : 'border-[var(--brand-blue-lighter)] hover:border-[var(--brand-blue)]'
+                            ? 'text-black'
+                            : dark ? 'text-white hover:bg-zinc-900' : 'text-black hover:bg-sky-50'
                         }`}
                       >
-                        <span className="text-lg block mb-1 text-black">{dept.icon}</span>
-                        <span className="text-xs font-bold uppercase tracking-widest leading-tight block text-black">
+                        {form.department === dept.label && (
+                          <span className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-black text-sm font-black text-white">
+                            ✓
+                          </span>
+                        )}
+                        <span className="text-lg block mb-1">{dept.icon}</span>
+                        <span className="text-xs font-bold uppercase tracking-widest leading-tight block">
                           {dept.label}
                         </span>
+                        {form.department === dept.label && (
+                          <span className="mt-2 block text-[9px] font-black uppercase tracking-[0.18em] text-black/70">
+                            Selected
+                          </span>
+                        )}
                       </button>
                     ))}
                   </div>
@@ -325,7 +359,7 @@ export default function ContactPage() {
                       Message Sent! ✨
                     </h3>
                     <p className={`text-sm ${dark ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Thank you! We will get back to you within 24 hours on <span className={`font-bold ${textSecondaryClass}`}>{form.email}</span>
+                      Thank you! We will get back to you within 24 hours using your contact details.
                     </p>
                   </div>
                 ) : (
@@ -345,7 +379,7 @@ export default function ContactPage() {
                         {fieldErrors.name && <p className="text-red-500 text-xs mt-1 font-bold">{fieldErrors.name}</p>}
                       </div>
                       <div>
-                        <label className={labelClass}>Email Address *</label>
+                        <label className={labelClass}>Email Address (Optional)</label>
                         <input
                           type="email"
                           name="email"
@@ -356,6 +390,20 @@ export default function ContactPage() {
                         />
                         {fieldErrors.email && <p className="text-red-500 text-xs mt-1 font-bold">{fieldErrors.email}</p>}
                       </div>
+                    </div>
+
+                    <div>
+                      <label className={labelClass}>City *</label>
+                      <select
+                        name="city"
+                        value={form.city}
+                        onChange={handleChange}
+                        className={inputClass}
+                      >
+                        <option value="">Select city</option>
+                        {cities.map((city) => <option key={city} value={city}>{city}</option>)}
+                      </select>
+                      {fieldErrors.city && <p className="text-red-500 text-xs mt-1 font-bold">{fieldErrors.city}</p>}
                     </div>
 
                     {/* Phone + Subject */}

@@ -14,6 +14,13 @@ function resultRedirect(req, status, reference, message, returnTo = '/userdashbo
   return NextResponse.redirect(url, 303);
 }
 
+function withPaymentParams(path, status, message) {
+  const url = new URL(path, 'https://mtboss.local');
+  url.searchParams.set('payment', status);
+  if (message) url.searchParams.set('message', message);
+  return `${url.pathname}${url.search}`;
+}
+
 export async function POST(req) {
   const client = await pool.connect();
 
@@ -105,19 +112,22 @@ export async function POST(req) {
       }
 
       await client.query('COMMIT');
+      const resultMessage = succeeded
+        ? (
+          intent.purpose.includes('package')
+            ? 'Payment received. Package is pending admin approval.'
+            : intent.purpose.includes('registration')
+              ? 'Payment received. Your registration is pending admin approval.'
+              : null
+        )
+        : fields.error_Message || 'Payment was not completed.';
+      const franchiseReturnTo = withPaymentParams('/franchise', succeeded ? 'success' : 'failed', resultMessage);
+
       return resultRedirect(
         req,
         succeeded ? 'success' : 'failed',
         intent.purpose === 'booking_final' ? fields.udf2 : null,
-        succeeded
-          ? (
-            intent.purpose.includes('package')
-              ? 'Payment received. Package is pending admin approval.'
-              : intent.purpose.includes('registration')
-                ? 'Payment received. Your registration is pending admin approval.'
-                : null
-          )
-          : fields.error_Message || 'Payment was not completed.',
+        resultMessage,
         intent.purpose === 'vendor_package'
           ? '/vendor/dashboard?tab=packages'
           : intent.purpose === 'supplier_package'
@@ -125,7 +135,7 @@ export async function POST(req) {
             : intent.purpose === 'supplier_registration'
               ? '/supplier/pending-approval'
               : intent.purpose === 'franchise_registration'
-                ? '/franchise'
+                ? franchiseReturnTo
             : '/userdashboard'
       );
     }

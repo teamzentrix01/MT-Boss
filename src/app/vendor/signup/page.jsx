@@ -12,6 +12,9 @@ export default function VendorSignupPage() {
   const [dark, setDark] = useState(false);
   const { cities: managedCities, services, loading: loadingServices, error: serviceCityError } = useServiceCities();
   const [step, setStep] = useState(1);
+  const [registrationOtp, setRegistrationOtp] = useState('');
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpMessage, setOtpMessage] = useState('');
   const [profilePreview, setProfilePreview] = useState(null);
   const [aadharPreview, setAadharPreview] = useState(null);
   const profileRef = useRef();
@@ -85,6 +88,29 @@ export default function VendorSignupPage() {
     });
   };
 
+  const sendRegistrationOtp = async () => {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Enter a valid email before requesting OTP');
+      return;
+    }
+    setOtpSending(true); setError(''); setOtpMessage('');
+    try {
+      const res = await fetch('/api/vendor/signup-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Unable to send OTP');
+      if (data.dev_otp) setRegistrationOtp(data.dev_otp);
+      setOtpMessage(data.dev_otp ? `Development OTP: ${data.dev_otp}` : 'OTP sent to your email.');
+    } catch (sendError) {
+      setError(sendError.message || 'Unable to send OTP');
+    } finally {
+      setOtpSending(false);
+    }
+  };
+
   const validateStep = (s) => {
     switch (s) {
       case 1:
@@ -102,6 +128,9 @@ export default function VendorSignupPage() {
         }
         if (!/^[6-9]\d{9}$/.test(formData.phone.replace(/\D/g, ''))) {
           setError('Invalid Indian mobile number'); return false;
+        }
+        if (!/^\d{6}$/.test(registrationOtp)) {
+          setError('Send and enter the 6-digit email OTP'); return false;
         }
         return true;
 
@@ -158,6 +187,7 @@ const handleSubmit = async (e) => {
       payload.append('aadhar_number', formData.aadhar_number);
       payload.append('services', JSON.stringify(formData.services));
       payload.append('package_id', formData.package_id);
+      payload.append('registration_otp', registrationOtp);
       if (formData.profile_photo) payload.append('profile_photo', formData.profile_photo);
       if (formData.aadhar_image) payload.append('aadhar_image', formData.aadhar_image);
 
@@ -541,7 +571,7 @@ const handleSubmit = async (e) => {
 
             {error && <div className="vs-error">⚠ {error}</div>}
 
-            <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
+            <form onSubmit={step === 4 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
 
               {/* STEP 1 */}
               {step === 1 && (
@@ -570,6 +600,25 @@ const handleSubmit = async (e) => {
                       placeholder="9876543210"
                       maxLength={10}
                     />
+                  </div>
+
+                  <div className="vs-field">
+                    <label className="vs-label">Email Verification OTP *</label>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <input
+                        className="vs-input"
+                        type="text"
+                        inputMode="numeric"
+                        value={registrationOtp}
+                        onChange={(e) => setRegistrationOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        placeholder="6-digit OTP"
+                        maxLength={6}
+                      />
+                      <button type="button" className="vs-btn" onClick={sendRegistrationOtp} disabled={otpSending}>
+                        {otpSending ? 'Sending...' : 'Send OTP'}
+                      </button>
+                    </div>
+                    {otpMessage && <small style={{ color: '#16a34a' }}>{otpMessage}</small>}
                   </div>
 
                   <div className="vs-field">
@@ -804,7 +853,7 @@ const handleSubmit = async (e) => {
                 <button
                   type="submit"
                   className="vs-btn vs-btn-primary"
-                  disabled={loading || (step === 3 && loadingServices)}
+                  disabled={loading || (step === 3 && loadingServices) || otpSending}
                 >
                   {step === 4
                     ? loading ? 'Creating account...' : 'Create Account →'

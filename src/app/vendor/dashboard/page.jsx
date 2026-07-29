@@ -334,6 +334,30 @@ function VendorDashboardContent() {
       });
       const data = await res.json();
       if (data.success) {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async ({ coords }) => {
+              try {
+                await fetch('/api/vendor/location/update', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                  body: JSON.stringify({
+                    booking_id: bookingId,
+                    latitude: coords.latitude,
+                    longitude: coords.longitude,
+                    accuracy_meters: coords.accuracy,
+                  }),
+                });
+                setVendorLocation({ latitude: coords.latitude, longitude: coords.longitude });
+                fetchVendorData(token);
+              } catch (locationError) {
+                console.error('Automatic location update failed:', locationError);
+              }
+            },
+            () => setRequestMsg('Booking accepted. Allow location access to update your live location.'),
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+          );
+        }
         setSelectedNotification(null);
         setNotifications((n) => n.filter((x) => x.booking_id !== bookingId));
         fetchVendorData(token);
@@ -441,12 +465,14 @@ function VendorDashboardContent() {
     <main className={`min-h-screen font-serif ${bg} px-4 py-6 sm:p-6`}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col gap-5 mb-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0">
-            <h1 className="text-3xl sm:text-4xl font-black uppercase break-words">Vendor Dashboard</h1>
-            <p className={`text-sm ${muted} mt-1`}>{vendorProfile?.shop_name || "My Shop"} · {vendorProfile?.city || ""}</p>
+        <div className="flex flex-col gap-4 mb-6 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0 max-w-full">
+            <h1 className="max-w-full text-[clamp(2rem,13vw,3.25rem)] sm:text-4xl font-black uppercase leading-[0.95] break-words">
+              Vendor Dashboard
+            </h1>
+            <p className={`text-sm ${muted} mt-2 break-words`}>{vendorProfile?.shop_name || "My Shop"} · {vendorProfile?.city || ""}</p>
           </div>
-          <div className={`grid w-full grid-cols-2 border ${isDark ? "border-zinc-800" : "border-zinc-200"} sm:flex sm:w-auto sm:flex-wrap`}>
+          <div className={`grid w-full min-w-0 grid-cols-2 overflow-hidden border ${isDark ? "border-zinc-800" : "border-zinc-200"} sm:flex sm:w-auto sm:flex-wrap lg:shrink-0`}>
             {[
               { key: "notifications", label: "📬 Bookings" },
               { key: "history", label: "📋 History" },
@@ -463,7 +489,7 @@ function VendorDashboardContent() {
                   setActiveTab(tab.key);
                   if (tab.key === "packages") loadPackages();
                 }}
-                className={`min-w-0 px-3 py-2.5 text-[10px] font-black uppercase tracking-wider transition-all sm:px-5 sm:tracking-widest ${
+                className={`min-w-0 whitespace-normal break-words px-2.5 py-2.5 text-[10px] font-black uppercase leading-tight tracking-wider transition-all sm:px-5 sm:tracking-widest ${
                   activeTab === tab.key
                     ? "bg-[var(--brand-blue)] text-black"
                     : isDark ? "text-zinc-400 hover:text-white" : "text-zinc-500 hover:text-zinc-900"

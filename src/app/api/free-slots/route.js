@@ -13,6 +13,8 @@ const ensureFreeSlotsColumns = createInitializationGuard(async () => {
   await pool.query(`UPDATE free_time_slots SET max_bookings = 1 WHERE max_bookings IS NULL`);
 });
 
+const FREE_SLOT_WINDOWS = new Set(['08:00-10:00', '16:00-18:00']);
+
 async function getSlotManager(req, permission) {
   const admin = requireRole(req, 'admin');
   if (admin) return { allowed: true, isAdmin: true, user: admin };
@@ -53,8 +55,9 @@ export async function GET(req) {
           AND fts.is_available = TRUE
           AND COALESCE(fts.current_bookings, 0) < COALESCE(fts.max_bookings, 1)
           AND fts.slot_date::DATE >= $3::DATE
+          AND CONCAT(TO_CHAR(fts.slot_start, 'HH24:MI'), '-', TO_CHAR(fts.slot_end, 'HH24:MI')) IN ('08:00-10:00', '16:00-18:00')
         ORDER BY fts.slot_date ASC, fts.slot_start ASC
-        LIMIT 10`;
+        LIMIT 2`;
       params = [city, serviceId, today];
     } else if (city && city !== 'all') {
       const manager = await getSlotManager(req, 'slots.view');
@@ -98,6 +101,10 @@ export async function POST(req) {
 
     if (!quick_service_id || !slot_date || !slot_start || !slot_end || !city) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+    const requestedWindow = `${String(slot_start).slice(0, 5)}-${String(slot_end).slice(0, 5)}`;
+    if (!FREE_SLOT_WINDOWS.has(requestedWindow)) {
+      return NextResponse.json({ error: 'Free slots are fixed to Morning (08:00-10:00) or Evening (16:00-18:00).' }, { status: 400 });
     }
     const requestedCity = manager.isAdmin ? city : manager.franchise.city;
     if (!manager.isAdmin && String(city).trim().toLowerCase() !== String(manager.franchise.city).trim().toLowerCase()) {

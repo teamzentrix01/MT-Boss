@@ -396,23 +396,19 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
               )}
 
               <div className="form-group">
-                <label className="form-label">Start Time</label>
-                <input
-                  type="time"
-                  className="form-input"
-                  value={formData.slot_start}
-                  onChange={(e) => setFormData({ ...formData, slot_start: e.target.value })}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">End Time</label>
-                <input
-                  type="time"
-                  className="form-input"
-                  value={formData.slot_end}
-                  onChange={(e) => setFormData({ ...formData, slot_end: e.target.value })}
-                />
+                <label className="form-label">Free Slot *</label>
+                <select
+                  className="form-select"
+                  value={`${formData.slot_start}-${formData.slot_end}`}
+                  onChange={(e) => {
+                    const [slot_start, slot_end] = e.target.value.split('-');
+                    setFormData({ ...formData, slot_start, slot_end });
+                  }}
+                >
+                  <option value="08:00-10:00">Morning — 08:00 AM to 10:00 AM</option>
+                  <option value="16:00-18:00">Evening — 04:00 PM to 06:00 PM</option>
+                </select>
+                <small style={{ color: 'var(--muted)' }}>Each service exposes only one morning and one evening free slot.</small>
               </div>
             </div>
 

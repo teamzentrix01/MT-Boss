@@ -9,11 +9,8 @@ import { getQuickServiceTax, getQuickServiceTotal } from '@/lib/quick-service-pr
 
 const TIME_SLOTS = [
   '08:00 AM – 10:00 AM',
-  '10:00 AM – 12:00 PM',
   '12:00 PM – 02:00 PM',
-  '02:00 PM – 04:00 PM',
   '04:00 PM – 06:00 PM',
-  '06:00 PM – 08:00 PM',
 ];
 
 const PROPERTY_TYPES = ['Apartment', 'Independent House', 'Villa', 'Office / Commercial', 'Shop / Showroom', 'Other'];
@@ -1076,9 +1073,6 @@ export default function AllQuickServicesPage() {
           {services.length > 0 ? (
             services.map((s) => (
               <div key={s.id} className={`group p-5 border transition-all duration-300 relative overflow-hidden ${card}`}>
-                <span className={`absolute -top-1 -right-1 text-6xl font-black opacity-[0.03] group-hover:opacity-10 group-hover:text-[var(--brand-blue)] transition-all ${isDark ? 'text-white' : 'text-black'}`}>
-                  {s.id < 10 ? `0${s.id}` : s.id}
-                </span>
                 <div className="text-3xl mb-3 transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300 origin-left">
                   <QuickServiceIcon value={s.icon} label={s.label}
                     className="flex h-10 w-10 items-center justify-center"

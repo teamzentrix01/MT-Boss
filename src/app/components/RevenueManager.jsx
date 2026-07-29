@@ -223,8 +223,8 @@ export default function RevenueManager({ isDarkMode }) {
 
   const CARD_DEFS = summary ? [
     { label: 'Total Revenue Collected', value: fmt(summary.total_collected),  sub: `${summary.completed_bookings} completed bookings`, bg: '#f0fdf4', tx: '#14532d' },
-    { label: 'Admin Earned (15%)',       value: fmt(summary.total_admin_earn), sub: 'Platform commission',                              bg: 'var(--brand-blue-soft)', tx: 'var(--brand-blue-deepest)' },
-    { label: 'Vendor Payouts (85%)',     value: fmt(summary.total_vendor_pay), sub: 'Total due to vendors',                            bg: '#dbeafe', tx: '#1e3a8a' },
+    { label: 'Company Profit (6%)',      value: fmt(summary.total_admin_earn), sub: 'Profit excluding GST',                             bg: 'var(--brand-blue-soft)', tx: 'var(--brand-blue-deepest)' },
+    { label: 'Vendor Payouts',           value: fmt(summary.total_vendor_pay), sub: 'After GST and 6% company profit',                  bg: '#dbeafe', tx: '#1e3a8a' },
     { label: 'GST Collected',            value: fmt(summary.total_gst),        sub: 'Tax component',                                   bg: '#fce7f3', tx: '#831843' },
     { label: 'Pipeline Value',           value: fmt(summary.pipeline_value),   sub: `${summary.active_bookings} active bookings`,      bg: '#fff7ed', tx: '#9a3412' },
   ] : [];
@@ -271,7 +271,7 @@ export default function RevenueManager({ isDarkMode }) {
         done:  b.status === 'COMPLETED',
         time:  b.completed_at ? dt(b.completed_at) : 'Not completed',
         detail: b.status === 'COMPLETED'
-          ? `Completed — Admin commission: ${fmt(b.admin_commission)} | Vendor payout: ${fmt(b.vendor_payout)}`
+          ? `Completed — Company profit: ${fmt(b.admin_commission)} | Vendor payout: ${fmt(b.vendor_payout)}`
           : 'Booking not yet completed',
         amount: b.status === 'COMPLETED' ? fmt(b.effective_amount) : null,
       },
@@ -318,8 +318,8 @@ export default function RevenueManager({ isDarkMode }) {
               ['Total Estimate',            fmt(b.total_amount),      'var(--brand-blue-deep)'],
               ['Vendor Final Quote',        fmt(b.final_amount),      'var(--brand-blue-deep)'],
               ['User Actually Paid',        fmt(b.user_paid_amount),  '#16a34a'],
-              ['Admin Commission (15%)',    fmt(b.admin_commission),  '#dc2626'],
-              ['Vendor Payout (85%)',       fmt(b.vendor_payout),     '#16a34a'],
+              ['Company Profit (6%)',       fmt(b.admin_commission),  '#dc2626'],
+              ['Vendor Payout',             fmt(b.vendor_payout),     '#16a34a'],
             ].map(([k, v, c]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem 0', borderBottom: '1px dashed var(--border)' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>{k}</span>
@@ -487,7 +487,7 @@ export default function RevenueManager({ isDarkMode }) {
                       <tr>
                         {['Booking Ref','Customer','Service','Vendor','City','Status',
                           'Base Amt','Visit Fee','GST','Estimate','Vendor Quote','User Paid',
-                          'Admin (15%)','Vendor (85%)','Date','Action'].map(h => (
+                          'Company (6%)','Vendor Payout','Date','Action'].map(h => (
                           <th key={h} style={S.th}>{h}</th>
                         ))}
                       </tr>
@@ -579,7 +579,7 @@ export default function RevenueManager({ isDarkMode }) {
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
                       <tr>
-                        {['Vendor','Phone','Total Bookings','Completed','Total Collected','Admin Commission (15%)','Vendor Payout (85%)','GST Collected','Completion Rate'].map(h => (
+                        {['Vendor','Phone','Total Bookings','Completed','Total Collected','Company Profit (6%)','Vendor Payout','GST Collected','Completion Rate'].map(h => (
                           <th key={h} style={S.th}>{h}</th>
                         ))}
                       </tr>
@@ -712,11 +712,11 @@ export default function RevenueManager({ isDarkMode }) {
                         {b.status === 'COMPLETED' && (
                           <div style={{ marginTop: '0.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.375rem' }}>
                             <div style={{ textAlign: 'center', padding: '0.375rem', background: '#fee2e2', borderRadius: '6px' }}>
-                              <div style={{ fontSize: '0.6rem', color: '#9b1c1c', textTransform: 'uppercase', fontWeight: 700 }}>Admin (15%)</div>
+                              <div style={{ fontSize: '0.6rem', color: '#9b1c1c', textTransform: 'uppercase', fontWeight: 700 }}>Company (6%)</div>
                               <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#dc2626' }}>{fmt(b.admin_commission)}</div>
                             </div>
                             <div style={{ textAlign: 'center', padding: '0.375rem', background: '#dcfce7', borderRadius: '6px' }}>
-                              <div style={{ fontSize: '0.6rem', color: '#14532d', textTransform: 'uppercase', fontWeight: 700 }}>Vendor (85%)</div>
+                              <div style={{ fontSize: '0.6rem', color: '#14532d', textTransform: 'uppercase', fontWeight: 700 }}>Vendor payout</div>
                               <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#16a34a' }}>{fmt(b.vendor_payout)}</div>
                             </div>
                           </div>

@@ -22,7 +22,7 @@ export async function PATCH(req, { params }) {
     const { id } = await params;
     const body = await req.json();
     const current = await pool.query(
-      `SELECT quick_service_id, city FROM free_time_slots WHERE id = $1`,
+      `SELECT quick_service_id, city, slot_start, slot_end FROM free_time_slots WHERE id = $1`,
       [id]
     );
     if (current.rows.length === 0) {
@@ -39,6 +39,11 @@ export async function PATCH(req, { params }) {
     const canonicalCity = await resolveServiceCity(serviceId, requestedCity);
     if (!canonicalCity) {
       return NextResponse.json({ error: 'This city is not configured for the selected service' }, { status: 400 });
+    }
+    const nextStart = String(body.slot_start || current.rows[0].slot_start).slice(0, 5);
+    const nextEnd = String(body.slot_end || current.rows[0].slot_end).slice(0, 5);
+    if (!new Set(['08:00-10:00', '16:00-18:00']).has(`${nextStart}-${nextEnd}`)) {
+      return NextResponse.json({ error: 'Free slots are fixed to Morning or Evening.' }, { status: 400 });
     }
 
     const result = await pool.query(

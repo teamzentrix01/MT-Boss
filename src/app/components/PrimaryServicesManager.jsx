@@ -17,20 +17,56 @@ const defaultForm = {
   cta_heading: '', contact_phone: '', contact_email: '',
 };
 
+async function optimizePrimaryServiceImage(file) {
+  if (!file.type.match(/^image\/(jpeg|webp)$/) || file.size < 2 * 1024 * 1024) return file;
+
+  const bitmap = await createImageBitmap(file);
+  const maxDimension = 2560;
+  const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+  if (scale === 1) {
+    bitmap.close();
+    return file;
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext('2d', { alpha: false }).drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, file.type, 0.92));
+  return blob
+    ? new File([blob], file.name, { type: file.type, lastModified: file.lastModified })
+    : file;
+}
+
 async function uploadPrimaryServiceImage(file) {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
   if (!cloudName || !uploadPreset) throw new Error('Cloudinary env is missing');
 
+  if (!file.type.startsWith('image/')) throw new Error('Please select an image file');
+  if (file.size > 15 * 1024 * 1024) throw new Error('Image must be smaller than 15 MB');
+  const optimizedFile = await optimizePrimaryServiceImage(file);
   const fd = new FormData();
-  fd.append('file', file);
+  fd.append('file', optimizedFile);
   fd.append('upload_preset', uploadPreset);
   fd.append('folder', 'mtboss/primary-services');
 
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-    method: 'POST',
-    body: fd,
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 60000);
+  let res;
+  try {
+    res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: 'POST',
+      body: fd,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (error.name === 'AbortError') throw new Error('Upload timed out. Please check your connection and retry.');
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
   const data = await res.json();
   if (!res.ok || !data.secure_url) throw new Error(data.error?.message || 'Image upload failed');
   return data.secure_url;

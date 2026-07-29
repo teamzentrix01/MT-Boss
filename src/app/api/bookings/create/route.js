@@ -16,6 +16,10 @@ function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
 }
 
+const PAID_TIME_SLOTS = new Set([
+  '08:00 AM - 10:00 AM', '12:00 PM - 02:00 PM', '04:00 PM - 06:00 PM',
+]);
+
 async function ensurePaidSlotsTable() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS paid_time_slot_availability (
@@ -194,6 +198,10 @@ export async function POST(req) {
         );
       }
     } else {
+      const normalizedBookingTime = normalizeTimeSlot(booking_time);
+      if (!PAID_TIME_SLOTS.has(normalizedBookingTime)) {
+        return NextResponse.json({ error: 'Select one of the three available service time slots.' }, { status: 400 });
+      }
       await ensurePaidSlotsTable();
       const paidSlotCheck = await pool.query(
         `SELECT is_available
@@ -203,7 +211,7 @@ export async function POST(req) {
            AND LOWER(TRIM(city)) = LOWER(TRIM($3))
            AND time_slot = $4
          LIMIT 1`,
-        [quick_service_id, booking_date, selectedCity, normalizeTimeSlot(booking_time)]
+        [quick_service_id, booking_date, selectedCity, normalizedBookingTime]
       );
 
       if (paidSlotCheck.rows[0]?.is_available === false) {

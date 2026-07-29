@@ -7,6 +7,8 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { ensurePackageSchema } from '@/lib/packages';
+import { ensureOtpSchema, generateOtp, hashOtp } from '@/lib/otp';
+import { sendMail } from '@/lib/email';
  
 export async function POST(req, { params }) {
   try {
@@ -26,6 +28,7 @@ export async function POST(req, { params }) {
  
     const { id: bookingId } = await params;
     await ensurePackageSchema();
+    await ensureOtpSchema();
  
     const client = await pool.connect();
     let booking;
@@ -33,12 +36,17 @@ export async function POST(req, { params }) {
     try {
       await client.query('BEGIN');
 
+      const startOtp = generateOtp();
       const result = await client.query(
         `UPDATE service_bookings sb
          SET vendor_id = $1,
              status = 'VENDOR_ACCEPTED',
              vendor_status = 'ACCEPTED',
-             accepted_at = NOW()
+             accepted_at = NOW(),
+             start_otp = $3,
+             start_otp_verified = FALSE,
+             start_otp_generated_at = NOW(),
+             start_otp_attempts = 0
          WHERE sb.id = $2
            AND sb.status = 'WAITING_FOR_VENDOR_ACCEPTANCE'
            AND sb.vendor_id IS NULL
@@ -57,8 +65,8 @@ export async function POST(req, { params }) {
                AND v.package_status = 'active'
                AND v.package_expires_at > NOW()
            )
-         RETURNING id, booking_reference, total_amount, user_id`,
-        [vendorId, bookingId]
+         RETURNING id, booking_reference, total_amount, user_id, user_email`,
+        [vendorId, bookingId, hashOtp(startOtp)]
       );
    
       if (result.rows.length === 0) {
@@ -84,6 +92,7 @@ export async function POST(req, { params }) {
       );
 
       await client.query('COMMIT');
+      booking.start_otp_plain = startOtp;
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;
@@ -91,6 +100,19 @@ export async function POST(req, { params }) {
       client.release();
     }
  
+    if (booking.user_email) {
+      try {
+        await sendMail({
+          to: booking.user_email,
+          subject: `Vendor assigned - start OTP for ${booking.booking_reference}`,
+          text: `Your vendor has accepted the service. Share start OTP ${booking.start_otp_plain} only when the vendor reaches your location.`,
+        });
+      } catch (emailError) {
+        console.error('Accepted booking OTP email failed:', emailError.message);
+      }
+    }
+    delete booking.start_otp_plain;
+
     return NextResponse.json({
       success: true,
       message: 'Booking accepted. You can now start the journey.',

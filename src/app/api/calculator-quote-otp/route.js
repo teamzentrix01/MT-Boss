@@ -183,14 +183,20 @@ export async function POST(req) {
       ]
     );
 
-    const smtpConfigured = !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+    const smtpConfigured = !!(
+      (process.env.SMTP_HOST || process.env.EMAIL_HOST)
+      && (process.env.SMTP_USER || process.env.EMAIL_USER)
+      && (process.env.SMTP_PASS || process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD)
+    );
     const isProduction = process.env.NODE_ENV === 'production';
 
     if (smtpConfigured) {
-      await sendMail({
-        to: String(email).trim(),
-        subject: 'Your MTBoss budget estimate OTP',
-        html: `
+      try {
+        await sendMail({
+          to: String(email).trim(),
+          subject: 'Your MTBoss budget estimate OTP',
+          text: `Your MTBoss budget estimate OTP is ${otp}. It expires in ${EXPIRY_MINUTES} minutes.`,
+          html: `
           <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px;background:#fff;color:#111;">
             <h2 style="margin:0 0 8px;font-size:22px;">MTBoss Budget Estimate OTP</h2>
             <p style="color:#555;line-height:1.6;">Use this OTP to verify your quote request and download your construction budget estimate. It expires in <strong>${EXPIRY_MINUTES} minutes</strong>.</p>
@@ -199,8 +205,16 @@ export async function POST(req) {
             </div>
             <p style="font-size:12px;color:#777;">The same OTP can be used for mobile/email verification on the website.</p>
           </div>
-        `,
-      });
+          `,
+        });
+      } catch (mailError) {
+        await pool.query(`UPDATE calculator_quote_otps SET used = TRUE WHERE id = $1`, [result.rows[0].id]);
+        console.error('Budget OTP email delivery error:', mailError.message);
+        return NextResponse.json({
+          success: false,
+          error: 'We could not deliver the OTP email. Please verify your email address and try again.',
+        }, { status: 502 });
+      }
     } else if (isProduction) {
       await pool.query(`UPDATE calculator_quote_otps SET used = TRUE WHERE id = $1`, [result.rows[0].id]);
       return NextResponse.json({ success: false, error: 'OTP service is not configured. Please contact support.' }, { status: 503 });

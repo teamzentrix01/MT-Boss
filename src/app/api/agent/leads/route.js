@@ -30,7 +30,13 @@ export async function GET(req) {
          FROM agent_leads l
          LEFT JOIN projects p ON p.source_lead_id = l.id
         WHERE l.agent_id = $1
-        ORDER BY COALESCE(l.follow_up_date, l.created_at::date) ASC, l.created_at DESC`,
+        ORDER BY
+          CASE
+            WHEN l.status = 'Lost' OR l.lead_stage = 'Lost' THEN 2
+            WHEN l.status = 'New' OR l.lead_stage = 'New' THEN 0
+            ELSE 1
+          END ASC,
+          l.created_at DESC`,
       [agent.id]
     );
 

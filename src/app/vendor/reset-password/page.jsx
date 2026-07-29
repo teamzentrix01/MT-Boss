@@ -1,5 +1,5 @@
 'use client';
-import ResetPasswordForm from '@/app/components/ResetPasswordForm';
+import ForgotPasswordForm from '@/app/components/ForgotPasswordForm';
 export default function Page() {
-  return <ResetPasswordForm loginHref="/vendor/login" accentColor="var(--brand-blue)" />;
+  return <ForgotPasswordForm userType="vendor" loginHref="/vendor/login" accentColor="var(--brand-blue)" />;
 }

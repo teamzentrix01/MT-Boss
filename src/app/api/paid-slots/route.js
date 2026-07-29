@@ -8,11 +8,8 @@ export const dynamic = 'force-dynamic';
 
 const TIME_SLOTS = [
   '08:00 AM - 10:00 AM',
-  '10:00 AM - 12:00 PM',
   '12:00 PM - 02:00 PM',
-  '02:00 PM - 04:00 PM',
   '04:00 PM - 06:00 PM',
-  '06:00 PM - 08:00 PM',
 ];
 
 async function ensurePaidSlotsTable() {
@@ -123,6 +120,9 @@ export async function POST(req) {
 
     if (!quick_service_id || !slot_date || !city || !normalizedSlot) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
+    }
+    if (!TIME_SLOTS.includes(normalizedSlot)) {
+      return NextResponse.json({ success: false, error: 'Only the three standard service slots can be managed.' }, { status: 400 });
     }
     const requestedCity = manager.isAdmin ? city : manager.franchise.city;
     if (!manager.isAdmin && String(city).trim().toLowerCase() !== String(manager.franchise.city).trim().toLowerCase()) {

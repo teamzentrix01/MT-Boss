@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import QuickServiceIcon from './QuickServiceIcon';
 import { getQuickServiceTotal } from '@/lib/quick-service-pricing';
 
+const QUICK_SERVICE_DURATION = '15 mins';
+
 async function uploadQuickServiceIcon(file) {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -41,7 +43,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   const [orderSaving, setOrderSaving] = useState(false);
 
   const [formData, setFormData] = useState({
-    icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150',
+    icon: '', label: '', desc: '', basePrice: '150', duration: QUICK_SERVICE_DURATION, visiting_price: '150',
     main_category: '', sub_category: '', cities: [],
   });
 
@@ -163,7 +165,7 @@ export default function QuickServicesManager({ isDarkMode }) {
       const data = await res.json();
       if (data.success) {
         setSuccess(editingId ? 'Service updated!' : 'Service added!');
-        setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150', main_category: '', sub_category: '', cities: [] });
+        setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: QUICK_SERVICE_DURATION, visiting_price: '150', main_category: '', sub_category: '', cities: [] });
         setEditingId(null); setShowForm(false);
         fetchServices();
       } else setError(data.error || 'Something went wrong');
@@ -191,7 +193,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   const handleEdit = (service) => {
     setFormData({
       icon: service.icon, label: service.label,
-      desc: service.description, basePrice: String(service.base_price ?? 150), duration: service.duration,
+      desc: service.description, basePrice: String(service.base_price ?? 150), duration: QUICK_SERVICE_DURATION,
       visiting_price: String(service.visiting_price ?? 150),
       main_category: service.main_category || '', sub_category: service.sub_category || '',
       cities: Array.isArray(service.cities) ? service.cities : [],
@@ -213,7 +215,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   };
 
   const resetForm = () => {
-    setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: '', visiting_price: '150', main_category: '', sub_category: '', cities: [] });
+    setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: QUICK_SERVICE_DURATION, visiting_price: '150', main_category: '', sub_category: '', cities: [] });
     setEditingId(null); setShowForm(false);
   };
 
@@ -502,10 +504,8 @@ export default function QuickServicesManager({ isDarkMode }) {
                 </div>
 
                 <div>
-                  <label className="qs-label">Duration *</label>
-                  <input className="qs-input" type="text" placeholder="e.g. 1–2 hrs"
-                    value={formData.duration}
-                    onChange={e => setFormData({ ...formData, duration: e.target.value })} />
+                  <label className="qs-label">Duration (Fixed)</label>
+                  <input className="qs-input" type="text" value={QUICK_SERVICE_DURATION} readOnly />
                 </div>
                 <div>
                   <label className="qs-label">Main Category</label>

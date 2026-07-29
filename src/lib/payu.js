@@ -58,7 +58,11 @@ export function createPayURequest(fields) {
 
   return {
     endpoint: config.paymentUrl,
-    fields: { ...normalized, hash: sha512(hashParts.join('|')) },
+    fields: {
+      ...normalized,
+      service_provider: config.environment === 'test' ? 'payu_paisa' : '',
+      hash: sha512(hashParts.join('|')),
+    },
   };
 }
 

@@ -8,6 +8,7 @@ import { normalizeManagedCityList } from '@/lib/cities';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+const QUICK_SERVICE_DURATION = '15 mins';
 
 function jsonWithoutCache(body, init = {}) {
   const response = NextResponse.json(body, init);
@@ -41,6 +42,11 @@ const ensureQuickServiceSeoColumns = createInitializationGuard(async () => {
          SET slug = LOWER(REGEXP_REPLACE(TRIM(label), '[^a-zA-Z0-9]+', '-', 'g'))
        WHERE slug IS NULL OR TRIM(slug) = ''
     `);
+
+    await pool.query(
+      `UPDATE quick_services SET duration = $1 WHERE duration IS DISTINCT FROM $1`,
+      [QUICK_SERVICE_DURATION]
+    );
 
   } catch (error) {
     console.error('ensureQuickServiceSeoColumns error:', error.message);
@@ -121,7 +127,6 @@ export async function POST(req) {
       label,
       desc,
       basePrice,
-      duration,
       visiting_price,
       main_category,
       sub_category,
@@ -134,7 +139,7 @@ export async function POST(req) {
       cities,
     } = await req.json();
 
-    if (!icon || !label || !desc || !basePrice || !duration || !Array.isArray(cities) || cities.length === 0) {
+    if (!icon || !label || !desc || !basePrice || !Array.isArray(cities) || cities.length === 0) {
       return NextResponse.json(
         { error: 'All fields and at least one city are required' },
         { status: 400 }
@@ -159,7 +164,7 @@ export async function POST(req) {
         label,
         desc,
         parseFloat(basePrice),
-        duration,
+        QUICK_SERVICE_DURATION,
         parseFloat(visiting_price || 150),
         main_category || null,
         sub_category || null,
@@ -195,7 +200,6 @@ export async function PUT(req) {
       label,
       desc,
       basePrice,
-      duration,
       visiting_price,
       main_category,
       sub_category,
@@ -208,7 +212,7 @@ export async function PUT(req) {
       cities,
     } = await req.json();
 
-    if (!id || !icon || !label || !desc || !basePrice || !duration || !Array.isArray(cities) || cities.length === 0) {
+    if (!id || !icon || !label || !desc || !basePrice || !Array.isArray(cities) || cities.length === 0) {
       return NextResponse.json(
         { error: 'All fields and at least one city are required' },
         { status: 400 }
@@ -233,7 +237,7 @@ export async function PUT(req) {
         label,
         desc,
         parseFloat(basePrice),
-        duration,
+        QUICK_SERVICE_DURATION,
         parseFloat(visiting_price || 150),
         main_category || null,
         sub_category || null,
