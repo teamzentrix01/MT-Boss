@@ -105,16 +105,20 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
     const id = searchParams.get('id');
+    const admin = status === 'all' ? requireRole(req, 'admin') : null;
 
     if (id) {
-      const result = await pool.query('SELECT * FROM jobs WHERE id = $1 LIMIT 1', [id]);
+      if (status === 'all' && !admin) return unauthorized();
+      const result = admin
+        ? await pool.query('SELECT * FROM jobs WHERE id = $1 LIMIT 1', [id])
+        : await pool.query("SELECT * FROM jobs WHERE id = $1 AND status = 'active' LIMIT 1", [id]);
       if (!result.rows[0]) {
         return NextResponse.json({ success: false, error: 'Job not found' }, { status: 404 });
       }
       return NextResponse.json({ success: true, data: normalizeJob(result.rows[0]) });
     }
 
-    if (status === 'all' && !requireRole(req, 'admin')) return unauthorized();
+    if (status === 'all' && !admin) return unauthorized();
     const result = status === 'all'
       ? await pool.query('SELECT * FROM jobs ORDER BY created_at DESC')
       : await pool.query("SELECT * FROM jobs WHERE status = 'active' ORDER BY urgent DESC, created_at DESC");

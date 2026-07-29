@@ -420,6 +420,7 @@ export default function FranchiseDashboardPage() {
                 <span className="fd-user-meta">{franchise?.city}, {franchise?.state}</span>
               </div>
             </div>
+            <button className="fd-btn secondary" onClick={() => router.push('/material-orders?role=franchise')}>Material Orders</button>
             {can('profile.change_password') && <button className="fd-btn secondary" onClick={openPasswordForm}>Change Password</button>}
           </div>
         </div>

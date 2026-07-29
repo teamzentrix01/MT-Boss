@@ -1,12 +1,17 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { requireRole, unauthorized } from '@/lib/auth';
+import { requireRole, unauthorized, verifyBearer } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { resolveManagedCity } from '@/lib/cities';
 import { createInitializationGuard } from '@/lib/api-utils';
 
 const ensurePropertiesSchema = createInitializationGuard(async () => {
   await pool.query(`ALTER TABLE properties ADD COLUMN IF NOT EXISTS area_unit VARCHAR(20) NOT NULL DEFAULT 'sqft'`);
+  await pool.query(`ALTER TABLE properties ADD COLUMN IF NOT EXISTS lister_user_id INTEGER`);
+  await pool.query(`ALTER TABLE properties ADD COLUMN IF NOT EXISTS tracking_token VARCHAR(64)`);
+  await pool.query(`ALTER TABLE properties ALTER COLUMN status SET DEFAULT 'pending'`);
+  await pool.query(`UPDATE properties SET tracking_token = CONCAT('PROP-', id, '-', SUBSTRING(MD5(RANDOM()::TEXT), 1, 8)) WHERE tracking_token IS NULL`);
+  await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS properties_tracking_token_idx ON properties (tracking_token)`);
 });
 
 // GET — public. ?listing_type=buy|rent&status=verified for public pages.
@@ -18,12 +23,47 @@ export async function GET(req) {
     const listing_type = searchParams.get('listing_type'); // buy | rent | null = all
     const status       = searchParams.get('status');       // verified | pending | rejected | all
     const id           = searchParams.get('id');
+    const mine         = searchParams.get('mine');
+    const tracking     = cleanText(searchParams.get('tracking') || '').toUpperCase();
 
     // Single property
     if (id) {
-      const result = await pool.query(`SELECT * FROM properties WHERE id=$1`, [id]);
+      const user = verifyBearer(req);
+      const vals = [id];
+      let query = `SELECT * FROM properties WHERE id=$1 AND status='verified'`;
+
+      if (requireRole(req, 'admin')) {
+        query = `SELECT * FROM properties WHERE id=$1`;
+      } else if (user?.role === 'user') {
+        vals.push(user.id);
+        query = `SELECT * FROM properties WHERE id=$1 AND (status='verified' OR lister_user_id=$2)`;
+      }
+
+      const result = await pool.query(query, vals);
       if (result.rows.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
       return NextResponse.json({ success: true, data: result.rows[0] });
+    }
+
+    if (mine === 'true') {
+      const user = verifyBearer(req);
+
+      if (user?.role === 'user') {
+        const result = await pool.query(
+          `SELECT * FROM properties WHERE lister_user_id=$1 ORDER BY created_at DESC`,
+          [user.id]
+        );
+        return NextResponse.json({ success: true, data: result.rows });
+      }
+
+      if (!tracking) {
+        return NextResponse.json({ error: 'Enter a tracking id to view listing status' }, { status: 400 });
+      }
+
+      const result = await pool.query(
+        `SELECT * FROM properties WHERE UPPER(tracking_token)=$1 ORDER BY created_at DESC`,
+        [tracking]
+      );
+      return NextResponse.json({ success: true, data: result.rows });
     }
 
     // Admin wants all — requires token
@@ -58,6 +98,9 @@ export async function POST(req) {
       highlights, images, tag,
       seller_type, seller_name, seller_phone, seller_email,
     } = await req.json();
+    const currentUser = verifyBearer(req);
+    const listerUserId = currentUser?.role === 'user' ? currentUser.id : null;
+    const trackingToken = `PROP-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`.toUpperCase();
 
     if (!title || !type || !listing_type || !price || !price_raw || !location) {
       return NextResponse.json({ error: 'title, type, listing_type, price, price_raw and location are required' }, { status: 400 });
@@ -83,8 +126,8 @@ export async function POST(req) {
       `INSERT INTO properties
         (title, type, listing_type, category, price, price_raw, location, address,
          beds, baths, area, area_unit, description, highlights, images, tag,
-         seller_type, seller_name, seller_phone, seller_email, status, verified_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,'verified',NOW())
+         seller_type, seller_name, seller_phone, seller_email, status, verified_at, lister_user_id, tracking_token)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,'pending',NULL,$21,$22)
        RETURNING *`,
       [
         title, type, listing_type, category || type.toLowerCase(),
@@ -97,6 +140,7 @@ export async function POST(req) {
         tag || 'New',
         seller_type || 'owner',
         cleanSellerName, cleanSellerPhone, cleanSellerEmail,
+        listerUserId, trackingToken,
       ]
     );
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });

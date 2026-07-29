@@ -40,7 +40,8 @@ export default function CareersPage() {
   const [jobs, setJobs] = useState(fallbackJobs);
   const ref = useRef(null);
 
-  const departments = ["All", ...Array.from(new Set(jobs.map(job => job.department).filter(Boolean)))];
+  const activeJobs = jobs.filter((job) => (job.status || "active") === "active");
+  const departments = ["All", ...Array.from(new Set(activeJobs.map(job => job.department).filter(Boolean)))];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -69,7 +70,7 @@ export default function CareersPage() {
     return job.posted || "Recently posted";
   };
 
-  const filtered = jobs.filter((job) => {
+  const filtered = activeJobs.filter((job) => {
     const matchDept = filter === "All" || job.department === filter;
     const matchSearch =
       job.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -107,7 +108,7 @@ export default function CareersPage() {
           <div className="flex items-center justify-center gap-8 mt-6">
             {[
               { value: "500+", label: "Team Members" },
-              { value: `${jobs.length}+`, label: "Open Positions" },
+              { value: `${activeJobs.length}+`, label: "Open Positions" },
               { value: "20+", label: "Years Legacy" },
             ].map((s) => (
               <div key={s.label} className="text-center">
@@ -170,10 +171,12 @@ export default function CareersPage() {
             {departments.map((dept) => (
               <button
                 key={dept}
+                type="button"
                 onClick={() => setFilter(dept)}
+                aria-pressed={filter === dept}
                 className={`px-5 py-2 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${
                   filter === dept
-                    ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black"
+                    ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black shadow-[0_0_0_3px_rgba(37,99,235,0.18)] -translate-y-0.5"
                     : dark
                     ? "border-zinc-700 text-zinc-500 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
                     : "border-gray-200 text-zinc-400 hover:border-zinc-800 hover:text-zinc-800"

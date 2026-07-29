@@ -56,6 +56,7 @@ export default function JobDetailPage() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [submittedApplication, setSubmittedApplication] = useState(null);
   const [loading, setLoading] = useState(false);
   const [resumeName, setResumeName] = useState("");
   const [dragOver, setDragOver] = useState(false);
@@ -81,6 +82,21 @@ export default function JobDetailPage() {
 
     if (id) fetchJobs();
   }, [id]);
+
+  useEffect(() => {
+    try {
+      const savedUser = JSON.parse(localStorage.getItem("user") || "null");
+      if (!savedUser) return;
+      setForm((current) => ({
+        ...current,
+        name: current.name || savedUser.name || "",
+        email: current.email || savedUser.email || "",
+        phone: current.phone || savedUser.phone || "",
+      }));
+    } catch {
+      // Ignore malformed local account data.
+    }
+  }, []);
 
   const getPostedLabel = (item) => {
     if (item.posted) return item.posted;
@@ -169,6 +185,11 @@ export default function JobDetailPage() {
   setLoading(true);
 
   try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Please login as a customer before applying so you can track your application.");
+      return;
+    }
     const payload = new FormData();
     payload.append("job_id", id);
     payload.append("position", job.title);
@@ -189,6 +210,7 @@ export default function JobDetailPage() {
 
     const res = await fetch("/api/career-enquiries", {
       method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
       body: payload,
     });
     const data = await res.json();
@@ -200,6 +222,7 @@ export default function JobDetailPage() {
 
     if (data.data) {
       openWhatsApp(data.data);
+      setSubmittedApplication(data.data);
     }
 
     setSubmitted(true);
@@ -259,6 +282,11 @@ export default function JobDetailPage() {
             Your application for
           </p>
           <p className="text-[var(--brand-blue)] font-black text-sm mb-6">{job.title}</p>
+          {submittedApplication?.application_reference && (
+            <p className={`mb-5 text-[10px] font-black uppercase tracking-widest ${dark ? "text-white" : "text-zinc-800"}`}>
+              Application ID: {submittedApplication.application_reference}
+            </p>
+          )}
           <p className={`text-xs leading-relaxed mb-8 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
             Our HR team will review your application and get back to you within 3-5 business days on{" "}
             <span className={`font-black ${dark ? "text-white" : "text-zinc-800"}`}>{form.email}</span>
@@ -275,10 +303,10 @@ export default function JobDetailPage() {
               View More Jobs
             </Link>
             <Link
-              href="/"
+              href="/job-applications"
               className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
             >
-              Go Home
+              Track Application
             </Link>
           </div>
         </div>

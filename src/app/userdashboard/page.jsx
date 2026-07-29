@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { redirectToPayU } from '@/lib/payu-client';
 import QuickServiceIcon from '../components/QuickServiceIcon';
+import MaterialOrdersPanel from '@/app/components/MaterialOrdersPanel';
+import JobApplicationsPanel from '@/app/components/JobApplicationsPanel';
 
 // ── Status config ──────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
@@ -714,10 +716,20 @@ export default function UserDashboard() {
             </h1>
             {user?.email && <p className={`text-xs mt-1 ${muted}`}>{user.email}</p>}
           </div>
-          <Link href="/quick"
-            className={`self-start px-5 py-2.5 text-[9px] font-black uppercase tracking-widest border transition-all ${isDark ? 'border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/10' : 'border-zinc-900 text-zinc-900 hover:bg-zinc-100'}`}>
-            + Book a Service
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/property/listings-status"
+              className="self-start border border-green-600 px-5 py-2.5 text-[9px] font-black uppercase tracking-widest text-green-600 transition-all hover:bg-green-50">
+              Track Property Listings
+            </Link>
+            <Link href="/material-orders?role=user"
+              className="self-start border border-blue-600 px-5 py-2.5 text-[9px] font-black uppercase tracking-widest text-blue-600 transition-all hover:bg-blue-50">
+              Track Material Orders
+            </Link>
+            <Link href="/quick"
+              className={`self-start px-5 py-2.5 text-[9px] font-black uppercase tracking-widest border transition-all ${isDark ? 'border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/10' : 'border-zinc-900 text-zinc-900 hover:bg-zinc-100'}`}>
+              + Book a Service
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -747,6 +759,8 @@ export default function UserDashboard() {
               { key: 'active',  label: `Active (${activeBookings.length})` },
               { key: 'history', label: `History (${historyBookings.length})` },
               { key: 'primary', label: `Construction Services (${primaryServices.length})` },
+              { key: 'purchases', label: 'Material Purchases' },
+              { key: 'applications', label: 'Job Applications' },
             ].map(({ key, label }) => {
               const selected = tab === key;
               return (
@@ -765,6 +779,12 @@ export default function UserDashboard() {
             })}
           </div>
 
+          {tab === 'purchases' ? (
+            <MaterialOrdersPanel role="user" embedded />
+          ) : tab === 'applications' ? (
+            <JobApplicationsPanel />
+          ) : (
+          <>
           {tab === 'primary' && primaryServices.length > 0 && (
             <div className={`mb-4 px-4 py-3 border ${isDark ? 'border-zinc-800 bg-zinc-950' : 'border-zinc-200 bg-white'}`}>
               <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[var(--brand-blue)]">Construction Services</p>
@@ -810,6 +830,8 @@ export default function UserDashboard() {
                 />
               ))}
             </div>
+          )}
+          </>
           )}
         </div>
       </section>

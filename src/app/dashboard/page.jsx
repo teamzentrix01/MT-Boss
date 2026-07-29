@@ -73,6 +73,33 @@ function getResumeViewerUrl(resumeUrl, resumeName) {
   return `/dashboard/resume-viewer?${params.toString()}`;
 }
 
+const CAREER_EDIT_FIELDS = [
+  { name: 'name', label: 'Name', required: true },
+  { name: 'email', label: 'Email', type: 'email', required: true },
+  { name: 'phone', label: 'Phone', required: true },
+  { name: 'alternative_phone', label: 'Alternative Phone' },
+  { name: 'experience', label: 'Experience', required: true },
+  { name: 'current_company', label: 'Current Company' },
+  { name: 'notice_period', label: 'Notice Period' },
+  { name: 'current_salary', label: 'Current Salary' },
+  { name: 'expected_salary', label: 'Expected Salary' },
+];
+
+function makeCareerEditForm(application = {}) {
+  return {
+    name: application.name || '',
+    email: application.email || '',
+    phone: application.phone || '',
+    alternative_phone: application.alternative_phone || '',
+    experience: application.experience || '',
+    current_company: application.current_company || '',
+    notice_period: application.notice_period || '',
+    current_salary: application.current_salary || '',
+    expected_salary: application.expected_salary || '',
+    cover_letter: application.cover_letter || '',
+  };
+}
+
 function AdminDashboard() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(() => searchParams.get('tab') || 'overview');
@@ -87,6 +114,13 @@ function AdminDashboard() {
   const [pseSearch, setPseSearch] = useState('');
   const [careerEnquiries, setCareerEnquiries] = useState([]);
   const [selectedCareerEnquiry, setSelectedCareerEnquiry] = useState(null);
+  const [careerStatus, setCareerStatus] = useState('New');
+  const [careerNote, setCareerNote] = useState('');
+  const [careerInterviewAt, setCareerInterviewAt] = useState('');
+  const [careerSaving, setCareerSaving] = useState(false);
+  const [careerEditForm, setCareerEditForm] = useState({});
+  const [careerEditResume, setCareerEditResume] = useState(null);
+  const [careerEditSaving, setCareerEditSaving] = useState(false);
   const [pendingProperties, setPendingProperties] = useState(0);
   const [pendingVendors, setPendingVendors] = useState(0);
   const [pendingSuppliers, setPendingSuppliers] = useState(0);
@@ -342,6 +376,76 @@ function AdminDashboard() {
     { id: 'vendors',                    label: 'Vendors',                   icon: '🏪' },
     { id: 'packages',                   label: 'Package Approvals',         icon: '📦' },
   ];
+
+  const openCareerEnquiry = (application) => {
+    setSelectedCareerEnquiry(application);
+    setCareerEditForm(makeCareerEditForm(application));
+    setCareerEditResume(null);
+    setCareerStatus(application.status || 'New');
+    setCareerNote(application.status_note || '');
+    setCareerInterviewAt(application.interview_at
+      ? new Date(application.interview_at).toISOString().slice(0, 16)
+      : '');
+  };
+
+  const updateCareerApplication = async () => {
+    if (!selectedCareerEnquiry) return;
+    setCareerSaving(true);
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const response = await fetch('/api/career-enquiries', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id: selectedCareerEnquiry.id,
+          status: careerStatus,
+          note: careerNote,
+          interview_at: careerStatus === 'Interview Scheduled' ? careerInterviewAt : null,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || 'Application update failed');
+      setSelectedCareerEnquiry(data.data);
+      setCareerEnquiries((current) => current.map((item) => item.id === data.data.id ? data.data : item));
+      setCareerNote(data.data.status_note || '');
+      setCareerEditForm(makeCareerEditForm(data.data));
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setCareerSaving(false);
+    }
+  };
+
+  const updateCareerApplicationDetails = async () => {
+    if (!selectedCareerEnquiry) return;
+    setCareerEditSaving(true);
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const formData = new FormData();
+      formData.append('id', selectedCareerEnquiry.id);
+      Object.entries(careerEditForm).forEach(([key, value]) => formData.append(key, value || ''));
+      if (careerEditResume) formData.append('resume', careerEditResume);
+
+      const response = await fetch('/api/career-enquiries', {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || 'Application details update failed');
+      setSelectedCareerEnquiry(data.data);
+      setCareerEnquiries((current) => current.map((item) => item.id === data.data.id ? data.data : item));
+      setCareerEditForm(makeCareerEditForm(data.data));
+      setCareerEditResume(null);
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setCareerEditSaving(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -1074,7 +1178,7 @@ function AdminDashboard() {
                           <td style={{ padding: '0.6rem 0.875rem' }}><span className={`badge ${getStatusColor(item.status)}`}>{item.status}</span></td>
                           <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.created_at).toLocaleDateString()}</td>
                           <td style={{ padding: '0.6rem 0.875rem' }}>
-                            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '600', padding: 0 }} onClick={() => setSelectedCareerEnquiry(item)}>View</button>
+                            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '600', padding: 0 }} onClick={() => openCareerEnquiry(item)}>View</button>
                           </td>
                         </tr>
                       ))}
@@ -1731,6 +1835,70 @@ function AdminDashboard() {
 
               <div className="modal-field-label" style={{ marginBottom: '0.375rem' }}>Cover Letter</div>
               <div className="modal-message">{selectedCareerEnquiry.cover_letter || 'No cover letter provided.'}</div>
+
+              <div style={{ marginTop:'1rem', padding:'1rem', border:'1px solid var(--border)', borderRadius:8, background:'var(--surface)' }}>
+                <div className="modal-field-label" style={{ marginBottom:'0.6rem' }}>Edit Application Details</div>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))', gap:'0.6rem' }}>
+                  {CAREER_EDIT_FIELDS.map(field => (
+                    <label key={field.name} style={{ display:'block' }}>
+                      <span className="modal-field-label">{field.label}</span>
+                      <input
+                        type={field.type || 'text'}
+                        required={field.required}
+                        value={careerEditForm[field.name] || ''}
+                        onChange={event => setCareerEditForm(current => ({ ...current, [field.name]: event.target.value }))}
+                        className="search-input"
+                        style={{ width:'100%', marginTop:'0.25rem' }}
+                      />
+                    </label>
+                  ))}
+                </div>
+                <label style={{ display:'block', marginTop:'0.6rem' }}>
+                  <span className="modal-field-label">Cover Letter</span>
+                  <textarea
+                    value={careerEditForm.cover_letter || ''}
+                    onChange={event => setCareerEditForm(current => ({ ...current, cover_letter: event.target.value }))}
+                    className="search-input"
+                    rows={4}
+                    style={{ width:'100%', marginTop:'0.25rem', resize:'vertical' }}
+                  />
+                </label>
+                <label style={{ display:'block', marginTop:'0.6rem' }}>
+                  <span className="modal-field-label">Replace Resume</span>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={event => setCareerEditResume(event.target.files?.[0] || null)}
+                    className="search-input"
+                    style={{ width:'100%', marginTop:'0.25rem' }}
+                  />
+                </label>
+                <button type="button" onClick={updateCareerApplicationDetails} disabled={careerEditSaving}
+                  className="modal-close-btn" style={{ marginTop:'0.75rem', background:'var(--accent)', color:'#fff', opacity:careerEditSaving ? 0.55 : 1 }}>
+                  {careerEditSaving ? 'Saving...' : 'Save Detail Changes'}
+                </button>
+              </div>
+
+              <div style={{ marginTop:'1rem', padding:'1rem', border:'1px solid var(--border)', borderRadius:8, background:'var(--bg)' }}>
+                <div className="modal-field-label" style={{ marginBottom:'0.6rem' }}>Update Application Status</div>
+                <div style={{ display:'grid', gridTemplateColumns:'minmax(180px, .8fr) minmax(220px, 1.2fr)', gap:'0.6rem' }}>
+                  <select value={careerStatus} onChange={event => setCareerStatus(event.target.value)} className="search-input" style={{ width:'100%' }}>
+                    {['New','Under Review','Shortlisted','Interview Scheduled','Selected','Rejected','Withdrawn'].map(status => (
+                      <option key={status} value={status}>{status}</option>
+                    ))}
+                  </select>
+                  <input value={careerNote} onChange={event => setCareerNote(event.target.value)}
+                    placeholder="Update visible to applicant" className="search-input" style={{ width:'100%' }} />
+                </div>
+                {careerStatus === 'Interview Scheduled' && (
+                  <input type="datetime-local" value={careerInterviewAt} onChange={event => setCareerInterviewAt(event.target.value)}
+                    className="search-input" style={{ width:'100%', marginTop:'0.6rem' }} />
+                )}
+                <button type="button" onClick={updateCareerApplication} disabled={careerSaving}
+                  className="modal-close-btn" style={{ marginTop:'0.75rem', background:'var(--accent)', color:'#fff', opacity:careerSaving ? 0.55 : 1 }}>
+                  {careerSaving ? 'Saving…' : 'Post Status Update'}
+                </button>
+              </div>
 
               <button className="modal-close-btn" onClick={() => setSelectedCareerEnquiry(null)}>Close</button>
             </div>
