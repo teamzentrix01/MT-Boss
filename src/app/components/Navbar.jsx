@@ -173,7 +173,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
   return (
     <nav
-      className={`site-navbar w-screen max-w-[100vw] overflow-x-hidden ${bg} border-b shadow-sm transition-all duration-500 sticky top-0 z-[100]`}
+      className={`site-navbar w-full max-w-full overflow-visible ${bg} border-b shadow-sm transition-all duration-500 sticky top-0 z-[100]`}
     >
       <div className="w-full mx-auto px-2 2xl:px-4">
         <div className="flex items-center justify-between h-16">
