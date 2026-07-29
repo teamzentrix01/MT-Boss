@@ -102,7 +102,8 @@ function VendorDashboardContent() {
   useEffect(() => {
     const token = localStorage.getItem("vendor-token");
     if (!token) {
-      router.push("/vendor/login");
+      setLoading(false);
+      router.replace("/vendor/login");
       return;
     }
  
@@ -139,6 +140,12 @@ function VendorDashboardContent() {
       const [notData, bookData, compData, profData, leadData] = await Promise.all([
         notRes.json(), bookRes.json(), compRes.json(), profRes.json(), leadRes.json(),
       ]);
+      if ([notRes, bookRes, compRes, profRes, leadRes].some((response) => response.status === 401 || response.status === 403)) {
+        localStorage.removeItem('vendor-token');
+        setLoading(false);
+        router.replace('/vendor/login');
+        return;
+      }
       if (notData.success) setNotifications(notData.notifications);
       if (leadData.success) {
         setVendorLeads(leadData.data || []);

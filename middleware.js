@@ -4,6 +4,7 @@ export function middleware(request) {
   const token = request.cookies.get('auth-token')?.value;
   const franchiseToken = request.cookies.get('franchise-auth-token')?.value;
   const agentToken = request.cookies.get('agent-auth-token')?.value;
+  const vendorToken = request.cookies.get('vendor-auth-token')?.value;
   
   // Protect dashboard routes
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
@@ -35,6 +36,14 @@ export function middleware(request) {
     }
   }
 
+  if (request.nextUrl.pathname.startsWith('/vendor/dashboard') && !vendorToken) {
+    return NextResponse.redirect(new URL('/vendor/login', request.url));
+  }
+
+  if (request.nextUrl.pathname.startsWith('/vendor/login') && vendorToken) {
+    return NextResponse.redirect(new URL('/vendor/dashboard', request.url));
+  }
+
   return NextResponse.next();
 }
 
@@ -47,5 +56,7 @@ export const config = {
     '/franchise/dashboard/:path*',
     '/agent/login',
     '/agent/dashboard/:path*',
+    '/vendor/login',
+    '/vendor/dashboard/:path*',
   ],
 };

@@ -1052,38 +1052,38 @@ export default function AllQuickServicesPage() {
   }
 
   return (
-    <main className={`min-h-screen font-serif transition-colors duration-500 ${bg}`}>
+    <main className={`min-h-screen w-screen max-w-[100vw] overflow-x-hidden font-serif transition-colors duration-500 ${bg}`}>
 
       {/* Hero */}
-      <section className={`pt-28 pb-10 px-6 text-center border-b ${border}`}>
-        <div className="max-w-3xl mx-auto">
-          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-3">Quality Guaranteed</p>
-          <h1 className={`text-4xl md:text-6xl font-black uppercase tracking-tighter mb-4 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+      <section className={`w-screen max-w-[100vw] overflow-hidden pt-20 sm:pt-28 pb-10 px-4 sm:px-6 text-center border-b ${border}`}>
+        <div className="w-full min-w-0 max-w-3xl mx-auto overflow-hidden">
+          <p className="text-[var(--brand-blue)] text-[9px] sm:text-[10px] font-black uppercase tracking-[0.28em] sm:tracking-[0.5em] mb-3">Quality Guaranteed</p>
+          <h1 className={`max-w-full break-words text-[clamp(1.75rem,9vw,2.5rem)] md:text-6xl leading-[0.95] font-black uppercase tracking-tighter mb-4 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
             Quick <span className="text-[var(--brand-blue)]">Home</span> Services
           </h1>
-          <p className={`text-sm max-w-xl mx-auto leading-relaxed ${muted}`}>
+          <p className={`max-w-full break-words text-sm sm:max-w-xl mx-auto leading-relaxed ${muted}`}>
             Hassle-free home maintenance with India&apos;s most trusted professionals. Select a service to book an appointment.
           </p>
         </div>
       </section>
 
       {/* Grid */}
-      <section className="py-12 px-6">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <section className="w-screen max-w-[100vw] overflow-hidden py-10 sm:py-12 px-4 sm:px-6">
+        <div className="w-full min-w-0 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {services.length > 0 ? (
             services.map((s) => (
-              <div key={s.id} className={`group p-5 border transition-all duration-300 relative overflow-hidden ${card}`}>
+              <div key={s.id} className={`group min-w-0 max-w-full p-5 border transition-all duration-300 relative overflow-hidden ${card}`}>
                 <div className="text-3xl mb-3 transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300 origin-left">
                   <QuickServiceIcon value={s.icon} label={s.label}
                     className="flex h-10 w-10 items-center justify-center"
                     imageClassName="h-10 w-10 object-contain" />
                 </div>
                 <Link href={`/quick/${s.slug || s.label.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')}`}>
-                  <h3 className={`text-base font-black uppercase tracking-tight mb-2 hover:text-[var(--brand-blue)] transition-colors ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                  <h3 className={`break-words text-base font-black uppercase tracking-tight mb-2 hover:text-[var(--brand-blue)] transition-colors ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                     {s.label}
                   </h3>
                 </Link>
-                <p className={`text-xs leading-relaxed mb-3 min-h-[48px] ${muted}`}>{s.description}</p>
+                <p className={`break-words text-xs leading-relaxed mb-3 min-h-[48px] ${muted}`}>{s.description}</p>
                 {s.sub_category && (
                   <p className={`text-[10px] uppercase font-bold tracking-wide mb-3 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                     Includes: <span className="font-semibold">{s.sub_category}</span>

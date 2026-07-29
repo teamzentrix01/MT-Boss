@@ -173,7 +173,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
   return (
     <nav
-      className={`site-navbar ${bg} border-b shadow-sm transition-all duration-500 sticky top-0 z-[100]`}
+      className={`site-navbar w-screen max-w-[100vw] overflow-x-hidden ${bg} border-b shadow-sm transition-all duration-500 sticky top-0 z-[100]`}
     >
       <div className="w-full mx-auto px-2 2xl:px-4">
         <div className="flex items-center justify-between h-16">
@@ -182,7 +182,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             <img
               src="/logo.png"
               alt="MTBOSS"
-              className="h-[58px] w-auto object-contain"
+              className="h-12 sm:h-[58px] w-auto object-contain"
             />
           </Link>
 
@@ -395,12 +395,12 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           </div>
 
           {/* Mobile Hamburger */}
-          <div className="xl:hidden flex items-center gap-2 sm:gap-3">
+          <div className="xl:hidden min-w-0 flex items-center gap-1 sm:gap-3">
             {!loading && !user && (
-              <div className="flex items-center gap-1.5 mr-1">
+              <div className="flex min-w-0 items-center gap-1 mr-0.5">
                 <Link
                   href="/login"
-                  className={`text-[10px] font-bold px-2 py-1.5 border rounded transition-all duration-200 ${
+                  className={`whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 border rounded transition-all duration-200 ${
                     isDarkMode
                       ? 'text-[var(--brand-blue)] border-[var(--brand-blue)] hover:bg-[var(--brand-blue)]'
                       : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)]'
@@ -410,7 +410,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 </Link>
                 <Link
                   href="/signup"
-                  className="text-[10px] font-bold px-2 py-1.5 bg-[var(--brand-blue)] text-black rounded hover:bg-[var(--brand-blue-dark)] transition-all duration-200"
+                  className="hidden min-[430px]:inline-flex whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 bg-[var(--brand-blue)] text-black rounded hover:bg-[var(--brand-blue-dark)] transition-all duration-200"
                 >
                   Sign Up
                 </Link>
@@ -421,7 +421,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               type="button"
               aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               title={isDarkMode ? "Light mode" : "Dark mode"}
-              className={`nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border ${
+              className={`nav-theme-toggle flex h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 items-center justify-center rounded-full border ${
                 isDarkMode ? 'nav-theme-toggle-dark border-zinc-700 bg-zinc-900 text-zinc-200' : 'nav-theme-toggle-light border-gray-300 bg-white text-zinc-700'
               }`}
             >
@@ -429,7 +429,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`nav-control p-2 rounded-md ${
+              className={`nav-control p-1.5 sm:p-2 rounded-md ${
                 isDarkMode
                   ? 'text-zinc-300 hover:bg-zinc-800'
                   : 'text-zinc-600 hover:bg-gray-100'
