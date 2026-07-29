@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import PaidTimeSlotsManager from './PaidTimeSlotsManager';
+import QuickServiceIcon from './QuickServiceIcon';
 
 export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', defaultCity = '', compact = false, permissions = null }) {
   const lockedCity = tokenKey === 'franchise-token' && Boolean(defaultCity);
@@ -21,6 +22,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
 
   const [formData, setFormData] = useState({
     quick_service_id: '',
+    quick_service_ids: [],
     slot_date: '',
     slot_end_date: '',
     slot_start: '08:00',
@@ -28,8 +30,14 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
     city: defaultCity || '',
     max_bookings: 1,
   });
-  const selectedService = services.find((service) => String(service.id) === String(formData.quick_service_id));
-  const formCityOptions = selectedService?.cities || [];
+  const selectedServiceIds = editingSlot
+    ? [String(formData.quick_service_id)]
+    : formData.quick_service_ids.map(String);
+  const selectedServices = services.filter((service) => selectedServiceIds.includes(String(service.id)));
+  const formCityOptions = selectedServices.length === 0 ? [] : selectedServices.reduce((common, service, index) => {
+    const cities = service.cities || [];
+    return index === 0 ? cities : common.filter((city) => cities.some((item) => item.toLowerCase() === city.toLowerCase()));
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -76,7 +84,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
   }
 
   async function handleCreateSlot() {
-    if (!formData.quick_service_id || !formData.slot_date || !formData.city) {
+    if (selectedServiceIds.length === 0 || !formData.slot_date || !formData.city) {
       alert('Please fill all required fields');
       return;
     }
@@ -99,6 +107,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
         setEditingSlot(null);
         setFormData({
           quick_service_id: '',
+          quick_service_ids: [],
           slot_date: '',
           slot_end_date: '',
           slot_start: '08:00',
@@ -164,6 +173,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
     setEditingSlot(slot);
     setFormData({
       quick_service_id: String(slot.quick_service_id || ''),
+      quick_service_ids: [String(slot.quick_service_id || '')],
       slot_date: slot.slot_date ? String(slot.slot_date).split('T')[0] : '',
       slot_end_date: '',
       slot_start: String(slot.slot_start || '08:00').slice(0, 5),
@@ -179,6 +189,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
     setShowForm(false);
     setFormData({
       quick_service_id: '',
+      quick_service_ids: [],
       slot_date: '',
       slot_end_date: '',
       slot_start: '08:00',
@@ -323,24 +334,36 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
             </h4>
             
             <div className="form-grid">
-              <div className="form-group">
-                <label className="form-label">Service *</label>
-                <select
-                  className="form-select"
-                  value={formData.quick_service_id}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    quick_service_id: e.target.value,
-                    city: lockedCity ? defaultCity : '',
-                  })}
-                >
-                  <option value="">Select Service</option>
-                  {services.map((service) => (
-                    <option key={service.id} value={service.id}>
-                      {service.label}
-                    </option>
-                  ))}
-                </select>
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label className="form-label">Services * ({selectedServiceIds.length} selected)</label>
+                {editingSlot ? (
+                  <div className="form-input">{editingSlot.service_label || `Service #${editingSlot.quick_service_id}`}</div>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.5rem', maxHeight: '220px', overflowY: 'auto', padding: '0.75rem', border: '1px solid var(--border)', borderRadius: '6px' }}>
+                    {services.map((service) => {
+                      const checked = selectedServiceIds.includes(String(service.id));
+                      return (
+                        <label key={service.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.8rem' }}>
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => setFormData((current) => ({
+                              ...current,
+                              quick_service_ids: checked
+                                ? current.quick_service_ids.filter((id) => String(id) !== String(service.id))
+                                : [...current.quick_service_ids, String(service.id)],
+                              city: lockedCity ? defaultCity : '',
+                            }))}
+                          />
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', minWidth: 0 }}>
+                            <QuickServiceIcon value={service.icon} label={service.label} className="inline-flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded" imageClassName="h-full w-full object-contain" />
+                            <span>{service.label}</span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               <div className="form-group">
@@ -349,7 +372,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
                   className="form-select"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  disabled={!formData.quick_service_id || lockedCity}
+                  disabled={selectedServiceIds.length === 0 || lockedCity}
                 >
                   <option value="">Select city</option>
                   {formCityOptions.map((city) => <option key={city} value={city}>{city}</option>)}
@@ -457,7 +480,12 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
                 <tbody>
                   {slots.map((slot) => (
                     <tr key={slot.id}>
-                      <td style={{ fontWeight: '600' }}>{slot.service_icon} {slot.service_label || `Service #${slot.quick_service_id}`}</td>
+                      <td style={{ fontWeight: '600' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <QuickServiceIcon value={slot.service_icon} label={slot.service_label} className="inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded" imageClassName="h-full w-full object-contain" />
+                          <span>{slot.service_label || `Service #${slot.quick_service_id}`}</span>
+                        </span>
+                      </td>
                       <td>{slot.slot_date ? String(slot.slot_date).split('T')[0] : '—'}</td>
                       <td>{slot.slot_start} - {slot.slot_end}</td>
                       <td>{slot.city}</td>

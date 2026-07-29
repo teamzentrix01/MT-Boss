@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import QuickServiceIcon from './QuickServiceIcon';
 
 const TIME_SLOTS = [
   '08:00 AM - 10:00 AM',
@@ -232,7 +233,12 @@ export default function PaidTimeSlotsManager({ tokenKey = 'token', defaultCity =
                 <tr><td colSpan={7}>No paid slot overrides yet. All paid slots are open by default.</td></tr>
               ) : rules.map((rule) => (
                 <tr key={rule.id}>
-                  <td>{rule.service_icon} {rule.service_label || `Service #${rule.quick_service_id}`}</td>
+                  <td>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <QuickServiceIcon value={rule.service_icon} label={rule.service_label} className="inline-flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded" imageClassName="h-full w-full object-contain" />
+                      <span>{rule.service_label || `Service #${rule.quick_service_id}`}</span>
+                    </span>
+                  </td>
                   <td>{rule.city}</td>
                   <td>{rule.slot_date}</td>
                   <td>{rule.time_slot}</td>

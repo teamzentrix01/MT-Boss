@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { downloadXlsx } from '@/lib/xlsx';
+import QuickServiceIcon from './QuickServiceIcon';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 const fmt  = (n) => `₹${Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -501,7 +502,10 @@ export default function RevenueManager({ isDarkMode }) {
                             <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{b.user_phone}</div>
                           </td>
                           <td style={{ ...S.td, whiteSpace: 'nowrap' }}>
-                            <span>{b.service_icon} {b.service_label}</span>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}>
+                              <QuickServiceIcon value={b.service_icon} label={b.service_label} className="inline-flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded" imageClassName="h-full w-full object-contain" />
+                              <span>{b.service_label}</span>
+                            </span>
                           </td>
                           <td style={{ ...S.td, whiteSpace: 'nowrap' }}>
                             {b.vendor_name
@@ -663,7 +667,10 @@ export default function RevenueManager({ isDarkMode }) {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
                           <div>
                             <div style={{ fontSize: '0.8rem', fontWeight: 800 }}>{b.booking_reference}</div>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginTop: '1px' }}>{b.service_icon} {b.service_label}</div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                              <QuickServiceIcon value={b.service_icon} label={b.service_label} className="inline-flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded" imageClassName="h-full w-full object-contain" />
+                              <span>{b.service_label}</span>
+                            </div>
                           </div>
                           <span style={S.badge(b.status)}>{smeta(b.status).label}</span>
                         </div>

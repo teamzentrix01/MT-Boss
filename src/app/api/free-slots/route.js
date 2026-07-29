@@ -97,9 +97,14 @@ export async function POST(req) {
     if (!manager.allowed) return franchiseAccessResponse(manager);
     await ensureFreeSlotsColumns();
 
-    const { quick_service_id, slot_date, slot_end_date, slot_start, slot_end, city, max_bookings = 1 } = await req.json();
+    const { quick_service_id, quick_service_ids, slot_date, slot_end_date, slot_start, slot_end, city, max_bookings = 1 } = await req.json();
+    const serviceIds = [...new Set(
+      (Array.isArray(quick_service_ids) && quick_service_ids.length ? quick_service_ids : [quick_service_id])
+        .map(Number)
+        .filter((id) => Number.isInteger(id) && id > 0)
+    )];
 
-    if (!quick_service_id || !slot_date || !slot_start || !slot_end || !city) {
+    if (serviceIds.length === 0 || !slot_date || !slot_start || !slot_end || !city) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
     const requestedWindow = `${String(slot_start).slice(0, 5)}-${String(slot_end).slice(0, 5)}`;
@@ -111,20 +116,27 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Slots can only be managed in the franchise city' }, { status: 403 });
     }
 
-    let canonicalCity = await resolveServiceCity(quick_service_id, requestedCity);
-    if (!canonicalCity && manager.isAdmin) {
-      canonicalCity = await addServiceCity(quick_service_id, city);
-    }
-    if (!canonicalCity) {
-      return NextResponse.json({ error: 'This city is not configured for the selected service' }, { status: 400 });
+    const canonicalCities = [];
+    for (const serviceId of serviceIds) {
+      let canonicalCity = await resolveServiceCity(serviceId, requestedCity);
+      if (!canonicalCity && manager.isAdmin) canonicalCity = await addServiceCity(serviceId, city);
+      if (!canonicalCity) {
+        return NextResponse.json({ error: `City is not configured for service #${serviceId}` }, { status: 400 });
+      }
+      canonicalCities.push(canonicalCity);
     }
 
     const endDate = slot_end_date || slot_date;
     if (endDate < slot_date) {
       return NextResponse.json({ error: 'End date cannot be before start date' }, { status: 400 });
     }
-    const result = await pool.query(
-      `INSERT INTO free_time_slots
+    const client = await pool.connect();
+    const createdRows = [];
+    try {
+      await client.query('BEGIN');
+      for (let index = 0; index < serviceIds.length; index += 1) {
+        const result = await client.query(
+          `INSERT INTO free_time_slots
          (quick_service_id, slot_date, slot_start, slot_end, city, max_bookings, current_bookings, is_available, created_at)
        SELECT $1, day::DATE, $3, $4, $5, $6, 0, TRUE, NOW()
        FROM GENERATE_SERIES($2::DATE, $7::DATE, INTERVAL '1 day') day
@@ -137,10 +149,19 @@ export async function POST(req) {
             AND LOWER(TRIM(existing.city)) = LOWER(TRIM($5))
        )
        RETURNING *, TO_CHAR(slot_date::DATE, 'YYYY-MM-DD') AS slot_date`,
-      [quick_service_id, slot_date, slot_start, slot_end, canonicalCity, Math.max(Number(max_bookings) || 1, 1), endDate]
-    );
+          [serviceIds[index], slot_date, slot_start, slot_end, canonicalCities[index], Math.max(Number(max_bookings) || 1, 1), endDate]
+        );
+        createdRows.push(...result.rows);
+      }
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
 
-    return NextResponse.json({ success: true, data: result.rows[0] || null, count: result.rows.length }, { status: 201 });
+    return NextResponse.json({ success: true, data: createdRows, count: createdRows.length }, { status: 201 });
   } catch (error) {
     console.error('Free slots POST error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
