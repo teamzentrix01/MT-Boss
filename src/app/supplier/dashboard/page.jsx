@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { redirectToPayU } from '@/lib/payu-client';
+import MaterialOrdersPanel from '@/app/components/MaterialOrdersPanel';
 
 export default function SupplierDashboard() {
   return (
@@ -444,6 +445,7 @@ function SupplierDashboardContent() {
           {/* Tabs */}
           <div className="sd-tabs">
             {[
+              { id: 'tracking', label: 'Material Order Tracking' },
               { id: 'orders',   label: '📋 Orders'   },
               { id: 'earnings', label: '💰 Earnings'  },
               { id: 'packages', label: '📦 Package'   },
@@ -539,6 +541,10 @@ function SupplierDashboardContent() {
           )}
 
           {/* ══════════════════════ EARNINGS ══════════════════════ */}
+          {activeTab === 'tracking' && (
+            <MaterialOrdersPanel role="supplier" embedded />
+          )}
+
           {activeTab === 'earnings' && (
             <>
               <div style={{ marginBottom: '1.5rem' }}>

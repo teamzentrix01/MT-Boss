@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { sendEnquiryAcceptedEmail } from '@/lib/email';
 import { requireRole } from '@/lib/auth';
+import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material-orders';
 
 function getSupplier(req) {
   return requireRole(req, 'supplier');
@@ -13,6 +14,7 @@ export async function POST(req, { params }) {
     if (!decoded) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 
     const { id } = await params;
+    await ensureMaterialOrderSchema();
 
     const client = await pool.connect();
     try {
@@ -43,11 +45,22 @@ export async function POST(req, { params }) {
       // Accept it
       const result = await client.query(
         `UPDATE material_enquiries
-         SET status = 'accepted', accepted_by_supplier_id = $1, accepted_at = NOW(), updated_at = NOW()
+         SET status = 'accepted', accepted_by_supplier_id = $1,
+             assigned_role = 'supplier', assigned_entity_id = $1,
+             accepted_at = NOW(), updated_at = NOW()
          WHERE id = $2
          RETURNING *`,
         [decoded.id, id]
       );
+      await addMaterialOrderEvent(client, {
+        orderId: id,
+        status: 'accepted',
+        title: 'Accepted by supplier',
+        note: 'A supplier has accepted this material order.',
+        actorRole: 'supplier',
+        actorId: decoded.id,
+        actorName: decoded.shop_name || decoded.email || 'Supplier',
+      });
 
       await client.query('COMMIT');
 

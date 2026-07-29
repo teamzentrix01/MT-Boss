@@ -29,6 +29,12 @@ function EnqStatusBadge({ status }) {
   const map = {
     open:      { bg:'var(--brand-blue-soft)', color:'#92400e', label:'Open'      },
     accepted:  { bg:'#dbeafe', color:'#1e40af', label:'Accepted'  },
+    confirmed: { bg:'#dbeafe', color:'#1e40af', label:'Confirmed' },
+    processing:{ bg:'#ede9fe', color:'#6d28d9', label:'Processing' },
+    packed:    { bg:'#fef3c7', color:'#92400e', label:'Packed' },
+    dispatched:{ bg:'#e0e7ff', color:'#4338ca', label:'Dispatched' },
+    out_for_delivery:{ bg:'#e0e7ff', color:'#4338ca', label:'Out for Delivery' },
+    delivered: { bg:'#dcfce7', color:'#15803d', label:'Delivered' },
     fulfilled: { bg:'#dcfce7', color:'#15803d', label:'Fulfilled' },
     cancelled: { bg:'#fee2e2', color:'#991b1b', label:'Cancelled' },
   };
@@ -69,6 +75,11 @@ export default function SupplierHubAdmin({ isDarkMode }) {
 
   /* ── enquiry modal state ───────────────────────────────────────────────── */
   const [selectedEnq, setSelectedEnq] = useState(null);
+  const [assignees, setAssignees] = useState([]);
+  const [assignmentValue, setAssignmentValue] = useState('');
+  const [orderStatus, setOrderStatus] = useState('');
+  const [orderNote, setOrderNote] = useState('');
+  const [orderActionLoading, setOrderActionLoading] = useState(false);
 
   /* ── filters ───────────────────────────────────────────────────────────── */
   const [supFilter,  setSupFilter]  = useState('all');
@@ -144,6 +155,77 @@ export default function SupplierHubAdmin({ isDarkMode }) {
     if (selectedSupplier?.id === rejectTarget.id) setSelectedSupplier(null);
   };
 
+  const openEnquiry = async (enquiry) => {
+    setSelectedEnq(enquiry);
+    setAssignees([]);
+    setAssignmentValue(enquiry.assigned_role && enquiry.assigned_entity_id
+      ? `${enquiry.assigned_role}:${enquiry.assigned_entity_id}`
+      : '');
+    setOrderStatus(enquiry.status === 'open' ? 'accepted' : enquiry.status || 'accepted');
+    setOrderNote('');
+    try {
+      const city = encodeURIComponent(enquiry.selected_city || '');
+      const res = await fetch(`/api/material-orders?action=assignees&city=${city}`, {
+        headers: { Authorization: `Bearer ${token()}` },
+        cache: 'no-store',
+      });
+      const data = await res.json();
+      setAssignees(res.ok && data.success ? data.data || [] : []);
+    } catch {
+      setAssignees([]);
+    }
+  };
+
+  const assignMaterialOrder = async () => {
+    if (!selectedEnq || !assignmentValue) return;
+    const [assigned_role, rawId] = assignmentValue.split(':');
+    setOrderActionLoading(true);
+    try {
+      const res = await fetch('/api/material-orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token()}` },
+        body: JSON.stringify({
+          id: selectedEnq.id,
+          action: 'assign',
+          assigned_role,
+          assigned_entity_id: Number(rawId),
+          note: orderNote || 'Assigned by admin',
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Assignment failed');
+      setSelectedEnq(data.data);
+      setEnquiries(prev => prev.map(item => item.id === selectedEnq.id ? data.data : item));
+      setOrderStatus(data.data.status);
+      setOrderNote('');
+    } catch (e) {
+      alert(`Error: ${e.message}`);
+    } finally {
+      setOrderActionLoading(false);
+    }
+  };
+
+  const updateMaterialOrder = async () => {
+    if (!selectedEnq || !orderStatus) return;
+    setOrderActionLoading(true);
+    try {
+      const res = await fetch('/api/material-orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token()}` },
+        body: JSON.stringify({ id:selectedEnq.id, status:orderStatus, note:orderNote }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Status update failed');
+      setSelectedEnq(data.data);
+      setEnquiries(prev => prev.map(item => item.id === selectedEnq.id ? data.data : item));
+      setOrderNote('');
+    } catch (e) {
+      alert(`Error: ${e.message}`);
+    } finally {
+      setOrderActionLoading(false);
+    }
+  };
+
   /* ── derived data ──────────────────────────────────────────────────────── */
   const pendingCount = suppliers.filter(s => s.status === 'pending').length;
   const activeCount  = suppliers.filter(s => s.status === 'approved' && s.is_active).length;
@@ -158,7 +240,13 @@ export default function SupplierHubAdmin({ isDarkMode }) {
   });
 
   const filteredEnqs = enquiries.filter(e => {
-    const mf = enqStatus === 'all' ? true : e.status === enqStatus;
+    const mf = enqStatus === 'all'
+      ? true
+      : enqStatus === 'active'
+        ? ['accepted','confirmed','processing','packed','dispatched','out_for_delivery'].includes(e.status)
+        : enqStatus === 'delivered'
+          ? ['delivered','fulfilled'].includes(e.status)
+          : e.status === enqStatus;
     const term = enqSearch.toLowerCase();
     return mf && (!term
       || e.user_name?.toLowerCase().includes(term)
@@ -404,6 +492,45 @@ export default function SupplierHubAdmin({ isDarkMode }) {
               </div>
             )}
 
+            <div style={{ background:bg, borderRadius:8, padding:'1rem', marginBottom:'1rem' }}>
+              <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.6rem' }}>Assign Order</div>
+              <div style={{ display:'flex', gap:'0.5rem', flexWrap:'wrap' }}>
+                <select value={assignmentValue} onChange={e => setAssignmentValue(e.target.value)}
+                  style={{ ...inpStyle, flex:'1 1 280px' }}>
+                  <option value="">Select approved supplier, vendor or franchise</option>
+                  {assignees.map(person => (
+                    <option key={`${person.role}:${person.id}`} value={`${person.role}:${person.id}`}>
+                      {person.role.toUpperCase()} — {person.name}{person.city ? ` (${person.city})` : ''}
+                    </option>
+                  ))}
+                </select>
+                <button onClick={assignMaterialOrder} disabled={!assignmentValue || orderActionLoading}
+                  style={{ padding:'0.55rem 1rem', background:accent, color:'#fff', border:'none', borderRadius:7, fontWeight:700, cursor:'pointer', opacity:(!assignmentValue || orderActionLoading) ? 0.55 : 1 }}>
+                  {orderActionLoading ? 'Saving…' : selectedEnq.assigned_entity_id ? 'Reassign' : 'Assign'}
+                </button>
+              </div>
+              {selectedEnq.assigned_name && <div style={{ marginTop:'0.5rem', fontSize:'0.75rem', color:muted }}>Currently assigned to: <strong style={{ color:text }}>{selectedEnq.assigned_name}</strong></div>}
+            </div>
+
+            <div style={{ background:bg, borderRadius:8, padding:'1rem', marginBottom:'1rem' }}>
+              <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.6rem' }}>Update Tracking Status</div>
+              <div style={{ display:'grid', gridTemplateColumns:'minmax(160px, .7fr) minmax(220px, 1.3fr)', gap:'0.5rem' }}>
+                <select value={orderStatus} onChange={e => setOrderStatus(e.target.value)} style={inpStyle}>
+                  {[
+                    ['accepted','Accepted'], ['confirmed','Confirmed'], ['processing','Processing'],
+                    ['packed','Packed'], ['dispatched','Dispatched'], ['out_for_delivery','Out for Delivery'],
+                    ['delivered','Delivered'], ['cancelled','Cancelled'],
+                  ].map(([value,label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+                <input value={orderNote} onChange={e => setOrderNote(e.target.value)}
+                  placeholder="Update note visible to customer" style={inpStyle} />
+              </div>
+              <button onClick={updateMaterialOrder} disabled={orderActionLoading}
+                style={{ marginTop:'0.6rem', padding:'0.55rem 1rem', background:'#16a34a', color:'#fff', border:'none', borderRadius:7, fontWeight:700, cursor:'pointer', opacity:orderActionLoading ? 0.55 : 1 }}>
+                Post Status Update
+              </button>
+            </div>
+
             <button onClick={() => setSelectedEnq(null)}
               style={{ width:'100%', padding:'0.6rem', background:accent, color:'#fff', border:'none', borderRadius:8, fontWeight:700, fontSize:'0.875rem', cursor:'pointer', fontFamily:'inherit' }}>
               Close
@@ -510,7 +637,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                   <thead><tr>{['Customer','Category','Type','Qty','Status','Date'].map(c=><th key={c} style={th}>{c}</th>)}</tr></thead>
                   <tbody>
                     {enquiries.slice(0, 8).map(e => (
-                      <tr key={e.id} onClick={() => setSelectedEnq(e)} style={{ cursor:'pointer' }}>
+                      <tr key={e.id} onClick={() => openEnquiry(e)} style={{ cursor:'pointer' }}>
                         <td style={td()}>
                           <div style={{ fontWeight:600, color:text }}>{e.user_name}</div>
                           <div style={{ fontSize:'0.72rem', color:muted }}>{e.user_phone}</div>
@@ -539,10 +666,13 @@ export default function SupplierHubAdmin({ isDarkMode }) {
             <input value={enqSearch} onChange={e => setEnqSearch(e.target.value)} placeholder="Search customer, category, brand…"
               style={{ ...inpStyle, width:260 }} />
             <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
-              {['all','open','accepted','fulfilled'].map(s => (
+              {['all','open','active','delivered','cancelled'].map(s => (
                 <button key={s} onClick={() => setEnqStatus(s)}
                   style={{ padding:'0.35rem 0.875rem', border:`1px solid ${enqStatus===s ? accent : border}`, borderRadius:20, background: enqStatus===s ? accent : 'transparent', color: enqStatus===s ? '#fff' : muted, fontSize:'0.78rem', fontWeight:600, cursor:'pointer', textTransform:'capitalize', fontFamily:'inherit' }}>
-                  {s==='all'?`All (${enquiries.length})`:s==='open'?`Open (${enquiries.filter(e=>e.status==='open').length})`:s==='accepted'?`Accepted (${enquiries.filter(e=>e.status==='accepted').length})`:`Fulfilled (${enquiries.filter(e=>e.status==='fulfilled').length})`}
+                  {s === 'all' ? `All (${enquiries.length})`
+                    : s === 'active' ? `Active (${enquiries.filter(e => ['accepted','confirmed','processing','packed','dispatched','out_for_delivery'].includes(e.status)).length})`
+                    : s === 'delivered' ? `Delivered (${enquiries.filter(e => ['delivered','fulfilled'].includes(e.status)).length})`
+                    : `${s.charAt(0).toUpperCase() + s.slice(1)} (${enquiries.filter(e => e.status === s).length})`}
                 </button>
               ))}
             </div>
@@ -558,7 +688,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                 </thead>
                 <tbody>
                   {filteredEnqs.map(e => (
-                    <tr key={e.id} style={{ cursor:'pointer' }} onClick={() => setSelectedEnq(e)}>
+                    <tr key={e.id} style={{ cursor:'pointer' }} onClick={() => openEnquiry(e)}>
                       <td style={td({ color:muted })}>{e.id}</td>
                       <td style={td()}>
                         <div style={{ fontWeight:600, color:text, whiteSpace:'nowrap' }}>{e.user_name}</div>
@@ -587,7 +717,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                       <td style={td({ color:'#f97316', fontWeight:700, whiteSpace:'nowrap' })}>{e.admin_commission ? fmt(e.admin_commission) : '—'}</td>
                       <td style={td({ color:muted, whiteSpace:'nowrap' })}>{fmtD(e.created_at)}</td>
                       <td style={td()}>
-                        <button onClick={ev => { ev.stopPropagation(); setSelectedEnq(e); }}
+                        <button onClick={ev => { ev.stopPropagation(); openEnquiry(e); }}
                           style={{ padding:'0.25rem 0.6rem', border:`1px solid ${border}`, borderRadius:5, background:'transparent', color:muted, fontSize:'0.72rem', cursor:'pointer' }}>
                           View
                         </button>
@@ -753,7 +883,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                     .filter(e => e.status === 'fulfilled')
                     .sort((a,b) => new Date(b.fulfilled_at||b.updated_at) - new Date(a.fulfilled_at||a.updated_at))
                     .map(e => (
-                      <tr key={e.id} onClick={() => setSelectedEnq(e)} style={{ cursor:'pointer' }}>
+                      <tr key={e.id} onClick={() => openEnquiry(e)} style={{ cursor:'pointer' }}>
                         <td style={td({ color:muted })}>{e.id}</td>
                         <td style={td()}>
                           <div style={{ fontWeight:600, color:text }}>{e.user_name}</div>

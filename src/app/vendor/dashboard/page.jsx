@@ -7,6 +7,7 @@
 import { Suspense, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { redirectToPayU } from '@/lib/payu-client';
+import MaterialOrdersPanel from '@/app/components/MaterialOrdersPanel';
 
 function ServiceIcon({ icon, className = "h-8 w-8" }) {
   const value = String(icon || "").trim();
@@ -448,6 +449,7 @@ function VendorDashboardContent() {
           </div>
           <div className={`grid w-full grid-cols-2 border ${isDark ? "border-zinc-800" : "border-zinc-200"} sm:flex sm:w-auto sm:flex-wrap`}>
             {[
+              { key: "materials", label: "Material Orders" },
               { key: "notifications", label: "📬 Bookings" },
               { key: "history", label: "📋 History" },
               { key: "packages", label: "📦 Package" },
@@ -475,7 +477,9 @@ function VendorDashboardContent() {
           </div>
         </div>
  
-        {activeTab === "history" ? (
+        {activeTab === "materials" ? (
+          <MaterialOrdersPanel role="vendor" embedded />
+        ) : activeTab === "history" ? (
           /* ── History Tab ── */
           <div className="space-y-4">
             {/* Earnings Summary */}

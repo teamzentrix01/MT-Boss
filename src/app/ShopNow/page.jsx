@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useCities } from "@/hooks/useCities";
 
 // Dark-mode watcher
@@ -83,6 +84,7 @@ export default function ShopPage() {
   const [isModalOpen, setIsModalOpen]       = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [submitted, setSubmitted]           = useState(false);
+  const [submittedOrder, setSubmittedOrder] = useState(null);
   const [submitting, setSubmitting]         = useState(false);
   const [submitError, setSubmitError]       = useState("");
 
@@ -137,6 +139,7 @@ export default function ShopPage() {
   const openModal = (category) => {
     setSelectedCategory(category);
     setSubmitted(false);
+    setSubmittedOrder(null);
     setSubmitError("");
     setSelectedCity("");
     setCityError("");
@@ -256,9 +259,16 @@ export default function ShopPage() {
     }
 
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Please login as a customer before placing an order so you can track it.");
+      }
       const res = await fetch("/api/material-enquiries", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           user_name:       formData.name,
           user_phone:      formData.phone,
@@ -280,8 +290,8 @@ export default function ShopPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || "Failed to submit enquiry");
+      setSubmittedOrder(data.data);
       setSubmitted(true);
-      setTimeout(() => setIsModalOpen(false), 3500);
     } catch (err) {
       setSubmitError(err.message);
     } finally {
@@ -487,6 +497,26 @@ export default function ShopPage() {
                 <p className={`mt-2 text-sm ${subText}`}>
                   Your order request has been received. Order will be placed within 24 to 48 hrs after supplier confirmation.
                 </p>
+                {submittedOrder?.order_reference && (
+                  <p className={`mt-3 text-xs font-black uppercase tracking-wider ${headText}`}>
+                    Order ID: {submittedOrder.order_reference}
+                  </p>
+                )}
+                <div className="mt-5 flex flex-col justify-center gap-2 sm:flex-row">
+                  <Link
+                    href="/material-orders?role=user"
+                    className="rounded-lg bg-[var(--brand-blue)] px-5 py-2.5 text-xs font-black uppercase tracking-wider text-gray-950"
+                  >
+                    Track this order
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className={`rounded-lg border px-5 py-2.5 text-xs font-black uppercase tracking-wider ${isDarkMode ? "border-zinc-700 text-zinc-300" : "border-zinc-300 text-zinc-700"}`}
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="p-6 overflow-y-auto">

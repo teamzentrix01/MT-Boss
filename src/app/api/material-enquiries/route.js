@@ -3,6 +3,8 @@ import pool from '@/lib/db';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
 import { resolveManagedCity } from '@/lib/cities';
+import { requireRole } from '@/lib/auth';
+import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material-orders';
 
 // No `ready` flag — CREATE TABLE IF NOT EXISTS + ALTER IF NOT EXISTS are idempotent
 // and run in milliseconds when the table already exists. This makes the route resilient
@@ -56,6 +58,14 @@ const ensureTable = createInitializationGuard(async () => {
 export async function POST(req) {
   try {
     await ensureTable();
+    await ensureMaterialOrderSchema();
+    const user = requireRole(req, 'user');
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Please login as a customer to place and track this order' },
+        { status: 401 }
+      );
+    }
 
     const {
       user_name, user_phone, user_email,
@@ -87,26 +97,45 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Select an active delivery city' }, { status: 400 });
     }
 
-    const result = await pool.query(
-      `INSERT INTO material_enquiries
-         (user_name, user_phone, user_email,
-          category_name, category_emoji,
-          material_type, subcategory_name, brand_company,
-          quantity_text, order_unit, delivery_date,
-          delivery_address, latitude, longitude, message, selected_city)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
-       RETURNING id, status, created_at`,
-      [
-        cleanName, cleanPhone, cleanEmail,
-        category_name, category_emoji || '',
-        material_type || null, subcategory_name || null, brand_company || null,
-        quantity_text || null, order_unit || null, delivery_date || null,
-        delivery_address || null, latitude || null, longitude || null,
-        message || null, canonicalCity,
-      ]
-    );
-
-    return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const orderReference = `MO-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+      const result = await client.query(
+        `INSERT INTO material_enquiries
+           (user_id, order_reference, user_name, user_phone, user_email,
+            category_name, category_emoji,
+            material_type, subcategory_name, brand_company,
+            quantity_text, order_unit, delivery_date,
+            delivery_address, latitude, longitude, message, selected_city)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+         RETURNING id, order_reference, status, created_at`,
+        [
+          user.id, orderReference, cleanName, cleanPhone, cleanEmail || user.email || null,
+          category_name, category_emoji || '',
+          material_type || null, subcategory_name || null, brand_company || null,
+          quantity_text || null, order_unit || null, delivery_date || null,
+          delivery_address || null, latitude || null, longitude || null,
+          message || null, canonicalCity,
+        ]
+      );
+      await addMaterialOrderEvent(client, {
+        orderId: result.rows[0].id,
+        status: 'open',
+        title: 'Order placed',
+        note: 'Your material order has been received.',
+        actorRole: 'user',
+        actorId: user.id,
+        actorName: cleanName,
+      });
+      await client.query('COMMIT');
+      return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   } catch (err) {
     console.error('POST material-enquiries error:', err);
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
@@ -114,9 +143,14 @@ export async function POST(req) {
 }
 
 // ── GET — admin can view all enquiries ────────────────────────────────────────
-export async function GET() {
+export async function GET(req) {
   try {
     await ensureTable();
+    await ensureMaterialOrderSchema();
+    const admin = requireRole(req, 'admin');
+    if (!admin) {
+      return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
+    }
     const result = await pool.query(
       `SELECT me.*, s.shop_name AS accepted_by_shop
        FROM material_enquiries me
