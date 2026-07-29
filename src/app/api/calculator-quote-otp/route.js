@@ -1,7 +1,4 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import { join } from 'path';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { sendMail } from '@/lib/email';
@@ -54,18 +51,29 @@ async function saveSiteImage(file) {
     throw new Error('Site image is too large. Max 5MB allowed.');
   }
 
-  const ext = file.type === 'image/jpeg' ? 'jpg' : file.type === 'image/png' ? 'png' : 'webp';
-  const safeName = String(file.name || `site.${ext}`).replace(/[^a-zA-Z0-9._-]/g, '-');
-  const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName}`;
-  const uploadDir = join(process.cwd(), 'public', 'uploads', 'calculator-sites');
-  if (!existsSync(uploadDir)) await mkdir(uploadDir, { recursive: true });
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET || process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+  if (!cloudName || !uploadPreset) {
+    throw new Error('Cloudinary image upload is not configured.');
+  }
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(join(uploadDir, filename), buffer);
+  const uploadData = new FormData();
+  uploadData.append('file', file);
+  uploadData.append('upload_preset', uploadPreset);
+  uploadData.append('folder', 'mtboss/calculator-sites');
+
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: 'POST',
+    body: uploadData,
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.secure_url) {
+    throw new Error(data.error?.message || 'Cloudinary image upload failed.');
+  }
 
   return {
-    url: `/uploads/calculator-sites/${filename}`,
-    name: file.name || filename,
+    url: data.secure_url,
+    name: file.name || data.original_filename || 'site-image',
   };
 }
 
@@ -216,7 +224,10 @@ export async function POST(req) {
     });
   } catch (error) {
     console.error('calculator-quote-otp error:', error);
-    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+    const message = error.message?.includes('Cloudinary') || error.message?.includes('site image')
+      ? error.message
+      : 'Internal server error';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
 

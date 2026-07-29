@@ -13,6 +13,18 @@ const STATUS_STYLES = {
   Withdrawn: 'bg-zinc-200 text-zinc-600',
 };
 
+const EDIT_FIELDS = [
+  { name: 'name', label: 'Full Name', required: true },
+  { name: 'email', label: 'Email', type: 'email', required: true },
+  { name: 'phone', label: 'Phone', required: true },
+  { name: 'alternative_phone', label: 'Alternative Phone' },
+  { name: 'experience', label: 'Experience', required: true },
+  { name: 'current_company', label: 'Current Company' },
+  { name: 'notice_period', label: 'Notice Period' },
+  { name: 'current_salary', label: 'Current Salary' },
+  { name: 'expected_salary', label: 'Expected Salary' },
+];
+
 function formatDate(value, withTime = false) {
   if (!value) return '—';
   return new Date(value).toLocaleString('en-IN', withTime
@@ -25,6 +37,10 @@ export default function JobApplicationsPanel() {
   const [expanded, setExpanded] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({});
+  const [editResume, setEditResume] = useState(null);
+  const [editSaving, setEditSaving] = useState(false);
 
   const loadApplications = useCallback(async (quiet = false) => {
     if (!quiet) setLoading(true);
@@ -51,6 +67,53 @@ export default function JobApplicationsPanel() {
     const interval = setInterval(() => loadApplications(true), 30000);
     return () => clearInterval(interval);
   }, [loadApplications]);
+
+  const startEdit = (application) => {
+    setEditingId(application.id);
+    setEditResume(null);
+    setEditForm({
+      name: application.name || '',
+      email: application.email || '',
+      phone: application.phone || '',
+      alternative_phone: application.alternative_phone || '',
+      experience: application.experience || '',
+      current_company: application.current_company || '',
+      notice_period: application.notice_period || '',
+      current_salary: application.current_salary || '',
+      expected_salary: application.expected_salary || '',
+      cover_letter: application.cover_letter || '',
+    });
+  };
+
+  const saveEdit = async (event) => {
+    event.preventDefault();
+    if (!editingId) return;
+    setEditSaving(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('Please sign in to edit your application.');
+      const formData = new FormData();
+      formData.append('id', editingId);
+      Object.entries(editForm).forEach(([key, value]) => formData.append(key, value || ''));
+      if (editResume) formData.append('resume', editResume);
+
+      const response = await fetch('/api/career-enquiries', {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || 'Application could not be updated');
+      setApplications((current) => current.map((item) => item.id === data.data.id ? data.data : item));
+      setEditingId(null);
+      setEditResume(null);
+      setError('');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setEditSaving(false);
+    }
+  };
 
   if (loading) {
     return <div className="border border-zinc-200 bg-white p-12 text-center text-sm text-zinc-500">Loading applications…</div>;
@@ -129,6 +192,57 @@ export default function JobApplicationsPanel() {
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Current Company</span>{application.current_company || '—'}</div>
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Notice Period</span>{application.notice_period || '—'}</div>
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Resume</span>{application.resume_name || '—'}</div>
+                    </div>
+
+                    <div className="mt-5">
+                      {editingId === application.id ? (
+                        <form onSubmit={saveEdit} className="border border-zinc-200 bg-white p-4">
+                          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {EDIT_FIELDS.map((field) => (
+                              <label key={field.name} className="text-[10px] font-black uppercase tracking-wider text-zinc-500">
+                                {field.label}
+                                <input
+                                  type={field.type || 'text'}
+                                  required={field.required}
+                                  value={editForm[field.name] || ''}
+                                  onChange={(event) => setEditForm((current) => ({ ...current, [field.name]: event.target.value }))}
+                                  className="mt-1 w-full border border-zinc-200 px-3 py-2 text-sm font-semibold normal-case tracking-normal text-zinc-900 outline-none focus:border-blue-500"
+                                />
+                              </label>
+                            ))}
+                          </div>
+                          <label className="mt-3 block text-[10px] font-black uppercase tracking-wider text-zinc-500">
+                            Cover Letter
+                            <textarea
+                              value={editForm.cover_letter || ''}
+                              onChange={(event) => setEditForm((current) => ({ ...current, cover_letter: event.target.value }))}
+                              rows={4}
+                              className="mt-1 w-full border border-zinc-200 px-3 py-2 text-sm font-semibold normal-case tracking-normal text-zinc-900 outline-none focus:border-blue-500"
+                            />
+                          </label>
+                          <label className="mt-3 block text-[10px] font-black uppercase tracking-wider text-zinc-500">
+                            Replace Resume
+                            <input
+                              type="file"
+                              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                              onChange={(event) => setEditResume(event.target.files?.[0] || null)}
+                              className="mt-1 w-full border border-zinc-200 px-3 py-2 text-sm font-semibold normal-case tracking-normal text-zinc-900"
+                            />
+                          </label>
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <button type="submit" disabled={editSaving} className="bg-blue-600 px-4 py-2 text-xs font-black uppercase text-white disabled:opacity-60">
+                              {editSaving ? 'Saving...' : 'Save Application'}
+                            </button>
+                            <button type="button" onClick={() => setEditingId(null)} className="border border-zinc-300 px-4 py-2 text-xs font-black uppercase text-zinc-700">
+                              Cancel
+                            </button>
+                          </div>
+                        </form>
+                      ) : (
+                        <button type="button" onClick={() => startEdit(application)} className="border border-blue-600 px-4 py-2 text-xs font-black uppercase text-blue-600">
+                          Edit Application
+                        </button>
+                      )}
                     </div>
 
                     {application.status_note && (

@@ -732,7 +732,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
   };
 
   const requestQuoteOtp = async (e) => {
-    e.preventDefault();
+    e?.preventDefault?.();
     setQuoteLoading(true);
     setQuoteMsg('');
     setDevOtp('');
@@ -781,6 +781,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || 'OTP verification failed');
       setQuoteStep('verified');
+      setSiteImage(null);
       setQuoteMsg('Verification complete. Your report is ready.');
     } catch (error) {
       setQuoteMsg(error.message);
