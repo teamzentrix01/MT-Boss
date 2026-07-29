@@ -24,6 +24,7 @@ export default function SellPage() {
   const [loading,   setLoading]   = useState(false);
   const [error,     setError]     = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submittedListing, setSubmittedListing] = useState(null);
 
   const showError = (message) => {
     setError(message);
@@ -154,6 +155,7 @@ export default function SellPage() {
       });
       const data = await res.json();
       if (data.success) {
+        setSubmittedListing(data.data);
         setSubmitted(true);
       } else {
         showError(data.error || "Submission failed");
@@ -418,9 +420,12 @@ export default function SellPage() {
             <p className="text-6xl">🎉</p>
             <h2 className="text-xl font-black uppercase tracking-tight text-[var(--brand-blue)]">Listing Submitted!</h2>
             <p className={`text-sm leading-relaxed ${muted}`}>
-              Your property has been published successfully and is now available on the Buy Properties page. Admin can still review or moderate the listing.
+              Your property has been submitted for admin verification. It will go live on the Buy Properties page after approval.
             </p>
             <div className={`border rounded p-4 text-left space-y-1 ${dark ? "border-zinc-800":"border-gray-100"}`}>
+              {submittedListing?.tracking_token && (
+                <p className={`text-xs font-black ${dark ? "text-white" : "text-zinc-900"}`}>Tracking ID: {submittedListing.tracking_token}</p>
+              )}
               <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>What happens next</p>
               <p className={`text-xs ${muted}`}>✓ Admin reviews your listing and images</p>
               <p className={`text-xs ${muted}`}>✓ Verification call may be made to {form.seller_phone}</p>
@@ -428,8 +433,8 @@ export default function SellPage() {
               <p className={`text-xs ${muted}`}>✓ Buyers can enquire directly</p>
             </div>
             <div className="flex gap-3 pt-2">
-              <a href="/property/buy" className="flex-1 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-[10px] tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all text-center">Browse Properties</a>
-              <button onClick={() => { setSubmitted(false); setStep(1); setForm(empty); setImages([]); setImageFiles([]); }}
+              <a href={`/property/listings-status${submittedListing?.tracking_token ? `?tracking=${submittedListing.tracking_token}` : ""}`} className="flex-1 py-3 bg-[var(--brand-blue)] text-black font-black uppercase text-[10px] tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all text-center">Track Status</a>
+              <button onClick={() => { setSubmitted(false); setSubmittedListing(null); setStep(1); setForm(empty); setImages([]); setImageFiles([]); }}
                 className={`flex-1 py-3 border text-[10px] font-black uppercase tracking-widest transition-all ${dark ? "border-zinc-700 text-zinc-400 hover:border-zinc-500":"border-gray-300 text-zinc-500"}`}>
                 List Another
               </button>

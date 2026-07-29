@@ -22,6 +22,7 @@ export default function AgentsPage() {
   const [workspace, setWorkspace] = useState(null);
   const [workspaceLoading, setWorkspaceLoading] = useState(false);
   const [showLeads, setShowLeads] = useState(false);
+  const [showActivity, setShowActivity] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
   const [error, setError] = useState('');
   const [pendingStatus, setPendingStatus] = useState('');
@@ -101,6 +102,7 @@ export default function AgentsPage() {
     setWorkspace(null);
     setWorkspaceLoading(true);
     setShowLeads(false);
+    setShowActivity(false);
     setSelectedLead(null);
     setPendingStatus('');
     setError('');
@@ -515,11 +517,11 @@ export default function AgentsPage() {
 
       {/* Detail Modal */}
       {selected && (
-        <div className="ag-backdrop" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setSelectedLead(null); }}>
+        <div className="ag-backdrop" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setShowActivity(false); setSelectedLead(null); }}>
           <div className="ag-modal" onClick={e => e.stopPropagation()}>
             <div className="ag-modal-head">
               <span className="ag-modal-title">Agent Application</span>
-              <button className="ag-modal-close" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setSelectedLead(null); setPendingStatus(''); }}>Close</button>
+              <button className="ag-modal-close" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setShowActivity(false); setSelectedLead(null); setPendingStatus(''); }}>Close</button>
             </div>
 
             <div className="ag-modal-grid">
@@ -642,7 +644,7 @@ export default function AgentsPage() {
             ) : workspace && (
               <div style={{ marginTop: '1rem' }}>
                 <div className="ag-field-label" style={{ marginBottom: '0.5rem' }}>Agent Workspace Preview</div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '0.875rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem', marginBottom: '0.875rem' }}>
                   <div className="ag-stat">
                     <div className="ag-stat-label">Leads</div>
                     <div className="ag-stat-value">{workspace.leads?.length || 0}</div>
@@ -654,6 +656,10 @@ export default function AgentsPage() {
                   <div className="ag-stat">
                     <div className="ag-stat-label">Projects</div>
                     <div className="ag-stat-value">{workspace.projects?.length || 0}</div>
+                  </div>
+                  <div className="ag-stat">
+                    <div className="ag-stat-label">Unread Activity</div>
+                    <div className="ag-stat-value">{workspace.unread_activity_count || 0}</div>
                   </div>
                 </div>
 
@@ -676,7 +682,47 @@ export default function AgentsPage() {
                   >
                     {showLeads ? 'Hide Leads' : 'View Leads'}
                   </button>
+                  <button
+                    type="button"
+                    className="ag-close-btn"
+                    onClick={() => setShowActivity(v => !v)}
+                  >
+                    {showActivity ? 'Hide Activity' : 'View Activity Track'}
+                  </button>
                 </div>
+
+                {showActivity && (
+                  <div className="ag-modal-msg">
+                    <strong>Activity Track</strong>
+                    <div style={{ marginTop: '0.75rem', display: 'grid', gap: '0.5rem' }}>
+                      {(workspace.activity || []).length === 0 ? (
+                        <div>No activity recorded yet.</div>
+                      ) : workspace.activity.map((activity) => (
+                        <div key={activity.id} style={{ padding: '0.65rem 0.75rem', border: '1px solid var(--border)', borderRadius: 6, background: activity.is_read ? 'var(--surface)' : 'color-mix(in srgb, var(--accent) 10%, var(--surface))' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'start' }}>
+                            <div>
+                              <div style={{ fontWeight: 800, color: 'var(--text)' }}>{activity.title}</div>
+                              <div style={{ marginTop: 3 }}>{activity.message}</div>
+                              <div style={{ marginTop: 4, fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)', fontWeight: 800 }}>
+                                {String(activity.type || '').replaceAll('_', ' ')}
+                                {activity.entity_type ? ` · ${activity.entity_type}${activity.entity_id ? ` #${activity.entity_id}` : ''}` : ''}
+                              </div>
+                            </div>
+                            <div style={{ whiteSpace: 'nowrap', fontSize: '0.68rem', color: 'var(--muted)', textAlign: 'right' }}>
+                              {new Date(activity.created_at).toLocaleString('en-IN', {
+                                day: '2-digit',
+                                month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                              {!activity.is_read && <div style={{ color: 'var(--accent)', fontWeight: 900, marginTop: 4 }}>Unread</div>}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {showLeads && (
                   <div className="ag-modal-msg">
@@ -750,7 +796,7 @@ export default function AgentsPage() {
             )}
 
             <div className="ag-modal-footer">
-              <button className="ag-close-btn" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setSelectedLead(null); }}>Close</button>
+              <button className="ag-close-btn" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setShowActivity(false); setSelectedLead(null); }}>Close</button>
             </div>
           </div>
         </div>

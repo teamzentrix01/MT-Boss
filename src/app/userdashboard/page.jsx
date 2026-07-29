@@ -717,6 +717,10 @@ export default function UserDashboard() {
             {user?.email && <p className={`text-xs mt-1 ${muted}`}>{user.email}</p>}
           </div>
           <div className="flex flex-wrap gap-2">
+            <Link href="/property/listings-status"
+              className="self-start border border-green-600 px-5 py-2.5 text-[9px] font-black uppercase tracking-widest text-green-600 transition-all hover:bg-green-50">
+              Track Property Listings
+            </Link>
             <Link href="/material-orders?role=user"
               className="self-start border border-blue-600 px-5 py-2.5 text-[9px] font-black uppercase tracking-widest text-blue-600 transition-all hover:bg-blue-50">
               Track Material Orders

@@ -44,6 +44,9 @@ function VendorDashboardContent() {
   const searchParams = useSearchParams();
   const [vendor, setVendor] = useState(null);
   const [notifications, setNotifications] = useState([]);
+  const [vendorLeads, setVendorLeads] = useState([]);
+  const [vendorLeadCounts, setVendorLeadCounts] = useState({ incoming: 0, active: 0, awaiting_payment: 0, completed: 0 });
+  const [leadFilter, setLeadFilter] = useState("all");
   const [activeBooking, setActiveBooking] = useState(null);
   const [completedCount, setCompletedCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -117,7 +120,7 @@ function VendorDashboardContent() {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (['notifications', 'history', 'packages', 'profile'].includes(tab)) {
+    if (['notifications', 'leads', 'history', 'packages', 'profile', 'materials'].includes(tab)) {
       setActiveTab(tab);
       if (tab === 'packages') loadPackages();
     }
@@ -125,17 +128,22 @@ function VendorDashboardContent() {
  
   async function fetchVendorData(token) {
     try {
-      const [notRes, bookRes, compRes, profRes] = await Promise.all([
+      const [notRes, bookRes, compRes, profRes, leadRes] = await Promise.all([
         fetch("/api/vendor/notifications", { headers: { Authorization: `Bearer ${token}` } }),
         fetch("/api/vendor/bookings?type=active", { headers: { Authorization: `Bearer ${token}` } }),
         fetch("/api/vendor/bookings?type=completed", { headers: { Authorization: `Bearer ${token}` } }),
         fetch("/api/vendor/profile", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch("/api/vendor/leads", { headers: { Authorization: `Bearer ${token}` } }),
       ]);
 
-      const [notData, bookData, compData, profData] = await Promise.all([
-        notRes.json(), bookRes.json(), compRes.json(), profRes.json(),
+      const [notData, bookData, compData, profData, leadData] = await Promise.all([
+        notRes.json(), bookRes.json(), compRes.json(), profRes.json(), leadRes.json(),
       ]);
       if (notData.success) setNotifications(notData.notifications);
+      if (leadData.success) {
+        setVendorLeads(leadData.data || []);
+        setVendorLeadCounts(leadData.counts || { incoming: 0, active: 0, awaiting_payment: 0, completed: 0 });
+      }
 
       let awaitingPaymentCount = 0;
       if (bookData.success && bookData.bookings.length > 0) {
@@ -317,6 +325,17 @@ function VendorDashboardContent() {
       });
     });
   }
+
+  const filteredVendorLeads = leadFilter === "all"
+    ? vendorLeads
+    : vendorLeads.filter((lead) => lead.lead_track_status === leadFilter);
+
+  const leadStatusLabels = {
+    incoming: "Incoming",
+    active: "Active",
+    awaiting_payment: "Awaiting Payment",
+    completed: "Completed",
+  };
  
   async function acceptBooking(bookingId) {
     if (selectedNotification && !selectedNotification.can_accept) {
@@ -451,6 +470,7 @@ function VendorDashboardContent() {
             {[
               { key: "materials", label: "Material Orders" },
               { key: "notifications", label: "📬 Bookings" },
+              { key: "leads", label: "Lead Track" },
               { key: "history", label: "📋 History" },
               { key: "packages", label: "📦 Package" },
               { key: "profile", label: "👤 Profile" },
@@ -479,6 +499,113 @@ function VendorDashboardContent() {
  
         {activeTab === "materials" ? (
           <MaterialOrdersPanel role="vendor" embedded />
+        ) : activeTab === "leads" ? (
+          <div className="space-y-5">
+            <div className={`border ${card} p-5`}>
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Lead Track</p>
+                  <h2 className="mt-1 text-xl font-black uppercase">Vendor Service Leads</h2>
+                  <p className={`mt-1 text-xs ${muted}`}>Incoming requests, active work, payment follow-up, and completed leads in one place.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => fetchVendorData(localStorage.getItem("vendor-token"))}
+                  className="px-4 py-2 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-widest"
+                >
+                  Refresh
+                </button>
+              </div>
+
+              <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
+                {[
+                  ["incoming", "Incoming", vendorLeadCounts.incoming],
+                  ["active", "Active", vendorLeadCounts.active],
+                  ["awaiting_payment", "Payment", vendorLeadCounts.awaiting_payment],
+                  ["completed", "Completed", vendorLeadCounts.completed],
+                ].map(([key, label, value]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setLeadFilter(leadFilter === key ? "all" : key)}
+                    className={`border p-4 text-left transition-all ${
+                      leadFilter === key
+                        ? "border-[var(--brand-blue)] bg-[var(--brand-blue)]/10"
+                        : isDark ? "border-zinc-800 bg-zinc-950" : "border-zinc-200 bg-white"
+                    }`}
+                  >
+                    <p className={`text-[9px] font-black uppercase tracking-widest ${muted}`}>{label}</p>
+                    <p className="mt-1 text-2xl font-black text-[var(--brand-blue)]">{value || 0}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              {filteredVendorLeads.length === 0 ? (
+                <div className={`border ${card} p-10 text-center ${muted}`}>
+                  No {leadFilter === "all" ? "" : leadStatusLabels[leadFilter]?.toLowerCase()} leads found.
+                </div>
+              ) : filteredVendorLeads.map((lead) => {
+                const statusLabel = leadStatusLabels[lead.lead_track_status] || lead.status;
+                return (
+                  <article key={`${lead.lead_track_status}-${lead.booking_id}`} className={`border ${card} p-5`}>
+                    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                      <div className="flex min-w-0 gap-3">
+                        <ServiceIcon icon={lead.service_icon} className="h-10 w-10" />
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="font-black uppercase tracking-tight">{lead.service_label || "Service Lead"}</h3>
+                            <span className="px-2 py-1 text-[9px] font-black uppercase tracking-widest bg-[var(--brand-blue)]/15 text-[var(--brand-blue)]">
+                              {statusLabel}
+                            </span>
+                          </div>
+                          <p className={`mt-1 text-xs ${muted}`}>{lead.booking_reference} · {lead.service_city} · {lead.booking_date || "-"} {lead.booking_time || ""}</p>
+                          <p className="mt-2 text-sm font-bold">{lead.customer_name}</p>
+                          {lead.contact_locked ? (
+                            <p className={`text-xs ${muted}`}>Contact locked until package is active.</p>
+                          ) : (
+                            <p className={`text-xs ${muted}`}>{lead.customer_phone || "-"} · {lead.service_address || "Address not available"}</p>
+                          )}
+                          {(lead.service_subcategory || lead.service_description) && (
+                            <p className={`mt-2 text-xs leading-relaxed ${muted}`}>
+                              {lead.service_subcategory ? `${lead.service_subcategory}: ` : ""}{lead.service_description || "No description"}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-2 lg:min-w-44">
+                        <div className={`border px-3 py-2 text-xs ${isDark ? "border-zinc-800 bg-zinc-900" : "border-zinc-200 bg-zinc-50"}`}>
+                          <span className={`block text-[9px] font-black uppercase tracking-widest ${muted}`}>Amount</span>
+                          <span className="font-black text-[var(--brand-blue)]">₹{lead.final_amount || lead.total_amount || lead.base_amount || 0}</span>
+                        </div>
+                        {lead.lead_track_status === "incoming" && (
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => rejectBooking(lead.booking_id)}
+                              className="flex-1 border border-red-500 px-3 py-2 text-[9px] font-black uppercase text-red-500"
+                            >
+                              Reject
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => acceptBooking(lead.booking_id)}
+                              disabled={!lead.can_accept}
+                              className="flex-1 bg-[var(--brand-blue)] px-3 py-2 text-[9px] font-black uppercase text-black disabled:opacity-50"
+                            >
+                              {lead.can_accept ? "Accept" : "Locked"}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
         ) : activeTab === "history" ? (
           /* ── History Tab ── */
           <div className="space-y-4">
