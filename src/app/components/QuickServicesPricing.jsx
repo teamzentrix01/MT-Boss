@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import QuickServiceIcon from './QuickServiceIcon';
+import { getQuickServiceTotal } from '@/lib/quick-service-pricing';
 
 export default function QuickServicesPricing({ isDarkMode }) {
   const [services, setServices] = useState([]);
@@ -22,7 +23,8 @@ export default function QuickServicesPricing({ isDarkMode }) {
     setLoading(true);
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
-      const res = await fetch('/api/quick-services', {
+      const res = await fetch(`/api/quick-services?admin=1&pricing_refresh=${Date.now()}`, {
+        cache: 'no-store',
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -261,7 +263,8 @@ export default function QuickServicesPricing({ isDarkMode }) {
               <thead>
                 <tr>
                   <th>Service Name</th>
-                  <th>Base Price (15 mins)</th>
+                  <th>Base Visiting Fee</th>
+                  <th>Customer Price (Incl. GST)</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
@@ -318,6 +321,11 @@ export default function QuickServicesPricing({ isDarkMode }) {
                           </>
                         )}
                       </div>
+                    </td>
+                    <td>
+                      <span className="price-display">
+                        ₹{getQuickServiceTotal(service.admin_base_price ?? service.base_price ?? 150)}
+                      </span>
                     </td>
                     <td>
                       <span

@@ -629,6 +629,9 @@ export default function FranchisesPage() {
                   <div className="fr-modal-grid">
                     <Field label="Franchise Model"    value={selected.model} />
                     <Field label="Investment"         value={selected.investment} />
+                    <Field label="Registration Fee"   value={selected.registration_fee ? `₹${Number(selected.registration_fee).toLocaleString('en-IN')}` : '—'} />
+                    <Field label="Payment Status"     value={selected.payment_status || 'UNPAID'} />
+                    <Field label="Payment Gateway ID" value={selected.payment_gateway_id || '—'} />
                     <Field label="Territory"          value={selected.territory} />
                     <Field label="Referral Source"    value={selected.referral_source} />
                     <Field label="Start Date"         value={selected.start_date} />

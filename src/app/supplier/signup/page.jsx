@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCities } from '@/hooks/useCities';
+import { redirectToPayU } from '@/lib/payu-client';
 
 export default function SupplierSignupPage() {
-  const router = useRouter();
   const { cities, loading: citiesLoading, error: citiesError } = useCities();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -108,7 +107,7 @@ export default function SupplierSignupPage() {
         }),
       });
       const data = await res.json();
-      if (res.ok) router.push('/supplier/pending-approval');
+      if (res.ok && data.success) redirectToPayU(data.payment);
       else setError(data.error || 'Registration failed. Please try again.');
     } catch { setError('An error occurred. Please try again.'); }
     finally { setLoading(false); }
@@ -398,7 +397,7 @@ export default function SupplierSignupPage() {
                 <button type="button" onClick={() => { setError(''); setStep(step - 1); }} className="ss-btn">← Back</button>
               )}
               <button type="submit" className="ss-btn ss-btn-primary" disabled={loading}>
-                {step === TOTAL_STEPS ? (loading ? 'Submitting…' : 'Submit for Approval →') : 'Continue →'}
+                {step === TOTAL_STEPS ? (loading ? 'Opening PayU…' : 'Pay & Submit →') : 'Continue →'}
               </button>
             </div>
           </form>

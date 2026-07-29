@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { COMPANY_CONTACT } from "../lib/company";
 import { useCities } from "@/hooks/useCities";
+import { redirectToPayU } from "@/lib/payu-client";
 
 
 function useDarkMode() {
@@ -28,7 +29,7 @@ function useInView(threshold = 0.1) {
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
-  }, []);
+  }, [threshold]);
   return [ref, inView];
 }
 
@@ -131,6 +132,8 @@ export default function FranchisePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [formStep, setFormStep] = useState(1);
+  const [registrationFee, setRegistrationFee] = useState(null);
+  const [feeLoading, setFeeLoading] = useState(false);
 
  const [form, setForm] = useState({
   // Personal
@@ -153,6 +156,35 @@ export default function FranchisePage() {
   // Additional
   message: "", otherFranchise: "", trainingWilling: "",
 });
+
+  useEffect(() => {
+    if (!form.model) {
+      setRegistrationFee(null);
+      return;
+    }
+    const controller = new AbortController();
+    setFeeLoading(true);
+    fetch(`/api/franchises?action=registration-fee&model=${encodeURIComponent(form.model)}`, {
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(response => response.json().then(data => ({ response, data })))
+      .then(({ response, data }) => {
+        if (!response.ok || !data.success) throw new Error(data.error || "Registration fee is unavailable");
+        setRegistrationFee(Number(data.amount));
+      })
+      .catch(fetchError => {
+        if (fetchError.name !== "AbortError") {
+          setRegistrationFee(null);
+          setError(fetchError.message || "Registration fee is unavailable");
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setFeeLoading(false);
+      });
+    return () => controller.abort();
+  }, [form.model]);
+
   const [heroRef, heroVisible] = useInView(0.1);
   const [benefitsRef, benefitsVisible] = useInView(0.1);
   const [processRef, processVisible] = useInView(0.1);
@@ -268,6 +300,7 @@ export default function FranchisePage() {
       }),
     });
 
+    redirectToPayU(dbData.payment);
     setSubmitted(true);
   } catch (err) {
     setError("Network error. Please try again.");
@@ -365,7 +398,7 @@ export default function FranchisePage() {
             <span className="block text-[var(--brand-blue)]">Opportunity</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-            Partner with India's trusted construction brand. Build a profitable business with MTBOSS's proven model, technical expertise, and 20+ years of legacy.
+            Partner with India&apos;s trusted construction brand. Build a profitable business with MTBOSS&apos;s proven model, technical expertise, and 20+ years of legacy.
           </p>
 
           {/* Stats */}
@@ -1186,6 +1219,15 @@ export default function FranchisePage() {
           </div>
 
           <div className="w-full sm:w-auto">
+            {formStep === 4 && (
+              <p className={`mb-3 text-center text-[10px] font-black uppercase tracking-wider ${dark ? "text-zinc-300" : "text-zinc-600"}`}>
+                {feeLoading
+                  ? "Loading registration fee..."
+                  : registrationFee
+                    ? `PayU registration fee: ₹${registrationFee.toLocaleString("en-IN")}`
+                    : "Registration fee unavailable"}
+              </p>
+            )}
             {formStep < 4 ? (
               <button
                 type="button"
@@ -1207,7 +1249,7 @@ export default function FranchisePage() {
             ) : (
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || feeLoading || !registrationFee}
                 className="w-full sm:w-auto px-12 py-4 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3 rounded-sm"
               >
                 {loading ? (
@@ -1216,11 +1258,11 @@ export default function FranchisePage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                     </svg>
-                    Submitting...
+                    Opening PayU...
                   </>
                 ) : (
                   <>
-                    Submit Application
+                    Pay & Submit Application
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>

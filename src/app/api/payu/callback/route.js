@@ -57,7 +57,11 @@ export async function POST(req) {
              WHERE id = $3 AND status = 'AWAITING_PAYMENT'`,
             [intent.amount, String(fields.mihpayid || ''), intent.entity_id]
           );
-        } else if (intent.purpose === 'vendor_package' || intent.purpose === 'supplier_package') {
+        } else if (
+          intent.purpose === 'vendor_package'
+          || intent.purpose === 'supplier_package'
+          || intent.purpose === 'supplier_registration'
+        ) {
           await ensurePackageSchema();
           const pkg = getPackageById(intent.package_id);
           if (!pkg) throw new Error('Paid package no longer exists');
@@ -69,6 +73,17 @@ export async function POST(req) {
              WHERE id = $5`,
             [pkg.id, pkg.name, pkg.price, pkg.duration_months, intent.entity_id]
           );
+        } else if (intent.purpose === 'franchise_registration') {
+          await client.query(
+            `UPDATE franchises
+             SET payment_status = 'PAID',
+                 registration_fee = $1,
+                 payment_gateway = 'PAYU',
+                 payment_gateway_id = $2,
+                 payment_completed_at = NOW()
+             WHERE id = $3`,
+            [intent.amount, String(fields.mihpayid || ''), intent.entity_id]
+          );
         }
 
         await client.query(
@@ -79,6 +94,14 @@ export async function POST(req) {
         );
       } else if (!succeeded && intent.status === 'PENDING') {
         await client.query(`UPDATE payu_payment_intents SET status = 'FAILED' WHERE id = $1`, [intent.id]);
+        if (intent.purpose === 'franchise_registration') {
+          await client.query(
+            `UPDATE franchises
+             SET payment_status = 'FAILED'
+             WHERE id = $1 AND payment_status <> 'PAID'`,
+            [intent.entity_id]
+          );
+        }
       }
 
       await client.query('COMMIT');
@@ -87,12 +110,22 @@ export async function POST(req) {
         succeeded ? 'success' : 'failed',
         intent.purpose === 'booking_final' ? fields.udf2 : null,
         succeeded
-          ? (intent.purpose.includes('package') ? 'Payment received. Package is pending admin approval.' : null)
+          ? (
+            intent.purpose.includes('package')
+              ? 'Payment received. Package is pending admin approval.'
+              : intent.purpose.includes('registration')
+                ? 'Payment received. Your registration is pending admin approval.'
+                : null
+          )
           : fields.error_Message || 'Payment was not completed.',
         intent.purpose === 'vendor_package'
           ? '/vendor/dashboard?tab=packages'
           : intent.purpose === 'supplier_package'
             ? '/supplier/dashboard?tab=packages'
+            : intent.purpose === 'supplier_registration'
+              ? '/supplier/pending-approval'
+              : intent.purpose === 'franchise_registration'
+                ? '/franchise'
             : '/userdashboard'
       );
     }

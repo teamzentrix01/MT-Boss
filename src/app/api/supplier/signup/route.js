@@ -3,11 +3,16 @@ import pool from '@/lib/db';
 import { ensurePackageSchema, getPackageById } from '@/lib/packages';
 import { cleanText, normalizePhone, isValidEmail, isValidIndianMobile } from '@/lib/validation';
 import { resolveManagedCity } from '@/lib/cities';
+import { createPayURequest } from '@/lib/payu';
+import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    let { email, password, shop_name, phone, city, state, country, postal_code, aadhaar_number, product_categories, package_id } = body;
+    let {
+      email, password, shop_name, phone, city, state, country, postal_code,
+      aadhaar_number, product_categories, package_id,
+    } = body;
     email = cleanText(email).toLowerCase();
     phone = normalizePhone(phone);
     postal_code = cleanText(postal_code);
@@ -31,56 +36,125 @@ export async function POST(request) {
     if (!aadhaar_number || !/^\d{12}$/.test(aadhaar_number.replace(/\s/g, ''))) {
       return NextResponse.json({ error: 'Valid 12-digit Aadhaar number is required' }, { status: 400 });
     }
-    if (!product_categories || product_categories.length === 0) {
+    if (!Array.isArray(product_categories) || product_categories.length === 0) {
       return NextResponse.json({ error: 'Select at least one product category' }, { status: 400 });
     }
 
     await ensurePackageSchema();
     await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS product_categories TEXT[] DEFAULT '{}'`);
 
-    const existing = await pool.query('SELECT id FROM suppliers WHERE email = $1', [email]);
-    if (existing.rows.length > 0) {
-      return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
+    const pkg = getPackageById(package_id || 'pkg_6m');
+    if (!pkg) {
+      return NextResponse.json({ error: 'Select a valid subscription plan' }, { status: 400 });
     }
 
-    const pkg = getPackageById(package_id || 'pkg_6m') || getPackageById('pkg_6m');
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const existing = await client.query(
+        `SELECT id, email, shop_name, phone, status, package_status,
+                (password_hash = crypt($2, password_hash)) AS password_match
+         FROM suppliers
+         WHERE LOWER(email) = LOWER($1)
+         FOR UPDATE`,
+        [email, password]
+      );
 
-    // $4 = business_name (same as shop_name — column has NOT NULL constraint)
-    const result = await pool.query(
-      `INSERT INTO suppliers (
-        email, password_hash,
-        shop_name, business_name, phone,
-        city, state, country, postal_code,
-        aadhaar_number, product_categories, status,
-        package_id, package_name, package_price, package_duration_months,
-        package_purchased_at, package_status
-      ) VALUES (
-        $1, crypt($2, gen_salt('bf')),
-        $3, $4, $5,
-        $6, $7, $8, $9,
-        $10, $11, 'pending',
-        $12, $13, $14, $15,
-        NULL, 'unpaid'
-      )
-      RETURNING id, email, shop_name, phone, status, created_at`,
-      [
-        email, password,
-        shop_name, shop_name, phone,
-        canonicalCity, state || null, country || 'India', postal_code || null,
-        aadhaar_number.replace(/\s/g, ''),
-        product_categories,
-        pkg.id, pkg.name, pkg.price, pkg.duration_months
-      ]
-    );
+      let supplier;
+      if (existing.rows[0]) {
+        supplier = existing.rows[0];
+        const paymentCanBeRetried = supplier.password_match
+          && supplier.status === 'pending'
+          && !['pending', 'active'].includes(supplier.package_status);
+        if (!paymentCanBeRetried) {
+          await client.query('ROLLBACK');
+          return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
+        }
+        await client.query(
+          `UPDATE suppliers
+           SET package_id = $1, package_name = $2, package_price = $3,
+               package_duration_months = $4, package_status = 'unpaid'
+           WHERE id = $5`,
+          [pkg.id, pkg.name, pkg.price, pkg.duration_months, supplier.id]
+        );
+      } else {
+        const result = await client.query(
+          `INSERT INTO suppliers (
+            email, password_hash,
+            shop_name, business_name, phone,
+            city, state, country, postal_code,
+            aadhaar_number, product_categories, status,
+            package_id, package_name, package_price, package_duration_months,
+            package_purchased_at, package_status
+          ) VALUES (
+            $1, crypt($2, gen_salt('bf')),
+            $3, $4, $5,
+            $6, $7, $8, $9,
+            $10, $11, 'pending',
+            $12, $13, $14, $15,
+            NULL, 'unpaid'
+          )
+          RETURNING id, email, shop_name, phone, status, created_at`,
+          [
+            email, password,
+            shop_name, shop_name, phone,
+            canonicalCity, state || null, country || 'India', postal_code || null,
+            aadhaar_number.replace(/\s/g, ''),
+            product_categories,
+            pkg.id, pkg.name, pkg.price, pkg.duration_months,
+          ]
+        );
+        supplier = result.rows[0];
+      }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Registration successful. Please wait for admin approval before logging in.',
-      supplier: { id: result.rows[0].id, email: result.rows[0].email, shop_name: result.rows[0].shop_name, status: 'pending' },
-    }, { status: 201 });
+      const txnid = newPayUTxnId('SRG');
+      await createPayUIntent({
+        txnid,
+        purpose: 'supplier_registration',
+        entityId: supplier.id,
+        packageId: pkg.id,
+        amount: pkg.price,
+        client,
+      });
+      const callbackUrl = getPayUCallbackUrl(request);
+      const payment = createPayURequest({
+        txnid,
+        amount: pkg.price,
+        productinfo: `MTBOSS supplier registration - ${pkg.label}`,
+        firstname: String(shop_name).trim().split(/\s+/)[0],
+        email,
+        phone,
+        surl: callbackUrl,
+        furl: callbackUrl,
+        udf1: String(supplier.id),
+        udf2: pkg.id,
+        udf3: 'supplier_registration',
+      });
 
+      await client.query('COMMIT');
+      return NextResponse.json({
+        success: true,
+        message: 'Registration saved. Redirecting to PayU for subscription payment.',
+        supplier: {
+          id: supplier.id,
+          email: supplier.email,
+          shop_name: supplier.shop_name,
+          status: 'pending',
+        },
+        payment,
+      }, { status: existing.rows[0] ? 200 : 201 });
+    } catch (error) {
+      try { await client.query('ROLLBACK'); } catch {}
+      throw error;
+    } finally {
+      client.release();
+    }
   } catch (err) {
     console.error('Signup error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({
+      error: err.message?.includes('PayU is not configured')
+        ? 'Online payment is temporarily unavailable'
+        : 'Internal server error',
+    }, { status: 500 });
   }
 }

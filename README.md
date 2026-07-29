@@ -16,6 +16,25 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## PayU configuration
+
+Supplier subscriptions, franchise registrations, and service payments use the
+same PayU merchant credentials:
+
+```env
+PAYU_KEY=your_merchant_key
+PAYU_SALT=your_merchant_salt
+PAYU_ENV=test
+NEXT_PUBLIC_APP_URL=https://your-domain.example
+FRANCHISE_REGISTRATION_FEE=your_fee
+```
+
+`PAYU_ENV` can be changed to `production` for live payments. The common
+franchise fee can be overridden per model with
+`FRANCHISE_ASSOCIATE_REGISTRATION_FEE`,
+`FRANCHISE_REGIONAL_REGISTRATION_FEE`, and
+`FRANCHISE_MASTER_REGISTRATION_FEE`.
+
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

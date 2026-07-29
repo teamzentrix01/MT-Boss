@@ -2,8 +2,10 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireAdmin } from '@/lib/agent-auth';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { ensurePackageSchema } from '@/lib/packages';
 
 const ensureSupplierColumns = createInitializationGuard(async () => {
+  await ensurePackageSchema();
   await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE`);
   await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS product_categories TEXT[] DEFAULT '{}'`);
 });
@@ -22,7 +24,7 @@ export async function GET(req) {
         s.city, s.state, s.country, s.postal_code,
         s.aadhaar_number, s.aadhaar_status,
         s.product_categories,
-        s.status, s.is_active,
+        s.status, s.is_active, s.package_name, s.package_price, s.package_status,
         s.rejection_reason,
         s.created_at, s.updated_at,
         COALESCE(e.total_earned, 0)      AS total_earned,
@@ -64,7 +66,10 @@ export async function PUT(req) {
     let query, values;
 
     if (action === 'approve') {
-      query = `UPDATE suppliers SET status = 'approved', is_active = TRUE, rejection_reason = NULL, updated_at = NOW() WHERE id = $1 RETURNING id, email, shop_name, status, is_active`;
+      query = `UPDATE suppliers
+               SET status = 'approved', is_active = TRUE, rejection_reason = NULL, updated_at = NOW()
+               WHERE id = $1 AND package_status IN ('pending', 'active')
+               RETURNING id, email, shop_name, status, is_active`;
       values = [supplier_id];
     } else if (action === 'reject') {
       query = `UPDATE suppliers SET status = 'rejected', is_active = FALSE, rejection_reason = $2, updated_at = NOW() WHERE id = $1 RETURNING id, email, shop_name, status, is_active`;
@@ -80,7 +85,13 @@ export async function PUT(req) {
     }
 
     const result = await pool.query(query, values);
-    if (result.rows.length === 0) return NextResponse.json({ error: 'Supplier not found' }, { status: 404 });
+    if (result.rows.length === 0) {
+      return NextResponse.json({
+        error: action === 'approve'
+          ? 'Supplier payment must be completed before approval'
+          : 'Supplier not found',
+      }, { status: action === 'approve' ? 409 : 404 });
+    }
 
     return NextResponse.json({ success: true, message: `Supplier ${action}d`, data: result.rows[0] });
   } catch (error) {

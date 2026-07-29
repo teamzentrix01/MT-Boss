@@ -21,9 +21,16 @@ export function newPayUTxnId(prefix = 'MTB') {
   return `${prefix}${Date.now()}${Math.random().toString(36).slice(2, 8)}`.slice(0, 50);
 }
 
-export async function createPayUIntent({ txnid, purpose, entityId, packageId = null, amount }) {
-  await ensurePayUIntentSchema();
-  await pool.query(
+export async function createPayUIntent({
+  txnid,
+  purpose,
+  entityId,
+  packageId = null,
+  amount,
+  client = pool,
+}) {
+  await ensurePayUIntentSchema(client);
+  await client.query(
     `INSERT INTO payu_payment_intents (txnid, purpose, entity_id, package_id, amount)
      VALUES ($1, $2, $3, $4, $5)`,
     [txnid, purpose, entityId, packageId, amount]

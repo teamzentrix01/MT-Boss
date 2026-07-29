@@ -8,11 +8,26 @@ import { createInitializationGuard } from '@/lib/api-utils';
 import { ensureFranchiseAccessColumns } from '@/lib/franchise-access';
 import { resolveFranchisePermissionDependencies } from '@/lib/franchise-permissions';
 import { resolveManagedCity } from '@/lib/cities';
+import { createPayURequest } from '@/lib/payu';
+import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
 
 const STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
+const FRANCHISE_FEE_ENV_KEYS = Object.freeze({
+  'Associate Partner': 'FRANCHISE_ASSOCIATE_REGISTRATION_FEE',
+  'Regional Franchise': 'FRANCHISE_REGIONAL_REGISTRATION_FEE',
+  'Master Franchise': 'FRANCHISE_MASTER_REGISTRATION_FEE',
+});
 
 const ensureFranchiseColumns = createInitializationGuard(async () => {
   await ensureFranchiseAccessColumns();
+  await pool.query(`
+    ALTER TABLE franchises
+      ADD COLUMN IF NOT EXISTS registration_fee NUMERIC(12,2),
+      ADD COLUMN IF NOT EXISTS payment_status TEXT NOT NULL DEFAULT 'UNPAID',
+      ADD COLUMN IF NOT EXISTS payment_gateway TEXT,
+      ADD COLUMN IF NOT EXISTS payment_gateway_id TEXT,
+      ADD COLUMN IF NOT EXISTS payment_completed_at TIMESTAMPTZ
+  `);
 });
 
 function clean(value) {
@@ -21,6 +36,21 @@ function clean(value) {
 
 function normalizeCity(value) {
   return clean(value).toLowerCase();
+}
+
+function getFranchiseRegistrationFee(model) {
+  const modelEnvKey = FRANCHISE_FEE_ENV_KEYS[model];
+  if (!modelEnvKey) {
+    throw new Error('Invalid franchise model');
+  }
+  const amount = Number(
+    process.env[modelEnvKey]
+    || process.env.FRANCHISE_REGISTRATION_FEE
+  );
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error('Franchise registration fee is not configured');
+  }
+  return amount;
 }
 
 async function cityTaken(city, excludeId = null) {
@@ -93,6 +123,19 @@ function credentialsEmail({ name, email, password, city }) {
 
 export async function GET(req) {
   try {
+    const { searchParams } = new URL(req.url);
+    if (searchParams.get('action') === 'registration-fee') {
+      const model = clean(searchParams.get('model'));
+      if (!FRANCHISE_FEE_ENV_KEYS[model]) {
+        return NextResponse.json({ success: false, error: 'Valid franchise model is required' }, { status: 400 });
+      }
+      return NextResponse.json({
+        success: true,
+        model,
+        amount: getFranchiseRegistrationFee(model),
+      });
+    }
+
     const admin = requireRole(req, 'admin');
     if (!admin) {
       return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
@@ -133,6 +176,9 @@ export async function POST(req) {
     if (!cleanName || !cleanEmail || !cleanPhone || !clean(model) || !canonicalCity) {
       return NextResponse.json({ success: false, error: 'Name, email, phone, city and franchise model are required' }, { status: 400 });
     }
+    if (!FRANCHISE_FEE_ENV_KEYS[model]) {
+      return NextResponse.json({ success: false, error: 'Select a valid franchise model' }, { status: 400 });
+    }
     const contactError = validateContactFields({ name: cleanName, email: cleanEmail, phone: cleanPhone });
     if (contactError) {
       return NextResponse.json({ success: false, error: contactError }, { status: 400 });
@@ -153,47 +199,126 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Password and confirm password do not match' }, { status: 400 });
     }
 
-    const existingCity = await cityTaken(canonicalCity);
-    if (existingCity) {
+    const registrationFee = getFranchiseRegistrationFee(model);
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const existing = await client.query(
+        `SELECT *
+         FROM franchises
+         WHERE LOWER(email) = LOWER($1)
+         FOR UPDATE`,
+        [cleanEmail]
+      );
+
+      let franchise;
+      let isRetry = false;
+      if (existing.rows[0]) {
+        franchise = existing.rows[0];
+        const passwordMatches = franchise.password_hash
+          && await bcrypt.compare(password, franchise.password_hash);
+        const paymentCanBeRetried = passwordMatches
+          && normalizeCity(franchise.city) === normalizeCity(canonicalCity)
+          && ['Pending', 'Reviewing'].includes(franchise.status)
+          && franchise.payment_status !== 'PAID';
+        if (!paymentCanBeRetried) {
+          await client.query('ROLLBACK');
+          return NextResponse.json({
+            success: false,
+            error: 'An application already exists for this email',
+          }, { status: 409 });
+        }
+        isRetry = true;
+      } else {
+        const existingCity = await cityTaken(canonicalCity);
+        if (existingCity) {
+          await client.query('ROLLBACK');
+          return NextResponse.json({
+            success: false,
+            error: `A franchise application already exists for ${city}. Only one franchise is allowed in one city.`,
+          }, { status: 409 });
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+        const result = await client.query(
+          `INSERT INTO franchises (
+            name, father_name, dob, gender, marital_status, phone, email,
+            occupation, qualification, annual_income, id_type, id_number, pan,
+            address, district, city, state, pin_code, current_business, experience,
+            construction_exp, employees, network, bank_name, branch_name,
+            account_number, ifsc_code, model, investment, territory, referral_source,
+            start_date, service_category, office_area, office_district, premises_ownership,
+            lease_duration, office_area_sqft, office_type, message, other_franchise,
+            training_willing, password_hash, login_enabled, permissions
+          ) VALUES (
+            $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,
+            $19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,
+            $35,$36,$37,$38,$39,$40,$41,$42,$43,FALSE,'{}'::jsonb
+          ) RETURNING *`,
+          [
+            cleanName, fatherName, dob, gender, maritalStatus, cleanPhone, cleanEmail,
+            occupation, qualification, annualIncome, idType, idNumber, pan,
+            address, district, canonicalCity, state, pinCode, currentBusiness, experience,
+            constructionExp, employees, network, bankName, branchName,
+            accountNumber, ifscCode, model, investment, territory, referralSource,
+            startDate, serviceCategory, officeArea, officeDistrict, premisesOwnership,
+            leaseDuration, officeArea_sqft, officeType, message, otherFranchise,
+            trainingWilling, passwordHash,
+          ]
+        );
+        franchise = result.rows[0];
+      }
+
+      await client.query(
+        `UPDATE franchises
+         SET registration_fee = $1, payment_status = 'PENDING',
+             payment_gateway = 'PAYU', payment_gateway_id = NULL
+         WHERE id = $2`,
+        [registrationFee, franchise.id]
+      );
+      const txnid = newPayUTxnId('FRG');
+      await createPayUIntent({
+        txnid,
+        purpose: 'franchise_registration',
+        entityId: franchise.id,
+        amount: registrationFee,
+        client,
+      });
+      const callbackUrl = getPayUCallbackUrl(req);
+      const payment = createPayURequest({
+        txnid,
+        amount: registrationFee,
+        productinfo: `MTBOSS ${model} registration`,
+        firstname: cleanName.split(/\s+/)[0],
+        email: cleanEmail,
+        phone: cleanPhone,
+        surl: callbackUrl,
+        furl: callbackUrl,
+        udf1: String(franchise.id),
+        udf2: String(franchise.id),
+        udf3: 'franchise_registration',
+      });
+
+      await client.query('COMMIT');
       return NextResponse.json({
-        success: false,
-        error: `A franchise application already exists for ${city}. Only one franchise is allowed in one city.`,
-      }, { status: 409 });
+        success: true,
+        data: { ...franchise, registration_fee: registrationFee, payment_status: 'PENDING' },
+        payment,
+      }, { status: isRetry ? 200 : 201 });
+    } catch (paymentError) {
+      try { await client.query('ROLLBACK'); } catch {}
+      throw paymentError;
+    } finally {
+      client.release();
     }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    const result = await pool.query(
-      `INSERT INTO franchises (
-        name, father_name, dob, gender, marital_status, phone, email,
-        occupation, qualification, annual_income, id_type, id_number, pan,
-        address, district, city, state, pin_code, current_business, experience,
-        construction_exp, employees, network, bank_name, branch_name,
-        account_number, ifsc_code, model, investment, territory, referral_source,
-        start_date, service_category, office_area, office_district, premises_ownership,
-        lease_duration, office_area_sqft, office_type, message, other_franchise,
-        training_willing, password_hash, login_enabled, permissions
-      ) VALUES (
-        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,
-        $19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,
-        $35,$36,$37,$38,$39,$40,$41,$42,$43,FALSE,'{}'::jsonb
-      ) RETURNING *`,
-      [
-        cleanName, fatherName, dob, gender, maritalStatus, cleanPhone, cleanEmail,
-        occupation, qualification, annualIncome, idType, idNumber, pan,
-        address, district, canonicalCity, state, pinCode, currentBusiness, experience,
-        constructionExp, employees, network, bankName, branchName,
-        accountNumber, ifscCode, model, investment, territory, referralSource,
-        startDate, serviceCategory, officeArea, officeDistrict, premisesOwnership,
-        leaseDuration, officeArea_sqft, officeType, message, otherFranchise,
-        trainingWilling, passwordHash,
-      ]
-    );
-
-    return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
     console.error('Franchise submit error:', error);
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+    const configurationError = error.message === 'Franchise registration fee is not configured'
+      || error.message?.includes('PayU is not configured');
+    return NextResponse.json({
+      success: false,
+      error: configurationError ? 'Online registration payment is temporarily unavailable' : 'Server error',
+    }, { status: 500 });
   }
 }
 
@@ -315,6 +440,12 @@ export async function PATCH(req) {
     }
 
     if (status === 'Approved') {
+      if (current.payment_status !== 'PAID') {
+        return NextResponse.json({
+          success: false,
+          error: 'Franchise registration payment must be completed before approval',
+        }, { status: 409 });
+      }
       const existingCity = await cityTaken(current.city, id);
       if (existingCity) {
         return NextResponse.json({

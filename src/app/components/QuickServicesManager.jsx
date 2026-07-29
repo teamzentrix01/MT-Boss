@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import QuickServiceIcon from './QuickServiceIcon';
+import { getQuickServiceTotal } from '@/lib/quick-service-pricing';
 
 async function uploadQuickServiceIcon(file) {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
@@ -374,7 +375,8 @@ export default function QuickServicesManager({ isDarkMode }) {
           display:block; width:100%; min-width:0; color:var(--qs-muted);
           overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
         }
-        .qs-price-cell { font-weight:600; }
+        .qs-price-cell { display:flex; flex-direction:column; gap:0.1rem; font-weight:700; white-space:nowrap; }
+        .qs-price-base { color:var(--qs-muted); font-size:0.625rem; font-weight:500; }
 
         .qs-row-actions { display:flex; gap:0.2rem; white-space:nowrap; }
         .qs-act {
@@ -578,7 +580,7 @@ export default function QuickServicesManager({ isDarkMode }) {
               <thead>
                 <tr>
                   <th style={{ width: '2rem' }} />
-                  {['Icon', 'Service', 'Description', 'Cities', 'Main Category', 'Sub Category', 'Visiting Price', 'Duration', 'Actions'].map(col => (
+                  {['Icon', 'Service', 'Description', 'Cities', 'Main Category', 'Sub Category', 'Customer Price (Incl. GST)', 'Duration', 'Actions'].map(col => (
                     <th key={col}>{col}</th>
                   ))}
                 </tr>
@@ -607,7 +609,17 @@ export default function QuickServicesManager({ isDarkMode }) {
                     <td><span className="qs-muted-cell">{service.cities?.length ? service.cities.join(', ') : 'Vendor-based'}</span></td>
                     <td><span className="qs-muted-cell">{service.main_category || '—'}</span></td>
                     <td><span className="qs-muted-cell">{service.sub_category || '—'}</span></td>
-                    <td><span className="qs-price-cell">₹{service.visiting_price || 150}</span></td>
+                    <td>
+                      {(() => {
+                        const basePrice = Number(service.admin_base_price ?? service.base_price ?? 150);
+                        return (
+                          <span className="qs-price-cell">
+                            ₹{getQuickServiceTotal(basePrice)}
+                            <span className="qs-price-base">Base ₹{basePrice} + 18% GST</span>
+                          </span>
+                        );
+                      })()}
+                    </td>
                     <td style={{ color: 'var(--qs-muted)' }}>{service.duration}</td>
                     <td>
                       <div className="qs-row-actions">

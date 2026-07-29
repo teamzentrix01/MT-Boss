@@ -32,7 +32,7 @@ export default async function PayUResultPage({ searchParams }) {
             Continue
           </Link>
           {!success && (
-            <Link href="/quick" className="px-5 py-3 border border-zinc-700 text-xs font-black uppercase tracking-wider">
+            <Link href={returnTo} className="px-5 py-3 border border-zinc-700 text-xs font-black uppercase tracking-wider">
               Try again
             </Link>
           )}
