@@ -114,7 +114,7 @@ export default function RentBrowsePage() {
                 onClick={() => goToDetail(property.id)}
               >
                 {/* Image */}
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-zinc-800">
                   <img
                     src={
                       property.images && property.images.length > 0
@@ -124,7 +124,7 @@ export default function RentBrowsePage() {
                     alt={property.title}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover hover:scale-110 transition-transform"
+                    className="block w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
                       e.target.src = "/placeholder.jpg";
                     }}
