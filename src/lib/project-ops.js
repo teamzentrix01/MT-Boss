@@ -15,6 +15,7 @@ export const ensureProjectOpsSchema = createInitializationGuard(async () => {
       ADD COLUMN IF NOT EXISTS project_status TEXT DEFAULT 'lead',
       ADD COLUMN IF NOT EXISTS source_lead_id INTEGER,
       ADD COLUMN IF NOT EXISTS project_kind TEXT NOT NULL DEFAULT 'portfolio',
+      ADD COLUMN IF NOT EXISTS sort_order INTEGER NOT NULL DEFAULT 0,
       ADD COLUMN IF NOT EXISTS assigned_by_role TEXT,
       ADD COLUMN IF NOT EXISTS assigned_by_id INTEGER,
       ADD COLUMN IF NOT EXISTS assigned_at TIMESTAMPTZ,
@@ -216,7 +217,7 @@ export async function convertFinalLeadToProject(db, leadId) {
   return result.rows[0];
 }
 
-export async function getProjectSummaries(whereSql = '', params = []) {
+export async function getProjectSummaries(whereSql = '', params = [], orderBySql = 'ORDER BY p.created_at DESC') {
   await ensureProjectOpsSchema();
   const result = await pool.query(
     `
@@ -285,7 +286,7 @@ export async function getProjectSummaries(whereSql = '', params = []) {
       GROUP BY project_id
     ) contractor ON contractor.project_id = p.id
     ${whereSql}
-    ORDER BY p.created_at DESC
+    ${orderBySql}
     `,
     params
   );

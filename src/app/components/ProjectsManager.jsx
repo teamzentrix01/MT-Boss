@@ -23,6 +23,10 @@ export default function ProjectsManager() {
   const [saving, setSaving]           = useState(false);
   const [deleteId, setDeleteId]       = useState(null);
   const [preview, setPreview]         = useState('');
+  const [dragIndex, setDragIndex]     = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+  const [orderSaving, setOrderSaving] = useState(false);
+  const [orderMessage, setOrderMessage] = useState('');
   const fileRef = useRef(null);
 
   const emptyForm = {
@@ -115,7 +119,7 @@ export default function ProjectsManager() {
         if (editProject) {
           setProjects(prev => prev.map(p => p.id === editProject.id ? data.data : p));
         } else {
-          setProjects(prev => [data.data, ...prev]);
+          setProjects(prev => [...prev, data.data]);
         }
         setShowForm(false);
       }
@@ -147,6 +151,71 @@ export default function ProjectsManager() {
     });
     const data = await res.json();
     if (data.success) setProjects(prev => prev.map(p => p.id === project.id ? data.data : p));
+  };
+
+  const saveOrder = async (orderedProjects, previousProjects) => {
+    setOrderSaving(true);
+    setOrderMessage('');
+    try {
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const res = await fetch('/api/projects', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          items: orderedProjects.map((project, index) => ({
+            id: project.id,
+            sort_order: index + 1,
+          })),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Unable to save project order');
+      setOrderMessage('Project sequence saved.');
+      setTimeout(() => setOrderMessage(''), 2500);
+    } catch (error) {
+      setProjects(previousProjects);
+      setOrderMessage(error.message || 'Unable to save project order. Please try again.');
+    } finally {
+      setOrderSaving(false);
+    }
+  };
+
+  const handleDragStart = (event, index) => {
+    setDragIndex(index);
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', String(projects[index].id));
+  };
+
+  const handleDragOver = (event, index) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    if (index !== dragIndex) setDragOverIndex(index);
+  };
+
+  const handleDrop = (event, dropIndex) => {
+    event.preventDefault();
+    if (dragIndex === null || dragIndex === dropIndex || orderSaving) {
+      setDragIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    const previousProjects = [...projects];
+    const reorderedProjects = [...projects];
+    const [draggedProject] = reorderedProjects.splice(dragIndex, 1);
+    reorderedProjects.splice(dropIndex, 0, draggedProject);
+    setProjects(reorderedProjects);
+    setDragIndex(null);
+    setDragOverIndex(null);
+    saveOrder(reorderedProjects, previousProjects);
+  };
+
+  const handleDragEnd = () => {
+    setDragIndex(null);
+    setDragOverIndex(null);
   };
 
   return (
@@ -188,6 +257,7 @@ export default function ProjectsManager() {
           gap: 0.75rem;
         }
         .pm-card {
+          position: relative;
           background: var(--surface) !important;
           background-image: none !important;
           border: 1px solid var(--border);
@@ -200,6 +270,27 @@ export default function ProjectsManager() {
           transform: translateY(-1px);
           box-shadow: 0 10px 28px rgba(15, 23, 42, .08);
         }
+        .pm-card-dragging { opacity: .45; }
+        .pm-card-drag-over {
+          border-color: var(--accent);
+          box-shadow: 0 0 0 2px var(--accent);
+        }
+        .pm-drag-handle {
+          position: absolute; top: 0.625rem; left: 0.625rem; z-index: 2;
+          display: flex; align-items: center; justify-content: center;
+          width: 2rem; height: 2rem; border: 1px solid rgba(255,255,255,.65);
+          border-radius: 6px; background: rgba(0,0,0,.68); color: #fff;
+          font-size: 1.1rem; line-height: 1; cursor: grab; user-select: none;
+          backdrop-filter: blur(4px);
+        }
+        .pm-drag-handle:active { cursor: grabbing; }
+        .pm-order-hint {
+          display: flex; align-items: center; gap: .5rem;
+          margin-bottom: 1rem; padding: .625rem .75rem;
+          border: 1px dashed var(--border); border-radius: 7px;
+          color: var(--muted); font-size: .75rem; font-weight: 600;
+        }
+        .pm-order-status { margin-left: auto; color: var(--accent); }
         .pm-card-img {
           width: 100%; height: 160px;
           object-fit: cover; display: block;
@@ -403,6 +494,16 @@ export default function ProjectsManager() {
           ))}
         </div>
 
+        {projects.length > 1 && (
+          <div className="pm-order-hint">
+            <span aria-hidden="true">⠿</span>
+            Drag project cards to change their sequence on the website.
+            {(orderSaving || orderMessage) && (
+              <span className="pm-order-status">{orderSaving ? 'Saving sequence...' : orderMessage}</span>
+            )}
+          </div>
+        )}
+
         {/* Grid */}
         {loading ? (
           <div className="pm-empty">Loading projects…</div>
@@ -410,13 +511,19 @@ export default function ProjectsManager() {
           <div className="pm-empty">No projects yet. Click Add Project to get started.</div>
         ) : (
           <div className="pm-grid">
-            {projects.map(project => {
+            {projects.map((project, index) => {
               const st = statusStyle[project.status] || statusStyle.published;
               return (
                 <div
                   key={project.id}
-                  className="pm-card"
+                  className={`pm-card ${dragIndex === index ? 'pm-card-dragging' : ''} ${dragOverIndex === index && dragIndex !== index ? 'pm-card-drag-over' : ''}`}
+                  draggable={!orderSaving}
+                  onDragStart={(event) => handleDragStart(event, index)}
+                  onDragOver={(event) => handleDragOver(event, index)}
+                  onDrop={(event) => handleDrop(event, index)}
+                  onDragEnd={handleDragEnd}
                 >
+                  <span className="pm-drag-handle" title="Drag to reorder" aria-label="Drag to reorder">⠿</span>
                   {project.image_url
                     ? <img src={project.image_url} alt={project.title} className="pm-card-img" />
                     : <div className="pm-card-img-placeholder">🏗️</div>

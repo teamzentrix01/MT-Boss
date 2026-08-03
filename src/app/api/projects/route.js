@@ -48,17 +48,21 @@ export async function GET(req) {
       await ensureProjectOpsSchema();
       return NextResponse.json({
         success: true,
-        data: await getProjectSummaries("WHERE p.project_kind = 'portfolio'"),
+        data: await getProjectSummaries(
+          "WHERE p.project_kind = 'portfolio'",
+          [],
+          'ORDER BY COALESCE(p.sort_order, 0) ASC, p.created_at DESC'
+        ),
       });
     }
 
     await ensureProjectOpsSchema();
     const result = await pool.query(
       `SELECT id, title, category, location, description, image_url, cloudinary_public_id,
-              size, status, created_at
+              size, status, sort_order, created_at
          FROM projects
         WHERE project_kind = 'portfolio' AND status = 'published'
-        ORDER BY created_at DESC`
+        ORDER BY COALESCE(sort_order, 0) ASC, created_at DESC`
     );
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
@@ -86,8 +90,10 @@ export async function POST(req) {
 
     await ensureProjectOpsSchema();
     const result = await pool.query(
-      `INSERT INTO projects (title, category, location, description, image_url, cloudinary_public_id, size, status, project_kind)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'portfolio') RETURNING *`,
+      `INSERT INTO projects (title, category, location, description, image_url, cloudinary_public_id, size, status, sort_order, project_kind)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,
+         (SELECT COALESCE(MAX(sort_order), 0) + 1 FROM projects WHERE project_kind = 'portfolio'),
+         'portfolio') RETURNING *`,
       [title, category, location || '', description || '', image_url, cloudinary_public_id || '', size || 'small', status || 'published']
     );
 
@@ -103,7 +109,39 @@ export async function PATCH(req) {
     if (!requireRole(req, 'admin')) return unauthorized();
     await ensureProjectOpsSchema();
 
-    const { id, title, category, location, description, image_url, cloudinary_public_id, size, status } = await req.json();
+    const payload = await req.json();
+
+    if (Array.isArray(payload.items)) {
+      if (payload.items.length === 0) {
+        return NextResponse.json({ success: false, error: 'items array required' }, { status: 400 });
+      }
+
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        for (const item of payload.items) {
+          const id = Number(item.id);
+          const sortOrder = Number(item.sort_order);
+          if (!Number.isInteger(id) || !Number.isInteger(sortOrder) || sortOrder < 1) {
+            throw new Error('Invalid project order');
+          }
+          await client.query(
+            `UPDATE projects SET sort_order=$1 WHERE id=$2 AND project_kind='portfolio'`,
+            [sortOrder, id]
+          );
+        }
+        await client.query('COMMIT');
+      } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+      } finally {
+        client.release();
+      }
+
+      return NextResponse.json({ success: true });
+    }
+
+    const { id, title, category, location, description, image_url, cloudinary_public_id, size, status } = payload;
 
     const result = await pool.query(
       `UPDATE projects SET title=$1, category=$2, location=$3, description=$4,
