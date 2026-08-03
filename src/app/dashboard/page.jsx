@@ -113,6 +113,7 @@ function AdminDashboard() {
   const [selectedPrimaryServiceEnquiry, setSelectedPrimaryServiceEnquiry] = useState(null);
   const [pseSearch, setPseSearch] = useState('');
   const [careerEnquiries, setCareerEnquiries] = useState([]);
+  const [careerSearch, setCareerSearch] = useState('');
   const [selectedCareerEnquiry, setSelectedCareerEnquiry] = useState(null);
   const [careerStatus, setCareerStatus] = useState('New');
   const [careerNote, setCareerNote] = useState('');
@@ -1155,7 +1156,13 @@ function AdminDashboard() {
             <div>
               <div className="section-head">
                 <span className="section-head-title">Career Enquiry</span>
-                <input type="text" placeholder="Search..." className="search-input" />
+                <input
+                  type="search"
+                  placeholder="Search..."
+                  className="search-input"
+                  value={careerSearch}
+                  onChange={(event) => setCareerSearch(event.target.value)}
+                />
               </div>
               <div className="panel">
                 <div style={{ overflowX: 'auto' }}>
@@ -1168,7 +1175,24 @@ function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {careerEnquiries.map((item) => (
+                      {careerEnquiries.filter((item) => {
+                        const query = careerSearch.trim().toLowerCase();
+                        if (!query) return true;
+
+                        const searchableValues = [
+                          item.name,
+                          item.email,
+                          item.phone,
+                          item.position,
+                          item.experience,
+                          item.status,
+                          item.created_at && new Date(item.created_at).toLocaleDateString(),
+                        ];
+
+                        return searchableValues.some((value) =>
+                          String(value ?? '').toLowerCase().includes(query)
+                        );
+                      }).map((item) => (
                         <tr key={item.id} style={{ borderBottom: '1px solid var(--border)' }}>
                           <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>{item.name}</td>
                           <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.email}</td>
@@ -1184,7 +1208,22 @@ function AdminDashboard() {
                       ))}
                     </tbody>
                   </table>
-                  {careerEnquiries.length === 0 && <p className="empty-state">No career enquiries yet.</p>}
+                  {careerEnquiries.length === 0 ? (
+                    <p className="empty-state">No career enquiries yet.</p>
+                  ) : careerEnquiries.filter((item) => {
+                    const query = careerSearch.trim().toLowerCase();
+                    return !query || [
+                      item.name,
+                      item.email,
+                      item.phone,
+                      item.position,
+                      item.experience,
+                      item.status,
+                      item.created_at && new Date(item.created_at).toLocaleDateString(),
+                    ].some((value) => String(value ?? '').toLowerCase().includes(query));
+                  }).length === 0 ? (
+                    <p className="empty-state">No career enquiries match your search.</p>
+                  ) : null}
                 </div>
               </div>
             </div>

@@ -483,7 +483,7 @@ export default function ProfessionalsPage() {
       <div style={{ background:t.heroBg,padding:'22px 24px 24px',textAlign:'center',position:'relative',overflow:'hidden',borderBottom:`2px solid ${t.accent}` }}>
         <div style={{ position:'absolute',inset:0,backgroundImage:`linear-gradient(${isDark?'color-mix(in srgb, var(--brand-blue) 3%, transparent)':'rgba(255,255,255,0.03)'} 1px,transparent 1px),linear-gradient(90deg,${isDark?'color-mix(in srgb, var(--brand-blue) 3%, transparent)':'rgba(255,255,255,0.03)'} 1px,transparent 1px)`,backgroundSize:'40px 40px',pointerEvents:'none' }} />
         <p style={{ color:t.accent,fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.15em',margin:'0 0 8px' }}>MTbossProfessional Services</p>
-        <h1 style={{ color:'#fff',fontSize:'clamp(24px,3.4vw,36px)',fontWeight:800,margin:'0 0 8px',lineHeight:1.05,textTransform:'uppercase',letterSpacing:'-0.02em' }}>Meet Our Professionals</h1>
+        <h1 style={{ color:'#fff',fontSize:'clamp(24px,3.4vw,36px)',fontWeight:800,margin:'0 0 8px',lineHeight:1.05,textTransform:'uppercase',letterSpacing:'-0.02em' }}>Meet Our Professional Team</h1>
         <p style={{ color:'rgba(255,255,255,0.55)',fontSize:'13px',maxWidth:'480px',margin:'0 auto 14px',lineHeight:1.45 }}>
           Verified interior designers, architects and home experts — handpicked for quality and excellence.
         </p>
