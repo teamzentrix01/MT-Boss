@@ -71,12 +71,12 @@ export default function AllServicesPage() {
           {services.length > 0 ? (
             services.map((s) => (
               <div key={s.id} className={`group relative h-[340px] overflow-hidden border transition-all duration-500 ${isDark ? "border-zinc-800" : "border-zinc-100"}`}>
-                <img src={s.image} alt={s.title} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105" />
-                <div className={`absolute inset-0 bg-gradient-to-t ${isDark ? "from-black via-black/40" : "from-black/90 via-black/20"} to-transparent`} />
+                <img src={s.image} alt={s.title} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover opacity-100 transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/35" />
                 <div className="absolute inset-0 p-7 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-400">
                   <div className="w-8 h-0.5 bg-[var(--brand-blue)] mb-4 -translate-x-3 group-hover:translate-x-0 transition-transform duration-400" />
-                  <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2">{s.title}</h3>
-                  <p className="text-zinc-300 text-xs leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-400 mb-5">{s.description}</p>
+                  <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2 [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]">{s.title}</h3>
+                  <p className="text-white text-xs font-medium leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-400 mb-5 [text-shadow:0_1px_6px_rgba(0,0,0,0.95)]">{s.description}</p>
                   <Link href={`/Services/all/${s.slug}`} className="w-fit px-6 py-2 bg-[var(--brand-blue)] text-black font-black uppercase text-[9px] tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-400 hover:bg-white">
                     Book a visit
                   </Link>
