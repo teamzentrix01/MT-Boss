@@ -148,11 +148,12 @@ function AgentDashboardContent() {
   async function loadData() {
     setLoading(true);
     try {
-      const [profileRes, leadsRes, scheduleRes, activityRes] = await Promise.all([
+      const [profileRes, leadsRes, scheduleRes, activityRes, projectsRes] = await Promise.all([
         authFetch('/api/agent/profile'),
         authFetch('/api/agent/leads'),
         authFetch('/api/agent/schedule'),
         authFetch('/api/agent/activity'),
+        authFetch('/api/agent/projects'),
       ]);
 
       if (!profileRes || !leadsRes || !scheduleRes) return;
@@ -161,6 +162,7 @@ function AgentDashboardContent() {
       const leadsData = await leadsRes.json();
       const scheduleData = await scheduleRes.json();
       const activityData = activityRes ? await activityRes.json() : null;
+      const projectsData = projectsRes ? await projectsRes.json() : null;
 
       if (profileData.success) {
         setAgent(profileData.agent);
@@ -173,7 +175,7 @@ function AgentDashboardContent() {
         setActivities(activityData.data || []);
         setUnreadActivityCount(activityData.unread_count || 0);
       }
-      await loadProjects();
+      if (projectsData?.success) setProjects(projectsData.data || []);
     } finally {
       setLoading(false);
     }

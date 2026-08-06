@@ -27,19 +27,33 @@ const ensureTable = createInitializationGuard(async () => {
 // POST — generate OTP and send to email
 export async function POST(req) {
   try {
-    const { email, user_type } = await req.json(); // user_type: 'user' | 'supplier' | 'vendor'
+    const { email, user_type } = await req.json(); // user_type: 'user' | 'supplier' | 'vendor' | 'agent'
 
     if (!email || !user_type) {
       return NextResponse.json({ success: false, error: 'Email and user type required' }, { status: 400 });
+    }
+    if (!['user', 'supplier', 'vendor', 'agent'].includes(user_type)) {
+      return NextResponse.json({ success: false, error: 'Invalid user type' }, { status: 400 });
     }
     const normalizedEmail = String(email).trim().toLowerCase();
 
     await ensureTable();
 
     // Check user exists in the right table
-    const table = user_type === 'supplier' ? 'suppliers' : user_type === 'vendor' ? 'vendors' : 'users';
+    const table = user_type === 'supplier'
+      ? 'suppliers'
+      : user_type === 'vendor'
+        ? 'vendors'
+        : user_type === 'agent'
+          ? 'agents'
+          : 'users';
     const userRes = await pool.query(
-      `SELECT id, email FROM ${table} WHERE LOWER(TRIM(email)) = $1`,
+      user_type === 'agent'
+        ? `SELECT id, email FROM agents
+           WHERE LOWER(TRIM(email)) = $1
+             AND status = 'Approved'
+             AND login_enabled = TRUE`
+        : `SELECT id, email FROM ${table} WHERE LOWER(TRIM(email)) = $1`,
       [normalizedEmail]
     );
 

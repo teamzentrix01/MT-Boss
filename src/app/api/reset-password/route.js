@@ -11,6 +11,9 @@ export async function POST(req) {
     if (!email || !user_type || !otp || !new_password) {
       return NextResponse.json({ success: false, error: 'All fields are required' }, { status: 400 });
     }
+    if (!['user', 'supplier', 'vendor', 'agent'].includes(user_type)) {
+      return NextResponse.json({ success: false, error: 'Invalid user type' }, { status: 400 });
+    }
     const normalizedEmail = String(email).trim().toLowerCase();
     if (new_password.length < 6) {
       return NextResponse.json({ success: false, error: 'Password must be at least 6 characters' }, { status: 400 });
@@ -64,6 +67,22 @@ export async function POST(req) {
           `UPDATE vendors SET password_hash = $1, updated_at = NOW() WHERE LOWER(TRIM(email)) = $2`,
           [hash, normalizedEmail]
         );
+      } else if (user_type === 'agent') {
+        const result = await pool.query(
+          `UPDATE agents
+             SET password_hash = $1,
+                 must_change_password = FALSE,
+                 auth_version = COALESCE(auth_version, 0) + 1,
+                 updated_at = NOW()
+           WHERE LOWER(TRIM(email)) = $2
+             AND status = 'Approved'
+             AND login_enabled = TRUE
+           RETURNING id`,
+          [hash, normalizedEmail]
+        );
+        if (!result.rows[0]) {
+          return NextResponse.json({ success: false, error: 'Agent login is not active for this email.' }, { status: 400 });
+        }
       } else {
         // users table uses 'password' column (not password_hash)
         await pool.query(

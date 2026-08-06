@@ -113,6 +113,12 @@ export default function AgentLoginPage() {
               </button>
             </div>
 
+            <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '-0.35rem 0 1rem' }}>
+              <Link href="/agent/forgot-password" style={{ color: 'var(--brand-blue)', fontSize: 12, fontWeight: 800, textDecoration: 'none' }}>
+                Forgot password?
+              </Link>
+            </div>
+
             <button type="submit" disabled={loading} style={{ width: '100%', padding: '0.7rem 1rem', border: 0, borderRadius: 7, background: 'var(--brand-blue)', color: '#111', fontSize: 13, fontWeight: 900, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.65 : 1 }}>
               {loading ? 'Signing in...' : 'Sign In'}
             </button>

@@ -221,6 +221,11 @@ export async function getProjectSummaries(whereSql = '', params = [], orderBySql
   await ensureProjectOpsSchema();
   const result = await pool.query(
     `
+    WITH filtered_projects AS (
+      SELECT p.*
+      FROM projects p
+      ${whereSql}
+    )
     SELECT
       p.*,
       f.name AS franchise_name,
@@ -249,32 +254,37 @@ export async function getProjectSummaries(whereSql = '', params = [], orderBySql
         - (COALESCE(pay.total_received, 0) * 0.02),
         2
       ) AS profit_loss
-    FROM projects p
+    FROM filtered_projects p
     LEFT JOIN franchises f ON f.id = p.franchise_id
     LEFT JOIN agents a ON a.id = p.assigned_agent_id
     LEFT JOIN (
       SELECT project_id, SUM(amount) AS total_received, COUNT(*) AS payment_count
       FROM project_payments
+      WHERE project_id IN (SELECT id FROM filtered_projects)
       GROUP BY project_id
     ) pay ON pay.project_id = p.id
     LEFT JOIN (
       SELECT project_id, SUM(wage_amount) AS labour_cost, SUM(paid_amount) AS labour_paid
       FROM project_labour_entries
+      WHERE project_id IN (SELECT id FROM filtered_projects)
       GROUP BY project_id
     ) lab ON lab.project_id = p.id
     LEFT JOIN (
       SELECT project_id, SUM(total_amount) AS material_cost
       FROM project_material_entries
+      WHERE project_id IN (SELECT id FROM filtered_projects)
       GROUP BY project_id
     ) mat ON mat.project_id = p.id
     LEFT JOIN (
       SELECT project_id, SUM(amount) AS extra_expense
       FROM project_expenses
+      WHERE project_id IN (SELECT id FROM filtered_projects)
       GROUP BY project_id
     ) exp ON exp.project_id = p.id
     LEFT JOIN (
       SELECT project_id, SUM(amount) AS transport_cost, COUNT(*) AS transport_count
       FROM project_transport_entries
+      WHERE project_id IN (SELECT id FROM filtered_projects)
       GROUP BY project_id
     ) transport ON transport.project_id = p.id
     LEFT JOIN (
@@ -283,9 +293,9 @@ export async function getProjectSummaries(whereSql = '', params = [], orderBySql
              SUM(contract_amount) AS contract_value,
              COUNT(*) AS contractor_count
       FROM project_contractor_entries
+      WHERE project_id IN (SELECT id FROM filtered_projects)
       GROUP BY project_id
     ) contractor ON contractor.project_id = p.id
-    ${whereSql}
     ${orderBySql}
     `,
     params
