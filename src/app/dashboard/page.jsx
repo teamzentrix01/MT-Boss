@@ -369,6 +369,7 @@ function AdminDashboard() {
     { id: 'project-management',         label: 'Project Management',       icon: '📋' },
     { id: 'projects',                   label: 'Portfolio Projects',        icon: '🏗️' },
     { id: 'properties',                 label: 'Properties',                icon: '⌂'  },
+    { id: 'quick-enquiries',            label: 'Quick Enquiry',             icon: '⚡' },
     { id: 'quick-services',             label: 'Quick Services',            icon: '⚡' },
     { id: 'revenue',                    label: 'Revenue & Earnings',        icon: '💸' },
     { id: 'bookings',                   label: 'Service Bookings',          icon: '📝' },
@@ -1356,6 +1357,7 @@ function AdminDashboard() {
           {activeTab === 'cities' && <CitiesManager />}
           {activeTab === 'property-enquiries' && <PropertyEnquiriesManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services' && <QuickServicesManager isDarkMode={isDarkMode} />}
+          {activeTab === 'quick-enquiries' && <BookingsManager isDarkMode={isDarkMode} title="Quick Enquiries" />}
           {activeTab === 'primary-services' && <PrimaryServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'professionals' && <ProfessionalServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'professional-enquiries' && <ProfessionalEnquiriesManager isDarkMode={isDarkMode} />}

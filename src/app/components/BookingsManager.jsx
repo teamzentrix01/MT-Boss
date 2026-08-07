@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from 'react';
 
-export default function BookingsManager({ isDarkMode }) {
+export default function BookingsManager({ isDarkMode, title = 'Service Bookings' }) {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('all');
@@ -220,7 +220,7 @@ export default function BookingsManager({ isDarkMode }) {
       {!selectedBooking ? (
         <>
           <div className="booking-section">
-            <h3 style={{ fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>Service Bookings</h3>
+            <h3 style={{ fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>{title}</h3>
             
             <div className="booking-filter">
               {['all', 'WAITING_FOR_ADMIN_ASSIGNMENT', 'ADMIN_ACCEPTED', 'WAITING_FOR_VENDOR_ACCEPTANCE', 'VENDOR_ACCEPTED', 'IN_PROGRESS', 'COMPLETED'].map((status) => (

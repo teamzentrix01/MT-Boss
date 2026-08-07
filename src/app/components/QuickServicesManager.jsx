@@ -339,19 +339,19 @@ export default function QuickServicesManager({ isDarkMode }) {
           width:100%; max-width:100%; min-width:0;
         }
         .qs-table-wrap {
-          position:relative; width:100%; max-width:100%; overflow-x:hidden; overflow-y:hidden;
+          position:relative; width:100%; max-width:100%; overflow-x:auto; overflow-y:hidden;
           overscroll-behavior-x:contain; scrollbar-gutter:stable;
           -webkit-overflow-scrolling:touch;
         }
         .qs-root .qs-table {
-          display:table; width:100%; min-width:0; table-layout:fixed;
+          display:table; width:100%; min-width:1120px; table-layout:fixed;
           border-collapse:separate; border-spacing:0; font-size:0.8rem;
         }
         .qs-table th {
           box-sizing:border-box; padding:0.5rem 0.45rem; text-align:left;
           font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
           color:var(--qs-muted); background:var(--qs-bg); border-bottom:1px solid var(--qs-border);
-          white-space:nowrap;
+          white-space:normal; line-height:1.25;
         }
         .qs-table td {
           box-sizing:border-box; padding:0.6rem 0.45rem; border-bottom:1px solid var(--qs-border);
@@ -360,13 +360,13 @@ export default function QuickServicesManager({ isDarkMode }) {
         .qs-table th:nth-child(1) { width:2.5%; }
         .qs-table th:nth-child(2) { width:4.5%; }
         .qs-table th:nth-child(3) { width:10%; }
-        .qs-table th:nth-child(4) { width:22%; }
+        .qs-table th:nth-child(4) { width:20%; }
         .qs-table th:nth-child(5) { width:11%; }
-        .qs-table th:nth-child(6) { width:10%; }
-        .qs-table th:nth-child(7) { width:10%; }
-        .qs-table th:nth-child(8) { width:8%; }
-        .qs-table th:nth-child(9) { width:8%; }
-        .qs-table th:nth-child(10) { width:14%; }
+        .qs-table th:nth-child(6) { width:9%; }
+        .qs-table th:nth-child(7) { width:9%; }
+        .qs-table th:nth-child(8) { width:11%; }
+        .qs-table th:nth-child(9) { width:7%; }
+        .qs-table th:nth-child(10) { width:15%; }
         .qs-table tr:last-child td { border-bottom:none; }
         .qs-table tbody tr { transition:background .12s; }
         .qs-table tbody tr:hover td { background:var(--qs-row-hov); }
@@ -580,7 +580,7 @@ export default function QuickServicesManager({ isDarkMode }) {
               <thead>
                 <tr>
                   <th style={{ width: '2rem' }} />
-                  {['Icon', 'Service', 'Description', 'Cities', 'Main Category', 'Sub Category', 'Customer Price (Incl. GST)', 'Duration', 'Actions'].map(col => (
+                  {['Icon', 'Service', 'Description', 'Cities', 'Main Category', 'Sub Category', 'Customer Price', 'Duration', 'Actions'].map(col => (
                     <th key={col}>{col}</th>
                   ))}
                 </tr>

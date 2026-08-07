@@ -101,11 +101,11 @@ export default function PropertyDetailPage() {
           <div className="lg:col-span-2 space-y-8">
 
             {/* Main Image */}
-            <div className="relative rounded-sm overflow-hidden h-72 md:h-96">
+            <div className={`relative rounded-sm overflow-hidden h-72 md:h-96 ${dark ? "bg-zinc-950" : "bg-gray-100"}`}>
               <img
                 src={images[activeImage]}
                 alt={property.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 onError={(e) => {
                   e.target.src = "/placeholder.jpg";
                 }}

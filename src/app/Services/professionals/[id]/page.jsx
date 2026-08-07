@@ -183,7 +183,7 @@ export default function ProfessionalProfilePage() {
 
           {/* Name block */}
           <div style={{ flex: 1, minWidth: '180px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'color-mix(in srgb, var(--brand-blue) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--brand-blue) 28%, transparent)', color: t.accent, fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', padding: '4px 12px', marginBottom: '14px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(41,157,244,0.14)', border: '1px solid rgba(41,157,244,0.45)', color: '#eaf7ff', fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', padding: '4px 12px', marginBottom: '14px' }}>
               {pro.category}
             </div>
             <h1 style={{ color: '#fff', margin: '0 0 6px', fontSize: 'clamp(26px,4vw,42px)', fontWeight: 900, letterSpacing: '-0.025em', lineHeight: 1.05 }}>
