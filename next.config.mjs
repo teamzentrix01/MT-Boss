@@ -15,6 +15,11 @@ const nextConfig = {
         destination: '/Services/all',
         permanent: true,
       },
+      {
+      source: '/:path*',
+      destination: 'https://zentrixinfotech.in',
+      permanent: false, // 307 temporary redirect
+      },
     ];
   },
   async rewrites() {
