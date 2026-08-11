@@ -126,8 +126,9 @@ export async function POST(req) {
       canonicalCities.push(canonicalCity);
     }
 
-    const endDate = slot_end_date || slot_date;
-    if (endDate < slot_date) {
+    const startDate = String(slot_date).slice(0, 10);
+    const endDate = String(slot_end_date || slot_date).slice(0, 10);
+    if (endDate < startDate) {
       return NextResponse.json({ error: 'End date cannot be before start date' }, { status: 400 });
     }
     const client = await pool.connect();
@@ -138,18 +139,18 @@ export async function POST(req) {
         const result = await client.query(
           `INSERT INTO free_time_slots
          (quick_service_id, slot_date, slot_start, slot_end, city, max_bookings, current_bookings, is_available, created_at)
-       SELECT $1, day::DATE, $3, $4, $5, $6, 0, TRUE, NOW()
+       SELECT $1::INTEGER, day::DATE, $3::TIME, $4::TIME, $5::TEXT, $6::INTEGER, 0, TRUE, NOW()
        FROM GENERATE_SERIES($2::DATE, $7::DATE, INTERVAL '1 day') day
        WHERE NOT EXISTS (
          SELECT 1 FROM free_time_slots existing
-          WHERE existing.quick_service_id = $1
+          WHERE existing.quick_service_id = $1::INTEGER
             AND existing.slot_date::DATE = day::DATE
-            AND existing.slot_start = $3
-            AND existing.slot_end = $4
-            AND LOWER(TRIM(existing.city)) = LOWER(TRIM($5))
+            AND existing.slot_start = $3::TIME
+            AND existing.slot_end = $4::TIME
+            AND LOWER(TRIM(existing.city)) = LOWER(TRIM($5::TEXT))
        )
        RETURNING *, TO_CHAR(slot_date::DATE, 'YYYY-MM-DD') AS slot_date`,
-          [serviceIds[index], slot_date, slot_start, slot_end, canonicalCities[index], Math.max(Number(max_bookings) || 1, 1), endDate]
+          [serviceIds[index], startDate, slot_start, slot_end, canonicalCities[index], Math.max(Number(max_bookings) || 1, 1), endDate]
         );
         createdRows.push(...result.rows);
       }

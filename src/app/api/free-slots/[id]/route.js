@@ -48,14 +48,14 @@ export async function PATCH(req, { params }) {
 
     const result = await pool.query(
       `UPDATE free_time_slots
-       SET quick_service_id = COALESCE($1, quick_service_id),
+       SET quick_service_id = COALESCE($1::INTEGER, quick_service_id),
            slot_date = COALESCE($2::DATE, slot_date),
-           slot_start = COALESCE($3, slot_start),
-           slot_end = COALESCE($4, slot_end),
-           city = COALESCE(NULLIF(TRIM($5), ''), city),
-           max_bookings = GREATEST(COALESCE($6, max_bookings), 1),
-           is_available = COALESCE($7, is_available)
-       WHERE id = $8
+           slot_start = COALESCE($3::TIME, slot_start),
+           slot_end = COALESCE($4::TIME, slot_end),
+           city = COALESCE(NULLIF(TRIM($5::TEXT), ''), city),
+           max_bookings = GREATEST(COALESCE($6::INTEGER, max_bookings), 1),
+           is_available = COALESCE($7::BOOLEAN, is_available)
+       WHERE id = $8::INTEGER
        RETURNING *, TO_CHAR(slot_date::DATE, 'YYYY-MM-DD') AS slot_date`,
       [
         body.quick_service_id || null,

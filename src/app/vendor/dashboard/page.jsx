@@ -236,11 +236,30 @@ function VendorDashboardContent() {
       if (data.success) {
         setOtpMsg('✓ Start OTP verified! Service in progress.');
         setStartOtpInput('');
+        await updateLocation(bookingId, { silent: true });
         fetchVendorData(token);
       } else {
         setOtpMsg(data.error || 'Invalid OTP');
       }
     } catch { setOtpMsg('Network error'); } finally { setOtpLoading(false); }
+  }
+
+  async function sendStartOtp(bookingId) {
+    setOtpLoading(true);
+    setOtpMsg('');
+    const token = localStorage.getItem('vendor-token');
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}/start-otp`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setOtpMsg(data.success ? `\u2713 ${data.message || 'Start OTP sent to customer email.'}` : (data.error || 'Unable to send OTP'));
+    } catch {
+      setOtpMsg('Network error');
+    } finally {
+      setOtpLoading(false);
+    }
   }
 
   async function verifyFinishOtp(bookingId) {
@@ -444,36 +463,47 @@ function VendorDashboardContent() {
     }
   }
 
-  async function updateLocation() {
-    if (!activeBooking || !navigator.geolocation) return;
- 
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        const token = localStorage.getItem("vendor-token");
- 
-        try {
-          const res = await fetch("/api/vendor/location/update", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              booking_id: activeBooking.id,
-              latitude,
-              longitude
-            })
-          });
- 
-          if (res.ok) {
-            setVendorLocation({ latitude, longitude });
+  async function updateLocation(bookingId = activeBooking?.id, options = {}) {
+    if (!bookingId || !navigator.geolocation) return false;
+
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude, accuracy } = position.coords;
+          const token = localStorage.getItem("vendor-token");
+
+          try {
+            const res = await fetch("/api/vendor/location/update", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                booking_id: bookingId,
+                latitude,
+                longitude,
+                accuracy_meters: accuracy
+              })
+            });
+
+            if (res.ok) {
+              setVendorLocation({ latitude, longitude });
+              resolve(true);
+              return;
+            }
+          } catch (error) {
+            console.error("Location update error:", error);
           }
-        } catch (error) {
-          console.error("Location update error:", error);
-        }
-      }
-    );
+          resolve(false);
+        },
+        () => {
+          if (!options.silent) setOtpMsg('Allow location access to update your live location.');
+          resolve(false);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+      );
+    });
   }
  
   const bg = isDark ? "bg-black text-white" : "bg-white text-zinc-900";
@@ -1164,7 +1194,15 @@ function VendorDashboardContent() {
                 {(activeBooking.status === 'VENDOR_ACCEPTED' || activeBooking.status === 'VENDOR_ON_WAY') && !activeBooking.start_otp_verified && (
                   <div className={`p-4 border ${isDark ? 'border-blue-500/30 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}>
                     <p className="text-[9px] font-black uppercase text-blue-400 tracking-widest mb-2">🔑 Enter Start OTP</p>
-                    <p className={`text-[10px] mb-3 ${muted}`}>Ask customer for the 4-digit Start OTP to begin service</p>
+                    <p className={`text-[10px] mb-3 ${muted}`}>Send the OTP to the customer email, then ask the customer for the 4-digit code to begin service.</p>
+                    <button
+                      type="button"
+                      onClick={() => sendStartOtp(activeBooking.id)}
+                      disabled={otpLoading}
+                      className="mb-3 w-full px-4 py-2.5 border border-blue-400 text-blue-500 text-[9px] font-black uppercase tracking-widest disabled:opacity-50"
+                    >
+                      {otpLoading ? 'Sending...' : 'Send OTP to Customer Email'}
+                    </button>
                     <div className="flex gap-2">
                       <input
                         type="text" maxLength={4} placeholder="Enter 4-digit OTP"
@@ -1217,7 +1255,7 @@ function VendorDashboardContent() {
                 ) : activeBooking.status !== 'IN_PROGRESS' ? (
                   <>
                     <button
-                      onClick={updateLocation}
+                      onClick={() => updateLocation()}
                       className="w-full py-2.5 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase hover:bg-[var(--brand-blue)]/10 transition-all"
                     >
                       📍 Update My Location
