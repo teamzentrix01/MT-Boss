@@ -279,12 +279,32 @@ const formatCurrency = (value) =>
 const formatNumber = (value) =>
   new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Number.isFinite(value) ? value : 0);
 
-function getProductPrice(product, city) {
+function getProductPrice(product, city, quality) {
+  if (quality && city && product.price_matrix && typeof product.price_matrix === 'object') {
+    const price = product.price_matrix[quality]?.[city];
+    if (price !== undefined && price !== null && price !== '') return Number(price);
+  }
   if (city && product.city_prices && typeof product.city_prices === 'object') {
     const price = product.city_prices[city];
     if (price !== undefined && price !== null && price !== '') return Number(price);
   }
   return Number(product.price || 0);
+}
+
+function hasObjectValues(value) {
+  return Boolean(value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length > 0);
+}
+
+function isProductAvailableForSelection(product, city, quality) {
+  const availableCities = Array.isArray(product.available_cities) ? product.available_cities : [];
+  if (availableCities.length > 0 && !availableCities.some((item) => item.toLowerCase() === city.toLowerCase())) {
+    return false;
+  }
+
+  if (!hasObjectValues(product.price_matrix)) return true;
+  const packagePrices = product.price_matrix[quality];
+  if (!hasObjectValues(packagePrices)) return false;
+  return !city || packagePrices[city] !== undefined;
 }
 
 function normalizeProduct(product, spec, index) {
@@ -490,6 +510,7 @@ function buildReportHtml(snapshot) {
 export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
   const [products, setProducts] = useState([]);
   const [settings, setSettings] = useState(() => mergeCalculatorSettings());
+  const [calculatorCities, setCalculatorCities] = useState(Object.keys(CITY_RATES));
   const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(false);
 
@@ -521,14 +542,23 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
   useEffect(() => {
     const fetchCalculatorData = async () => {
       try {
-        const [productRes, settingsRes] = await Promise.all([
+        const [productRes, settingsRes, cityRes] = await Promise.all([
           fetch('/api/calculator-products'),
           fetch('/api/calculator-settings'),
+          fetch('/api/cities'),
         ]);
         const productData = await productRes.json();
         const settingsData = await settingsRes.json();
+        const cityData = await cityRes.json();
         if (productData.success) setProducts(productData.data || []);
         if (settingsData.success) setSettings(mergeCalculatorSettings(settingsData.data || {}));
+        if (cityData.success && cityData.cities?.length) {
+          setCalculatorCities(cityData.cities);
+          setProject((current) => cityData.cities.includes(current.city)
+            ? current
+            : { ...current, city: cityData.cities[0] }
+          );
+        }
       } finally {
         setLoading(false);
       }
@@ -575,14 +605,17 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
   const productsByCategory = useMemo(() => {
     const map = new Map();
     CATEGORY_SPECS.forEach((spec) => {
-      const fromApi = products
+      const categoryProducts = products
         .filter((product) => product.category?.toLowerCase() === spec.key.toLowerCase())
         .map((product, index) => normalizeProduct(product, spec, index));
+      const availableProducts = categoryProducts.filter((product) =>
+        isProductAvailableForSelection(product, project.city, project.quality)
+      );
       const fallback = spec.fallbackProducts.map((product, index) => normalizeProduct(product, spec, index));
-      map.set(spec.key, fromApi.length > 0 ? fromApi : fallback);
+      map.set(spec.key, categoryProducts.length > 0 ? availableProducts : fallback);
     });
     return map;
-  }, [products]);
+  }, [products, project.city, project.quality]);
 
   useEffect(() => {
     setSelectedProducts((current) => {
@@ -616,8 +649,8 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
       const factor = baseFactor * structureMultiplier * floorWastage * finishMultiplier;
       const rawQuantity = builtUpArea * factor;
       const quantity = Math.max(Math.ceil(rawQuantity), 1);
-      const basePrice = selected ? getProductPrice(selected, project.city) : spec.fallbackPrice;
-      const price = Math.round(basePrice * cityRate.multiplier * quality.costMultiplier);
+      const basePrice = selected ? getProductPrice(selected, project.city, project.quality) : 0;
+      const price = Math.round(basePrice);
       const amount = quantity * price;
 
       return {
@@ -1143,9 +1176,12 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                 <MapPin size={14} /> Location
               </label>
               <div className="boq-select-wrap">
-                <input className="boq-input" value={project.city}
-                  onChange={(e) => updateProject('city', e.target.value)}
-                  placeholder="Any city in India" />
+                <select className="boq-select" value={project.city} onChange={(e) => updateProject('city', e.target.value)}>
+                  {calculatorCities.map((city) => (
+                    <option key={city} value={city}>{city}</option>
+                  ))}
+                </select>
+                <ChevronDown className="boq-select-icon" size={16} />
               </div>
             </div>
             <div className="boq-field">
@@ -1282,6 +1318,9 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                               disabled={!isIncluded}
                               style={{ marginTop: spec.type === 'Mandatory' ? 0 : 8 }}
                             >
+                              {options.length === 0 && (
+                                <option value="">No brand available</option>
+                              )}
                               {options.map((product) => (
                                 <option key={product.id} value={product.id}>
                                   {product.name}
@@ -1292,7 +1331,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                           </div>
                           <div className="boq-amount">
                             <strong>{item ? formatCurrency(item.amount) : formatCurrency(0)}</strong>
-                            <span>{item ? `${formatCurrency(item.price)} / ${item.product?.unit || spec.unit}` : 'Not included'}</span>
+                            <span>{item?.product ? `${formatCurrency(item.price)} / ${item.product.unit || spec.unit}` : isIncluded ? 'Not available' : 'Not included'}</span>
                           </div>
                         </article>
                       );

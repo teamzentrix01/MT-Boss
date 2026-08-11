@@ -87,6 +87,8 @@ const emptyForm = {
   unit: 'unit',
   price: '',
   city_prices: {},
+  price_matrix: {},
+  available_cities: [],
   is_active: true,
 };
 
@@ -112,6 +114,9 @@ export default function CalculatorManager({ isDarkMode }) {
   const [error,      setError]      = useState('');
   const [rateSettings, setRateSettings] = useState(() => mergeRateSettings());
   const [savingRates, setSavingRates] = useState(false);
+  const [managedCities, setManagedCities] = useState(CITIES);
+  const [bulkPackage, setBulkPackage] = useState('Basic');
+  const [bulkPrice, setBulkPrice] = useState('');
 
   /* product image state */
   const [imageMode,  setImageMode]  = useState('url');
@@ -131,21 +136,24 @@ export default function CalculatorManager({ isDarkMode }) {
       const requestOptions = {
         headers: { Authorization: `Bearer ${token}` }, cache: 'no-store',
       };
-      const [productRes, categoryRes, settingsRes] = await Promise.all([
+      const [productRes, categoryRes, settingsRes, cityRes] = await Promise.all([
         fetch('/api/calculator-products?admin=true', requestOptions),
         fetch('/api/calculator-categories', requestOptions),
         fetch('/api/calculator-settings', requestOptions),
+        fetch('/api/cities', requestOptions),
       ]);
-      const [productData, categoryData, settingsData] = await Promise.all([
+      const [productData, categoryData, settingsData, cityData] = await Promise.all([
         productRes.json(),
         categoryRes.json(),
         settingsRes.json(),
+        cityRes.json(),
       ]);
       const nextProducts   = productData.success  ? productData.data  || [] : [];
       const nextCategories = categoryData.success ? categoryData.data || [] : [];
       setProducts(nextProducts);
       setCategories(nextCategories);
       if (settingsData.success) setRateSettings(mergeRateSettings(settingsData.data || {}));
+      if (cityData.success) setManagedCities(cityData.cities?.length ? cityData.cities : CITIES);
       setSelectedCategory((current) => {
         if (current && nextCategories.some(c => c.name === current)) return current;
         return nextCategories[0]?.name || '';
@@ -194,6 +202,49 @@ export default function CalculatorManager({ isDarkMode }) {
       ...current,
       materialFactors: { ...current.materialFactors, [material]: value },
     }));
+  };
+
+  const selectedCities = formData.available_cities || [];
+  const qualityNames = Object.keys(rateSettings.qualityLevels || DEFAULT_RATE_SETTINGS.qualityLevels);
+
+  const toggleProductCity = (city) => {
+    setFormData((current) => {
+      const exists = (current.available_cities || []).includes(city);
+      const availableCities = exists
+        ? (current.available_cities || []).filter((item) => item !== city)
+        : [...(current.available_cities || []), city];
+      const cityPrices = { ...(current.city_prices || {}) };
+      const priceMatrix = { ...(current.price_matrix || {}) };
+      if (exists) {
+        delete cityPrices[city];
+        Object.keys(priceMatrix).forEach((quality) => {
+          priceMatrix[quality] = { ...(priceMatrix[quality] || {}) };
+          delete priceMatrix[quality][city];
+        });
+      }
+      return { ...current, available_cities: availableCities, city_prices: cityPrices, price_matrix: priceMatrix };
+    });
+  };
+
+  const updatePackageCityPrice = (quality, city, value) => {
+    setFormData((current) => {
+      const priceMatrix = { ...(current.price_matrix || {}) };
+      const qualityPrices = { ...(priceMatrix[quality] || {}) };
+      if (value === '') delete qualityPrices[city];
+      else qualityPrices[city] = value;
+      priceMatrix[quality] = qualityPrices;
+      return { ...current, price_matrix: priceMatrix };
+    });
+  };
+
+  const applyBulkPackagePrice = () => {
+    if (bulkPrice === '' || selectedCities.length === 0) return;
+    setFormData((current) => {
+      const priceMatrix = { ...(current.price_matrix || {}) };
+      const qualityPrices = { ...(priceMatrix[bulkPackage] || {}) };
+      selectedCities.forEach((city) => { qualityPrices[city] = bulkPrice; });
+      return { ...current, price_matrix: { ...priceMatrix, [bulkPackage]: qualityPrices } };
+    });
   };
 
   const saveRateSettings = async () => {
@@ -263,14 +314,27 @@ export default function CalculatorManager({ isDarkMode }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(''); setError('');
+    const allowedCities = formData.available_cities || [];
+    if (allowedCities.length === 0) {
+      setError('Select at least one city where this brand is available');
+      return;
+    }
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       // Clean city_prices: strip empty values, convert to numbers
       const cleanCityPrices = {};
       Object.entries(formData.city_prices || {}).forEach(([city, val]) => {
-        if (val !== '' && val !== undefined && val !== null) cleanCityPrices[city] = parseFloat(val);
+        if (allowedCities.includes(city) && val !== '' && val !== undefined && val !== null) cleanCityPrices[city] = parseFloat(val);
       });
-      const payload = { ...formData, city_prices: cleanCityPrices };
+      const cleanPriceMatrix = {};
+      Object.entries(formData.price_matrix || {}).forEach(([quality, prices]) => {
+        Object.entries(prices || {}).forEach(([city, val]) => {
+          if (allowedCities.includes(city) && val !== '' && val !== undefined && val !== null) {
+            cleanPriceMatrix[quality] = { ...(cleanPriceMatrix[quality] || {}), [city]: parseFloat(val) };
+          }
+        });
+      });
+      const payload = { ...formData, city_prices: cleanCityPrices, price_matrix: cleanPriceMatrix };
       const res = await fetch('/api/calculator-products', {
         method:  editingId ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -317,6 +381,8 @@ export default function CalculatorManager({ isDarkMode }) {
       unit:        product.unit        || 'unit',
       price:       product.price       || '',
       city_prices: product.city_prices || {},
+      price_matrix: product.price_matrix || {},
+      available_cities: product.available_cities || Object.keys(product.city_prices || {}),
       is_active:   product.is_active   ?? true,
     });
     setEditingId(product.id);
@@ -465,6 +531,12 @@ export default function CalculatorManager({ isDarkMode }) {
         .cm-img-preview { width:64px; height:64px; object-fit:cover; border-radius:6px; border:1px solid var(--cm-border); }
         .cm-city-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; margin-top:.4rem; }
         .cm-city-prices-summary { font-size:.68rem; color:var(--cm-muted); line-height:1.5; }
+        .cm-check-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(145px,1fr)); gap:.45rem; margin-top:.45rem; }
+        .cm-check { display:flex; align-items:center; gap:.45rem; border:1px solid var(--cm-border); border-radius:7px; background:var(--cm-bg); padding:.45rem .55rem; font-size:.74rem; font-weight:800; color:var(--cm-text); cursor:pointer; }
+        .cm-package-prices { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:.65rem; margin-top:.65rem; }
+        .cm-package-card { border:1px solid var(--cm-border); border-radius:8px; padding:.7rem; background:var(--cm-bg); }
+        .cm-package-city { display:grid; grid-template-columns:minmax(80px,1fr) 120px; gap:.45rem; align-items:center; margin-top:.45rem; }
+        .cm-bulk-row { display:grid; grid-template-columns:1fr 1fr auto; gap:.5rem; align-items:end; margin-top:.55rem; }
         .cm-rate-section { margin-top:1.1rem; }
         .cm-rate-title { margin:.2rem 0 .65rem; font-size:.82rem; font-weight:900; }
         .cm-rate-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:.7rem; }
@@ -537,7 +609,7 @@ export default function CalculatorManager({ isDarkMode }) {
           <div className="cm-rate-section">
             <div className="cm-rate-title">Location-wise prices</div>
             <div className="cm-rate-grid">
-              {CITIES.map(city => (
+              {managedCities.map(city => (
                 <div className="cm-rate-card" key={city}>
                   <div className="cm-rate-name">{city}</div>
                   <div className="cm-rate-fields">
@@ -815,29 +887,80 @@ export default function CalculatorManager({ isDarkMode }) {
                     </label>
                   </div>
 
-                  {/* City-Wise Prices — full width */}
+                  {/* City availability and package prices */}
                   <div className="cm-full">
-                    <label className="cm-label">City-Wise Prices (₹) — optional, overrides default price per city</label>
-                    <div className="cm-city-grid">
-                      {CITIES.map(city => (
-                        <div key={city}>
-                          <label className="cm-label" style={{ fontSize:'.6rem' }}>{city}</label>
+                    <label className="cm-label">Material availability cities</label>
+                    <div style={{ color:'var(--cm-muted)', fontSize:'.72rem', marginBottom:'.45rem' }}>
+                      Select every city where this brand is available. Package prices below apply only to selected cities.
+                    </div>
+                    <div className="cm-check-grid">
+                      {managedCities.map(city => (
+                        <label className="cm-check" key={city}>
                           <input
-                            className="cm-input"
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={formData.city_prices?.[city] ?? ''}
-                            placeholder={formData.price ? `₹${formData.price}` : '—'}
-                            onChange={e => {
-                              const cp = { ...(formData.city_prices || {}) };
-                              if (e.target.value === '') delete cp[city];
-                              else cp[city] = e.target.value;
-                              setFormData(f => ({ ...f, city_prices: cp }));
-                            }}
+                            type="checkbox"
+                            checked={selectedCities.includes(city)}
+                            onChange={() => toggleProductCity(city)}
                           />
-                        </div>
+                          {city}
+                        </label>
                       ))}
+                    </div>
+                  </div>
+
+                  <div className="cm-full">
+                    <label className="cm-label">Package and city prices (INR)</label>
+                    <div className="cm-bulk-row">
+                      <div>
+                        <label className="cm-label" style={{ fontSize:'.6rem' }}>Package</label>
+                        <select className="cm-select" value={bulkPackage} onChange={e => setBulkPackage(e.target.value)}>
+                          {qualityNames.map(quality => <option key={quality} value={quality}>{quality}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="cm-label" style={{ fontSize:'.6rem' }}>Same price for selected cities</label>
+                        <input
+                          className="cm-input"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={bulkPrice}
+                          onChange={e => setBulkPrice(e.target.value)}
+                          placeholder={formData.price ? `Default ${formData.price}` : 'Enter price'}
+                        />
+                      </div>
+                      <button className="cm-btn" type="button" onClick={applyBulkPackagePrice} disabled={!bulkPrice || selectedCities.length === 0}>
+                        Apply
+                      </button>
+                    </div>
+                    {selectedCities.length === 0 ? (
+                      <div className="cm-alert cm-warn" style={{ marginTop:'.65rem' }}>
+                        Select at least one city to enter package-wise prices.
+                      </div>
+                    ) : (
+                      <div className="cm-package-prices">
+                        {qualityNames.map(quality => (
+                          <div className="cm-package-card" key={quality}>
+                            <div className="cm-rate-name">{quality}</div>
+                            {selectedCities.map(city => (
+                              <div className="cm-package-city" key={`${quality}-${city}`}>
+                                <span style={{ color:'var(--cm-muted)', fontSize:'.72rem', fontWeight:800 }}>{city}</span>
+                                <input
+                                  className="cm-input"
+                                  type="number"
+                                  min="0"
+                                  step="0.01"
+                                  value={formData.price_matrix?.[quality]?.[city] ?? ''}
+                                  placeholder={formData.price ? `Default ${formData.price}` : '-'}
+                                  onChange={e => updatePackageCityPrice(quality, city, e.target.value)}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div style={{ color:'var(--cm-muted)', fontSize:'.72rem', marginTop:'.55rem' }}>
+                      Leave a package/city price blank to use the default brand price.
                     </div>
                   </div>
 
@@ -940,7 +1063,7 @@ export default function CalculatorManager({ isDarkMode }) {
             <table className="cm-table">
               <thead>
                 <tr>
-                  {['Image','Category','Product','Default Price','City Prices','Unit','Status','Actions'].map(col =>
+                  {['Image','Category','Product','Default Price','Availability','Package Prices','Unit','Status','Actions'].map(col =>
                     <th key={col}>{col}</th>)}
                 </tr>
               </thead>
@@ -963,14 +1086,25 @@ export default function CalculatorManager({ isDarkMode }) {
                     </td>
                     <td className="cm-price">₹{Number(product.price).toLocaleString('en-IN')}</td>
                     <td>
-                      {product.city_prices && Object.keys(product.city_prices).length > 0 ? (
+                      {product.available_cities?.length ? (
                         <div className="cm-city-prices-summary">
-                          {Object.entries(product.city_prices).map(([city, price]) => (
-                            <div key={city}>{city}: ₹{Number(price).toLocaleString('en-IN')}</div>
-                          ))}
+                          {product.available_cities.map(city => <div key={city}>{city}</div>)}
                         </div>
                       ) : (
-                        <span style={{ color:'var(--cm-muted)', fontSize:'.72rem' }}>—</span>
+                        <span style={{ color:'var(--cm-muted)', fontSize:'.72rem' }}>No cities selected</span>
+                      )}
+                    </td>
+                    <td>
+                      {product.price_matrix && Object.keys(product.price_matrix).length > 0 ? (
+                        <div className="cm-city-prices-summary">
+                          {Object.entries(product.price_matrix).flatMap(([quality, prices]) =>
+                            Object.entries(prices || {}).map(([city, price]) => (
+                              <div key={`${quality}-${city}`}>{quality} / {city}: INR {Number(price).toLocaleString('en-IN')}</div>
+                            ))
+                          )}
+                        </div>
+                      ) : (
+                        <span style={{ color:'var(--cm-muted)', fontSize:'.72rem' }}>Default price</span>
                       )}
                     </td>
                     <td>{product.unit}</td>
@@ -993,7 +1127,7 @@ export default function CalculatorManager({ isDarkMode }) {
                 ))}
                 {visibleProducts.length === 0 && (
                   <tr>
-                    <td colSpan={8} style={{ textAlign:'center', color:'var(--cm-muted)', padding:'2rem' }}>
+                    <td colSpan={9} style={{ textAlign:'center', color:'var(--cm-muted)', padding:'2rem' }}>
                       No calculator products yet.
                     </td>
                   </tr>

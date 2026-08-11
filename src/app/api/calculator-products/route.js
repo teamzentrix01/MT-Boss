@@ -1,6 +1,7 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { normalizeManagedCityList } from '@/lib/cities';
 
 let readyPromise;
 
@@ -64,6 +65,17 @@ async function initializeTables() {
   `);
 
   await pool.query(`ALTER TABLE calculator_products ADD COLUMN IF NOT EXISTS city_prices JSONB DEFAULT '{}'`);
+  await pool.query(`ALTER TABLE calculator_products ADD COLUMN IF NOT EXISTS price_matrix JSONB DEFAULT '{}'`);
+  await pool.query(`ALTER TABLE calculator_products ADD COLUMN IF NOT EXISTS available_cities TEXT[] NOT NULL DEFAULT '{}'`);
+  await pool.query(`
+    UPDATE calculator_products
+       SET available_cities = ARRAY(
+         SELECT DISTINCT key
+         FROM JSONB_OBJECT_KEYS(COALESCE(city_prices, '{}'::jsonb)) key
+       )
+     WHERE CARDINALITY(COALESCE(available_cities, '{}')) = 0
+       AND COALESCE(city_prices, '{}'::jsonb) <> '{}'::jsonb
+  `);
 
   await pool.query(
     `DELETE FROM calculator_products
@@ -162,6 +174,69 @@ function isMissingCalculatorSchema(error) {
   return error?.code === '42P01' || error?.code === '42703';
 }
 
+function cleanPriceMatrix(value = {}, allowedCities = []) {
+  const matrix = {};
+  const allowed = new Set(allowedCities.map((city) => city.toLocaleLowerCase('en-IN')));
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return matrix;
+  for (const [quality, cityPrices] of Object.entries(value)) {
+    if (!cityPrices || typeof cityPrices !== 'object' || Array.isArray(cityPrices)) continue;
+    for (const [city, price] of Object.entries(cityPrices)) {
+      const parsed = Number(price);
+      if (city && allowed.has(city.toLocaleLowerCase('en-IN')) && Number.isFinite(parsed) && parsed >= 0) {
+        matrix[quality] = { ...(matrix[quality] || {}), [city]: parsed };
+      }
+    }
+  }
+  return matrix;
+}
+
+function cleanCityPrices(value = {}, allowedCities = []) {
+  const prices = {};
+  const allowed = new Set(allowedCities.map((city) => city.toLocaleLowerCase('en-IN')));
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return prices;
+  for (const [city, price] of Object.entries(value)) {
+    const parsed = Number(price);
+    if (city && allowed.has(city.toLocaleLowerCase('en-IN')) && Number.isFinite(parsed) && parsed >= 0) prices[city] = parsed;
+  }
+  return prices;
+}
+
+async function validateProductInput(body, currentId = null) {
+  const { category, name, price } = body;
+  if (!category || !name || price === undefined || price === '') {
+    return { error: 'Category, name and price are required' };
+  }
+  const parsedPrice = Number(price);
+  if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+    return { error: 'Enter a valid non-negative default price' };
+  }
+  const activeCities = Array.isArray(body.available_cities) ? body.available_cities : [];
+  if (activeCities.length === 0) {
+    return { error: 'Select at least one active city for this brand' };
+  }
+  const availableCities = activeCities.length ? await normalizeManagedCityList(activeCities) : [];
+  if (availableCities.length !== activeCities.length) {
+    return { error: 'Select active cities from City Management only' };
+  }
+  const duplicate = await pool.query(
+    `SELECT id FROM calculator_products
+      WHERE LOWER(TRIM(category)) = LOWER(TRIM($1))
+        AND LOWER(TRIM(name)) = LOWER(TRIM($2))
+        AND ($3::INTEGER IS NULL OR id <> $3::INTEGER)
+      LIMIT 1`,
+    [category, name, currentId]
+  );
+  if (duplicate.rows[0]) {
+    return { error: 'This brand already exists in this category. Edit the existing brand instead.' };
+  }
+  return {
+    parsedPrice,
+    availableCities,
+    cityPrices: cleanCityPrices(body.city_prices || {}, availableCities),
+    priceMatrix: cleanPriceMatrix(body.price_matrix || {}, availableCities),
+  };
+}
+
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
@@ -195,16 +270,15 @@ export async function POST(req) {
     if (!requireRole(req, 'admin')) return unauthorized();
 
     const body = await req.json();
-    const { category, badge, name, description, image_url, unit, price, city_prices, is_active } = body;
-    if (!category || !name || price === undefined || price === '') {
-      return NextResponse.json({ error: 'Category, name and price are required' }, { status: 400 });
-    }
+    const { category, badge, name, description, image_url, unit, is_active } = body;
+    const valid = await validateProductInput(body);
+    if (valid.error) return NextResponse.json({ error: valid.error }, { status: 400 });
 
     const { rows: [{ max }] } = await pool.query('SELECT COALESCE(MAX(sort_order),0) AS max FROM calculator_products');
     const result = await pool.query(
       `INSERT INTO calculator_products
-        (category, badge, name, description, image_url, unit, price, city_prices, sort_order, is_active, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW(),NOW()) RETURNING *`,
+        (category, badge, name, description, image_url, unit, price, city_prices, price_matrix, available_cities, sort_order, is_active, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW(),NOW()) RETURNING *`,
       [
         category,
         badge || 'Recommended',
@@ -212,8 +286,10 @@ export async function POST(req) {
         description || '',
         image_url || '',
         unit || 'unit',
-        parseFloat(price),
-        JSON.stringify(city_prices || {}),
+        valid.parsedPrice,
+        JSON.stringify(valid.cityPrices),
+        JSON.stringify(valid.priceMatrix),
+        valid.availableCities,
         parseInt(max) + 1,
         is_active ?? true,
       ]
@@ -232,16 +308,16 @@ export async function PUT(req) {
     if (!requireRole(req, 'admin')) return unauthorized();
 
     const body = await req.json();
-    const { id, category, badge, name, description, image_url, unit, price, city_prices, is_active } = body;
-    if (!id || !category || !name || price === undefined || price === '') {
-      return NextResponse.json({ error: 'ID, category, name and price are required' }, { status: 400 });
-    }
+    const { id, category, badge, name, description, image_url, unit, is_active } = body;
+    if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+    const valid = await validateProductInput(body, Number(id));
+    if (valid.error) return NextResponse.json({ error: valid.error }, { status: 400 });
 
     const result = await pool.query(
       `UPDATE calculator_products
        SET category=$1, badge=$2, name=$3, description=$4, image_url=$5, unit=$6,
-           price=$7, city_prices=$8, is_active=$9, updated_at=NOW()
-       WHERE id=$10 RETURNING *`,
+           price=$7, city_prices=$8, price_matrix=$9, available_cities=$10, is_active=$11, updated_at=NOW()
+       WHERE id=$12 RETURNING *`,
       [
         category,
         badge || 'Recommended',
@@ -249,8 +325,10 @@ export async function PUT(req) {
         description || '',
         image_url || '',
         unit || 'unit',
-        parseFloat(price),
-        JSON.stringify(city_prices || {}),
+        valid.parsedPrice,
+        JSON.stringify(valid.cityPrices),
+        JSON.stringify(valid.priceMatrix),
+        valid.availableCities,
         is_active ?? true,
         id,
       ]

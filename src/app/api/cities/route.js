@@ -29,6 +29,24 @@ async function deactivateCityReferences(city) {
         FROM JSONB_EACH(COALESCE(city_prices, '{}'::jsonb)) entry
         WHERE LOWER(TRIM(entry.key)) <> LOWER(TRIM($1))
       ), '{}'::jsonb)`, [city]],
+    [`UPDATE calculator_products
+         SET city_prices = COALESCE((
+               SELECT JSONB_OBJECT_AGG(entry.key, entry.value)
+               FROM JSONB_EACH(COALESCE(city_prices, '{}'::jsonb)) entry
+               WHERE LOWER(TRIM(entry.key)) <> LOWER(TRIM($1))
+             ), '{}'::jsonb),
+             price_matrix = COALESCE((
+               SELECT JSONB_OBJECT_AGG(package_entry.key, COALESCE((
+                 SELECT JSONB_OBJECT_AGG(city_entry.key, city_entry.value)
+                 FROM JSONB_EACH(package_entry.value) city_entry
+                 WHERE LOWER(TRIM(city_entry.key)) <> LOWER(TRIM($1))
+               ), '{}'::jsonb))
+               FROM JSONB_EACH(COALESCE(price_matrix, '{}'::jsonb)) package_entry
+             ), '{}'::jsonb),
+             available_cities = ARRAY(
+               SELECT value FROM UNNEST(COALESCE(available_cities, '{}')) value
+               WHERE LOWER(TRIM(value)) <> LOWER(TRIM($1))
+             )`, [city]],
     [`UPDATE jobs SET status = 'draft', updated_at = NOW()
       WHERE LOWER(TRIM(location)) = LOWER(TRIM($1))`, [city]],
     [`UPDATE properties SET status = 'rejected', updated_at = NOW()
@@ -159,6 +177,30 @@ export async function PATCH(req) {
              )
              FROM JSONB_EACH(COALESCE(city_prices, '{}'::jsonb)) entry
            ), '{}'::jsonb)
+      `, [oldName, name]).catch(() => {});
+      await client.query(`
+        UPDATE calculator_products
+           SET city_prices = COALESCE((
+                 SELECT JSONB_OBJECT_AGG(
+                   CASE WHEN LOWER(TRIM(entry.key)) = LOWER(TRIM($1)) THEN $2 ELSE entry.key END,
+                   entry.value
+                 )
+                 FROM JSONB_EACH(COALESCE(city_prices, '{}'::jsonb)) entry
+               ), '{}'::jsonb),
+               price_matrix = COALESCE((
+                 SELECT JSONB_OBJECT_AGG(package_entry.key, COALESCE((
+                   SELECT JSONB_OBJECT_AGG(
+                     CASE WHEN LOWER(TRIM(city_entry.key)) = LOWER(TRIM($1)) THEN $2 ELSE city_entry.key END,
+                     city_entry.value
+                   )
+                   FROM JSONB_EACH(package_entry.value) city_entry
+                 ), '{}'::jsonb))
+                 FROM JSONB_EACH(COALESCE(price_matrix, '{}'::jsonb)) package_entry
+               ), '{}'::jsonb),
+               available_cities = ARRAY(
+                 SELECT CASE WHEN LOWER(TRIM(city)) = LOWER(TRIM($1)) THEN $2 ELSE city END
+                 FROM UNNEST(COALESCE(available_cities, '{}')) city
+               )
       `, [oldName, name]).catch(() => {});
     }
     await client.query('COMMIT');
