@@ -166,9 +166,10 @@ export async function POST(req) {
     if (!Number.isFinite(basePrice) || basePrice <= 0) {
       return NextResponse.json({ error: 'Service price is not configured correctly' }, { status: 400 });
     }
+    const isFreeSlot = slot_type === 'free';
     const visitFee = 0;
-    const taxAmount = getQuickServiceTax(basePrice);
-    const totalAmount = getQuickServiceTotal(basePrice, visitFee);
+    const taxAmount = isFreeSlot ? 0 : getQuickServiceTax(basePrice);
+    const totalAmount = isFreeSlot ? 0 : getQuickServiceTotal(basePrice, visitFee);
 
     // Generate booking reference
     const bookingReference = `BK${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
@@ -222,10 +223,36 @@ export async function POST(req) {
       }
     }
  
-    await ensurePaymentColumns();
-    const paymentTxnId = `MTB${Date.now()}${Math.random().toString(36).slice(2, 8)}`.slice(0, 50);
+    let vendors = { rows: [] };
+    if (isFreeSlot) {
+      vendors = await pool.query(
+        `SELECT DISTINCT v.id
+         FROM vendors v
+         JOIN vendor_services vs
+           ON vs.vendor_id = v.id
+          AND vs.quick_service_id = $2
+          AND vs.is_active = TRUE
+         WHERE LOWER(TRIM(v.city)) = LOWER(TRIM($1))
+           AND v.is_approved = TRUE
+           AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
+           AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
+           AND v.package_status = 'active'
+           AND v.package_expires_at > NOW()`,
+        [selectedCity, quick_service_id]
+      );
+    }
 
-    // Create a reserved booking. Vendors are notified only after PayU verifies payment.
+    await ensurePaymentColumns();
+    const paymentTxnId = isFreeSlot
+      ? null
+      : `MTB${Date.now()}${Math.random().toString(36).slice(2, 8)}`.slice(0, 50);
+    const initialStatus = isFreeSlot
+      ? (vendors.rows.length > 0 ? 'WAITING_FOR_VENDOR_ACCEPTANCE' : 'WAITING_FOR_ADMIN_ASSIGNMENT')
+      : 'PAYMENT_PENDING';
+    const initialPaymentStatus = isFreeSlot ? 'FREE' : 'PENDING';
+    const initialPaymentGateway = isFreeSlot ? null : 'PAYU';
+
+    // Create a reserved booking. Paid bookings notify vendors only after PayU verifies payment.
     const bookingResult = await pool.query(
       `INSERT INTO service_bookings (
         booking_reference, user_id, quick_service_id, user_name, user_phone, user_email,
@@ -247,7 +274,7 @@ export async function POST(req) {
         user_latitude, user_longitude, location_map_url,
         service_description,
         basePrice, visitFee, taxAmount, totalAmount,
-        'PAYMENT_PENDING', null, 'PAYMENT_PENDING', 'PENDING', 'PAYU', paymentTxnId
+        initialStatus, null, initialStatus, initialPaymentStatus, initialPaymentGateway, paymentTxnId
       ]
     );
  
@@ -277,6 +304,31 @@ export async function POST(req) {
           { status: 409 }
         );
       }
+
+      for (const vendor of vendors.rows) {
+        await pool.query(
+          `INSERT INTO service_notifications
+             (booking_id, vendor_id, notification_type, title, message, is_read, created_at)
+           SELECT $1, $2, 'new_booking', 'New Free Slot Service Request', $3, FALSE, NOW()
+           WHERE NOT EXISTS (
+             SELECT 1 FROM service_notifications
+             WHERE booking_id = $1 AND vendor_id = $2 AND notification_type = 'new_booking'
+           )`,
+          [bookingId, vendor.id, `New free slot booking from ${cleanUserName} in ${selectedCity}.`]
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Free slot booking confirmed. We are assigning a vendor.',
+        booking: {
+          id: bookingId,
+          booking_reference: bookingReference,
+          total_amount: 0,
+          payment_status: 'FREE',
+          status: initialStatus,
+        },
+      }, { status: 201 });
     }
  
     const configuredAppUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '');

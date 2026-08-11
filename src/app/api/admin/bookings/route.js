@@ -135,7 +135,7 @@ export async function PATCH(req) {
     if (action === 'admin_accept') {
       const result = await client.query(
         `UPDATE service_bookings SET status='ADMIN_ACCEPTED', user_status='ADMIN_ACCEPTED'
-         WHERE id=$1 AND payment_status='PAID'
+         WHERE id=$1 AND payment_status IN ('PAID', 'FREE')
            AND status IN ('WAITING_FOR_ADMIN_ASSIGNMENT','WAITING_FOR_VENDOR_ACCEPTANCE')
            AND vendor_id IS NULL RETURNING *`, [id]
       );
@@ -159,7 +159,7 @@ export async function PATCH(req) {
            start_otp_generated_at=NULL, start_otp_attempts=0
        WHERE sb.id=$2
          AND sb.status IN ('ADMIN_ACCEPTED', 'VENDOR_ACCEPTED', 'VENDOR_ON_WAY')
-         AND sb.payment_status='PAID'
+         AND sb.payment_status IN ('PAID', 'FREE')
          AND sb.vendor_id IS DISTINCT FROM $1
          AND COALESCE(sb.start_otp_verified, FALSE)=FALSE
          AND EXISTS (

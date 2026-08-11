@@ -283,6 +283,24 @@ function VendorDashboardContent() {
     } catch { setOtpMsg('Network error'); } finally { setOtpLoading(false); }
   }
 
+  async function sendFinishOtp(bookingId) {
+    setOtpLoading(true);
+    setOtpMsg('');
+    const token = localStorage.getItem('vendor-token');
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}/finish-otp`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setOtpMsg(data.success ? `\u2713 ${data.message || 'Finish OTP sent to customer email.'}` : (data.error || 'Unable to send OTP'));
+    } catch {
+      setOtpMsg('Network error');
+    } finally {
+      setOtpLoading(false);
+    }
+  }
+
   async function loadAllServices() {
     if (allServices.length > 0) return;
     try {
@@ -1225,7 +1243,15 @@ function VendorDashboardContent() {
                 {activeBooking.status === 'IN_PROGRESS' && (
                   <div className={`p-4 border ${isDark ? 'border-orange-500/30 bg-orange-500/10' : 'border-orange-200 bg-orange-50'}`}>
                     <p className="text-[9px] font-black uppercase text-orange-400 tracking-widest mb-2">🏁 Enter Finish OTP</p>
-                    <p className={`text-[10px] mb-3 ${muted}`}>When work is done, ask customer for Finish OTP to complete service</p>
+                    <p className={`text-[10px] mb-3 ${muted}`}>When work is done, send the Finish OTP to the customer email, then ask for the 4-digit code to complete service.</p>
+                    <button
+                      type="button"
+                      onClick={() => sendFinishOtp(activeBooking.id)}
+                      disabled={otpLoading}
+                      className="mb-3 w-full px-4 py-2.5 border border-orange-400 text-orange-500 text-[9px] font-black uppercase tracking-widest disabled:opacity-50"
+                    >
+                      {otpLoading ? 'Sending...' : 'Send Finish OTP to Customer Email'}
+                    </button>
                     <div className="flex gap-2">
                       <input
                         type="text" maxLength={4} placeholder="Enter 4-digit OTP"

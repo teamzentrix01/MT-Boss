@@ -80,7 +80,7 @@ export async function GET(req) {
          ($1::INTEGER IS NOT NULL AND sb.user_id = $1)
          OR ($2::TEXT IS NOT NULL AND LOWER(sb.user_email) = LOWER($2))
        )
-       AND sb.payment_status = 'PAID'
+       AND sb.payment_status IN ('PAID', 'FREE')
        ORDER BY sb.created_at DESC`;
     const queryParams = [userId, userEmail];
 

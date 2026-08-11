@@ -27,7 +27,7 @@ export async function POST(req, { params }) {
     }
 
     const booking = await pool.query(
-      `SELECT id, finish_otp, finish_otp_verified, finish_otp_generated_at, COALESCE(finish_otp_attempts, 0) AS finish_otp_attempts, status
+      `SELECT id, finish_otp, finish_otp_verified, finish_otp_generated_at, COALESCE(finish_otp_attempts, 0) AS finish_otp_attempts, status, slot_type, payment_status
        FROM service_bookings
        WHERE id = $1
          AND vendor_id = $2
@@ -71,6 +71,10 @@ export async function POST(req, { params }) {
     }
 
     // Verify finish OTP → move to AWAITING_PAYMENT
+    const isFreeBooking = row.slot_type === 'free' || row.payment_status === 'FREE';
+    const nextStatus = isFreeBooking ? 'COMPLETED' : 'AWAITING_PAYMENT';
+    const completedAtSql = isFreeBooking ? ', completed_at = NOW()' : '';
+
     const result = await pool.query(
       `UPDATE service_bookings
        SET finish_otp_verified = TRUE,
@@ -79,17 +83,20 @@ export async function POST(req, { params }) {
            final_amount = COALESCE(final_amount, total_amount, base_amount),
            extra_amount = COALESCE(extra_amount, 0),
            is_quick_job = COALESCE(is_quick_job, TRUE),
-           status = 'AWAITING_PAYMENT',
+           status = $2,
            vendor_status = 'COMPLETED',
-           user_status = 'AWAITING_PAYMENT'
+           user_status = $2
+           ${completedAtSql}
        WHERE id = $1
        RETURNING id, status, service_finished_at`,
-      [bookingId]
+      [bookingId, nextStatus]
     );
 
     return NextResponse.json({
       success: true,
-      message: 'Finish OTP verified! Work complete. Awaiting customer payment confirmation.',
+      message: isFreeBooking
+        ? 'Finish OTP verified! Free slot service completed.'
+        : 'Finish OTP verified! Work complete. Awaiting customer payment confirmation.',
       booking: result.rows[0],
     });
   } catch (error) {

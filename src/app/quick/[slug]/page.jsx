@@ -466,6 +466,12 @@ export default function QuickServiceSlugPage() {
       }
 
       setBookingReference(data.booking?.booking_reference || '');
+      if (!data.payment) {
+        setErrors({
+          submit: data.message || 'Free slot booking confirmed. We are assigning a vendor.',
+        });
+        return;
+      }
       redirectToPayU(data.payment);
     } catch (error) {
       console.error('Booking error:', error);

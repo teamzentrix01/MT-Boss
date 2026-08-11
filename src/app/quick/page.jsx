@@ -251,6 +251,12 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
         return;
       }
 
+      if (!data.payment) {
+        setErrors({
+          submit: data.message || 'Free slot booking confirmed. We are assigning a vendor.',
+        });
+        return;
+      }
       redirectToPayU(data.payment);
     } catch (error) {
       console.error('Booking error:', error);
