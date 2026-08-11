@@ -41,7 +41,7 @@ function AgentDashboardContent() {
   const [activityFilter, setActivityFilter] = useState('all');
   const [unreadActivityCount, setUnreadActivityCount] = useState(0);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [projectOps, setProjectOps] = useState({ payments: [], labour: [], materials: [], expenses: [], transport: [] });
+  const [projectOps, setProjectOps] = useState({ payments: [], labour: [], contractors: [], materials: [], expenses: [], transport: [] });
   const [activeTab, setActiveTab] = useState('leads');
   const [message, setMessage] = useState('');
   const [editLead, setEditLead] = useState(null);
@@ -214,6 +214,7 @@ function AgentDashboardContent() {
       setProjectOps({
         payments: data.payments || [],
         labour: data.labour || [],
+        contractors: data.contractors || [],
         materials: data.materials || [],
         expenses: data.expenses || [],
         transport: data.transport || [],
@@ -819,7 +820,7 @@ function AgentDashboardContent() {
                     <div className="flex items-center justify-between gap-3 mb-4">
                       <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">Daily Site Entry</p>
                       <select className={`border px-3 py-2 text-xs font-bold ${input}`} value={entryType} onChange={(e) => { setEntryType(e.target.value); setEntryForm({}); }}>
-                        {['payment', 'labour', 'material', 'expense', 'transport'].map((type) => <option key={type} value={type}>{type}</option>)}
+                        {['payment', 'labour', 'contractor', 'material', 'expense', 'transport'].map((type) => <option key={type} value={type}>{type}</option>)}
                       </select>
                     </div>
 
@@ -841,6 +842,20 @@ function AgentDashboardContent() {
                         <select className={`border px-3 py-2 text-sm ${input}`} value={entryForm.attendance_status || 'present'} onChange={(e) => setEntryForm((f) => ({ ...f, attendance_status: e.target.value }))}>
                           {['present', 'half_day', 'absent'].map((status) => <option key={status}>{status}</option>)}
                         </select>
+                      </div>
+                    )}
+
+                    {entryType === 'contractor' && (
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Contractor name" value={entryForm.contractor_name || ''} onChange={(e) => setEntryForm((f) => ({ ...f, contractor_name: e.target.value }))} required />
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Company / firm" value={entryForm.company_name || ''} onChange={(e) => setEntryForm((f) => ({ ...f, company_name: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Work description" value={entryForm.work_description || ''} onChange={(e) => setEntryForm((f) => ({ ...f, work_description: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} type="number" placeholder="Contract value" value={entryForm.contract_amount || ''} onChange={(e) => setEntryForm((f) => ({ ...f, contract_amount: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} type="number" placeholder="Payment amount" value={entryForm.paid_amount || ''} onChange={(e) => setEntryForm((f) => ({ ...f, paid_amount: e.target.value }))} required />
+                        <input className={`border px-3 py-2 text-sm ${input}`} type="date" value={entryForm.payment_date || todayIso()} onChange={(e) => setEntryForm((f) => ({ ...f, payment_date: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Payment mode" value={entryForm.payment_mode || ''} onChange={(e) => setEntryForm((f) => ({ ...f, payment_mode: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Invoice / reference no." value={entryForm.invoice_number || ''} onChange={(e) => setEntryForm((f) => ({ ...f, invoice_number: e.target.value }))} />
+                        <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Notes" value={entryForm.notes || ''} onChange={(e) => setEntryForm((f) => ({ ...f, notes: e.target.value }))} />
                       </div>
                     )}
 
@@ -887,6 +902,7 @@ function AgentDashboardContent() {
                     {[
                       ['Payments', 'payments', projectOps.payments, (x) => `${x.payment_date?.slice?.(0, 10) || ''} - Rs ${x.amount}`],
                       ['Labour', 'labour', projectOps.labour, (x) => `${x.work_date?.slice?.(0, 10) || ''} - ${x.labour_name} - Rs ${x.wage_amount}`],
+                      ['Contractor Payments', 'contractors', projectOps.contractors, (x) => `${x.payment_date?.slice?.(0, 10) || ''} - ${x.contractor_name} - Rs ${x.paid_amount || 0}`],
                       ['Materials', 'materials', projectOps.materials, (x) => `${x.entry_date?.slice?.(0, 10) || ''} - ${x.material_name} - ${x.quantity} ${x.unit || ''}`],
                       ['Expenses', 'expenses', projectOps.expenses, (x) => `${x.expense_date?.slice?.(0, 10) || ''} - ${x.expense_type} - Rs ${x.amount}`],
                       ['Transport', 'transport', projectOps.transport, (x) => `${x.transport_date?.slice?.(0, 10) || ''} - ${x.transport_type} - ${x.vehicle_number || ''} - Rs ${x.amount || 0}`],

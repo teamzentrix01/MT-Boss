@@ -21,6 +21,7 @@ function passwordGate(agent) {
 const ENTRY_TABLES = {
   payment: 'project_payments',
   labour: 'project_labour_entries',
+  contractor: 'project_contractor_entries',
   material: 'project_material_entries',
   expense: 'project_expenses',
   transport: 'project_transport_entries',
@@ -181,6 +182,34 @@ export async function POST(req) {
           body.attendance_status || 'present',
           wageAmount,
           paidAmount,
+          body.notes || null,
+        ]
+      );
+    } else if (entry_type === 'contractor') {
+      const contractAmount = Number(body.contract_amount || 0);
+      const paidAmount = Number(body.paid_amount || 0);
+      if (!body.contractor_name || paidAmount <= 0) {
+        return NextResponse.json({ success: false, error: 'Contractor name and payment amount are required' }, { status: 400 });
+      }
+      if (!Number.isFinite(contractAmount) || contractAmount < 0 || !Number.isFinite(paidAmount)) {
+        return NextResponse.json({ success: false, error: 'Enter valid non-negative contractor amounts' }, { status: 400 });
+      }
+      result = await pool.query(
+        `INSERT INTO project_contractor_entries (
+          project_id, agent_id, contractor_name, company_name, work_description,
+          contract_amount, paid_amount, payment_date, payment_mode, invoice_number, notes
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+        [
+          project_id,
+          agent.id,
+          body.contractor_name,
+          body.company_name || null,
+          body.work_description || null,
+          contractAmount,
+          paidAmount,
+          body.payment_date || new Date(),
+          body.payment_mode || null,
+          body.invoice_number || null,
           body.notes || null,
         ]
       );
