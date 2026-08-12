@@ -66,13 +66,14 @@ export async function POST(req) {
           );
         } else if (
           intent.purpose === 'vendor_package'
+          || intent.purpose === 'vendor_registration'
           || intent.purpose === 'supplier_package'
           || intent.purpose === 'supplier_registration'
         ) {
           await ensurePackageSchema();
           const pkg = getPackageById(intent.package_id);
           if (!pkg) throw new Error('Paid package no longer exists');
-          const table = intent.purpose === 'vendor_package' ? 'vendors' : 'suppliers';
+          const table = intent.purpose.startsWith('vendor_') ? 'vendors' : 'suppliers';
           await client.query(
             `UPDATE ${table}
              SET package_id = $1, package_name = $2, package_price = $3,
@@ -80,6 +81,14 @@ export async function POST(req) {
              WHERE id = $5`,
             [pkg.id, pkg.name, pkg.price, pkg.duration_months, intent.entity_id]
           );
+          if (intent.purpose === 'vendor_registration') {
+            await client.query(
+              `UPDATE vendors
+               SET verification_status = 'pending', status = 'inactive', updated_at = NOW()
+               WHERE id = $1 AND verification_status = 'payment_pending'`,
+              [intent.entity_id]
+            );
+          }
         } else if (intent.purpose === 'franchise_registration') {
           await client.query(
             `UPDATE franchises
@@ -130,6 +139,8 @@ export async function POST(req) {
         resultMessage,
         intent.purpose === 'vendor_package'
           ? '/vendor/dashboard?tab=packages'
+        : intent.purpose === 'vendor_registration'
+            ? (succeeded ? '/vendor/pending-approval' : '/vendor/signup')
           : intent.purpose === 'supplier_package'
             ? '/supplier/dashboard?tab=packages'
             : intent.purpose === 'supplier_registration'

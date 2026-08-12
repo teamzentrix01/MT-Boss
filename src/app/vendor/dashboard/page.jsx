@@ -796,7 +796,9 @@ function VendorDashboardContent() {
                 <p className="text-[10px] font-black uppercase tracking-widest text-green-500 mb-2">Current Package</p>
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-base font-black">{pkgStatus.package_name || 'No Plan Active'}</p>
+                    <p className="text-base font-black">
+                      {['active', 'pending'].includes(pkgStatus.package_status) ? (pkgStatus.package_name || 'No Plan Active') : 'No Plan Active'}
+                    </p>
                     <p className={`text-xs ${muted} mt-1`}>
                       {pkgStatus.is_active 
                         ? `Expires in ${pkgStatus.days_remaining} days (${new Date(pkgStatus.package_expires_at).toLocaleDateString('en-IN')})`
@@ -829,10 +831,10 @@ function VendorDashboardContent() {
                     <p className="font-black text-sm text-[var(--brand-blue)] mb-2">₹{pkg.price}</p>
                     <button
                       onClick={() => selectPackage(pkg.id)}
-                      disabled={pkgLoading || pkgStatus?.package_id === pkg.id}
+                      disabled={pkgLoading || (pkgStatus?.package_id === pkg.id && ['active', 'pending'].includes(pkgStatus?.package_status))}
                       className="px-4 py-2 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--brand-blue-light)]"
                     >
-                      {pkgStatus?.package_id === pkg.id ? 'Current' : 'Select Plan'}
+                      {pkgStatus?.package_id === pkg.id && ['active', 'pending'].includes(pkgStatus?.package_status) ? 'Current' : 'Select Plan'}
                     </button>
                   </div>
                 </div>

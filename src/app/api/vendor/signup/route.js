@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { ensurePackageSchema, getPackageById } from '@/lib/packages';
 import { cleanText, normalizePhone, isValidEmail, isValidIndianMobile } from '@/lib/validation';
 import { cleanCity, ensureServiceCitiesSchema } from '@/lib/service-cities';
 import { resolveManagedCity } from '@/lib/cities';
 import { verifyOtp } from '@/lib/otp';
+import { createPayURequest } from '@/lib/payu';
+import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
 
 export async function POST(req) {
   let client;
+  let retryVendorId = null;
   try {
     let email, password, phone, city, state, country, postal_code,
         aadhar_number, services, profilePhotoBuffer, profilePhotoMime,
@@ -162,6 +164,13 @@ export async function POST(req) {
 
     city = canonicalManagedCity;
     services = serviceIds;
+    const selectedPackageId = String(package_id || 'free');
+    const isFreeRegistration = selectedPackageId === 'free';
+    const pkg = isFreeRegistration ? null : getPackageById(selectedPackageId);
+
+    if (!isFreeRegistration && !pkg) {
+      return NextResponse.json({ error: 'Select a valid subscription plan' }, { status: 400 });
+    }
 
     // ════════════════════════════════════════════════════════════════
     // CHECK DUPLICATE EMAIL
@@ -169,11 +178,27 @@ export async function POST(req) {
 
     console.log('🔍 [SIGNUP] Checking for duplicate email...');
     const existsResult = await pool.query(
-      'SELECT id FROM vendors WHERE email = $1',
+      `SELECT id, password_hash, verification_status, is_approved, package_status
+       FROM vendors WHERE email = $1`,
       [email]
     );
 
     if (existsResult.rows.length > 0) {
+      const existingVendor = existsResult.rows[0];
+      const canRetryPayment = !isFreeRegistration
+        && !existingVendor.is_approved
+        && existingVendor.verification_status === 'payment_pending'
+        && !['pending', 'active'].includes(existingVendor.package_status);
+      const passwordMatches = canRetryPayment
+        ? await bcrypt.compare(password, existingVendor.password_hash)
+        : false;
+
+      if (passwordMatches) {
+        retryVendorId = existingVendor.id;
+      }
+    }
+
+    if (existsResult.rows.length > 0 && !retryVendorId) {
       console.warn('❌ [SIGNUP] Email already registered:', email);
       return NextResponse.json(
         { error: 'Email already registered' },
@@ -224,8 +249,6 @@ export async function POST(req) {
 
     console.log('🏗️ [SIGNUP] Building insert fields...');
     
-    const pkg = getPackageById(package_id || 'pkg_6m') || getPackageById('pkg_6m');
-
     const fields = {
       email,
       password_hash: hashedPassword,
@@ -235,17 +258,17 @@ export async function POST(req) {
       country,
       postal_code,
       status: 'inactive',
-      verification_status: 'pending',
+      verification_status: isFreeRegistration ? 'pending' : 'payment_pending',
       is_approved: false,
     };
 
     if (cols.has('package_id')) {
-      fields.package_id = pkg.id;
-      fields.package_name = pkg.name;
-      fields.package_price = pkg.price;
-      fields.package_duration_months = pkg.duration_months;
+      fields.package_id = null;
+      fields.package_name = null;
+      fields.package_price = 0;
+      fields.package_duration_months = 0;
       fields.package_purchased_at = null;
-      fields.package_status = 'unpaid';
+      fields.package_status = 'none';
     }
 
     if (cols.has('shop_name'))     fields.shop_name     = email.split('@')[0];
@@ -282,12 +305,22 @@ export async function POST(req) {
       RETURNING id, email, phone, city, state, country, postal_code, 
                 status, verification_status, is_approved, created_at
     `;
+    const updateSQL = `
+      UPDATE vendors
+      SET ${colNames.map((columnName, i) => `${columnName} = $${i + 1}`).join(', ')},
+          updated_at = NOW()
+      WHERE id = $${paramValues.length + 1}
+      RETURNING id, email, phone, city, state, country, postal_code,
+                status, verification_status, is_approved, created_at
+    `;
 
     console.log('📝 [SIGNUP] Insert SQL prepared');
     console.log('🔢 [SIGNUP] Number of fields:', colNames.length);
 
     console.log('⚙️ [SIGNUP] Executing INSERT query...');
-    const vendorResult = await client.query(insertSQL, paramValues);
+    const vendorResult = retryVendorId
+      ? await client.query(updateSQL, [...paramValues, retryVendorId])
+      : await client.query(insertSQL, paramValues);
     
     if (!vendorResult.rows[0]) {
       await client.query('ROLLBACK');
@@ -309,6 +342,9 @@ export async function POST(req) {
 
     if (services.length > 0) {
       console.log('⚙️ [SIGNUP] Assigning services...');
+      if (retryVendorId) {
+        await client.query(`UPDATE vendor_services SET is_active = FALSE WHERE vendor_id = $1`, [vendor.id]);
+      }
       for (const serviceId of services) {
         try {
           await client.query(
@@ -353,6 +389,34 @@ export async function POST(req) {
 
     console.log('🔄 [SIGNUP] Committing transaction...');
     await client.query(`UPDATE vendor_signup_otps SET used = TRUE WHERE email = $1 AND used = FALSE`, [email]);
+
+    let payment = null;
+    if (!isFreeRegistration) {
+      const txnid = newPayUTxnId('VRG');
+      await createPayUIntent({
+        txnid,
+        purpose: 'vendor_registration',
+        entityId: vendor.id,
+        packageId: pkg.id,
+        amount: pkg.price,
+        client,
+      });
+      const callbackUrl = getPayUCallbackUrl(req);
+      payment = createPayURequest({
+        txnid,
+        amount: pkg.price,
+        productinfo: `MTBOSS vendor registration - ${pkg.label}`,
+        firstname: String(fields.shop_name || fields.business_name || email).trim().split(/\s+/)[0],
+        email,
+        phone,
+        surl: callbackUrl,
+        furl: callbackUrl,
+        udf1: String(vendor.id),
+        udf2: pkg.id,
+        udf3: 'vendor_registration',
+      });
+    }
+
     await client.query('COMMIT');
     console.log('✅ [SIGNUP] Transaction committed successfully');
 
@@ -364,7 +428,9 @@ export async function POST(req) {
 
     return NextResponse.json({
       success: true,
-      message: 'Account created! Waiting for admin approval. You will receive an email once approved.',
+      message: payment
+        ? 'Registration saved. Redirecting to PayU for subscription payment.'
+        : 'Account created! Waiting for admin approval. You will receive an email once approved.',
       token: null,
       vendor: {
         id: vendor.id,
@@ -379,6 +445,7 @@ export async function POST(req) {
         is_approved: vendor.is_approved,
         role: 'vendor',
       },
+      payment,
       redirectTo: '/vendor/pending-approval',
     }, { status: 201 });
 
