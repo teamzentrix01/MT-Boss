@@ -61,6 +61,7 @@ export async function POST(req) {
 
     const {
       clientName, clientPhone, clientEmail, serviceType, leadType,
+      city,
       status, followUpDate, notes,
       lead_stage, meeting_done, estimate_sent, final_amount,
       daily_visit_notes, client_requirement, lead_source,
@@ -125,7 +126,7 @@ export async function POST(req) {
        RETURNING *`,
       [
         agent.id,
-        agent.city,
+        String(city || agent.city).trim() || agent.city,
         clientName,
         clientPhone,
         clientEmail || null,

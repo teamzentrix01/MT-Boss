@@ -3,6 +3,12 @@ import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { ensurePackageSchema } from '@/lib/packages';
 import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
+import { ensureAgentSchema } from '@/lib/agent-auth';
+
+async function ensureCrmLeadVendorAssignment() {
+  await ensureAgentSchema();
+  await pool.query(`ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS assigned_vendor_id INTEGER`);
+}
 
 export async function GET(req) {
   try {
@@ -11,6 +17,7 @@ export async function GET(req) {
 
     await ensurePackageSchema();
     await ensureServiceBookingSubcategorySchema();
+    await ensureCrmLeadVendorAssignment();
 
     const incoming = await pool.query(
       `WITH vendor_state AS (
@@ -106,7 +113,40 @@ export async function GET(req) {
       [vendor.id]
     );
 
-    const data = [...incoming.rows, ...assigned.rows].sort((a, b) => (
+    // CRM leads are city-scoped: every active, approved vendor sees leads for
+    // its own city, with no cross-city access. Vendor assignment remains
+    // optional metadata for admin workflow.
+    const crmLeads = await pool.query(
+      `SELECT l.id AS booking_id,
+              CONCAT('CRM-', l.id) AS booking_reference,
+              'active' AS lead_track_status,
+              l.status,
+              l.updated_at AS tracked_at,
+              l.client_name AS customer_name,
+              l.client_phone AS customer_phone,
+              l.notes AS service_address,
+              l.city AS service_city,
+              l.follow_up_date AS booking_date,
+              NULL::TEXT AS booking_time,
+              l.lead_type AS service_subcategory,
+              l.client_requirement AS service_description,
+              l.final_amount AS final_amount,
+              l.service_type AS service_label,
+              '📋' AS service_icon,
+              TRUE AS can_accept,
+              FALSE AS contact_locked,
+              TRUE AS crm_lead
+         FROM agent_leads l
+         JOIN vendors v ON v.id = $1
+        WHERE v.is_approved = TRUE
+          AND v.status = 'active'
+          AND LOWER(TRIM(COALESCE(l.city,''))) = LOWER(TRIM(COALESCE(v.city,'')))
+        ORDER BY l.updated_at DESC
+        LIMIT 200`,
+      [vendor.id]
+    );
+
+    const data = [...incoming.rows, ...assigned.rows, ...crmLeads.rows].sort((a, b) => (
       new Date(b.tracked_at || 0).getTime() - new Date(a.tracked_at || 0).getTime()
     ));
 

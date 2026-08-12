@@ -15,6 +15,7 @@ const ensureLeadManagementSchema = createInitializationGuard(async () => {
   try { await pool.query(`ALTER TABLE agent_leads ALTER COLUMN agent_id DROP NOT NULL`); } catch { /* older db may already allow null */ }
   const alters = [
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS assigned_franchise_id INTEGER`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS assigned_vendor_id INTEGER`,
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS assigned_by_role VARCHAR(40) DEFAULT 'admin'`,
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS source_ref_table VARCHAR(80)`,
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS source_ref_id INTEGER`,
@@ -161,10 +162,13 @@ async function getLeadRows({ search = '', status = '', source = '', city = '' } 
        a.phone AS agent_phone,
        f.name AS franchise_name,
        f.email AS franchise_email,
-       f.phone AS franchise_phone
+       f.phone AS franchise_phone,
+       v.shop_name AS vendor_name,
+       v.phone AS vendor_phone
      FROM agent_leads l
      LEFT JOIN agents a ON a.id = l.agent_id
      LEFT JOIN franchises f ON f.id = l.assigned_franchise_id
+     LEFT JOIN vendors v ON v.id = l.assigned_vendor_id
      ${where}
      ORDER BY
        CASE
@@ -232,9 +236,10 @@ export async function GET(req) {
       });
     }
 
-    const [agents, franchises] = await Promise.all([
+    const [agents, franchises, vendors] = await Promise.all([
       pool.query(`SELECT id, name, email, phone, city, state FROM agents WHERE status = 'Approved' ORDER BY name ASC`),
       pool.query(`SELECT id, name, email, phone, city, state FROM franchises WHERE status = 'Approved' ORDER BY name ASC`),
+      pool.query(`SELECT id, shop_name, email, phone, city, state FROM vendors WHERE is_approved = TRUE AND status = 'active' ORDER BY shop_name ASC`),
     ]);
 
     return NextResponse.json({
@@ -242,6 +247,7 @@ export async function GET(req) {
       data: rows,
       agents: agents.rows,
       franchises: franchises.rows,
+      vendors: vendors.rows,
     });
   } catch (error) {
     console.error('Lead management GET error:', error);
@@ -261,7 +267,7 @@ export async function POST(req) {
     const body = await req.json();
     const {
       client_name, client_phone, client_email, city, service_type, lead_type,
-      agent_id, assigned_franchise_id, notes, client_requirement, lead_source,
+      agent_id, assigned_franchise_id, assigned_vendor_id, notes, client_requirement, lead_source,
       priority, follow_up_date,
     } = body;
 
@@ -282,17 +288,26 @@ export async function POST(req) {
         return NextResponse.json({ success: false, error: 'Select an active approved agent from the lead city.' }, { status: 400 });
       }
     }
+    if (assigned_franchise_id) {
+      const match = await pool.query(`SELECT id FROM franchises WHERE id = $1 AND status = 'Approved' AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [assigned_franchise_id, city]);
+      if (!match.rows[0]) return NextResponse.json({ success: false, error: 'Select an approved franchise from the lead city.' }, { status: 400 });
+    }
+    if (assigned_vendor_id) {
+      const match = await pool.query(`SELECT id FROM vendors WHERE id = $1 AND is_approved = TRUE AND status = 'active' AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [assigned_vendor_id, city]);
+      if (!match.rows[0]) return NextResponse.json({ success: false, error: 'Select an active approved vendor from the lead city.' }, { status: 400 });
+    }
 
     const result = await pool.query(
       `INSERT INTO agent_leads
-        (agent_id, assigned_franchise_id, city, client_name, client_phone, client_email,
+        (agent_id, assigned_franchise_id, assigned_vendor_id, city, client_name, client_phone, client_email,
          service_type, lead_type, status, follow_up_date, notes, client_requirement,
          lead_source, priority, assigned_by_role)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'New',$9,$10,$11,$12,$13,'admin')
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'New',$10,$11,$12,$13,$14,'admin')
        RETURNING *`,
       [
         agent_id || null,
         assigned_franchise_id || null,
+        assigned_vendor_id || null,
         city,
         client_name,
         client_phone,
@@ -385,6 +400,14 @@ export async function PATCH(req) {
         return NextResponse.json({ success: false, error: 'Select an active approved agent from the lead city.' }, { status: 400 });
       }
     }
+    if (has('assigned_franchise_id') && body.assigned_franchise_id) {
+      const match = await client.query(`SELECT id FROM franchises WHERE id = $1 AND status = 'Approved' AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [body.assigned_franchise_id, current.city]);
+      if (!match.rows[0]) { await client.query('ROLLBACK'); return NextResponse.json({ success: false, error: 'Select an approved franchise from the lead city.' }, { status: 400 }); }
+    }
+    if (has('assigned_vendor_id') && body.assigned_vendor_id) {
+      const match = await client.query(`SELECT id FROM vendors WHERE id = $1 AND is_approved = TRUE AND status = 'active' AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [body.assigned_vendor_id, current.city]);
+      if (!match.rows[0]) { await client.query('ROLLBACK'); return NextResponse.json({ success: false, error: 'Select an active approved vendor from the lead city.' }, { status: 400 }); }
+    }
 
     const sets = [];
     const values = [];
@@ -394,6 +417,7 @@ export async function PATCH(req) {
     };
     if (has('agent_id')) add('agent_id', body.agent_id || null);
     if (has('assigned_franchise_id')) add('assigned_franchise_id', body.assigned_franchise_id || null);
+    if (has('assigned_vendor_id')) add('assigned_vendor_id', body.assigned_vendor_id || null);
     if (has('lead_stage')) add('lead_stage', body.lead_stage);
     if (has('status') || nextStage === 'Final') add('status', nextStatus);
     if (has('follow_up_date')) add('follow_up_date', body.follow_up_date || null);

@@ -55,9 +55,9 @@ export async function GET(req) {
         `SELECT l.*, a.name AS agent_name
          FROM agent_leads l
          LEFT JOIN agents a ON a.id = l.agent_id
-         WHERE l.assigned_franchise_id = $1
+         WHERE LOWER(TRIM(COALESCE(l.city, ''))) = LOWER(TRIM($1))
          ORDER BY l.created_at DESC`,
-        [franchise.id]
+        [access.franchise.city]
       );
 
     const data = leads.rows.map((lead) => filterLead(lead, access.permissions));
@@ -107,8 +107,9 @@ export async function PATCH(req) {
          FROM agent_leads l
          LEFT JOIN projects p ON p.source_lead_id = l.id AND p.project_kind = 'operational'
         WHERE l.id = $1 AND l.assigned_franchise_id = $2
+          AND LOWER(TRIM(COALESCE(l.city, ''))) = LOWER(TRIM($3))
         FOR UPDATE OF l`,
-      [id, franchise.id]
+      [id, franchise.id, access.franchise.city]
     );
     const current = currentResult.rows[0];
     if (!current) {
@@ -172,6 +173,7 @@ export async function PATCH(req) {
               assigned_by_role = 'franchise',
               updated_at = NOW()
         WHERE id = $11 AND assigned_franchise_id = $12
+          AND LOWER(TRIM(COALESCE(city, ''))) = LOWER(TRIM($13))
         RETURNING *`,
       [
         has('agent_id'), agent_id || null,
@@ -181,6 +183,7 @@ export async function PATCH(req) {
         has('notes'), String(notes || '').trim() || null,
         id,
         franchise.id,
+        access.franchise.city,
       ]
     );
 

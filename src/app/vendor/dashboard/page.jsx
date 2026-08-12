@@ -661,7 +661,9 @@ function VendorDashboardContent() {
                           <span className={`block text-[9px] font-black uppercase tracking-widest ${muted}`}>Amount</span>
                           <span className="font-black text-[var(--brand-blue)]">₹{lead.final_amount || lead.total_amount || lead.base_amount || 0}</span>
                         </div>
-                        {lead.lead_track_status === "incoming" && (
+                        {lead.crm_lead ? (
+                          <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>City CRM lead</p>
+                        ) : lead.lead_track_status === "incoming" && (
                           <div className="flex gap-2">
                             <button
                               type="button"

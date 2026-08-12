@@ -13,6 +13,7 @@ const emptyForm = {
   service_type: '',
   lead_type: '',
   assigned_franchise_id: '',
+  assigned_vendor_id: '',
   agent_id: '',
   priority: 'Normal',
   follow_up_date: '',
@@ -25,6 +26,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   const [leads, setLeads] = useState([]);
   const [agents, setAgents] = useState([]);
   const [franchises, setFranchises] = useState([]);
+  const [vendors, setVendors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [search, setSearch] = useState('');
@@ -49,6 +51,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
         setLeads(data.data || []);
         setAgents(data.agents || []);
         setFranchises(data.franchises || []);
+        setVendors(data.vendors || []);
       } else {
         setMessage(data.error || 'Could not load leads.');
       }
@@ -245,7 +248,14 @@ export default function LeadManagementAdmin({ isDarkMode }) {
             <label style={labelStyle}>Franchise</label>
             <select style={inputStyle} value={form.assigned_franchise_id} onChange={(e) => setForm((f) => ({ ...f, assigned_franchise_id: e.target.value }))}>
               <option value="">Not assigned</option>
-              {franchises.map((item) => <option key={item.id} value={item.id}>{item.name} - {item.city}</option>)}
+              {franchises.filter((item) => !form.city || item.city?.trim().toLowerCase() === form.city.trim().toLowerCase()).map((item) => <option key={item.id} value={item.id}>{item.name} - {item.city}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={labelStyle}>Vendor</label>
+            <select style={inputStyle} value={form.assigned_vendor_id} onChange={(e) => setForm((f) => ({ ...f, assigned_vendor_id: e.target.value }))}>
+              <option value="">Not assigned</option>
+              {vendors.filter((item) => !form.city || item.city?.trim().toLowerCase() === form.city.trim().toLowerCase()).map((item) => <option key={item.id} value={item.id}>{item.shop_name} - {item.city}</option>)}
             </select>
           </div>
           <div>
@@ -289,16 +299,16 @@ export default function LeadManagementAdmin({ isDarkMode }) {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem' }}>
             <thead>
               <tr style={{ background: surface }}>
-                {['Client', 'Service', 'Source', 'Status', 'Stage', 'Franchise', 'Agent', 'Follow Up', 'Action'].map((head) => (
+                {['Client', 'Service', 'Source', 'Status', 'Stage', 'Franchise', 'Vendor', 'Agent', 'Follow Up', 'Action'].map((head) => (
                   <th key={head} style={{ padding: '0.6rem', textAlign: 'left', color: muted, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '.07em' }}>{head}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={9} style={{ padding: '1rem', color: muted }}>Loading leads...</td></tr>
+                <tr><td colSpan={10} style={{ padding: '1rem', color: muted }}>Loading leads...</td></tr>
               ) : filteredLeads.length === 0 ? (
-                <tr><td colSpan={9} style={{ padding: '1rem', color: muted }}>No leads found.</td></tr>
+                <tr><td colSpan={10} style={{ padding: '1rem', color: muted }}>No leads found.</td></tr>
               ) : filteredLeads.map((lead) => (
                 <tr key={lead.id} style={{ borderTop: `1px solid ${border}` }}>
                   <td style={{ padding: '0.6rem', minWidth: 170 }}>
@@ -321,7 +331,13 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                   <td style={{ padding: '0.6rem' }}>
                     <select style={inputStyle} value={lead.assigned_franchise_id || ''} onChange={(e) => updateLead(lead.id, { assigned_franchise_id: e.target.value })}>
                       <option value="">Not assigned</option>
-                      {franchises.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+                      {franchises.filter((item) => item.city?.trim().toLowerCase() === lead.city?.trim().toLowerCase()).map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+                    </select>
+                  </td>
+                  <td style={{ padding: '0.6rem' }}>
+                    <select style={inputStyle} value={lead.assigned_vendor_id || ''} onChange={(e) => updateLead(lead.id, { assigned_vendor_id: e.target.value })}>
+                      <option value="">Not assigned</option>
+                      {vendors.filter((item) => item.city?.trim().toLowerCase() === lead.city?.trim().toLowerCase()).map((item) => <option key={item.id} value={item.id}>{item.shop_name}</option>)}
                     </select>
                   </td>
                   <td style={{ padding: '0.6rem' }}>
@@ -362,6 +378,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                 ['Status', selected.status],
                 ['Stage', selected.lead_stage],
                 ['Franchise', selected.franchise_name || '-'],
+                ['Vendor', selected.vendor_name || '-'],
                 ['Agent / Sub-agent', selected.agent_name || '-'],
                 ['Priority', selected.priority || 'Normal'],
                 ['Final Amount', `Rs ${Number(selected.final_amount || 0).toLocaleString('en-IN')}`],

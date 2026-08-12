@@ -49,6 +49,7 @@ function AgentDashboardContent() {
   const [deletingLeadId, setDeletingLeadId] = useState(null);
   const [leadForm, setLeadForm] = useState({
     clientName: '',
+    city: '',
     clientPhone: '',
     clientEmail: '',
     serviceType: '',
@@ -269,7 +270,7 @@ function AgentDashboardContent() {
   }
 
   const resetLeadForm = () => ({
-    clientName: '', clientPhone: '', clientEmail: '', serviceType: '', leadType: '',
+    clientName: '', city: agent?.city || '', clientPhone: '', clientEmail: '', serviceType: '', leadType: '',
     status: 'New', followUpDate: '', notes: '',
     lead_stage: 'New', meeting_done: false, estimate_sent: false, final_amount: '',
     daily_visit_notes: '', client_requirement: '', lead_source: 'offline',
@@ -380,6 +381,7 @@ function AgentDashboardContent() {
     setEditLead(lead);
     setLeadForm({
       clientName: lead.client_name || '', clientPhone: lead.client_phone || '',
+      city: lead.city || agent?.city || '',
       clientEmail: lead.client_email || '', serviceType: lead.service_type || '',
       leadType: lead.lead_type || '', status: lead.status || 'New',
       followUpDate: lead.follow_up_date ? String(lead.follow_up_date).slice(0, 10) : '',
@@ -637,11 +639,12 @@ function AgentDashboardContent() {
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <form onSubmit={createLead} className={`border ${card} p-5 h-fit`}>
               <div className="flex items-center justify-between mb-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">{editLead ? 'Edit Lead' : 'Add Lead'} in {agent?.city}</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">{editLead ? 'Edit Lead' : 'Add Lead'}</p>
                 {editLead && <button type="button" onClick={() => { setEditLead(null); setLeadForm(resetLeadForm()); }} className={`text-[10px] font-black uppercase ${muted}`}>Cancel</button>}
               </div>
-              {[
+              {[ 
                 ['Client Name *', 'clientName', 'text'],
+                ['Lead City *', 'city', 'text'],
                 ['Client Phone *', 'clientPhone', 'tel'],
                 ['Client Email', 'clientEmail', 'email'],
                 ['Service Type', 'serviceType', 'text'],
