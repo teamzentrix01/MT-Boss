@@ -52,24 +52,34 @@ async function uploadPrimaryServiceImage(file) {
   fd.append('upload_preset', uploadPreset);
   fd.append('folder', 'mtboss/primary-services');
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 60000);
-  let res;
-  try {
-    res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-      method: 'POST',
-      body: fd,
-      signal: controller.signal,
-    });
-  } catch (error) {
-    if (error.name === 'AbortError') throw new Error('Upload timed out. Please check your connection and retry.');
-    throw error;
-  } finally {
-    clearTimeout(timeout);
+  async function sendUpload() {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60000);
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST', body: fd, signal: controller.signal,
+      });
+      const data = await res.json();
+      if (!res.ok || !data.secure_url) throw new Error(data.error?.message || 'Image upload failed');
+      return data.secure_url;
+    } catch (error) {
+      if (error.name === 'AbortError') throw new Error('Upload timed out. Please check your connection and retry.');
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
   }
-  const data = await res.json();
-  if (!res.ok || !data.secure_url) throw new Error(data.error?.message || 'Image upload failed');
-  return data.secure_url;
+
+  // Mobile networks occasionally drop a multipart request; retry once before surfacing an error.
+  try {
+    return await sendUpload();
+  } catch (firstError) {
+    try {
+      return await sendUpload();
+    } catch {
+      throw firstError;
+    }
+  }
 }
 
 function ImageUrlUploadField({ label, value, onChange, required = false, compact = false }) {
