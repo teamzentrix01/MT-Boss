@@ -206,6 +206,7 @@ export default function CalculatorManager({ isDarkMode }) {
 
   const selectedCities = formData.available_cities || [];
   const qualityNames = Object.keys(rateSettings.qualityLevels || DEFAULT_RATE_SETTINGS.qualityLevels);
+  const selectedPackage = qualityNames.includes(bulkPackage) ? bulkPackage : qualityNames[0] || 'Basic';
 
   const toggleProductCity = (city) => {
     setFormData((current) => {
@@ -226,6 +227,13 @@ export default function CalculatorManager({ isDarkMode }) {
     });
   };
 
+  const getProductPackage = (product) => {
+    const packages = Object.entries(product.price_matrix || {})
+      .filter(([, prices]) => prices && typeof prices === 'object' && Object.keys(prices).length > 0)
+      .map(([quality]) => quality);
+    return packages.find((quality) => qualityNames.includes(quality)) || qualityNames[0] || 'Basic';
+  };
+
   const updatePackageCityPrice = (quality, city, value) => {
     setFormData((current) => {
       const priceMatrix = { ...(current.price_matrix || {}) };
@@ -241,9 +249,9 @@ export default function CalculatorManager({ isDarkMode }) {
     if (bulkPrice === '' || selectedCities.length === 0) return;
     setFormData((current) => {
       const priceMatrix = { ...(current.price_matrix || {}) };
-      const qualityPrices = { ...(priceMatrix[bulkPackage] || {}) };
+      const qualityPrices = { ...(priceMatrix[selectedPackage] || {}) };
       selectedCities.forEach((city) => { qualityPrices[city] = bulkPrice; });
-      return { ...current, price_matrix: { ...priceMatrix, [bulkPackage]: qualityPrices } };
+      return { ...current, price_matrix: { ...priceMatrix, [selectedPackage]: qualityPrices } };
     });
   };
 
@@ -326,13 +334,13 @@ export default function CalculatorManager({ isDarkMode }) {
       Object.entries(formData.city_prices || {}).forEach(([city, val]) => {
         if (allowedCities.includes(city) && val !== '' && val !== undefined && val !== null) cleanCityPrices[city] = parseFloat(val);
       });
-      const cleanPriceMatrix = {};
-      Object.entries(formData.price_matrix || {}).forEach(([quality, prices]) => {
-        Object.entries(prices || {}).forEach(([city, val]) => {
-          if (allowedCities.includes(city) && val !== '' && val !== undefined && val !== null) {
-            cleanPriceMatrix[quality] = { ...(cleanPriceMatrix[quality] || {}), [city]: parseFloat(val) };
-          }
-        });
+      const cleanPriceMatrix = { [selectedPackage]: {} };
+      allowedCities.forEach((city) => {
+        const packageValue = formData.price_matrix?.[selectedPackage]?.[city];
+        const value = packageValue === '' || packageValue === undefined || packageValue === null
+          ? formData.price
+          : packageValue;
+        cleanPriceMatrix[selectedPackage][city] = parseFloat(value);
       });
       const payload = { ...formData, city_prices: cleanCityPrices, price_matrix: cleanPriceMatrix };
       const res = await fetch('/api/calculator-products', {
@@ -372,6 +380,7 @@ export default function CalculatorManager({ isDarkMode }) {
   };
 
   const handleEdit = (product) => {
+    const productPackage = getProductPackage(product);
     setFormData({
       category:    product.category    || '',
       badge:       product.badge       || 'Recommended',
@@ -385,6 +394,7 @@ export default function CalculatorManager({ isDarkMode }) {
       available_cities: product.available_cities || Object.keys(product.city_prices || {}),
       is_active:   product.is_active   ?? true,
     });
+    setBulkPackage(productPackage);
     setEditingId(product.id);
     setImageMode('url');
     setUploadErr('');
@@ -440,6 +450,7 @@ export default function CalculatorManager({ isDarkMode }) {
       badge: category?.badge || 'Recommended',
     });
     setEditingId(null);
+    setBulkPackage(qualityNames[0] || 'Basic');
     setImageMode('url');
     setUploadErr('');
     setShowForm(true);
@@ -891,7 +902,7 @@ export default function CalculatorManager({ isDarkMode }) {
                   <div className="cm-full">
                     <label className="cm-label">Material availability cities</label>
                     <div style={{ color:'var(--cm-muted)', fontSize:'.72rem', marginBottom:'.45rem' }}>
-                      Select every city where this brand is available. Package prices below apply only to selected cities.
+                      Select every city where this brand is available. The brand will appear only in the package selected below.
                     </div>
                     <div className="cm-check-grid">
                       {managedCities.map(city => (
@@ -908,11 +919,11 @@ export default function CalculatorManager({ isDarkMode }) {
                   </div>
 
                   <div className="cm-full">
-                    <label className="cm-label">Package and city prices (INR)</label>
+                    <label className="cm-label">Selected package and city prices (INR)</label>
                     <div className="cm-bulk-row">
                       <div>
-                        <label className="cm-label" style={{ fontSize:'.6rem' }}>Package</label>
-                        <select className="cm-select" value={bulkPackage} onChange={e => setBulkPackage(e.target.value)}>
+                        <label className="cm-label" style={{ fontSize:'.6rem' }}>Brand appears in</label>
+                        <select className="cm-select" value={selectedPackage} onChange={e => setBulkPackage(e.target.value)}>
                           {qualityNames.map(quality => <option key={quality} value={quality}>{quality}</option>)}
                         </select>
                       </div>
@@ -938,29 +949,27 @@ export default function CalculatorManager({ isDarkMode }) {
                       </div>
                     ) : (
                       <div className="cm-package-prices">
-                        {qualityNames.map(quality => (
-                          <div className="cm-package-card" key={quality}>
-                            <div className="cm-rate-name">{quality}</div>
+                          <div className="cm-package-card" key={selectedPackage}>
+                            <div className="cm-rate-name">{selectedPackage}</div>
                             {selectedCities.map(city => (
-                              <div className="cm-package-city" key={`${quality}-${city}`}>
+                              <div className="cm-package-city" key={`${selectedPackage}-${city}`}>
                                 <span style={{ color:'var(--cm-muted)', fontSize:'.72rem', fontWeight:800 }}>{city}</span>
                                 <input
                                   className="cm-input"
                                   type="number"
                                   min="0"
                                   step="0.01"
-                                  value={formData.price_matrix?.[quality]?.[city] ?? ''}
+                                  value={formData.price_matrix?.[selectedPackage]?.[city] ?? ''}
                                   placeholder={formData.price ? `Default ${formData.price}` : '-'}
-                                  onChange={e => updatePackageCityPrice(quality, city, e.target.value)}
+                                  onChange={e => updatePackageCityPrice(selectedPackage, city, e.target.value)}
                                 />
                               </div>
                             ))}
                           </div>
-                        ))}
                       </div>
                     )}
                     <div style={{ color:'var(--cm-muted)', fontSize:'.72rem', marginTop:'.55rem' }}>
-                      Leave a package/city price blank to use the default brand price.
+                      Blank city prices use the default brand price, but the brand still stays limited to this selected package.
                     </div>
                   </div>
 
