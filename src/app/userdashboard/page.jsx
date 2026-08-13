@@ -682,9 +682,9 @@ export default function UserDashboard() {
   const displayed       = tab === 'active' ? activeBookings : tab === 'history' ? historyBookings : tab === 'primary' ? primaryServices : propertyEnquiries;
 
   const bg      = isDark ? 'bg-black text-white' : 'bg-zinc-50 text-zinc-900';
-  const muted   = isDark ? 'text-zinc-500' : 'text-zinc-400';
-  const border  = isDark ? 'border-zinc-900' : 'border-zinc-100';
-  const statCard= isDark ? 'border-zinc-900' : 'border-zinc-100';
+  const muted   = isDark ? 'text-zinc-300' : 'text-zinc-600';
+  const border  = isDark ? 'border-zinc-700' : 'border-zinc-300';
+  const statCard= isDark ? 'border-zinc-700' : 'border-zinc-300';
 
   function handlePaymentSuccess() {
     setPaymentBooking(null);

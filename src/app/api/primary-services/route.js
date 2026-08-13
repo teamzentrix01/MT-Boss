@@ -121,8 +121,8 @@ export async function PUT(req) {
     } = await req.json();
 
     const normalizedCities = normalizeCityList(cities);
-    if (!id || !slug || !title || !description || !image || normalizedCities.length === 0) {
-      return NextResponse.json({ error: 'ID, slug, title, description, image and at least one city are required' }, { status: 400 });
+    if (!id || !slug || !title || !description || !image) {
+      return NextResponse.json({ error: 'ID, slug, title, description and image are required' }, { status: 400 });
     }
 
     const result = await pool.query(
