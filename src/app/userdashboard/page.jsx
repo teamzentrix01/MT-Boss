@@ -629,6 +629,7 @@ export default function UserDashboard() {
   const [user, setUser]               = useState(null);
   const [bookings, setBookings]       = useState([]);
   const [primaryServices, setPrimaryServices] = useState([]);
+  const [propertyEnquiries, setPropertyEnquiries] = useState([]);
   const [loading, setLoading]         = useState(true);
   const [tab, setTab]                 = useState('active');
   const [paymentBooking, setPaymentBooking] = useState(null);
@@ -646,14 +647,17 @@ export default function UserDashboard() {
 
   const fetchBookings = useCallback(async (token) => {
     try {
-      const [bookingRes, primaryRes] = await Promise.all([
+      const [bookingRes, primaryRes, propertyRes] = await Promise.all([
         fetch('/api/user/bookings', { headers: { Authorization: `Bearer ${token}` } }),
         fetch('/api/user/primary-services', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/property-enquiries', { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       const bookingData = await bookingRes.json();
       const primaryData = await primaryRes.json();
+      const propertyData = await propertyRes.json();
       if (bookingData.success) setBookings(bookingData.data);
       if (primaryData.success) setPrimaryServices(primaryData.data);
+      if (propertyData.success) setPropertyEnquiries(propertyData.data);
     } catch (err) {
       console.error('Error fetching bookings:', err);
     } finally {
@@ -675,12 +679,12 @@ export default function UserDashboard() {
 
   const activeBookings  = bookings.filter((b) => b.payment_status === 'PAID' && !['COMPLETED', 'CANCELLED'].includes(b.status));
   const historyBookings = bookings.filter((b) =>  ['COMPLETED', 'CANCELLED'].includes(b.status));
-  const displayed       = tab === 'active' ? activeBookings : tab === 'history' ? historyBookings : primaryServices;
+  const displayed       = tab === 'active' ? activeBookings : tab === 'history' ? historyBookings : tab === 'primary' ? primaryServices : propertyEnquiries;
 
   const bg      = isDark ? 'bg-black text-white' : 'bg-zinc-50 text-zinc-900';
-  const muted   = isDark ? 'text-zinc-500' : 'text-zinc-400';
-  const border  = isDark ? 'border-zinc-900' : 'border-zinc-100';
-  const statCard= isDark ? 'border-zinc-900' : 'border-zinc-100';
+  const muted   = isDark ? 'text-zinc-300' : 'text-zinc-600';
+  const border  = isDark ? 'border-zinc-700' : 'border-zinc-300';
+  const statCard= isDark ? 'border-zinc-700' : 'border-zinc-300';
 
   function handlePaymentSuccess() {
     setPaymentBooking(null);
@@ -759,6 +763,7 @@ export default function UserDashboard() {
               { key: 'active',  label: `Active (${activeBookings.length})` },
               { key: 'history', label: `History (${historyBookings.length})` },
               { key: 'primary', label: `Construction Services (${primaryServices.length})` },
+              { key: 'property', label: `Property Enquiries (${propertyEnquiries.length})` },
               { key: 'purchases', label: 'Material Purchases' },
               { key: 'applications', label: 'Job Applications' },
             ].map(({ key, label }) => {
@@ -815,6 +820,18 @@ export default function UserDashboard() {
                   isDark={isDark}
                   onReview={setReviewPrimaryService}
                 />
+              ))}
+            </div>
+          ) : tab === 'property' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {propertyEnquiries.map((enquiry) => (
+                <div key={enquiry.id} className={`border p-5 ${isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-white border-zinc-200'}`}>
+                  <p className="text-[9px] font-black uppercase tracking-widest text-[var(--brand-blue)]">Property Enquiry · {enquiry.status}</p>
+                  <h3 className={`mt-2 font-black uppercase text-sm ${isDark ? 'text-white' : 'text-zinc-900'}`}>{enquiry.property_title}</h3>
+                  <p className={`mt-1 text-xs ${muted}`}>{enquiry.property_type || 'Property'} · {enquiry.property_location || 'Location not set'}</p>
+                  {enquiry.message && <p className={`mt-3 text-xs ${muted}`}>{enquiry.message}</p>}
+                  <p className={`mt-4 text-[10px] ${muted}`}>Submitted {new Date(enquiry.created_at).toLocaleDateString('en-IN')}</p>
+                </div>
               ))}
             </div>
           ) : (

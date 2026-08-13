@@ -1,6 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { requireRole, unauthorized } from '@/lib/auth';
+import { requireRole, unauthorized, verifyBearer } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
 
@@ -12,6 +12,7 @@ const ensureTable = createInitializationGuard(async () => {
     status VARCHAR(30) NOT NULL DEFAULT 'new', created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
   )`);
+  await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS user_id INTEGER`);
 });
 
 export async function POST(req) {
@@ -19,6 +20,7 @@ export async function POST(req) {
     await ensureTable();
     const body = await req.json();
     const propertyId = Number(body.property_id);
+    const currentUser = verifyBearer(req, 'user');
     const name = cleanText(body.name);
     const phone = normalizePhone(body.phone);
     const email = cleanText(body.email).toLowerCase();
@@ -30,9 +32,9 @@ export async function POST(req) {
     if (!found.rows.length) return NextResponse.json({ success: false, error: 'Property not found' }, { status: 404 });
     const property = found.rows[0];
     const result = await pool.query(
-      `INSERT INTO property_enquiries (property_id,property_title,property_type,property_location,enquirer_name,enquirer_phone,enquirer_email,message)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
-      [property.id, property.title, property.type, property.location, name, phone, email || null, message || null]
+      `INSERT INTO property_enquiries (property_id,property_title,property_type,property_location,enquirer_name,enquirer_phone,enquirer_email,message,user_id)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+      [property.id, property.title, property.type, property.location, name, phone, email || null, message || null, currentUser?.id || null]
     );
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
@@ -43,8 +45,18 @@ export async function POST(req) {
 
 export async function GET(req) {
   try {
-    if (!requireRole(req, 'admin')) return unauthorized();
     await ensureTable();
+    const user = verifyBearer(req, 'user');
+    if (user) {
+      const result = await pool.query(
+        `SELECT * FROM property_enquiries
+          WHERE user_id=$1 OR (user_id IS NULL AND enquirer_email IS NOT NULL AND LOWER(enquirer_email)=LOWER($2))
+          ORDER BY created_at DESC`,
+        [user.id, user.email || '']
+      );
+      return NextResponse.json({ success: true, data: result.rows });
+    }
+    if (!requireRole(req, 'admin')) return unauthorized();
     const result = await pool.query(`SELECT * FROM property_enquiries ORDER BY created_at DESC`);
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {

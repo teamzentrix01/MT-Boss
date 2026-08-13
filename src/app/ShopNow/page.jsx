@@ -155,19 +155,7 @@ export default function ShopPage() {
     setLocationStatus("loading");
     setLocationCoords(null);
     setIsModalOpen(true);
-    // auto-fetch GPS
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setLocationCoords({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
-          setLocationStatus("success");
-        },
-        () => setLocationStatus("error"),
-        { enableHighAccuracy: true, timeout: 10000 }
-      );
-    } else {
-      setLocationStatus("error");
-    }
+    requestLocation();
   };
 
   useEffect(() => {
@@ -182,7 +170,7 @@ export default function ShopPage() {
       .finally(() => setLoadingProductOptions(false));
   }, [selectedCategory?.name]);
 
-  const retryLocation = () => {
+  const requestLocation = () => {
     if (!navigator.geolocation) { setLocationStatus("error"); return; }
     setLocationStatus("loading");
     navigator.geolocation.getCurrentPosition(
@@ -190,10 +178,20 @@ export default function ShopPage() {
         setLocationCoords({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
         setLocationStatus("success");
       },
-      () => setLocationStatus("error"),
-      { enableHighAccuracy: true, timeout: 10000 }
+      // A normal browser location is still useful for delivery when precise GPS is unavailable.
+      () => navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setLocationCoords({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+          setLocationStatus("success");
+        },
+        () => setLocationStatus("error"),
+        { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
+      ),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
   };
+
+  const retryLocation = requestLocation;
 
   const checkCityAvailability = async (cityVal) => {
     if (!cityVal) {

@@ -1,7 +1,4 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import { join } from 'path';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { createInitializationGuard } from '@/lib/api-utils';
@@ -73,17 +70,27 @@ async function saveSiteImage(file) {
     throw new Error('Each site photo must be under 5MB.');
   }
 
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
-  const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName || 'site-photo.jpg'}`;
-  const uploadDir = join(process.cwd(), 'public', 'uploads', 'primary-service-reviews');
-
-  if (!existsSync(uploadDir)) {
-    await mkdir(uploadDir, { recursive: true });
+  // Deployment filesystems (for example /var/task on serverless hosts) are read-only.
+  // Store review media in the same durable image service used for service/property images.
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+  if (!cloudName || !uploadPreset) {
+    throw new Error('Image upload is not configured. Please contact support.');
   }
 
-  const bytes = await file.arrayBuffer();
-  await writeFile(join(uploadDir, filename), Buffer.from(bytes));
-  return `/uploads/primary-service-reviews/${filename}`;
+  const uploadData = new FormData();
+  uploadData.append('file', file);
+  uploadData.append('upload_preset', uploadPreset);
+  uploadData.append('folder', 'mtboss/primary-service-reviews');
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: 'POST',
+    body: uploadData,
+  });
+  const result = await response.json();
+  if (!response.ok || !result.secure_url) {
+    throw new Error(result.error?.message || 'Could not upload site photo. Please try again.');
+  }
+  return result.secure_url;
 }
 
 async function saveSiteImages(files) {

@@ -13,6 +13,8 @@ export default function VendorManagementAdmin({ isDarkMode }) {
   const [allServices, setAllServices] = useState([]);
   const [selectedServiceIds, setSelectedServiceIds] = useState([]);
   const [serviceSaving, setServiceSaving] = useState(false);
+  const [workspace, setWorkspace] = useState(null);
+  const [workspaceLoading, setWorkspaceLoading] = useState(false);
   const vendorCityServices = selectedVendor
     ? allServices.filter((service) => (service.cities || []).some(
         (city) => String(city).trim().toLowerCase() === String(selectedVendor.city || '').trim().toLowerCase()
@@ -80,9 +82,21 @@ export default function VendorManagementAdmin({ isDarkMode }) {
     }
   };
 
-  const openVendor = (vendor) => {
+  const openVendor = async (vendor) => {
     setSelectedVendor(vendor);
     setSelectedServiceIds((vendor.services || []).map((service) => Number(service.id)));
+    setWorkspace(null);
+    setWorkspaceLoading(true);
+    try {
+      const res = await fetch(`/api/admin/vendors/${vendor.id}/workspace`, { headers: getAdminHeaders() });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Vendor leads could not be loaded');
+      setWorkspace(data);
+    } catch (err) {
+      setError(err.message || 'Vendor leads could not be loaded');
+    } finally {
+      setWorkspaceLoading(false);
+    }
   };
 
   const handleSaveServices = async () => {
@@ -798,6 +812,32 @@ export default function VendorManagementAdmin({ isDarkMode }) {
                   ⚠️ No Aadhaar image uploaded
                 </div>
               )}
+            </div>
+
+            <div className="modal-section">
+              <div className="modal-section-title">Vendor Workspace & Leads</div>
+              {workspaceLoading ? (
+                <div className="modal-value">Loading bookings and CRM leads...</div>
+              ) : workspace ? (
+                <>
+                  <div className="modal-grid" style={{ marginBottom: '0.75rem' }}>
+                    {[
+                      ['Total bookings', workspace.counts.total_bookings],
+                      ['Active jobs', workspace.counts.active_bookings],
+                      ['Completed jobs', workspace.counts.completed_bookings],
+                      ['CRM leads', workspace.counts.crm_leads],
+                    ].map(([label, value]) => <div className="modal-field" key={label}><div className="modal-label">{label}</div><div className="modal-value" style={{ fontSize:'1.15rem', fontWeight:800 }}>{value}</div></div>)}
+                  </div>
+                  <div className="modal-label" style={{ marginBottom: '0.4rem' }}>Recent assigned bookings</div>
+                  {(workspace.bookings || []).length === 0 ? <div className="modal-value">No booking has been assigned yet.</div> : (
+                    <div style={{ display:'grid', gap:'0.45rem' }}>{workspace.bookings.slice(0, 5).map((lead) => <div key={lead.id} style={{ border:`1px solid ${isDarkMode?'#3f3f46':'#d1d5db'}`, padding:'0.6rem', borderRadius:6 }}><div className="modal-value">{lead.service_label || 'Service'} · {lead.user_name || 'Customer'}</div><div className="modal-label">{lead.status} · {lead.service_city || 'City not set'}</div></div>)}</div>
+                  )}
+                  <div className="modal-label" style={{ margin:'0.8rem 0 0.4rem' }}>CRM leads available to this vendor</div>
+                  {(workspace.crm_leads || []).length === 0 ? <div className="modal-value">No CRM lead is available for this vendor&apos;s city.</div> : (
+                    <div style={{ display:'grid', gap:'0.45rem' }}>{workspace.crm_leads.slice(0, 5).map((lead) => <div key={lead.id} style={{ border:`1px solid ${isDarkMode?'#3f3f46':'#d1d5db'}`, padding:'0.6rem', borderRadius:6 }}><div className="modal-value">{lead.client_name} · {lead.service_type || 'Lead'}</div><div className="modal-label">{lead.lead_stage || lead.status} · Agent: {lead.agent_name || 'Admin'}</div></div>)}</div>
+                  )}
+                </>
+              ) : <div className="modal-value">Workspace unavailable.</div>}
             </div>
 
             {/* Status */}

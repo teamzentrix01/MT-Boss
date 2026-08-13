@@ -1103,7 +1103,24 @@ function AgentDashboardContent() {
 
         {activeTab === 'profile' && (
           <section className={`border ${card} p-6 max-w-2xl`}>
-            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] mb-4">Profile</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] mb-4">Application & Profile</p>
+            {(() => {
+              const statuses = ['Pending', 'Reviewing', 'Approved'];
+              const current = statuses.indexOf(agent?.status);
+              const rejected = agent?.status === 'Rejected';
+              return (
+                <div className={`mb-6 border p-4 ${dark ? 'border-zinc-700 bg-zinc-900' : 'border-sky-200 bg-sky-50'}`}>
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                    <div><p className={`text-[9px] font-black uppercase tracking-widest ${muted}`}>Your agent application</p><p className="mt-1 text-lg font-black">{agent?.status || 'Pending'}</p></div>
+                    <span className={`px-3 py-1 text-[9px] font-black uppercase tracking-widest ${rejected ? 'bg-red-600 text-white' : current === 2 ? 'bg-green-600 text-white' : 'bg-[var(--brand-blue)] text-black'}`}>{rejected ? 'Action required' : current === 2 ? 'Access active' : 'Under review'}</span>
+                  </div>
+                  {rejected ? <p className={`text-xs ${muted}`}>Your application was not approved. Please contact MTBOSS support for the next step.</p> : (
+                    <div className="grid grid-cols-3 gap-2">{statuses.map((status, index) => <div key={status}><div className={`h-2 ${index <= current ? 'bg-[var(--brand-blue)]' : dark ? 'bg-zinc-700' : 'bg-zinc-300'}`} /><p className={`mt-1 text-[8px] font-black uppercase ${index <= current ? 'text-[var(--brand-blue)]' : muted}`}>{status}</p></div>)}</div>
+                  )}
+                  <p className={`mt-4 text-[10px] ${muted}`}>Applied on {agent?.created_at ? new Date(agent.created_at).toLocaleDateString('en-IN') : '—'} · City: {agent?.city || '—'}</p>
+                </div>
+              );
+            })()}
             {[
               ['Name', agent?.name],
               ['Email', agent?.email],

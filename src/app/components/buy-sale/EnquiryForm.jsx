@@ -44,6 +44,7 @@ export default function EnquiryForm({ isDarkMode, propertyId, propertyTitle }) {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
+          ...(localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {}),
         },
         body: JSON.stringify({
           name: form.name,
