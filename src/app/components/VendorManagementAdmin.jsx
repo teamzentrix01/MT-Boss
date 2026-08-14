@@ -20,6 +20,8 @@ export default function VendorManagementAdmin({ isDarkMode }) {
         (city) => String(city).trim().toLowerCase() === String(selectedVendor.city || '').trim().toLowerCase()
       ))
     : [];
+  const isPendingVendor = (vendor) => ['pending', 'payment_pending'].includes(vendor?.verification_status);
+  const formatStatus = (status) => String(status || '').replace(/_/g, ' ');
 
   // Fetch vendors
   useEffect(() => {
@@ -229,7 +231,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
     let matchesFilter = true;
     
     if (filter === 'pending') {
-      matchesFilter = v.verification_status === 'pending';
+      matchesFilter = isPendingVendor(v);
     } else if (filter === 'verified') {
       matchesFilter = v.verification_status === 'verified';
     } else if (filter === 'active') {
@@ -257,7 +259,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
 
   const stats = [
     { label: 'Total Vendors', value: vendors.length, color: 'stat-a' },
-    { label: 'Pending Verification', value: vendors.filter(v => v.verification_status === 'pending').length, color: 'stat-b' },
+    { label: 'Pending Verification', value: vendors.filter(isPendingVendor).length, color: 'stat-b' },
     { label: 'Verified', value: vendors.filter(v => v.verification_status === 'verified').length, color: 'stat-c' },
     { label: 'Active', value: vendors.filter(v => v.status === 'active').length, color: 'stat-d' },
   ];
@@ -423,6 +425,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
         }
 
         .badge-pending { background: var(--brand-blue-light); color: #78350f; }
+        .badge-payment_pending { background: #fee2e2; color: #991b1b; }
         .badge-verified { background: #10b981; color: #fff; }
         .badge-active { background: #3b82f6; color: #fff; }
         .badge-inactive { background: #6b7280; color: #fff; }
@@ -665,7 +668,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
                 <td className="vendor-meta">{vendor.services?.length || 0}</td>
                 <td>
                   <span className={`badge badge-${vendor.verification_status}`}>
-                    {vendor.verification_status}
+                    {formatStatus(vendor.verification_status)}
                   </span>
                 </td>
                 <td>
@@ -845,7 +848,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
               <div className="modal-section-title">Status</div>
               <div style={{ display:'flex', gap:'0.5rem', flexWrap:'wrap' }}>
                 <span className={`badge badge-${selectedVendor.verification_status}`}>
-                  Verification: {selectedVendor.verification_status}
+                  Verification: {formatStatus(selectedVendor.verification_status)}
                 </span>
                 <span className={`badge badge-${selectedVendor.status}`}>
                   Status: {selectedVendor.status}
@@ -857,7 +860,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
             </div>
 
             {/* Actions */}
-            {selectedVendor.verification_status === 'pending' && (
+            {isPendingVendor(selectedVendor) && (
               <div className="modal-actions">
                 <button className="modal-btn modal-btn-approve" onClick={() => handleApproveVendor(selectedVendor.id)}>
                   ✓ Approve Vendor

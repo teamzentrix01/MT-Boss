@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import { requireAdmin } from '@/lib/agent-auth';
 import { ensureServiceCitiesSchema } from '@/lib/service-cities';
 import { getManagedCities } from '@/lib/cities';
+import { ensurePackageSchema } from '@/lib/packages';
 
 // ═══════════════════════════════════════════════════════════════════════
 // VERIFY ADMIN TOKEN
@@ -22,6 +23,7 @@ export async function GET(req) {
       );
     }
     await ensureServiceCitiesSchema();
+    await ensurePackageSchema();
 
     const result = await pool.query(
       `SELECT
@@ -30,7 +32,9 @@ export async function GET(req) {
         v.aadhar_number,
         (v.profile_photo IS NOT NULL) AS profile_photo,
         (v.aadhar_image  IS NOT NULL) AS aadhar_image,
-        v.status, v.verification_status, v.is_approved, v.created_at, v.updated_at,
+        v.status, v.verification_status, v.is_approved,
+        v.package_id, v.package_name, v.package_price, v.package_status,
+        v.created_at, v.updated_at,
         COALESCE(assigned.services, '[]'::json) AS services
        FROM vendors v
        LEFT JOIN LATERAL (

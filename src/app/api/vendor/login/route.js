@@ -16,7 +16,7 @@ export async function POST(req) {
       `SELECT 
         id, email, password_hash, shop_name, business_name, 
         phone, city, state, country, postal_code, 
-        status, verification_status, is_approved, created_at 
+        status, verification_status, is_approved, package_status, created_at 
        FROM vendors 
        WHERE email = $1`,
       [email]
@@ -41,6 +41,17 @@ export async function POST(req) {
     }
 
     // ✅ CHECK 1: Account pending approval
+    if (!vendor.is_approved && vendor.verification_status === 'payment_pending') {
+      return NextResponse.json(
+        {
+          error: 'Your payment was not completed.',
+          code: 'PAYMENT_PENDING',
+          message: 'Complete payment again from vendor registration, or contact admin to approve your account manually.'
+        },
+        { status: 403 }
+      );
+    }
+
     if (!vendor.is_approved) {
       return NextResponse.json(
         { 
