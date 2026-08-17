@@ -11,6 +11,7 @@ export default function FilterBar({ isDarkMode, onFilter, propertyLocations = []
     maxPrice: "",
     beds: "Any",
   });
+  const [isOpen, setIsOpen] = useState(false);
 
   const propertyTypes = ["All", ...new Set(["Residential", "Apartment", "Independent House", "Villa", "Commercial", "Office", "Shop / Showroom", "Industrial", "Warehouse", "Plots", ...availablePropertyTypes.filter(Boolean)])];
   const bedOptions = ["Any", "1", "2", "3", "4", "5+"];
@@ -47,31 +48,43 @@ export default function FilterBar({ isDarkMode, onFilter, propertyLocations = []
 
   return (
     <div
-      className={`w-full rounded-sm border shadow-md p-6 mb-8 ${
+      className={`w-full rounded-sm border shadow-md p-4 mb-5 ${
         isDarkMode
           ? "bg-zinc-900 border-zinc-800"
           : "bg-white border-gray-100"
       }`}
     >
       {/* Heading */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between gap-3">
         <h2 className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
           Filter Properties
         </h2>
-        <button
-          onClick={handleReset}
-          className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 border rounded-sm transition-all ${
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsOpen(open => !open)}
+            className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 border rounded-sm transition-all ${
+              isDarkMode ? "border-[var(--brand-blue)] text-[var(--brand-blue)]" : "border-zinc-800 text-zinc-800"
+            }`}
+          >
+            {isOpen ? 'Hide Filters' : 'Filters'}
+          </button>
+          <button
+            type="button"
+            onClick={handleReset}
+            className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 border rounded-sm transition-all ${
             isDarkMode
               ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
               : "border-gray-200 text-zinc-400 hover:border-zinc-800 hover:text-zinc-800"
-          }`}
-        >
-          Reset All
-        </button>
+            }`}
+          >
+            Reset
+          </button>
+        </div>
       </div>
 
       {/* Filters Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      {isOpen && <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-4">
 
         {/* Property Type */}
         <div>
@@ -157,7 +170,7 @@ export default function FilterBar({ isDarkMode, onFilter, propertyLocations = []
           </div>
         </div>
 
-      </div>
+      </div>}
     </div>
   );
 }

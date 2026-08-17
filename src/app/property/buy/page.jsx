@@ -111,9 +111,9 @@ export default function BrowsePropertiesPage() {
     <main className={`min-h-screen ${dark ? "bg-black" : "bg-gray-50"}`}>
 
       {/* Hero */}
-      <div className={`relative py-20 px-4 text-center ${dark ? "bg-zinc-900" : "bg-zinc-800"}`}>
+      <div className={`relative py-8 md:py-10 px-4 text-center ${dark ? "bg-zinc-900" : "bg-zinc-800"}`}>
         <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">MTBOSS Property</span>
-        <h1 className="text-white text-3xl md:text-5xl font-black uppercase tracking-widest mt-2 mb-4">
+        <h1 className="text-white text-3xl md:text-4xl font-black uppercase tracking-widest mt-1 mb-2">
           Browse<span className="block text-[var(--brand-blue)]">Properties</span>
         </h1>
         <p className="text-zinc-400 text-xs max-w-xl mx-auto font-bold tracking-wide">
@@ -121,7 +121,7 @@ export default function BrowsePropertiesPage() {
         </p>
 
         {/* Mode Toggle */}
-        <div className="flex justify-center gap-3 mt-8">
+        <div className="flex flex-wrap justify-center gap-2 mt-4">
           <button
             onClick={() => setMode("buy")}
             className={`px-6 py-2.5 text-xs font-black uppercase tracking-widest transition-all rounded-sm ${
@@ -155,7 +155,7 @@ export default function BrowsePropertiesPage() {
         </div>
 
         {/* Stats */}
-        <div className="flex items-center justify-center gap-8 mt-8">
+        <div className="flex items-center justify-center gap-8 mt-4">
           {[
             ["Buy", `${buyCount}+`],
             ["Rent", `${rentCount}+`],
@@ -169,7 +169,7 @@ export default function BrowsePropertiesPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <FilterBar isDarkMode={dark} onFilter={handleFilter}
         propertyLocations={allProps.map(property => property.location)}
         propertyTypes={allProps.map(property => property.type)} />
