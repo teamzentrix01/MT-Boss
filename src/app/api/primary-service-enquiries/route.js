@@ -12,7 +12,7 @@ const ADMIN_EMAIL =
 
 export const runtime = 'nodejs';
 
-const PRIMARY_SERVICE_STATUSES = ['Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
+const PRIMARY_SERVICE_STATUSES = ['Pending', 'Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
 
 function normalizeArray(value) {
   if (Array.isArray(value)) return value.filter(Boolean);

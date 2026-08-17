@@ -54,7 +54,7 @@ export async function POST(req) {
     }
 
     const result = await pool.query(
-      `SELECT id, email, password, name, 'user'::TEXT AS role
+       `SELECT id, email, password, name, phone, 'user'::TEXT AS role
        FROM users
        WHERE LOWER(email) = $1`,
       [normalizedEmail]
@@ -83,7 +83,7 @@ export async function POST(req) {
 
     const response = NextResponse.json({
       token,
-      user: { id: user.id, email: user.email, name: user.name, role: userRole },
+      user: { id: user.id, email: user.email, name: user.name, phone: user.phone || '', role: userRole },
       redirectTo: userRole === 'admin' ? '/dashboard' : '/userdashboard',
     }, { status: 200 });
     return setAuthCookie(response, 'auth-token', token);

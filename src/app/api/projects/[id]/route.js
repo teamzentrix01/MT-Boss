@@ -277,11 +277,12 @@ export async function POST(req, { params }) {
         ]
       );
     } else if (entryType === 'contractor') {
-      const contractAmount = Number(body.contract_amount || 0);
-      const paidAmount = Number(body.paid_amount || 0);
-      if (!body.contractor_name || paidAmount <= 0) {
-        return NextResponse.json(
-          { success: false, error: 'Contractor name and payment amount are required' },
+    const contractAmount = Number(body.contract_amount || 0);
+    const paidAmount = Number(body.paid_amount || 0);
+    const contractorPhone = String(body.contractor_phone || '').replace(/\D/g, '');
+    if (!body.contractor_name || !/^[6-9]\d{9}$/.test(contractorPhone) || paidAmount <= 0) {
+      return NextResponse.json(
+          { success: false, error: 'Contractor name, valid 10-digit mobile number, and payment amount are required' },
           { status: 400 }
         );
       }
@@ -290,13 +291,14 @@ export async function POST(req, { params }) {
       }
       result = await pool.query(
         `INSERT INTO project_contractor_entries (
-          project_id, agent_id, contractor_name, company_name, work_description,
+          project_id, agent_id, contractor_name, contractor_phone, company_name, work_description,
           contract_amount, paid_amount, payment_date, payment_mode, invoice_number, notes
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
         [
           id,
           project.assigned_agent_id || null,
           body.contractor_name,
+          contractorPhone,
           body.company_name || null,
           body.work_description || null,
           contractAmount,

@@ -851,6 +851,7 @@ function AgentDashboardContent() {
                     {entryType === 'contractor' && (
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Contractor name" value={entryForm.contractor_name || ''} onChange={(e) => setEntryForm((f) => ({ ...f, contractor_name: e.target.value }))} required />
+                        <input className={`border px-3 py-2 text-sm ${input}`} type="tel" inputMode="numeric" maxLength={10} placeholder="Contractor mobile number" value={entryForm.contractor_phone || ''} onChange={(e) => setEntryForm((f) => ({ ...f, contractor_phone: e.target.value.replace(/\D/g, '').slice(0, 10) }))} required />
                         <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Company / firm" value={entryForm.company_name || ''} onChange={(e) => setEntryForm((f) => ({ ...f, company_name: e.target.value }))} />
                         <input className={`border px-3 py-2 text-sm ${input}`} placeholder="Work description" value={entryForm.work_description || ''} onChange={(e) => setEntryForm((f) => ({ ...f, work_description: e.target.value }))} />
                         <input className={`border px-3 py-2 text-sm ${input}`} type="number" placeholder="Contract value" value={entryForm.contract_amount || ''} onChange={(e) => setEntryForm((f) => ({ ...f, contract_amount: e.target.value }))} />

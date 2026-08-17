@@ -347,7 +347,7 @@ function AdminDashboard() {
     };
     return map[status] || 'status-new';
   };
-  const primaryServiceStatuses = ['Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
+  const primaryServiceStatuses = ['Pending', 'Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
   const tabs = [
     { id: 'overview',                   label: 'Overview',                  icon: '▦'  },
     { id: 'agents',                     label: 'Agents',                    icon: '👤' },

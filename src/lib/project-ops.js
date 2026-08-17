@@ -150,6 +150,7 @@ export const ensureProjectOpsSchema = createInitializationGuard(async () => {
       project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
       agent_id INTEGER REFERENCES agents(id) ON DELETE SET NULL,
       contractor_name TEXT NOT NULL,
+      contractor_phone VARCHAR(30),
       company_name TEXT,
       work_description TEXT,
       contract_amount NUMERIC NOT NULL DEFAULT 0,
@@ -161,6 +162,7 @@ export const ensureProjectOpsSchema = createInitializationGuard(async () => {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+  await pool.query(`ALTER TABLE project_contractor_entries ADD COLUMN IF NOT EXISTS contractor_phone VARCHAR(30)`);
 });
 
 export async function convertFinalLeadToProject(db, leadId) {

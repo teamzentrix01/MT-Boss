@@ -107,6 +107,7 @@ export default function MaterialOrdersPanel({ role = 'user', embedded = false })
           status,
           note: draft.note || '',
           estimated_delivery_date: draft.estimated_delivery_date || null,
+          amount_received: draft.amount_received || null,
         }),
       });
       const data = await response.json();
@@ -280,6 +281,19 @@ export default function MaterialOrdersPanel({ role = 'user', embedded = false })
                             placeholder="Update note for customer"
                             className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
                           />
+                          {role === 'admin' && ['delivered', 'fulfilled'].includes(draft.status || order.status) && (
+                            <input
+                              type="number"
+                              min="0"
+                              value={draft.amount_received || ''}
+                              onChange={(event) => setDrafts((current) => ({
+                                ...current,
+                                [order.id]: { ...draft, amount_received: event.target.value },
+                              }))}
+                              placeholder="Final order amount (₹)"
+                              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                            />
+                          )}
                         </div>
                         <button
                           type="button"

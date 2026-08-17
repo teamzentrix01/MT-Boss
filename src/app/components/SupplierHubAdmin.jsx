@@ -61,7 +61,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
   /* ── data ──────────────────────────────────────────────────────────────── */
   const [suppliers,   setSuppliers]   = useState([]);
   const [enquiries,   setEnquiries]   = useState([]);
-  const [commission,  setCommission]  = useState({ total: 0, today: 0, fulfilled: 0, open: 0 });
+  const [commission,  setCommission]  = useState({ total: 0, today: 0, fulfilled: 0, open: 0, subscriptionRevenue: 0, paidSupplierPayments: 0 });
   const [loadingSup,  setLoadingSup]  = useState(true);
   const [loadingEnq,  setLoadingEnq]  = useState(true);
   const [error,       setError]       = useState(null);
@@ -108,6 +108,8 @@ export default function SupplierHubAdmin({ isDarkMode }) {
         today:     parseFloat(cd.data.today_commission || 0),
         fulfilled: parseInt(cd.data.total_fulfilled   || 0),
         open:      parseInt(cd.data.open_enquiries    || 0),
+        subscriptionRevenue: parseFloat(cd.data.subscription_revenue || 0),
+        paidSupplierPayments: parseInt(cd.data.paid_supplier_payments || 0),
       });
     } catch (e) { setError(e.message); }
     finally { setLoadingSup(false); }
@@ -356,6 +358,16 @@ export default function SupplierHubAdmin({ isDarkMode }) {
               </div>
             )}
 
+            <div style={{ background:isDarkMode?'#102019':'#f0fdf4', border:'1px solid #16a34a55', borderRadius:8, padding:'1rem', marginBottom:'1.25rem' }}>
+              <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.75rem' }}>Registration / Package Payment</div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:'0.75rem' }}>
+                <div><div style={{ fontSize:'0.65rem', color:muted }}>Status</div><div style={{ fontWeight:800, color:selectedSupplier.payment_status === 'PAID' ? '#16a34a' : '#f97316' }}>{selectedSupplier.payment_status || 'No online payment record'}</div></div>
+                <div><div style={{ fontSize:'0.65rem', color:muted }}>Amount</div><div style={{ fontWeight:800, color:text }}>{selectedSupplier.payment_amount ? fmt(selectedSupplier.payment_amount) : '—'}</div></div>
+                <div><div style={{ fontSize:'0.65rem', color:muted }}>Reference</div><div style={{ fontSize:'0.78rem', fontWeight:700, color:text }}>{selectedSupplier.payment_reference || '—'}</div></div>
+                <div><div style={{ fontSize:'0.65rem', color:muted }}>Received</div><div style={{ fontSize:'0.78rem', fontWeight:700, color:text }}>{selectedSupplier.payment_completed_at ? fmtD(selectedSupplier.payment_completed_at) : '—'}</div></div>
+              </div>
+            </div>
+
             {/* Earnings */}
             <div style={{ background:bg, borderRadius:8, padding:'1rem', marginBottom:'1.25rem' }}>
               <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.75rem' }}>Earnings Summary</div>
@@ -579,6 +591,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
             <StatCard label="Orders Fulfilled"  value={commission.fulfilled}          sub="Completed deliveries"      color="#3b82f6" bg={isDarkMode?'#0a1a2a':'#eff6ff'} border={isDarkMode?'#1e40af33':'#bfdbfe'} />
             <StatCard label="Today's Commission" value={fmt(commission.today)}        sub="15% of today's fulfil."   color="var(--brand-blue-dark)" bg={isDarkMode?'#1a1a0a':'var(--brand-blue-faint)'} border={isDarkMode?'#92400e33':'#fde68a'} />
             <StatCard label="Total Commission"   value={fmt(commission.total)}        sub="All-time 15% earned"      color="#16a34a" bg={isDarkMode?'#0a2a14':'#f0fdf4'} border={isDarkMode?'#16a34a33':'#bbf7d0'} />
+            <StatCard label="Supplier Payments"  value={fmt(commission.subscriptionRevenue)} sub={`${commission.paidSupplierPayments} successful online payment${commission.paidSupplierPayments === 1 ? '' : 's'}`} color="#7c3aed" bg={isDarkMode?'#1f1536':'#f5f3ff'} border={isDarkMode?'#7c3aed55':'#ddd6fe'} />
           </div>
 
           {/* Pending suppliers */}

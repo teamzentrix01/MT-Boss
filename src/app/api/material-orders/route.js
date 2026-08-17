@@ -224,19 +224,31 @@ export async function PATCH(req) {
       }
       const note = String(body.note || '').trim() || null;
       const estimatedDelivery = body.estimated_delivery_date || null;
+      const deliveryAmount = Number(body.amount_received || 0);
+      const isSupplierDelivery = order.assigned_role === 'supplier' || order.accepted_by_supplier_id;
+      if (actor.role === 'admin' && isSupplierDelivery && ['delivered', 'fulfilled'].includes(nextStatus) && (!Number.isFinite(deliveryAmount) || deliveryAmount <= 0)) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Enter the final order amount to mark a supplier order as delivered and calculate commission.' }, { status: 400 });
+      }
+      const finalStatus = actor.role === 'admin' && isSupplierDelivery && ['delivered', 'fulfilled'].includes(nextStatus) ? 'fulfilled' : nextStatus;
+      const commission = actor.role === 'admin' && isSupplierDelivery && ['delivered', 'fulfilled'].includes(nextStatus)
+        ? Math.round(deliveryAmount * 0.15 * 100) / 100
+        : null;
       await client.query(
         `UPDATE material_enquiries
-            SET status = $1::TEXT, status_note = $2::TEXT,
-                estimated_delivery_date = COALESCE($3::DATE, estimated_delivery_date),
-                fulfilled_at = CASE WHEN $1::TEXT IN ('delivered', 'fulfilled') THEN COALESCE(fulfilled_at, NOW()) ELSE fulfilled_at END,
-                updated_at = NOW()
-          WHERE id = $4`,
-        [nextStatus, note, estimatedDelivery, orderId]
+             SET status = $1::TEXT, status_note = $2::TEXT,
+                 estimated_delivery_date = COALESCE($3::DATE, estimated_delivery_date),
+                 amount_received = COALESCE($4::NUMERIC, amount_received),
+                 admin_commission = COALESCE($5::NUMERIC, admin_commission),
+                 fulfilled_at = CASE WHEN $1::TEXT IN ('delivered', 'fulfilled') THEN COALESCE(fulfilled_at, NOW()) ELSE fulfilled_at END,
+                 updated_at = NOW()
+           WHERE id = $6`,
+        [finalStatus, note, estimatedDelivery, commission === null ? null : deliveryAmount, commission, orderId]
       );
       await addMaterialOrderEvent(client, {
         orderId,
-        status: nextStatus,
-        title: materialOrderStatusLabel(nextStatus),
+        status: finalStatus,
+        title: materialOrderStatusLabel(finalStatus),
         note,
         actorRole: actor.role,
         actorId: actor.id,

@@ -391,7 +391,7 @@ export default function FranchiseDashboardPage() {
         .fd-money div{background:#f8fafc;border:1px solid #eef2f7;border-radius:7px;padding:.45rem}.fd-money strong{display:block;color:#111;margin-top:.12rem}
         .fd-pill{display:inline-flex;padding:.18rem .55rem;border-radius:999px;background:#fef9c3;color:#854d0e;font-size:.68rem;font-weight:900;margin-top:.55rem}
         .fd-actions{display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap}
-        .fd-section{margin-top:1.25rem;background:#fff;border:1px solid #e5e7eb;border-radius:9px;overflow:hidden}
+        .fd-section{margin-top:1.25rem;background:#fff;border:1px solid #e5e7eb;border-radius:9px;overflow:hidden}.fd-slot-section{overflow:visible}
         .fd-section-head{display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:1rem;border-bottom:1px solid #e5e7eb}
         .fd-table{width:100%;border-collapse:collapse;font-size:.8rem}.fd-table th{padding:.65rem;text-align:left;color:#71717a;background:#f8fafc;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em}.fd-table td{padding:.65rem;border-top:1px solid #eef2f7;vertical-align:top}.fd-mini-select{border:1px solid #d4d4d8;border-radius:6px;background:#fafafa;color:#111;padding:.45rem;font-size:.76rem;font-weight:800;width:100%}
         .fd-empty{padding:3rem;text-align:center;color:#71717a}
@@ -420,6 +420,9 @@ export default function FranchiseDashboardPage() {
                 <span className="fd-user-meta">{franchise?.city}, {franchise?.state}</span>
               </div>
             </div>
+            <button className="fd-btn secondary" onClick={() => document.getElementById('fd-projects')?.scrollIntoView({ behavior: 'smooth' })}>Projects</button>
+            {can('leads.view') && <button className="fd-btn secondary" onClick={() => document.getElementById('fd-leads')?.scrollIntoView({ behavior: 'smooth' })}>Leads</button>}
+            {can('slots.view') && <button className="fd-btn secondary" onClick={() => document.getElementById('fd-slots')?.scrollIntoView({ behavior: 'smooth' })}>Slots</button>}
             <button className="fd-btn secondary" onClick={() => router.push('/material-orders?role=franchise')}>Material Orders</button>
             {can('profile.change_password') && <button className="fd-btn secondary" onClick={openPasswordForm}>Change Password</button>}
           </div>
@@ -437,7 +440,7 @@ export default function FranchiseDashboardPage() {
 
         {can('projects.view') && (
         <>
-        <div className="fd-head">
+        <div className="fd-head" id="fd-projects">
           <div>
             <h1 className="fd-title">Projects</h1>
             <p className="fd-sub">Create projects for your approved franchise territory and assign an admin-approved agent.</p>
@@ -496,7 +499,7 @@ export default function FranchiseDashboardPage() {
         </>
         )}
 
-        {can('leads.view') && <section className="fd-section">
+        {can('leads.view') && <section className="fd-section" id="fd-leads">
           <div className="fd-section-head">
             <div>
               <div className="fd-card-title">Assigned Leads</div>
@@ -559,7 +562,7 @@ export default function FranchiseDashboardPage() {
           </div>
         </section>}
 
-        {can('slots.view') && <section className="fd-section fd-slot-section">
+        {can('slots.view') && <section className="fd-section fd-slot-section" id="fd-slots">
           <div className="fd-section-head">
             <div>
               <div className="fd-card-title">Quick-Service Slots</div>

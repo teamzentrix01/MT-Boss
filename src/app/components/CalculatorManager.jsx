@@ -23,6 +23,7 @@ const DEFAULT_RATE_SETTINGS = {
   },
   foundationTypes: {
     Normal: { materialMultiplier: 1, labourMultiplier: 1 },
+    Stilt: { materialMultiplier: 1.08, labourMultiplier: 1.05 },
     Raft: { materialMultiplier: 1.14, labourMultiplier: 1.08 },
     Basement: { materialMultiplier: 1.32, labourMultiplier: 1.22 },
     Pile: { materialMultiplier: 1.28, labourMultiplier: 1.18 },

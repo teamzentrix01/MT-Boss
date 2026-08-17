@@ -20,7 +20,7 @@ const STATUS_CONFIG = {
   CANCELLED:                     { label: 'Cancelled',         color: 'text-red-500 border-red-500',      bg: 'bg-red-500/10',    pulse: false },
 };
 
-const PRIMARY_SERVICE_STAGES = ['Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
+const PRIMARY_SERVICE_STAGES = ['Pending', 'Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
 
 // ── Payment Modal ─────────────────────────────────────────────────────────────
 function PaymentModal({ booking, isDark, onClose }) {

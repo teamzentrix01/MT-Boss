@@ -119,6 +119,42 @@ export default function AdminProjectManagementPage() {
     return { received, labour, labourPaid, contractor, material, other, transport, spent, profit };
   }, [project]);
 
+  const contractorProfiles = useMemo(() => {
+    const profiles = new Map();
+    for (const item of ops.contractors || []) {
+      const phone = String(item.contractor_phone || '').replace(/\D/g, '');
+      const key = phone || `${String(item.contractor_name || '').trim().toLowerCase()}|${String(item.company_name || '').trim().toLowerCase()}`;
+      if (!item.contractor_name || profiles.has(key)) continue;
+      profiles.set(key, {
+        key,
+        contractor_name: item.contractor_name,
+        contractor_phone: phone,
+        company_name: item.company_name || '',
+        work_description: item.work_description || '',
+        contract_amount: item.contract_amount || '',
+      });
+    }
+    return [...profiles.values()];
+  }, [ops.contractors]);
+
+  const contractorLedger = useMemo(() => {
+    const ledger = new Map();
+    for (const item of ops.contractors || []) {
+      const phone = String(item.contractor_phone || '').replace(/\D/g, '');
+      const key = phone || `${String(item.contractor_name || '').trim().toLowerCase()}|${String(item.company_name || '').trim().toLowerCase()}`;
+      if (!key) continue;
+      const current = ledger.get(key) || {
+        key, contractor_name: item.contractor_name, contractor_phone: phone,
+        company_name: item.company_name || '', contract_amount: 0, paid_amount: 0, payments: 0,
+      };
+      current.contract_amount = Math.max(current.contract_amount, Number(item.contract_amount || 0));
+      current.paid_amount += Number(item.paid_amount || 0);
+      current.payments += 1;
+      ledger.set(key, current);
+    }
+    return [...ledger.values()];
+  }, [ops.contractors]);
+
   async function saveProject(event) {
     event.preventDefault();
     setSaving(true);
@@ -316,8 +352,21 @@ export default function AdminProjectManagementPage() {
 
             {entryType === 'contractor' && (
               <div className="ap-form-grid">
-                <Field label="Contractor Name" value={entryForm.contractor_name} onChange={(value) => setEntryForm((f) => ({ ...f, contractor_name: value }))} required />
-                <Field label="Company / Firm" value={entryForm.company_name} onChange={(value) => setEntryForm((f) => ({ ...f, company_name: value }))} />
+                <label>
+                  <span>Existing Contractor</span>
+                  <select className={input} value={entryForm.contractor_key || ''} onChange={(e) => {
+                    const selected = contractorProfiles.find((item) => item.key === e.target.value);
+                    setEntryForm((current) => selected
+          ? { ...current, contractor_key: selected.key, contractor_name: selected.contractor_name, contractor_phone: selected.contractor_phone, company_name: selected.company_name, work_description: selected.work_description, contract_amount: selected.contract_amount }
+                      : { ...current, contractor_key: '' });
+                  }}>
+                    <option value="">New contractor / enter manually</option>
+              {contractorProfiles.map((contractor) => <option key={contractor.key} value={contractor.key}>{contractor.contractor_name}{contractor.contractor_phone ? ` — ${contractor.contractor_phone}` : ''}{contractor.company_name ? ` (${contractor.company_name})` : ''}</option>)}
+            </select>
+          </label>
+          <Field label="Contractor Name" value={entryForm.contractor_name} onChange={(value) => setEntryForm((f) => ({ ...f, contractor_name: value }))} required />
+          <Field label="Contractor Mobile Number" type="tel" value={entryForm.contractor_phone} onChange={(value) => setEntryForm((f) => ({ ...f, contractor_phone: value.replace(/\D/g, '').slice(0, 10) }))} required />
+          <Field label="Company / Firm" value={entryForm.company_name} onChange={(value) => setEntryForm((f) => ({ ...f, company_name: value }))} />
                 <Field label="Contract Value" type="number" value={entryForm.contract_amount} onChange={(value) => setEntryForm((f) => ({ ...f, contract_amount: value }))} />
                 <Field label="Payment Amount" type="number" value={entryForm.paid_amount} onChange={(value) => setEntryForm((f) => ({ ...f, paid_amount: value }))} required />
                 <Field label="Payment Date" type="date" value={entryForm.payment_date || todayIso()} onChange={(value) => setEntryForm((f) => ({ ...f, payment_date: value }))} />
@@ -391,9 +440,34 @@ export default function AdminProjectManagementPage() {
               {row.notes && <p>{row.notes}</p>}
             </>
           )} />
-          <History title="Contractor Payments" type="contractor" rows={ops.contractors} onDelete={deleteEntry} render={(row) => (
+        {contractorLedger.length > 0 && (
+          <section className="ap-history">
+            <h3>Contractor Payment Ledger</h3>
+            <div className="ap-list">
+              {contractorLedger.map((contractor) => {
+                const due = Math.max(0, contractor.contract_amount - contractor.paid_amount);
+                const advance = Math.max(0, contractor.paid_amount - contractor.contract_amount);
+                return (
+                  <article key={contractor.key} className="ap-history-row">
+                    <div>
+                      <strong>{contractor.contractor_name}{contractor.contractor_phone ? ` — ${contractor.contractor_phone}` : ''}</strong>
+                      <p>{[contractor.company_name, `${contractor.payments} payment${contractor.payments === 1 ? '' : 's'}`].filter(Boolean).join(' | ')}</p>
+                    </div>
+                    <div className="ap-history-meta">
+                      <span>Contract: {money(contractor.contract_amount)}</span>
+                      <span>Paid: {money(contractor.paid_amount)}</span>
+                      <span>Due: {money(due)}</span>
+                      <span>Advance: {money(advance)}</span>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        )}
+        <History title="Contractor Payments" type="contractor" rows={ops.contractors} onDelete={deleteEntry} render={(row) => (
             <>
-              <strong>{row.contractor_name} - paid {money(row.paid_amount)}</strong>
+              <strong>{row.contractor_name}{row.contractor_phone ? ` (${row.contractor_phone})` : ''} - paid {money(row.paid_amount)}</strong>
               <span>
                 {dateOnly(row.payment_date)}
                 {row.company_name ? ` | ${row.company_name}` : ''}

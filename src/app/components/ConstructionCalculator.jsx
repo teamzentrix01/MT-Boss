@@ -64,6 +64,7 @@ const QUALITY_LEVELS = {
 
 const FOUNDATION_TYPES = {
   Normal: { label: 'Normal foundation', materialMultiplier: 1, labourMultiplier: 1 },
+  Stilt: { label: 'Stilt foundation', materialMultiplier: 1.08, labourMultiplier: 1.05 },
   Raft: { label: 'Raft foundation', materialMultiplier: 1.14, labourMultiplier: 1.08 },
   Basement: { label: 'Basement', materialMultiplier: 1.32, labourMultiplier: 1.22 },
   Pile: { label: 'Pile foundation', materialMultiplier: 1.28, labourMultiplier: 1.18 },
@@ -1116,15 +1117,18 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
         .boq-quote-field input,
         .boq-quote-field textarea {
           width: 100%;
+          box-sizing: border-box;
           border: 1px solid var(--boq-line);
           border-radius: 7px;
-          background: var(--boq-soft);
+          background: var(--boq-surface);
           color: var(--boq-text);
           padding: 12px;
           font: inherit;
           font-weight: 800;
           outline: none;
         }
+        .boq-quote-field input::placeholder, .boq-quote-field textarea::placeholder { color: var(--boq-muted); opacity: 1; }
+        .boq-quote-field input:focus, .boq-quote-field textarea:focus { border-color: var(--boq-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--boq-accent) 20%, transparent); }
         .boq-quote-field textarea { min-height: 86px; resize: vertical; }
         .boq-quote-msg { border: 1px solid var(--boq-line); background: var(--boq-soft); color: var(--boq-muted); padding: 11px 12px; border-radius: 7px; font-size: .78rem; font-weight: 800; line-height: 1.45; }
         .boq-report-note { padding: 14px; border: 1px solid rgba(215,169,35,.5); background: color-mix(in srgb, var(--boq-accent) 14%, var(--boq-surface)); color: var(--boq-text); border-radius: 8px; line-height: 1.55; font-size: .82rem; }
@@ -1451,8 +1455,12 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                         }
                       }}
                       required
+                      inputMode="numeric"
+                      maxLength={10}
+                      pattern="[6-9][0-9]{9}"
                       placeholder="10-digit mobile number"
                     />
+                    {!quoteForm.phone && <small style={{ color: 'var(--boq-muted)', display: 'block', marginTop: 6 }}>Enter the mobile number that should receive the quote follow-up.</small>}
                   </div>
                 </div>
                 <div className="boq-quote-field">

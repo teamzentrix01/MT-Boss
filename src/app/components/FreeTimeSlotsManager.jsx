@@ -229,12 +229,16 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
           padding: ${compact ? '1rem' : '1.25rem'};
           margin-bottom: 1rem;
         }
-        .form-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
+         .form-grid {
+           display: grid;
+           grid-template-columns: repeat(2, 1fr);
           gap: 1rem;
           margin-bottom: 1rem;
-        }
+         }
+         @media (max-width: 760px) {
+           .form-grid { grid-template-columns: 1fr; }
+           .section-header { align-items: flex-start; gap: .75rem; flex-direction: column; }
+         }
         .form-group {
           display: flex;
           flex-direction: column;

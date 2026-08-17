@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import { requireAdmin } from '@/lib/agent-auth';
 import { createInitializationGuard } from '@/lib/api-utils';
 import { ensurePackageSchema } from '@/lib/packages';
+import { ensurePayUIntentSchema } from '@/lib/payu-intents';
 
 const ensureSupplierColumns = createInitializationGuard(async () => {
   await ensurePackageSchema();
@@ -17,6 +18,7 @@ export async function GET(req) {
     if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     await ensureSupplierColumns();
+    await ensurePayUIntentSchema();
 
     const result = await pool.query(
       `SELECT
@@ -24,7 +26,10 @@ export async function GET(req) {
         s.city, s.state, s.country, s.postal_code,
         s.aadhaar_number, s.aadhaar_status,
         s.product_categories,
-        s.status, s.is_active, s.package_name, s.package_price, s.package_status,
+         s.status, s.is_active, s.package_name, s.package_price, s.package_status,
+         payment.txnid AS payment_reference, payment.status AS payment_status,
+         payment.amount AS payment_amount, payment.gateway_id AS payment_gateway_id,
+         payment.completed_at AS payment_completed_at,
         s.rejection_reason,
         s.created_at, s.updated_at,
         COALESCE(e.total_earned, 0)      AS total_earned,
@@ -39,7 +44,15 @@ export async function GET(req) {
          FROM material_enquiries
          WHERE status = 'fulfilled'
          GROUP BY accepted_by_supplier_id
-       ) e ON e.sid = s.id
+        ) e ON e.sid = s.id
+       LEFT JOIN LATERAL (
+         SELECT txnid, status, amount, gateway_id, completed_at
+         FROM payu_payment_intents
+         WHERE entity_id = s.id
+           AND purpose IN ('supplier_registration', 'supplier_package')
+         ORDER BY created_at DESC, id DESC
+         LIMIT 1
+       ) payment ON TRUE
        ORDER BY s.created_at DESC`
     );
 
@@ -105,16 +118,25 @@ export async function PATCH(req) {
   try {
     const admin = await requireAdmin(req);
     if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    await ensurePayUIntentSchema();
 
     const today = new Date().toISOString().split('T')[0];
 
     const result = await pool.query(
       `SELECT
+         COALESCE((
+           SELECT SUM(amount) FROM payu_payment_intents
+           WHERE purpose IN ('supplier_registration', 'supplier_package') AND status = 'PAID'
+         ), 0) AS subscription_revenue,
+         COALESCE((
+           SELECT COUNT(*) FROM payu_payment_intents
+           WHERE purpose IN ('supplier_registration', 'supplier_package') AND status = 'PAID'
+         ), 0) AS paid_supplier_payments,
          COALESCE(SUM(admin_commission), 0)                                                    AS total_commission,
          COALESCE(SUM(CASE WHEN DATE(fulfilled_at) = $1 THEN admin_commission ELSE 0 END), 0)  AS today_commission,
          COUNT(*) FILTER (WHERE status = 'fulfilled')                                           AS total_fulfilled,
          COUNT(*) FILTER (WHERE status = 'open')                                                AS open_enquiries
-       FROM material_enquiries`,
+        FROM material_enquiries`,
       [today]
     );
 
