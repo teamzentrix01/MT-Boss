@@ -825,7 +825,7 @@ const handleSubmit = async (e) => {
                   <div className="grid grid-cols-1 gap-3 mt-2">
                     {[
                       { id: 'free', name: 'Free Registration', duration: 'Free', price: 'Free', desc: 'Submit your vendor profile for admin approval without a paid package.' },
-                      { id: 'pkg_6m', name: '6 Months Plan', duration: '6 Months', price: '₹2,999', desc: 'Perfect for getting started. Complete booking access.' },
+                      { id: 'pkg_6m', name: '6 Months Plan', duration: '6 Months', price: '₹100', desc: 'Perfect for getting started. Complete booking access.' },
                       { id: 'pkg_1y', name: '1 Year Plan', duration: '12 Months', price: '₹4,999', desc: 'Most popular. Great value with a full year of leads.' },
                       { id: 'pkg_2y', name: '2 Years Plan', duration: '24 Months', price: '₹7,999', desc: 'Best deal. Long-term peace of mind and maximum savings.' },
                     ].map(pkg => (

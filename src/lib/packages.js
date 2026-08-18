@@ -3,7 +3,7 @@ import { createInitializationGuard } from '@/lib/api-utils';
 
 // Package definitions
 export const PACKAGES = [
-  { id: 'pkg_6m', name: '6 Months', duration_months: 6, price: 2999, label: '6 Month Plan' },
+  { id: 'pkg_6m', name: '6 Months', duration_months: 6, price: 100, label: '6 Month Plan' },
   { id: 'pkg_1y', name: '1 Year', duration_months: 12, price: 4999, label: '1 Year Plan' },
   { id: 'pkg_2y', name: '2 Years', duration_months: 24, price: 7999, label: '2 Year Plan' },
 ];
