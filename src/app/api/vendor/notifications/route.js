@@ -44,6 +44,7 @@ export async function GET(req) {
           sb.service_subcategory,
           sb.service_description,
           v.package_status,
+          v.package_starts_at,
           v.package_expires_at,
           qs.icon,
           qs.label,
@@ -57,12 +58,13 @@ export async function GET(req) {
           ) AS serves_service
         FROM service_bookings sb
         JOIN vendors v ON v.id = $1
-        LEFT JOIN service_notifications sn
+        JOIN service_notifications sn
           ON sn.booking_id = sb.id
          AND sn.vendor_id = v.id
         JOIN quick_services qs ON sb.quick_service_id = qs.id
         WHERE COALESCE(sn.is_read, FALSE) = FALSE
           AND (sn.expires_at IS NULL OR sn.expires_at > NOW())
+          AND COALESCE(sn.created_at, sb.created_at) >= COALESCE(v.package_starts_at, 'infinity'::TIMESTAMPTZ)
           AND sb.status = 'WAITING_FOR_VENDOR_ACCEPTANCE'
           AND LOWER(TRIM(v.city)) = LOWER(TRIM(sb.service_city))
           AND EXISTS (

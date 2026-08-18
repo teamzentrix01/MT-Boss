@@ -4,6 +4,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 const statuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
 const stages = ['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost'];
 const priorities = ['Low', 'Normal', 'High', 'Urgent'];
+const sourceOrder = ['primary-service', 'quick-service', 'calculator', 'contact', 'manual'];
+const sourceLabels = {
+  'primary-service': 'Primary Services',
+  'quick-service': 'Quick Services',
+  calculator: 'Calculator',
+  contact: 'Contact Forms',
+  manual: 'Manual',
+};
 
 const emptyForm = {
   client_name: '',
@@ -70,9 +78,22 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   }, [loadLeads]);
 
   const sources = useMemo(() => {
-    return [...new Set(leads.map((lead) => lead.lead_source?.trim()).filter(Boolean))]
+    const dynamicSources = [...new Set(leads.map((lead) => lead.lead_source?.trim()).filter(Boolean))]
       .sort((a, b) => a.localeCompare(b));
+    return [
+      ...sourceOrder.filter((item) => dynamicSources.includes(item)),
+      ...dynamicSources.filter((item) => !sourceOrder.includes(item)),
+    ];
   }, [leads]);
+
+  const sourceStats = useMemo(() => {
+    const counts = Object.fromEntries(sources.map((item) => [item, 0]));
+    leads.forEach((lead) => {
+      const key = lead.lead_source?.trim();
+      if (key) counts[key] = (counts[key] || 0) + 1;
+    });
+    return counts;
+  }, [leads, sources]);
 
   const cities = useMemo(() => {
     return [...new Set(leads.map((lead) => lead.city?.trim()).filter(Boolean))]
@@ -278,6 +299,41 @@ export default function LeadManagementAdmin({ isDarkMode }) {
       </form>
 
       <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 6, padding: '1rem' }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+          <button
+            type="button"
+            onClick={() => setSource('')}
+            style={{
+              border: `1px solid ${source ? border : 'var(--accent)'}`,
+              background: source ? surface : 'var(--accent)',
+              color: source ? text : '#111',
+              borderRadius: 6,
+              padding: '0.5rem 0.75rem',
+              fontWeight: 900,
+              cursor: 'pointer',
+            }}
+          >
+            All Leads ({leads.length})
+          </button>
+          {sources.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setSource(item)}
+              style={{
+                border: `1px solid ${source === item ? 'var(--accent)' : border}`,
+                background: source === item ? 'var(--accent)' : surface,
+                color: source === item ? '#111' : text,
+                borderRadius: 6,
+                padding: '0.5rem 0.75rem',
+                fontWeight: 900,
+                cursor: 'pointer',
+              }}
+            >
+              {sourceLabels[item] || item} ({sourceStats[item] || 0})
+            </button>
+          ))}
+        </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px,2fr) repeat(3,minmax(130px,1fr)) auto', gap: 10, marginBottom: 12 }}>
           <div ref={searchHostRef} />
           <select aria-label="Filter leads by city" style={inputStyle} value={city} onChange={(e) => setCity(e.target.value)}>
@@ -290,7 +346,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
           </select>
           <select style={inputStyle} value={source} onChange={(e) => setSource(e.target.value)}>
             <option value="">All source</option>
-            {sources.map((item) => <option key={item} value={item}>{item}</option>)}
+            {sources.map((item) => <option key={item} value={item}>{sourceLabels[item] || item}</option>)}
           </select>
           <button type="button" onClick={clearFilters} disabled={!search && !city && !status && !source} style={{ border: 0, background: surface, color: text, borderRadius: 6, padding: '0.55rem 1rem', fontWeight: 900, cursor: 'pointer' }}>Clear</button>
         </div>

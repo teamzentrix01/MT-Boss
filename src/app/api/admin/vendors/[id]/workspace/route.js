@@ -3,17 +3,18 @@ import pool from '@/lib/db';
 import { requireAdmin } from '@/lib/agent-auth';
 import { ensureAgentSchema } from '@/lib/agent-auth';
 import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
+import { ensurePackageSchema } from '@/lib/packages';
 
 // Admin-only vendor workspace, matching the visibility already available for agents.
 export async function GET(req, { params }) {
   try {
     if (!requireAdmin(req)) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    await Promise.all([ensureAgentSchema(), ensureServiceBookingSubcategorySchema()]);
+    await Promise.all([ensureAgentSchema(), ensureServiceBookingSubcategorySchema(), ensurePackageSchema()]);
     const { id } = await params;
     const [vendorResult, bookingsResult, crmLeadsResult] = await Promise.all([
       pool.query(
         `SELECT id, shop_name, email, phone, city, state, status, verification_status,
-                is_approved, package_status, package_expires_at, created_at, updated_at
+                is_approved, package_status, package_starts_at, package_expires_at, created_at, updated_at
            FROM vendors WHERE id=$1`,
         [id]
       ),
@@ -34,10 +35,9 @@ export async function GET(req, { params }) {
                 l.lead_type, l.status, l.lead_stage, l.follow_up_date, l.client_requirement,
                 l.notes, l.final_amount, l.updated_at, l.created_at,
                 a.name AS agent_name
-           FROM agent_leads l
+          FROM agent_leads l
            LEFT JOIN agents a ON a.id=l.agent_id
           WHERE l.assigned_vendor_id=$1
-             OR (l.assigned_vendor_id IS NULL AND LOWER(TRIM(COALESCE(l.city,'')))=(SELECT LOWER(TRIM(COALESCE(city,''))) FROM vendors WHERE id=$1))
           ORDER BY l.updated_at DESC
           LIMIT 100`,
         [id]

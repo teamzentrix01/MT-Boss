@@ -3,11 +3,11 @@ import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { ensurePackageSchema } from '@/lib/packages';
 import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
-import { ensureAgentSchema } from '@/lib/agent-auth';
 
-async function ensureCrmLeadVendorAssignment() {
-  await ensureAgentSchema();
-  await pool.query(`ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS assigned_vendor_id INTEGER`);
+function activePackageCondition(alias = 'v') {
+  return `${alias}.package_status = 'active'
+    AND ${alias}.package_starts_at IS NOT NULL
+    AND ${alias}.package_expires_at > NOW()`;
 }
 
 export async function GET(req) {
@@ -17,11 +17,10 @@ export async function GET(req) {
 
     await ensurePackageSchema();
     await ensureServiceBookingSubcategorySchema();
-    await ensureCrmLeadVendorAssignment();
 
     const incoming = await pool.query(
       `WITH vendor_state AS (
-         SELECT id, city, package_status, package_expires_at
+         SELECT id, city, package_status, package_starts_at, package_expires_at
            FROM vendors
           WHERE id = $1
        )
@@ -30,19 +29,10 @@ export async function GET(req) {
          sb.booking_reference,
          'incoming' AS lead_track_status,
          sb.status,
-         COALESCE(sn.created_at, sb.created_at) AS tracked_at,
-         CASE
-           WHEN v.package_status = 'active' AND v.package_expires_at > NOW() THEN sb.user_name
-           ELSE 'Customer'
-         END AS customer_name,
-         CASE
-           WHEN v.package_status = 'active' AND v.package_expires_at > NOW() THEN sb.user_phone
-           ELSE NULL
-         END AS customer_phone,
-         CASE
-           WHEN v.package_status = 'active' AND v.package_expires_at > NOW() THEN sb.service_address
-           ELSE NULL
-         END AS service_address,
+         sn.created_at AS tracked_at,
+         sb.user_name AS customer_name,
+         sb.user_phone AS customer_phone,
+         sb.service_address,
          sb.service_city,
          sb.booking_date,
          sb.booking_time,
@@ -52,17 +42,19 @@ export async function GET(req) {
          sb.total_amount,
          qs.label AS service_label,
          qs.icon AS service_icon,
-         (v.package_status = 'active' AND v.package_expires_at > NOW()) AS can_accept,
-         NOT (v.package_status = 'active' AND v.package_expires_at > NOW()) AS contact_locked
+         TRUE AS can_accept,
+         FALSE AS contact_locked
        FROM service_bookings sb
        JOIN vendor_state v ON LOWER(TRIM(v.city)) = LOWER(TRIM(sb.service_city))
        JOIN quick_services qs ON qs.id = sb.quick_service_id
-       LEFT JOIN service_notifications sn
+       JOIN service_notifications sn
          ON sn.booking_id = sb.id
         AND sn.vendor_id = v.id
        WHERE sb.status = 'WAITING_FOR_VENDOR_ACCEPTANCE'
          AND COALESCE(sn.is_read, FALSE) = FALSE
          AND (sn.expires_at IS NULL OR sn.expires_at > NOW())
+         AND ${activePackageCondition('v')}
+         AND sn.created_at >= v.package_starts_at
          AND EXISTS (
            SELECT 1
              FROM vendor_services vs
@@ -107,46 +99,16 @@ export async function GET(req) {
          FALSE AS contact_locked
        FROM service_bookings sb
        JOIN quick_services qs ON qs.id = sb.quick_service_id
+       JOIN vendors v ON v.id = sb.vendor_id
        WHERE sb.vendor_id = $1
+         AND ${activePackageCondition('v')}
+         AND COALESCE(sb.accepted_at, sb.created_at) >= v.package_starts_at
        ORDER BY tracked_at DESC
        LIMIT 200`,
       [vendor.id]
     );
 
-    // CRM leads are city-scoped: every active, approved vendor sees leads for
-    // its own city, with no cross-city access. Vendor assignment remains
-    // optional metadata for admin workflow.
-    const crmLeads = await pool.query(
-      `SELECT l.id AS booking_id,
-              CONCAT('CRM-', l.id) AS booking_reference,
-              'active' AS lead_track_status,
-              l.status,
-              l.updated_at AS tracked_at,
-              l.client_name AS customer_name,
-              l.client_phone AS customer_phone,
-              l.notes AS service_address,
-              l.city AS service_city,
-              l.follow_up_date AS booking_date,
-              NULL::TEXT AS booking_time,
-              l.lead_type AS service_subcategory,
-              l.client_requirement AS service_description,
-              l.final_amount AS final_amount,
-              l.service_type AS service_label,
-              '📋' AS service_icon,
-              TRUE AS can_accept,
-              FALSE AS contact_locked,
-              TRUE AS crm_lead
-         FROM agent_leads l
-         JOIN vendors v ON v.id = $1
-        WHERE v.is_approved = TRUE
-          AND v.status = 'active'
-          AND LOWER(TRIM(COALESCE(l.city,''))) = LOWER(TRIM(COALESCE(v.city,'')))
-        ORDER BY l.updated_at DESC
-        LIMIT 200`,
-      [vendor.id]
-    );
-
-    const data = [...incoming.rows, ...assigned.rows, ...crmLeads.rows].sort((a, b) => (
+    const data = [...incoming.rows, ...assigned.rows].sort((a, b) => (
       new Date(b.tracked_at || 0).getTime() - new Date(a.tracked_at || 0).getTime()
     ));
 

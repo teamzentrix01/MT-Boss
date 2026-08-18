@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import { sendEnquiryAcceptedEmail } from '@/lib/email';
 import { requireRole } from '@/lib/auth';
 import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material-orders';
+import { ensurePackageSchema } from '@/lib/packages';
 
 function getSupplier(req) {
   return requireRole(req, 'supplier');
@@ -15,10 +16,31 @@ export async function POST(req, { params }) {
 
     const { id } = await params;
     await ensureMaterialOrderSchema();
+    await ensurePackageSchema();
 
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+
+      const supplierCheck = await client.query(
+        `SELECT id, product_categories, city, is_active, package_status, package_starts_at, package_expires_at
+           FROM suppliers
+          WHERE id = $1
+            AND is_active = TRUE
+            AND package_status = 'active'
+            AND package_starts_at IS NOT NULL
+            AND package_expires_at > NOW()
+          FOR UPDATE`,
+        [decoded.id]
+      );
+      if (!supplierCheck.rows[0]) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({
+          success: false,
+          error: 'Active supplier package required before accepting material enquiries',
+          package_required: true,
+        }, { status: 403 });
+      }
 
       // Lock and check the enquiry
       const check = await client.query(
@@ -31,6 +53,34 @@ export async function POST(req, { params }) {
       }
 
       const enquiry = check.rows[0];
+      const supplier = supplierCheck.rows[0];
+      const supplierCity = String(supplier.city || '').trim().toLowerCase();
+      const enquiryCity = String(enquiry.selected_city || '').trim().toLowerCase();
+      const enquiryWords = new Set(
+        String(enquiry.category_name || '')
+          .toLowerCase()
+          .split(/[^a-z0-9]+/)
+          .filter((word) => word.length >= 3)
+      );
+      const categoryAllowed = (supplier.product_categories || []).some((category) => (
+        String(category || '')
+          .toLowerCase()
+          .split(/[^a-z0-9]+/)
+          .filter((word) => word.length >= 3)
+          .some((word) => enquiryWords.has(word))
+      ));
+      if (
+        new Date(enquiry.created_at) < new Date(supplier.package_starts_at)
+        || !supplierCity
+        || supplierCity !== enquiryCity
+        || !categoryAllowed
+      ) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({
+          success: false,
+          error: 'This material enquiry is not available for your package, city or categories',
+        }, { status: 403 });
+      }
       if (enquiry.status !== 'open') {
         await client.query('ROLLBACK');
         return NextResponse.json({

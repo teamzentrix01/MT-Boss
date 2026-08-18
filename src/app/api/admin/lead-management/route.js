@@ -6,12 +6,14 @@ import { createXlsxWorkbook } from '@/lib/xlsx';
 import { createInitializationGuard } from '@/lib/api-utils';
 import { convertFinalLeadToProject, ensureProjectOpsSchema } from '@/lib/project-ops';
 import { ensureAgentNotificationsSchema } from '@/lib/agent-notifications';
+import { ensurePackageSchema } from '@/lib/packages';
 
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
 
 const ensureLeadManagementSchema = createInitializationGuard(async () => {
   await ensureAgentSchema();
+  await ensurePackageSchema();
   try { await pool.query(`ALTER TABLE agent_leads ALTER COLUMN agent_id DROP NOT NULL`); } catch { /* older db may already allow null */ }
   const alters = [
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS assigned_franchise_id INTEGER`,
@@ -30,7 +32,7 @@ async function syncExternalLeads() {
        (city, client_name, client_phone, client_email, service_type, lead_type, status,
         notes, client_requirement, lead_source, source_ref_table, source_ref_id, assigned_by_role)
      SELECT
-       COALESCE(NULLIF(address, ''), 'Unassigned') AS city,
+       COALESCE(NULLIF(city, ''), 'Unassigned') AS city,
        name,
        phone,
        email,
@@ -239,7 +241,14 @@ export async function GET(req) {
     const [agents, franchises, vendors] = await Promise.all([
       pool.query(`SELECT id, name, email, phone, city, state FROM agents WHERE status = 'Approved' ORDER BY name ASC`),
       pool.query(`SELECT id, name, email, phone, city, state FROM franchises WHERE status = 'Approved' ORDER BY name ASC`),
-      pool.query(`SELECT id, shop_name, email, phone, city, state FROM vendors WHERE is_approved = TRUE AND status = 'active' ORDER BY shop_name ASC`),
+      pool.query(`SELECT id, shop_name, email, phone, city, state
+                    FROM vendors
+                   WHERE is_approved = TRUE
+                     AND status = 'active'
+                     AND package_status = 'active'
+                     AND package_starts_at IS NOT NULL
+                     AND package_expires_at > NOW()
+                   ORDER BY shop_name ASC`),
     ]);
 
     return NextResponse.json({
@@ -293,8 +302,8 @@ export async function POST(req) {
       if (!match.rows[0]) return NextResponse.json({ success: false, error: 'Select an approved franchise from the lead city.' }, { status: 400 });
     }
     if (assigned_vendor_id) {
-      const match = await pool.query(`SELECT id FROM vendors WHERE id = $1 AND is_approved = TRUE AND status = 'active' AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [assigned_vendor_id, city]);
-      if (!match.rows[0]) return NextResponse.json({ success: false, error: 'Select an active approved vendor from the lead city.' }, { status: 400 });
+      const match = await pool.query(`SELECT id FROM vendors WHERE id = $1 AND is_approved = TRUE AND status = 'active' AND package_status = 'active' AND package_starts_at IS NOT NULL AND package_expires_at > NOW() AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [assigned_vendor_id, city]);
+      if (!match.rows[0]) return NextResponse.json({ success: false, error: 'Select a paid active approved vendor from the lead city.' }, { status: 400 });
     }
 
     const result = await pool.query(
@@ -405,8 +414,8 @@ export async function PATCH(req) {
       if (!match.rows[0]) { await client.query('ROLLBACK'); return NextResponse.json({ success: false, error: 'Select an approved franchise from the lead city.' }, { status: 400 }); }
     }
     if (has('assigned_vendor_id') && body.assigned_vendor_id) {
-      const match = await client.query(`SELECT id FROM vendors WHERE id = $1 AND is_approved = TRUE AND status = 'active' AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [body.assigned_vendor_id, current.city]);
-      if (!match.rows[0]) { await client.query('ROLLBACK'); return NextResponse.json({ success: false, error: 'Select an active approved vendor from the lead city.' }, { status: 400 }); }
+      const match = await client.query(`SELECT id FROM vendors WHERE id = $1 AND is_approved = TRUE AND status = 'active' AND package_status = 'active' AND package_starts_at IS NOT NULL AND package_expires_at > NOW() AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [body.assigned_vendor_id, current.city]);
+      if (!match.rows[0]) { await client.query('ROLLBACK'); return NextResponse.json({ success: false, error: 'Select a paid active approved vendor from the lead city.' }, { status: 400 }); }
     }
 
     const sets = [];

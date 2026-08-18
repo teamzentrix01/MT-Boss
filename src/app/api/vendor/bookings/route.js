@@ -2,11 +2,13 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
+import { ensurePackageSchema } from '@/lib/packages';
 
 export async function GET(req) {
   try {
     const vendor = requireRole(req, 'vendor');
     if (!vendor) return unauthorized();
+    await ensurePackageSchema();
     await ensureServiceBookingSubcategorySchema();
 
     const { searchParams } = new URL(req.url);
@@ -46,8 +48,10 @@ export async function GET(req) {
         br.rating_stars, br.review_text, br.created_at AS rated_at
       FROM service_bookings sb
       JOIN quick_services qs ON sb.quick_service_id = qs.id
+      JOIN vendors v ON v.id = sb.vendor_id
       LEFT JOIN booking_ratings br ON br.booking_id = sb.id
-      WHERE sb.vendor_id = $1`;
+      WHERE sb.vendor_id = $1
+        AND COALESCE(sb.accepted_at, sb.created_at) >= COALESCE(v.package_starts_at, 'infinity'::TIMESTAMPTZ)`;
 
     let query = baseSelect;
     const params = [vendor.id];

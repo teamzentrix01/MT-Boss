@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
+import { ensurePackageSchema } from '@/lib/packages';
 
 function getSupplier(req) {
   return requireRole(req, 'supplier');
@@ -31,20 +32,33 @@ export async function GET(req) {
   try {
     const decoded = getSupplier(req);
     if (!decoded) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    await ensurePackageSchema();
 
     // Fetch this supplier's registered product categories and city from DB
     const supplierRes = await pool.query(
-      `SELECT product_categories, is_active, city FROM suppliers WHERE id = $1`,
+      `SELECT product_categories, is_active, city, package_status, package_starts_at, package_expires_at
+       FROM suppliers WHERE id = $1`,
       [decoded.id]
     );
     if (supplierRes.rows.length === 0) {
       return NextResponse.json({ success: false, error: 'Supplier not found' }, { status: 404 });
     }
 
-    const { product_categories, is_active, city: supplierCity } = supplierRes.rows[0];
+    const {
+      product_categories,
+      is_active,
+      city: supplierCity,
+      package_status,
+      package_starts_at,
+      package_expires_at,
+    } = supplierRes.rows[0];
+    const packageActive = package_status === 'active'
+      && package_starts_at
+      && package_expires_at
+      && new Date(package_expires_at) > new Date();
 
-    // Inactive suppliers see no new enquiries
-    if (!is_active) {
+    // Inactive/unpaid suppliers see no new enquiries.
+    if (!is_active || !packageActive) {
       const mine = await pool.query(
         `SELECT me.*, s.shop_name AS accepted_by_shop
          FROM material_enquiries me
@@ -63,13 +77,14 @@ export async function GET(req) {
       return NextResponse.json({ success: true, data: { open: [], mine: [], taken: [] } });
     }
 
-    // Get all enquiries from the last 30 days
+    // Paid suppliers only see material enquiries created after their package started.
     const allRes = await pool.query(
       `SELECT me.*, s.shop_name AS accepted_by_shop
        FROM material_enquiries me
        LEFT JOIN suppliers s ON s.id = me.accepted_by_supplier_id
-       WHERE me.created_at > NOW() - INTERVAL '30 days'
-       ORDER BY me.created_at DESC`
+       WHERE me.created_at >= $1
+       ORDER BY me.created_at DESC`,
+      [package_starts_at]
     );
 
     const all = allRes.rows;
