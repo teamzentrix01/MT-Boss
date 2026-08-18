@@ -36,7 +36,7 @@ export async function GET(req) {
 
     // Fetch this supplier's registered product categories and city from DB
     const supplierRes = await pool.query(
-      `SELECT product_categories, is_active, city, package_status, package_starts_at, package_expires_at
+      `SELECT product_categories, is_active, city, package_status, package_purchased_at, package_starts_at, package_expires_at, created_at
        FROM suppliers WHERE id = $1`,
       [decoded.id]
     );
@@ -49,13 +49,14 @@ export async function GET(req) {
       is_active,
       city: supplierCity,
       package_status,
+      package_purchased_at,
       package_starts_at,
       package_expires_at,
+      created_at,
     } = supplierRes.rows[0];
     const packageActive = package_status === 'active'
-      && package_starts_at
-      && package_expires_at
-      && new Date(package_expires_at) > new Date();
+      && (!package_expires_at || new Date(package_expires_at) > new Date());
+    const leadStartAt = package_starts_at || package_purchased_at || created_at || new Date(0);
 
     // Inactive/unpaid suppliers see no new enquiries.
     if (!is_active || !packageActive) {
@@ -84,7 +85,7 @@ export async function GET(req) {
        LEFT JOIN suppliers s ON s.id = me.accepted_by_supplier_id
        WHERE me.created_at >= $1
        ORDER BY me.created_at DESC`,
-      [package_starts_at]
+      [leadStartAt]
     );
 
     const all = allRes.rows;

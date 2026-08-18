@@ -51,7 +51,9 @@ export async function GET(req) {
       JOIN vendors v ON v.id = sb.vendor_id
       LEFT JOIN booking_ratings br ON br.booking_id = sb.id
       WHERE sb.vendor_id = $1
-        AND COALESCE(sb.accepted_at, sb.created_at) >= COALESCE(v.package_starts_at, 'infinity'::TIMESTAMPTZ)`;
+        AND v.package_status = 'active'
+        AND (v.package_expires_at IS NULL OR v.package_expires_at > NOW())
+        AND COALESCE(sb.accepted_at, sb.created_at) >= COALESCE(v.package_starts_at, v.package_purchased_at, v.created_at, '-infinity'::TIMESTAMPTZ)`;
 
     let query = baseSelect;
     const params = [vendor.id];

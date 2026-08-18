@@ -6,8 +6,7 @@ import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
 
 function activePackageCondition(alias = 'v') {
   return `${alias}.package_status = 'active'
-    AND ${alias}.package_starts_at IS NOT NULL
-    AND ${alias}.package_expires_at > NOW()`;
+    AND (${alias}.package_expires_at IS NULL OR ${alias}.package_expires_at > NOW())`;
 }
 
 export async function GET(req) {
@@ -20,7 +19,7 @@ export async function GET(req) {
 
     const incoming = await pool.query(
       `WITH vendor_state AS (
-         SELECT id, city, package_status, package_starts_at, package_expires_at
+         SELECT id, city, package_status, package_purchased_at, package_starts_at, package_expires_at, created_at
            FROM vendors
           WHERE id = $1
        )
@@ -54,7 +53,7 @@ export async function GET(req) {
          AND COALESCE(sn.is_read, FALSE) = FALSE
          AND (sn.expires_at IS NULL OR sn.expires_at > NOW())
          AND ${activePackageCondition('v')}
-         AND sn.created_at >= v.package_starts_at
+         AND sn.created_at >= COALESCE(v.package_starts_at, v.package_purchased_at, v.created_at, '-infinity'::TIMESTAMPTZ)
          AND EXISTS (
            SELECT 1
              FROM vendor_services vs
@@ -102,7 +101,7 @@ export async function GET(req) {
        JOIN vendors v ON v.id = sb.vendor_id
        WHERE sb.vendor_id = $1
          AND ${activePackageCondition('v')}
-         AND COALESCE(sb.accepted_at, sb.created_at) >= v.package_starts_at
+         AND COALESCE(sb.accepted_at, sb.created_at) >= COALESCE(v.package_starts_at, v.package_purchased_at, v.created_at, '-infinity'::TIMESTAMPTZ)
        ORDER BY tracked_at DESC
        LIMIT 200`,
       [vendor.id]

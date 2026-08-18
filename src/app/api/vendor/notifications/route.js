@@ -44,11 +44,12 @@ export async function GET(req) {
           sb.service_subcategory,
           sb.service_description,
           v.package_status,
+          v.package_purchased_at,
           v.package_starts_at,
           v.package_expires_at,
           qs.icon,
           qs.label,
-          (v.package_status = 'active' AND v.package_expires_at > NOW()) AS has_active_package,
+          (v.package_status = 'active' AND (v.package_expires_at IS NULL OR v.package_expires_at > NOW())) AS has_active_package,
           EXISTS (
             SELECT 1
             FROM vendor_services vs
@@ -64,7 +65,7 @@ export async function GET(req) {
         JOIN quick_services qs ON sb.quick_service_id = qs.id
         WHERE COALESCE(sn.is_read, FALSE) = FALSE
           AND (sn.expires_at IS NULL OR sn.expires_at > NOW())
-          AND COALESCE(sn.created_at, sb.created_at) >= COALESCE(v.package_starts_at, 'infinity'::TIMESTAMPTZ)
+          AND COALESCE(sn.created_at, sb.created_at) >= COALESCE(v.package_starts_at, v.package_purchased_at, v.created_at, '-infinity'::TIMESTAMPTZ)
           AND sb.status = 'WAITING_FOR_VENDOR_ACCEPTANCE'
           AND LOWER(TRIM(v.city)) = LOWER(TRIM(sb.service_city))
           AND EXISTS (

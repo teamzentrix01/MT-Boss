@@ -101,8 +101,7 @@ export async function GET(req) {
           AND LOWER(COALESCE(ev.status, 'active')) IN ('active', 'approved')
           AND COALESCE(ev.verification_status, 'verified') IN ('verified', 'approved')
           AND ev.package_status = 'active'
-          AND ev.package_starts_at IS NOT NULL
-          AND ev.package_expires_at > NOW()
+          AND (ev.package_expires_at IS NULL OR ev.package_expires_at > NOW())
       ) eligible ON TRUE
     `;
 
@@ -177,8 +176,7 @@ export async function PATCH(req) {
              AND LOWER(COALESCE(v.status,'active')) IN ('active','approved')
              AND COALESCE(v.verification_status,'verified') IN ('verified','approved')
              AND v.package_status = 'active'
-             AND v.package_starts_at IS NOT NULL
-             AND v.package_expires_at > NOW()
+             AND (v.package_expires_at IS NULL OR v.package_expires_at > NOW())
          ) RETURNING *`, [vendor_id, id]
     );
     if (!result.rows.length) {

@@ -23,13 +23,12 @@ export async function POST(req, { params }) {
       await client.query('BEGIN');
 
       const supplierCheck = await client.query(
-        `SELECT id, product_categories, city, is_active, package_status, package_starts_at, package_expires_at
+        `SELECT id, product_categories, city, is_active, package_status, package_purchased_at, package_starts_at, package_expires_at, created_at
            FROM suppliers
           WHERE id = $1
             AND is_active = TRUE
             AND package_status = 'active'
-            AND package_starts_at IS NOT NULL
-            AND package_expires_at > NOW()
+            AND (package_expires_at IS NULL OR package_expires_at > NOW())
           FOR UPDATE`,
         [decoded.id]
       );
@@ -54,6 +53,7 @@ export async function POST(req, { params }) {
 
       const enquiry = check.rows[0];
       const supplier = supplierCheck.rows[0];
+      const leadStartAt = supplier.package_starts_at || supplier.package_purchased_at || supplier.created_at || new Date(0);
       const supplierCity = String(supplier.city || '').trim().toLowerCase();
       const enquiryCity = String(enquiry.selected_city || '').trim().toLowerCase();
       const enquiryWords = new Set(
@@ -70,7 +70,7 @@ export async function POST(req, { params }) {
           .some((word) => enquiryWords.has(word))
       ));
       if (
-        new Date(enquiry.created_at) < new Date(supplier.package_starts_at)
+        new Date(enquiry.created_at) < new Date(leadStartAt)
         || !supplierCity
         || supplierCity !== enquiryCity
         || !categoryAllowed

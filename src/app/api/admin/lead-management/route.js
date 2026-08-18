@@ -246,8 +246,7 @@ export async function GET(req) {
                    WHERE is_approved = TRUE
                      AND status = 'active'
                      AND package_status = 'active'
-                     AND package_starts_at IS NOT NULL
-                     AND package_expires_at > NOW()
+                     AND (package_expires_at IS NULL OR package_expires_at > NOW())
                    ORDER BY shop_name ASC`),
     ]);
 
@@ -302,7 +301,7 @@ export async function POST(req) {
       if (!match.rows[0]) return NextResponse.json({ success: false, error: 'Select an approved franchise from the lead city.' }, { status: 400 });
     }
     if (assigned_vendor_id) {
-      const match = await pool.query(`SELECT id FROM vendors WHERE id = $1 AND is_approved = TRUE AND status = 'active' AND package_status = 'active' AND package_starts_at IS NOT NULL AND package_expires_at > NOW() AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [assigned_vendor_id, city]);
+      const match = await pool.query(`SELECT id FROM vendors WHERE id = $1 AND is_approved = TRUE AND status = 'active' AND package_status = 'active' AND (package_expires_at IS NULL OR package_expires_at > NOW()) AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [assigned_vendor_id, city]);
       if (!match.rows[0]) return NextResponse.json({ success: false, error: 'Select a paid active approved vendor from the lead city.' }, { status: 400 });
     }
 
@@ -414,7 +413,7 @@ export async function PATCH(req) {
       if (!match.rows[0]) { await client.query('ROLLBACK'); return NextResponse.json({ success: false, error: 'Select an approved franchise from the lead city.' }, { status: 400 }); }
     }
     if (has('assigned_vendor_id') && body.assigned_vendor_id) {
-      const match = await client.query(`SELECT id FROM vendors WHERE id = $1 AND is_approved = TRUE AND status = 'active' AND package_status = 'active' AND package_starts_at IS NOT NULL AND package_expires_at > NOW() AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [body.assigned_vendor_id, current.city]);
+      const match = await client.query(`SELECT id FROM vendors WHERE id = $1 AND is_approved = TRUE AND status = 'active' AND package_status = 'active' AND (package_expires_at IS NULL OR package_expires_at > NOW()) AND LOWER(TRIM(COALESCE(city,''))) = LOWER(TRIM($2))`, [body.assigned_vendor_id, current.city]);
       if (!match.rows[0]) { await client.query('ROLLBACK'); return NextResponse.json({ success: false, error: 'Select a paid active approved vendor from the lead city.' }, { status: 400 }); }
     }
 

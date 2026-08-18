@@ -55,7 +55,7 @@ export function calculateExpiry(startDate, durationMonths) {
 export function isPackageActive(row) {
   if (!row.package_status || row.package_status === 'none') return false;
   if (row.package_status !== 'active') return false;
-  if (!row.package_expires_at) return false;
+  if (!row.package_expires_at) return true;
   return new Date(row.package_expires_at) > new Date();
 }
 
