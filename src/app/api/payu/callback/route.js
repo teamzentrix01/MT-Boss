@@ -59,7 +59,8 @@ export async function POST(req) {
           await client.query(
             `UPDATE service_bookings
              SET status = 'COMPLETED', user_status = 'COMPLETED', payment_status = 'PAID',
-                 user_paid_amount = $1, payment_gateway = 'PAYU', payment_gateway_id = $2,
+                 user_paid_amount = COALESCE(user_paid_amount, 0) + $1,
+                 payment_gateway = 'PAYU', payment_gateway_id = $2,
                  payment_completed_at = NOW(), completed_at = NOW()
              WHERE id = $3 AND status = 'AWAITING_PAYMENT'`,
             [intent.amount, String(fields.mihpayid || ''), intent.entity_id]
@@ -187,7 +188,7 @@ export async function POST(req) {
              AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
              AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
              AND v.package_status = 'active'
-             AND v.package_expires_at > NOW()`,
+             AND (v.package_expires_at IS NULL OR v.package_expires_at > NOW())`,
           [booking.service_city, booking.quick_service_id]
         );
 
@@ -197,6 +198,7 @@ export async function POST(req) {
         await client.query(
           `UPDATE service_bookings
            SET status = $1, user_status = $2, payment_status = 'PAID',
+               user_paid_amount = COALESCE(user_paid_amount, 0) + total_amount,
                payment_gateway_id = $3, payment_completed_at = NOW()
            WHERE id = $4`,
           [nextStatus, nextStatus, String(fields.mihpayid || ''), booking.id]

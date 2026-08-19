@@ -39,7 +39,8 @@ function PaymentModal({ booking, isDark, onClose }) {
         body: JSON.stringify({}),
       });
       const data = await res.json();
-      if (data.success) redirectToPayU(data.payment);
+      if (data.success && data.payment) redirectToPayU(data.payment);
+      else if (data.success && data.completed) window.location.reload();
       else setError(data.error || 'Failed to start payment');
     } catch { setError('Something went wrong. Try again.'); }
     finally { setLoading(false); }

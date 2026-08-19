@@ -63,7 +63,7 @@ export async function POST(req, { params }) {
                AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
                AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
                AND v.package_status = 'active'
-               AND v.package_expires_at > NOW()
+               AND (v.package_expires_at IS NULL OR v.package_expires_at > NOW())
            )
          RETURNING id, booking_reference, total_amount, user_id, user_email`,
         [vendorId, bookingId, hashOtp(startOtp)]

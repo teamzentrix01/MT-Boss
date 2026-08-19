@@ -237,7 +237,7 @@ export async function POST(req) {
            AND LOWER(COALESCE(v.status, 'active')) IN ('active', 'approved')
            AND COALESCE(v.verification_status, 'verified') IN ('verified', 'approved')
            AND v.package_status = 'active'
-           AND v.package_expires_at > NOW()`,
+           AND (v.package_expires_at IS NULL OR v.package_expires_at > NOW())`,
         [selectedCity, quick_service_id]
       );
     }

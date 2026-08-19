@@ -27,7 +27,9 @@ export async function POST(req, { params }) {
     }
 
     const booking = await pool.query(
-      `SELECT id, finish_otp, finish_otp_verified, finish_otp_generated_at, COALESCE(finish_otp_attempts, 0) AS finish_otp_attempts, status, slot_type, payment_status
+      `SELECT id, finish_otp, finish_otp_verified, finish_otp_generated_at,
+              COALESCE(finish_otp_attempts, 0) AS finish_otp_attempts,
+              status, slot_type, payment_status, total_amount, final_amount, user_paid_amount
        FROM service_bookings
        WHERE id = $1
          AND vendor_id = $2
@@ -72,8 +74,11 @@ export async function POST(req, { params }) {
 
     // Verify finish OTP → move to AWAITING_PAYMENT
     const isFreeBooking = row.slot_type === 'free' || row.payment_status === 'FREE';
-    const nextStatus = isFreeBooking ? 'COMPLETED' : 'AWAITING_PAYMENT';
-    const completedAtSql = isFreeBooking ? ', completed_at = NOW()' : '';
+    const finalAmount = Number(row.final_amount || row.total_amount || 0);
+    const paidAmount = Number(row.user_paid_amount || 0);
+    const isAlreadyPaid = row.payment_status === 'PAID' && paidAmount >= finalAmount;
+    const nextStatus = (isFreeBooking || isAlreadyPaid) ? 'COMPLETED' : 'AWAITING_PAYMENT';
+    const completedAtSql = nextStatus === 'COMPLETED' ? ', completed_at = NOW()' : '';
 
     const result = await pool.query(
       `UPDATE service_bookings
@@ -96,7 +101,9 @@ export async function POST(req, { params }) {
       success: true,
       message: isFreeBooking
         ? 'Finish OTP verified! Free slot service completed.'
-        : 'Finish OTP verified! Work complete. Awaiting customer payment confirmation.',
+        : isAlreadyPaid
+          ? 'Finish OTP verified! Paid service completed.'
+          : 'Finish OTP verified! Work complete. Awaiting customer payment confirmation.',
       booking: result.rows[0],
     });
   } catch (error) {

@@ -20,7 +20,7 @@ export async function POST(req, { params }) {
     const { is_quick_job, extra_amount, vendor_note } = await req.json();
 
     const bookingRow = await pool.query(
-      `SELECT base_amount, status, finish_otp_verified
+      `SELECT base_amount, total_amount, user_paid_amount, payment_status, status, finish_otp_verified
        FROM service_bookings
        WHERE id = $1 AND vendor_id = $2`,
       [bookingId, vendorId]
@@ -38,6 +38,10 @@ export async function POST(req, { params }) {
 
     const base = parseFloat(bookingRow.rows[0].base_amount);
     const finalAmount = is_quick_job ? base : base + parseFloat(extra_amount || 0);
+    const paidAmount = Number(bookingRow.rows[0].user_paid_amount || 0);
+    const isAlreadyPaid = bookingRow.rows[0].payment_status === 'PAID' && paidAmount >= finalAmount;
+    const nextStatus = isAlreadyPaid ? 'COMPLETED' : 'AWAITING_PAYMENT';
+    const completedAtSql = isAlreadyPaid ? ', completed_at = NOW()' : '';
 
     const result = await pool.query(
       `UPDATE service_bookings
@@ -45,16 +49,20 @@ export async function POST(req, { params }) {
            extra_amount   = $2,
            is_quick_job   = $3,
            vendor_notes   = $4,
-           status         = 'AWAITING_PAYMENT',
+           status         = $7,
+           user_status    = $7,
            vendor_status  = 'COMPLETED'
+           ${completedAtSql}
        WHERE id = $5 AND vendor_id = $6
        RETURNING id, user_id, base_amount, final_amount, is_quick_job`,
-      [finalAmount, is_quick_job ? 0 : parseFloat(extra_amount || 0), is_quick_job, vendor_note, bookingId, vendorId]
+      [finalAmount, is_quick_job ? 0 : parseFloat(extra_amount || 0), is_quick_job, vendor_note, bookingId, vendorId, nextStatus]
     );
 
     return NextResponse.json({
       success: true,
-      message: 'Work marked complete. Awaiting payment confirmation.',
+      message: isAlreadyPaid
+        ? 'Work marked complete. Payment already received.'
+        : 'Work marked complete. Awaiting payment confirmation.',
       booking: result.rows[0],
     });
 

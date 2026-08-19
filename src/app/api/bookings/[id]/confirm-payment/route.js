@@ -37,8 +37,8 @@ export async function POST(req, { params }) {
       `UPDATE service_bookings
        SET status = 'COMPLETED',
            user_status = 'COMPLETED',
-           payment_status = 'CONFIRMED',
-           user_paid_amount = $1,
+           payment_status = 'PAID',
+           user_paid_amount = COALESCE(user_paid_amount, 0) + $1,
            user_notes = $2,
            completed_at = NOW()
        WHERE id = $3

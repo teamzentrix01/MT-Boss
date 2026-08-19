@@ -12,7 +12,11 @@ export async function POST(req, { params }) {
     const { id } = await params;
     const result = await pool.query(
       `SELECT sb.id, sb.booking_reference, sb.user_name, sb.user_email, sb.user_phone,
-              COALESCE(sb.final_amount, sb.total_amount) AS payable_amount
+              GREATEST(
+                COALESCE(sb.final_amount, sb.total_amount, sb.base_amount, 0)
+                - COALESCE(sb.user_paid_amount, CASE WHEN sb.payment_status = 'PAID' THEN sb.total_amount ELSE 0 END, 0),
+                0
+              ) AS payable_amount
        FROM service_bookings sb
        WHERE sb.id = $1 AND sb.status = 'AWAITING_PAYMENT'
          AND (($2::INTEGER IS NOT NULL AND sb.user_id = $2)
@@ -26,7 +30,17 @@ export async function POST(req, { params }) {
     const booking = result.rows[0];
     const amount = Number(booking.payable_amount);
     if (!Number.isFinite(amount) || amount <= 0) {
-      return NextResponse.json({ error: 'The payable amount is invalid' }, { status: 400 });
+      await pool.query(
+        `UPDATE service_bookings
+            SET status = 'COMPLETED',
+                user_status = 'COMPLETED',
+                vendor_status = 'COMPLETED',
+                completed_at = COALESCE(completed_at, NOW())
+          WHERE id = $1
+            AND status = 'AWAITING_PAYMENT'`,
+        [booking.id]
+      );
+      return NextResponse.json({ success: true, already_paid: true, completed: true });
     }
 
     const txnid = newPayUTxnId('BFP');

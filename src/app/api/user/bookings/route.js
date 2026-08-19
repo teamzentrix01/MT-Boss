@@ -18,6 +18,19 @@ export async function GET(req) {
     }
     await ensureServiceBookingSubcategorySchema();
 
+    await pool.query(
+      `UPDATE service_bookings
+          SET status = 'COMPLETED',
+              user_status = 'COMPLETED',
+              vendor_status = 'COMPLETED',
+              user_paid_amount = COALESCE(user_paid_amount, total_amount),
+              completed_at = COALESCE(completed_at, NOW())
+        WHERE status = 'AWAITING_PAYMENT'
+          AND payment_status = 'PAID'
+          AND COALESCE(finish_otp_verified, FALSE) = TRUE
+          AND COALESCE(final_amount, total_amount, base_amount, 0) <= COALESCE(user_paid_amount, total_amount, 0)`
+    );
+
     const userId = decoded.id && decoded.id !== 0 ? decoded.id : null;
     const userEmail = decoded.email || null;
 
