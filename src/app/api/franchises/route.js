@@ -6,7 +6,10 @@ import { sendMail } from '@/lib/email';
 import { normalizePhone, validateContactFields, isValidEmail } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
 import { ensureFranchiseAccessColumns } from '@/lib/franchise-access';
-import { resolveFranchisePermissionDependencies } from '@/lib/franchise-permissions';
+import {
+  DEFAULT_APPROVED_FRANCHISE_PERMISSIONS,
+  resolveFranchisePermissionDependencies,
+} from '@/lib/franchise-permissions';
 import { resolveManagedCity } from '@/lib/cities';
 import { createPayURequest } from '@/lib/payu';
 import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
@@ -51,6 +54,10 @@ function getFranchiseRegistrationFee(model) {
     throw new Error('Franchise registration fee is not configured');
   }
   return amount;
+}
+
+function hasSavedPermissions(value) {
+  return value && typeof value === 'object' && Object.values(value).some(Boolean);
 }
 
 async function cityTaken(city, excludeId = null) {
@@ -457,16 +464,20 @@ export async function PATCH(req) {
 
     let result;
     let generatedPassword = null;
+    const nextPermissions = status === 'Approved' && !hasSavedPermissions(current.permissions)
+      ? resolveFranchisePermissionDependencies(DEFAULT_APPROVED_FRANCHISE_PERMISSIONS)
+      : current.permissions;
     if (status === 'Approved' && !current.password_hash) {
       generatedPassword = randomPassword();
       const passwordHash = await bcrypt.hash(generatedPassword, 10);
       result = await pool.query(
         `UPDATE franchises
          SET status = $1::VARCHAR, password_hash = $2, approved_at = NOW(),
-             approved_by_email = $3, login_enabled = TRUE
+             approved_by_email = $3, login_enabled = TRUE,
+             permissions = $5::jsonb
          WHERE id = $4
          RETURNING *`,
-        [status, passwordHash, admin.email, id]
+        [status, passwordHash, admin.email, id, JSON.stringify(nextPermissions)]
       );
     } else {
       result = await pool.query(
@@ -474,10 +485,11 @@ export async function PATCH(req) {
          SET status = $1::VARCHAR,
              login_enabled = CASE WHEN $1::VARCHAR = 'Approved' THEN TRUE ELSE FALSE END,
              approved_at = CASE WHEN $1::VARCHAR = 'Approved' THEN COALESCE(approved_at, NOW()) ELSE approved_at END,
-             approved_by_email = CASE WHEN $1::VARCHAR = 'Approved' THEN COALESCE(approved_by_email, $2) ELSE approved_by_email END
+             approved_by_email = CASE WHEN $1::VARCHAR = 'Approved' THEN COALESCE(approved_by_email, $2) ELSE approved_by_email END,
+             permissions = CASE WHEN $1::VARCHAR = 'Approved' THEN $4::jsonb ELSE permissions END
          WHERE id = $3
          RETURNING *`,
-        [status, admin.email, id]
+        [status, admin.email, id, JSON.stringify(nextPermissions)]
       );
     }
 

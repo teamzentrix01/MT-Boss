@@ -55,9 +55,10 @@ export async function GET(req) {
         `SELECT l.*, a.name AS agent_name
          FROM agent_leads l
          LEFT JOIN agents a ON a.id = l.agent_id
-         WHERE LOWER(TRIM(COALESCE(l.city, ''))) = LOWER(TRIM($1))
+         WHERE l.assigned_franchise_id = $1
+           AND LOWER(TRIM(COALESCE(l.city, ''))) = LOWER(TRIM($2))
          ORDER BY l.created_at DESC`,
-        [access.franchise.city]
+        [access.franchise.id, access.franchise.city]
       );
 
     const data = leads.rows.map((lead) => filterLead(lead, access.permissions));

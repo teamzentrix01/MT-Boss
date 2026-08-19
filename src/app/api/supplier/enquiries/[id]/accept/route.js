@@ -4,6 +4,7 @@ import { sendEnquiryAcceptedEmail } from '@/lib/email';
 import { requireRole } from '@/lib/auth';
 import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material-orders';
 import { ensurePackageSchema } from '@/lib/packages';
+import { materialCategoryMatches, materialLeadStartAt } from '@/lib/material-lead-matching';
 
 function getSupplier(req) {
   return requireRole(req, 'supplier');
@@ -23,7 +24,8 @@ export async function POST(req, { params }) {
       await client.query('BEGIN');
 
       const supplierCheck = await client.query(
-        `SELECT id, product_categories, city, is_active, package_status, package_purchased_at, package_starts_at, package_expires_at, created_at
+        `SELECT id, product_categories, city, is_active, package_status, package_duration_months,
+                package_purchased_at, package_starts_at, package_expires_at, created_at
            FROM suppliers
           WHERE id = $1
             AND is_active = TRUE
@@ -53,22 +55,10 @@ export async function POST(req, { params }) {
 
       const enquiry = check.rows[0];
       const supplier = supplierCheck.rows[0];
-      const leadStartAt = supplier.package_starts_at || supplier.package_purchased_at || supplier.created_at || new Date(0);
+      const leadStartAt = materialLeadStartAt(supplier);
       const supplierCity = String(supplier.city || '').trim().toLowerCase();
       const enquiryCity = String(enquiry.selected_city || '').trim().toLowerCase();
-      const enquiryWords = new Set(
-        String(enquiry.category_name || '')
-          .toLowerCase()
-          .split(/[^a-z0-9]+/)
-          .filter((word) => word.length >= 3)
-      );
-      const categoryAllowed = (supplier.product_categories || []).some((category) => (
-        String(category || '')
-          .toLowerCase()
-          .split(/[^a-z0-9]+/)
-          .filter((word) => word.length >= 3)
-          .some((word) => enquiryWords.has(word))
-      ));
+      const categoryAllowed = materialCategoryMatches(enquiry.category_name, supplier.product_categories || []);
       if (
         new Date(enquiry.created_at) < new Date(leadStartAt)
         || !supplierCity

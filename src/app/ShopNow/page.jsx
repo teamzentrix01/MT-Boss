@@ -112,6 +112,7 @@ export default function ShopPage() {
   // GPS
   const [locationStatus, setLocationStatus] = useState("idle");
   const [locationCoords, setLocationCoords] = useState(null);
+  const [locationError, setLocationError] = useState("");
 
   // ── helpers ────────────────────────────────────────────────────────────────
   const dynamicTypes = productOptions.types || [];
@@ -152,10 +153,10 @@ export default function ShopPage() {
     setProductOptions({ products: [], types: [], units: [] });
     setBrandCompany("");
     setDeliveryDate("");
-    setLocationStatus("loading");
+    setLocationStatus("idle");
     setLocationCoords(null);
+    setLocationError("");
     setIsModalOpen(true);
-    requestLocation();
   };
 
   useEffect(() => {
@@ -170,21 +171,49 @@ export default function ShopPage() {
       .finally(() => setLoadingProductOptions(false));
   }, [selectedCategory?.name]);
 
+  const fillAddressFromCoords = async (latitude, longitude) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
+        { headers: { 'Accept-Language': 'en' } }
+      );
+      const data = await response.json();
+      if (data.display_name) {
+        setFormData((prev) => ({
+          ...prev,
+          address: prev.address?.trim() ? prev.address : data.display_name,
+        }));
+      }
+    } catch {
+      // Keep the captured coordinates even if reverse geocoding is unavailable.
+    }
+  };
+
   const requestLocation = () => {
-    if (!navigator.geolocation) { setLocationStatus("error"); return; }
+    if (!navigator.geolocation) {
+      setLocationStatus("error");
+      setLocationError("Geolocation is not supported by your browser.");
+      return;
+    }
     setLocationStatus("loading");
+    setLocationError("");
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      async (pos) => {
         setLocationCoords({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
         setLocationStatus("success");
+        await fillAddressFromCoords(pos.coords.latitude, pos.coords.longitude);
       },
       // A normal browser location is still useful for delivery when precise GPS is unavailable.
       () => navigator.geolocation.getCurrentPosition(
-        (pos) => {
+        async (pos) => {
           setLocationCoords({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
           setLocationStatus("success");
+          await fillAddressFromCoords(pos.coords.latitude, pos.coords.longitude);
         },
-        () => setLocationStatus("error"),
+        () => {
+          setLocationStatus("error");
+          setLocationError("Could not access location. Please allow GPS permission and try again.");
+        },
         { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
       ),
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
@@ -254,6 +283,12 @@ export default function ShopPage() {
         setSubmitting(false);
         return;
       }
+    }
+
+    if (!locationCoords?.latitude || !locationCoords?.longitude) {
+      setSubmitError("Please click 'Get Live Location' before submitting this material enquiry.");
+      setSubmitting(false);
+      return;
     }
 
     try {
@@ -777,13 +812,27 @@ export default function ShopPage() {
                     <span className={`text-[10px] font-bold ${isDarkMode ? "text-zinc-400" : "text-gray-500"}`}>
                       Share your location for faster supplier matching
                     </span>
-                    {locationStatus !== "loading" && (
+                    {locationStatus === "success" && (
                       <button type="button" onClick={retryLocation}
                         className={`text-[10px] font-bold px-2 py-0.5 rounded border transition-all ${isDarkMode ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue-light)]" : "border-gray-300 text-gray-500 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue-deep)]"}`}>
                         🔄 Retry
                       </button>
                     )}
                   </div>
+
+                  {(locationStatus === "idle" || locationStatus === "error") && (
+                    <button
+                      type="button"
+                      onClick={retryLocation}
+                      className={`w-full py-2.5 px-3 mb-2 text-[10px] font-black uppercase tracking-widest border transition-all ${
+                        isDarkMode
+                          ? "border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/10"
+                          : "border-zinc-900 text-zinc-900 hover:bg-zinc-100"
+                      }`}
+                    >
+                      {locationStatus === "error" ? "Try Again - Get Live Location" : "Get Live Location"}
+                    </button>
+                  )}
 
                   {locationStatus === "loading" && (
                     <div className={`flex items-center gap-2 px-3 py-3 rounded-lg border ${isDarkMode ? "border-[var(--brand-blue-deeper)] bg-[var(--brand-blue-ink)]/10" : "border-[var(--brand-blue-lighter)] bg-sky-50"}`}>

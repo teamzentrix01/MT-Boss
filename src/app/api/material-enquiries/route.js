@@ -96,6 +96,11 @@ export async function POST(req) {
     if (!canonicalCity) {
       return NextResponse.json({ success: false, error: 'Select an active delivery city' }, { status: 400 });
     }
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      return NextResponse.json({ success: false, error: 'Live location is required for material enquiries' }, { status: 400 });
+    }
 
     const client = await pool.connect();
     try {
@@ -115,7 +120,7 @@ export async function POST(req) {
           category_name, category_emoji || '',
           material_type || null, subcategory_name || null, brand_company || null,
           quantity_text || null, order_unit || null, delivery_date || null,
-          delivery_address || null, latitude || null, longitude || null,
+          delivery_address || null, lat, lng,
           message || null, canonicalCity,
         ]
       );

@@ -2,24 +2,10 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { ensurePackageSchema } from '@/lib/packages';
+import { materialCategoryMatches, materialLeadStartAt } from '@/lib/material-lead-matching';
 
 function getSupplier(req) {
   return requireRole(req, 'supplier');
-}
-
-// Extract meaningful keywords (≥3 chars) from a string
-function keywords(str) {
-  return (str || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .split(/\s+/)
-    .filter(w => w.length >= 3);
-}
-
-// True if any keyword from enquiry category matches any keyword from supplier category
-function categoryMatches(enquiryCat, supplierCategories) {
-  const eKw = new Set(keywords(enquiryCat));
-  return supplierCategories.some(sc => keywords(sc).some(k => eKw.has(k)));
 }
 
 // True only when both cities are present and match (case-insensitive)
@@ -36,7 +22,8 @@ export async function GET(req) {
 
     // Fetch this supplier's registered product categories and city from DB
     const supplierRes = await pool.query(
-      `SELECT product_categories, is_active, city, package_status, package_purchased_at, package_starts_at, package_expires_at, created_at
+      `SELECT product_categories, is_active, city, package_status, package_duration_months,
+              package_purchased_at, package_starts_at, package_expires_at, created_at
        FROM suppliers WHERE id = $1`,
       [decoded.id]
     );
@@ -49,6 +36,7 @@ export async function GET(req) {
       is_active,
       city: supplierCity,
       package_status,
+      package_duration_months,
       package_purchased_at,
       package_starts_at,
       package_expires_at,
@@ -56,7 +44,13 @@ export async function GET(req) {
     } = supplierRes.rows[0];
     const packageActive = package_status === 'active'
       && (!package_expires_at || new Date(package_expires_at) > new Date());
-    const leadStartAt = package_starts_at || package_purchased_at || created_at || new Date(0);
+    const leadStartAt = materialLeadStartAt({
+      package_starts_at,
+      package_purchased_at,
+      package_expires_at,
+      package_duration_months,
+      created_at,
+    });
 
     // Inactive/unpaid suppliers see no new enquiries.
     if (!is_active || !packageActive) {
@@ -93,13 +87,13 @@ export async function GET(req) {
     const mine  = all.filter(e => e.accepted_by_supplier_id === decoded.id);
     const open  = all.filter(e =>
       e.status === 'open' &&
-      categoryMatches(e.category_name, myCategories) &&
+      materialCategoryMatches(e.category_name, myCategories) &&
       cityMatches(e.selected_city, supplierCity)
     );
     const taken = all.filter(e =>
       e.status === 'accepted' &&
       e.accepted_by_supplier_id !== decoded.id &&
-      categoryMatches(e.category_name, myCategories) &&
+      materialCategoryMatches(e.category_name, myCategories) &&
       cityMatches(e.selected_city, supplierCity)
     );
 

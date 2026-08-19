@@ -2,8 +2,10 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import {
+  DEFAULT_APPROVED_FRANCHISE_PERMISSIONS,
   LEGACY_FRANCHISE_PERMISSIONS,
   normalizeFranchisePermissions,
+  resolveFranchisePermissionDependencies,
 } from '@/lib/franchise-permissions';
 
 const legacyPermissionsSql = JSON.stringify(LEGACY_FRANCHISE_PERMISSIONS).replace(/'/g, "''");
@@ -25,6 +27,22 @@ export async function ensureFranchiseAccessColumns() {
   await pool.query(`
     ALTER TABLE franchises
       ALTER COLUMN permissions SET DEFAULT '{}'::jsonb
+  `);
+
+  const defaultApprovedPermissions = JSON.stringify(
+    resolveFranchisePermissionDependencies(DEFAULT_APPROVED_FRANCHISE_PERMISSIONS)
+  ).replace(/'/g, "''");
+
+  await pool.query(`
+    UPDATE franchises
+       SET permissions = '${defaultApprovedPermissions}'::jsonb
+     WHERE status = 'Approved'
+       AND login_enabled = TRUE
+       AND (
+         permissions IS NULL
+         OR permissions = '{}'::jsonb
+         OR permissions = 'null'::jsonb
+       )
   `);
 }
 

@@ -92,6 +92,42 @@ export const EMPTY_FRANCHISE_PERMISSIONS = Object.freeze(
   Object.fromEntries(FRANCHISE_PERMISSION_KEYS.map((key) => [key, false]))
 );
 
+export const DEFAULT_APPROVED_FRANCHISE_PERMISSIONS = Object.freeze({
+  'profile.change_password': true,
+  'dashboard.view_statistics': true,
+  'projects.view': true,
+  'projects.view_client_details': true,
+  'projects.view_notes': true,
+  'projects.view_assigned_agent': true,
+  'projects.create': true,
+  'projects.edit': true,
+  'projects.manage_stage': true,
+  'projects.manage_clients': true,
+  'projects.manage_notes': true,
+  'projects.manage_images': true,
+  'leads.view': true,
+  'leads.view_contact_details': true,
+  'leads.view_service_details': true,
+  'leads.view_source': true,
+  'leads.view_notes': true,
+  'leads.view_assigned_agent': true,
+  'leads.update_status': true,
+  'leads.update_stage': true,
+  'leads.update_follow_up': true,
+  'leads.edit_notes': true,
+  'leads.convert': true,
+  'agents.view': true,
+  'agents.view_contact_details': true,
+  'agents.assign_leads': true,
+  'agents.assign_projects': true,
+  'slots.view': true,
+  'slots.free.create': true,
+  'slots.free.edit': true,
+  'slots.paid.create': true,
+  'slots.paid.edit': true,
+  'vendors.view': true,
+});
+
 const LEGACY_EXPANSIONS = {
   'projects.view': ['dashboard.view_statistics', 'projects.view_client_details', 'projects.view_notes', 'projects.view_assigned_agent'],
   'projects.edit': [
