@@ -27,7 +27,7 @@ export async function GET(req, { params }) {
 
     const [vendorResult, bookingsResult, crmLeadsResult] = await Promise.all([
       pool.query(
-        `SELECT id, shop_name, email, phone, city, state, status, verification_status,
+        `SELECT id, vendor_name, shop_name, email, phone, city, state, status, verification_status,
                 is_approved, package_status, package_starts_at, package_expires_at, created_at, updated_at
            FROM vendors WHERE id=$1`,
         [id]

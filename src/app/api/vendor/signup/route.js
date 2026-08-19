@@ -13,7 +13,7 @@ export async function POST(req) {
   let client;
   let retryVendorId = null;
   try {
-    let email, password, phone, city, state, country, postal_code,
+    let vendor_name, email, password, phone, city, state, country, postal_code,
         aadhar_number, services, profilePhotoBuffer, profilePhotoMime,
         aadharImageBuffer, aadharImageMime, package_id, registration_otp;
 
@@ -30,6 +30,7 @@ export async function POST(req) {
       console.log('📨 [SIGNUP] Parsing FormData with file uploads...');
       
       const fd = await req.formData();
+      vendor_name   = fd.get('vendor_name');
       email         = fd.get('email');
       password      = fd.get('password');
       phone         = fd.get('phone');
@@ -58,6 +59,7 @@ export async function POST(req) {
     } else {
       console.log('📨 [SIGNUP] Parsing JSON request...');
       const body = await req.json();
+      vendor_name   = body.vendor_name;
       email         = body.email;
       password      = body.password;
       phone         = body.phone;
@@ -71,6 +73,7 @@ export async function POST(req) {
       registration_otp = body.registration_otp;
     }
 
+    vendor_name = cleanText(vendor_name);
     email = cleanText(email).toLowerCase();
     phone = normalizePhone(phone);
     postal_code = cleanText(postal_code);
@@ -83,10 +86,10 @@ export async function POST(req) {
     // VALIDATION
     // ════════════════════════════════════════════════════════════════
 
-    if (!email || !password || !phone || !canonicalManagedCity || !state || !postal_code) {
+    if (!vendor_name || !email || !password || !phone || !canonicalManagedCity || !state || !postal_code) {
       console.warn('❌ [SIGNUP] Missing required fields');
       return NextResponse.json(
-        { error: 'Missing required fields: email, password, phone, city, state, postal_code' },
+        { error: 'Missing required fields: vendor_name, email, password, phone, city, state, postal_code' },
         { status: 400 }
       );
     }
@@ -250,6 +253,7 @@ export async function POST(req) {
     console.log('🏗️ [SIGNUP] Building insert fields...');
     
     const fields = {
+      vendor_name,
       email,
       password_hash: hashedPassword,
       phone,
@@ -271,8 +275,8 @@ export async function POST(req) {
       fields.package_status = 'none';
     }
 
-    if (cols.has('shop_name'))     fields.shop_name     = email.split('@')[0];
-    if (cols.has('business_name')) fields.business_name = email.split('@')[0];
+    if (cols.has('shop_name'))     fields.shop_name     = vendor_name;
+    if (cols.has('business_name')) fields.business_name = vendor_name;
 
     if (cols.has('aadhar_number') && aadhar_number)
       fields.aadhar_number = aadhar_number;
@@ -302,7 +306,7 @@ export async function POST(req) {
     const insertSQL = `
       INSERT INTO vendors (${colNames.join(', ')}, created_at, updated_at)
       VALUES (${placeholders.join(', ')}, NOW(), NOW())
-      RETURNING id, email, phone, city, state, country, postal_code, 
+      RETURNING id, vendor_name, email, phone, city, state, country, postal_code,
                 status, verification_status, is_approved, created_at
     `;
     const updateSQL = `
@@ -310,7 +314,7 @@ export async function POST(req) {
       SET ${colNames.map((columnName, i) => `${columnName} = $${i + 1}`).join(', ')},
           updated_at = NOW()
       WHERE id = $${paramValues.length + 1}
-      RETURNING id, email, phone, city, state, country, postal_code,
+      RETURNING id, vendor_name, email, phone, city, state, country, postal_code,
                 status, verification_status, is_approved, created_at
     `;
 
@@ -406,7 +410,7 @@ export async function POST(req) {
         txnid,
         amount: pkg.price,
         productinfo: `MTBOSS vendor registration - ${pkg.label}`,
-        firstname: String(fields.shop_name || fields.business_name || email).trim().split(/\s+/)[0],
+        firstname: String(vendor_name || fields.shop_name || fields.business_name || email).trim().split(/\s+/)[0],
         email,
         phone,
         surl: callbackUrl,
@@ -434,6 +438,7 @@ export async function POST(req) {
       token: null,
       vendor: {
         id: vendor.id,
+        vendor_name: vendor.vendor_name,
         email: vendor.email,
         phone: vendor.phone,
         city: vendor.city,

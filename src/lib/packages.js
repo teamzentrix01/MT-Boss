@@ -11,6 +11,7 @@ export const PACKAGES = [
 export const ensurePackageSchema = createInitializationGuard(async () => {
   // Add package columns to vendors table
   const vendorAlters = [
+    `ALTER TABLE vendors ADD COLUMN IF NOT EXISTS vendor_name TEXT`,
     `ALTER TABLE vendors ADD COLUMN IF NOT EXISTS package_id TEXT`,
     `ALTER TABLE vendors ADD COLUMN IF NOT EXISTS package_name TEXT`,
     `ALTER TABLE vendors ADD COLUMN IF NOT EXISTS package_price NUMERIC DEFAULT 0`,

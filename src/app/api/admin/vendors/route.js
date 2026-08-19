@@ -27,7 +27,7 @@ export async function GET(req) {
 
     const result = await pool.query(
       `SELECT
-        v.id, v.email, v.shop_name, v.phone,
+        v.id, v.vendor_name, v.email, v.shop_name, v.phone,
         v.city, v.state, v.country, v.postal_code,
         v.aadhar_number,
         (v.profile_photo IS NOT NULL) AS profile_photo,

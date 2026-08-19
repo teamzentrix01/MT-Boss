@@ -22,6 +22,7 @@ export default function VendorSignupPage() {
   const aadharRef = useRef();
 
   const [formData, setFormData] = useState({
+    vendor_name: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -115,7 +116,7 @@ export default function VendorSignupPage() {
   const validateStep = (s) => {
     switch (s) {
       case 1:
-        if (!formData.email || !formData.password || !formData.confirmPassword || !formData.phone) {
+        if (!formData.vendor_name.trim() || !formData.email || !formData.password || !formData.confirmPassword || !formData.phone) {
           setError('All fields are required'); return false;
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -178,6 +179,7 @@ const handleSubmit = async (e) => {
     try {
       // Build FormData for file uploads
       const payload = new FormData();
+      payload.append('vendor_name', formData.vendor_name);
       payload.append('email', formData.email);
       payload.append('password', formData.password);
       payload.append('phone', formData.phone);
@@ -581,6 +583,19 @@ const handleSubmit = async (e) => {
               {/* STEP 1 */}
               {step === 1 && (
                 <>
+                  <div className="vs-field">
+                    <label className="vs-label">Vendor Name *</label>
+                    <input
+                      className="vs-input"
+                      type="text"
+                      name="vendor_name"
+                      value={formData.vendor_name}
+                      onChange={handleChange}
+                      placeholder="Your full name"
+                      autoComplete="name"
+                    />
+                  </div>
+
                   <div className="vs-field">
                     <label className="vs-label">Email Address *</label>
                     <input

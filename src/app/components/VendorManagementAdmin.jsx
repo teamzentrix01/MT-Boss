@@ -243,6 +243,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
 
     // Check search
     const matchesSearch = !searchTerm || 
+      v.vendor_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       v.shop_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       v.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       v.business_name?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -647,7 +648,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
         <table className="vendors-table">
           <thead>
             <tr>
-              <th>Shop Name</th>
+              <th>Vendor</th>
               <th>Email</th>
               <th>City</th>
               <th>Services</th>
@@ -660,7 +661,8 @@ export default function VendorManagementAdmin({ isDarkMode }) {
             {filteredVendors.map(vendor => (
               <tr key={vendor.id}>
                 <td>
-                  <div className="vendor-name">{vendor.shop_name || vendor.email}</div>
+                  <div className="vendor-name">{vendor.vendor_name || vendor.shop_name || vendor.email}</div>
+                  <div className="vendor-meta">{vendor.shop_name || 'Shop not added'}</div>
                   <div className="vendor-meta">{vendor.city}, {vendor.state}</div>
                 </td>
                 <td className="vendor-meta">{vendor.email}</td>
@@ -708,8 +710,11 @@ export default function VendorManagementAdmin({ isDarkMode }) {
                   </div>
                 )}
                 <div>
-                  <div className="modal-title">{selectedVendor.shop_name || selectedVendor.email}</div>
+                  <div className="modal-title">{selectedVendor.vendor_name || selectedVendor.shop_name || selectedVendor.email}</div>
                   <div style={{ fontSize:'0.8rem', color: isDarkMode?'#999':'#666', marginTop:'0.1rem' }}>{selectedVendor.email}</div>
+                  {selectedVendor.shop_name && selectedVendor.shop_name !== selectedVendor.vendor_name && (
+                    <div style={{ fontSize:'0.8rem', color: isDarkMode?'#999':'#666', marginTop:'0.1rem' }}>{selectedVendor.shop_name}</div>
+                  )}
                 </div>
               </div>
               <button className="modal-close" onClick={() => setSelectedVendor(null)}>✕</button>
@@ -719,6 +724,10 @@ export default function VendorManagementAdmin({ isDarkMode }) {
             <div className="modal-section">
               <div className="modal-section-title">Contact & Location</div>
               <div className="modal-grid">
+                <div className="modal-field">
+                  <div className="modal-label">Vendor Name</div>
+                  <div className="modal-value">{selectedVendor.vendor_name || '-'}</div>
+                </div>
                 <div className="modal-field">
                   <div className="modal-label">Phone</div>
                   <div className="modal-value">{selectedVendor.phone || '—'}</div>
