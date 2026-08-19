@@ -11,6 +11,20 @@ export async function GET(req, { params }) {
     if (!requireAdmin(req)) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     await Promise.all([ensureAgentSchema(), ensureServiceBookingSubcategorySchema(), ensurePackageSchema()]);
     const { id } = await params;
+
+    await pool.query(
+      `UPDATE service_bookings
+          SET status = 'COMPLETED',
+              user_status = 'COMPLETED',
+              vendor_status = 'COMPLETED',
+              user_paid_amount = COALESCE(user_paid_amount, total_amount),
+              completed_at = COALESCE(completed_at, NOW())
+        WHERE status = 'AWAITING_PAYMENT'
+          AND payment_status = 'PAID'
+          AND COALESCE(finish_otp_verified, FALSE) = TRUE
+          AND COALESCE(final_amount, total_amount, base_amount, 0) <= COALESCE(user_paid_amount, total_amount, 0)`
+    );
+
     const [vendorResult, bookingsResult, crmLeadsResult] = await Promise.all([
       pool.query(
         `SELECT id, shop_name, email, phone, city, state, status, verification_status,
@@ -19,25 +33,61 @@ export async function GET(req, { params }) {
         [id]
       ),
       pool.query(
-        `SELECT sb.id, sb.booking_reference, sb.status, sb.user_name, sb.user_phone,
+        `WITH target_vendor AS (
+           SELECT id, email, phone FROM vendors WHERE id = $1
+         ),
+         linked_vendors AS (
+           SELECT v.id
+             FROM vendors v
+             CROSS JOIN target_vendor tv
+            WHERE v.id = tv.id
+               OR (
+                 NULLIF(regexp_replace(COALESCE(v.phone, ''), '\\D', '', 'g'), '') IS NOT NULL
+                 AND regexp_replace(COALESCE(v.phone, ''), '\\D', '', 'g') = regexp_replace(COALESCE(tv.phone, ''), '\\D', '', 'g')
+               )
+               OR (
+                 NULLIF(TRIM(COALESCE(v.email, '')), '') IS NOT NULL
+                 AND LOWER(TRIM(v.email)) = LOWER(TRIM(COALESCE(tv.email, '')))
+               )
+         )
+         SELECT sb.id, sb.booking_reference, sb.status, sb.user_name, sb.user_phone,
                 sb.service_address, sb.service_city, sb.booking_date, sb.booking_time,
                 sb.service_subcategory, sb.service_description, sb.final_amount,
+                sb.vendor_id, assigned_vendor.shop_name AS assigned_vendor_name,
                 sb.created_at, sb.accepted_at, sb.completed_at, qs.label AS service_label
            FROM service_bookings sb
+           JOIN linked_vendors lv ON lv.id = sb.vendor_id
            LEFT JOIN quick_services qs ON qs.id=sb.quick_service_id
-          WHERE sb.vendor_id=$1
+           LEFT JOIN vendors assigned_vendor ON assigned_vendor.id = sb.vendor_id
           ORDER BY COALESCE(sb.completed_at, sb.accepted_at, sb.created_at) DESC
           LIMIT 100`,
         [id]
       ),
       pool.query(
-        `SELECT l.id, l.client_name, l.client_phone, l.client_email, l.city, l.service_type,
+        `WITH target_vendor AS (
+           SELECT id, email, phone FROM vendors WHERE id = $1
+         ),
+         linked_vendors AS (
+           SELECT v.id
+             FROM vendors v
+             CROSS JOIN target_vendor tv
+            WHERE v.id = tv.id
+               OR (
+                 NULLIF(regexp_replace(COALESCE(v.phone, ''), '\\D', '', 'g'), '') IS NOT NULL
+                 AND regexp_replace(COALESCE(v.phone, ''), '\\D', '', 'g') = regexp_replace(COALESCE(tv.phone, ''), '\\D', '', 'g')
+               )
+               OR (
+                 NULLIF(TRIM(COALESCE(v.email, '')), '') IS NOT NULL
+                 AND LOWER(TRIM(v.email)) = LOWER(TRIM(COALESCE(tv.email, '')))
+               )
+         )
+         SELECT l.id, l.client_name, l.client_phone, l.client_email, l.city, l.service_type,
                 l.lead_type, l.status, l.lead_stage, l.follow_up_date, l.client_requirement,
                 l.notes, l.final_amount, l.updated_at, l.created_at,
                 a.name AS agent_name
           FROM agent_leads l
+           JOIN linked_vendors lv ON lv.id = l.assigned_vendor_id
            LEFT JOIN agents a ON a.id=l.agent_id
-          WHERE l.assigned_vendor_id=$1
           ORDER BY l.updated_at DESC
           LIMIT 100`,
         [id]
