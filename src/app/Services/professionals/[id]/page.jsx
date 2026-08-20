@@ -124,11 +124,6 @@ export default function ProfessionalProfilePage() {
 
   const specializations = parseArr(pro.specializations);
   const portfolio       = parseArr(pro.portfolio_images);
-  const socials = [
-    pro.website   && { icon: '🌐', label: 'Website',   href: pro.website.startsWith('http')   ? pro.website   : `https://${pro.website}` },
-    pro.instagram && { icon: '📸', label: 'Instagram', href: pro.instagram.startsWith('http') ? pro.instagram : `https://instagram.com/${pro.instagram.replace('@','')}` },
-    pro.linkedin  && { icon: '💼', label: 'LinkedIn',  href: pro.linkedin.startsWith('http')  ? pro.linkedin  : `https://linkedin.com/in/${pro.linkedin}` },
-  ].filter(Boolean);
 
   const firstName = pro.name?.split(' ')[0] || 'Professional';
 
@@ -250,24 +245,6 @@ export default function ProfessionalProfilePage() {
                 </p>
               </div>
             </div>
-
-            {/* Social Links */}
-            {socials.length > 0 && (
-              <div style={{ background: t.card, border: `1px solid ${t.border}`, marginBottom: '16px', overflow: 'hidden' }}>
-                <div style={{ background: isDark ? '#0d0d0d' : '#f9fafb', padding: '14px 20px', borderBottom: `1px solid ${t.border}` }}>
-                  <p style={{ margin: 0, fontSize: '9px', fontWeight: 800, color: t.accent, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Social & Web</p>
-                </div>
-                <div style={{ padding: '8px 0' }}>
-                  {socials.map((s, i) => (
-                    <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" className="social-row"
-                      style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 20px', color: t.accent, textDecoration: 'none', fontSize: '12px', fontWeight: 700, transition: 'background 0.12s' }}>
-                      <span style={{ width: '34px', height: '34px', background: isDark ? '#1c1c1c' : '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', flexShrink: 0, border: `1px solid ${t.border}` }}>{s.icon}</span>
-                      {s.label} ↗
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Quick Info */}
             <div style={{ background: t.card, border: `1px solid ${t.border}`, marginBottom: '16px', overflow: 'hidden' }}>

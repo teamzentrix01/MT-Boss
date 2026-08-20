@@ -112,7 +112,7 @@ function t(dark) {
 
 const EMPTY = {
   name:'', title:'', category:CATEGORIES[0], experience:'', city:'', phone:'', email:'',
-  description:'', website:'', instagram:'', linkedin:'', certifications:'', specializations:'',
+  description:'', certifications:'', specializations:'',
 };
 
 // Returns [formFields, profilePicUrl, portfolioUrls[]]
@@ -130,9 +130,6 @@ function toFormState(pro) {
       phone: pro.phone || '',
       email: pro.email || '',
       description: pro.description || '',
-      website: pro.website || '',
-      instagram: pro.instagram || '',
-      linkedin: pro.linkedin || '',
       certifications: pro.certifications || '',
       specializations: Array.isArray(pro.specializations)
         ? pro.specializations.join(', ')
@@ -332,15 +329,6 @@ export default function ProfessionalServicesManager({ isDarkMode }) {
               </div>
               <div style={{ gridColumn:'span 2' }}>
                 <MultiImageUpload label="Portfolio Images (up to 8)" value={portfolioImgs} onChange={setPortfolioImgs} border={th.border} inputBg={th.inputBg} sub={th.sub} />
-              </div>
-              {/* ── Social links ── */}
-              <div style={{ gridColumn:'span 2', borderTop:`1px solid ${th.border}`, paddingTop:'12px', marginTop:'2px' }}>
-                <p style={{ color:th.muted, fontSize:'10px', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', margin:'0 0 12px' }}>Social &amp; Web Links</p>
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
-                  <div><label style={lbl}>Website</label><input style={inp} value={form.website} onChange={set('website')} /></div>
-                  <div><label style={lbl}>Instagram</label><input style={inp} value={form.instagram} onChange={set('instagram')} /></div>
-                  <div style={{ gridColumn:'span 2' }}><label style={lbl}>LinkedIn</label><input style={inp} value={form.linkedin} onChange={set('linkedin')} /></div>
-                </div>
               </div>
             </div>
             <div style={{ display:'flex', gap:'12px', marginTop:'22px' }}>

@@ -293,8 +293,9 @@ function FranchisePageContent() {
       return;
     }
 
-    // Also send email notification
-    await fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
+    // Send email notification in the background; PayU redirect must not wait on
+    // FormSubmit because that external call can be slow/blocked by the browser.
+    void fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
@@ -310,11 +311,16 @@ function FranchisePageContent() {
         "_template": "table",
         "_captcha": "false",
       }),
+    }).catch((mailError) => {
+      console.warn("Franchise notification email failed:", mailError);
     });
 
+    if (!dbData.payment) {
+      throw new Error("Payment details were not returned by the server.");
+    }
     redirectToPayU(dbData.payment);
   } catch (err) {
-    setError("Network error. Please try again.");
+    setError(err.message || "Network error. Please try again.");
   } finally {
     setLoading(false);
   }

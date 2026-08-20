@@ -209,7 +209,7 @@ function ApplyModal({ isDark, onClose }) {
   const [form, setForm] = useState({
     name:'', title:'', category:'Interior Designer', experience:'',
     city:'', phone:'', email:'', description:'', certifications:'',
-    specializations:'', website:'', instagram:'', linkedin:'',
+    specializations:'',
   });
   const [profilePic, setProfilePic] = useState('');       // Cloudinary URL
   const [portfolioImgs, setPortfolioImgs] = useState([]); // Cloudinary URLs[]
@@ -298,15 +298,6 @@ function ApplyModal({ isDark, onClose }) {
                   <MultiImageUpload label="Portfolio Images (up to 8)" value={portfolioImgs} onChange={setPortfolioImgs} isDark={isDark} />
                 </div>
 
-                {/* ── Social links only ── */}
-                <div style={{ gridColumn:'span 2',borderTop:`1px solid ${t.border}`,paddingTop:'14px',marginTop:'2px' }}>
-                  <p style={{ color:t.muted,fontSize:'10px',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',margin:'0 0 12px' }}>Social & Web Links</p>
-                  <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px' }}>
-                    <div><label style={lbl}>Website</label><input style={inp} value={form.website} onChange={set('website')} placeholder="https://yoursite.com" /></div>
-                    <div><label style={lbl}>Instagram</label><input style={inp} value={form.instagram} onChange={set('instagram')} placeholder="@handle" /></div>
-                    <div style={{ gridColumn:'span 2' }}><label style={lbl}>LinkedIn</label><input style={inp} value={form.linkedin} onChange={set('linkedin')} placeholder="https://linkedin.com/in/…" /></div>
-                  </div>
-                </div>
               </div>
 
               <button type="submit" disabled={sending}
@@ -391,9 +382,6 @@ function ProfileModal({ pro, isDark, onEnquire, onClose }) {
             {[
               pro.email    && { icon:'✉️', val:pro.email,    href:`mailto:${pro.email}` },
               pro.phone    && { icon:'📞', val:pro.phone,    href:`tel:${pro.phone}` },
-              pro.website  && { icon:'🌐', val:'Website',    href:pro.website },
-              pro.instagram && { icon:'📸', val:'Instagram', href:pro.instagram.startsWith('http')?pro.instagram:`https://instagram.com/${pro.instagram.replace('@','')}` },
-              pro.linkedin  && { icon:'💼', val:'LinkedIn',  href:pro.linkedin },
             ].filter(Boolean).map((item,i)=>(
               <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
                 style={{ color:t.accent,fontSize:'12px',textDecoration:'none',fontWeight:600,display:'flex',alignItems:'center',gap:'4px' }}>

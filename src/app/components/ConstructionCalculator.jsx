@@ -1085,7 +1085,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
           position: fixed;
           inset: 0;
           z-index: 1000;
-          background: rgba(0,0,0,.68);
+          background: rgba(15,23,42,.42);
           backdrop-filter: blur(8px);
           display: flex;
           align-items: flex-start;
@@ -1095,10 +1095,11 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
         }
         .boq-modal {
           width: min(620px, 100%);
-          background: var(--boq-surface);
-          border: 1px solid var(--boq-line);
+          background: #ffffff;
+          border: 1px solid #cfd6c9;
           box-shadow: 0 28px 90px rgba(0,0,0,.34);
           margin: 20px 0;
+          color: #111827;
         }
         .boq-modal-head {
           display: flex;
@@ -1113,25 +1114,55 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
         .boq-modal-close { border: 1px solid var(--boq-line); background: var(--boq-soft); color: var(--boq-text); width: 36px; height: 36px; border-radius: 7px; display: grid; place-items: center; cursor: pointer; }
         .boq-quote-form { padding: 18px; display: grid; gap: 13px; }
         .boq-quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
-        .boq-quote-field label { display: block; margin-bottom: 7px; color: var(--boq-muted); font-size: .68rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; }
+        .boq-quote-field label { display: block; margin-bottom: 7px; color: #374151; font-size: .68rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; }
         .boq-quote-field input,
         .boq-quote-field textarea {
           width: 100%;
           box-sizing: border-box;
-          border: 1px solid var(--boq-line);
+          border: 1px solid #cbd5e1;
           border-radius: 7px;
-          background: var(--boq-surface);
-          color: var(--boq-text);
+          background: #ffffff;
+          color: #111827;
           padding: 12px;
           font: inherit;
           font-weight: 800;
           outline: none;
         }
-        .boq-quote-field input::placeholder, .boq-quote-field textarea::placeholder { color: var(--boq-muted); opacity: 1; }
+        .boq-quote-field input::placeholder, .boq-quote-field textarea::placeholder { color: #6b7280; opacity: 1; }
         .boq-quote-field input:focus, .boq-quote-field textarea:focus { border-color: var(--boq-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--boq-accent) 20%, transparent); }
         .boq-quote-field textarea { min-height: 86px; resize: vertical; }
-        .boq-quote-msg { border: 1px solid var(--boq-line); background: var(--boq-soft); color: var(--boq-muted); padding: 11px 12px; border-radius: 7px; font-size: .78rem; font-weight: 800; line-height: 1.45; }
-        .boq-report-note { padding: 14px; border: 1px solid rgba(215,169,35,.5); background: color-mix(in srgb, var(--boq-accent) 14%, var(--boq-surface)); color: var(--boq-text); border-radius: 8px; line-height: 1.55; font-size: .82rem; }
+        .boq-quote-msg { border: 1px solid #d7dde5; background: #f8fafc; color: #374151; padding: 11px 12px; border-radius: 7px; font-size: .78rem; font-weight: 800; line-height: 1.45; }
+        .boq-report-note { padding: 14px; border: 1px solid rgba(215,169,35,.65); background: #fff8dc; color: #1f2937; border-radius: 8px; line-height: 1.55; font-size: .82rem; }
+        .dark-mode .boq-modal-overlay,
+        .boq-page.dark .boq-modal-overlay { background: rgba(0,0,0,.68); }
+        .dark-mode .boq-modal,
+        .boq-page.dark .boq-modal {
+          background: var(--boq-surface);
+          border-color: var(--boq-line);
+          color: var(--boq-text);
+        }
+        .dark-mode .boq-quote-field label,
+        .boq-page.dark .boq-quote-field label { color: var(--boq-muted); }
+        .dark-mode .boq-quote-field input,
+        .dark-mode .boq-quote-field textarea,
+        .boq-page.dark .boq-quote-field input,
+        .boq-page.dark .boq-quote-field textarea {
+          border-color: var(--boq-line);
+          background: var(--boq-surface);
+          color: var(--boq-text);
+        }
+        .dark-mode .boq-quote-field input::placeholder,
+        .dark-mode .boq-quote-field textarea::placeholder,
+        .boq-page.dark .boq-quote-field input::placeholder,
+        .boq-page.dark .boq-quote-field textarea::placeholder { color: var(--boq-muted); }
+        .dark-mode .boq-quote-msg,
+        .boq-page.dark .boq-quote-msg { border-color: var(--boq-line); background: var(--boq-soft); color: var(--boq-muted); }
+        .dark-mode .boq-report-note,
+        .boq-page.dark .boq-report-note {
+          border-color: rgba(215,169,35,.5);
+          background: color-mix(in srgb, var(--boq-accent) 14%, var(--boq-surface));
+          color: var(--boq-text);
+        }
         @media print {
           .boq-hero, .boq-config, .boq-actions, .boq-quality-grid { display: none; }
           .boq-shell { margin: 0; padding: 0; width: 100%; }
@@ -1471,9 +1502,10 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                     readOnly
                     required
                     style={{
-                      opacity: 0.7,
+                      opacity: 0.95,
                       cursor: 'not-allowed',
-                      background: 'rgba(255, 255, 255, 0.05)',
+                      background: 'var(--boq-soft)',
+                      color: 'var(--boq-text)',
                       pointerEvents: 'none'
                     }}
                   />
