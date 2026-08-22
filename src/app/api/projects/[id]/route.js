@@ -277,17 +277,40 @@ export async function POST(req, { params }) {
         ]
       );
     } else if (entryType === 'contractor') {
-    const contractAmount = Number(body.contract_amount || 0);
-    const paidAmount = Number(body.paid_amount || 0);
-    const contractorPhone = String(body.contractor_phone || '').replace(/\D/g, '');
-    if (!body.contractor_name || !/^[6-9]\d{9}$/.test(contractorPhone) || paidAmount <= 0) {
-      return NextResponse.json(
+      const contractAmount = Number(body.contract_amount || 0);
+      const paidAmount = Number(body.paid_amount || 0);
+      const contractorPhone = String(body.contractor_phone || '').replace(/\D/g, '');
+      if (!body.contractor_name || !/^[6-9]\d{9}$/.test(contractorPhone) || paidAmount <= 0) {
+        return NextResponse.json(
           { success: false, error: 'Contractor name, valid 10-digit mobile number, and payment amount are required' },
           { status: 400 }
         );
       }
       if (!Number.isFinite(contractAmount) || contractAmount < 0 || !Number.isFinite(paidAmount)) {
         return NextResponse.json({ success: false, error: 'Enter valid non-negative contractor amounts' }, { status: 400 });
+      }
+
+      // A contractor is identified by their mobile number within a project. The
+      // contract value belongs to the contractor, not to every instalment. Older
+      // records may have repeated it, so the ledger reads the highest value; new
+      // instalments intentionally store zero to prevent further double counting.
+      const existingContractor = await pool.query(
+        `SELECT contractor_name, contractor_phone, company_name, work_description,
+                MAX(contract_amount) AS contract_amount
+           FROM project_contractor_entries
+          WHERE project_id = $1
+            AND REGEXP_REPLACE(COALESCE(contractor_phone, ''), '\\D', '', 'g') = $2
+          GROUP BY contractor_name, contractor_phone, company_name, work_description
+          ORDER BY MAX(created_at) DESC
+          LIMIT 1`,
+        [id, contractorPhone]
+      );
+      const existing = existingContractor.rows[0];
+      if (!existing && contractAmount <= 0) {
+        return NextResponse.json(
+          { success: false, error: 'Contract value is required when adding a new contractor' },
+          { status: 400 }
+        );
       }
       result = await pool.query(
         `INSERT INTO project_contractor_entries (
@@ -297,11 +320,11 @@ export async function POST(req, { params }) {
         [
           id,
           project.assigned_agent_id || null,
-          body.contractor_name,
+          body.contractor_name || existing?.contractor_name,
           contractorPhone,
-          body.company_name || null,
-          body.work_description || null,
-          contractAmount,
+          body.company_name || existing?.company_name || null,
+          body.work_description || existing?.work_description || null,
+          existing ? 0 : contractAmount,
           paidAmount,
           body.payment_date || new Date(),
           body.payment_mode || null,

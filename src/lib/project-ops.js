@@ -292,10 +292,21 @@ export async function getProjectSummaries(whereSql = '', params = [], orderBySql
     LEFT JOIN (
       SELECT project_id,
              SUM(paid_amount) AS contractor_cost,
-             SUM(contract_amount) AS contract_value,
+             SUM(contract_value) AS contract_value,
              COUNT(*) AS contractor_count
-      FROM project_contractor_entries
-      WHERE project_id IN (SELECT id FROM filtered_projects)
+      FROM (
+        SELECT
+          project_id,
+          COALESCE(
+            NULLIF(REGEXP_REPLACE(COALESCE(contractor_phone, ''), '\\D', '', 'g'), ''),
+            LOWER(TRIM(COALESCE(contractor_name, ''))) || '|' || LOWER(TRIM(COALESCE(company_name, '')))
+          ) AS contractor_key,
+          SUM(paid_amount) AS paid_amount,
+          MAX(contract_amount) AS contract_value
+        FROM project_contractor_entries
+        WHERE project_id IN (SELECT id FROM filtered_projects)
+        GROUP BY project_id, contractor_key
+      ) contractor_ledger
       GROUP BY project_id
     ) contractor ON contractor.project_id = p.id
     ${orderBySql}

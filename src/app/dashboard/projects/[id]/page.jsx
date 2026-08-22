@@ -119,24 +119,6 @@ export default function AdminProjectManagementPage() {
     return { received, labour, labourPaid, contractor, material, other, transport, spent, profit };
   }, [project]);
 
-  const contractorProfiles = useMemo(() => {
-    const profiles = new Map();
-    for (const item of ops.contractors || []) {
-      const phone = String(item.contractor_phone || '').replace(/\D/g, '');
-      const key = phone || `${String(item.contractor_name || '').trim().toLowerCase()}|${String(item.company_name || '').trim().toLowerCase()}`;
-      if (!item.contractor_name || profiles.has(key)) continue;
-      profiles.set(key, {
-        key,
-        contractor_name: item.contractor_name,
-        contractor_phone: phone,
-        company_name: item.company_name || '',
-        work_description: item.work_description || '',
-        contract_amount: item.contract_amount || '',
-      });
-    }
-    return [...profiles.values()];
-  }, [ops.contractors]);
-
   const contractorLedger = useMemo(() => {
     const ledger = new Map();
     for (const item of ops.contractors || []) {
@@ -145,15 +127,37 @@ export default function AdminProjectManagementPage() {
       if (!key) continue;
       const current = ledger.get(key) || {
         key, contractor_name: item.contractor_name, contractor_phone: phone,
-        company_name: item.company_name || '', contract_amount: 0, paid_amount: 0, payments: 0,
+        company_name: item.company_name || '', work_description: item.work_description || '',
+        contract_amount: 0, paid_amount: 0, payments: 0, entries: [],
       };
+      if (!current.contractor_name && item.contractor_name) current.contractor_name = item.contractor_name;
+      if (!current.company_name && item.company_name) current.company_name = item.company_name;
+      if (!current.work_description && item.work_description) current.work_description = item.work_description;
       current.contract_amount = Math.max(current.contract_amount, Number(item.contract_amount || 0));
       current.paid_amount += Number(item.paid_amount || 0);
       current.payments += 1;
+      current.entries.push(item);
       ledger.set(key, current);
     }
-    return [...ledger.values()];
+    return [...ledger.values()].map((contractor) => ({
+      ...contractor,
+      entries: contractor.entries.sort((a, b) => String(b.payment_date || '').localeCompare(String(a.payment_date || ''))),
+    }));
   }, [ops.contractors]);
+
+  const contractorProfiles = useMemo(() => contractorLedger.map((contractor) => ({
+    key: contractor.key,
+    contractor_name: contractor.contractor_name,
+    contractor_phone: contractor.contractor_phone,
+    company_name: contractor.company_name,
+    work_description: contractor.work_description,
+    contract_amount: contractor.contract_amount || '',
+  })), [contractorLedger]);
+
+  const selectedContractor = useMemo(
+    () => contractorLedger.find((contractor) => contractor.key === entryForm.contractor_key) || null,
+    [contractorLedger, entryForm.contractor_key]
+  );
 
   async function saveProject(event) {
     event.preventDefault();
@@ -353,26 +357,35 @@ export default function AdminProjectManagementPage() {
             {entryType === 'contractor' && (
               <div className="ap-form-grid">
                 <label>
-                  <span>Existing Contractor</span>
+                  <span>Contractor</span>
                   <select className={input} value={entryForm.contractor_key || ''} onChange={(e) => {
                     const selected = contractorProfiles.find((item) => item.key === e.target.value);
                     setEntryForm((current) => selected
           ? { ...current, contractor_key: selected.key, contractor_name: selected.contractor_name, contractor_phone: selected.contractor_phone, company_name: selected.company_name, work_description: selected.work_description, contract_amount: selected.contract_amount }
                       : { ...current, contractor_key: '' });
                   }}>
-                    <option value="">New contractor / enter manually</option>
+                    <option value="">Add new contractor</option>
               {contractorProfiles.map((contractor) => <option key={contractor.key} value={contractor.key}>{contractor.contractor_name}{contractor.contractor_phone ? ` — ${contractor.contractor_phone}` : ''}{contractor.company_name ? ` (${contractor.company_name})` : ''}</option>)}
             </select>
           </label>
+          {selectedContractor && (
+            <div className="ap-contractor-summary wide">
+              <strong>{selectedContractor.contractor_name}{selectedContractor.contractor_phone ? ` — ${selectedContractor.contractor_phone}` : ''}</strong>
+              <span>Contract {money(selectedContractor.contract_amount)} · Paid {money(selectedContractor.paid_amount)} · Due {money(Math.max(0, selectedContractor.contract_amount - selectedContractor.paid_amount))}</span>
+              <small>Contractor details are saved. Add only this payment below.</small>
+            </div>
+          )}
+          {!selectedContractor && <>
           <Field label="Contractor Name" value={entryForm.contractor_name} onChange={(value) => setEntryForm((f) => ({ ...f, contractor_name: value }))} required />
           <Field label="Contractor Mobile Number" type="tel" value={entryForm.contractor_phone} onChange={(value) => setEntryForm((f) => ({ ...f, contractor_phone: value.replace(/\D/g, '').slice(0, 10) }))} required />
           <Field label="Company / Firm" value={entryForm.company_name} onChange={(value) => setEntryForm((f) => ({ ...f, company_name: value }))} />
-                <Field label="Contract Value" type="number" value={entryForm.contract_amount} onChange={(value) => setEntryForm((f) => ({ ...f, contract_amount: value }))} />
+                <Field label="Total Contract Value" type="number" value={entryForm.contract_amount} onChange={(value) => setEntryForm((f) => ({ ...f, contract_amount: value }))} required />
+                <Field label="Work Description" className="wide" value={entryForm.work_description} onChange={(value) => setEntryForm((f) => ({ ...f, work_description: value }))} />
+          </>}
                 <Field label="Payment Amount" type="number" value={entryForm.paid_amount} onChange={(value) => setEntryForm((f) => ({ ...f, paid_amount: value }))} required />
                 <Field label="Payment Date" type="date" value={entryForm.payment_date || todayIso()} onChange={(value) => setEntryForm((f) => ({ ...f, payment_date: value }))} />
                 <Field label="Payment Mode" value={entryForm.payment_mode} onChange={(value) => setEntryForm((f) => ({ ...f, payment_mode: value }))} />
                 <Field label="Invoice / Reference No." value={entryForm.invoice_number} onChange={(value) => setEntryForm((f) => ({ ...f, invoice_number: value }))} />
-                <Field label="Work Description" className="wide" value={entryForm.work_description} onChange={(value) => setEntryForm((f) => ({ ...f, work_description: value }))} />
                 <Field label="Note" className="wide" value={entryForm.notes} onChange={(value) => setEntryForm((f) => ({ ...f, notes: value }))} />
               </div>
             )}
@@ -443,6 +456,7 @@ export default function AdminProjectManagementPage() {
         {contractorLedger.length > 0 && (
           <section className="ap-history">
             <h3>Contractor Payment Ledger</h3>
+            <p className="ap-muted">Each contractor is shown once. Open a contractor to see or delete individual instalments.</p>
             <div className="ap-list">
               {contractorLedger.map((contractor) => {
                 const due = Math.max(0, contractor.contract_amount - contractor.paid_amount);
@@ -459,28 +473,27 @@ export default function AdminProjectManagementPage() {
                       <span>Due: {money(due)}</span>
                       <span>Advance: {money(advance)}</span>
                     </div>
+                    <details className="ap-contractor-payments">
+                      <summary>View {contractor.payments} payment{contractor.payments === 1 ? '' : 's'}</summary>
+                      <div className="ap-contractor-payment-list">
+                        {contractor.entries.map((entry) => (
+                          <div key={entry.id} className="ap-contractor-payment">
+                            <div>
+                              <strong>{money(entry.paid_amount)}</strong>
+                              <span>{dateOnly(entry.payment_date)}{entry.payment_mode ? ` / ${entry.payment_mode}` : ''}{entry.invoice_number ? ` / Ref: ${entry.invoice_number}` : ''}</span>
+                              {entry.notes && <small>{entry.notes}</small>}
+                            </div>
+                            <button type="button" onClick={() => deleteEntry('contractor', entry.id)}>Delete</button>
+                          </div>
+                        ))}
+                      </div>
+                    </details>
                   </article>
                 );
               })}
             </div>
           </section>
         )}
-        <History title="Contractor Payments" type="contractor" rows={ops.contractors} onDelete={deleteEntry} render={(row) => (
-            <>
-              <strong>{row.contractor_name}{row.contractor_phone ? ` (${row.contractor_phone})` : ''} - paid {money(row.paid_amount)}</strong>
-              <span>
-                {dateOnly(row.payment_date)}
-                {row.company_name ? ` | ${row.company_name}` : ''}
-                {row.payment_mode ? ` | ${row.payment_mode}` : ''}
-              </span>
-              <p>
-                Contract {money(row.contract_amount)}
-                {' | '}Balance {money(Math.max(Number(row.contract_amount || 0) - Number(row.paid_amount || 0), 0))}
-                {row.invoice_number ? ` | Ref: ${row.invoice_number}` : ''}
-              </p>
-              {(row.work_description || row.notes) && <p>{[row.work_description, row.notes].filter(Boolean).join(' | ')}</p>}
-            </>
-          )} />
           <History title="Material / Purchase Orders" type="material" rows={ops.materials} onDelete={deleteEntry} render={(row) => (
             <>
               <strong>{row.material_name} - {money(row.total_amount)}</strong>
@@ -570,6 +583,12 @@ const pageStyles = `
   .ap-history{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1rem}
   .ap-list{display:flex;flex-direction:column;gap:.55rem}
   .ap-list-empty{color:var(--muted,#6b7280);font-size:.8rem;padding:.8rem;background:var(--bg,#fafafa);border-radius:6px}
+  .ap-contractor-summary{display:flex;flex-direction:column;gap:.28rem;border:1px solid #bfdbfe;background:#eff6ff;border-radius:7px;padding:.8rem}.ap-contractor-summary strong{font-size:.88rem}.ap-contractor-summary span,.ap-contractor-summary small{color:#1e3a5f;font-size:.77rem;line-height:1.4}.ap-contractor-summary small{color:#475569}
+  .ap-history-row{border:1px solid var(--border,#e5e7eb);border-radius:7px;padding:.8rem;background:var(--bg,#fafafa)}
+  .ap-history-row>div:first-child strong{display:block;font-size:.86rem}.ap-history-row>div:first-child p{margin:.24rem 0 0;color:var(--muted,#6b7280);font-size:.76rem}
+  .ap-history-meta{display:flex;flex-wrap:wrap;gap:.35rem .7rem;margin-top:.7rem}.ap-history-meta span{font-size:.74rem;font-weight:800;color:var(--text,#111)}
+  .ap-contractor-payments{margin-top:.75rem;border-top:1px solid var(--border,#e5e7eb);padding-top:.65rem}.ap-contractor-payments summary{cursor:pointer;color:var(--accent,#2563eb);font-size:.77rem;font-weight:900}.ap-contractor-payment-list{display:flex;flex-direction:column;gap:.45rem;margin-top:.55rem}
+  .ap-contractor-payment{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;padding:.55rem;border-radius:6px;background:var(--surface,#fff)}.ap-contractor-payment strong,.ap-contractor-payment span,.ap-contractor-payment small{display:block}.ap-contractor-payment strong{font-size:.8rem}.ap-contractor-payment span,.ap-contractor-payment small{margin-top:.15rem;color:var(--muted,#6b7280);font-size:.72rem}.ap-contractor-payment button{border:1px solid #fecaca;background:#fff1f2;color:#b91c1c;border-radius:5px;padding:.3rem .5rem;font-size:.68rem;font-weight:800;cursor:pointer}
   .ap-row{display:flex;justify-content:space-between;gap:.75rem;border:1px solid var(--border,#e5e7eb);border-radius:7px;padding:.75rem;background:var(--bg,#fafafa)}
   .ap-row strong{display:block;font-size:.84rem}.ap-row span,.ap-row p,.ap-row a{display:block;margin-top:.2rem;color:var(--muted,#6b7280);font-size:.76rem;line-height:1.45}
   .ap-row a{color:var(--accent,#2563eb);font-weight:800;text-decoration:none}
