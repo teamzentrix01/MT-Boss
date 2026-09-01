@@ -53,7 +53,7 @@ export default function HeroBannersManager({ isDarkMode }) {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/hero-banners', {
+      const res = await fetch('/api/hero-banners?mode=manager', {
         headers: { Authorization: `Bearer ${token()}` },
       });
       const data = await res.json();
@@ -123,23 +123,22 @@ export default function HeroBannersManager({ isDarkMode }) {
     try {
       const fd = new FormData();
       fd.append('file', file);
-      fd.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
-      fd.append('folder', 'mtboss/hero-banners');
-
-      const res  = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        { method: 'POST', body: fd }
-      );
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token()}` },
+        body: fd,
+      });
       const data = await res.json();
-      if (data.secure_url) {
-        setForm(f => ({ ...f, image_url: data.secure_url, cloudinary_public_id: data.public_id }));
-        setPreview(data.secure_url);
+      const uploadedUrl = data.url || data.data?.url;
+      if (res.ok && uploadedUrl) {
+        setForm(f => ({ ...f, image_url: uploadedUrl, cloudinary_public_id: '' }));
+        setPreview(uploadedUrl);
       } else {
-        setImageMessage(data.error?.message || data.error || 'Upload failed. Check the Cloudinary upload preset.');
+        setImageMessage(data.error?.message || data.error || 'Upload failed.');
       }
     } catch (err) {
       console.error('Cloudinary upload error:', err);
-      setImageMessage('Upload failed. Check your connection and Cloudinary configuration.');
+      setImageMessage('Upload failed. Check your connection and try again.');
     } finally {
       setUploading(false);
     }

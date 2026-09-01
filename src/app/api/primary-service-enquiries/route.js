@@ -4,6 +4,7 @@ import { requireRole, unauthorized, verifyBearer } from '@/lib/auth';
 import { ensureAgentSchema } from '@/lib/agent-auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { notifyAdminSubmission } from '@/lib/customer-communications';
 
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
@@ -297,6 +298,7 @@ export async function POST(req) {
     const enquiry = result.rows[0];
     await syncEnquiryToLead(enquiry);
     await sendAdminNotification(enquiry);
+    await notifyAdminSubmission({ type: 'primary service enquiry', name: enquiry.name, phone: enquiry.phone, email: enquiry.email, reference: `PRIMARY-${enquiry.id}`, details: { Service: enquiry.service_title, City: enquiry.city, Budget: enquiry.budget, 'Meeting date': enquiry.meeting_date } });
 
     return NextResponse.json(
       {

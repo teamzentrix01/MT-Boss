@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import { getPayUConfig, verifyPayUResponse } from '@/lib/payu';
 import { ensurePayUIntentSchema } from '@/lib/payu-intents';
 import { ensurePackageSchema, getPackageById } from '@/lib/packages';
+import { deliverPaymentInvoice, notifyAdminSubmission } from '@/lib/customer-communications';
 
 function resultRedirect(req, status, reference, message, returnTo = '/userdashboard') {
   const configured = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '');
@@ -23,6 +24,7 @@ function withPaymentParams(path, status, message) {
 
 export async function POST(req) {
   const client = await pool.connect();
+  let paymentNotice = null;
 
   try {
     const formData = await req.formData();
@@ -109,6 +111,29 @@ export async function POST(req) {
            WHERE id = $2`,
           [String(fields.mihpayid || ''), intent.id]
         );
+
+        if (intent.purpose === 'booking_final') {
+          const recipient = await client.query(
+            `SELECT sb.user_name AS name, sb.user_email AS email, sb.user_phone AS phone,
+                    sb.booking_reference AS reference,
+                    COALESCE(qs.label, sb.service_subcategory, 'Service booking') AS service
+             FROM service_bookings sb LEFT JOIN quick_services qs ON qs.id = sb.quick_service_id
+             WHERE sb.id = $1`,
+            [intent.entity_id]
+          );
+          paymentNotice = { ...recipient.rows[0], amount: intent.amount };
+        } else {
+          const table = intent.purpose.startsWith('vendor_')
+            ? 'vendors' : intent.purpose.startsWith('supplier_') ? 'suppliers' : 'franchises';
+          const nameColumn = table === 'vendors' ? 'vendor_name' : table === 'suppliers' ? 'shop_name' : 'name';
+          const recipient = await client.query(`SELECT ${nameColumn} AS name, email, phone FROM ${table} WHERE id = $1`, [intent.entity_id]);
+          paymentNotice = {
+            ...recipient.rows[0], amount: intent.amount, reference: fields.txnid,
+            service: intent.purpose === 'franchise_registration'
+              ? 'Franchise registration'
+              : (getPackageById(intent.package_id)?.name || intent.purpose.replaceAll('_', ' ')),
+          };
+        }
       } else if (!succeeded && intent.status === 'PENDING') {
         await client.query(`UPDATE payu_payment_intents SET status = 'FAILED' WHERE id = $1`, [intent.id]);
         if (intent.purpose === 'franchise_registration') {
@@ -122,6 +147,17 @@ export async function POST(req) {
       }
 
       await client.query('COMMIT');
+      if (paymentNotice) {
+        const invoice = {
+          customerName: paymentNotice.name, email: paymentNotice.email, phone: paymentNotice.phone,
+          service: paymentNotice.service, amount: paymentNotice.amount,
+          reference: paymentNotice.reference || fields.txnid, paymentId: String(fields.mihpayid || ''), paymentMethod: 'PayU',
+        };
+        await Promise.all([
+          deliverPaymentInvoice(invoice),
+          notifyAdminSubmission({ type: 'successful payment', name: invoice.customerName, phone: invoice.phone, email: invoice.email, reference: invoice.reference, details: { Service: invoice.service, Amount: `INR ${invoice.amount}`, 'Payment ID': invoice.paymentId } }),
+        ]);
+      }
       const resultMessage = succeeded
         ? (
           intent.purpose.includes('package')
@@ -153,7 +189,7 @@ export async function POST(req) {
     }
 
     const bookingResult = await client.query(
-      `SELECT id, booking_reference, user_name, service_city, quick_service_id, base_amount,
+      `SELECT id, booking_reference, user_name, user_email, user_phone, service_city, service_subcategory, quick_service_id, base_amount,
               total_amount, slot_type, time_slot_id, payment_status
        FROM service_bookings
        WHERE payment_txnid = $1
@@ -203,6 +239,12 @@ export async function POST(req) {
            WHERE id = $4`,
           [nextStatus, nextStatus, String(fields.mihpayid || ''), booking.id]
         );
+        const serviceResult = await client.query('SELECT label FROM quick_services WHERE id = $1', [booking.quick_service_id]);
+        paymentNotice = {
+          name: booking.user_name, email: booking.user_email, phone: booking.user_phone,
+          service: serviceResult.rows[0]?.label || booking.service_subcategory || 'Service booking',
+          amount: booking.total_amount, reference: booking.booking_reference,
+        };
 
         for (const vendor of vendors.rows) {
           await client.query(
@@ -219,6 +261,17 @@ export async function POST(req) {
       }
 
       await client.query('COMMIT');
+      if (paymentNotice) {
+        const invoice = {
+          customerName: paymentNotice.name, email: paymentNotice.email, phone: paymentNotice.phone,
+          service: paymentNotice.service, amount: paymentNotice.amount, reference: paymentNotice.reference,
+          paymentId: String(fields.mihpayid || ''), paymentMethod: 'PayU',
+        };
+        await Promise.all([
+          deliverPaymentInvoice(invoice),
+          notifyAdminSubmission({ type: 'paid service booking', name: invoice.customerName, phone: invoice.phone, email: invoice.email, reference: invoice.reference, details: { Service: invoice.service, Amount: `INR ${invoice.amount}`, City: booking.service_city } }),
+        ]);
+      }
       return resultRedirect(req, 'success', booking.booking_reference);
     }
 

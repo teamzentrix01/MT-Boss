@@ -30,11 +30,13 @@ const ensureTable = createInitializationGuard(async () => {
 });
 
 // Public — used by the home page Hero component
-export async function GET() {
+export async function GET(req) {
   try {
     await ensureTable();
+    const managerMode = new URL(req.url).searchParams.get('mode') === 'manager';
+    if (managerMode && !requireRole(req, 'admin')) return unauthorized();
     const result = await pool.query(
-      `SELECT * FROM hero_banners WHERE is_active = true ORDER BY sort_order ASC, id ASC`
+      `SELECT * FROM hero_banners ${managerMode ? '' : 'WHERE is_active = true'} ORDER BY sort_order ASC, id ASC`
     );
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
@@ -82,6 +84,8 @@ export async function PATCH(req) {
 
     const { id, label, title, subtitle, description, image_url, cloudinary_public_id, sort_order, is_active } = await req.json();
     if (!id) return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
+    if (!String(title || '').trim() || !String(image_url || '').trim())
+      return NextResponse.json({ success: false, error: 'Title and image are required' }, { status: 400 });
 
     await ensureTable();
     const result = await pool.query(

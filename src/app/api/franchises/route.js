@@ -13,6 +13,7 @@ import {
 import { resolveManagedCity } from '@/lib/cities';
 import { createPayURequest } from '@/lib/payu';
 import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
+import { notifyAdminSubmission } from '@/lib/customer-communications';
 
 const STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 const FRANCHISE_FEE_ENV_KEYS = Object.freeze({
@@ -307,6 +308,7 @@ export async function POST(req) {
       });
 
       await client.query('COMMIT');
+      await notifyAdminSubmission({ type: 'franchise application awaiting payment', name: cleanName, phone: cleanPhone, email: cleanEmail, reference: `FRANCHISE-${franchise.id}`, details: { Model: model, City: canonicalCity, Fee: `INR ${registrationFee}` } });
       return NextResponse.json({
         success: true,
         data: { ...franchise, registration_fee: registrationFee, payment_status: 'PENDING' },

@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { notifyAdminSubmission } from '@/lib/customer-communications';
 
 // Tables are guaranteed to exist by professional-services route (same ensureTables),
 // but guard here too so this route works standalone.
@@ -79,6 +80,7 @@ export async function POST(req) {
         message,
       ]
     );
+    await notifyAdminSubmission({ type: 'professional enquiry', name: cleanName, phone: cleanPhone, email: cleanEmail, reference: `PRO-${professional_id}`, details: { Professional: professional.name, Title: professional.title } });
 
     // Email the ADMIN (admin acts as middleman — client never contacts professional directly)
     try {

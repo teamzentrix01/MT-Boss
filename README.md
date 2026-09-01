@@ -53,3 +53,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Transactional email and WhatsApp
+
+Payment receipts use the existing SMTP configuration. WhatsApp delivery uses the Meta WhatsApp Cloud API. Configure these server-side variables in every deployed environment (never prefix secrets with `NEXT_PUBLIC_`):
+
+```env
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=notifications@example.com
+SMTP_PASS=replace-with-app-password
+SMTP_FROM=MTBOSS Construction <notifications@example.com>
+
+WHATSAPP_PHONE_NUMBER_ID=your-meta-phone-number-id
+WHATSAPP_ACCESS_TOKEN=your-permanent-system-user-token
+ADMIN_WHATSAPP_NUMBER=919876543210
+
+COMPANY_NAME=MTBOSS Construction
+COMPANY_PHONE=919876543210
+COMPANY_LOGO_URL=https://your-domain.example/logo.png
+NEXT_PUBLIC_APP_URL=https://your-domain.example
+```
+
+`ADMIN_WHATSAPP_NUMBER` and customer numbers must include the country code. If WhatsApp credentials are absent, the application continues normally and logs the skipped delivery; SMTP behaves the same way when it is not configured.

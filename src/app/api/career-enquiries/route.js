@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { notifyAdminSubmission } from '@/lib/customer-communications';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
@@ -310,6 +311,7 @@ export async function POST(req) {
 
     const enquiry = result.rows[0];
     await sendAdminNotification(enquiry);
+    await notifyAdminSubmission({ type: 'job application', name: enquiry.name, phone: enquiry.phone, email: enquiry.email, reference: enquiry.application_reference, details: { Position: enquiry.position, Department: enquiry.department, Experience: enquiry.experience, Location: enquiry.job_location } });
 
     return NextResponse.json(
       {

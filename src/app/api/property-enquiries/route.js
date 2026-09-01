@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { requireRole, unauthorized, verifyBearer } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { notifyAdminSubmission } from '@/lib/customer-communications';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`CREATE TABLE IF NOT EXISTS property_enquiries (
@@ -36,6 +37,7 @@ export async function POST(req) {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
       [property.id, property.title, property.type, property.location, name, phone, email || null, message || null, currentUser?.id || null]
     );
+    await notifyAdminSubmission({ type: 'property enquiry', name, phone, email, reference: `PROPERTY-${result.rows[0].id}`, details: { Property: property.title, Location: property.location } });
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
     console.error('POST property enquiry error:', error);

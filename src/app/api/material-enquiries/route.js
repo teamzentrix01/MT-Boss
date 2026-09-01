@@ -5,6 +5,7 @@ import { createInitializationGuard } from '@/lib/api-utils';
 import { resolveManagedCity } from '@/lib/cities';
 import { requireRole } from '@/lib/auth';
 import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material-orders';
+import { notifyAdminSubmission } from '@/lib/customer-communications';
 
 // No `ready` flag — CREATE TABLE IF NOT EXISTS + ALTER IF NOT EXISTS are idempotent
 // and run in milliseconds when the table already exists. This makes the route resilient
@@ -134,6 +135,7 @@ export async function POST(req) {
         actorName: cleanName,
       });
       await client.query('COMMIT');
+      await notifyAdminSubmission({ type: 'material order', name: cleanName, phone: cleanPhone, email: cleanEmail || user.email, reference: orderReference, details: { Category: category_name, Material: material_type, Quantity: quantity_text, Unit: order_unit, City: canonicalCity } });
       return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
     } catch (error) {
       await client.query('ROLLBACK');

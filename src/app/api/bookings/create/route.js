@@ -11,6 +11,7 @@ import { createPayURequest } from '@/lib/payu';
 import { getQuickServiceTax, getQuickServiceTotal } from '@/lib/quick-service-pricing';
 import { resolveManagedCity } from '@/lib/cities';
 import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
+import { notifyAdminSubmission } from '@/lib/customer-communications';
 
 function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
@@ -280,6 +281,11 @@ export async function POST(req) {
  
     const booking = bookingResult.rows[0];
     const bookingId = booking.id;
+    await notifyAdminSubmission({
+      type: isFreeSlot ? 'free service booking' : 'service booking awaiting payment',
+      name: cleanUserName, phone: cleanUserPhone, email: cleanUserEmail, reference: bookingReference,
+      details: { Service: selectedSubcategory, City: selectedCity, Date: booking_date, Time: booking_time, Amount: `INR ${totalAmount}` },
+    });
  
     // Update free slot if used. The conditions prevent booking admin-closed,
     // full, expired, wrong-city, or wrong-service slots.
