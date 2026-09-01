@@ -382,3 +382,41 @@ button[aria-expanded]:hover * {
   transform: none !important;
   box-shadow: none !important;
 }
+.privacy-consent-field {
+  width: 100%;
+  margin: 14px 0;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, currentColor 4%, transparent);
+  color: inherit;
+  box-sizing: border-box;
+}
+
+.privacy-consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.55;
+  cursor: pointer;
+}
+
+.privacy-consent-label input {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  margin: 2px 0 0;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.privacy-consent-label a {
+  color: #2563eb;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.privacy-required { color: #dc2626; font-weight: 800; }
+.privacy-consent-help { display: block; margin: 5px 0 0 26px; font-size: 10px; opacity: .65; }

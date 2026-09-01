@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import "./globals.css";
 import Footer from "./components/Footer";
 import { COMPANY_CONTACT } from "./lib/company";
+import PrivacyConsentGuard from "./components/PrivacyConsentGuard";
 
 export default function RootLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -89,6 +90,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={isDarkMode ? "dark-mode" : ""}>
       <body className={`transition-colors duration-500 overflow-x-hidden ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+        <PrivacyConsentGuard />
         <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
         {children}
         <Footer/>
