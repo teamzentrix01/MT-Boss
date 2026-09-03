@@ -42,6 +42,7 @@ export default function HeroBannersManager({ isDarkMode }) {
   const [deleteId, setDeleteId]   = useState(null);
   const [urlMode, setUrlMode]     = useState(false); // toggle between upload vs paste URL
   const [imageMessage, setImageMessage] = useState('');
+  const [loadError, setLoadError] = useState('');
   const fileRef = useRef(null);
 
   const token = () =>
@@ -52,13 +53,28 @@ export default function HeroBannersManager({ isDarkMode }) {
   // ── fetch ──────────────────────────────────────────────────────────────────
   const load = async () => {
     setLoading(true);
+    setLoadError('');
     try {
       const res = await fetch('/api/hero-banners?mode=manager', {
         headers: { Authorization: `Bearer ${token()}` },
       });
-      const data = await res.json();
-      if (data.success) setBanners(data.data);
-    } catch (e) { console.error(e); }
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) {
+        setBanners([]);
+        setLoadError(data?.error || (res.status === 401 || res.status === 403 ? 'Your admin session has expired. Please sign in again.' : 'Hero banners could not be loaded.'));
+        return;
+      }
+      if (!Array.isArray(data.data)) {
+        setBanners([]);
+        setLoadError('The server returned an invalid hero banner response. Please refresh or check the database connection.');
+        return;
+      }
+      setBanners(data.data);
+    } catch (e) {
+      console.error(e);
+      setBanners([]);
+      setLoadError('Could not connect to the hero banner service. Please try again.');
+    }
     finally { setLoading(false); }
   };
 
@@ -243,7 +259,8 @@ export default function HeroBannersManager({ isDarkMode }) {
     },
   });
 
-  const sorted = [...banners].sort((a, b) => a.sort_order - b.sort_order);
+  const safeBanners = Array.isArray(banners) ? banners : [];
+  const sorted = [...safeBanners].sort((a, b) => Number(a?.sort_order || 0) - Number(b?.sort_order || 0));
 
   // ────────────────────────────────────────────────────────────────────────────
   return (
@@ -273,9 +290,9 @@ export default function HeroBannersManager({ isDarkMode }) {
       {/* Stat cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(130px,1fr))', gap: '12px', marginBottom: '24px' }}>
         {[
-          { label: 'Total',    val: banners.length,                           color: t.sub     },
-          { label: 'Active',   val: banners.filter(b => b.is_active).length,  color: '#22c55e' },
-          { label: 'Inactive', val: banners.filter(b => !b.is_active).length, color: '#ef4444' },
+          { label: 'Total',    val: safeBanners.length,                           color: t.sub     },
+          { label: 'Active',   val: safeBanners.filter(b => b?.is_active).length,  color: '#22c55e' },
+          { label: 'Inactive', val: safeBanners.filter(b => !b?.is_active).length, color: '#ef4444' },
         ].map(s => (
           <div key={s.label} style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '16px', textAlign: 'center' }}>
             <div style={{ fontSize: '22px', fontWeight: 800, color: s.color }}>{s.val}</div>
@@ -285,7 +302,13 @@ export default function HeroBannersManager({ isDarkMode }) {
       </div>
 
       {/* Banner list */}
-      {loading ? (
+      {loadError ? (
+        <div style={{ padding: '22px', border: '1px solid #ef4444', borderRadius: '6px', background: '#ef444412', color: t.text }}>
+          <strong style={{ display: 'block', color: '#ef4444', marginBottom: '6px' }}>Hero banner manager could not load</strong>
+          <span style={{ fontSize: '12px' }}>{loadError}</span>
+          <button type="button" onClick={load} style={{ display: 'block', marginTop: '14px', padding: '8px 14px', cursor: 'pointer' }}>Try again</button>
+        </div>
+      ) : loading ? (
         <div style={{ textAlign: 'center', padding: '60px', color: t.sub, fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Loading…</div>
       ) : sorted.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px', border: `1px solid ${t.border}`, borderRadius: '4px' }}>
@@ -429,7 +452,10 @@ export default function HeroBannersManager({ isDarkMode }) {
                 <div style={{ marginTop: '10px', borderRadius: '4px', overflow: 'hidden', border: `1px solid ${t.border}` }}>
                   <img src={preview} alt="Banner preview"
                     onError={() => setImageMessage('Image URL could not be loaded. Use a direct public image link.')}
-                    onLoad={e => setImageMessage(current => current || `Image loaded: ${e.currentTarget.naturalWidth}×${e.currentTarget.naturalHeight}.`)}
+                    onLoad={(event) => {
+                      const { naturalWidth, naturalHeight } = event.currentTarget;
+                      setImageMessage((current) => current || `Image loaded: ${naturalWidth}×${naturalHeight}.`);
+                    }}
                     style={{ width: '100%', aspectRatio: '16 / 9', objectFit: 'cover', display: 'block' }} />
                 </div>
               )}

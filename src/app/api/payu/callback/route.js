@@ -5,13 +5,16 @@ import { ensurePayUIntentSchema } from '@/lib/payu-intents';
 import { ensurePackageSchema, getPackageById } from '@/lib/packages';
 import { deliverPaymentInvoice, notifyAdminSubmission } from '@/lib/customer-communications';
 
-function resultRedirect(req, status, reference, message, returnTo = '/userdashboard') {
+function resultRedirect(req, status, reference, message, returnTo = '/userdashboard', receipt = null) {
   const configured = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '');
   const url = new URL('/payment/payu', configured || new URL(req.url).origin);
   url.searchParams.set('status', status);
   if (reference) url.searchParams.set('booking', reference);
   if (message) url.searchParams.set('message', message);
   url.searchParams.set('returnTo', returnTo);
+  if (receipt?.service) url.searchParams.set('service', receipt.service);
+  if (receipt?.amount !== undefined) url.searchParams.set('amount', String(receipt.amount));
+  if (receipt?.paymentId) url.searchParams.set('paymentId', receipt.paymentId);
   return NextResponse.redirect(url, 303);
 }
 
@@ -184,7 +187,8 @@ export async function POST(req) {
               ? '/supplier/pending-approval'
               : intent.purpose === 'franchise_registration'
                 ? franchiseReturnTo
-            : '/userdashboard'
+            : '/userdashboard',
+        paymentNotice ? { service: paymentNotice.service, amount: paymentNotice.amount, paymentId: String(fields.mihpayid || '') } : null
       );
     }
 
@@ -272,7 +276,11 @@ export async function POST(req) {
           notifyAdminSubmission({ type: 'paid service booking', name: invoice.customerName, phone: invoice.phone, email: invoice.email, reference: invoice.reference, details: { Service: invoice.service, Amount: `INR ${invoice.amount}`, City: booking.service_city } }),
         ]);
       }
-      return resultRedirect(req, 'success', booking.booking_reference);
+      return resultRedirect(req, 'success', booking.booking_reference, null, '/userdashboard', {
+        service: paymentNotice?.service,
+        amount: paymentNotice?.amount,
+        paymentId: String(fields.mihpayid || ''),
+      });
     }
 
     if (booking.payment_status === 'PENDING') {

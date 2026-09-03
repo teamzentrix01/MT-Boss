@@ -46,6 +46,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [slotType, setSlotType] = useState(initialSlotType || 'paid'); // 'free' | 'paid'
   const [freeSlots, setFreeSlots] = useState([]);
@@ -171,6 +172,10 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
   }
 
   async function handleConfirm() {
+    if (!privacyAccepted) {
+      setErrors((current) => ({ ...current, privacy: 'Please accept the Privacy Policy before confirming your booking.' }));
+      return;
+    }
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
@@ -760,6 +765,15 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                 The visiting charge is paid securely through PayU. Repair charges remain separate and require your approval.
               </p>
 
+              <label className={`flex items-start gap-3 border p-3 text-left cursor-pointer ${isDark ? 'border-zinc-700 bg-zinc-900' : 'border-zinc-300 bg-zinc-50'}`}>
+                <input type="checkbox" checked={privacyAccepted} onChange={(event) => {
+                  setPrivacyAccepted(event.target.checked);
+                  if (event.target.checked) setErrors((current) => ({ ...current, privacy: '' }));
+                }} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--brand-blue)]" />
+                <span className={`text-[10px] leading-relaxed ${muted}`}>I have read and agree to the <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-bold text-[var(--brand-blue)] underline">Privacy Policy</a>. I consent to MTBOSS using my details to process this booking and payment.</span>
+              </label>
+              {errors.privacy && <p className="text-[10px] font-bold text-red-500">{errors.privacy}</p>}
+
               <div className="flex gap-3">
                 <button
                   onClick={() => setStep(1)}
@@ -769,7 +783,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                 </button>
                 <button
                   onClick={handleConfirm}
-                  disabled={loading}
+                  disabled={loading || !privacyAccepted}
                   className={`flex-1 py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-light)] transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {loading ? 'Opening PayU...' : 'Pay & Confirm'}

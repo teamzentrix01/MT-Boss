@@ -93,6 +93,7 @@ export default function QuickServiceSlugPage() {
 
   const [errors, setErrors] = useState({});
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [slotType, setSlotType] = useState('paid'); // 'free' | 'paid'
   const [freeSlots, setFreeSlots] = useState([]);
@@ -384,6 +385,10 @@ export default function QuickServiceSlugPage() {
   }
 
   async function handleConfirmBooking() {
+    if (!privacyAccepted) {
+      setErrors((current) => ({ ...current, privacy: 'Please accept the Privacy Policy before confirming your booking.' }));
+      return;
+    }
     setBookingLoading(true);
     setErrors({});
     try {
@@ -965,6 +970,15 @@ export default function QuickServiceSlugPage() {
                   ✓ Repair prices are separate. Technician will examine the appliance/issue and provide a full repair quote. Zero hidden charges.
                 </p>
 
+                <label className={`flex items-start gap-3 border rounded p-3 text-left cursor-pointer ${dark ? 'border-zinc-700 bg-zinc-900' : 'border-zinc-300 bg-zinc-50'}`}>
+                  <input type="checkbox" checked={privacyAccepted} onChange={(event) => {
+                    setPrivacyAccepted(event.target.checked);
+                    if (event.target.checked) setErrors((current) => ({ ...current, privacy: '' }));
+                  }} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--brand-blue)]" />
+                  <span className={`text-[10px] leading-relaxed ${muted}`}>I have read and agree to the <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-bold text-[var(--brand-blue)] underline">Privacy Policy</a>. I consent to MTBOSS using my details to process this booking and payment.</span>
+                </label>
+                {errors.privacy && <p className="text-left text-[10px] font-bold text-red-500">{errors.privacy}</p>}
+
                 <div className="flex gap-4">
                   <button
                     type="button"
@@ -978,7 +992,7 @@ export default function QuickServiceSlugPage() {
                   <button
                     type="button"
                     onClick={handleConfirmBooking}
-                    disabled={bookingLoading}
+                    disabled={bookingLoading || !privacyAccepted}
                     className="flex-1 py-3 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase tracking-widest hover:bg-yellow-500 transition-all disabled:opacity-50"
                   >
                     {bookingLoading ? 'Opening PayU...' : 'Pay & Confirm Visit'}

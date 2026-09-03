@@ -8,6 +8,16 @@ export default async function PayUResultPage({ searchParams }) {
     && !params.returnTo.startsWith('//')
     ? params.returnTo
     : '/userdashboard';
+  const receiptText = [
+    'MTBOSS Construction - Payment Receipt',
+    params.booking ? `Reference: ${params.booking}` : null,
+    params.service ? `Service / Plan: ${params.service}` : null,
+    params.amount ? `Amount paid: INR ${Number(params.amount).toLocaleString('en-IN')}` : null,
+    params.paymentId ? `Payment ID: ${params.paymentId}` : null,
+    'Status: PAID',
+    'A detailed invoice has also been sent to your registered email.',
+  ].filter(Boolean).join('\n');
+  const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(receiptText)}`;
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white flex items-center justify-center px-6">
@@ -35,6 +45,11 @@ export default async function PayUResultPage({ searchParams }) {
             <Link href={returnTo} className="px-5 py-3 border border-zinc-700 text-xs font-black uppercase tracking-wider">
               Try again
             </Link>
+          )}
+          {success && (
+            <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer" className="px-5 py-3 bg-[#25D366] text-black text-xs font-black uppercase tracking-wider">
+              Share on WhatsApp
+            </a>
           )}
         </div>
       </section>

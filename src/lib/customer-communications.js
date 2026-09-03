@@ -82,15 +82,22 @@ export async function deliverPaymentInvoice(details) {
 
 export async function notifyAdminSubmission({ type, name, phone, email, reference, details = {} }) {
   const adminPhone = process.env.ADMIN_WHATSAPP_NUMBER;
-  if (!adminPhone) return { skipped: true };
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || process.env.SMTP_USER;
   const detailLines = Object.entries(details).filter(([, value]) => value !== undefined && value !== null && value !== '').slice(0, 12).map(([key, value]) => `${key}: ${value}`);
-  try {
-    return await sendWhatsApp({
+  const plainText = `New ${type} - ${companyName}\n\nName: ${name || '-'}\nPhone: ${phone || '-'}\nEmail: ${email || '-'}\nReference: ${reference || '-'}${detailLines.length ? `\n${detailLines.join('\n')}` : ''}\n\nReceived: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
+  const jobs = [];
+  if (adminEmail) jobs.push(sendMail({
+    to: adminEmail,
+    subject: `New ${type}: ${reference || name || 'MTBOSS notification'}`,
+    text: plainText,
+    replyTo: email || undefined,
+    html: `<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden"><div style="background:#111827;color:white;padding:22px"><div style="font-size:12px;color:#60a5fa;letter-spacing:1.5px">NEW WEBSITE ACTIVITY</div><h2 style="margin:7px 0 0">${escapeHtml(type)}</h2></div><div style="padding:24px"><table style="width:100%;border-collapse:collapse">${[['Name', name], ['Phone', phone], ['Email', email], ['Reference', reference], ...Object.entries(details)].filter(([, value]) => value !== undefined && value !== null && value !== '').map(([key, value]) => `<tr><td style="padding:8px;color:#6b7280;width:35%">${escapeHtml(key)}</td><td style="padding:8px;font-weight:600">${escapeHtml(value)}</td></tr>`).join('')}</table></div></div>`,
+  }));
+  if (adminPhone) jobs.push(sendWhatsApp({
       to: adminPhone,
-      text: `*New ${type} - ${companyName}*\n\nName: ${name || '-'}\nPhone: ${phone || '-'}\nEmail: ${email || '-'}\nReference: ${reference || '-'}${detailLines.length ? `\n${detailLines.join('\n')}` : ''}\n\nReceived: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`,
-    });
-  } catch (error) {
-    console.error('Admin WhatsApp notification error:', error);
-    return { error: error.message };
-  }
+      text: `*${plainText}*`,
+    }));
+  const results = await Promise.allSettled(jobs);
+  results.filter((item) => item.status === 'rejected').forEach((item) => console.error('Admin notification error:', item.reason));
+  return results.length ? results : [{ status: 'skipped' }];
 }

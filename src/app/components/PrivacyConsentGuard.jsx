@@ -52,9 +52,24 @@ export default function PrivacyConsentGuard() {
       requestAnimationFrame(syncForms);
     };
     const observer = new MutationObserver(scheduleSync);
+    const removeInjectedConsent = () => {
+      document.querySelectorAll('[data-privacy-consent-injected]').forEach((element) => element.remove());
+    };
+    const beforeNavigation = (event) => {
+      if (event.target instanceof Element && event.target.closest('a[href]')) removeInjectedConsent();
+    };
     observer.observe(document.body, { childList: true, subtree: true });
+    document.addEventListener('click', beforeNavigation, true);
+    window.addEventListener('popstate', removeInjectedConsent);
+    window.addEventListener('pagehide', removeInjectedConsent);
     syncForms();
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('click', beforeNavigation, true);
+      window.removeEventListener('popstate', removeInjectedConsent);
+      window.removeEventListener('pagehide', removeInjectedConsent);
+      removeInjectedConsent();
+    };
   }, []);
 
   return null;
