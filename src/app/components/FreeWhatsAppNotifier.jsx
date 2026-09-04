@@ -4,14 +4,18 @@ import { useEffect, useState } from 'react';
 
 const TRACKED_ENDPOINTS = new Map([
   ['/api/contact', 'Contact Form'],
-  ['/api/career-enquiries', 'Job Application'],
+  // Job and agent application pages already have their own richer WhatsApp messages.
   ['/api/franchises', 'Franchise Application'],
   ['/api/material-enquiries', 'Material Order'],
   ['/api/property-enquiries', 'Property Enquiry'],
   ['/api/professional-enquiries', 'Professional Enquiry'],
   ['/api/primary-service-enquiries', 'Construction Service Enquiry'],
   ['/api/calculator-leads', 'Calculator Enquiry'],
+  ['/api/calculator-quote-otp', 'Construction Calculator Quotation'],
   ['/api/bookings/create', 'Quick Service Booking'],
+  ['/api/properties', 'Property Listing Submission'],
+  ['/api/professional-services', 'Professional Registration'],
+  ['/api/user/primary-services', 'Construction Service Request'],
   ['/api/auth/signup', 'Customer Registration'],
   ['/api/vendor/signup', 'Vendor Registration'],
   ['/api/supplier/signup', 'Supplier Registration'],
@@ -78,12 +82,15 @@ export default function FreeWhatsAppNotifier() {
       const endpoint = endpointFrom(input);
       const type = TRACKED_ENDPOINTS.get(endpoint);
       const method = String(init.method || (typeof input !== 'string' ? input?.method : '') || 'GET').toUpperCase();
-      if (!type || method !== 'POST' || !response.ok) return response;
+      const details = requestDetails(init.body);
+      const isAdminScreen = /(^|\/)dashboard(\/|$)/.test(window.location.pathname);
+      const isOtpVerification = endpoint === '/api/calculator-quote-otp' && details.action === 'verify';
+      if (!type || method !== 'POST' || !response.ok || isAdminScreen || isOtpVerification) return response;
 
       try {
         const responseData = await response.clone().json().catch(() => ({}));
         if (responseData?.success === false || responseData?.error) return response;
-        const message = makeMessage(type, requestDetails(init.body), responseData);
+        const message = makeMessage(type, details, responseData);
         const shareUrl = `https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`;
         setPendingShare({ type, shareUrl });
         window.open(shareUrl, '_blank', 'noopener,noreferrer');

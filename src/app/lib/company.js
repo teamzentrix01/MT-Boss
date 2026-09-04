@@ -1,6 +1,10 @@
 export const COMPANY_NAME = "Mtboss construction private limited";
 
-const phoneDigits = (process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || "").replace(/\D/g, "");
+const phoneDigits = (
+  process.env.NEXT_PUBLIC_ADMIN_WHATSAPP_NUMBER
+  || process.env.NEXT_PUBLIC_ADMIN_WHATSAPP
+  || ""
+).replace(/\D/g, "");
 
 function formatIndianPhone(value) {
   const localNumber = value.startsWith("91") && value.length === 12 ? value.slice(2) : value;
