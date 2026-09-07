@@ -1,25 +1,4 @@
-export const fallbackHeroBanners = [
-  {
-    id: 'fallback-hero-1',
-    label: 'Engineering Excellence',
-    title: 'Sustainable Technology Led',
-    subtitle: 'Engineering, Procurement & Construction',
-    description: 'We provide simple and innovative solutions to deliver complex projects on time.',
-    image_url: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80',
-    sort_order: 0,
-    is_active: true,
-  },
-  {
-    id: 'fallback-hero-2',
-    label: 'Engineering Excellence',
-    title: "Building Tomorrow's",
-    subtitle: 'Infrastructure Today',
-    description: 'Delivering world-class infrastructure across energy, transport, and urban development.',
-    image_url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1600&q=80',
-    sort_order: 1,
-    is_active: true,
-  },
-];
+export { defaultHeroBanners as fallbackHeroBanners } from './hero-banner-defaults.mjs';
 
 export const fallbackQuickServices = [
   {

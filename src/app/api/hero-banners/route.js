@@ -3,129 +3,66 @@ import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { createInitializationGuard, handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 import { fallbackHeroBanners, fallbackResponse } from '@/lib/public-fallbacks';
+import { ensureHeroBannersSchema } from '@/lib/hero-banners-schema.mjs';
+import { validateBanner } from '@/lib/hero-banner-fields.mjs';
 
-const CREATE_TABLE_SQL = `
-  CREATE TABLE IF NOT EXISTS hero_banners (
-    id                   SERIAL PRIMARY KEY,
-    label                VARCHAR(255) DEFAULT 'Engineering Excellence',
-    title                VARCHAR(500) NOT NULL,
-    subtitle             VARCHAR(500),
-    description          TEXT,
-    image_url            TEXT NOT NULL,
-    cloudinary_public_id VARCHAR(255),
-    sort_order           INTEGER DEFAULT 0,
-    is_active            BOOLEAN DEFAULT true,
-    created_at           TIMESTAMP DEFAULT NOW(),
-    updated_at           TIMESTAMP DEFAULT NOW()
-  )
-`;
+const ensureTable = createInitializationGuard(() => ensureHeroBannersSchema(pool));
+const fail = (error, status = 400) => NextResponse.json({ success: false, error }, { status });
 
-const ensureTable = createInitializationGuard(async () => {
-  try {
-    await pool.query(CREATE_TABLE_SQL);
-  } catch (error) {
-    console.error('ensureTable error:', error);
-    throw error;
-  }
-});
-
-// Public — used by the home page Hero component
 export async function GET(req) {
+  const managerMode = new URL(req.url).searchParams.get('mode') === 'manager';
+  if (managerMode && !requireRole(req, 'admin')) return unauthorized();
   try {
     await ensureTable();
-    const managerMode = new URL(req.url).searchParams.get('mode') === 'manager';
-    if (managerMode && !requireRole(req, 'admin')) return unauthorized();
-    const result = await pool.query(
-      `SELECT * FROM hero_banners ${managerMode ? '' : 'WHERE is_active = true'} ORDER BY sort_order ASC, id ASC`
-    );
-    return NextResponse.json({ success: true, data: result.rows });
+    const result = await pool.query(`SELECT * FROM hero_banners ${managerMode ? '' : 'WHERE is_active = true'} ORDER BY sort_order ASC, id ASC`);
+    return NextResponse.json({ success: true, data: result.rows }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
-    console.error('GET hero-banners error:', error.message);
-    if (isDatabaseConnectionError(error)) {
-      return NextResponse.json(fallbackResponse(fallbackHeroBanners));
+    // Never present fallback content as editable database records.
+    if (!managerMode && isDatabaseConnectionError(error)) return NextResponse.json(fallbackResponse(fallbackHeroBanners));
+    return handleApiError(error);
+  }
+}
+
+async function save(req, updating) {
+  if (!requireRole(req, 'admin')) return unauthorized();
+  try {
+    const payload = await req.json();
+    if (!payload || typeof payload !== 'object') return fail('Invalid banner.');
+    if (updating && (!Number.isInteger(Number(payload.id)) || Number(payload.id) < 1)) return fail('A valid banner ID is required.');
+    if (updating && Object.keys(payload).every(key => ['id', 'is_active'].includes(key))) {
+      if (typeof payload.is_active !== 'boolean') return fail('Invalid banner status.');
+      await ensureTable();
+      const result = await pool.query('UPDATE hero_banners SET is_active=$1, updated_at=NOW() WHERE id=$2 RETURNING *', [payload.is_active, payload.id]);
+      if (!result.rows.length) return fail('Banner not found.', 404);
+      return NextResponse.json({ success: true, data: result.rows[0] });
     }
-    return handleApiError(error);
-  }
-}
-
-export async function POST(req) {
-  try {
-    if (!requireRole(req, 'admin')) return unauthorized();
-
-    const { label, title, subtitle, description, image_url, cloudinary_public_id, sort_order, is_active } = await req.json();
-    if (!title || !image_url)
-      return NextResponse.json({ success: false, error: 'Title and image are required' }, { status: 400 });
-
+    const { data, error } = validateBanner(payload, process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME);
+    if (error) return fail(error);
     await ensureTable();
-    const result = await pool.query(
-      `INSERT INTO hero_banners (label, title, subtitle, description, image_url, cloudinary_public_id, sort_order, is_active)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
-      [
-        label || 'Engineering Excellence',
-        title,
-        subtitle || null,
-        description || null,
-        image_url,
-        cloudinary_public_id || null,
-        sort_order ?? 0,
-        is_active ?? true,
-      ]
-    );
-    return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
+    const fields = Object.keys(data);
+    const values = Object.values(data);
+    const result = updating
+      ? await pool.query(`UPDATE hero_banners SET ${fields.map((key, i) => `${key}=$${i + 1}`).join(', ')}, updated_at=NOW() WHERE id=$${values.length + 1} RETURNING *`, [...values, Number(payload.id)])
+      : await pool.query(`INSERT INTO hero_banners (${fields.join(', ')}) VALUES (${values.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`, values);
+    if (!result.rows.length) return fail('Banner not found.', 404);
+    return NextResponse.json({ success: true, data: result.rows[0] }, { status: updating ? 200 : 201 });
   } catch (error) {
-    console.error('POST hero-banners error:', error.message);
+    if (error instanceof SyntaxError) return fail('Invalid request body.');
     return handleApiError(error);
   }
 }
 
-export async function PATCH(req) {
-  try {
-    if (!requireRole(req, 'admin')) return unauthorized();
-
-    const { id, label, title, subtitle, description, image_url, cloudinary_public_id, sort_order, is_active } = await req.json();
-    if (!id) return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
-    if (!String(title || '').trim() || !String(image_url || '').trim())
-      return NextResponse.json({ success: false, error: 'Title and image are required' }, { status: 400 });
-
-    await ensureTable();
-    const result = await pool.query(
-      `UPDATE hero_banners
-       SET label=$1, title=$2, subtitle=$3, description=$4, image_url=$5,
-           cloudinary_public_id=$6, sort_order=$7, is_active=$8, updated_at=NOW()
-       WHERE id=$9 RETURNING *`,
-      [
-        label || 'Engineering Excellence',
-        title,
-        subtitle || null,
-        description || null,
-        image_url,
-        cloudinary_public_id || null,
-        sort_order ?? 0,
-        is_active ?? true,
-        id,
-      ]
-    );
-    if (!result.rows.length)
-      return NextResponse.json({ success: false, error: 'Banner not found' }, { status: 404 });
-    return NextResponse.json({ success: true, data: result.rows[0] });
-  } catch (error) {
-    console.error('PATCH hero-banners error:', error.message);
-    return handleApiError(error);
-  }
-}
+export async function POST(req) { return save(req, false); }
+export async function PATCH(req) { return save(req, true); }
 
 export async function DELETE(req) {
+  if (!requireRole(req, 'admin')) return unauthorized();
   try {
-    if (!requireRole(req, 'admin')) return unauthorized();
-
     const { id } = await req.json();
-    if (!id) return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
-
+    if (!Number.isInteger(Number(id)) || Number(id) < 1) return fail('A valid banner ID is required.');
     await ensureTable();
-    await pool.query(`DELETE FROM hero_banners WHERE id=$1`, [id]);
+    const result = await pool.query('DELETE FROM hero_banners WHERE id=$1 RETURNING id', [id]);
+    if (!result.rows.length) return fail('Banner not found.', 404);
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('DELETE hero-banners error:', error);
-    return handleApiError(error);
-  }
+  } catch (error) { return handleApiError(error); }
 }

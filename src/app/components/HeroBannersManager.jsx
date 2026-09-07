@@ -1,517 +1,244 @@
 'use client';
-
-import { useState, useEffect, useRef } from 'react';
-
-function th(dark) {
-  return {
-    bg:       dark ? '#000000' : '#f8f9fa',
-    card:     dark ? '#111111' : '#ffffff',
-    text:     dark ? '#ffffff' : '#111827',
-    sub:      dark ? '#71717a' : '#6b7280',
-    muted:    dark ? '#52525b' : '#9ca3af',
-    border:   dark ? '#27272a' : '#e5e7eb',
-    inputBg:  dark ? '#0a0a0a' : '#f9fafb',
-    accent:   dark ? 'var(--brand-blue)' : '#111827',
-    accentFg: dark ? '#000000' : '#ffffff',
-    rowHov:   dark ? '#1a1a1a' : '#f9fafb',
-    tHead:    dark ? '#0a0a0a' : '#f3f4f6',
-  };
-}
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { BANNER_LIMITS, bannerImageUrl, validateBanner } from '@/lib/hero-banner-fields.mjs';
+import HeroBannerSlide from './HeroBannerSlide';
+import heroStyles from './Hero.module.css';
+import styles from './HeroBannersManager.module.css';
 
 const EMPTY = {
-  label: 'Engineering Excellence',
-  title: '',
-  subtitle: '',
-  description: '',
-  image_url: '',
-  cloudinary_public_id: '',
-  sort_order: 0,
-  is_active: true,
+  service_name: '', label: '', title: '', subtitle: '', description: '',
+  image_url: '', image_alt: '', image_position: 'center', cloudinary_public_id: '',
+  cta_text: '', cta_href: '', secondary_cta_text: '', secondary_cta_href: '',
+  sort_order: 0, is_active: true,
 };
 
+async function request(method = 'GET', body) {
+  const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+  const headers = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (body) headers['Content-Type'] = 'application/json';
+  const response = await fetch(`/api/hero-banners${method === 'GET' ? '?mode=manager' : ''}`, {
+    method, headers, ...(body ? { body: JSON.stringify(body) } : {}), cache: 'no-store',
+  });
+  const data = await response.json();
+  if (!response.ok || !data.success || data.fallback) throw new Error(data.error || 'Banners could not be loaded or saved. Please try again.');
+  return data.data;
+}
+
 export default function HeroBannersManager({ isDarkMode }) {
-  const t = th(isDarkMode);
-  const [banners, setBanners]     = useState([]);
-  const [loading, setLoading]     = useState(true);
-  const [showForm, setShowForm]   = useState(false);
-  const [editing, setEditing]     = useState(null);
-  const [form, setForm]           = useState(EMPTY);
-  const [preview, setPreview]     = useState('');
+  const [banners, setBanners] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [form, setForm] = useState(null);
+  const [formError, setFormError] = useState('');
+  const [uploadMessage, setUploadMessage] = useState('');
+  const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [saving, setSaving]       = useState(false);
-  const [deleteId, setDeleteId]   = useState(null);
-  const [urlMode, setUrlMode]     = useState(false); // toggle between upload vs paste URL
-  const [imageMessage, setImageMessage] = useState('');
-  const [loadError, setLoadError] = useState('');
-  const fileRef = useRef(null);
+  const [mobilePreview, setMobilePreview] = useState(false);
+  const [deleting, setDeleting] = useState(null);
+  const dialog = useRef(null);
+  const deleteDialog = useRef(null);
+  const theme = {
+    '--panel-bg': isDarkMode ? '#0a1018' : '#f5f7fa',
+    '--panel-card': isDarkMode ? '#121c28' : '#fff',
+    '--panel-text': isDarkMode ? '#f1f5f9' : '#172536',
+    '--panel-muted': isDarkMode ? '#b0bfd0' : '#526174',
+    '--panel-border': isDarkMode ? '#334155' : '#d8e0e9',
+  };
 
-  const token = () =>
-    typeof window !== 'undefined'
-      ? localStorage.getItem('admin-token') || localStorage.getItem('token') || ''
-      : '';
-
-  // ── fetch ──────────────────────────────────────────────────────────────────
-  const load = async () => {
-    setLoading(true);
-    setLoadError('');
+  const load = useCallback(async () => {
+    setLoading(true); setError('');
     try {
-      const res = await fetch('/api/hero-banners?mode=manager', {
-        headers: { Authorization: `Bearer ${token()}` },
-      });
-      const data = await res.json().catch(() => null);
-      if (!res.ok || !data?.success) {
-        setBanners([]);
-        setLoadError(data?.error || (res.status === 401 || res.status === 403 ? 'Your admin session has expired. Please sign in again.' : 'Hero banners could not be loaded.'));
-        return;
-      }
-      if (!Array.isArray(data.data)) {
-        setBanners([]);
-        setLoadError('The server returned an invalid hero banner response. Please refresh or check the database connection.');
-        return;
-      }
-      setBanners(data.data);
-    } catch (e) {
-      console.error(e);
-      setBanners([]);
-      setLoadError('Could not connect to the hero banner service. Please try again.');
-    }
+      const rows = await request();
+      if (!Array.isArray(rows)) throw new Error('The server returned an invalid banner list.');
+      setBanners(rows);
+    } catch (error) { setError(error.message); }
     finally { setLoading(false); }
-  };
-
-  useEffect(() => { load(); }, []);
-
-  // ── open add / edit ────────────────────────────────────────────────────────
-  const openAdd = () => {
-    const nextOrder = banners.length > 0 ? Math.max(...banners.map(b => b.sort_order)) + 1 : 0;
-    setForm({ ...EMPTY, sort_order: nextOrder });
-    setPreview('');
-    setEditing(null);
-    setUrlMode(false);
-    setShowForm(true);
-  };
-
-  const openEdit = (b) => {
-    setForm({
-      label:                b.label || 'Engineering Excellence',
-      title:                b.title,
-      subtitle:             b.subtitle || '',
-      description:          b.description || '',
-      image_url:            b.image_url,
-      cloudinary_public_id: b.cloudinary_public_id || '',
-      sort_order:           b.sort_order ?? 0,
-      is_active:            b.is_active ?? true,
+  }, []);
+  useEffect(() => {
+    let cancelled = false;
+    request().then(rows => {
+      if (!Array.isArray(rows)) throw new Error('The server returned an invalid banner list.');
+      if (!cancelled) setBanners(rows);
+    }).catch(error => {
+      if (!cancelled) setError(error.message);
+    }).finally(() => {
+      if (!cancelled) setLoading(false);
     });
-    setPreview(b.image_url);
-    setEditing(b);
-    setUrlMode(false);
-    setShowForm(true);
-  };
+    return () => { cancelled = true; };
+  }, []);
+  const editingOpen = Boolean(form);
+  useEffect(() => { if (editingOpen) dialog.current?.showModal(); }, [editingOpen]);
+  useEffect(() => { if (deleting) deleteDialog.current?.showModal(); }, [deleting]);
 
-  // ── Cloudinary upload ──────────────────────────────────────────────────────
-  const handleUpload = async (e) => {
-    const file = e.target.files[0];
+  function edit(banner) {
+    setForm({ ...EMPTY, ...banner });
+    setFormError(''); setUploadMessage(''); setNotice(''); setMobilePreview(false);
+  }
+  function closeEditor() {
+    if (busy || uploading) return;
+    dialog.current?.close(); setForm(null);
+  }
+  const change = (key, value) => setForm(current => ({ ...current, [key]: value }));
+
+  async function upload(event) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
     if (!file) return;
-    e.target.value = '';
-    setImageMessage('');
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      setImageMessage('Please choose a JPG, PNG or WEBP image.');
-      return;
+    setFormError(''); setUploadMessage('');
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+      setFormError('Choose a JPG, PNG or WEBP image smaller than 5 MB.'); return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setImageMessage('Image is larger than 5 MB. Please compress it and try again.');
-      return;
-    }
-    const dimensions = await new Promise(resolve => {
-      const img = new Image();
-      const objectUrl = URL.createObjectURL(file);
-      img.onload = () => { URL.revokeObjectURL(objectUrl); resolve({ width: img.naturalWidth, height: img.naturalHeight }); };
-      img.onerror = () => { URL.revokeObjectURL(objectUrl); resolve(null); };
-      img.src = objectUrl;
-    });
-    if (!dimensions) {
-      setImageMessage('This image could not be read. Please choose another file.');
-      return;
-    }
-    setImageMessage(dimensions.width < 1200 || dimensions.height < 675
-      ? `Selected image is ${dimensions.width}×${dimensions.height}. At least 1200×675 is recommended to avoid blur.`
-      : `Selected image: ${dimensions.width}×${dimensions.height}.`);
     setUploading(true);
     try {
-      const fd = new FormData();
-      fd.append('file', file);
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token()}` },
-        body: fd,
+      const body = new FormData(); body.append('file', file);
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const response = await fetch('/api/hero-banners/upload', {
+        method: 'POST', headers: token ? { Authorization: `Bearer ${token}` } : {}, body,
       });
-      const data = await res.json();
-      const uploadedUrl = data.url || data.data?.url;
-      if (res.ok && uploadedUrl) {
-        setForm(f => ({ ...f, image_url: uploadedUrl, cloudinary_public_id: '' }));
-        setPreview(uploadedUrl);
-      } else {
-        setImageMessage(data.error?.message || data.error || 'Upload failed.');
-      }
-    } catch (err) {
-      console.error('Cloudinary upload error:', err);
-      setImageMessage('Upload failed. Check your connection and try again.');
-    } finally {
-      setUploading(false);
-    }
-  };
+      const data = await response.json();
+      if (!response.ok || !data.success || !data.url) throw new Error(data.error || 'Image upload failed.');
+      setForm(current => ({ ...current, image_url: data.url, cloudinary_public_id: data.public_id }));
+      setUploadMessage(`Uploaded to Cloudinary (${data.width} x ${data.height}).${data.width < 1200 ? ' A wider image is recommended for desktop.' : ''} Save the banner to publish this image.`);
+    } catch (error) { setFormError(error.message); }
+    finally { setUploading(false); }
+  }
 
-  // ── save ───────────────────────────────────────────────────────────────────
-  const handleSave = async () => {
-    if (!form.title.trim()) { alert('Title is required.'); return; }
-    if (!form.image_url.trim()) { alert('Banner image is required.'); return; }
-    if (!/^(https?:\/\/|\/)/i.test(form.image_url.trim())) { alert('Enter a valid image URL beginning with http://, https:// or /.'); return; }
-    setSaving(true);
+  async function save(event) {
+    event.preventDefault();
+    const result = validateBanner(form, process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME);
+    if (result.error) { setFormError(result.error); return; }
+    setBusy(true); setFormError('');
     try {
-      const method = editing ? 'PATCH' : 'POST';
-      const body   = editing ? { ...form, id: editing.id } : form;
-      const res    = await fetch('/api/hero-banners', {
-        method,
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (data.success) {
-        if (editing) {
-          setBanners(prev => prev.map(b => b.id === editing.id ? data.data : b));
-        } else {
-          setBanners(prev => [...prev, data.data].sort((a, b) => a.sort_order - b.sort_order));
-        }
-        setShowForm(false);
-      } else {
-        alert(data.error || 'Save failed.');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Server error.');
-    } finally {
-      setSaving(false);
-    }
-  };
+      const saved = await request(form.id ? 'PATCH' : 'POST', { ...result.data, ...(form.id ? { id: form.id } : {}) });
+      setBanners(rows => form.id ? rows.map(row => row.id === saved.id ? saved : row) : [...rows, saved]);
+      dialog.current.close(); setForm(null); setNotice('Banner saved. The homepage will use it on its next load.');
+    } catch (error) { setFormError(error.message); }
+    finally { setBusy(false); }
+  }
 
-  // ── delete ─────────────────────────────────────────────────────────────────
-  const handleDelete = async (id) => {
+  async function toggle(banner) {
+    setBusy(true); setError(''); setNotice('');
     try {
-      const res  = await fetch('/api/hero-banners', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
-        body: JSON.stringify({ id }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setBanners(prev => prev.filter(b => b.id !== id));
-        setDeleteId(null);
-      }
-    } catch (err) { console.error(err); }
-  };
-
-  // ── toggle active ──────────────────────────────────────────────────────────
-  const toggleActive = async (b) => {
+      const saved = await request('PATCH', { id: banner.id, is_active: !banner.is_active });
+      setBanners(rows => rows.map(row => row.id === saved.id ? saved : row));
+    } catch (error) { setError(error.message); }
+    finally { setBusy(false); }
+  }
+  async function remove() {
+    setBusy(true); setError('');
     try {
-      const res  = await fetch('/api/hero-banners', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
-        body: JSON.stringify({ id: b.id, ...b, is_active: !b.is_active }),
-      });
-      const data = await res.json();
-      if (data.success) setBanners(prev => prev.map(x => x.id === b.id ? data.data : x));
-    } catch (err) { console.error(err); }
-  };
+      await request('DELETE', { id: deleting.id });
+      setBanners(rows => rows.filter(row => row.id !== deleting.id));
+      deleteDialog.current.close(); setDeleting(null); setNotice('Banner deleted.');
+    } catch (error) { setError(error.message); deleteDialog.current.close(); setDeleting(null); }
+    finally { setBusy(false); }
+  }
 
-  // ── move order ─────────────────────────────────────────────────────────────
-  const moveOrder = async (b, dir) => {
-    const sorted  = [...banners].sort((a, x) => a.sort_order - x.sort_order);
-    const idx     = sorted.findIndex(x => x.id === b.id);
-    const swapIdx = idx + dir;
-    if (swapIdx < 0 || swapIdx >= sorted.length) return;
+  function field(key, label, placeholder, wide = false) {
+    return <label className={`${styles.field} ${wide ? styles.wide : ''}`}>
+      {label}
+      <input aria-label={label} value={form[key] || ''} onChange={event => change(key, event.target.value)}
+        maxLength={BANNER_LIMITS[key]} placeholder={placeholder} required={key === 'title'} />
+      {['title', 'subtitle'].includes(key) && <small>{(form[key] || '').length}/{BANNER_LIMITS[key]} characters. Keep this line short.</small>}
+    </label>;
+  }
 
-    const a = sorted[idx];
-    const s = sorted[swapIdx];
-    const [newA, newS] = [s.sort_order, a.sort_order];
-
-    await Promise.all([
-      fetch('/api/hero-banners', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
-        body: JSON.stringify({ id: a.id, ...a, sort_order: newA }),
-      }),
-      fetch('/api/hero-banners', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
-        body: JSON.stringify({ id: s.id, ...s, sort_order: newS }),
-      }),
-    ]);
-    load();
-  };
-
-  const inp = (field) => ({
-    value: form[field],
-    onChange: e => setForm(f => ({ ...f, [field]: e.target.value })),
-    style: {
-      width: '100%', boxSizing: 'border-box',
-      background: t.inputBg, color: t.text,
-      border: `1px solid ${t.border}`, borderRadius: '4px',
-      padding: '9px 12px', fontSize: '13px', outline: 'none',
-    },
-  });
-
-  const safeBanners = Array.isArray(banners) ? banners : [];
-  const sorted = [...safeBanners].sort((a, b) => Number(a?.sort_order || 0) - Number(b?.sort_order || 0));
-
-  // ────────────────────────────────────────────────────────────────────────────
-  return (
-    <div style={{ background: t.bg, minHeight: '100vh', padding: '24px' }}>
-
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <p style={{ color: t.accent, fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 4px' }}>Admin Panel</p>
-          <h2 style={{ color: t.text, margin: '0 0 4px', fontSize: '20px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-            Hero Banners
-          </h2>
-          <p style={{ color: t.sub, margin: 0, fontSize: '12px' }}>Manage the homepage hero slider — images, headings, and order.</p>
-        </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={load}
-            style={{ background: 'none', border: `1px solid ${t.border}`, borderRadius: '4px', padding: '8px 14px', color: t.sub, cursor: 'pointer', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-            ↺ Refresh
-          </button>
-          <button onClick={openAdd}
-            style={{ background: t.accent, color: t.accentFg, border: 'none', borderRadius: '4px', padding: '8px 18px', cursor: 'pointer', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-            + Add Banner
-          </button>
-        </div>
-      </div>
-
-      {/* Stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(130px,1fr))', gap: '12px', marginBottom: '24px' }}>
-        {[
-          { label: 'Total',    val: safeBanners.length,                           color: t.sub     },
-          { label: 'Active',   val: safeBanners.filter(b => b?.is_active).length,  color: '#22c55e' },
-          { label: 'Inactive', val: safeBanners.filter(b => !b?.is_active).length, color: '#ef4444' },
-        ].map(s => (
-          <div key={s.label} style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '16px', textAlign: 'center' }}>
-            <div style={{ fontSize: '22px', fontWeight: 800, color: s.color }}>{s.val}</div>
-            <div style={{ fontSize: '10px', color: t.sub, marginTop: '3px', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Banner list */}
-      {loadError ? (
-        <div style={{ padding: '22px', border: '1px solid #ef4444', borderRadius: '6px', background: '#ef444412', color: t.text }}>
-          <strong style={{ display: 'block', color: '#ef4444', marginBottom: '6px' }}>Hero banner manager could not load</strong>
-          <span style={{ fontSize: '12px' }}>{loadError}</span>
-          <button type="button" onClick={load} style={{ display: 'block', marginTop: '14px', padding: '8px 14px', cursor: 'pointer' }}>Try again</button>
-        </div>
-      ) : loading ? (
-        <div style={{ textAlign: 'center', padding: '60px', color: t.sub, fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Loading…</div>
-      ) : sorted.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '60px', border: `1px solid ${t.border}`, borderRadius: '4px' }}>
-          <div style={{ fontSize: '36px', marginBottom: '10px' }}>🖼️</div>
-          <p style={{ color: t.text, fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 8px' }}>No banners yet</p>
-          <p style={{ color: t.sub, fontSize: '12px', margin: '0 0 16px' }}>Add your first hero banner to get started.</p>
-          <button onClick={openAdd}
-            style={{ background: t.accent, color: t.accentFg, border: 'none', borderRadius: '4px', padding: '10px 20px', cursor: 'pointer', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-            + Add Banner
-          </button>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {sorted.map((b, i) => (
-            <div key={b.id}
-              style={{ background: t.card, border: `1px solid ${b.is_active ? t.border : '#52525b'}`, borderRadius: '6px', display: 'flex', gap: '16px', alignItems: 'center', padding: '14px 16px', opacity: b.is_active ? 1 : 0.55 }}>
-
-              {/* Thumbnail */}
-              <div style={{ width: 90, height: 56, borderRadius: '4px', overflow: 'hidden', flexShrink: 0, background: t.inputBg, border: `1px solid ${t.border}` }}>
-                <img src={b.image_url} alt={b.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-
-              {/* Text */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
-                  <span style={{ fontSize: '10px', fontWeight: 800, color: t.accent, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{b.label}</span>
-                  <span style={{ fontSize: '10px', color: b.is_active ? '#22c55e' : '#ef4444', fontWeight: 700, textTransform: 'uppercase' }}>
-                    {b.is_active ? '● Active' : '○ Inactive'}
-                  </span>
-                </div>
-                <div style={{ fontWeight: 800, fontSize: '14px', color: t.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.title}</div>
-                {b.subtitle && <div style={{ fontSize: '12px', color: t.sub, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.subtitle}</div>}
-                {b.description && <div style={{ fontSize: '11px', color: t.muted, marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.description}</div>}
-              </div>
-
-              {/* Order + actions */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-                {/* Up/Down */}
-                <button onClick={() => moveOrder(b, -1)} disabled={i === 0}
-                  style={{ background: 'none', border: `1px solid ${t.border}`, borderRadius: '3px', width: '26px', height: '26px', cursor: i === 0 ? 'default' : 'pointer', color: i === 0 ? t.muted : t.sub, fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: i === 0 ? 0.4 : 1 }}>▲</button>
-                <button onClick={() => moveOrder(b, 1)} disabled={i === sorted.length - 1}
-                  style={{ background: 'none', border: `1px solid ${t.border}`, borderRadius: '3px', width: '26px', height: '26px', cursor: i === sorted.length - 1 ? 'default' : 'pointer', color: i === sorted.length - 1 ? t.muted : t.sub, fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: i === sorted.length - 1 ? 0.4 : 1 }}>▼</button>
-
-                <button onClick={() => toggleActive(b)}
-                  style={{ background: b.is_active ? '#14532d22' : '#1e293b', border: `1px solid ${b.is_active ? '#22c55e' : t.border}`, borderRadius: '4px', padding: '4px 10px', cursor: 'pointer', color: b.is_active ? '#22c55e' : t.muted, fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  {b.is_active ? 'Deactivate' : 'Activate'}
-                </button>
-
-                <button onClick={() => openEdit(b)}
-                  style={{ background: 'none', border: `1px solid ${t.border}`, borderRadius: '4px', padding: '4px 12px', cursor: 'pointer', color: t.sub, fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Edit
-                </button>
-
-                <button onClick={() => setDeleteId(b.id)}
-                  style={{ background: 'none', border: '1px solid #ef4444', borderRadius: '4px', padding: '4px 10px', cursor: 'pointer', color: '#ef4444', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* ── Add / Edit Modal ── */}
-      {showForm && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}
-          onClick={() => setShowForm(false)}>
-          <div style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: '6px', width: '100%', maxWidth: '560px', padding: '28px', position: 'relative', maxHeight: '92vh', overflowY: 'auto' }}
-            onClick={e => e.stopPropagation()}>
-
-            <button onClick={() => setShowForm(false)}
-              style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: `1px solid ${t.border}`, borderRadius: '2px', width: '28px', height: '28px', cursor: 'pointer', color: t.sub, fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
-
-            <p style={{ color: t.accent, fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 4px' }}>Hero Banners</p>
-            <h3 style={{ color: t.text, margin: '0 0 24px', fontSize: '17px', fontWeight: 800 }}>{editing ? 'Edit Banner' : 'Add New Banner'}</h3>
-
-            {/* Label */}
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Accent Label <span style={{ color: t.muted }}>(e.g. &quot;Engineering Excellence&quot;)</span></label>
-              <input {...inp('label')} placeholder="Engineering Excellence" />
-            </div>
-
-            {/* Title */}
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Title (Yellow Heading) <span style={{ color: '#ef4444' }}>*</span></label>
-              <input {...inp('title')} placeholder="Sustainable Technology Led" />
-            </div>
-
-            {/* Subtitle */}
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Subtitle (White Heading)</label>
-              <input {...inp('subtitle')} placeholder="Engineering, Procurement & Construction" />
-            </div>
-
-            {/* Description */}
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Description</label>
-              <textarea {...inp('description')} rows={3}
-                placeholder="We provide simple and innovative solutions…"
-                style={{ ...inp('description').style, resize: 'vertical', lineHeight: 1.6 }} />
-            </div>
-
-            {/* Image */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>Banner Image <span style={{ color: '#ef4444' }}>*</span></label>
-              <p style={{ color: t.sub, fontSize: '11px', lineHeight: 1.5, margin: '0 0 10px' }}>
-                Recommended: 1920×1080 (16:9), minimum 1200×675, maximum 5 MB. Keep important content near the center because edges may crop on mobile.
-              </p>
-
-              {/* Toggle tabs */}
-              <div style={{ display: 'flex', gap: '0', marginBottom: '10px', border: `1px solid ${t.border}`, borderRadius: '4px', overflow: 'hidden', width: 'fit-content' }}>
-                {[{ v: false, l: '⬆ Upload' }, { v: true, l: '🔗 Paste URL' }].map(({ v, l }) => (
-                  <button key={String(v)} onClick={() => setUrlMode(v)}
-                    style={{ padding: '6px 16px', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', border: 'none', cursor: 'pointer', background: urlMode === v ? t.accent : t.inputBg, color: urlMode === v ? t.accentFg : t.sub }}>
-                    {l}
-                  </button>
-                ))}
-              </div>
-
-              {urlMode ? (
-                <input
-                  value={form.image_url}
-                  onChange={e => { setForm(f => ({ ...f, image_url: e.target.value.trim(), cloudinary_public_id: '' })); setPreview(e.target.value.trim()); setImageMessage(''); }}
-                  placeholder="https://images.unsplash.com/…"
-                  style={{ width: '100%', boxSizing: 'border-box', background: t.inputBg, color: t.text, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '9px 12px', fontSize: '13px', outline: 'none' }}
-                />
-              ) : (
-                <div>
-                  <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleUpload} style={{ display: 'none' }} />
-                  <button onClick={() => fileRef.current?.click()} disabled={uploading}
-                    style={{ background: t.inputBg, border: `1px dashed ${t.border}`, borderRadius: '4px', padding: '12px 20px', cursor: 'pointer', color: t.sub, fontSize: '12px', fontWeight: 600, width: '100%' }}>
-                    {uploading ? '⏳ Uploading to Cloudinary…' : '📁 Click to choose image (JPG / PNG / WEBP)'}
-                  </button>
-                </div>
-              )}
-
-              {imageMessage && <p style={{ color: /failed|could not|larger/i.test(imageMessage) ? '#ef4444' : t.sub, fontSize: '11px', margin: '8px 0 0' }}>{imageMessage}</p>}
-
-              {/* Preview */}
-              {preview && (
-                <div style={{ marginTop: '10px', borderRadius: '4px', overflow: 'hidden', border: `1px solid ${t.border}` }}>
-                  <img src={preview} alt="Banner preview"
-                    onError={() => setImageMessage('Image URL could not be loaded. Use a direct public image link.')}
-                    onLoad={(event) => {
-                      const { naturalWidth, naturalHeight } = event.currentTarget;
-                      setImageMessage((current) => current || `Image loaded: ${naturalWidth}×${naturalHeight}.`);
-                    }}
-                    style={{ width: '100%', aspectRatio: '16 / 9', objectFit: 'cover', display: 'block' }} />
-                </div>
-              )}
-            </div>
-
-            {/* Sort order + Active */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Sort Order</label>
-                <input type="number" min="0"
-                  value={form.sort_order}
-                  onChange={e => setForm(f => ({ ...f, sort_order: parseInt(e.target.value) || 0 }))}
-                  style={{ width: '100%', boxSizing: 'border-box', background: t.inputBg, color: t.text, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '9px 12px', fontSize: '13px', outline: 'none' }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Status</label>
-                <select value={form.is_active ? 'active' : 'inactive'}
-                  onChange={e => setForm(f => ({ ...f, is_active: e.target.value === 'active' }))}
-                  style={{ width: '100%', boxSizing: 'border-box', background: t.inputBg, color: t.text, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '9px 12px', fontSize: '13px', outline: 'none' }}>
-                  <option value="active">Active (visible)</option>
-                  <option value="inactive">Inactive (hidden)</option>
-                </select>
-              </div>
-            </div>
-
-            <button onClick={handleSave} disabled={saving || uploading}
-              style={{ width: '100%', background: t.accent, color: t.accentFg, border: 'none', borderRadius: '4px', padding: '13px', cursor: saving ? 'default' : 'pointer', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', opacity: saving ? 0.7 : 1 }}>
-              {saving ? 'Saving…' : editing ? '✓ Update Banner' : '+ Add Banner'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ── Delete Confirm Modal ── */}
-      {deleteId && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}
-          onClick={() => setDeleteId(null)}>
-          <div style={{ background: t.card, border: `1px solid #ef4444`, borderRadius: '6px', width: '100%', maxWidth: '360px', padding: '28px', textAlign: 'center' }}
-            onClick={e => e.stopPropagation()}>
-            <div style={{ fontSize: '32px', marginBottom: '12px' }}>🗑️</div>
-            <h3 style={{ color: t.text, margin: '0 0 8px', fontSize: '16px', fontWeight: 800 }}>Delete Banner?</h3>
-            <p style={{ color: t.sub, fontSize: '13px', margin: '0 0 24px' }}>This will permanently remove the banner from the homepage slider.</p>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-              <button onClick={() => setDeleteId(null)}
-                style={{ background: 'none', border: `1px solid ${t.border}`, borderRadius: '4px', padding: '9px 20px', cursor: 'pointer', color: t.sub, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>
-                Cancel
-              </button>
-              <button onClick={() => handleDelete(deleteId)}
-                style={{ background: '#ef4444', border: 'none', borderRadius: '4px', padding: '9px 20px', cursor: 'pointer', color: '#fff', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase' }}>
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+  const sorted = [...banners].sort((a, b) => a.sort_order - b.sort_order || a.id - b.id);
+  return <div className={styles.manager} style={theme}>
+    <div className={styles.header}>
+      <div><h2>Homepage Banners</h2><p className={styles.muted}>Manage service banners, Cloudinary images, buttons and display order.</p></div>
+      <button type="button" disabled={busy || loading || Boolean(error)} onClick={() => edit({ ...EMPTY, sort_order: Math.max(0, ...banners.map(b => b.sort_order)) + 1 })}>Add Banner</button>
     </div>
-  );
+    {error && <div role="alert" className={`${styles.message} ${styles.error}`}>{error} <button type="button" onClick={load}>Retry</button></div>}
+    {notice && <p role="status" className={styles.message}>{notice}</p>}
+    {loading ? <p>Loading banners...</p> : <div className={styles.list}>
+      {!sorted.length && !error && <p>No banners yet. Add a banner to feature a service on the homepage.</p>}
+      {sorted.map(banner => <article key={banner.id} className={styles.card}>
+        <img src={bannerImageUrl(banner.image_url, 400)} alt={banner.image_alt || banner.title} className={styles.thumbnail} />
+        <div className={styles.cardCopy}>
+          <span className={styles.status}>{banner.service_name || 'Service banner'} / Order {banner.sort_order} / {banner.is_active ? 'Active' : 'Hidden'}</span>
+          <h3>{banner.title}</h3><p className={styles.muted}>{banner.subtitle}</p>
+          {banner.cta_text && <p className={styles.muted}>{banner.cta_text} &rarr; {banner.cta_href}</p>}
+        </div>
+        <div className={styles.actions}>
+          <button type="button" disabled={busy} onClick={() => edit(banner)}>Edit</button>
+          <button type="button" disabled={busy} onClick={() => toggle(banner)}>{banner.is_active ? 'Hide' : 'Show'}</button>
+          <button type="button" disabled={busy} onClick={() => setDeleting(banner)}>Delete</button>
+        </div>
+      </article>)}
+    </div>}
+    {form && <dialog ref={dialog} className={styles.dialog} style={theme} aria-labelledby="banner-editor-title"
+      onCancel={event => { event.preventDefault(); closeEditor(); }}>
+      <form onSubmit={save}>
+        <div className={styles.header}>
+          <div><h2 id="banner-editor-title">{form.id ? 'Edit Banner' : 'Add Banner'}</h2><p className={styles.muted}>Use English text and a clear image for this service.</p></div>
+          <button type="button" disabled={busy || uploading} onClick={closeEditor} aria-label="Close banner editor">Close</button>
+        </div>
+        <div className={styles.editor}>
+          <div className={styles.fields}>
+            {field('service_name', 'Service tab name', 'Construction')}
+            {field('label', 'Small label above heading', 'PLANNING TO COMPLETION')}
+            {field('title', 'Main heading (white)', 'Your vision.', true)}
+            {field('subtitle', 'Highlight line (blue)', 'Built to last.', true)}
+            <label className={`${styles.field} ${styles.wide}`}>Description
+              <textarea aria-label="Description" value={form.description || ''} onChange={event => change('description', event.target.value)} rows={3} maxLength={BANNER_LIMITS.description} />
+              <small>{(form.description || '').length}/{BANNER_LIMITS.description} characters</small>
+            </label>
+            <label className={`${styles.field} ${styles.wide}`}>Upload banner image
+              <input aria-label="Upload banner image" type="file" accept="image/jpeg,image/png,image/webp" disabled={uploading || busy} onChange={upload} />
+              <small>{uploading ? 'Uploading to Cloudinary...' : 'JPG, PNG or WEBP, up to 5 MB. Recommended width: 1920 px. Use a photo without embedded text.'}</small>
+            </label>
+            {uploadMessage && <p role="status" className={`${styles.muted} ${styles.wide}`}>{uploadMessage}</p>}
+            <label className={`${styles.field} ${styles.wide}`}>Cloudinary image URL
+              <input aria-label="Cloudinary image URL" type="url" required value={form.image_url} disabled={uploading} placeholder="https://res.cloudinary.com/..."
+                onChange={event => { change('image_url', event.target.value); change('cloudinary_public_id', ''); setUploadMessage(''); }} />
+              <small>Upload a file above, or paste an image URL from your Cloudinary account.</small>
+            </label>
+            {field('image_alt', 'Image description (accessibility)', 'Construction workers on a building site', true)}
+            <label className={styles.field}>Image focal point
+              <select aria-label="Image focal point" value={form.image_position} onChange={event => change('image_position', event.target.value)}>
+                <option value="left">Left</option><option value="center">Center</option><option value="right">Right</option>
+              </select>
+            </label>
+            <label className={styles.field}>Display order
+              <input aria-label="Display order" type="number" min="0" max="2147483647" required value={form.sort_order} onChange={event => change('sort_order', event.target.value)} />
+            </label>
+            {field('cta_text', 'Primary button text', 'Explore Services')}
+            {field('cta_href', 'Primary button destination', '/Services/all')}
+            {field('secondary_cta_text', 'Secondary button text', 'Contact Us')}
+            {field('secondary_cta_href', 'Secondary button destination', '/contact')}
+            <p className={`${styles.muted} ${styles.wide}`}>Use a page path such as /quick, /ShopNow or /buy-sale. Leave both fields blank to remove a button.</p>
+            <label className={styles.field}>Visibility
+              <select aria-label="Visibility" value={form.is_active ? 'active' : 'hidden'} onChange={event => change('is_active', event.target.value === 'active')}>
+                <option value="active">Active on homepage</option><option value="hidden">Hidden</option>
+              </select>
+            </label>
+          </div>
+          <div className={styles.previewColumn}>
+            <div className={styles.previewHeader}><strong>Banner preview</strong><button type="button" onClick={() => setMobilePreview(value => !value)}>{mobilePreview ? 'Wide Preview' : 'Mobile Preview'}</button></div>
+            <div className={mobilePreview ? styles.mobilePreview : ''}>
+              <div className={heroStyles.preview}><HeroBannerSlide banner={form} preview /></div>
+            </div>
+            <p className={styles.muted}>The image crops to fit each screen. Check both widths before saving.</p>
+          </div>
+        </div>
+        {formError && <p role="alert" className={`${styles.message} ${styles.error}`}>{formError}</p>}
+        <div className={styles.footer}>
+          <button type="button" disabled={busy || uploading} onClick={closeEditor}>Cancel</button>
+          <button type="submit" disabled={busy || uploading}>{busy ? 'Saving...' : uploading ? 'Uploading...' : 'Save Banner'}</button>
+        </div>
+      </form>
+    </dialog>}
+    {deleting && <dialog ref={deleteDialog} className={`${styles.dialog} ${styles.deleteDialog}`} style={theme} aria-labelledby="delete-banner-title"
+      onCancel={event => { if (busy) event.preventDefault(); else setDeleting(null); }}>
+      <h2 id="delete-banner-title">Delete this banner?</h2><p>{deleting.title}</p>
+      <p className={styles.muted}>This removes the banner from the homepage. You can hide it instead if you want to use it later.</p>
+      <div className={styles.footer}>
+        <button type="button" disabled={busy} onClick={() => { deleteDialog.current.close(); setDeleting(null); }}>Cancel</button>
+        <button type="button" disabled={busy} onClick={remove}>{busy ? 'Deleting...' : 'Delete Banner'}</button>
+      </div>
+    </dialog>}
+  </div>;
 }
