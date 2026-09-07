@@ -5,6 +5,7 @@ import { createInitializationGuard, handleApiError, isDatabaseConnectionError } 
 import { fallbackHeroBanners, fallbackResponse } from '@/lib/public-fallbacks';
 import { ensureHeroBannersSchema } from '@/lib/hero-banners-schema.mjs';
 import { validateBanner } from '@/lib/hero-banner-fields.mjs';
+import { installServiceBanners } from '@/lib/install-service-banners';
 
 const ensureTable = createInitializationGuard(() => ensureHeroBannersSchema(pool));
 const fail = (error, status = 400) => NextResponse.json({ success: false, error }, { status });
@@ -28,6 +29,10 @@ async function save(req, updating) {
   try {
     const payload = await req.json();
     if (!payload || typeof payload !== 'object') return fail('Invalid banner.');
+    if (!updating && payload.action === 'load-service-banners') {
+      await ensureTable();
+      return NextResponse.json({ success: true, data: await installServiceBanners() });
+    }
     if (updating && (!Number.isInteger(Number(payload.id)) || Number(payload.id) < 1)) return fail('A valid banner ID is required.');
     if (updating && Object.keys(payload).every(key => ['id', 'is_active'].includes(key))) {
       if (typeof payload.is_active !== 'boolean') return fail('Invalid banner status.');

@@ -126,6 +126,17 @@ export default function HeroBannersManager({ isDarkMode }) {
     } catch (error) { setError(error.message); }
     finally { setBusy(false); }
   }
+  async function loadServiceBanners() {
+    if (!window.confirm('Load the four English banners for Construction, Home Services, Materials and Property? Their Cloudinary images and buttons will be included. Current banners will be backed up and hidden. Any edits to these four service banners will be reset.')) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const rows = await request('POST', { action: 'load-service-banners' });
+      if (!Array.isArray(rows)) throw new Error('The server returned an invalid banner list.');
+      setBanners(rows);
+      setNotice('Four service banners are now active. Previous banners were backed up and hidden. Refresh the homepage to see the changes.');
+    } catch (error) { setError(error.message); }
+    finally { setBusy(false); }
+  }
   async function remove() {
     setBusy(true); setError('');
     try {
@@ -149,7 +160,10 @@ export default function HeroBannersManager({ isDarkMode }) {
   return <div className={styles.manager} style={theme}>
     <div className={styles.header}>
       <div><h2>Homepage Banners</h2><p className={styles.muted}>Manage service banners, Cloudinary images, buttons and display order.</p></div>
-      <button type="button" disabled={busy || loading || Boolean(error)} onClick={() => edit({ ...EMPTY, sort_order: Math.max(0, ...banners.map(b => b.sort_order)) + 1 })}>Add Banner</button>
+      <div className={styles.actions}>
+        <button type="button" disabled={busy || loading || Boolean(error)} onClick={loadServiceBanners}>{busy ? 'Please wait...' : 'Load Service Banners'}</button>
+        <button type="button" disabled={busy || loading || Boolean(error)} onClick={() => edit({ ...EMPTY, sort_order: Math.max(0, ...banners.map(b => b.sort_order)) + 1 })}>Add Banner</button>
+      </div>
     </div>
     {error && <div role="alert" className={`${styles.message} ${styles.error}`}>{error} <button type="button" onClick={load}>Retry</button></div>}
     {notice && <p role="status" className={styles.message}>{notice}</p>}
