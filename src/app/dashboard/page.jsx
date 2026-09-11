@@ -32,6 +32,9 @@ const OfficeLocationsManager = dynamicManager(() => import('../components/Office
 const LeadManagementAdmin = dynamicManager(() => import('../components/LeadManagementAdmin'));
 const PropertyEnquiriesManager = dynamicManager(() => import('../components/PropertyEnquiriesManager'));
 const CitiesManager = dynamicManager(() => import('../components/CitiesManager'));
+const FaqsManager = dynamicManager(() => import('../components/FaqsManager'));
+const ReviewsManager = dynamicManager(() => import('../components/ReviewsManager'));
+const BlogsManager = dynamicManager(() => import('../components/BlogsManager'));
 
 function hasResumeFile(resumeUrl) {
   const value = String(resumeUrl || '').trim();
@@ -354,6 +357,9 @@ function AdminDashboard() {
     { id: 'calculator',                 label: 'Calculator',                icon: '🧮' },
     { id: 'calculator-quotes',          label: 'Calculator Quotes',         icon: '✉'  },
     { id: 'hero-banners',              label: 'Hero Banners',              icon: '🖼️' },
+    { id: 'faqs',                       label: 'FAQs Management',           icon: '❓' },
+    { id: 'reviews',                    label: 'Customer Reviews',          icon: '⭐' },
+    { id: 'blogs',                     label: 'SEO Blogs & Articles',      icon: '📰' },
     { id: 'career-enquiries',           label: 'Career Enquiry',            icon: '✉'  },
     { id: 'jobs',                       label: 'New Jobs',                  icon: '💼' },
     { id: 'lead-management',            label: 'Lead Management',           icon: '📋' },
@@ -1438,6 +1444,9 @@ function AdminDashboard() {
             </div>
           )}
           {activeTab === 'hero-banners' && <HeroBannersManager isDarkMode={isDarkMode} />}
+          {activeTab === 'faqs' && <FaqsManager isDarkMode={isDarkMode} />}
+          {activeTab === 'reviews' && <ReviewsManager isDarkMode={isDarkMode} />}
+          {activeTab === 'blogs' && <BlogsManager isDarkMode={isDarkMode} />}
           {activeTab === 'jobs' && <JobsManager isDarkMode={isDarkMode} />}
           {activeTab === 'lead-management' && <LeadManagementAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'office-locations' && <OfficeLocationsManager isDarkMode={isDarkMode} />}

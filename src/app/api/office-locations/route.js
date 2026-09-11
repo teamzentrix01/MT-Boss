@@ -20,7 +20,9 @@ const DEFAULT_OFFICES = [
   phone: COMPANY_CONTACT.phone,
   email: `${city.toLowerCase()}@mtboss.com`,
   hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
-  map_url: `https://www.google.com/maps?q=${encodeURIComponent(`${city}, India`)}&output=embed`,
+  map_url: city.toLowerCase() === 'bareilly'
+    ? 'https://www.google.com/maps?q=28.3975,79.452806&z=17&output=embed'
+    : `https://www.google.com/maps?q=${encodeURIComponent(`${city}, India`)}&output=embed`,
   sort_order: index,
 }));
 

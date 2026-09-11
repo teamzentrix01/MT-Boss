@@ -6,6 +6,8 @@ import Footer from "./components/Footer";
 import { COMPANY_CONTACT } from "./lib/company";
 import PrivacyConsentGuard from "./components/PrivacyConsentGuard";
 import FreeWhatsAppNotifier from "./components/FreeWhatsAppNotifier";
+import ChatbotWidget from "./components/ChatbotWidget";
+import LeadConsultationModal from "./components/LeadConsultationModal";
 
 export default function RootLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -41,8 +43,6 @@ export default function RootLayout({ children }) {
       if (phoneLike(el)) {
         const rawDigits = value.replace(/\D/g, '');
         const digits = rawDigits.length > 10 ? rawDigits.slice(-10) : rawDigits;
-        // Do not write to el.value here. React owns controlled input values, and
-        // changing the DOM from this global listener can make typed digits vanish.
         el.setCustomValidity(/^[6-9]\d{9}$/.test(digits) ? '' : 'Enter a valid 10-digit mobile number starting with 6, 7, 8 or 9.');
         return !el.validationMessage;
       }
@@ -96,6 +96,12 @@ export default function RootLayout({ children }) {
         <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
         {children}
         <Footer/>
+
+        {/* Floating Chatbot Assistant Widget */}
+        <ChatbotWidget isDarkMode={isDarkMode} />
+
+        {/* On-Arrival Project Consultation Modal */}
+        <LeadConsultationModal isDarkMode={isDarkMode} />
 
         {/* Floating WhatsApp support button */}
         <a

@@ -5,13 +5,23 @@ import styles from './Hero.module.css';
 
 export default function HeroBannerSlide({ banner, active = true, preview = false, headingId }) {
   const Heading = preview ? 'h3' : 'h1';
+  const imageUrl = bannerImageUrl(banner.image_url, 1920);
+
   return (
     <div className={`${styles.slide} ${!active ? styles.hidden : ''}`} aria-hidden={!active} inert={!active ? true : undefined}>
-      {banner.image_url && <img className={styles.photo} src={bannerImageUrl(banner.image_url)}
-        srcSet={`${bannerImageUrl(banner.image_url, 800)} 800w, ${bannerImageUrl(banner.image_url, 1280)} 1280w, ${bannerImageUrl(banner.image_url)} 1920w`}
-        sizes="100vw" alt={banner.image_alt || banner.service_name || ''}
-        style={{ objectPosition: banner.image_position || 'center' }} fetchPriority={active ? 'high' : 'low'} loading={active ? 'eager' : 'lazy'} decoding="async" />}
+      {imageUrl && (
+        <img
+          className={styles.photo}
+          src={imageUrl}
+          alt={banner.image_alt || banner.service_name || 'MTBOSS Service Banner'}
+          style={{ objectPosition: banner.image_position || 'center' }}
+          fetchPriority={active ? 'high' : 'low'}
+          loading={active ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+      )}
       <div className={styles.shade} />
+
       <div className={styles.content}>
         <div className={styles.copy} key={`${banner.id}-${active}`}>
           {banner.label && <p className={styles.eyebrow}>{banner.label}</p>}

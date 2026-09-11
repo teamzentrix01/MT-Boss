@@ -4,7 +4,9 @@ import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { handleApiError } from '@/lib/api-utils';
 import { resolveManagedCity } from '@/lib/cities';
-import { notifyAdminSubmission } from '@/lib/customer-communications';
+import { notifyAdminSubmission, deliverContactAcknowledgement } from '@/lib/customer-communications';
+
+
 
 async function ensureContactCityColumn() {
   await pool.query(`ALTER TABLE contact_submissions ADD COLUMN IF NOT EXISTS city VARCHAR(120)`);
@@ -48,7 +50,13 @@ export async function POST(req) {
        RETURNING id, name, email, created_at`,
       [cleanName, cleanEmail || null, cleanPhone, canonicalCity, department, subject, message, 'New']
     );
-    await notifyAdminSubmission({ type: 'contact form', name: cleanName, phone: cleanPhone, email: cleanEmail, reference: `CONTACT-${result.rows[0].id}`, details: { City: canonicalCity, Department: department, Subject: subject } });
+    const ref = `CONTACT-${result.rows[0].id}`;
+
+    await Promise.allSettled([
+      notifyAdminSubmission({ type: 'contact form', name: cleanName, phone: cleanPhone, email: cleanEmail, reference: ref, details: { City: canonicalCity, Department: department, Subject: subject } }),
+      deliverContactAcknowledgement({ email: cleanEmail, name: cleanName, subject, reference: ref }),
+    ]);
+
 
     return NextResponse.json(
       {

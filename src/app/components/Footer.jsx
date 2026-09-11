@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { COMPANY_CONTACT } from "../lib/company";
+import ReviewModal from "./ReviewModal";
 
 export default function Footer() {
   const [isDark, setIsDark] = useState(false);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
 
   useEffect(() => {
     const checkTheme = () => {
@@ -23,12 +25,15 @@ export default function Footer() {
   const quickLinks = [
     { label: "Home", href: "/" },
     { label: "About Us", href: "/About-us" },
+    { label: "Blogs & Guides", href: "/blog" },
     { label: "Shop Now", href: "/ShopNow" },
     { label: "Careers", href: "/careers" },
     { label: "Contact", href: "/contact" },
+    { label: "Review Us ⭐", isReviewAction: true },
     { label: "Privacy Policy", href: "/privacy-policy" },
     { label: "Terms and Conditions", href: "/terms-and-conditions" },
   ];
+
 
   const serviceLinks = [
     { label: "Commercial Buildings", href: "/Services/all" },
@@ -42,12 +47,12 @@ export default function Footer() {
   const socialLinks = [
     {
       label: "Facebook",
-      href: "https://www.facebook.com/Mtbosscompany/",
+      href: "https://www.facebook.com/share/19QJ3uZKtq/",
       icon: <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />,
     },
     {
       label: "Instagram",
-      href: "https://www.instagram.com/mtboss.in/",
+      href: "https://www.instagram.com/mtboss.in?stkn=NTQxMTczN2JrZGs4",
       icon: (
         <>
           <path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7z" />
@@ -68,7 +73,7 @@ export default function Footer() {
     },
     {
       label: "YouTube",
-      href: "https://www.youtube.com/@mtboss",
+      href: "https://youtube.com/@mtbossconstruction4906?si=slUfUlTDhtYa7Dve",
       icon: <path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.508a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.871.508 9.388.508 9.388.508s7.517 0 9.388-.508a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />,
     },
   ];
@@ -79,35 +84,37 @@ export default function Footer() {
     <footer className={`transition-colors duration-500 border-t ${isDark ? "bg-black border-zinc-900" : "bg-white border-zinc-100"}`}>
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+          
           <div className="space-y-6">
-            <a href="/" className="inline-block">
-              <img
-                src="/logo.png"
-                alt="MTBOSS Logo"
-                loading="lazy"
-                decoding="async"
-                className={`h-10 w-auto transition-all ${isDark ? "brightness-200" : "brightness-100"}`}
-              />
-            </a>
-            <p className={`text-sm leading-relaxed font-medium ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
-              Mtboss construction private limited provides construction services, project support, material
-              coordination, and property-related solutions across India.
-            </p>
             <div className="flex items-center gap-3">
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-black text-xl shadow-md transition-all duration-300 group-hover:scale-105"
+                style={{ backgroundColor: themeYellow }}
+              >
+                MT
+              </div>
+              <span className={`text-xl font-black tracking-wider uppercase ${isDark ? "text-white" : "text-zinc-900"}`}>
+                MTBOSS
+              </span>
+            </div>
+            
+            <p className={`text-xs leading-relaxed max-w-sm ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
+              Leading the industry in premium commercial, hotel, residential, and industrial construction across India with precision and excellence.
+            </p>
+
+            <div className="flex items-center gap-3 pt-2">
               {socialLinks.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`w-9 h-9 flex items-center justify-center rounded-sm transition-all duration-300 hover:scale-110 ${
-                    isDark
-                      ? "bg-zinc-900 text-white hover:bg-[var(--brand-blue)] hover:text-black"
-                      : "bg-zinc-100 text-zinc-900 hover:bg-[var(--brand-blue)]"
-                  }`}
                   aria-label={s.label}
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+                    isDark 
+                      ? "bg-zinc-900 text-zinc-400 hover:text-black hover:bg-[var(--brand-blue)]" 
+                      : "bg-zinc-100 text-zinc-600 hover:text-black hover:bg-[var(--brand-blue)]"
+                  }`}
                 >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                     {s.icon}
                   </svg>
                 </a>
@@ -119,17 +126,32 @@ export default function Footer() {
             <h3 className={`text-xs font-black uppercase tracking-[0.2em] mb-6 ${isDark ? "text-white" : "text-zinc-900"}`}>
               Navigation
             </h3>
-            <ul className="space-y-4">
+            <ul className="space-y-3.5">
               {quickLinks.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className={`text-sm font-bold transition-colors duration-200 hover:text-[var(--brand-blue)] ${
-                      isDark ? "text-zinc-400" : "text-zinc-600"
-                    }`}
-                  >
-                    {link.label}
-                  </a>
+                  {link.isReviewAction ? (
+                    <button
+                      type="button"
+                      onClick={() => setIsReviewOpen(true)}
+                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all duration-200 border ${
+                        isDark 
+                          ? "bg-amber-400/10 text-amber-300 border-amber-400/30 hover:bg-amber-400/20 hover:border-amber-400/50" 
+                          : "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100"
+                      }`}
+                    >
+                      <span>⭐ Review Us</span>
+                      <span className="text-[10px] bg-amber-400 text-black px-1.5 py-0.5 rounded font-black">RATE</span>
+                    </button>
+                  ) : (
+                    <a
+                      href={link.href}
+                      className={`text-sm font-medium transition-colors duration-200 hover:text-[var(--brand-blue)] ${
+                        isDark ? "text-zinc-400" : "text-zinc-600"
+                      }`}
+                    >
+                      {link.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
@@ -190,7 +212,14 @@ export default function Footer() {
           <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
             (c) {new Date().getFullYear()} Mtboss construction private limited - built with precision
           </p>
-          <div className="flex gap-6">
+          <div className="flex items-center gap-6">
+            <button
+              type="button"
+              onClick={() => setIsReviewOpen(true)}
+              className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] hover:underline flex items-center gap-1"
+            >
+              ⭐ Review Us
+            </button>
             <a href="/privacy-policy" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[var(--brand-blue)]">
               Privacy
             </a>
@@ -200,6 +229,13 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
+      <ReviewModal
+        isOpen={isReviewOpen}
+        onClose={() => setIsReviewOpen(false)}
+        isDarkMode={isDark}
+      />
     </footer>
   );
 }
+

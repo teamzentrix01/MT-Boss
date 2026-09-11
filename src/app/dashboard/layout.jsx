@@ -50,7 +50,11 @@ export default function DashboardLayout({ children }) {
     { label: 'Contact Forms',            icon: '✉️', tab: 'submissions' },
     { label: 'Franchises',               icon: '🏢', tab: 'franchises' },
     { label: 'Free Time Slots',          icon: '📅', tab: 'free-slots' },
+    { label: 'FAQs Management',          icon: '❓', tab: 'faqs' },
+    { label: 'Customer Reviews',         icon: '⭐', tab: 'reviews' },
     { label: 'Hero Banners',             icon: '🖼️', tab: 'hero-banners' },
+    { label: 'SEO Blogs & Guides',       icon: '📰', tab: 'blogs' },
+
     { label: 'Construction Services',    icon: '⊞',  tab: 'primary-services' },
     { label: 'Construction Enquiry',     icon: '✉️', tab: 'primary-service-enquiries' },
     { label: 'Professional Enquiries',   icon: '💬', tab: 'professional-enquiries' },

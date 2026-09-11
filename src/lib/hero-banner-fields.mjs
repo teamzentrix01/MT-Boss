@@ -12,6 +12,15 @@ export function isCloudinaryBannerImage(value, cloudName) {
   } catch { return false; }
 }
 
+export function isWebImageUrl(value) {
+  if (typeof value === 'string' && value.startsWith('/') && !value.startsWith('//')) return true;
+  try {
+    const url = new URL(value);
+    return (url.protocol === 'https:' || url.protocol === 'http:') && url.hostname.length > 3;
+  } catch { return false; }
+}
+
+
 export function validateBanner(payload, cloudName) {
   const data = {};
   for (const [key, limit] of Object.entries(BANNER_LIMITS)) {
@@ -20,7 +29,9 @@ export function validateBanner(payload, cloudName) {
   }
   if (!data.title) return { error: 'A banner title is required.' };
   data.image_url = String(payload.image_url ?? '').trim();
-  if (!isCloudinaryBannerImage(data.image_url, cloudName)) return { error: 'Upload an image to Cloudinary or paste an image URL from your Cloudinary account.' };
+  if (!isCloudinaryBannerImage(data.image_url, cloudName) && !isWebImageUrl(data.image_url)) {
+    return { error: 'Upload an image or paste a valid image URL.' };
+  }
   for (const prefix of ['cta', 'secondary_cta']) {
     if (Boolean(data[`${prefix}_text`]) !== Boolean(data[`${prefix}_href`])) return { error: 'Each button needs both its text and destination.' };
     if (data[`${prefix}_href`] && !isInternalBannerLink(data[`${prefix}_href`])) return { error: 'Button destinations must be site paths, such as /quick or /buy-sale.' };
@@ -37,7 +48,9 @@ export function validateBanner(payload, cloudName) {
 }
 
 export function bannerImageUrl(url, width = 1920) {
+  if (!url) return '';
   if (!isCloudinaryBannerImage(url)) return url;
   // The original is kept in the database; delivery is optimized for each screen.
   return url.replace('/image/upload/', `/image/upload/f_auto,q_auto,c_limit,w_${width}/`);
 }
+

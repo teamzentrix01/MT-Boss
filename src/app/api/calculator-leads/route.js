@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { notifyAdminSubmission } from '@/lib/customer-communications';
+import { notifyAdminSubmission, deliverCalculatorEstimate } from '@/lib/customer-communications';
 
 export async function POST(req) {
   try {
@@ -53,9 +53,14 @@ export async function POST(req) {
           existing.rows[0].id
         ]
       );
-      await notifyAdminSubmission({ type: 'calculator lead', name, phone: searchPhone, email: searchEmail, reference: `CALC-${result.rows[0].id}`, details: { City: city, Estimate: `INR ${grandTotal || 0}`, Status: 'Updated' } });
+      const ref = `CALC-${result.rows[0].id}`;
+      await Promise.allSettled([
+        notifyAdminSubmission({ type: 'calculator lead', name, phone: searchPhone, email: searchEmail, reference: ref, details: { City: city, Estimate: `INR ${grandTotal || 0}`, Status: 'Updated' } }),
+        deliverCalculatorEstimate({ email: searchEmail, customerName: name, phone: searchPhone, project: { city, propertySize: area, floors, quality }, totals: { grandTotal }, reference: ref }),
+      ]);
       return NextResponse.json({ success: true, message: 'Calculator lead updated.', lead_id: result.rows[0].id });
     }
+
 
     // Insert new lead
     result = await pool.query(
@@ -79,7 +84,11 @@ export async function POST(req) {
         'system'
       ]
     );
-    await notifyAdminSubmission({ type: 'calculator lead', name, phone: searchPhone, email: searchEmail, reference: `CALC-${result.rows[0].id}`, details: { City: city, Estimate: `INR ${grandTotal || 0}` } });
+    const ref = `CALC-${result.rows[0].id}`;
+    await Promise.allSettled([
+      notifyAdminSubmission({ type: 'calculator lead', name, phone: searchPhone, email: searchEmail, reference: ref, details: { City: city, Estimate: `INR ${grandTotal || 0}` } }),
+      deliverCalculatorEstimate({ email: searchEmail, customerName: name, phone: searchPhone, project: { city, propertySize: area, floors, quality }, totals: { grandTotal }, reference: ref }),
+    ]);
 
     return NextResponse.json({ success: true, message: 'Calculator lead created.', lead_id: result.rows[0].id });
   } catch (err) {
@@ -87,3 +96,4 @@ export async function POST(req) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }
+

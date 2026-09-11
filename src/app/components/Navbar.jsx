@@ -282,6 +282,13 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             >
               Shop Now
             </Link>
+
+            <Link
+              href="/blog"
+              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+            >
+              Blogs
+            </Link>
           </div>
 
           {/* Right Side */}
@@ -609,6 +616,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             { label: 'Budget Calculator', href: '/calculator' },
             { label: 'Portfolio', href: '/FeaturedProjects/ProjectGallery' },
             { label: 'Shop Now', href: '/ShopNow' },
+            { label: 'Blogs & Guides', href: '/blog' },
             { label: 'Careers', href: '/careers' },
             { label: 'Contact', href: '/contact' },
           ].map((link) => (

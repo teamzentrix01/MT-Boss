@@ -5,11 +5,8 @@ import { createInitializationGuard } from '@/lib/api-utils';
 import { resolveManagedCity } from '@/lib/cities';
 import { requireRole } from '@/lib/auth';
 import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material-orders';
-import { notifyAdminSubmission } from '@/lib/customer-communications';
+import { notifyAdminSubmission, deliverMaterialOrderReceipt } from '@/lib/customer-communications';
 
-// No `ready` flag — CREATE TABLE IF NOT EXISTS + ALTER IF NOT EXISTS are idempotent
-// and run in milliseconds when the table already exists. This makes the route resilient
-// to dev hot-reloads and any out-of-band DB resets.
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS material_enquiries (
@@ -21,6 +18,7 @@ const ensureTable = createInitializationGuard(async () => {
       category_emoji          TEXT         DEFAULT '',
       material_type           VARCHAR(255),
       subcategory_name        VARCHAR(255),
+
       brand_company           VARCHAR(255),
       quantity_text           VARCHAR(255),
       order_unit              VARCHAR(100),
@@ -135,8 +133,13 @@ export async function POST(req) {
         actorName: cleanName,
       });
       await client.query('COMMIT');
-      await notifyAdminSubmission({ type: 'material order', name: cleanName, phone: cleanPhone, email: cleanEmail || user.email, reference: orderReference, details: { Category: category_name, Material: material_type, Quantity: quantity_text, Unit: order_unit, City: canonicalCity } });
+      const targetEmail = cleanEmail || user.email;
+      await Promise.allSettled([
+        notifyAdminSubmission({ type: 'material order', name: cleanName, phone: cleanPhone, email: targetEmail, reference: orderReference, details: { Category: category_name, Material: material_type, Quantity: quantity_text, Unit: order_unit, City: canonicalCity } }),
+        deliverMaterialOrderReceipt({ email: targetEmail, customerName: cleanName, phone: cleanPhone, category: category_name, material: material_type, quantity: quantity_text, unit: order_unit, city: canonicalCity, orderReference, deliveryAddress: delivery_address }),
+      ]);
       return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
+
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;

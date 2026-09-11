@@ -3,9 +3,10 @@
 .hero .slide { min-height: 0; }
 .slide { grid-area: 1 / 1; position: relative; min-height: 560px; display: flex; align-items: center; background: #071521; overflow: hidden; }
 .hidden { visibility: hidden; pointer-events: none; }
-.photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(7,21,33,.88), rgba(7,21,33,.78) 29%, rgba(7,21,33,.52) 46%, rgba(7,21,33,.12) 72%, rgba(7,21,33,.08)), linear-gradient(0deg, rgba(7,21,33,.45), transparent 35%); }
-.content { position: relative; width: 100%; max-width: 1360px; margin: 0 auto; padding: 70px 48px; }
+.photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+.shade { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(90deg, rgba(7, 21, 33, 0.92) 0%, rgba(7, 21, 33, 0.72) 32%, rgba(7, 21, 33, 0.35) 60%, rgba(7, 21, 33, 0.1) 85%, transparent 100%), linear-gradient(0deg, rgba(7, 21, 33, 0.5) 0%, transparent 40%); }
+.content { position: relative; z-index: 3; width: 100%; max-width: 1360px; margin: 0 auto; padding: 70px 48px; }
+
 .copy { max-width: 620px; animation: reveal .45s ease-out; }
 .hero .content { max-width: none; padding: 40px 5vw; }
 .hero .copy { max-width: 500px; }

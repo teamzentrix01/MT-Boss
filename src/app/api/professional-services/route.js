@@ -195,7 +195,7 @@ export async function POST(req) {
     // Notify admin via email (non-blocking)
     try {
       const { sendMail } = await import('@/lib/email');
-      const adminEmail = process.env.SMTP_USER || process.env.ADMIN_EMAIL;
+      const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || 'mtboss2016@gmail.com';
       if (adminEmail) {
         await sendMail({
           to: adminEmail,

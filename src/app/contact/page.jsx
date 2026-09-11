@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { COMPANY_CONTACT } from '../lib/company';
+import { useFaqs } from '@/hooks/useFaqs';
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -46,7 +47,9 @@ const DEFAULT_OFFICES = [
   phone: COMPANY_CONTACT.phone,
   email: `${city.toLowerCase()}@mtboss.com`,
   hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
-  mapUrl: `https://www.google.com/maps?q=${encodeURIComponent(`${city}, India`)}&output=embed`,
+  mapUrl: city.toLowerCase() === 'bareilly'
+    ? 'https://www.google.com/maps?q=28.3975,79.452806&z=17&output=embed'
+    : `https://www.google.com/maps?q=${encodeURIComponent(`${city}, India`)}&output=embed`,
 }));
 
 const departments = [
@@ -60,15 +63,9 @@ const departments = [
   { icon: '💬', label: 'General Inquiry', value: 'general' },
 ];
 
-const faqs = [
-  { q: 'How quickly will you respond to my inquiry?', a: 'We aim to respond to all inquiries within 24 business hours. For urgent matters, please call us directly on our helpline number.' },
-  { q: 'Which cities does MTBOSS operate in?', a: 'MTBOSS Construction operates across 50+ cities in India including Delhi, Noida, Gurgaon, Mumbai, Bangalore, Hyderabad, and more.' },
-  { q: 'How can I get a project estimate?', a: 'Fill the contact form with your project details and select Construction Projects as the department. Our team will schedule a site visit and provide a detailed estimate.' },
-  { q: 'I want to visit your office. Do I need an appointment?', a: 'Walk-ins are welcome during business hours. However, for project discussions, we recommend scheduling an appointment to ensure the right team member is available.' },
-];
-
 export default function ContactPage() {
   const dark = useDarkMode();
+  const faqs = useFaqs('contact');
   const [activeFaq, setActiveFaq] = useState(null);
   const [activeOffice, setActiveOffice] = useState(0);
   const [submitted, setSubmitted] = useState(false);
