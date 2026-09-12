@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { COMPANY_CONTACT } from "../lib/company";
 import { useCities } from "@/hooks/useCities";
+import { useFaqs } from "@/hooks/useFaqs";
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -124,8 +125,9 @@ const faqs = [
 ];
 
 export default function MaterialSuppliersPage() {
-  const { cities, loading: citiesLoading } = useCities();
   const dark = useDarkMode();
+  const { cities, loading: citiesLoading, error: citiesError } = useCities();
+  const dynamicFaqs = useFaqs('material-suppliers');
   const [activeFaq, setActiveFaq] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -432,7 +434,7 @@ export default function MaterialSuppliersPage() {
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>FAQ</h2>
           </div>
           <div className="space-y-3">
-            {faqs.map((faq, i) => (
+            {(dynamicFaqs?.length ? dynamicFaqs : faqs).map((faq, i) => (
               <div key={i} className={`rounded-sm border overflow-hidden transition-all duration-300 ${activeFaq === i ? dark ? "border-[var(--brand-blue)] bg-zinc-900" : "border-zinc-800 bg-white shadow-md" : dark ? "border-zinc-800 bg-zinc-900" : "border-gray-100 bg-white"}`}>
                 <button onClick={() => setActiveFaq(activeFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left">
                   <span className={`text-xs font-black uppercase tracking-wide pr-4 ${dark ? "text-white" : "text-zinc-800"}`}>{faq.q}</span>

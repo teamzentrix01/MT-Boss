@@ -28,6 +28,7 @@ export default function Footer() {
     { label: "Blogs & Guides", href: "/blog" },
     { label: "Shop Now", href: "/ShopNow" },
     { label: "Careers", href: "/careers" },
+    { label: "FAQs", href: "/faqs" },
     { label: "Contact", href: "/contact" },
     { label: "Review Us ⭐", isReviewAction: true },
     { label: "Privacy Policy", href: "/privacy-policy" },

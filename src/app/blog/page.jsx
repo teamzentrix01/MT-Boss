@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { DEFAULT_BLOGS } from '@/lib/blog-defaults.mjs';
 
 const CATEGORIES = [
   'All',
@@ -13,8 +14,7 @@ const CATEGORIES = [
 ];
 
 export default function BlogListingPage() {
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [blogs] = useState(DEFAULT_BLOGS);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDark, setIsDark] = useState(false);
@@ -27,24 +27,6 @@ export default function BlogListingPage() {
     const obs = new MutationObserver(checkTheme);
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    async function fetchBlogs() {
-      try {
-        setLoading(true);
-        const res = await fetch('/api/blogs');
-        const json = await res.json();
-        if (json.success && Array.isArray(json.data)) {
-          setBlogs(json.data);
-        }
-      } catch (err) {
-        console.error('Failed to load blogs:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchBlogs();
   }, []);
 
   const filteredBlogs = useMemo(() => {
@@ -130,14 +112,7 @@ export default function BlogListingPage() {
 
       {/* ── ARTICLES GRID ── */}
       <main className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-14">
-        {loading ? (
-          <div className="py-24 text-center space-y-4">
-            <div className="w-12 h-12 border-4 border-[var(--brand-blue)] border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">
-              Loading Articles...
-            </p>
-          </div>
-        ) : filteredBlogs.length === 0 ? (
+        {filteredBlogs.length === 0 ? (
           <div className="py-20 text-center space-y-3">
             <div className="text-4xl">📄</div>
             <h3 className="text-xl font-bold">No articles found</h3>

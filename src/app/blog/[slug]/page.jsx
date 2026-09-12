@@ -1,18 +1,10 @@
-import pool from '@/lib/db';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { DEFAULT_BLOGS } from '@/lib/blog-defaults.mjs';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  
-  let blog = null;
-  try {
-    const res = await pool.query('SELECT * FROM blogs WHERE slug = $1 LIMIT 1', [slug]);
-    if (res.rows.length > 0) blog = res.rows[0];
-  } catch (e) {
-    blog = DEFAULT_BLOGS.find((b) => b.slug === slug);
-  }
+  const blog = DEFAULT_BLOGS.find((b) => b.slug === slug);
 
   if (!blog) {
     return {
@@ -53,30 +45,15 @@ export async function generateMetadata({ params }) {
   };
 }
 
-async function getBlog(slug) {
-  try {
-    const res = await pool.query('SELECT * FROM blogs WHERE slug = $1 LIMIT 1', [slug]);
-    if (res.rows.length > 0) {
-      // Async increment
-      pool.query('UPDATE blogs SET views_count = views_count + 1 WHERE slug = $1', [slug]).catch(() => {});
-      return res.rows[0];
-    }
-  } catch (e) {
-    console.error('Error fetching blog from DB:', e);
-  }
+function getBlog(slug) {
   return DEFAULT_BLOGS.find((b) => b.slug === slug) || null;
 }
 
-async function getRelatedBlogs(currentSlug, category) {
-  try {
-    const res = await pool.query(
-      'SELECT id, slug, title, cover_image, category, read_time FROM blogs WHERE slug != $1 AND is_published = true ORDER BY (category = $2) DESC, created_at DESC LIMIT 3',
-      [currentSlug, category]
-    );
-    return res.rows;
-  } catch (e) {
-    return DEFAULT_BLOGS.filter((b) => b.slug !== currentSlug).slice(0, 3);
-  }
+function getRelatedBlogs(currentSlug, category) {
+  return DEFAULT_BLOGS
+    .filter((b) => b.slug !== currentSlug)
+    .sort((a, b) => (b.category === category ? 1 : 0) - (a.category === category ? 1 : 0))
+    .slice(0, 3);
 }
 
 function renderSimpleMarkdown(content) {

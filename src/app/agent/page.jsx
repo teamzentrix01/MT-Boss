@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { COMPANY_CONTACT } from "../lib/company";
 import { useCities } from "@/hooks/useCities";
+import { useFaqs } from "@/hooks/useFaqs";
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -91,6 +92,7 @@ const faqs = [
 export default function AgentPage() {
   const dark = useDarkMode();
   const { cities, loading: citiesLoading, error: citiesError } = useCities();
+  const dynamicFaqs = useFaqs('agent');
   const [activeFaq, setActiveFaq] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -493,7 +495,7 @@ export default function AgentPage() {
           </div>
 
           <div className="space-y-3">
-            {faqs.map((faq, i) => (
+            {(dynamicFaqs?.length ? dynamicFaqs : faqs).map((faq, i) => (
               <div
                 key={i}
                 className={`rounded-sm border overflow-hidden transition-all duration-300 ${

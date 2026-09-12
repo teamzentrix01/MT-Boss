@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { COMPANY_CONTACT } from "../lib/company";
 import { useCities } from "@/hooks/useCities";
 import { redirectToPayU } from "@/lib/payu-client";
+import { useFaqs } from "@/hooks/useFaqs";
 
 
 function useDarkMode() {
@@ -135,6 +136,7 @@ export default function FranchisePage() {
 function FranchisePageContent() {
   const dark = useDarkMode();
   const searchParams = useSearchParams();
+  const dynamicFaqs = useFaqs('franchise');
   const { cities, loading: citiesLoading, error: citiesError } = useCities();
   const [activeTab, setActiveTab] = useState("Associate Partner");
   const [activeFaq, setActiveFaq] = useState(null);
@@ -639,7 +641,7 @@ function FranchisePageContent() {
           </div>
 
           <div className="space-y-3">
-            {faqs.map((faq, i) => (
+            {(dynamicFaqs?.length ? dynamicFaqs : faqs).map((faq, i) => (
               <div
                 key={i}
                 className={`rounded-sm border overflow-hidden transition-all duration-300 ${
