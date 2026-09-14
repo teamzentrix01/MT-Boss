@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /api/
+Disallow: /auth/
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /dashboard/
+Disallow: /userdashboard/
+Disallow: /payment/
+Disallow: /material-orders/
+Disallow: /inventory/
+
+Sitemap: https://www.mtboss.in/sitemap.xml
