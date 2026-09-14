@@ -90,6 +90,9 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" className={isDarkMode ? "dark-mode" : ""}>
+       <head>
+        <meta name="google-site-verification" content="_HIsDPgunnMsWo7iWtmz2fX3YW9aG406vj5zL02lWXY" />
+      </head>
       <body className={`transition-colors duration-500 overflow-x-hidden ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
         <PrivacyConsentGuard />
         <FreeWhatsAppNotifier />
