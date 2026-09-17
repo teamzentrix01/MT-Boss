@@ -85,20 +85,15 @@ export default function Footer() {
     <footer className={`transition-colors duration-500 border-t ${isDark ? "bg-black border-zinc-900" : "bg-white border-zinc-100"}`}>
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-          
+
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div 
-                className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-black text-xl shadow-md transition-all duration-300 group-hover:scale-105"
-                style={{ backgroundColor: themeYellow }}
-              >
-                MT
-              </div>
+
               <span className={`text-xl font-black tracking-wider uppercase ${isDark ? "text-white" : "text-zinc-900"}`}>
                 MTBOSS
               </span>
             </div>
-            
+
             <p className={`text-xs leading-relaxed max-w-sm ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
               Leading the industry in premium commercial, hotel, residential, and industrial construction across India with precision and excellence.
             </p>
@@ -109,11 +104,10 @@ export default function Footer() {
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${
-                    isDark 
-                      ? "bg-zinc-900 text-zinc-400 hover:text-black hover:bg-[var(--brand-blue)]" 
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${isDark
+                      ? "bg-zinc-900 text-zinc-400 hover:text-black hover:bg-[var(--brand-blue)]"
                       : "bg-zinc-100 text-zinc-600 hover:text-black hover:bg-[var(--brand-blue)]"
-                  }`}
+                    }`}
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                     {s.icon}
@@ -134,11 +128,10 @@ export default function Footer() {
                     <button
                       type="button"
                       onClick={() => setIsReviewOpen(true)}
-                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all duration-200 border ${
-                        isDark 
-                          ? "bg-amber-400/10 text-amber-300 border-amber-400/30 hover:bg-amber-400/20 hover:border-amber-400/50" 
+                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all duration-200 border ${isDark
+                          ? "bg-amber-400/10 text-amber-300 border-amber-400/30 hover:bg-amber-400/20 hover:border-amber-400/50"
                           : "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100"
-                      }`}
+                        }`}
                     >
                       <span>⭐ Review Us</span>
                       <span className="text-[10px] bg-amber-400 text-black px-1.5 py-0.5 rounded font-black">RATE</span>
@@ -146,9 +139,8 @@ export default function Footer() {
                   ) : (
                     <a
                       href={link.href}
-                      className={`text-sm font-medium transition-colors duration-200 hover:text-[var(--brand-blue)] ${
-                        isDark ? "text-zinc-400" : "text-zinc-600"
-                      }`}
+                      className={`text-sm font-medium transition-colors duration-200 hover:text-[var(--brand-blue)] ${isDark ? "text-zinc-400" : "text-zinc-600"
+                        }`}
                     >
                       {link.label}
                     </a>
@@ -167,9 +159,8 @@ export default function Footer() {
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className={`text-sm font-bold transition-colors duration-200 hover:text-[var(--brand-blue)] ${
-                      isDark ? "text-zinc-400" : "text-zinc-600"
-                    }`}
+                    className={`text-sm font-bold transition-colors duration-200 hover:text-[var(--brand-blue)] ${isDark ? "text-zinc-400" : "text-zinc-600"
+                      }`}
                   >
                     {link.label}
                   </a>

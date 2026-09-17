@@ -140,6 +140,8 @@ export default function PrimaryServicesManager({ isDarkMode }) {
   const [cityOptions, setCityOptions] = useState([]);
   const [customCity, setCustomCity] = useState('');
 
+  const [saving,    setSaving]    = useState(false);
+
   // ── Drag & Drop state ──────────────────────────────────────────────────────
   const [dragIndex,     setDragIndex]     = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
@@ -149,9 +151,9 @@ export default function PrimaryServicesManager({ isDarkMode }) {
 
   const fetchServices = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
       const [res, citiesRes] = await Promise.all([
-        fetch('/api/primary-services', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch('/api/primary-services', { headers: token ? { 'Authorization': `Bearer ${token}` } : {} }),
         fetch('/api/service-cities'),
       ]);
       const [data, citiesData] = await Promise.all([res.json(), citiesRes.json()]);
@@ -169,11 +171,11 @@ export default function PrimaryServicesManager({ isDarkMode }) {
     setOrderSaving(true);
     setError('');
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
       const items = ordered.map((s, i) => ({ id: s.id, sort_order: i + 1 }));
       const res = await fetch('/api/primary-services', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
         body: JSON.stringify({ items }),
       });
       const data = await res.json();
@@ -227,21 +229,65 @@ export default function PrimaryServicesManager({ isDarkMode }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); setSuccess('');
-    if (!formData.slug || !formData.title || !formData.description || !formData.image || (!editingId && formData.cities.length === 0)) {
-      setError(editingId ? 'Slug, title, description and image are required' : 'Slug, title, description, image and at least one city are required'); return;
+
+    // If user typed a city in the input but didn't click "Add City", auto-add it
+    let currentCities = Array.isArray(formData.cities) ? [...formData.cities] : [];
+    const pendingCity = String(customCity || '').trim().replace(/\s+/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+    if (pendingCity && !currentCities.some(item => item.toLowerCase() === pendingCity.toLowerCase())) {
+      currentCities.push(pendingCity);
+      setFormData(f => ({ ...f, cities: currentCities }));
+      setCityOptions(current => [...new Set([...current, pendingCity])].sort((a, b) => a.localeCompare(b)));
+      setCustomCity('');
     }
+
+    if (!formData.slug || !formData.title || !formData.description || !formData.image || (!editingId && currentCities.length === 0)) {
+      setActiveTab('basic');
+      setError(editingId ? 'Slug, title, description and image are required' : 'Slug, title, description, image and at least one city are required');
+      return;
+    }
+
+    const trimmedSlug = String(formData.slug || '').trim().toLowerCase();
+    if (!editingId && services.some(s => s.slug?.toLowerCase() === trimmedSlug)) {
+      setActiveTab('basic');
+      setError(`A service with slug "${formData.slug}" already exists. Please choose a different slug (e.g. "${formData.slug}-new") or edit the existing service from the list.`);
+      return;
+    }
+    if (editingId && services.some(s => s.id !== editingId && s.slug?.toLowerCase() === trimmedSlug)) {
+      setActiveTab('basic');
+      setError(`Another service with slug "${formData.slug}" already exists. Please choose a different slug.`);
+      return;
+    }
+
+    setSaving(true);
     try {
-      const token  = localStorage.getItem('token');
+      const token  = localStorage.getItem('token') || localStorage.getItem('admin-token');
       const method = editingId ? 'PUT' : 'POST';
-      const body   = editingId ? { id: editingId, ...formData } : formData;
+      const body   = {
+        ...(editingId ? { id: editingId } : {}),
+        ...formData,
+        cities: currentCities,
+      };
       const res    = await fetch('/api/primary-services', {
-        method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      if (data.success) { setSuccess(editingId ? 'Updated!' : 'Added!'); resetForm(); fetchServices(); }
-      else setError(data.error || 'Something went wrong');
-    } catch { setError('Error saving service'); }
+      if (data.success) {
+        setSuccess(editingId ? 'Updated!' : 'Added!');
+        resetForm();
+        fetchServices();
+      } else {
+        setError(data.error || 'Something went wrong');
+      }
+    } catch {
+      setError('Error saving service');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleEdit = (s) => {
@@ -286,6 +332,7 @@ export default function PrimaryServicesManager({ isDarkMode }) {
     }));
     setCityOptions(current => [...new Set([...current, city])].sort((a, b) => a.localeCompare(b)));
     setCustomCity('');
+    if (error) setError('');
   };
 
   if (loading) return <div style={{ color: 'var(--ps-muted)', fontSize: '0.8125rem' }}>Loading…</div>;
@@ -535,7 +582,8 @@ export default function PrimaryServicesManager({ isDarkMode }) {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate data-no-auto-validate>
+              {error && <div className="ps-alert ps-alert-err" style={{ margin: '0.875rem 1.25rem 0' }}>{error}</div>}
               <div className="ps-form-body">
 
                 {/* BASIC */}
@@ -747,10 +795,10 @@ export default function PrimaryServicesManager({ isDarkMode }) {
               </div>
 
               <div className="ps-form-actions">
-                <button type="submit" className="ps-submit-btn">
-                  {editingId ? '💾 Update Service' : '✅ Add Service'}
+                <button type="submit" className="ps-submit-btn" disabled={saving}>
+                  {saving ? 'Saving...' : editingId ? '💾 Update Service' : '✅ Add Service'}
                 </button>
-                <button type="button" className="ps-cancel-btn" onClick={resetForm}>Cancel</button>
+                <button type="button" className="ps-cancel-btn" onClick={resetForm} disabled={saving}>Cancel</button>
               </div>
             </form>
           </div>

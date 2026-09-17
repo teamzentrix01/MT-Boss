@@ -47,16 +47,25 @@ export default function LeadConsultationModal({ isDarkMode }) {
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    // Show popup on every refresh/page load
+    // Disable popup on mobile screens (< 768px)
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return;
+    }
+    // Show popup after 15 seconds of page load on desktop
     const timer = setTimeout(() => {
       setIsOpen(true);
-    }, 2000);
+    }, 15000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Listen to global open event (e.g. from CTA buttons)
+  // Listen to global open event (e.g. from CTA buttons) - desktop only
   useEffect(() => {
-    const handleOpen = () => setIsOpen(true);
+    const handleOpen = () => {
+      if (typeof window !== 'undefined' && window.innerWidth < 768) {
+        return;
+      }
+      setIsOpen(true);
+    };
     window.addEventListener('open-consultation-modal', handleOpen);
     return () => window.removeEventListener('open-consultation-modal', handleOpen);
   }, []);
@@ -110,25 +119,25 @@ export default function LeadConsultationModal({ isDarkMode }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100000] flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/75 backdrop-blur-sm animate-fadeIn">
+    <div className="hidden md:flex fixed inset-0 z-[100000] items-center justify-center p-4 md:p-6 bg-black/75 backdrop-blur-sm animate-fadeIn">
       
-      {/* ── MODAL CONTAINER ── */}
+      {/* ── MODAL CONTAINER (DESKTOP ONLY) ── */}
       <div 
-        className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-3xl shadow-2xl border border-white/20 flex flex-col md:flex-row overflow-hidden animate-scaleUp transition-all duration-300 bg-zinc-950 text-white"
+        className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-3xl shadow-2xl border border-white/20 flex flex-row overflow-hidden animate-scaleUp transition-all duration-300 bg-zinc-950 text-white"
         onClick={(e) => e.stopPropagation()}
       >
 
         {/* ── CLOSE BUTTON ── */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 text-white flex items-center justify-center transition-all duration-200 text-sm font-bold shadow-md hover:rotate-90"
+          className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-black/60 hover:bg-black/90 border border-white/20 text-white flex items-center justify-center transition-all duration-200 text-sm font-bold shadow-md hover:rotate-90"
           aria-label="Close modal"
         >
           ✕
         </button>
 
         {/* ── LEFT PANEL (BRAND & VALUE PROPOSITION) ── */}
-        <div className="relative w-full md:w-5/12 p-6 sm:p-8 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-slate-950 via-sky-950 to-blue-950 border-b md:border-b-0 md:border-r border-white/10">
+        <div className="relative w-5/12 p-8 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-slate-950 via-sky-950 to-blue-950 border-r border-white/10">
           
           {/* Subtle Background Pattern & Glow */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,180,216,0.25),transparent_60%)] pointer-events-none" />
@@ -196,51 +205,51 @@ export default function LeadConsultationModal({ isDarkMode }) {
         </div>
 
         {/* ── RIGHT PANEL (INTERACTIVE CONSULTATION FORM) ── */}
-        <div className="w-full md:w-7/12 p-6 sm:p-8 bg-zinc-950 flex flex-col justify-center">
+        <div className="w-7/12 p-6 md:p-8 bg-zinc-950 flex flex-col justify-center">
           {submitted ? (
-            <div className="py-8 text-center space-y-4 animate-fadeIn">
-              <div className="w-16 h-16 mx-auto rounded-full bg-emerald-500/20 border-2 border-emerald-400 text-emerald-400 flex items-center justify-center text-2xl shadow-lg">
+            <div className="py-6 sm:py-8 text-center space-y-3 sm:space-y-4 animate-fadeIn">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-full bg-emerald-500/20 border-2 border-emerald-400 text-emerald-400 flex items-center justify-center text-xl sm:text-2xl shadow-lg">
                 ✓
               </div>
-              <h4 className="text-xl font-black text-white">
+              <h4 className="text-lg sm:text-xl font-black text-white">
                 Consultation Request Received!
               </h4>
               <p className="text-xs text-zinc-300 max-w-sm mx-auto leading-relaxed">
                 Thank you <strong className="text-sky-400">{formData.name}</strong>. Our senior project engineer will connect with you on <strong className="text-white">{formData.phone}</strong> within 15 minutes.
               </p>
-              <div className="pt-4 flex flex-col sm:flex-row gap-2 justify-center">
+              <div className="pt-3 sm:pt-4 flex flex-col sm:flex-row gap-2 justify-center">
                 <a
                   href="https://wa.me/919458410866"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md inline-flex items-center justify-center gap-1.5"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md inline-flex items-center justify-center gap-1.5"
                 >
                   <span>💬 Instant WhatsApp Chat</span>
                 </a>
                 <button
                   onClick={handleClose}
-                  className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all"
                 >
                   Continue Browsing
                 </button>
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-3.5">
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-3.5">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">📅</span>
-                  <h4 className="text-lg font-black tracking-tight text-white">
+                  <span className="text-sm md:text-lg">📅</span>
+                  <h4 className="text-sm md:text-lg font-black tracking-tight text-white">
                     Book Free Project Consultation
                   </h4>
                 </div>
-                <p className="text-xs text-zinc-400">
+                <p className="text-[10px] md:text-xs text-zinc-400">
                   Fill in your details — our senior project engineer will confirm your slot.
                 </p>
               </div>
 
               {errorMsg && (
-                <div className="p-2.5 rounded-xl bg-red-500/20 border border-red-500/40 text-red-300 text-xs font-medium">
+                <div className="p-2 rounded-xl bg-red-500/20 border border-red-500/40 text-red-300 text-[10px] sm:text-xs font-medium">
                   ⚠️ {errorMsg}
                 </div>
               )}
@@ -254,12 +263,12 @@ export default function LeadConsultationModal({ isDarkMode }) {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all placeholder-zinc-500"
+                  className="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all placeholder-zinc-500"
                 />
               </div>
 
               {/* Mobile & Email Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
                 <input
                   type="tel"
                   name="phone"
@@ -268,7 +277,7 @@ export default function LeadConsultationModal({ isDarkMode }) {
                   onChange={handleChange}
                   required
                   maxLength={10}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all placeholder-zinc-500"
+                  className="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all placeholder-zinc-500"
                 />
                 <input
                   type="email"
@@ -276,21 +285,21 @@ export default function LeadConsultationModal({ isDarkMode }) {
                   placeholder="Email Address (Optional)"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all placeholder-zinc-500"
+                  className="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all placeholder-zinc-500"
                 />
               </div>
 
               {/* City & Service Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
                 <div>
-                  <label className="block text-[10px] text-zinc-400 font-semibold mb-1">
+                  <label className="block text-[9px] sm:text-[10px] text-zinc-400 font-semibold mb-0.5 sm:mb-1">
                     Select Location / City *
                   </label>
                   <select
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all"
+                    className="w-full px-2.5 py-1.5 sm:py-2 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all"
                   >
                     {CITIES.map((c) => (
                       <option key={c} value={c}>
@@ -301,14 +310,14 @@ export default function LeadConsultationModal({ isDarkMode }) {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] text-zinc-400 font-semibold mb-1">
+                  <label className="block text-[9px] sm:text-[10px] text-zinc-400 font-semibold mb-0.5 sm:mb-1">
                     Service Required *
                   </label>
                   <select
                     name="service"
                     value={formData.service}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all"
+                    className="w-full px-2.5 py-1.5 sm:py-2 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all"
                   >
                     {SERVICES.map((s) => (
                       <option key={s} value={s}>
@@ -320,16 +329,16 @@ export default function LeadConsultationModal({ isDarkMode }) {
               </div>
 
               {/* Preferred Slot & Approx Area */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
                 <div>
-                  <label className="block text-[10px] text-zinc-400 font-semibold mb-1">
+                  <label className="block text-[9px] sm:text-[10px] text-zinc-400 font-semibold mb-0.5 sm:mb-1">
                     Preferred Time Slot
                   </label>
                   <select
                     name="preferredSlot"
                     value={formData.preferredSlot}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all"
+                    className="w-full px-2.5 py-1.5 sm:py-2 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all"
                   >
                     {TIME_SLOTS.map((t) => (
                       <option key={t} value={t}>
@@ -340,7 +349,7 @@ export default function LeadConsultationModal({ isDarkMode }) {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] text-zinc-400 font-semibold mb-1">
+                  <label className="block text-[9px] sm:text-[10px] text-zinc-400 font-semibold mb-0.5 sm:mb-1">
                     Approx. Plot / Built Area (Optional)
                   </label>
                   <input
@@ -349,7 +358,7 @@ export default function LeadConsultationModal({ isDarkMode }) {
                     placeholder="e.g. 1000 sqft / 200 Gaj"
                     value={formData.plotArea}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all placeholder-zinc-500"
+                    className="w-full px-2.5 py-1.5 sm:py-2 rounded-xl bg-zinc-900 border border-zinc-700 focus:border-sky-400 text-white text-xs outline-none transition-all placeholder-zinc-500"
                   />
                 </div>
               </div>
@@ -358,7 +367,7 @@ export default function LeadConsultationModal({ isDarkMode }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-sky-400 via-[var(--brand-blue)] to-blue-600 hover:brightness-110 active:scale-[0.99] text-black font-black text-xs uppercase tracking-wider transition-all duration-200 shadow-lg shadow-sky-500/20 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-2.5 sm:py-3 px-4 rounded-xl bg-gradient-to-r from-sky-400 via-[var(--brand-blue)] to-blue-600 hover:brightness-110 active:scale-[0.99] text-black font-black text-xs uppercase tracking-wider transition-all duration-200 shadow-lg shadow-sky-500/20 disabled:opacity-50 flex items-center justify-center gap-2 mt-1 sm:mt-2"
               >
                 {loading ? (
                   <>
@@ -367,7 +376,7 @@ export default function LeadConsultationModal({ isDarkMode }) {
                   </>
                 ) : (
                   <>
-                    <span>📅 Confirm Free Consultation &amp; Get Estimate</span>
+                    <span>📅 Confirm Free Consultation</span>
                   </>
                 )}
               </button>

@@ -258,6 +258,18 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Alternate phone number must be 10 digits and start with 6, 7, 8 or 9.' }, { status: 400 });
     }
 
+    if (meeting_date) {
+      const selectedDate = new Date(String(meeting_date).slice(0, 10) + 'T00:00:00');
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      if (!isNaN(selectedDate.getTime()) && selectedDate <= todayDate) {
+        return NextResponse.json({
+          success: false,
+          error: 'Preferred meeting date must be scheduled from tomorrow onwards. Same-day booking is not available.'
+        }, { status: 400 });
+      }
+    }
+
     await ensureTable();
     const propertyImageData = await savePropertyImages(propertyImages);
     const user = verifyBearer(req, 'user');
