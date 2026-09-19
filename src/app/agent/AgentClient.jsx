@@ -199,15 +199,13 @@ export default function AgentPage() {
     }
   };
 
-  const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${
-    dark
+  const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${dark
       ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
       : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
-  }`;
+    }`;
 
-  const labelClass = `block text-[10px] font-black uppercase tracking-widest mb-2 ${
-    dark ? "text-zinc-400" : "text-zinc-500"
-  }`;
+  const labelClass = `block text-[10px] font-black uppercase tracking-widest mb-2 ${dark ? "text-zinc-400" : "text-zinc-500"
+    }`;
 
   if (submitted) {
     return (
@@ -235,9 +233,8 @@ export default function AgentPage() {
           <div className="flex gap-3 justify-center">
             <Link
               href="/"
-              className={`px-6 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all ${
-                dark ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
-              }`}
+              className={`px-6 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all ${dark ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
+                }`}
             >
               Go Home
             </Link>
@@ -303,8 +300,8 @@ export default function AgentPage() {
               </div>
             ))}
           </div>
-<a
-          
+          <a
+
             href="#agent-form"
             className="mt-10 inline-flex items-center gap-3 px-10 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
           >
@@ -335,9 +332,8 @@ export default function AgentPage() {
             {agentTypes.map((type, i) => (
               <div
                 key={i}
-                className={`relative p-8 rounded-sm border-2 transition-all duration-300 flex flex-col ${type.color} ${
-                  dark ? "bg-zinc-800" : "bg-white shadow-lg"
-                }`}
+                className={`relative p-8 rounded-sm border-2 transition-all duration-300 flex flex-col ${type.color} ${dark ? "bg-zinc-800" : "bg-white shadow-lg"
+                  }`}
               >
                 {type.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
@@ -360,13 +356,12 @@ export default function AgentPage() {
                 <a
                   href="#agent-form"
                   onClick={() => setForm({ ...form, agentType: type.title })}
-                  className={`block text-center py-3 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${
-                    type.popular
+                  className={`block text-center py-3 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${type.popular
                       ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-dark)]"
                       : dark
-                      ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
-                      : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"
-                  }`}
+                        ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
+                        : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"
+                    }`}
                 >
                   Apply as {type.title}
                 </a>
@@ -400,9 +395,8 @@ export default function AgentPage() {
             {benefits.map((b, i) => (
               <div
                 key={i}
-                className={`group p-6 rounded-sm border transition-all duration-300 hover:border-[var(--brand-blue)] ${
-                  dark ? "bg-zinc-900 border-zinc-800 hover:bg-zinc-800" : "bg-white border-gray-100 hover:shadow-lg"
-                }`}
+                className={`group p-6 rounded-sm border transition-all duration-300 hover:border-[var(--brand-blue)] ${dark ? "bg-zinc-900 border-zinc-800 hover:bg-zinc-800" : "bg-white border-gray-100 hover:shadow-lg"
+                  }`}
               >
                 <span className="text-3xl block mb-4">{b.icon}</span>
                 <h3 className={`text-xs font-black uppercase tracking-widest mb-2 group-hover:text-[var(--brand-blue)] transition-colors ${dark ? "text-white" : "text-zinc-800"}`}>
@@ -441,13 +435,10 @@ export default function AgentPage() {
             {howItWorks.map((p, i) => (
               <div
                 key={i}
-                className={`relative p-6 rounded-sm border transition-all duration-300 group hover:border-[var(--brand-blue)] ${
-                  dark ? "bg-zinc-800 border-zinc-700" : "bg-gray-50 border-gray-100 hover:bg-white hover:shadow-md"
-                }`}
+                className={`relative p-6 rounded-sm border transition-all duration-300 group hover:border-[var(--brand-blue)] ${dark ? "bg-zinc-800 border-zinc-700" : "bg-gray-50 border-gray-100 hover:bg-white hover:shadow-md"
+                  }`}
               >
-                <span className={`text-5xl font-black opacity-10 group-hover:opacity-20 transition-opacity absolute top-4 right-4 ${dark ? "text-[var(--brand-blue)]" : "text-zinc-800"}`}>
-                  {p.step}
-                </span>
+
                 <div className="w-10 h-10 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center mb-4">
                   <span className="text-black font-black text-sm">{p.step}</span>
                 </div>
@@ -498,11 +489,10 @@ export default function AgentPage() {
             {(dynamicFaqs?.length ? dynamicFaqs : faqs).map((faq, i) => (
               <div
                 key={i}
-                className={`rounded-sm border overflow-hidden transition-all duration-300 ${
-                  activeFaq === i
+                className={`rounded-sm border overflow-hidden transition-all duration-300 ${activeFaq === i
                     ? dark ? "border-[var(--brand-blue)] bg-zinc-900" : "border-zinc-800 bg-white shadow-md"
                     : dark ? "border-zinc-800 bg-zinc-900" : "border-gray-100 bg-white"
-                }`}
+                  }`}
               >
                 <button
                   aria-expanded={activeFaq === i}

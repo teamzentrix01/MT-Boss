@@ -207,7 +207,7 @@ export default async function BlogDetailPage({ params }) {
               <div>
                 <p className="font-bold text-zinc-900 dark:text-white text-sm">{blog.author_name}</p>
                 <p className="text-[11px]">
-                  Published: {new Date(blog.created_at).toLocaleDateString('en-IN', { month: 'long', day: 'numeric', year: 'numeric' })} • {blog.read_time}
+                  Published: {blog.created_at ? new Date(blog.created_at).toLocaleDateString('en-IN', { month: 'long', day: 'numeric', year: 'numeric' }) : 'March 2026'} • {blog.read_time}
                 </p>
               </div>
             </div>
@@ -348,7 +348,7 @@ export default async function BlogDetailPage({ params }) {
                     <span className="text-[10px] font-black uppercase tracking-wider text-[var(--brand-blue)]">
                       {post.category}
                     </span>
-                    <h3 className="font-bold text-sm leading-snug group-hover:text-[var(--brand-blue)] transition-colors mt-1.5 line-clamp-2">
+                    <h3 className="font-bold text-sm leading-snug text-black group-hover:text-[var(--brand-blue)] hover:text-[var(--brand-blue)] transition-colors mt-1.5 line-clamp-2">
                       {post.title}
                     </h3>
                   </div>

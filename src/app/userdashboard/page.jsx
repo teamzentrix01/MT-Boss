@@ -825,15 +825,75 @@ export default function UserDashboard() {
             </div>
           ) : tab === 'property' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {propertyEnquiries.map((enquiry) => (
-                <div key={enquiry.id} className={`border p-5 ${isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-white border-zinc-200'}`}>
-                  <p className="text-[9px] font-black uppercase tracking-widest text-[var(--brand-blue)]">Property Enquiry · {enquiry.status}</p>
-                  <h3 className={`mt-2 font-black uppercase text-sm ${isDark ? 'text-white' : 'text-zinc-900'}`}>{enquiry.property_title}</h3>
-                  <p className={`mt-1 text-xs ${muted}`}>{enquiry.property_type || 'Property'} · {enquiry.property_location || 'Location not set'}</p>
-                  {enquiry.message && <p className={`mt-3 text-xs ${muted}`}>{enquiry.message}</p>}
-                  <p className={`mt-4 text-[10px] ${muted}`}>Submitted {new Date(enquiry.created_at).toLocaleDateString('en-IN')}</p>
-                </div>
-              ))}
+              {propertyEnquiries.map((enquiry) => {
+                const isOwner = (user?.id && enquiry.owner_user_id === user.id) ||
+                  (user?.email && enquiry.owner_email && enquiry.owner_email.toLowerCase() === user.email.toLowerCase());
+                const cleanPhone = String(enquiry.enquirer_phone || '').replace(/\D/g, '');
+                const waLink = cleanPhone ? `https://wa.me/91${cleanPhone.slice(-10)}?text=${encodeURIComponent(`Hello ${enquiry.enquirer_name}, regarding your inquiry for ${enquiry.property_title}...`)}` : '';
+                const isRent = (enquiry.listing_type || '').toLowerCase() === 'rent';
+
+                return (
+                  <div key={enquiry.id} className={`border p-5 rounded-sm flex flex-col justify-between ${isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-white border-zinc-200 shadow-sm'}`}>
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm ${
+                          isOwner ? 'bg-amber-500/15 text-amber-500 border border-amber-500/30' : 'bg-[var(--brand-blue)]/15 text-[var(--brand-blue)] border border-[var(--brand-blue)]/30'
+                        }`}>
+                          {isOwner ? `Lead on Your Property (${isRent ? 'Rent' : 'Sell'})` : `Inquiry Sent (${isRent ? 'Rent' : 'Buy'})`}
+                        </span>
+                        <span className="text-[10px] font-bold capitalize text-zinc-400">Status: {enquiry.status}</span>
+                      </div>
+
+                      <h3 className={`mt-2 font-black uppercase text-sm ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                        {enquiry.property_title}
+                      </h3>
+                      <p className={`mt-1 text-xs ${muted}`}>
+                        {enquiry.property_type || 'Property'} · {enquiry.property_location || 'Location not set'}
+                        {enquiry.property_price ? ` · ₹${enquiry.property_price}` : ''}
+                      </p>
+
+                      {isOwner && (
+                        <div className={`mt-3 p-3 rounded-sm border ${isDark ? 'bg-black/50 border-zinc-800' : 'bg-zinc-50 border-zinc-200'}`}>
+                          <p className="text-[10px] font-black uppercase tracking-wider text-[var(--brand-blue)]">Buyer / Renter Details</p>
+                          <p className="text-xs font-bold mt-1 text-zinc-800 dark:text-zinc-200">{enquiry.enquirer_name}</p>
+                          <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">📞 {enquiry.enquirer_phone}</p>
+                          {enquiry.enquirer_email && <p className="text-xs text-zinc-600 dark:text-zinc-400">✉️ {enquiry.enquirer_email}</p>}
+                          {enquiry.message && <p className="mt-2 text-xs italic opacity-80">"{enquiry.message}"</p>}
+                        </div>
+                      )}
+
+                      {!isOwner && enquiry.message && (
+                        <p className={`mt-3 text-xs italic ${muted}`}>Your message: "{enquiry.message}"</p>
+                      )}
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-2">
+                      <span className={`text-[10px] ${muted}`}>
+                        {new Date(enquiry.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+
+                      {isOwner && cleanPhone && (
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={`tel:${cleanPhone}`}
+                            className="px-2.5 py-1 bg-[var(--brand-blue)] text-black rounded-sm text-[10px] font-black uppercase tracking-wider hover:brightness-110"
+                          >
+                            📞 Call
+                          </a>
+                          <a
+                            href={waLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2.5 py-1 bg-green-500 text-white rounded-sm text-[10px] font-black uppercase tracking-wider hover:brightness-110"
+                          >
+                            💬 WhatsApp
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

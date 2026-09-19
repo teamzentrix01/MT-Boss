@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { requireRole, unauthorized, verifyBearer } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
-import { notifyAdminSubmission } from '@/lib/customer-communications';
+import { notifyAdminSubmission, deliverPropertyEnquiryNotification } from '@/lib/customer-communications';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`CREATE TABLE IF NOT EXISTS property_enquiries (
@@ -14,6 +14,13 @@ const ensureTable = createInitializationGuard(async () => {
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
   )`);
   await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS user_id INTEGER`);
+  await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS listing_type VARCHAR(50)`);
+  await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS property_price VARCHAR(100)`);
+  await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS owner_name VARCHAR(200)`);
+  await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS owner_phone VARCHAR(50)`);
+  await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS owner_email VARCHAR(200)`);
+  await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS owner_user_id INTEGER`);
+  await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS admin_notes TEXT`);
 });
 
 export async function POST(req) {
@@ -29,16 +36,76 @@ export async function POST(req) {
     if (!Number.isInteger(propertyId) || propertyId <= 0) return NextResponse.json({ success: false, error: 'Invalid property' }, { status: 400 });
     const contactError = validateContactFields({ name, phone, email: email || undefined, emailRequired: false, nameLabel: 'Full name' });
     if (contactError) return NextResponse.json({ success: false, error: contactError }, { status: 400 });
-    const found = await pool.query(`SELECT id,title,type,location FROM properties WHERE id=$1 AND status='verified'`, [propertyId]);
+
+    const found = await pool.query(
+      `SELECT id, title, type, listing_type, price, location, address, seller_type, seller_name, seller_phone, seller_email, lister_user_id
+       FROM properties WHERE id=$1 AND status='verified'`,
+      [propertyId]
+    );
     if (!found.rows.length) return NextResponse.json({ success: false, error: 'Property not found' }, { status: 404 });
     const property = found.rows[0];
+
+    const owner = {
+      name: property.seller_name || 'Property Owner',
+      phone: property.seller_phone || null,
+      email: property.seller_email || null,
+      userId: property.lister_user_id || null,
+    };
+
     const result = await pool.query(
-      `INSERT INTO property_enquiries (property_id,property_title,property_type,property_location,enquirer_name,enquirer_phone,enquirer_email,message,user_id)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
-      [property.id, property.title, property.type, property.location, name, phone, email || null, message || null, currentUser?.id || null]
+      `INSERT INTO property_enquiries
+        (property_id, property_title, property_type, property_location, listing_type, property_price,
+         enquirer_name, enquirer_phone, enquirer_email, message, user_id,
+         owner_name, owner_phone, owner_email, owner_user_id)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING *`,
+      [
+        property.id,
+        property.title,
+        property.type,
+        property.location,
+        property.listing_type || 'buy',
+        property.price || null,
+        name,
+        phone,
+        email || null,
+        message || null,
+        currentUser?.id || null,
+        owner.name,
+        owner.phone,
+        owner.email,
+        owner.userId,
+      ]
     );
-    await notifyAdminSubmission({ type: 'property enquiry', name, phone, email, reference: `PROPERTY-${result.rows[0].id}`, details: { Property: property.title, Location: property.location } });
-    return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
+
+    const createdEnquiry = result.rows[0];
+
+    // Notify Admin with comprehensive inquiry, property, and owner details
+    await notifyAdminSubmission({
+      type: `Property Inquiry (${property.listing_type === 'rent' ? 'Rent' : 'Sell/Buy'})`,
+      name,
+      phone,
+      email,
+      reference: `PROP-ENQ-${createdEnquiry.id}`,
+      details: {
+        'Property Title': property.title,
+        'Listing Type': property.listing_type === 'rent' ? 'For Rent' : 'For Sale / Buy',
+        'Location': property.location,
+        'Property Price': property.price ? `₹${property.price}` : 'Not specified',
+        'Customer Message': message || 'No message provided',
+        'Property Owner': owner.name,
+        'Owner Phone': owner.phone || 'N/A',
+        'Owner Email': owner.email || 'N/A',
+      },
+    });
+
+    // Notify Property Owner and send Customer Acknowledgment
+    await deliverPropertyEnquiryNotification({
+      enquiry: { id: createdEnquiry.id, name, phone, email, message },
+      property,
+      owner,
+    });
+
+    return NextResponse.json({ success: true, data: createdEnquiry }, { status: 201 });
   } catch (error) {
     console.error('POST property enquiry error:', error);
     return NextResponse.json({ success: false, error: 'Unable to submit enquiry' }, { status: 500 });
@@ -50,9 +117,13 @@ export async function GET(req) {
     await ensureTable();
     const user = verifyBearer(req, 'user');
     if (user) {
+      // User can see enquiries submitted by themselves OR enquiries received for their properties
       const result = await pool.query(
         `SELECT * FROM property_enquiries
-          WHERE user_id=$1 OR (user_id IS NULL AND enquirer_email IS NOT NULL AND LOWER(enquirer_email)=LOWER($2))
+          WHERE user_id=$1
+             OR owner_user_id=$1
+             OR (owner_email IS NOT NULL AND LOWER(TRIM(owner_email))=LOWER(TRIM($2)))
+             OR (enquirer_email IS NOT NULL AND LOWER(TRIM(enquirer_email))=LOWER(TRIM($2)))
           ORDER BY created_at DESC`,
         [user.id, user.email || '']
       );
@@ -71,9 +142,32 @@ export async function PATCH(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
     await ensureTable();
-    const { id, status } = await req.json();
-    if (!id || !['new', 'contacted', 'follow-up', 'converted', 'lost'].includes(status)) return NextResponse.json({ success: false, error: 'Invalid status update' }, { status: 400 });
-    const result = await pool.query(`UPDATE property_enquiries SET status=$1,updated_at=NOW() WHERE id=$2 RETURNING *`, [status, id]);
+    const { id, status, admin_notes } = await req.json();
+    if (!id) return NextResponse.json({ success: false, error: 'Inquiry ID is required' }, { status: 400 });
+
+    const updates = [];
+    const vals = [];
+
+    if (status) {
+      if (!['new', 'contacted', 'follow-up', 'converted', 'lost'].includes(status)) {
+        return NextResponse.json({ success: false, error: 'Invalid status update' }, { status: 400 });
+      }
+      vals.push(status);
+      updates.push(`status=$${vals.length}`);
+    }
+
+    if (admin_notes !== undefined) {
+      vals.push(cleanText(admin_notes));
+      updates.push(`admin_notes=$${vals.length}`);
+    }
+
+    updates.push(`updated_at=NOW()`);
+    vals.push(id);
+
+    const result = await pool.query(
+      `UPDATE property_enquiries SET ${updates.join(', ')} WHERE id=$${vals.length} RETURNING *`,
+      vals
+    );
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Enquiry not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {

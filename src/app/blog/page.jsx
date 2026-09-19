@@ -153,7 +153,7 @@ export default function BlogListingPage() {
                       </div>
                       
                       <Link href={`/blog/${featuredBlog.slug}`}>
-                        <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-snug hover:text-[var(--brand-blue)] transition-colors">
+                        <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-snug text-black group-hover:text-[var(--brand-blue)] hover:text-[var(--brand-blue)] transition-colors">
                           {featuredBlog.title}
                         </h2>
                       </Link>
@@ -169,8 +169,12 @@ export default function BlogListingPage() {
                           ✍️
                         </div>
                         <div>
-                          <p className="text-xs font-bold leading-tight">{featuredBlog.author_name}</p>
-                          <p className="text-[10px] text-zinc-400">{new Date(featuredBlog.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                          <p className="text-xs font-bold leading-tight text-black">{featuredBlog.author_name}</p>
+                          <p className="text-[10px] text-zinc-400">
+                            {featuredBlog.created_at
+                              ? new Date(featuredBlog.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })
+                              : 'March 2026'}
+                          </p>
                         </div>
                       </div>
 
@@ -213,7 +217,7 @@ export default function BlogListingPage() {
                       </span>
                       
                       <Link href={`/blog/${post.slug}`}>
-                        <h3 className="text-lg font-black tracking-tight leading-snug group-hover:text-[var(--brand-blue)] transition-colors line-clamp-2">
+                        <h3 className="text-lg font-black tracking-tight leading-snug text-black group-hover:text-[var(--brand-blue)] hover:text-[var(--brand-blue)] transition-colors line-clamp-2">
                           {post.title}
                         </h3>
                       </Link>
@@ -227,7 +231,9 @@ export default function BlogListingPage() {
                   <div className="px-6 pb-6 pt-2 border-t border-zinc-100 dark:border-zinc-800/60 flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] text-zinc-400">
-                        {new Date(post.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
+                        {post.created_at
+                          ? new Date(post.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })
+                          : 'March 2026'}
                       </span>
                       <span className="text-zinc-600">•</span>
                       <span className="text-[10px] text-zinc-400 font-medium">
