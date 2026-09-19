@@ -332,7 +332,7 @@ function ProfileModal({ pro, isDark, onEnquire, onClose }) {
               : <div style={{ width:'80px',height:'80px',borderRadius:'2px',background:t.accent,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'28px',flexShrink:0,color:t.accentFg,fontWeight:800 }}>{pro.name?.[0]?.toUpperCase()}</div>
             }
             <div style={{ flex:1 }}>
-              <p style={{ color:t.accent,fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.1em',margin:'0 0 4px' }}>{pro.category}</p>
+              <p style={{ color:'var(--brand-blue, #2196F3)',fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.1em',margin:'0 0 4px' }}>{pro.category}</p>
               <h2 style={{ color:'#fff',margin:'0 0 4px',fontSize:'22px',fontWeight:800 }}>{pro.name}</h2>
               <p style={{ color:'rgba(255,255,255,0.6)',margin:'0 0 12px',fontSize:'14px' }}>{pro.title}</p>
               <div style={{ display:'flex',gap:'8px',flexWrap:'wrap' }}>
@@ -415,8 +415,8 @@ function ProCard({ pro, isDark, onClick }) {
           ? <img src={pro.profile_picture} alt={pro.name} loading="lazy" decoding="async" style={{ width:'100%',height:'100%',objectFit:'cover' }} />
           : <div style={{ width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'52px',color:isDark?'#333':'#d1d5db' }}>👤</div>
         }
-        <div style={{ position:'absolute',bottom:0,left:0,right:0,background:'linear-gradient(transparent,rgba(0,0,0,0.75))',padding:'20px 12px 10px' }}>
-          <span style={{ color:t.accent,fontSize:'9px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.1em' }}>{pro.category}</span>
+        <div style={{ position:'absolute',bottom:0,left:0,right:0,background:'linear-gradient(transparent,rgba(0,0,0,0.85))',padding:'20px 12px 10px' }}>
+          <span style={{ color:'var(--brand-blue, #2196F3)',fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.12em',textShadow:'0 1px 3px rgba(0,0,0,0.9)' }}>{pro.category}</span>
         </div>
       </div>
       <div style={{ padding:'16px',borderTop:`1px solid ${t.border}` }}>

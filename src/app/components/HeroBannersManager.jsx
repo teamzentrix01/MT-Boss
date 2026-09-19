@@ -150,7 +150,7 @@ export default function HeroBannersManager({ isDarkMode }) {
   function field(key, label, placeholder, wide = false) {
     return <label className={`${styles.field} ${wide ? styles.wide : ''}`}>
       {label}
-      <input aria-label={label} value={form[key] || ''} onChange={event => change(key, event.target.value)}
+      <input aria-label={label} name={key} id={`hero-banner-${key}`} value={form[key] || ''} onChange={event => change(key, event.target.value)}
         maxLength={BANNER_LIMITS[key]} placeholder={placeholder} required={key === 'title'} />
       {['title', 'subtitle'].includes(key) && <small>{(form[key] || '').length}/{BANNER_LIMITS[key]} characters. Keep this line short.</small>}
     </label>;
@@ -185,7 +185,7 @@ export default function HeroBannersManager({ isDarkMode }) {
     </div>}
     {form && <dialog ref={dialog} className={styles.dialog} style={theme} aria-labelledby="banner-editor-title"
       onCancel={event => { event.preventDefault(); closeEditor(); }}>
-      <form onSubmit={save}>
+      <form onSubmit={save} noValidate data-no-auto-validate>
         <div className={styles.header}>
           <div><h2 id="banner-editor-title">{form.id ? 'Edit Banner' : 'Add Banner'}</h2><p className={styles.muted}>Use English text and a clear image for this service.</p></div>
           <button type="button" disabled={busy || uploading} onClick={closeEditor} aria-label="Close banner editor">Close</button>

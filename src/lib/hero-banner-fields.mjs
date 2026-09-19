@@ -1,4 +1,4 @@
-export const BANNER_LIMITS = { service_name: 32, label: 60, title: 80, subtitle: 80, description: 220, image_alt: 160, cta_text: 32, cta_href: 300, secondary_cta_text: 32, secondary_cta_href: 300 };
+export const BANNER_LIMITS = { service_name: 32, label: 60, title: 80, subtitle: 80, description: 220, image_alt: 160, cta_text: 32, cta_href: 300, secondary_cta_text: undefined, secondary_cta_href: 300 };
 
 export function isInternalBannerLink(value) {
   return typeof value === 'string' && /^\/(?!\/)/.test(value) && !/[\\\s\u0000-\u001f]/.test(value) && !/%(?:2f|5c|0[0-9a-f]|1[0-9a-f])/i.test(value);
@@ -25,7 +25,7 @@ export function validateBanner(payload, cloudName) {
   const data = {};
   for (const [key, limit] of Object.entries(BANNER_LIMITS)) {
     data[key] = String(payload[key] ?? '').trim();
-    if (data[key].length > limit) return { error: `${key.replaceAll('_', ' ')} must be ${limit} characters or fewer.` };
+    if (typeof limit === 'number' && data[key].length > limit) return { error: `${key.replaceAll('_', ' ')} must be ${limit} characters or fewer.` };
   }
   if (!data.title) return { error: 'A banner title is required.' };
   data.image_url = String(payload.image_url ?? '').trim();

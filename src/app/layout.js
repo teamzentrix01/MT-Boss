@@ -15,6 +15,7 @@ export default function RootLayout({ children }) {
   const isShopPage = pathname?.toLowerCase() === "/shopnow";
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+
   // 1. Page load hote hi localStorage se theme check karein
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -27,15 +28,31 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     const phoneLike = (el) => {
-      const key = `${el.name || ''} ${el.id || ''} ${el.placeholder || ''}`.toLowerCase();
-      return el.type === 'tel' || /phone|mobile|contact|whatsapp/.test(key);
+      if (el.type === 'tel') return true;
+      if (!['text', 'number', ''].includes(el.type)) return false;
+      const nameId = `${el.name || ''} ${el.id || ''}`.toLowerCase();
+      if (/(?:cta|href|url|button|btn|text|subject|message|dest|title|subtitle|desc|image|order|slug|query)/i.test(nameId)) return false;
+      if (/(?:phone|mobile|whatsapp|contact_?(?:no|num|number)|calling)(?![a-z])/i.test(nameId)) return true;
+      const placeholder = (el.placeholder || '').toLowerCase();
+      if (/(?:cta|href|url|button|btn|http|\/|services|explore|page)/i.test(placeholder)) return false;
+      return /(?:phone|mobile|whatsapp|\bcontact\s*(?:no|num|number)\b|10[- ]?digit)/i.test(placeholder);
     };
     const nameLike = (el) => {
-      const key = `${el.name || ''} ${el.id || ''} ${el.placeholder || ''}`.toLowerCase();
-      return /(^|[^a-z])(name|full name|client_name|user_name|shop_name)([^a-z]|$)/.test(key);
+      if (!['text', ''].includes(el.type)) return false;
+      const nameId = `${el.name || ''} ${el.id || ''}`.toLowerCase();
+      if (/(?:service|shop|category|file|banner|company|page|brand|product|user_name|username|role|type|cta|dest)/i.test(nameId)) return false;
+      return /(^|[^a-z])(full[_-]?name|client[_-]?name|customer[_-]?name|first[_-]?name|last[_-]?name)([^a-z]|$)/i.test(nameId) || nameId.trim() === 'name';
     };
     const validateField = (el) => {
       if (!(el instanceof HTMLInputElement)) return true;
+      if (el.form?.noValidate || el.hasAttribute('data-no-validate') || el.closest('[data-no-auto-validate]')) {
+        el.setCustomValidity('');
+        return true;
+      }
+      if (['hidden', 'submit', 'button', 'checkbox', 'radio', 'file', 'image', 'reset', 'url'].includes(el.type)) {
+        el.setCustomValidity('');
+        return true;
+      }
       const value = el.value.trim();
       if (!value) {
         el.setCustomValidity('');
@@ -55,10 +72,12 @@ export default function RootLayout({ children }) {
         el.setCustomValidity(/\d/.test(value) ? 'Name cannot contain digits.' : '');
         return !el.validationMessage;
       }
+      el.setCustomValidity('');
       return true;
     };
     const onInput = (event) => validateField(event.target);
     const onSubmit = (event) => {
+      if (event.target.noValidate || event.target.hasAttribute('data-no-auto-validate')) return;
       const fields = Array.from(event.target.querySelectorAll('input'));
       const ok = fields.every(validateField);
       if (!ok) {
@@ -79,7 +98,7 @@ export default function RootLayout({ children }) {
   const toggleTheme = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
-    
+
     if (newMode) {
       document.documentElement.classList.add("dark-mode");
       localStorage.setItem("theme", "dark");
@@ -91,7 +110,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" className={`${isDarkMode ? "dark-mode" : ""} ${isShopPage ? "shop-html" : ""}`}>
-       <head>
+      <head>
         <meta name="google-site-verification" content="_HIsDPgunnMsWo7iWtmz2fX3YW9aG406vj5zL02lWXY" />
       </head>
       <body className={`transition-colors duration-500 ${isShopPage ? "shop-route overflow-x-clip" : "overflow-x-hidden"} ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
@@ -99,7 +118,7 @@ export default function RootLayout({ children }) {
         <FreeWhatsAppNotifier />
         <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
         {children}
-        <Footer/>
+        <Footer />
 
         {/* Floating Chatbot Assistant Widget */}
         <ChatbotWidget isDarkMode={isDarkMode} />

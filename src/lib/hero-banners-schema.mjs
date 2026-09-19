@@ -11,6 +11,6 @@ export async function ensureHeroBannersSchema(db) {
     ADD COLUMN IF NOT EXISTS image_position VARCHAR(16) DEFAULT 'center',
     ADD COLUMN IF NOT EXISTS cta_text VARCHAR(32) DEFAULT '',
     ADD COLUMN IF NOT EXISTS cta_href VARCHAR(300) DEFAULT '',
-    ADD COLUMN IF NOT EXISTS secondary_cta_text VARCHAR(32) DEFAULT '',
+    ADD COLUMN IF NOT EXISTS secondary_cta_text TEXT DEFAULT '',
     ADD COLUMN IF NOT EXISTS secondary_cta_href VARCHAR(300) DEFAULT ''`);
 }

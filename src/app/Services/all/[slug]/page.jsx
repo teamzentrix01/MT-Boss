@@ -149,10 +149,16 @@ export default function ServiceDetailPage() {
     setSubmitting(true);
 
     if (form.meetingDate) {
-      const year = new Date(form.meetingDate).getFullYear();
-      const currentYear = new Date().getFullYear();
-      if (year < currentYear || year > 9999 || isNaN(year)) {
-        setSubmitError("Please enter a valid year (current year or later) for the preferred meeting date");
+      const selectedDate = new Date(form.meetingDate + "T00:00:00");
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      if (isNaN(selectedDate.getTime()) || selectedDate <= todayDate) {
+        setSubmitError("Preferred meeting date must be from tomorrow onwards. Same-day booking is not available.");
+        setSubmitting(false);
+        return;
+      }
+      if (selectedDate.getFullYear() > 9999) {
+        setSubmitError("Please enter a valid year for the preferred meeting date.");
         setSubmitting(false);
         return;
       }
@@ -236,7 +242,15 @@ export default function ServiceDetailPage() {
   const phone         = service.contact_phone || COMPANY_CONTACT.phone;
   const email         = service.contact_email  || "mtboss2016@gmail.com";
 
-  const today = new Date().toISOString().split("T")[0];
+  const getTomorrowIso = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  const minDate = getTomorrowIso();
 
   return (
     <main className={`min-h-screen font-serif transition-colors duration-500 flex flex-col ${bg}`}>
@@ -415,8 +429,8 @@ export default function ServiceDetailPage() {
 
               {/* Meeting Date */}
               <div>
-                <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Preferred Meeting Date</label>
-                <input type="date" className={inp} min={today} max="9999-12-31"
+                <label className={`text-[9px] font-black uppercase tracking-widest block mb-1.5 ${muted}`}>Preferred Meeting Date (Tomorrow onwards)</label>
+                <input type="date" className={inp} min={minDate} max="9999-12-31"
                   value={form.meetingDate} onChange={e => setForm({ ...form, meetingDate: e.target.value })} />
               </div>
 

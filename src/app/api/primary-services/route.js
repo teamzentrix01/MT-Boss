@@ -101,7 +101,10 @@ export async function POST(req) {
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
     console.error('Error creating primary service:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    if (error.code === '23505' || String(error.message || '').includes('primary_services_slug_key')) {
+      return NextResponse.json({ error: 'A service with this slug already exists. Please choose a different slug or edit the existing service.' }, { status: 409 });
+    }
+    return NextResponse.json({ error: error.message || 'Server error' }, { status: 500 });
   }
 }
 
@@ -158,7 +161,10 @@ export async function PUT(req) {
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
     console.error('Error updating primary service:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    if (error.code === '23505' || String(error.message || '').includes('primary_services_slug_key')) {
+      return NextResponse.json({ error: 'A service with this slug already exists. Please choose a different slug.' }, { status: 409 });
+    }
+    return NextResponse.json({ error: error.message || 'Server error' }, { status: 500 });
   }
 }
 

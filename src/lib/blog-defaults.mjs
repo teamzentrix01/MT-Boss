@@ -12,6 +12,7 @@ export const DEFAULT_BLOGS = [
     meta_description: 'Learn how to calculate residential house construction cost per sq ft in India. Complete breakdown of cement, steel, bricks, labor, and finishing budget.',
     meta_keywords: 'house construction cost, construction cost per sq ft, building cost calculator india, residential construction budget',
     is_published: true,
+    created_at: '2026-03-01T10:00:00.000Z',
     views_count: 1420,
     content: `
 ## Planning Your Construction Budget with Precision
@@ -63,6 +64,7 @@ MTBOSS provides full turnkey architectural planning, 3D structural blueprints, a
     meta_description: 'Essential guide on choosing top building materials: TMT steel grades (Fe500D vs Fe550D), OPC vs PPC cement, red clay vs fly ash bricks, and sand quality tests.',
     meta_keywords: 'building materials checklist, tmt steel grades, cement selection guide, brick quality testing, construction materials india',
     is_published: true,
+    created_at: '2026-03-02T10:00:00.000Z',
     views_count: 980,
     content: `
 ## Why Material Quality Determines Structural Longevity
@@ -109,6 +111,7 @@ Explore wholesale building materials on [MTBOSS Shop Now](/ShopNow) with verifie
     meta_description: 'Legal checklist for buying plots, commercial buildings, and residential apartments in Uttar Pradesh and NCR. Verify RERA, 30-year search report, registry, and mutations.',
     meta_keywords: 'property buying checklist, buy plot in bareilly moradabad, rera approved properties, land title verification, registry process',
     is_published: true,
+    created_at: '2026-03-03T10:00:00.000Z',
     views_count: 1150,
     content: `
 ## Protecting Your Investment with Legal Due Diligence
@@ -150,6 +153,7 @@ Discover authentic, legal-verified residential plots, villas, and commercial rea
     meta_description: 'Scientific and architectural Vastu Shastra guidelines for modern home designs. Best directions for main door, kitchen, puja room, bedrooms, and water tanks.',
     meta_keywords: 'vastu for home, vastu architecture plans, main entrance vastu direction, modern vastu floor plans',
     is_published: true,
+    created_at: '2026-03-04T10:00:00.000Z',
     views_count: 830,
     content: `
 ## Blending Ancient Vastu Principles with Modern Architectural Aesthetics

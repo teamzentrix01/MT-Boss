@@ -249,3 +249,132 @@ export async function notifyAdminSubmission({ type, name, phone, email, referenc
   results.filter((item) => item.status === 'rejected').forEach((item) => console.error('Admin notification error:', item.reason));
   return results.length ? results : [{ status: 'skipped' }];
 }
+
+export async function deliverPropertyEnquiryNotification({ enquiry, property, owner }) {
+  const jobs = [];
+  const listingLabel = (property.listing_type || '').toLowerCase() === 'rent' ? 'Rent' : 'Sell / Buy';
+
+  // 1. Notify Property Owner (if owner email exists)
+  if (owner?.email) {
+    const ownerSubject = `New Customer Inquiry for your ${listingLabel} Property: ${property.title} - ${companyName}`;
+    const cleanEnquirerPhone = String(enquiry.phone || '').replace(/\D/g, '');
+    const waLink = cleanEnquirerPhone ? `https://wa.me/91${cleanEnquirerPhone.slice(-10)}?text=${encodeURIComponent(`Hello ${enquiry.name || ''}, regarding your inquiry for ${property.title} on MTBoss...`)}` : '';
+    const telLink = cleanEnquirerPhone ? `tel:+91${cleanEnquirerPhone.slice(-10)}` : '';
+
+    const ownerHtml = `<!doctype html><html><body style="margin:0;background:#f3f4f6;padding:24px;font-family:Arial,sans-serif;color:#111827">
+      <div style="max-width:640px;margin:auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 8px 30px #00000012">
+        <div style="background:#0b1220;color:#fff;padding:24px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:11px;letter-spacing:1.5px;color:#38bdf8;text-transform:uppercase;font-weight:bold">NEW PROPERTY INQUIRY</div>
+            <h2 style="margin:6px 0 0;font-size:22px">${escapeHtml(companyName)}</h2>
+          </div>
+          ${logoUrl ? `<img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(companyName)}" width="64" style="max-height:50px;object-fit:contain;background:#fff;border-radius:8px;padding:4px">` : ''}
+        </div>
+        <div style="padding:28px">
+          <p style="font-size:15px;margin-top:0">Dear <strong>${escapeHtml(owner.name || 'Property Owner')}</strong>,</p>
+          <p style="font-size:14px;line-height:1.6;color:#4b5563">
+            A customer has submitted an inquiry for your listed property (<strong>${escapeHtml(listingLabel)}</strong>):
+          </p>
+
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #2196f3;padding:16px;border-radius:8px;margin:18px 0">
+            <h3 style="margin:0 0 6px;font-size:16px;color:#0f172a">${escapeHtml(property.title)}</h3>
+            <p style="margin:0;font-size:13px;color:#64748b">
+              📍 ${escapeHtml(property.location || '-')}${property.price ? ` &nbsp;•&nbsp; 💰 <strong>₹${escapeHtml(property.price)}</strong>` : ''}
+            </p>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px;margin-bottom:22px">
+            <div style="font-size:12px;font-weight:bold;color:#6b7280;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase">Customer Lead Details</div>
+            <table style="width:100%;border-collapse:collapse">
+              <tr><td style="padding:7px 0;color:#6b7280;font-size:13px;width:35%">Customer Name:</td><td style="padding:7px 0;font-size:13px;font-weight:bold;color:#111827">${escapeHtml(enquiry.name)}</td></tr>
+              <tr><td style="padding:7px 0;color:#6b7280;font-size:13px">Phone Number:</td><td style="padding:7px 0;font-size:13px;font-weight:bold;color:#111827">${escapeHtml(enquiry.phone)}</td></tr>
+              ${enquiry.email ? `<tr><td style="padding:7px 0;color:#6b7280;font-size:13px">Email Address:</td><td style="padding:7px 0;font-size:13px;font-weight:bold;color:#111827">${escapeHtml(enquiry.email)}</td></tr>` : ''}
+              ${enquiry.message ? `<tr><td style="padding:7px 0;color:#6b7280;font-size:13px;vertical-align:top">Message:</td><td style="padding:7px 0;font-size:13px;color:#374151;white-space:pre-wrap">${escapeHtml(enquiry.message)}</td></tr>` : ''}
+              <tr><td style="padding:7px 0;color:#6b7280;font-size:13px">Received On:</td><td style="padding:7px 0;font-size:12px;color:#6b7280">${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</td></tr>
+            </table>
+          </div>
+
+          <div style="margin:24px 0">
+            ${telLink ? `<a href="${telLink}" style="display:inline-block;background:#2196f3;color:#000;padding:12px 22px;border-radius:8px;font-size:13px;font-weight:bold;text-decoration:none;margin-right:10px;margin-bottom:10px">📞 Call Customer</a>` : ''}
+            ${waLink ? `<a href="${waLink}" target="_blank" rel="noopener noreferrer" style="display:inline-block;background:#22c55e;color:#fff;padding:12px 22px;border-radius:8px;font-size:13px;font-weight:bold;text-decoration:none;margin-bottom:10px">💬 WhatsApp Customer</a>` : ''}
+          </div>
+
+          <p style="font-size:13px;color:#6b7280;margin-bottom:0">Best regards,<br>${escapeHtml(companyName)} Property Team</p>
+        </div>
+        <div style="padding:16px 28px;background:#f9fafb;color:#6b7280;font-size:12px">${escapeHtml(companyName)}${companyPhone ? ` · ${escapeHtml(companyPhone)}` : ''}</div>
+      </div></body></html>`;
+
+    jobs.push(sendMail({
+      to: owner.email,
+      subject: ownerSubject,
+      html: ownerHtml,
+      text: `Hello ${owner.name || 'Owner'},\n\nNew inquiry for your property: ${property.title}\n\nCustomer: ${enquiry.name}\nPhone: ${enquiry.phone}\nEmail: ${enquiry.email || '-'}\nMessage: ${enquiry.message || '-'}\n\nReceived: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`,
+      replyTo: enquiry.email || undefined,
+    }));
+  }
+
+  // 2. WhatsApp to Property Owner (if owner phone exists)
+  if (owner?.phone) {
+    const ownerWhatsAppText = `*${companyName} - New Property Inquiry*\n\nDear *${owner.name || 'Property Owner'}*,\nYou received an inquiry for your property:\n*${property.title}* (${listingLabel})\n\n*Customer Details:*\n• Name: ${enquiry.name}\n• Phone: ${enquiry.phone}\n• Email: ${enquiry.email || '-'}\n• Message: ${enquiry.message || '-'}\n\nPlease contact the customer at your earliest convenience.`;
+    jobs.push(sendWhatsApp({ to: owner.phone, text: ownerWhatsAppText }));
+  }
+
+  // 3. Customer Acknowledgment Email (if customer email provided)
+  if (enquiry?.email) {
+    const customerSubject = `Inquiry Confirmation: ${property.title} - ${companyName}`;
+    const customerHtml = `<!doctype html><html><body style="margin:0;background:#f3f4f6;padding:24px;font-family:Arial,sans-serif;color:#111827">
+      <div style="max-width:640px;margin:auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 8px 30px #00000012">
+        <div style="background:#0b1220;color:#fff;padding:24px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:11px;letter-spacing:1.5px;color:#38bdf8;text-transform:uppercase;font-weight:bold">INQUIRY CONFIRMATION</div>
+            <h2 style="margin:6px 0 0;font-size:22px">${escapeHtml(companyName)}</h2>
+          </div>
+          ${logoUrl ? `<img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(companyName)}" width="64" style="max-height:50px;object-fit:contain;background:#fff;border-radius:8px;padding:4px">` : ''}
+        </div>
+        <div style="padding:28px">
+          <p style="font-size:15px;margin-top:0">Hello <strong>${escapeHtml(enquiry.name)}</strong>,</p>
+          <p style="font-size:14px;line-height:1.6;color:#4b5563">
+            Thank you for reaching out! Your inquiry for <strong>${escapeHtml(property.title)}</strong> (<strong>${escapeHtml(listingLabel)}</strong>) has been successfully received and forwarded directly to the property owner and our team.
+          </p>
+
+          <!-- Property Card Summary -->
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #2196f3;padding:16px;border-radius:8px;margin:18px 0">
+            <h3 style="margin:0 0 6px;font-size:16px;color:#0f172a">${escapeHtml(property.title)}</h3>
+            <p style="margin:0;font-size:13px;color:#64748b">
+              📍 ${escapeHtml(property.location || '-')}${property.price ? ` &nbsp;•&nbsp; 💰 <strong>₹${escapeHtml(property.price)}</strong>` : ''} &nbsp;•&nbsp; ${escapeHtml(listingLabel)}
+            </p>
+          </div>
+
+          <!-- Customer Submitted Details -->
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px;margin-bottom:22px">
+            <div style="font-size:12px;font-weight:bold;color:#6b7280;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase">Your Submitted Inquiry Details</div>
+            <table style="width:100%;border-collapse:collapse">
+              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px;width:35%">Your Name:</td><td style="padding:6px 0;font-size:13px;font-weight:bold;color:#111827">${escapeHtml(enquiry.name)}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px">Phone Number:</td><td style="padding:6px 0;font-size:13px;font-weight:bold;color:#111827">${escapeHtml(enquiry.phone)}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px">Email Address:</td><td style="padding:6px 0;font-size:13px;font-weight:bold;color:#111827">${escapeHtml(enquiry.email)}</td></tr>
+              ${enquiry.message ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;vertical-align:top">Your Message:</td><td style="padding:6px 0;font-size:13px;color:#374151;white-space:pre-wrap">${escapeHtml(enquiry.message)}</td></tr>` : ''}
+              <tr><td style="padding:6px 0;color:#6b7280;font-size:13px">Submitted On:</td><td style="padding:6px 0;font-size:12px;color:#6b7280">${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</td></tr>
+            </table>
+          </div>
+
+          <div style="background:#eff6ff;border-left:4px solid #2563eb;padding:14px 18px;border-radius:6px;margin:18px 0;font-size:13px;color:#1e40af">
+            The property owner ${owner?.name ? `(<strong>${escapeHtml(owner.name)}</strong>)` : ''} or our support team will contact you shortly on <strong>${escapeHtml(enquiry.phone)}</strong>.
+          </div>
+
+          <p style="font-size:13px;color:#6b7280;margin-bottom:0">Warm regards,<br>${escapeHtml(companyName)} Team</p>
+        </div>
+        <div style="padding:16px 28px;background:#f9fafb;color:#6b7280;font-size:12px">${escapeHtml(companyName)}${companyPhone ? ` · ${escapeHtml(companyPhone)}` : ''}</div>
+      </div></body></html>`;
+
+    jobs.push(sendMail({
+      to: enquiry.email,
+      subject: customerSubject,
+      html: customerHtml,
+      text: `Hello ${enquiry.name},\n\nThank you for inquiring about ${property.title}. Your inquiry has been received and forwarded to the property owner.\n\nDetails:\nProperty: ${property.title}\nPrice: ${property.price || '-'}\nLocation: ${property.location || '-'}\n\nOur team / property owner will get in touch with you soon.\n\nWarm regards,\n${companyName}`,
+    }));
+  }
+
+  const results = await Promise.allSettled(jobs);
+  results.filter((item) => item.status === 'rejected').forEach((item) => console.error('Property inquiry notification error:', item.reason));
+  return results;
+}
