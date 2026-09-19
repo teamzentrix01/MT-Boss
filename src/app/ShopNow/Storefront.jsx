@@ -42,13 +42,15 @@ function unitPrice(product, quantity = 1) {
 function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, onDetails, selectedCity }) {
   const price = Number(product.price);
   const hasPrice = Number.isFinite(price) && price > 0;
+  const discount = hasPrice && Number(product.compare_at_price) > price ? Math.round((1 - price / Number(product.compare_at_price)) * 100) : 0;
   const cityUnavailable = Boolean(selectedCity && product.supplier_id === 0 && !product.available_cities?.some((city) => city.toLowerCase() === selectedCity.toLowerCase()));
   const canOrder = !cityUnavailable && (!product.fromSupplier || Number(product.quantity) > 0);
   return (
     <article className="store-product-card">
+      {discount > 0 && <span className="store-discount-badge">{discount}% OFF</span>}
       <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={product.image} category={product.category} name={product.name} /></button>
       <div className="store-product-details">
-        <span className="store-product-tag">{product.brand || (product.fromSupplier ? "Supplier listing" : "Available for quote")}</span>
+        <span className="store-product-tag">{product.brand || (product.supplier_id === 0 ? 'MT Boss listing' : product.fromSupplier ? "Supplier listing" : "Available for quote")}</span>
         <button type="button" className="store-product-title" onClick={() => onDetails(product)}><h3>{product.name}</h3></button>
         <p className="store-product-category">{product.category.name}{product.unit ? ` · ${product.unit}` : ""}</p>
         <div className="store-product-price">
@@ -58,7 +60,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
         {cityUnavailable && <span className="store-stock-note">Not delivered in {selectedCity}</span>}
         {product.fromSupplier && Number(product.quantity) === 0 && <span className="store-stock-note">Currently unavailable</span>}
         <div className="store-product-actions">
-          <button type="button" className="store-quote-btn" onClick={() => onQuote(product)}>Get Quote</button>
+          <button type="button" className="store-quote-btn" disabled={!canOrder} onClick={() => onQuote(product)}>Get Quote</button>
           <button type="button" className="store-buy-btn" disabled={!canOrder} onClick={() => onBuy(product)}>{canOrder ? 'Buy Now' : 'Unavailable'}</button>
         </div>
         {quantity ? (
@@ -84,6 +86,14 @@ export default function Storefront({ categories, products, content, loading, cit
   const [detailsProduct, setDetailsProduct] = useState(null);
   const [sortBy, setSortBy] = useState('featured');
   const [brandFilter, setBrandFilter] = useState('all');
+
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('category');
+    const match = categories.find((category) => category.name.toLowerCase() === requested?.toLowerCase());
+    if (!match) return undefined;
+    const frame = requestAnimationFrame(() => setActiveCategory(match.id));
+    return () => cancelAnimationFrame(frame);
+  }, [categories]);
 
   useEffect(() => {
     const checkAdmin = () => {
@@ -127,6 +137,7 @@ export default function Storefront({ categories, products, content, loading, cit
       quantity: product.quantity,
       supplier_id: product.supplier_id,
       available_cities: product.available_cities,
+      created_at: product.created_at,
       fromSupplier: true,
     }));
     const names = Array.isArray(category.types) && category.types.length ? category.types : [category.name];
@@ -149,6 +160,8 @@ export default function Storefront({ categories, products, content, loading, cit
   )).sort((a, b) => sortBy === 'price-asc' ? (Number(a.price) || Infinity) - (Number(b.price) || Infinity) : sortBy === 'price-desc' ? (Number(b.price) || 0) - (Number(a.price) || 0) : sortBy === 'name' ? a.name.localeCompare(b.name) : 0);
   const brands = [...new Set(catalog.filter((product) => activeCategory === 'all' || String(product.category.id) === String(activeCategory)).map((product) => product.brand).filter(Boolean))].sort();
   const featured = categories.map((category) => catalog.find((product) => product.category.id === category.id)).filter(Boolean).slice(0, 8);
+  const deals = catalog.filter((product) => Number(product.price) > 0 && Number(product.compare_at_price) > Number(product.price)).sort((a, b) => (1 - Number(b.price) / Number(b.compare_at_price)) - (1 - Number(a.price) / Number(a.compare_at_price))).slice(0, 6);
+  const arrivals = catalog.filter((product) => product.fromSupplier && product.created_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 6);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const pricedTotal = cart.reduce((sum, item) => sum + unitPrice(item.product, item.quantity) * item.quantity, 0);
   const hasUnpriced = cart.some((item) => !Number(item.product.price));
@@ -157,6 +170,11 @@ export default function Storefront({ categories, products, content, loading, cit
     setActiveCategory(id);
     setBrandFilter('all');
     setSearch("");
+    const url = new URL(window.location.href);
+    const selected = categories.find((category) => String(category.id) === String(id));
+    if (selected) url.searchParams.set('category', selected.name);
+    else url.searchParams.delete('category');
+    window.history.replaceState(window.history.state, '', url);
     document.getElementById("store-products")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
@@ -200,6 +218,10 @@ export default function Storefront({ categories, products, content, loading, cit
         </section>
 
         {!searchTerm && activeCategory === "all" && featured.length > 0 && <section className="store-section" aria-labelledby="store-featured-heading"><div className="store-section-heading"><div><span className="store-section-kicker">POPULAR PICKS</span><h2 id="store-featured-heading">{content.featured_heading}</h2></div><span className="store-section-note">Get a quote or order directly</span></div><div className="store-product-grid">{featured.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
+
+        {!searchTerm && activeCategory === 'all' && deals.length > 0 && <section className="store-section" aria-labelledby="store-deals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">CURRENT OFFERS</span><h2 id="store-deals-heading">{content.deals_heading}</h2></div><span className="store-section-note">Savings shown against original price</span></div><div className="store-product-grid">{deals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
+
+        {!searchTerm && activeCategory === 'all' && arrivals.length > 0 && <section className="store-section" aria-labelledby="store-arrivals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">JUST ADDED</span><h2 id="store-arrivals-heading">{content.arrivals_heading}</h2></div><span className="store-section-note">Recently added products</span></div><div className="store-product-grid">{arrivals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
 
         <section className="store-section store-catalog" id="store-products" aria-labelledby="store-products-heading">
           <div className="store-section-heading"><div><span className="store-section-kicker">THE CATALOGUE</span><h2 id="store-products-heading">{searchTerm ? `Results for “${search}”` : activeCategory === "all" ? content.catalog_heading : categories.find((category) => String(category.id) === String(activeCategory))?.name || "Materials"}</h2></div><span className="store-section-note">{visible.length} items</span></div>

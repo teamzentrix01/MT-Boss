@@ -14,6 +14,7 @@ const fields = [
   ['hero_badge', 'Image badge text'],
   ['hero_button', 'Banner button'], ['search_placeholder', 'Search placeholder'],
   ['categories_heading', 'Categories heading'], ['featured_heading', 'Featured heading'],
+  ['deals_heading', 'Deals heading'], ['arrivals_heading', 'New arrivals heading'],
   ['catalog_heading', 'Catalogue heading'], ['footer_tagline', 'Footer tagline'],
 ];
 

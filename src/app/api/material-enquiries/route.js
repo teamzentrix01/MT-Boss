@@ -17,6 +17,8 @@ const ensureTable = createInitializationGuard(async () => {
       category_name           VARCHAR(255) NOT NULL,
       category_emoji          TEXT         DEFAULT '',
       material_type           VARCHAR(255),
+      product_id              INTEGER,
+      indicative_unit_price   NUMERIC(10,2),
       subcategory_name        VARCHAR(255),
 
       brand_company           VARCHAR(255),
@@ -47,6 +49,8 @@ const ensureTable = createInitializationGuard(async () => {
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS order_unit       VARCHAR(100)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS delivery_date    DATE`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS selected_city    VARCHAR(100)`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS product_id       INTEGER`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS indicative_unit_price NUMERIC(10,2)`,
   ];
   for (const sql of migrations) {
     try { await pool.query(sql); } catch { /* already correct type or column exists */ }
@@ -121,10 +125,25 @@ export async function POST(req) {
       await client.query('BEGIN');
       const orders = [];
       for (const item of orderItems) {
+        let indicativeUnitPrice = null;
+        const coverage = await client.query(`SELECT 1 WHERE EXISTS (
+          SELECT 1 FROM suppliers s WHERE LOWER(s.city)=LOWER($1)
+            AND s.status='approved' AND s.is_active=TRUE
+            AND EXISTS (SELECT 1 FROM unnest(s.product_categories) cat WHERE LOWER(cat)=LOWER($2))
+        ) OR EXISTS (
+          SELECT 1 FROM supplier_materials m WHERE m.supplier_id=0 AND m.is_available=TRUE AND m.quantity>0
+            AND LOWER(TRIM(m.category))=LOWER(TRIM($2))
+            AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(COALESCE(m.available_cities, '[]'::jsonb)) city WHERE LOWER(city)=LOWER($1))
+        )`, [canonicalCity, cleanText(item.category_name)]);
+        if (!coverage.rows.length) {
+          const failure = new Error(`${item.category_name} is not available for delivery in ${canonicalCity}.`);
+          failure.status = 409;
+          throw failure;
+        }
         if (item.product_id) {
           const requestedQuantity = isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10);
           const productResult = await client.query(
-            `SELECT name, category, unit, quantity, is_available, supplier_id, available_cities FROM supplier_materials WHERE id=$1 FOR UPDATE`,
+            `SELECT name, category, unit, quantity, price, bulk_pricing, is_available, supplier_id, available_cities FROM supplier_materials WHERE id=$1 FOR UPDATE`,
             [item.product_id]
           );
           const product = productResult.rows[0];
@@ -143,21 +162,27 @@ export async function POST(req) {
             failure.status = 409;
             throw failure;
           }
+          if (product.price != null) {
+            const tier = (Array.isArray(product.bulk_pricing) ? product.bulk_pricing : [])
+              .filter((entry) => Number.isInteger(requestedQuantity) && requestedQuantity >= Number(entry.min_quantity))
+              .sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity))[0];
+            indicativeUnitPrice = tier ? Number(tier.price) : Number(product.price);
+          }
         }
         const orderReference = `MO-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const itemQuantity = isCart ? `${item.quantity} ${cleanText(item.order_unit) || 'pcs'}` : quantity_text;
         const result = await client.query(
         `INSERT INTO material_enquiries
            (user_id, order_reference, user_name, user_phone, user_email,
-            category_name, category_emoji,
+            category_name, category_emoji, product_id, indicative_unit_price,
             material_type, subcategory_name, brand_company,
             quantity_text, order_unit, delivery_date,
             delivery_address, latitude, longitude, message, selected_city)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
          RETURNING id, order_reference, status, created_at`,
         [
           user.id, orderReference, cleanName, cleanPhone, cleanEmail || user.email || null,
-          cleanText(item.category_name), item.category_emoji || '',
+          cleanText(item.category_name), item.category_emoji || '', item.product_id || null, indicativeUnitPrice,
           cleanText(item.material_type) || null, cleanText(item.subcategory_name) || null, cleanText(item.brand_company) || null,
           itemQuantity || null, cleanText(item.order_unit) || null, delivery_date || null,
           delivery_address || null, lat, lng,
@@ -173,7 +198,7 @@ export async function POST(req) {
           actorId: user.id,
           actorName: cleanName,
         });
-        orders.push({ ...result.rows[0], category_name: item.category_name, material_type: item.material_type, quantity_text: itemQuantity, order_unit: item.order_unit });
+        orders.push({ ...result.rows[0], product_id: item.product_id || null, indicative_unit_price: indicativeUnitPrice, category_name: item.category_name, material_type: item.material_type, quantity_text: itemQuantity, order_unit: item.order_unit });
       }
       await client.query('COMMIT');
       const targetEmail = cleanEmail || user.email;

@@ -9,6 +9,8 @@ export const defaultShopStorefront = {
   search_placeholder: 'Search "cement", "steel" and more',
   categories_heading: 'Shop by category',
   featured_heading: 'Materials for your next project',
+  deals_heading: 'Deals on materials',
+  arrivals_heading: 'New arrivals',
   catalog_heading: 'Browse all materials',
   footer_tagline: 'Construction materials, made easier to source.',
   promos: [
@@ -21,7 +23,7 @@ export const defaultShopStorefront = {
 const textFields = [
   'hero_kicker', 'hero_title', 'hero_highlight', 'hero_description',
   'hero_image', 'hero_badge', 'hero_button', 'search_placeholder', 'categories_heading',
-  'featured_heading', 'catalog_heading', 'footer_tagline',
+  'featured_heading', 'deals_heading', 'arrivals_heading', 'catalog_heading', 'footer_tagline',
 ];
 
 export function normalizeShopStorefront(value = {}) {

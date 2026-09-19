@@ -127,7 +127,7 @@ export async function GET(req) {
         return NextResponse.json({
           success: true,
           available: true,
-          message: city ? `Supplier available in ${city}` : `Supplier available in pincode ${pincode}`,
+          message: city ? `Material available in ${city}` : `Material available in pincode ${pincode}`,
         });
       } else {
         return NextResponse.json({

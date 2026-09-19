@@ -46,7 +46,7 @@ export async function GET(req) {
 
     const result = await pool.query(
       `SELECT id, supplier_id, name, description, price, unit, quantity, image_url, category,
-              brand, compare_at_price, images, specifications, bulk_pricing, available_cities
+              brand, compare_at_price, images, specifications, bulk_pricing, available_cities, created_at
        FROM supplier_materials
        WHERE is_available = TRUE
          AND ($1 = '' OR LOWER(TRIM(category)) = LOWER(TRIM($1)))
@@ -70,6 +70,7 @@ export async function GET(req) {
       specifications: row.specifications || {},
       bulk_pricing: Array.isArray(row.bulk_pricing) ? row.bulk_pricing : [],
       available_cities: Array.isArray(row.available_cities) ? row.available_cities : [],
+      created_at: row.created_at,
     }));
 
     return NextResponse.json({

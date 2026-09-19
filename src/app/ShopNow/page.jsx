@@ -521,7 +521,7 @@ export default function ShopPage() {
                     </p>
                   )}
                   {!cityError && cityVerified && selectedCity && (
-                    <p className="text-[9px] mt-1 text-green-500">✓ Supplier available in this city</p>
+                    <p className="text-[9px] mt-1 text-green-500">✓ Material available in this city</p>
                   )}
                   <p className={`text-[9px] mt-0.5 ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>
                     Required to check supplier availability and delivery.
@@ -533,7 +533,7 @@ export default function ShopPage() {
                   <div className={`rounded-xl border-2 px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-green-600 bg-green-900/20" : "border-green-500 bg-green-50"}`}>
                     <div>
                       <p className={`text-[9px] font-extrabold uppercase tracking-widest mb-0.5 ${isDarkMode ? "text-green-400" : "text-green-700"}`}>
-                        ✓ Supplier Available
+                        ✓ Material Available
                       </p>
                       <p className={`text-base font-black ${isDarkMode ? "text-green-300" : "text-green-800"}`}>
                         {selectedCity}

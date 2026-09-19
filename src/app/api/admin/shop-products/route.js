@@ -61,6 +61,7 @@ async function validProduct(body, { allowUnassigned = false } = {}) {
   if (images.length > 8 || images.some((url) => typeof url !== 'string' || url.length > 1000)) return { error: 'Add up to 8 image URLs' };
   if (Object.keys(specifications).length > 20 || Object.entries(specifications).some(([key, value]) => key.length > 100 || typeof value !== 'string' || value.length > 500)) return { error: 'Add up to 20 short specifications' };
   if (bulkPricing.length > 10 || bulkPricing.some((tier) => !Number.isInteger(Number(tier.min_quantity)) || Number(tier.min_quantity) < 2 || !Number.isFinite(Number(tier.price)) || Number(tier.price) <= 0)) return { error: 'Bulk tiers need a minimum quantity and positive price' };
+  if (bulkPricing.length && rawPrice === null) return { error: 'Set a selling price before adding bulk tiers' };
   if (availableCities.length > 100 || availableCities.some((city) => typeof city !== 'string' || city.length > 120)) return { error: 'Choose valid delivery cities' };
   return { value: {
     name,
