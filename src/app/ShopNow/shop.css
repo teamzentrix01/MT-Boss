@@ -4,6 +4,7 @@
 .shop-page button{background-color:transparent!important;background-image:none!important;border-color:transparent!important;box-shadow:none!important;color:inherit!important;transform:none!important;transition:background .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease!important;will-change:auto!important}
 .shop-page button:hover:not(:disabled),.shop-page button:active:not(:disabled){background-image:none!important;box-shadow:none!important;transform:none!important}
 .shop-page button:focus-visible,.shop-page a:focus-visible,.shop-page input:focus-visible,.shop-page select:focus-visible{outline:2px solid var(--store-green)!important;outline-offset:2px}
+.shop-page .store-search input:focus,.shop-page .store-search input:focus-visible{outline:none!important;box-shadow:none!important;border:0!important}
 .shop-page a{text-decoration:none}
 .store-header{height:82px;position:sticky;top:0;z-index:80;background:#fff;border-bottom:1px solid #e5e7e5;box-shadow:0 2px 12px rgba(13,38,19,.04)}
 .store-header-inner{max-width:1440px;height:100%;margin:auto;display:flex;align-items:center;gap:18px;padding:0 32px}
