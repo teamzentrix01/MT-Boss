@@ -88,12 +88,6 @@ export default function Footer() {
           
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div 
-                className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-black text-xl shadow-md transition-all duration-300 group-hover:scale-105"
-                style={{ backgroundColor: themeYellow }}
-              >
-                MT
-              </div>
               <span className={`text-xl font-black tracking-wider uppercase ${isDark ? "text-white" : "text-zinc-900"}`}>
                 MTBOSS
               </span>

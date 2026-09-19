@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCities } from "@/hooks/useCities";
+import Storefront from "./Storefront";
+import { defaultShopStorefront } from "@/lib/shop-storefront-defaults";
 
 // Dark-mode watcher
 function useDarkMode() {
@@ -24,34 +26,6 @@ const X = ({ size = 20 }) => (
     <path d="M18 6L6 18M6 6l12 12" />
   </svg>
 );
-const ArrowRight = ({ size = 13 }) => (
-  <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" viewBox="0 0 24 24">
-    <path d="M5 12h14M12 5l7 7-7 7" />
-  </svg>
-);
-const Package = ({ size = 18 }) => (
-  <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" viewBox="0 0 24 24">
-    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
-    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-    <line x1="12" y1="22.08" x2="12" y2="12" />
-  </svg>
-);
-const Zap = ({ size = 12 }) => (
-  <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" viewBox="0 0 24 24">
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-  </svg>
-);
-const TrendingUp = ({ size = 18 }) => (
-  <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" viewBox="0 0 24 24">
-    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-    <polyline points="17 6 23 6 23 12" />
-  </svg>
-);
-const Star = ({ size = 18 }) => (
-  <svg width={size} height={size} fill="currentColor" stroke="currentColor" strokeWidth={1} viewBox="0 0 24 24">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-  </svg>
-);
 
 // ── Thin section divider used inside the modal ────────────────────────────────
 function SectionLabel({ children, isDark }) {
@@ -71,6 +45,24 @@ export default function ShopPage() {
   // ── category list ──────────────────────────────────────────────────────────
   const [categories, setCategories] = useState([]);
   const [catsLoading, setCatsLoading] = useState(true);
+  const [allProducts, setAllProducts] = useState([]);
+  const [productsLoaded, setProductsLoaded] = useState(false);
+  const [storeContent, setStoreContent] = useState(defaultShopStorefront);
+  const [cart, setCart] = useState([]);
+  const [cartReady, setCartReady] = useState(false);
+  const [modalMode, setModalMode] = useState("quote");
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("mtboss-shop-cart") || "[]");
+      if (Array.isArray(saved)) setCart(saved.filter((item) => item?.product?.id && Number.isInteger(item.quantity) && item.quantity > 0));
+    } catch { /* Ignore stale cart data. */ }
+    setCartReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (cartReady) localStorage.setItem("mtboss-shop-cart", JSON.stringify(cart));
+  }, [cart, cartReady]);
 
   useEffect(() => {
     fetch("/api/shop-categories")
@@ -80,9 +72,37 @@ export default function ShopPage() {
       .finally(() => setCatsLoading(false));
   }, []);
 
+  useEffect(() => {
+    fetch("/api/shop-material-options")
+      .then((response) => response.json())
+      .then((data) => { if (data.success) setAllProducts(data.data?.products || []); })
+      .catch(console.error)
+      .finally(() => setProductsLoaded(true));
+  }, []);
+
+  useEffect(() => {
+    if (!cartReady || !productsLoaded || !categories.length) return;
+    setCart((previous) => previous.flatMap((item) => {
+      if (!item.product?.product_id) return [item];
+      const current = allProducts.find((product) => product.id === item.product.product_id);
+      const category = categories.find((entry) => entry.name.toLowerCase() === current?.category?.toLowerCase())
+        || categories.find((entry) => current?.name?.toLowerCase().includes(entry.name.toLowerCase()));
+      if (!current || !category || Number(current.quantity) < 1) return [];
+      return [{ product: { ...item.product, ...current, category, image: current.image_url, fromSupplier: true, product_id: current.id }, quantity: Math.min(item.quantity, current.quantity) }];
+    }));
+  }, [allProducts, cartReady, categories, productsLoaded]);
+
+  useEffect(() => {
+    fetch("/api/shop-storefront")
+      .then((response) => response.json())
+      .then((data) => { if (data.success) setStoreContent(data.data); })
+      .catch(console.error);
+  }, []);
+
   // ── modal state ────────────────────────────────────────────────────────────
   const [isModalOpen, setIsModalOpen]       = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [submitted, setSubmitted]           = useState(false);
   const [submittedOrder, setSubmittedOrder] = useState(null);
   const [submitting, setSubmitting]         = useState(false);
@@ -107,6 +127,7 @@ export default function ShopPage() {
   // City selection
   const [selectedCity, setSelectedCity] = useState("");
   const [cityError, setCityError] = useState("");
+  const [cityVerified, setCityVerified] = useState(false);
   const [checkingCity, setCheckingCity] = useState(false);
 
   // GPS
@@ -137,19 +158,21 @@ export default function ShopPage() {
   ].map((u) => String(u || '').trim()).filter(Boolean);
   const unitOptions = [...new Set(categoryUnits)];
 
-  const openModal = (category) => {
+  const openModal = (category, product = null, mode = "quote") => {
+    setModalMode(mode);
     setSelectedCategory(category);
+    setSelectedProduct(product);
     setSubmitted(false);
     setSubmittedOrder(null);
     setSubmitError("");
-    setSelectedCity("");
     setCityError("");
-    setFormData({ name: "", email: "", phone: "", quantity: "", address: "", message: "" });
-    setMaterialType("");
-    setCustomType("");
+    setCityVerified(false);
+    setFormData({ name: "", email: "", phone: "", quantity: product && mode !== "cart" ? "1" : "", address: "", message: "" });
+    setMaterialType(product?.name || "");
+    setCustomType(product?.name || "");
     setSubcategoryVal("");
     setCustomSubcategory("");
-    setOrderUnit("");
+    setOrderUnit(product?.unit || "");
     setProductOptions({ products: [], types: [], units: [] });
     setBrandCompany("");
     setDeliveryDate("");
@@ -159,8 +182,28 @@ export default function ShopPage() {
     setIsModalOpen(true);
   };
 
+  const addToCart = (product) => {
+    setCart((previous) => {
+      const existing = previous.find((item) => item.product.id === product.id);
+      const limit = product.fromSupplier ? Math.max(0, Number(product.quantity) || 0) : 10000;
+      if (limit === 0) return previous;
+      if (existing) return previous.map((item) => item.product.id === product.id ? { ...item, quantity: Math.min(item.quantity + 1, limit, 10000) } : item);
+      if (previous.length >= 20) return previous;
+      return [...previous, { product, quantity: 1 }];
+    });
+  };
+
+  const changeCartQuantity = (id, delta) => setCart((previous) => previous
+    .map((item) => item.product.id === id ? { ...item, quantity: Math.max(0, Math.min(item.product.fromSupplier ? Math.max(0, Number(item.product.quantity) || 0) : 10000, 10000, item.quantity + delta)) } : item)
+    .filter((item) => item.quantity > 0));
+
+  const openCartCheckout = () => {
+    if (!cart.length) return;
+    openModal(cart[0].product.category, null, "cart");
+  };
+
   useEffect(() => {
-    if (!selectedCategory?.name) return;
+    if (!isModalOpen || !selectedCategory?.name) return;
     setLoadingProductOptions(true);
     fetch(`/api/shop-material-options?category=${encodeURIComponent(selectedCategory.name)}`)
       .then((r) => r.json())
@@ -169,7 +212,7 @@ export default function ShopPage() {
       })
       .catch(console.error)
       .finally(() => setLoadingProductOptions(false));
-  }, [selectedCategory?.name]);
+  }, [selectedCategory?.name, isModalOpen]);
 
   const fillAddressFromCoords = async (latitude, longitude) => {
     try {
@@ -230,16 +273,24 @@ export default function ShopPage() {
     
     setCheckingCity(true);
     setCityError("");
+    setCityVerified(false);
     try {
-      const res = await fetch(`/api/pincode-check?city=${encodeURIComponent(cityVal)}&type=category&name=${selectedCategory?.name}`);
-      const data = await res.json();
-      
-      if (!data.available) {
-        setCityError(data.message || `Service not available in ${cityVal}`);
+      const categoryNames = modalMode === "cart"
+        ? [...new Set(cart.map((item) => item.product.category.name))]
+        : [selectedCategory?.name];
+      const checks = await Promise.all(categoryNames.map(async (name) => {
+        const res = await fetch(`/api/pincode-check?city=${encodeURIComponent(cityVal)}&type=category&name=${encodeURIComponent(name)}`);
+        if (!res.ok) throw new Error("Could not check city availability");
+        return { name, data: await res.json() };
+      }));
+      const unavailable = checks.find((check) => !check.data.available);
+      if (unavailable) {
+        setCityError(unavailable.data.message || `${unavailable.name} is not available in ${cityVal}`);
         setCheckingCity(false);
         return false;
       }
       setCityError("");
+      setCityVerified(true);
       setCheckingCity(false);
       return true;
     } catch (error) {
@@ -265,7 +316,7 @@ export default function ShopPage() {
     setSubmitError("");
 
     // Resolve final type & subcategory values
-    const finalType     = hasTypes ? (materialType === "Others" ? customType.trim() : materialType) : customType.trim();
+    const finalType     = hasTypes ? (materialType === "Others" ? customType.trim() : materialType) : (customType.trim() || materialType.trim());
     const finalSubcat   = subcategoryVal   === "Others" ? customSubcategory.trim() : subcategoryVal;
 
     // Check city availability first
@@ -296,34 +347,51 @@ export default function ShopPage() {
       if (!token) {
         throw new Error("Please login as a customer before placing an order so you can track it.");
       }
-      const res = await fetch("/api/material-enquiries", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
+      const payload = {
+          order_intent:    modalMode,
           user_name:       formData.name,
           user_phone:      formData.phone,
           user_email:      formData.email,
-          category_name:   selectedCategory?.name,
-          category_emoji:  selectedCategory?.emoji || '',
-          material_type:   finalType   || null,
-          subcategory_name: finalSubcat || null,
-          brand_company:   brandCompany.trim() || null,
-          quantity_text:   formData.quantity && orderUnit ? `${formData.quantity} ${orderUnit}` : formData.quantity || null,
-          order_unit:      orderUnit || null,
           delivery_date:   deliveryDate || null,
           delivery_address: formData.address,
           latitude:        locationCoords?.latitude  || null,
           longitude:       locationCoords?.longitude || null,
           message:         formData.message || null,
           selected_city:   selectedCity,
-        }),
+      };
+      if (modalMode === "cart") {
+        payload.items = cart.map((item) => ({
+          product_id: item.product.product_id || null,
+          category_name: item.product.category.name,
+          category_emoji: item.product.category.emoji || "",
+          material_type: item.product.name,
+          quantity: item.quantity,
+          order_unit: item.product.unit || "pcs",
+        }));
+      } else {
+        Object.assign(payload, {
+          product_id:   selectedProduct?.product_id || null,
+          category_name:   selectedCategory?.name,
+          category_emoji:  selectedCategory?.emoji || '',
+          material_type:   finalType || null,
+          subcategory_name: finalSubcat || null,
+          brand_company:   brandCompany.trim() || null,
+          quantity_text:   formData.quantity && orderUnit ? `${formData.quantity} ${orderUnit}` : formData.quantity || null,
+          order_unit:      orderUnit || null,
+        });
+      }
+      const res = await fetch("/api/material-enquiries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || "Failed to submit enquiry");
       setSubmittedOrder(data.data);
+      if (modalMode === "cart") setCart([]);
       setSubmitted(true);
     } catch (err) {
       setSubmitError(err.message);
@@ -334,11 +402,8 @@ export default function ShopPage() {
 
   // ── theme tokens ───────────────────────────────────────────────────────────
   const pageBg     = isDarkMode ? "bg-zinc-950"    : "bg-gray-50";
-  const cardBg     = isDarkMode ? "bg-zinc-900"    : "bg-white";
-  const cardBorder = isDarkMode ? "border-zinc-800" : "border-gray-200";
   const headText   = isDarkMode ? "text-white"     : "text-gray-900";
   const subText    = isDarkMode ? "text-zinc-400"  : "text-gray-500";
-  const divider    = isDarkMode ? "border-zinc-700" : "border-gray-100";
   const inputCls   = isDarkMode
     ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue-light)]"
     : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-[var(--brand-blue-light)]";
@@ -349,24 +414,6 @@ export default function ShopPage() {
   const modalBg    = isDarkMode ? "bg-zinc-900 border-zinc-700" : "bg-white border-gray-100";
   const modalHead  = isDarkMode ? "border-zinc-800" : "border-gray-100";
 
-  const labelStyles = {
-    blue:   { bg: isDarkMode ? "bg-blue-900/40"   : "bg-blue-50",   text: isDarkMode ? "text-blue-300"   : "text-blue-600",   border: isDarkMode ? "border-blue-700"   : "border-blue-200"   },
-    yellow: { bg: isDarkMode ? "bg-[var(--brand-blue-ink)]/40" : "bg-sky-50", text: isDarkMode ? "text-[var(--brand-blue-lighter)]" : "text-[var(--brand-blue-deep)]", border: isDarkMode ? "border-[var(--brand-blue-deeper)]" : "border-sky-200" },
-    green:  { bg: isDarkMode ? "bg-green-900/40"  : "bg-green-50",  text: isDarkMode ? "text-green-300"  : "text-green-600",  border: isDarkMode ? "border-green-700"  : "border-green-200"  },
-    purple: { bg: isDarkMode ? "bg-purple-900/40" : "bg-purple-50", text: isDarkMode ? "text-purple-300" : "text-purple-600", border: isDarkMode ? "border-purple-700" : "border-purple-200" },
-    pink:   { bg: isDarkMode ? "bg-pink-900/40"   : "bg-pink-50",   text: isDarkMode ? "text-pink-300"   : "text-pink-600",   border: isDarkMode ? "border-pink-700"   : "border-pink-200"   },
-    orange: { bg: isDarkMode ? "bg-orange-900/40" : "bg-orange-50", text: isDarkMode ? "text-orange-300" : "text-orange-600", border: isDarkMode ? "border-orange-700" : "border-orange-200" },
-    amber:  { bg: isDarkMode ? "bg-[var(--brand-blue-ink)]/40"  : "bg-sky-50",  text: isDarkMode ? "text-[var(--brand-blue-lighter)]"  : "text-[var(--brand-blue-deep)]",  border: isDarkMode ? "border-[var(--brand-blue-deeper)]"  : "border-sky-200"  },
-    cyan:   { bg: isDarkMode ? "bg-cyan-900/40"   : "bg-cyan-50",   text: isDarkMode ? "text-cyan-300"   : "text-cyan-600",   border: isDarkMode ? "border-cyan-700"   : "border-cyan-200"   },
-  };
-
-  const stats = [
-    { icon: <Package size={18} />, value: "500+",  label: "Products"   },
-    { icon: <TrendingUp size={18} />, value: catsLoading ? "…" : `${categories.length}`, label: "Categories" },
-    { icon: <Zap size={18} />,     value: "24hr",  label: "Response"   },
-    { icon: <Star size={18} />,    value: "4.9★",  label: "Rated"      },
-  ];
-
   // shared input class
   const inp = `w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--brand-blue-lighter)] transition-all ${inputCls}`;
   const sel = `w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--brand-blue-lighter)] transition-all ${selectCls}`;
@@ -376,129 +423,8 @@ export default function ShopPage() {
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden bg-zinc-950">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-5 text-center">
-          <div className="inline-flex items-center gap-2 bg-[var(--brand-blue)]/10 border border-[var(--brand-blue-light)]/30 text-[var(--brand-blue)] text-[9px] font-bold px-3 py-1 rounded-full mb-2 tracking-widest uppercase">
-            <Zap size={12} /> Material Marketplace
-          </div>
-          <h1 className="text-2xl md:text-4xl font-extrabold text-white mb-2 leading-tight">
-            Construction Materials, <span className="text-[var(--brand-blue-light)]">Sourced Right.</span>
-          </h1>
-          <p className="text-xs md:text-sm text-zinc-400 max-w-xl mx-auto mb-3">
-            Browse all major construction categories and get a direct quote from verified suppliers across India.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {stats.map((s, i) => (
-              <div key={i} className="flex items-center gap-1.5 text-zinc-300">
-                <span className="text-[var(--brand-blue-light)]">{s.icon}</span>
-                <span className="font-bold text-sm">{s.value}</span>
-                <span className="text-[11px] text-zinc-400">{s.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} />
 
-      {/* ── Categories Grid ──────────────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-5">
-        <div className="text-center mb-5">
-          <p className="text-[10px] font-bold tracking-widest uppercase text-[var(--brand-blue)] mb-1">What We Offer</p>
-          <h2 className={`text-xl md:text-2xl font-bold ${headText}`}>Material Categories</h2>
-          <p className={`mt-1 text-xs ${subText}`}>Click any category to get a quote</p>
-        </div>
-
-        {catsLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="flex flex-col items-center gap-3">
-              <svg className="w-8 h-8 animate-spin text-[var(--brand-blue-light)]" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-              </svg>
-              <p className={`text-sm font-semibold ${subText} uppercase tracking-widest`}>Loading categories…</p>
-            </div>
-          </div>
-        ) : categories.length === 0 ? (
-          <div className={`text-center py-20 border ${cardBorder} rounded-xl`}>
-            <div className="text-5xl mb-4">🛒</div>
-            <p className={`text-base font-bold ${headText} mb-2`}>No categories available yet</p>
-            <p className={`text-sm ${subText}`}>Check back soon — categories are being configured.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {categories.map((cat) => {
-              const style = labelStyles[cat.label_color] || labelStyles["yellow"];
-              return (
-                <div
-                  key={cat.id}
-                  className={`group relative ${cardBg} border ${cardBorder} rounded-xl flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden`}
-                  onClick={() => openModal(cat)}
-                >
-                  {/* Image / Emoji hero */}
-                  {cat.image ? (
-                    <div className="relative w-full overflow-hidden" style={{ height: "160px" }}>
-                      <img src={cat.image} alt={cat.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      {cat.label && (
-                        <span className={`absolute top-3 left-3 text-[9px] font-extrabold tracking-widest uppercase px-2 py-1 rounded border ${style.bg} ${style.text} ${style.border}`}>
-                          {cat.label}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <div className={`relative flex flex-col items-start justify-end p-4 ${isDarkMode ? "bg-zinc-800" : "bg-gray-100"}`} style={{ height: "120px" }}>
-                      <div className="text-6xl mb-1 group-hover:scale-110 transition-transform duration-300">{cat.emoji}</div>
-                      {cat.label && (
-                        <span className={`text-[9px] font-extrabold tracking-widest uppercase px-2 py-1 rounded border ${style.bg} ${style.text} ${style.border}`}>
-                          {cat.label}
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Card body */}
-                  <div className="flex flex-col flex-1 p-4">
-                    <h3 className={`text-sm font-extrabold ${headText} mb-3 leading-snug tracking-wide flex-1`}>{cat.name}</h3>
-
-                    {/* Types preview pills */}
-                    {(cat.types || []).length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {(cat.types || []).slice(0, 3).map((t) => (
-                          <span key={t} className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${isDarkMode ? "bg-zinc-700 text-zinc-300" : "bg-gray-100 text-gray-600"}`}>
-                            {t}
-                          </span>
-                        ))}
-                        {(cat.types || []).length > 3 && (
-                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${isDarkMode ? "bg-zinc-700 text-zinc-400" : "bg-gray-100 text-gray-400"}`}>
-                            +{(cat.types || []).length - 3} more
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    <button className="w-full flex items-center justify-center gap-2 bg-[var(--brand-blue)] hover:bg-sky-500 text-gray-900 text-xs font-bold py-2.5 px-4 rounded-lg transition-all duration-200 group-hover:shadow-md">
-                      Get Quote <ArrowRight size={13} />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* ── Trust Bar ───────────────────────────────────────────────────────── */}
-      <div className={`border-t ${cardBorder} ${isDarkMode ? "bg-zinc-900" : "bg-white"}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-wrap justify-center gap-8 text-center">
-          {["✅ Verified Suppliers", "🚚 Pan-India Delivery", "💬 Expert Support", "🔒 Secure Enquiry"].map((item) => (
-            <span key={item} className={`text-sm font-semibold ${isDarkMode ? "text-zinc-300" : "text-gray-600"}`}>{item}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* ════════════════════════════════════════════════════════════════════════
-          MODAL — Get a Quote
-      ════════════════════════════════════════════════════════════════════════ */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] flex items-start justify-center p-3 sm:p-4 overflow-hidden">
           <div className={`${modalBg} rounded-2xl shadow-2xl w-full max-w-lg border overflow-hidden max-h-[calc(100vh-2rem)] flex flex-col`}>
@@ -506,9 +432,9 @@ export default function ShopPage() {
             {/* Modal Header */}
             <div className={`flex items-center justify-between px-6 py-4 border-b ${modalHead}`}>
               <div>
-                <p className="text-xs font-bold tracking-widest uppercase text-[var(--brand-blue)] mb-0.5">Request Quote</p>
+                <p className="text-xs font-bold tracking-widest uppercase text-[var(--brand-blue)] mb-0.5">{modalMode === "quote" ? "Request Quote" : "Checkout"}</p>
                 <h2 className={`text-lg font-extrabold ${headText} flex items-center gap-2`}>
-                  {selectedCategory?.emoji || "📦"} {selectedCategory?.name}
+                  {modalMode === "cart" ? (submitted ? "Cart order placed" : `Your cart (${cart.length} materials)`) : <>{selectedCategory?.emoji || "📦"} {selectedCategory?.name}</>}
                 </h2>
               </div>
               <button
@@ -526,7 +452,7 @@ export default function ShopPage() {
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--brand-blue)] text-2xl text-gray-950">
                   ✓
                 </div>
-                <h3 className={`text-xl font-black ${headText}`}>Request submitted</h3>
+                <h3 className={`text-xl font-black ${headText}`}>{modalMode === "quote" ? "Quote requested" : "Order request placed"}</h3>
                 <p className={`mt-2 text-sm ${subText}`}>
                   Your order request has been received. Order will be placed within 24 to 48 hrs after supplier confirmation.
                 </p>
@@ -534,6 +460,11 @@ export default function ShopPage() {
                   <p className={`mt-3 text-xs font-black uppercase tracking-wider ${headText}`}>
                     Order ID: {submittedOrder.order_reference}
                   </p>
+                )}
+                {submittedOrder?.orders?.length > 0 && (
+                  <div className={`mt-3 text-xs ${headText}`}>
+                    {submittedOrder.orders.map((order) => <p key={order.id} className="mt-1"><strong>{order.material_type}</strong> — {order.order_reference}</p>)}
+                  </div>
                 )}
                 <div className="mt-5 flex flex-col justify-center gap-2 sm:flex-row">
                   <Link
@@ -562,6 +493,7 @@ export default function ShopPage() {
                       onChange={(e) => {
                         const val = e.target.value;
                         setSelectedCity(val);
+                        setCityVerified(false);
                         if (val && selectedCategory) {
                           checkCityAvailability(val);
                         } else {
@@ -588,16 +520,16 @@ export default function ShopPage() {
                       ⚠ {cityError}
                     </p>
                   )}
-                  {!cityError && selectedCity && (
+                  {!cityError && cityVerified && selectedCity && (
                     <p className="text-[9px] mt-1 text-green-500">✓ Supplier available in this city</p>
                   )}
                   <p className={`text-[9px] mt-0.5 ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>
-                    Required — used to check supplier availability and show local pricing.
+                    Required to check supplier availability and delivery.
                   </p>
                 </div>
 
                 {/* ── CITY VERIFICATION STATUS ─────────────────────── */}
-                {selectedCity && !cityError && (
+                {selectedCity && cityVerified && !cityError && (
                   <div className={`rounded-xl border-2 px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-green-600 bg-green-900/20" : "border-green-500 bg-green-50"}`}>
                     <div>
                       <p className={`text-[9px] font-extrabold uppercase tracking-widest mb-0.5 ${isDarkMode ? "text-green-400" : "text-green-700"}`}>
@@ -610,7 +542,23 @@ export default function ShopPage() {
                   </div>
                 )}
 
+                {modalMode === "cart" ? (
+                  <div className={`rounded-xl border px-4 py-3 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
+                    <p className={`text-xs font-bold mb-2 ${headText}`}>Materials in your order</p>
+                    {cart.map((item) => <p key={item.product.id} className={`text-xs py-1 ${subText}`}>{item.product.name} · {item.quantity} {item.product.unit}</p>)}
+                    <p className={`text-[10px] mt-2 ${subText}`}>Final pricing and delivery are confirmed by the supplier.</p>
+                  </div>
+                ) : <>
                 {(() => {
+                  if (Number(selectedProduct?.price) > 0) {
+                    return (
+                      <div className={`rounded-xl border px-4 py-3 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
+                        <p className={`text-[9px] font-bold uppercase tracking-widest ${subText}`}>Indicative supplier price</p>
+                        <p className={`text-sm font-bold mt-1 ${headText}`}>₹{Number(selectedProduct.price).toLocaleString("en-IN")} / {selectedProduct.unit || "unit"}</p>
+                        <p className={`text-[10px] mt-1 ${subText}`}>Final price and delivery are confirmed by the supplier.</p>
+                      </div>
+                    );
+                  }
                   if (selectedCategory?.price_range) {
                     return (
                       <div className={`rounded-xl border px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
@@ -735,6 +683,7 @@ export default function ShopPage() {
                     Leave blank if any brand is acceptable
                   </p>
                 </div>
+                </>}
 
                 {/* ── SECTION 2 — Contact Details ────────────────────── */}
                 <SectionLabel isDark={isDarkMode}>👤 Your Details</SectionLabel>
@@ -759,9 +708,10 @@ export default function ShopPage() {
                 <SectionLabel isDark={isDarkMode}>🚚 Quantity & Delivery</SectionLabel>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+                  {modalMode !== "cart" && <>
                   <div>
                     <label className={lbl}>Quantity Required</label>
-                    <input type="text" name="quantity" value={formData.quantity} onChange={handleInputChange} placeholder="e.g. 500" className={inp} />
+                    <input type={modalMode === "buy" ? "number" : "text"} min={modalMode === "buy" ? "1" : undefined} max={modalMode === "buy" ? "10000" : undefined} step={modalMode === "buy" ? "1" : undefined} name="quantity" value={formData.quantity} onChange={handleInputChange} required={modalMode === "buy"} placeholder="e.g. 500" className={inp} />
                   </div>
                   <div>
                     <label className={lbl}>SKU / Unit</label>
@@ -777,6 +727,7 @@ export default function ShopPage() {
                       ))}
                     </select>
                   </div>
+                  </>}
                   <div>
                     <label className={lbl}>Delivery Needed By</label>
                     <input
@@ -897,6 +848,7 @@ export default function ShopPage() {
                 {submitError && (
                   <div className="text-xs text-red-500 font-semibold bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-3">
                     ⚠️ {submitError}
+                    {submitError.toLowerCase().includes("login") && <Link href="/login" className="block mt-2 underline">Go to login</Link>}
                   </div>
                 )}
 
@@ -906,7 +858,7 @@ export default function ShopPage() {
                   disabled={submitting}
                   className="w-full bg-[var(--brand-blue)] hover:bg-sky-500 disabled:opacity-60 text-gray-900 font-extrabold py-3 px-4 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 text-sm tracking-wide"
                 >
-                  {submitting ? "Submitting…" : "Submit Enquiry →"}
+                  {submitting ? "Submitting…" : modalMode === "quote" ? "Get Quote →" : "Place Order Request →"}
                 </button>
                 <button
                   type="button"

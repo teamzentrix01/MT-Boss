@@ -66,6 +66,7 @@ export async function POST(req) {
       );
     }
 
+    const body = await req.json();
     const {
       user_name, user_phone, user_email,
       category_name, category_emoji,
@@ -73,12 +74,20 @@ export async function POST(req) {
       quantity_text, order_unit, delivery_date,
       delivery_address, latitude, longitude,
       message, selected_city,
-    } = await req.json();
+    } = body;
+    const isCart = Array.isArray(body.items);
+    if (isCart && (body.items.length === 0 || body.items.length > 20)) {
+      return NextResponse.json({ success: false, error: 'Cart must contain 1 to 20 materials' }, { status: 400 });
+    }
+    const orderItems = isCart ? body.items : [{
+      product_id: body.product_id, category_name, category_emoji, material_type, subcategory_name,
+      brand_company, quantity_text, order_unit,
+    }];
     const cleanName = cleanText(user_name);
     const cleanEmail = user_email ? cleanText(user_email).toLowerCase() : null;
     const cleanPhone = normalizePhone(user_phone);
 
-    if (!cleanName || !cleanPhone || !category_name) {
+    if (!cleanName || !cleanPhone || orderItems.some((item) => !cleanText(item?.category_name))) {
       return NextResponse.json(
         { success: false, error: 'Name, phone, and category are required' },
         { status: 400 }
@@ -100,12 +109,44 @@ export async function POST(req) {
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
       return NextResponse.json({ success: false, error: 'Live location is required for material enquiries' }, { status: 400 });
     }
+    if (isCart && orderItems.some((item) => {
+      const quantity = Number(item.quantity);
+      return !cleanText(item.material_type) || !Number.isInteger(quantity) || quantity < 1 || quantity > 10000;
+    })) {
+      return NextResponse.json({ success: false, error: 'Each cart item needs a material and valid quantity' }, { status: 400 });
+    }
 
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const orderReference = `MO-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-      const result = await client.query(
+      const orders = [];
+      for (const item of orderItems) {
+        if (item.product_id) {
+          const requestedQuantity = isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10);
+          const productResult = await client.query(
+            `SELECT name, category, unit, quantity, is_available, supplier_id, available_cities FROM supplier_materials WHERE id=$1 FOR UPDATE`,
+            [item.product_id]
+          );
+          const product = productResult.rows[0];
+          if (!product || !product.is_available || product.name !== item.material_type || (product.category && product.category !== item.category_name)) {
+            const failure = new Error('A product in your order has changed or is unavailable. Refresh Shop Now and try again.');
+            failure.status = 409;
+            throw failure;
+          }
+          if (product.supplier_id === 0 && !(product.available_cities || []).some((city) => city.toLowerCase() === canonicalCity.toLowerCase())) {
+            const failure = new Error(`${product.name} is not available for delivery in ${canonicalCity}.`);
+            failure.status = 409;
+            throw failure;
+          }
+          if (body.order_intent !== 'quote' && Number.isInteger(requestedQuantity) && requestedQuantity > product.quantity) {
+            const failure = new Error(`${product.name} has only ${product.quantity} ${product.unit || 'units'} available. Update your cart quantity.`);
+            failure.status = 409;
+            throw failure;
+          }
+        }
+        const orderReference = `MO-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+        const itemQuantity = isCart ? `${item.quantity} ${cleanText(item.order_unit) || 'pcs'}` : quantity_text;
+        const result = await client.query(
         `INSERT INTO material_enquiries
            (user_id, order_reference, user_name, user_phone, user_email,
             category_name, category_emoji,
@@ -116,29 +157,31 @@ export async function POST(req) {
          RETURNING id, order_reference, status, created_at`,
         [
           user.id, orderReference, cleanName, cleanPhone, cleanEmail || user.email || null,
-          category_name, category_emoji || '',
-          material_type || null, subcategory_name || null, brand_company || null,
-          quantity_text || null, order_unit || null, delivery_date || null,
+          cleanText(item.category_name), item.category_emoji || '',
+          cleanText(item.material_type) || null, cleanText(item.subcategory_name) || null, cleanText(item.brand_company) || null,
+          itemQuantity || null, cleanText(item.order_unit) || null, delivery_date || null,
           delivery_address || null, lat, lng,
           message || null, canonicalCity,
         ]
       );
-      await addMaterialOrderEvent(client, {
-        orderId: result.rows[0].id,
-        status: 'open',
-        title: 'Order placed',
-        note: 'Your material order has been received.',
-        actorRole: 'user',
-        actorId: user.id,
-        actorName: cleanName,
-      });
+        await addMaterialOrderEvent(client, {
+          orderId: result.rows[0].id,
+          status: 'open',
+          title: 'Order placed',
+          note: 'Your material order has been received.',
+          actorRole: 'user',
+          actorId: user.id,
+          actorName: cleanName,
+        });
+        orders.push({ ...result.rows[0], category_name: item.category_name, material_type: item.material_type, quantity_text: itemQuantity, order_unit: item.order_unit });
+      }
       await client.query('COMMIT');
       const targetEmail = cleanEmail || user.email;
-      await Promise.allSettled([
-        notifyAdminSubmission({ type: 'material order', name: cleanName, phone: cleanPhone, email: targetEmail, reference: orderReference, details: { Category: category_name, Material: material_type, Quantity: quantity_text, Unit: order_unit, City: canonicalCity } }),
-        deliverMaterialOrderReceipt({ email: targetEmail, customerName: cleanName, phone: cleanPhone, category: category_name, material: material_type, quantity: quantity_text, unit: order_unit, city: canonicalCity, orderReference, deliveryAddress: delivery_address }),
-      ]);
-      return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
+      await Promise.allSettled(orders.flatMap((order) => [
+        notifyAdminSubmission({ type: 'material order', name: cleanName, phone: cleanPhone, email: targetEmail, reference: order.order_reference, details: { Category: order.category_name, Material: order.material_type, Quantity: order.quantity_text, Unit: order.order_unit, City: canonicalCity } }),
+        deliverMaterialOrderReceipt({ email: targetEmail, customerName: cleanName, phone: cleanPhone, category: order.category_name, material: order.material_type, quantity: order.quantity_text, unit: order.order_unit, city: canonicalCity, orderReference: order.order_reference, deliveryAddress: delivery_address }),
+      ]));
+      return NextResponse.json({ success: true, data: isCart ? { orders } : orders[0] }, { status: 201 });
 
     } catch (error) {
       await client.query('ROLLBACK');
@@ -148,7 +191,7 @@ export async function POST(req) {
     }
   } catch (err) {
     console.error('POST material-enquiries error:', err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: err.message }, { status: err.status || 500 });
   }
 }
 

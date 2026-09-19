@@ -14,11 +14,24 @@ const ensureTable = createInitializationGuard(async () => {
       quantity INTEGER DEFAULT 0,
       image_url TEXT,
       category VARCHAR(255),
+      brand VARCHAR(120),
+      compare_at_price NUMERIC(10,2),
+      images JSONB DEFAULT '[]'::jsonb,
+      specifications JSONB DEFAULT '{}'::jsonb,
+      bulk_pricing JSONB DEFAULT '[]'::jsonb,
+      available_cities JSONB DEFAULT '[]'::jsonb,
       is_available BOOLEAN DEFAULT TRUE,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     )
   `);
+  await pool.query(`ALTER TABLE supplier_materials
+    ADD COLUMN IF NOT EXISTS brand VARCHAR(120),
+    ADD COLUMN IF NOT EXISTS compare_at_price NUMERIC(10,2),
+    ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS specifications JSONB DEFAULT '{}'::jsonb,
+    ADD COLUMN IF NOT EXISTS bulk_pricing JSONB DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS available_cities JSONB DEFAULT '[]'::jsonb`);
 });
 
 function uniq(values) {
@@ -31,22 +44,32 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const category = String(searchParams.get('category') || '').trim();
 
-    if (!category) {
-      return NextResponse.json({ success: true, data: { products: [], types: [], units: [] } });
-    }
-
     const result = await pool.query(
-      `SELECT DISTINCT name, unit
+      `SELECT id, supplier_id, name, description, price, unit, quantity, image_url, category,
+              brand, compare_at_price, images, specifications, bulk_pricing, available_cities
        FROM supplier_materials
        WHERE is_available = TRUE
-         AND LOWER(TRIM(category)) = LOWER(TRIM($1))
-       ORDER BY name ASC`,
+         AND ($1 = '' OR LOWER(TRIM(category)) = LOWER(TRIM($1)))
+       ORDER BY name ASC, id ASC`,
       [category]
     );
 
     const products = result.rows.map((row) => ({
+      id: row.id,
+      supplier_id: row.supplier_id,
       name: row.name,
+      description: row.description || '',
+      price: row.price,
       unit: row.unit || '',
+      quantity: row.quantity,
+      image_url: row.image_url || '',
+      category: row.category || '',
+      brand: row.brand || '',
+      compare_at_price: row.compare_at_price,
+      images: Array.isArray(row.images) ? row.images : [],
+      specifications: row.specifications || {},
+      bulk_pricing: Array.isArray(row.bulk_pricing) ? row.bulk_pricing : [],
+      available_cities: Array.isArray(row.available_cities) ? row.available_cities : [],
     }));
 
     return NextResponse.json({

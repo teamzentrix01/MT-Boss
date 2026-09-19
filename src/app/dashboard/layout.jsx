@@ -23,11 +23,14 @@ export default function DashboardLayout({ children }) {
   }, []);
 
   useEffect(() => {
-    try {
-      setUser(JSON.parse(localStorage.getItem('user') || '{}'));
-    } catch {
-      setUser({});
-    }
+    const frame = requestAnimationFrame(() => {
+      try {
+        setUser(JSON.parse(localStorage.getItem('user') || '{}'));
+      } catch {
+        setUser({});
+      }
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
@@ -68,7 +71,8 @@ export default function DashboardLayout({ children }) {
     { label: 'Revenue & Earnings',       icon: '💸', tab: 'revenue' },
     { label: 'Service Bookings',         icon: '📝', tab: 'bookings' },
     { label: 'Service Pricing',          icon: '💰', tab: 'quick-services-pricing' },
-    { label: 'Shop Categories',          icon: '🛒', tab: 'shop-categories' },
+    { label: 'Shop Now Manager',         icon: '🛒', tab: 'shop-categories' },
+    { label: '+ Add Shop Product',       icon: '➕', tab: 'shop-products' },
     { label: 'Suppliers',                icon: '📦', tab: 'suppliers' },
     { label: 'Vendors',                  icon: '🏪', tab: 'vendors' },
     { label: 'Package Approvals',        icon: '📦', tab: 'packages' },

@@ -125,6 +125,7 @@ export const fallbackShopCategories = [
     id: 'fallback-shop-4',
     name: 'Bricks',
     emoji: 'B',
+    unit: 'pcs',
     types: ['Red Bricks', 'Fly Ash', 'AAC Blocks'],
     is_active: true,
     sort_order: 3,
