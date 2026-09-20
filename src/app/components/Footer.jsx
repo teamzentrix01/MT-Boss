@@ -88,7 +88,6 @@ export default function Footer() {
 
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-
               <span className={`text-xl font-black tracking-wider uppercase ${isDark ? "text-white" : "text-zinc-900"}`}>
                 MTBOSS
               </span>

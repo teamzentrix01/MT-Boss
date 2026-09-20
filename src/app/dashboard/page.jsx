@@ -13,7 +13,7 @@ const QuickServicesManager = dynamicManager(() => import('../components/QuickSer
 const PrimaryServicesManager = dynamicManager(() => import('../components/PrimaryServicesManager'));
 const ProfessionalServicesManager = dynamicManager(() => import('../components/ProfessionalServicesManager'));
 const ProfessionalEnquiriesManager = dynamicManager(() => import('../components/ProfessionalEnquiriesManager'));
-const ShopCategoriesManager = dynamicManager(() => import('../components/ShopCategoriesManager'));
+const ShopNowManager = dynamicManager(() => import('../components/ShopNowManager'));
 const PropertiesManager = dynamicManager(() => import('../components/PropertiesManager'));
 const ProjectsManager = dynamicManager(() => import('../components/ProjectsManager'));
 const OperationalProjectsManager = dynamicManager(() => import('../components/OperationalProjectsManager'));
@@ -379,7 +379,8 @@ function AdminDashboard() {
     { id: 'quick-services',             label: 'Quick Services',            icon: '⚡' },
     { id: 'revenue',                    label: 'Revenue & Earnings',        icon: '💸' },
     { id: 'bookings',                   label: 'Service Bookings',          icon: '📝' },
-    { id: 'shop-categories',            label: 'Shop Categories',           icon: '🛒' },
+    { id: 'shop-categories',            label: 'Shop Now Manager',          icon: '🛒' },
+    { id: 'shop-products',              label: '+ Add Shop Product',        icon: '➕' },
     { id: 'suppliers',                  label: 'Suppliers',                 icon: '📦' },
     { id: 'vendors',                    label: 'Vendors',                   icon: '🏪' },
     { id: 'packages',                   label: 'Package Approvals',         icon: '📦' },
@@ -1371,7 +1372,7 @@ function AdminDashboard() {
           {activeTab === 'franchises' && <FranchisesManager />}
           {activeTab === 'projects' && <ProjectsManager />}
           {activeTab === 'project-management' && <OperationalProjectsManager />}
-          {activeTab === 'shop-categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}
+          {(activeTab === 'shop-categories' || activeTab === 'shop-products') && <ShopNowManager key={activeTab} isDarkMode={isDarkMode} initialTab={activeTab === 'shop-products' ? 'products' : 'categories'} />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'revenue' && <RevenueManager isDarkMode={isDarkMode} />}
           {activeTab === 'free-slots' && <FreeTimeSlotsManager isDarkMode={isDarkMode} />}

@@ -8,21 +8,22 @@ import PrivacyConsentGuard from "./components/PrivacyConsentGuard";
 import FreeWhatsAppNotifier from "./components/FreeWhatsAppNotifier";
 import ChatbotWidget from "./components/ChatbotWidget";
 import LeadConsultationModal from "./components/LeadConsultationModal";
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({ children }) {
+  const pathname = usePathname();
+  const isShopPage = pathname?.toLowerCase() === "/shopnow";
   const [isDarkMode, setIsDarkMode] = useState(false);
 
 
   // 1. Page load hote hi localStorage se theme check karein
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      setIsDarkMode(true);
-      document.documentElement.classList.add("dark-mode");
-    } else {
-      setIsDarkMode(false);
-      document.documentElement.classList.remove("dark-mode");
-    }
+    const frame = requestAnimationFrame(() => {
+      const dark = localStorage.getItem("theme") === "dark";
+      setIsDarkMode(dark);
+      document.documentElement.classList.toggle("dark-mode", dark);
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
@@ -108,11 +109,11 @@ export default function RootLayout({ children }) {
   };
 
   return (
-    <html lang="en" className={isDarkMode ? "dark-mode" : ""}>
+    <html lang="en" className={`${isDarkMode ? "dark-mode" : ""} ${isShopPage ? "shop-html" : ""}`}>
       <head>
         <meta name="google-site-verification" content="_HIsDPgunnMsWo7iWtmz2fX3YW9aG406vj5zL02lWXY" />
       </head>
-      <body className={`transition-colors duration-500 overflow-x-hidden ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+      <body className={`transition-colors duration-500 ${isShopPage ? "shop-route overflow-x-clip" : "overflow-x-hidden"} ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
         <PrivacyConsentGuard />
         <FreeWhatsAppNotifier />
         <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
@@ -123,9 +124,19 @@ export default function RootLayout({ children }) {
         <ChatbotWidget isDarkMode={isDarkMode} />
 
         {/* On-Arrival Project Consultation Modal */}
-        <LeadConsultationModal isDarkMode={isDarkMode} />
+        {!isShopPage && <LeadConsultationModal isDarkMode={isDarkMode} />}
 
         {/* Floating WhatsApp support button */}
+        {isShopPage && COMPANY_CONTACT.telHref && <a
+          href={COMPANY_CONTACT.telHref}
+          aria-label={`Call MT Boss at ${COMPANY_CONTACT.phone}`}
+          title={`Call ${COMPANY_CONTACT.phone}`}
+          className="fixed bottom-24 right-6 z-[9999] flex h-14 w-14 items-center justify-center rounded-full bg-[var(--brand-blue)] text-white shadow-lg transition-transform hover:scale-110"
+        >
+          <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 3.09 5.18 2 2 0 0 1 5.08 3h3a2 2 0 0 1 2 1.72c.12.96.35 1.9.68 2.79a2 2 0 0 1-.45 2.11L9.04 10.9a16 16 0 0 0 4.06 4.06l1.28-1.27a2 2 0 0 1 2.11-.45c.89.33 1.83.56 2.79.68A2 2 0 0 1 22 16.92z" />
+          </svg>
+        </a>}
         <a
           href={COMPANY_CONTACT.whatsappHref}
           target="_blank"
