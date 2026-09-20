@@ -4,6 +4,8 @@ import { requireRole, unauthorized } from '@/lib/auth';
 import { ensureProjectOpsSchema, getProjectOps, getProjectSummaries } from '@/lib/project-ops';
 import { ensureAgentSchema } from '@/lib/agent-auth';
 import { ensureAgentNotificationsSchema } from '@/lib/agent-notifications';
+import { fallbackProjects } from '@/lib/public-fallbacks';
+import { isDatabaseConnectionError } from '@/lib/api-utils';
 
 const PROJECT_STATUSES = new Set([
   'lead',
@@ -68,12 +70,22 @@ export async function GET(req, { params }) {
       [id]
     );
     if (result.rows.length === 0) {
+      const fallback = fallbackProjects.find((p) => String(p.id) === String(id));
+      if (fallback) {
+        return NextResponse.json({ success: true, data: fallback });
+      }
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
     console.error('Project fetch error:', error);
+    if (isDatabaseConnectionError(error)) {
+      const fallback = fallbackProjects.find((p) => String(p.id) === String(id));
+      if (fallback) {
+        return NextResponse.json({ success: true, data: fallback });
+      }
+    }
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

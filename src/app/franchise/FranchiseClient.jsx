@@ -329,8 +329,8 @@ function FranchisePageContent() {
   };
 
   const inputClass = `w-full px-4 py-3 text-xs font-bold border rounded-sm outline-none transition-all duration-200 ${dark
-      ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
-      : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
+    ? "bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:border-[var(--brand-blue)]"
+    : "bg-gray-50 border-gray-200 text-zinc-800 placeholder-zinc-400 focus:border-zinc-800"
     }`;
 
   const labelClass = `block text-[10px] font-black uppercase tracking-widest mb-2 ${dark ? "text-zinc-400" : "text-zinc-500"
@@ -524,10 +524,10 @@ function FranchisePageContent() {
                   href="#franchise-form"
                   onClick={() => setForm({ ...form, model: model.name })}
                   className={`block text-center py-3 text-[10px] font-black uppercase tracking-widest border-2 rounded-sm transition-all duration-300 ${model.popular
-                      ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-dark)]"
-                      : dark
-                        ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
-                        : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"
+                    ? "bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black hover:bg-[var(--brand-blue-dark)]"
+                    : dark
+                      ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
+                      : "border-zinc-800 text-zinc-800 hover:bg-zinc-800 hover:text-white"
                     }`}
                 >
                   Apply for {model.name}
@@ -605,7 +605,6 @@ function FranchisePageContent() {
                 className={`relative p-6 rounded-sm border transition-all duration-300 group hover:border-[var(--brand-blue)] ${dark ? "bg-zinc-800 border-zinc-700" : "bg-gray-50 border-gray-100 hover:bg-white hover:shadow-md"
                   }`}
               >
-
                 <div className="w-10 h-10 bg-[var(--brand-blue)] rounded-sm flex items-center justify-center mb-4">
                   <span className="text-black font-black text-sm">{p.step}</span>
                 </div>
@@ -638,8 +637,8 @@ function FranchisePageContent() {
               <div
                 key={i}
                 className={`rounded-sm border overflow-hidden transition-all duration-300 ${activeFaq === i
-                    ? dark ? "border-[var(--brand-blue)] bg-zinc-900" : "border-zinc-800 bg-white shadow-md"
-                    : dark ? "border-zinc-800 bg-zinc-900" : "border-gray-100 bg-white"
+                  ? dark ? "border-[var(--brand-blue)] bg-zinc-900" : "border-zinc-800 bg-white shadow-md"
+                  : dark ? "border-zinc-800 bg-zinc-900" : "border-gray-100 bg-white"
                   }`}
               >
                 <button
@@ -702,8 +701,8 @@ function FranchisePageContent() {
             {paymentStatus && (
               <div
                 className={`mx-8 mt-8 p-4 rounded-sm border flex items-start gap-3 ${paymentStatus === "success"
-                    ? "bg-green-500/10 border-green-500/30"
-                    : "bg-red-500/10 border-red-500/30"
+                  ? "bg-green-500/10 border-green-500/30"
+                  : "bg-red-500/10 border-red-500/30"
                   }`}
               >
                 <p
@@ -735,26 +734,26 @@ function FranchisePageContent() {
                     <div
                       key={s.step}
                       className={`flex items-center gap-3 p-3 rounded-sm border transition-all duration-300 ${isActive
+                        ? dark
+                          ? "bg-zinc-800/85 border-[var(--brand-blue)] text-white"
+                          : "bg-white border-zinc-800 text-zinc-800 shadow-sm"
+                        : isCompleted
                           ? dark
-                            ? "bg-zinc-800/85 border-[var(--brand-blue)] text-white"
-                            : "bg-white border-zinc-800 text-zinc-800 shadow-sm"
-                          : isCompleted
-                            ? dark
-                              ? "bg-zinc-900 border-emerald-500/30 text-emerald-400"
-                              : "bg-emerald-50/50 border-emerald-200 text-emerald-600"
-                            : dark
-                              ? "bg-zinc-900/40 border-zinc-800/50 text-zinc-500"
-                              : "bg-gray-50/50 border-gray-100 text-zinc-400"
+                            ? "bg-zinc-900 border-emerald-500/30 text-emerald-400"
+                            : "bg-emerald-50/50 border-emerald-200 text-emerald-600"
+                          : dark
+                            ? "bg-zinc-900/40 border-zinc-800/50 text-zinc-500"
+                            : "bg-gray-50/50 border-gray-100 text-zinc-400"
                         }`}
                     >
                       <div
                         className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black transition-all duration-300 ${isActive
-                            ? "bg-[var(--brand-blue)] text-black"
-                            : isCompleted
-                              ? "bg-emerald-500 text-white"
-                              : dark
-                                ? "bg-zinc-800 text-zinc-600"
-                                : "bg-gray-200 text-zinc-400"
+                          ? "bg-[var(--brand-blue)] text-black"
+                          : isCompleted
+                            ? "bg-emerald-500 text-white"
+                            : dark
+                              ? "bg-zinc-800 text-zinc-600"
+                              : "bg-gray-200 text-zinc-400"
                           }`}
                       >
                         {isCompleted ? "✓" : s.step}
@@ -1234,8 +1233,8 @@ function FranchisePageContent() {
                         document.getElementById("franchise-form")?.scrollIntoView({ behavior: 'smooth' });
                       }}
                       className={`px-8 py-3.5 border-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${dark
-                          ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
-                          : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
+                        ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
+                        : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
                         }`}
                     >
                       Back

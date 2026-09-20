@@ -1,6 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import PortfolioProjectCard from "@/app/components/PortfolioProjectCard";
+import { fallbackProjects } from "@/lib/public-fallbacks";
 import { COMPANY_CONTACT } from "../../../lib/company";
 
 const fallbackProcess = [
@@ -19,12 +22,6 @@ const fallbackBenefits = [
   { icon: "🔬", title: "Quality Audits",        desc: "Third-party inspections at every critical stage." },
   { icon: "🌿", title: "Sustainable Practices", desc: "Eco-friendly methods and green building options available." },
   { icon: "🔑", title: "Turnkey Ready",         desc: "Complete delivery with zero coordination hassle for the client." },
-];
-
-const fallbackProjects = [
-  { name: "Greenfield Villas, Noida",        type: "Luxury Villas",     area: "48 Units",   status: "Delivered", img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80" },
-  { name: "Vertex Corporate Tower, Noida",   type: "Office Complex",    area: "1.2L sq.ft", status: "Delivered", img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80" },
-  { name: "Urban Nest, Greater Noida",       type: "Mixed-Use",         area: "240 Units",  status: "Ongoing",   img: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=600&q=80" },
 ];
 
 const INDIA_STATES = [
@@ -46,10 +43,11 @@ export default function ServiceDetailPage() {
   const { slug }   = useParams();
   const router     = useRouter();
 
-  const [service,   setService]   = useState(null);
-  const [loading,   setLoading]   = useState(true);
-  const [notFound,  setNotFound]  = useState(false);
-  const [isDark,    setIsDark]    = useState(false);
+  const [service,           setService]           = useState(null);
+  const [portfolioProjects, setPortfolioProjects] = useState([]);
+  const [loading,           setLoading]           = useState(true);
+  const [notFound,          setNotFound]          = useState(false);
+  const [isDark,            setIsDark]            = useState(false);
 
   const [form, setForm] = useState({
     name: "", phone: "", alternatePhone: "", email: "", message: "",
@@ -85,6 +83,24 @@ export default function ServiceDetailPage() {
       finally { setLoading(false); }
     })();
   }, [slug]);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/projects");
+        const data = await res.json();
+        if (isMounted && data.success && Array.isArray(data.data)) {
+          setPortfolioProjects(data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching portfolio projects:", err);
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const bg   = isDark ? "bg-black text-white"            : "bg-white text-zinc-900";
   const muted= isDark ? "text-zinc-400"                  : "text-zinc-600";
@@ -219,7 +235,37 @@ export default function ServiceDetailPage() {
 
   const processList  = Array.isArray(service.process)  && service.process.length  > 0 ? service.process  : fallbackProcess;
   const benefitsList = Array.isArray(service.benefits) && service.benefits.length > 0 ? service.benefits : fallbackBenefits;
-  const projectsList = Array.isArray(service.projects) && service.projects.length > 0 ? service.projects : fallbackProjects;
+  const rawProjects = (() => {
+    if (portfolioProjects.length > 0) {
+      const sTitle = (service.title || "").toLowerCase();
+      const sSlug = (slug || "").toLowerCase().replace(/-/g, " ");
+
+      const matchesCategory = (category) => {
+        if (!category) return false;
+        const cat = category.toLowerCase().trim();
+        return sTitle.includes(cat) || cat.includes(sTitle) || sSlug.includes(cat) || cat.includes(sSlug);
+      };
+
+      const matching = portfolioProjects.filter((p) => matchesCategory(p.category));
+      const nonMatching = portfolioProjects.filter((p) => !matching.some((m) => m.id === p.id));
+      const combined = [...matching, ...nonMatching];
+      return combined.slice(0, 3);
+    }
+    if (Array.isArray(service.projects) && service.projects.length > 0) {
+      return service.projects;
+    }
+    return fallbackProjects;
+  })();
+
+  const projectsList = rawProjects.map((p, idx) => ({
+    id: p.id || `fallback-${idx}`,
+    title: p.title || p.name || "Signature Project",
+    category: p.category || p.type || "Construction",
+    location: p.location || p.area || "India",
+    description: p.description || "",
+    image_url: p.image_url || p.image || p.img,
+    status: p.status || "Completed",
+  }));
 
   const stats = [
     service.stat1_value ? [service.stat1_value, service.stat1_label] : null,
@@ -329,22 +375,32 @@ export default function ServiceDetailPage() {
       {/* ── Projects ── */}
       <section className="order-6 py-14 px-6">
         <div className="max-w-5xl mx-auto">
-          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Project References</p>
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">Signature<br />Projects</h2>
-          <div className="grid md:grid-cols-3 gap-5">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+            <div>
+              <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Project References</p>
+              <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter">Signature<br />Projects</h2>
+            </div>
+            <Link
+              href="/FeaturedProjects/ProjectGallery"
+              className={`group self-start sm:self-end flex items-center gap-2 px-5 py-2.5 border font-black uppercase text-[9px] tracking-widest transition-all ${
+                isDark
+                  ? "border-zinc-700 text-white hover:bg-[var(--brand-blue)] hover:text-black hover:border-[var(--brand-blue)]"
+                  : "border-zinc-300 text-zinc-800 hover:bg-zinc-900 hover:text-white hover:border-zinc-900"
+              }`}
+            >
+              View All Portfolio
+              <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {projectsList.map((p, i) => (
-              <div key={i} className={`group border overflow-hidden ${card}`}>
-                <div className="relative h-44 overflow-hidden">
-                  <img src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div className={`absolute top-3 right-3 px-2 py-1 text-[9px] font-black uppercase tracking-widest ${
-                    p.status === "Delivered" ? "bg-[var(--brand-blue)] text-black" : "bg-black text-[var(--brand-blue)] border border-[var(--brand-blue)]"
-                  }`}>{p.status}</div>
-                </div>
-                <div className="p-4">
-                  <p className={`text-[9px] font-black uppercase tracking-widest mb-1 ${muted}`}>{p.type} · {p.area}</p>
-                  <h3 className="text-sm font-black uppercase tracking-tight">{p.name}</h3>
-                </div>
-              </div>
+              <PortfolioProjectCard
+                key={p.id || i}
+                project={p}
+                index={i}
+                isDark={isDark}
+                isVisible={true}
+              />
             ))}
           </div>
         </div>
