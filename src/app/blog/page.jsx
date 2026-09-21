@@ -68,7 +68,9 @@ export default function BlogListingPage() {
             <span>📰</span>{'Construction & Real Estate Insights'}
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight max-w-4xl mx-auto">
-            MTBOSS <span className="text-[var(--brand-blue)]">Knowledge Hub</span> &amp; Guides
+            <span className="inline-block mr-3">MTBOSS</span>
+            <span className="inline-block mr-3 text-[var(--brand-blue)]">Knowledge Hub</span>
+            <span className="inline-block">&amp; Guides</span>
           </h1>
           <p className="mt-4 text-sm sm:text-base max-w-2xl mx-auto text-zinc-600 dark:text-zinc-400 leading-relaxed">
             Expert insights, construction cost estimations, raw material testing guides, legal property checklists, and modern architecture tips.
@@ -131,7 +133,7 @@ export default function BlogListingPage() {
             <div className="text-4xl">📄</div>
             <h3 className="text-xl font-bold">No articles found</h3>
             <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-              Try searching with different keywords or switch back to the 'All' category.
+              Try searching with different keywords or switch back to the &apos;All&apos; category.
             </p>
             <button
               onClick={() => { setSelectedCategory('All'); setSearchQuery(''); }}
