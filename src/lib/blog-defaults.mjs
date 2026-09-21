@@ -7,7 +7,7 @@ export const DEFAULT_BLOGS = [
     tags: ['Cost Calculator', 'House Construction', 'Budgeting', 'Building Materials'],
     author_name: 'Er. Rajesh Verma (Chief Project Engineer)',
     read_time: '6 min read',
-    cover_image: 'https://images.unsplash.com/photo-1541888946425-d0fbb186156a?auto=format&fit=crop&w=1200&q=80',
+    cover_image: 'images/30f393838ef54ac2bcafbe8b1a2246e0.jpg',
     meta_title: 'House Construction Cost in India 2026 - Per Sq Ft Estimation Guide | MTBOSS',
     meta_description: 'Learn how to calculate residential house construction cost per sq ft in India. Complete breakdown of cement, steel, bricks, labor, and finishing budget.',
     meta_keywords: 'house construction cost, construction cost per sq ft, building cost calculator india, residential construction budget',

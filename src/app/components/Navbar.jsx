@@ -221,9 +221,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   >
                     <p className="text-sm font-bold">{item.label}</p>
                     <p
-                      className={`text-[11px] mt-0.5 ${
-                        isDarkMode ? "text-zinc-600" : "text-zinc-400"
-                      }`}
+                      className={`text-[11px] mt-0.5 ${isDarkMode ? "text-zinc-600" : "text-zinc-400"
+                        }`}
                     >
                       {item.sub}
                     </p>
@@ -289,11 +288,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               type="button"
               aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               title={isDarkMode ? "Light mode" : "Dark mode"}
-              className={`nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md border transition-all ${
-                isDarkMode
-                  ? "nav-theme-toggle-dark border-zinc-700 bg-zinc-900 text-zinc-200"
-                  : "nav-theme-toggle-light border-gray-300 bg-white text-zinc-700"
-              }`}
+              className={`nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md border transition-all ${isDarkMode
+                ? "nav-theme-toggle-dark border-zinc-700 bg-zinc-900 text-zinc-200"
+                : "nav-theme-toggle-light border-gray-300 bg-white text-zinc-700"
+                }`}
             >
               {isDarkMode ? (
                 <svg
@@ -318,19 +316,17 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             {!loading ? (
               user ? (
                 // Logged In User
-                <div className={`flex min-w-0 items-center gap-1.5 px-2 py-1.5 rounded-lg border transition-all ${
-                  isDarkMode 
-                    ? 'border-zinc-700 bg-zinc-900/50' 
-                    : 'border-gray-200 bg-gray-50'
-                }`}>
+                <div className={`flex min-w-0 items-center gap-1.5 px-2 py-1.5 rounded-lg border transition-all ${isDarkMode
+                  ? 'border-zinc-700 bg-zinc-900/50'
+                  : 'border-gray-200 bg-gray-50'
+                  }`}>
                   <div
-                    className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                      user.role === 'admin' ? 'bg-red-500'
+                    className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${user.role === 'admin' ? 'bg-red-500'
                       : user.role === 'vendor' ? 'bg-green-500'
-                      : user.role === 'supplier' ? 'bg-sky-500'
-                      : user.role === 'franchise' ? 'bg-[var(--brand-blue-deep)]'
-                      : 'bg-blue-500'
-                    } text-white`}
+                        : user.role === 'supplier' ? 'bg-sky-500'
+                          : user.role === 'franchise' ? 'bg-[var(--brand-blue-deep)]'
+                            : 'bg-blue-500'
+                      } text-white`}
                   >
                     {(user.name || user.shop_name || user.email || 'U')[0].toUpperCase()}
                   </div>
@@ -344,21 +340,19 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   </div>
                   <button
                     onClick={handleDashboard}
-                    className={`nav-control nav-dashboard px-2 2xl:px-3 py-1 text-[11px] 2xl:text-xs font-semibold rounded-md transition-all whitespace-nowrap 2xl:ml-1 ${
-                      isDarkMode
-                        ? 'border border-zinc-500 text-zinc-300 hover:bg-zinc-700'
-                        : 'border border-gray-400 text-gray-700 hover:bg-gray-200'
-                    }`}
+                    className={`nav-control nav-dashboard px-2 2xl:px-3 py-1 text-[11px] 2xl:text-xs font-semibold rounded-md transition-all whitespace-nowrap 2xl:ml-1 ${isDarkMode
+                      ? 'border border-zinc-500 text-zinc-300 hover:bg-zinc-700'
+                      : 'border border-gray-400 text-gray-700 hover:bg-gray-200'
+                      }`}
                   >
                     Dashboard
                   </button>
                   <button
                     onClick={handleLogout}
-                    className={`nav-control nav-logout px-2 2xl:px-3 py-1 text-[11px] 2xl:text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
-                      isDarkMode
-                        ? 'bg-red-600 text-white hover:bg-red-700'
-                        : 'bg-red-500 text-white hover:bg-red-600'
-                    }`}
+                    className={`nav-control nav-logout px-2 2xl:px-3 py-1 text-[11px] 2xl:text-xs font-semibold rounded-md transition-all whitespace-nowrap ${isDarkMode
+                      ? 'bg-red-600 text-white hover:bg-red-700'
+                      : 'bg-red-500 text-white hover:bg-red-600'
+                      }`}
                   >
                     Logout
                   </button>
@@ -368,11 +362,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 <>
                   <Link
                     href="/login"
-                    className={`px-5 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-                      isDarkMode
-                        ? 'text-[var(--brand-blue)] border border-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
-                        : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)] hover:bg-sky-50'
-                    }`}
+                    className={`px-5 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${isDarkMode
+                      ? 'text-[var(--brand-blue)] border border-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
+                      : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)] hover:bg-sky-50'
+                      }`}
                   >
                     Sign In
                   </Link>
@@ -393,11 +386,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               <div className="flex min-w-0 items-center gap-1 mr-0.5">
                 <Link
                   href="/login"
-                  className={`whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 border rounded transition-all duration-200 ${
-                    isDarkMode
-                      ? 'text-[var(--brand-blue)] border-[var(--brand-blue)] hover:bg-[var(--brand-blue)]'
-                      : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)]'
-                  }`}
+                  className={`whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 border rounded transition-all duration-200 ${isDarkMode
+                    ? 'text-[var(--brand-blue)] border-[var(--brand-blue)] hover:bg-[var(--brand-blue)]'
+                    : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)]'
+                    }`}
                 >
                   Sign In
                 </Link>
@@ -414,19 +406,17 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               type="button"
               aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               title={isDarkMode ? "Light mode" : "Dark mode"}
-              className={`nav-theme-toggle flex h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 items-center justify-center rounded-full border ${
-                isDarkMode ? 'nav-theme-toggle-dark border-zinc-700 bg-zinc-900 text-zinc-200' : 'nav-theme-toggle-light border-gray-300 bg-white text-zinc-700'
-              }`}
+              className={`nav-theme-toggle flex h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 items-center justify-center rounded-full border ${isDarkMode ? 'nav-theme-toggle-dark border-zinc-700 bg-zinc-900 text-zinc-200' : 'nav-theme-toggle-light border-gray-300 bg-white text-zinc-700'
+                }`}
             >
               {isDarkMode ? '☀️' : '🌙'}
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`nav-control p-1.5 sm:p-2 rounded-md ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:bg-gray-100'
-              }`}
+              className={`nav-control p-1.5 sm:p-2 rounded-md ${isDarkMode
+                ? 'text-zinc-300 hover:bg-zinc-800'
+                : 'text-zinc-600 hover:bg-gray-100'
+                }`}
             >
               {isOpen ? (
                 <svg
@@ -471,16 +461,14 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
         />
       )}
       <div
-        className={`xl:hidden fixed inset-x-0 top-16 z-[120] transition-all duration-300 ${
-          isOpen
-            ? 'visible translate-y-0 opacity-100'
-            : 'invisible -translate-y-3 opacity-0 pointer-events-none'
-        }`}
+        className={`xl:hidden fixed inset-x-0 top-16 z-[120] transition-all duration-300 ${isOpen
+          ? 'visible translate-y-0 opacity-100'
+          : 'invisible -translate-y-3 opacity-0 pointer-events-none'
+          }`}
       >
         <div
-          className={`${
-            isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-gray-100'
-          } border-t px-4 py-4 space-y-1 max-h-[calc(100dvh-4rem)] overflow-y-auto shadow-2xl`}
+          className={`${isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-gray-100'
+            } border-t px-4 py-4 space-y-1 max-h-[calc(100dvh-4rem)] overflow-y-auto shadow-2xl`}
         >
           <div className="pb-3">
             <GlobalSearch user={user} isDarkMode={isDarkMode} onNavigate={() => setIsOpen(false)} />
@@ -493,11 +481,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               key={link.label}
               href={link.href}
               onClick={closeMobileMenu}
-              className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
+              className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+                }`}
             >
               {link.label}
             </Link>
@@ -507,17 +494,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           <div>
             <button
               onClick={() => setServicesOpen(!servicesOpen)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
+              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+                }`}
             >
               Services
               <svg
-                className={`w-4 h-4 transition-transform ${
-                  servicesOpen ? 'rotate-180' : ''
-                }`}
+                className={`w-4 h-4 transition-transform ${servicesOpen ? 'rotate-180' : ''
+                  }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -537,11 +522,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                     key={s.label}
                     href={s.href}
                     onClick={closeMobileMenu}
-                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${
-                      isDarkMode
-                        ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                        : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
-                    }`}
+                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${isDarkMode
+                      ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                      : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
+                      }`}
                   >
                     {s.label}
                   </Link>
@@ -554,17 +538,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           <div>
             <button
               onClick={() => setPropertyOpen(!propertyOpen)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
+              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+                }`}
             >
               Property
               <svg
-                className={`w-4 h-4 transition-transform ${
-                  propertyOpen ? 'rotate-180' : ''
-                }`}
+                className={`w-4 h-4 transition-transform ${propertyOpen ? 'rotate-180' : ''
+                  }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -584,11 +566,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                     key={s.label}
                     href={s.href}
                     onClick={closeMobileMenu}
-                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${
-                      isDarkMode
-                        ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                        : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
-                    }`}
+                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${isDarkMode
+                      ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                      : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
+                      }`}
                   >
                     {s.label}
                   </Link>
@@ -608,11 +589,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               key={link.label}
               href={link.href}
               onClick={closeMobileMenu}
-              className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
+              className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+                }`}
             >
               {link.label}
             </Link>
@@ -621,33 +601,30 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           <Link
             href="/agent"
             onClick={closeMobileMenu}
-            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-              isDarkMode
-                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-            }`}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
           >
             Become an Agent
           </Link>
           <Link
             href="/agent/login"
             onClick={closeMobileMenu}
-            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-              isDarkMode
-                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-            }`}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
           >
             Agent Login
           </Link>
           <Link
             href="/franchise"
             onClick={closeMobileMenu}
-            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-              isDarkMode
-                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-            }`}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
           >
             Franchise
           </Link>
@@ -661,21 +638,19 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 </div>
                 <button
                   onClick={handleDashboard}
-                  className={`nav-control nav-dashboard w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
-                    isDarkMode
-                      ? 'border border-zinc-600 text-zinc-300 hover:bg-zinc-800'
-                      : 'border border-gray-300 text-gray-600 hover:bg-gray-100'
-                  }`}
+                  className={`nav-control nav-dashboard w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${isDarkMode
+                    ? 'border border-zinc-600 text-zinc-300 hover:bg-zinc-800'
+                    : 'border border-gray-300 text-gray-600 hover:bg-gray-100'
+                    }`}
                 >
                   Dashboard
                 </button>
                 <button
                   onClick={handleLogout}
-                  className={`nav-control nav-logout w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
-                    isDarkMode
-                      ? 'bg-red-600 text-white hover:bg-red-700'
-                      : 'bg-red-500 text-white hover:bg-red-600'
-                  }`}
+                  className={`nav-control nav-logout w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${isDarkMode
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-red-500 text-white hover:bg-red-600'
+                    }`}
                 >
                   Logout
                 </button>
@@ -685,11 +660,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 <Link
                   href="/login"
                   onClick={closeMobileMenu}
-                  className={`block text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
-                    isDarkMode
-                      ? 'text-[var(--brand-blue)] border border-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
-                      : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)] hover:bg-sky-50'
-                  }`}
+                  className={`block text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${isDarkMode
+                    ? 'text-[var(--brand-blue)] border border-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
+                    : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)] hover:bg-sky-50'
+                    }`}
                 >
                   Sign In
                 </Link>
