@@ -13,6 +13,20 @@ const CATEGORIES = [
   'Home Services',
 ];
 
+const BLOG_MONTHS = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+function formatBlogDate(value) {
+  if (!value) return 'March 2026';
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'March 2026';
+
+  return `${BLOG_MONTHS[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()}`;
+}
+
 export default function BlogListingPage() {
   const [blogs] = useState(DEFAULT_BLOGS);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -51,7 +65,7 @@ export default function BlogListingPage() {
       <section className="relative overflow-hidden pt-28 pb-16 px-6 sm:px-10 lg:px-16 border-b border-zinc-200 dark:border-zinc-800/80 bg-gradient-to-b from-sky-500/10 via-transparent to-transparent">
         <div className="max-w-7xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-[var(--brand-blue)]/15 text-[var(--brand-blue)] border border-[var(--brand-blue)]/30 mb-4">
-            <span>📰</span> Construction &amp; Real Estate Insights
+            <span>📰</span>{'Construction & Real Estate Insights'}
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight max-w-4xl mx-auto">
             MTBOSS <span className="text-[var(--brand-blue)]">Knowledge Hub</span> &amp; Guides
@@ -171,9 +185,7 @@ export default function BlogListingPage() {
                         <div>
                           <p className="text-xs font-bold leading-tight text-black">{featuredBlog.author_name}</p>
                           <p className="text-[10px] text-zinc-400">
-                            {featuredBlog.created_at
-                              ? new Date(featuredBlog.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })
-                              : 'March 2026'}
+                            {formatBlogDate(featuredBlog.created_at)}
                           </p>
                         </div>
                       </div>
@@ -231,9 +243,7 @@ export default function BlogListingPage() {
                   <div className="px-6 pb-6 pt-2 border-t border-zinc-100 dark:border-zinc-800/60 flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] text-zinc-400">
-                        {post.created_at
-                          ? new Date(post.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })
-                          : 'March 2026'}
+                        {formatBlogDate(post.created_at)}
                       </span>
                       <span className="text-zinc-600">•</span>
                       <span className="text-[10px] text-zinc-400 font-medium">
