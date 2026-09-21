@@ -35,10 +35,10 @@ svg {
 }
 
 
-@layer base {
-  body {
-    @apply font-serif;
-  }
+
+/* body font — equivalent to Tailwind's font-serif utility */
+body {
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 
@@ -111,7 +111,7 @@ a[class*="-btn"]:focus-visible,
 a[class*="btn-"]:focus-visible,
 a[href][class*="uppercase"][class*="bg-"]:focus-visible,
 a[href][class*="uppercase"][class*="border"]:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--brand-blue) 30%, white);
+  outline: 3px solid rgba(33, 150, 243, 0.35); /* color-mix fallback: brand-blue 30% + white */
   outline-offset: 3px;
 }
 
@@ -218,6 +218,7 @@ button[aria-disabled="true"],
   color: #111 !important;
 }
 
+/* Apply the aria-expanded blue style globally. The shop page overrides this below in shop.css. */
 button[aria-expanded] {
   background: var(--brand-blue) !important;
   background-image: none !important;
@@ -235,6 +236,22 @@ button[aria-expanded]:hover {
 button[aria-expanded] *,
 button[aria-expanded]:hover * {
   color: inherit !important;
+}
+
+/* Shop page: card image & title buttons must never inherit global button animation */
+.shop-page .store-product-image-button,
+.shop-page .store-product-title,
+.shop-page .store-bulk-link {
+  background-color: transparent !important;
+  background-image: none !important;
+  background-position: initial !important;
+  background-size: initial !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  transform: none !important;
+  transition: none !important;
+  will-change: auto !important;
 }
 
 /* Segmented property-form choices must show their actual pressed state. */
@@ -289,7 +306,7 @@ button[aria-expanded]:hover * {
 .faq-panel {
   background: #111 !important;
   color: #fff !important;
-  border-top: 1px solid color-mix(in srgb, var(--brand-blue) 55%, transparent);
+  border-top: 1px solid rgba(33, 150, 243, 0.55); /* color-mix fallback: brand-blue 55% + transparent */
 }
 
 .qs-choice-active {
@@ -337,7 +354,7 @@ button[aria-expanded]:hover * {
     max-width: 100%;
     overflow-x: auto;
     white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
+  /* -webkit-overflow-scrolling: touch; — removed: deprecated, no effect in modern browsers */
   }
 
   .booking-table th,
@@ -386,9 +403,9 @@ button[aria-expanded]:hover * {
   width: 100%;
   margin: 14px 0;
   padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border: 1px solid rgba(0, 0, 0, 0.18); /* color-mix fallback: currentColor 18% + transparent */
   border-radius: 8px;
-  background: color-mix(in srgb, currentColor 4%, transparent);
+  background: rgba(0, 0, 0, 0.04); /* color-mix fallback: currentColor 4% + transparent */
   color: inherit;
   box-sizing: border-box;
 }

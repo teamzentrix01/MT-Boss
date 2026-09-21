@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight, CheckCircle2, ChevronDown, ClipboardList, Grid3X3,
@@ -86,6 +86,43 @@ export default function Storefront({ categories, products, content, loading, cit
   const [detailsProduct, setDetailsProduct] = useState(null);
   const [sortBy, setSortBy] = useState('featured');
   const [brandFilter, setBrandFilter] = useState('all');
+  const searchScrolled = useRef(false);
+
+  // When user types a search term, scroll the catalog into view automatically
+  useEffect(() => {
+    const term = search.trim();
+    if (term && !searchScrolled.current) {
+      searchScrolled.current = true;
+      // Small delay lets React render the filtered results before scrolling
+      const id = setTimeout(() => {
+        document.getElementById('store-products')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
+      return () => clearTimeout(id);
+    }
+    if (!term) searchScrolled.current = false;
+  }, [search]);
+
+  // Scroll-lock: add .shop-is-scrolling to .shop-page while scrolling so CSS
+  // :hover never sticks on product/category cards during wheel or trackpad scroll.
+  // 500ms delay ensures the hover state fully clears before pointer-events are restored.
+  useEffect(() => {
+    const page = document.querySelector('.shop-page');
+    if (!page) return;
+    let timer = null;
+    const onScroll = () => {
+      page.classList.add('shop-is-scrolling');
+      clearTimeout(timer);
+      timer = setTimeout(() => page.classList.remove('shop-is-scrolling'), 500);
+    };
+    // Listen on both window and document to catch all scroll events
+    window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener('scroll', onScroll, { passive: true, capture: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('scroll', onScroll, { capture: true });
+      clearTimeout(timer);
+    };
+  }, []);
 
   useEffect(() => {
     const requested = new URLSearchParams(window.location.search).get('category');
@@ -176,6 +213,8 @@ export default function Storefront({ categories, products, content, loading, cit
     else url.searchParams.delete('category');
     window.history.replaceState(window.history.state, '', url);
     document.getElementById("store-products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Immediately drop focus from the clicked card so :focus style never sticks during scroll
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   };
 
   return (
