@@ -69,7 +69,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
         {product.fromSupplier && Number(product.quantity) === 0 && <span className="store-stock-note">Currently unavailable</span>}
         <div className="store-product-actions">
           <button type="button" className="store-quote-btn" disabled={!canOrder} onClick={() => onQuote(product)}>{canOrder ? 'Get Quote' : 'Unavailable'}</button>
-          <button type="button" className="store-buy-btn" disabled={!canOrder} onClick={() => onBuy(product)}>{canOrder ? 'Buy Now' : 'Unavailable'}</button>
+          <button type="button" className="store-buy-btn" disabled={!canOrder || !hasPrice} title={!hasPrice ? 'Exact price is required for Buy Now' : undefined} onClick={() => onBuy(product)}>{canOrder ? 'Buy Now' : 'Unavailable'}</button>
         </div>
         {hasPrice && quantity ? (
           <div className="store-quantity-control" aria-label={`${product.name} quantity in cart`}>
@@ -78,7 +78,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
             <button type="button" onClick={() => onChangeQty(product.id, 1)} aria-label={`Add one ${product.name}`}><Plus size={15} /></button>
           </div>
         ) : (
-          <button type="button" className="store-add-btn" disabled={!canAdd || !canOrder} onClick={() => onAdd(product)}><Plus size={15} /> {!canOrder ? 'Unavailable' : canAdd ? "Add to cart" : "Cart limit reached"}</button>
+          <button type="button" className="store-add-btn" disabled={!hasPrice || !canAdd || !canOrder} title={!hasPrice ? 'Exact price is required for cart orders' : undefined} onClick={() => onAdd(product)}><Plus size={15} /> {!canOrder ? 'Unavailable' : canAdd ? "Add to cart" : "Cart limit reached"}</button>
         )}
       </div>
     </article>
@@ -295,8 +295,8 @@ export default function Storefront({ categories, products, content, loading, cit
               {Object.keys(detailsProduct.specifications || {}).length > 0 && <><h3>Specifications</h3><dl className="store-specs">{Object.entries(detailsProduct.specifications).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{value}</dd></div>)}</dl></>}
               <div className="store-detail-actions store-detail-actions-priced">
                 <button type="button" className="store-detail-quote" disabled={!detailsCanOrder} onClick={() => { onQuote(detailsProduct); setDetailsProduct(null); }}>{detailsCanOrder ? 'Get Quote' : 'Unavailable'}</button>
-                <button type="button" className="store-detail-buy" disabled={!detailsCanOrder} onClick={() => { onBuy(detailsProduct); setDetailsProduct(null); }}>{detailsCanOrder ? 'Buy Now' : 'Unavailable'}</button>
-                <button type="button" className="store-detail-add" disabled={!detailsCanOrder || cart.length >= 20} onClick={() => onAdd(detailsProduct)}>Add to cart</button>
+                <button type="button" className="store-detail-buy" disabled={!detailsCanOrder || !(Number(detailsProduct.price) > 0)} title={!(Number(detailsProduct.price) > 0) ? 'Exact price is required for Buy Now' : undefined} onClick={() => { onBuy(detailsProduct); setDetailsProduct(null); }}>{detailsCanOrder ? 'Buy Now' : 'Unavailable'}</button>
+                <button type="button" className="store-detail-add" disabled={!detailsCanOrder || !(Number(detailsProduct.price) > 0) || cart.length >= 20} title={!(Number(detailsProduct.price) > 0) ? 'Exact price is required for cart orders' : undefined} onClick={() => onAdd(detailsProduct)}>Add to cart</button>
               </div>
             </div>
           </section>
