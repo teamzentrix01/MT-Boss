@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useCities } from "@/hooks/useCities";
 import Storefront, { displayUnit } from "./Storefront";
 import { defaultShopStorefront } from "@/lib/shop-storefront-defaults";
-
 // Dark-mode watcher
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -20,7 +19,6 @@ function useDarkMode() {
   }, []);
   return dark;
 }
-
 // ── Inline SVG icons ──────────────────────────────────────────────────────────
 const X = ({ size = 20 }) => (
   <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" viewBox="0 0 24 24">
