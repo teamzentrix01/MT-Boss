@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useCities } from "@/hooks/useCities";
 import Storefront from "./Storefront";
@@ -107,6 +108,26 @@ export default function ShopPage() {
   const [submittedOrder, setSubmittedOrder] = useState(null);
   const [submitting, setSubmitting]         = useState(false);
   const [submitError, setSubmitError]       = useState("");
+
+  // ── Scroll-lock: lock BOTH <html> and <body> ─────────────────────────────────────────
+  // Next.js uses <html> as the scroll root, so locking only <body> is not enough.
+  // We lock both elements so the shop page cannot scroll while the form is open.
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    if (isModalOpen) {
+      html.style.overflow = 'hidden';
+      body.style.overflow = 'hidden';
+    } else {
+      html.style.overflow = '';
+      body.style.overflow = '';
+    }
+    // Always restore on unmount so navigation away doesn't leave scroll locked.
+    return () => {
+      html.style.overflow = '';
+      body.style.overflow = '';
+    };
+  }, [isModalOpen]);
 
   // Contact / delivery fields
   const [formData, setFormData] = useState({
@@ -419,15 +440,29 @@ export default function ShopPage() {
   const sel = `w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--brand-blue-lighter)] transition-all ${selectCls}`;
   const lbl = `block text-[10px] font-bold mb-1 ${labelText} uppercase tracking-wide`;
 
+  // ── mounted guard ──────────────────────────────────────────────────────────────────
+  // createPortal only works client-side, so delay rendering until mounted.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   // ── render ──────────────────────────────────────────────────────────────────
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
       <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} />
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] flex items-start justify-center p-3 sm:p-4 overflow-hidden">
-          <div className={`${modalBg} rounded-2xl shadow-2xl w-full max-w-lg border overflow-hidden max-h-[calc(100vh-2rem)] flex flex-col`}>
+      {isModalOpen && mounted && createPortal(
+        /* ──────────────────────────────────────────────────────────────────────────────
+          Rendered via createPortal into document.body so it is completely
+          outside the page wrapper’s CSS stacking context.  This guarantees
+          the overlay sits above the fixed store-header (z-9200) and the
+          sticky category-nav (z-9100) regardless of any ancestor z-index.
+        ────────────────────────────────────────────────────────────────────────────── */
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+          style={{ zIndex: 99999 }}
+        >
+          <div className={`${modalBg} rounded-2xl shadow-2xl w-full max-w-lg border overflow-hidden max-h-[calc(100dvh-2rem)] flex flex-col my-auto`}>
 
             {/* Modal Header */}
             <div className={`flex items-center justify-between px-6 py-4 border-b ${modalHead}`}>
@@ -870,7 +905,8 @@ export default function ShopPage() {
               </form>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
