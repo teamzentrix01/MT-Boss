@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useCities } from "@/hooks/useCities";
 import Storefront, { displayUnit } from "./Storefront";
@@ -150,12 +151,22 @@ export default function ShopPage() {
   const [submittedOrder, setSubmittedOrder] = useState(null);
   const [submitting, setSubmitting]         = useState(false);
   const [submitError, setSubmitError]       = useState("");
+  const [mounted, setMounted]               = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (!isModalOpen) return undefined;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = previousOverflow; };
+    const html = document.documentElement;
+    const body = document.body;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = body.style.overflow;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = previousHtmlOverflow;
+      body.style.overflow = previousBodyOverflow;
+    };
   }, [isModalOpen]);
 
   // Contact / delivery fields
@@ -484,8 +495,8 @@ export default function ShopPage() {
 
       <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, Number(product?.price) > 0 ? "buy" : "quote")} onCheckout={openCartCheckout} />
 
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[20000] flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4">
+      {isModalOpen && mounted && createPortal(
+        <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>
           <div className={`${modalBg} flex max-h-[calc(100dvh-1rem)] w-full max-w-xl flex-col overflow-hidden rounded-2xl border shadow-2xl sm:max-h-[calc(100dvh-2rem)]`}>
 
             {/* Modal Header */}
@@ -934,7 +945,8 @@ export default function ShopPage() {
               </form>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
