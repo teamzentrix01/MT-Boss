@@ -1,0 +1,130 @@
+.blog-page {
+  --blog-bg: #f8fafc;
+  --blog-surface: #ffffff;
+  --blog-surface-soft: #f4f7fa;
+  --blog-text: #161b22;
+  --blog-muted: #5f6b7a;
+  --blog-subtle: #8994a3;
+  --blog-border: #dce3ea;
+  background: var(--blog-bg) !important;
+  color: var(--blog-text) !important;
+}
+
+.blog-page .blog-featured,
+.blog-page .blog-card,
+.blog-page .blog-surface {
+  background: var(--blog-surface) !important;
+  border-color: var(--blog-border) !important;
+  color: var(--blog-text) !important;
+}
+
+.blog-page .blog-featured :is(h2, h3),
+.blog-page .blog-card :is(h2, h3),
+.blog-page .blog-surface :is(h2, h3, h4) {
+  color: var(--blog-text) !important;
+}
+
+.blog-page :is(.text-zinc-600, .text-zinc-500) {
+  color: var(--blog-muted) !important;
+}
+
+.blog-page .text-zinc-400 {
+  color: var(--blog-subtle) !important;
+}
+
+.blog-page :is(.border-zinc-100, .border-zinc-200) {
+  border-color: var(--blog-border) !important;
+}
+
+.blog-page .blog-category-chip,
+.blog-page .blog-category-chip:hover,
+.blog-page .blog-category-chip:focus,
+.blog-page .blog-category-chip:active {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid var(--blog-border) !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+  transform: none;
+}
+
+.blog-page .blog-category-chip:hover {
+  background-color: #eef6fd !important;
+  border-color: var(--brand-blue) !important;
+}
+
+.blog-page .blog-category-chip.is-active,
+.blog-page .blog-category-chip.is-active:hover {
+  background-color: var(--brand-blue) !important;
+  border-color: var(--brand-blue) !important;
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--brand-blue) 28%, transparent) !important;
+  color: #07111d !important;
+}
+
+.dark-mode .blog-page {
+  --blog-bg: #070b11;
+  --blog-surface: #121923;
+  --blog-surface-soft: #182230;
+  --blog-text: #f3f7fb;
+  --blog-muted: #b5c0cd;
+  --blog-subtle: #8e9bab;
+  --blog-border: #2a3747;
+}
+
+.dark-mode .blog-page :is(.bg-white, .bg-white\/50, .bg-zinc-50) {
+  background-color: var(--blog-surface) !important;
+}
+
+.dark-mode .blog-page :is(.text-black, .text-zinc-900, .text-zinc-800, .text-zinc-700) {
+  color: var(--blog-text) !important;
+}
+
+.dark-mode .blog-page :is(.border-zinc-800, .border-zinc-700) {
+  border-color: var(--blog-border) !important;
+}
+
+.dark-mode .blog-page input {
+  background: var(--blog-surface) !important;
+  border-color: var(--blog-border) !important;
+  color: var(--blog-text) !important;
+}
+
+.dark-mode .blog-page input::placeholder {
+  color: var(--blog-subtle) !important;
+}
+
+.dark-mode .blog-page .blog-category-chip,
+.dark-mode .blog-page .blog-category-chip:hover,
+.dark-mode .blog-page .blog-category-chip:focus,
+.dark-mode .blog-page .blog-category-chip:active {
+  background-color: var(--blog-surface) !important;
+  border-color: var(--blog-border) !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .blog-page .blog-category-chip:hover {
+  background-color: var(--blog-surface-soft) !important;
+  border-color: var(--brand-blue) !important;
+}
+
+.dark-mode .blog-page .blog-category-chip.is-active,
+.dark-mode .blog-page .blog-category-chip.is-active:hover {
+  background-color: var(--brand-blue) !important;
+  border-color: var(--brand-blue) !important;
+  color: #07111d !important;
+}
+
+.dark-mode .blog-detail-page article {
+  color: var(--blog-muted) !important;
+}
+
+.dark-mode .blog-detail-page article :is(h1, h3, strong) {
+  color: var(--blog-text) !important;
+}
+
+@media (max-width: 640px) {
+  .blog-page .blog-card,
+  .blog-page .blog-featured {
+    border-radius: 16px;
+  }
+}

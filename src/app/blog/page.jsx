@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { DEFAULT_BLOGS } from '@/lib/blog-defaults.mjs';
+import './blog.css';
 
 const CATEGORIES = [
   'All',
@@ -59,7 +60,7 @@ export default function BlogListingPage() {
   const standardBlogs = filteredBlogs.length > 0 ? filteredBlogs.slice(1) : [];
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDark ? 'bg-black text-white' : 'bg-zinc-50 text-zinc-900'}`}>
+    <div className={`blog-page blog-listing-page min-h-screen transition-colors duration-300 ${isDark ? 'bg-black text-white' : 'bg-zinc-50 text-zinc-900'}`}>
       
       {/* ── HERO HEADER ── */}
       <section className="relative overflow-hidden pt-28 pb-16 px-6 sm:px-10 lg:px-16 border-b border-zinc-200 dark:border-zinc-800/80 bg-gradient-to-b from-sky-500/10 via-transparent to-transparent">
@@ -110,13 +111,7 @@ export default function BlogListingPage() {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                    active
-                      ? 'bg-[var(--brand-blue)] text-black shadow-md shadow-[var(--brand-blue)]/30 scale-105'
-                      : isDark
-                      ? 'bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800'
-                      : 'bg-white text-zinc-600 hover:text-black hover:bg-zinc-100 border border-zinc-200'
-                  }`}
+                  className={`blog-category-chip px-4 py-2 rounded-xl text-xs font-bold transition-all ${active ? 'is-active scale-105' : ''}`}
                 >
                   {cat}
                 </button>
@@ -147,7 +142,7 @@ export default function BlogListingPage() {
             
             {/* 🌟 FEATURED HERO ARTICLE */}
             {featuredBlog && !searchQuery && selectedCategory === 'All' && (
-              <div className="group relative rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 shadow-xl transition-all hover:shadow-2xl">
+              <div className="blog-featured group relative rounded-3xl overflow-hidden border border-zinc-200 shadow-xl transition-all hover:shadow-2xl">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
                   <div className="lg:col-span-7 h-64 sm:h-80 lg:h-[420px] relative overflow-hidden bg-zinc-800">
                     <img
@@ -210,7 +205,7 @@ export default function BlogListingPage() {
               {(searchQuery || selectedCategory !== 'All' ? filteredBlogs : standardBlogs).map((post) => (
                 <article
                   key={post.id || post.slug}
-                  className="group rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-lg hover:shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1"
+                  className="blog-card group rounded-2xl overflow-hidden border border-zinc-200 shadow-lg hover:shadow-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1"
                 >
                   <div>
                     <div className="h-48 overflow-hidden relative bg-zinc-800">
