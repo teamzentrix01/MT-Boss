@@ -45,12 +45,20 @@ export async function GET(req) {
     const category = String(searchParams.get('category') || '').trim();
 
     const result = await pool.query(
-      `SELECT id, supplier_id, name, description, price, unit, quantity, image_url, category,
-              brand, compare_at_price, images, specifications, bulk_pricing, available_cities, created_at
-       FROM supplier_materials
-       WHERE is_available = TRUE
-         AND ($1 = '' OR LOWER(TRIM(category)) = LOWER(TRIM($1)))
-       ORDER BY name ASC, id ASC`,
+      `SELECT m.id, m.supplier_id, m.name, m.description, m.price, m.unit, m.quantity, m.image_url, m.category,
+              m.brand, m.compare_at_price, m.images, m.specifications, m.bulk_pricing,
+              CASE
+                WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
+                WHEN m.supplier_id <> 0 AND s.city IS NOT NULL THEN jsonb_build_array(s.city)
+                ELSE '[]'::jsonb
+              END AS available_cities,
+              m.created_at
+       FROM supplier_materials m
+       LEFT JOIN suppliers s ON s.id = m.supplier_id
+       WHERE m.is_available = TRUE
+         AND (m.supplier_id = 0 OR (s.status = 'approved' AND s.is_active = TRUE))
+         AND ($1 = '' OR LOWER(TRIM(m.category)) = LOWER(TRIM($1)))
+       ORDER BY m.name ASC, m.id ASC`,
       [category]
     );
 

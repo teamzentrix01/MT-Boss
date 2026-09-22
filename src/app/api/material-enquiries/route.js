@@ -116,7 +116,7 @@ export async function POST(req) {
     }
     const lat = Number(latitude);
     const lng = Number(longitude);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
       return NextResponse.json({ success: false, error: 'Live location is required for material enquiries' }, { status: 400 });
     }
     if (isCart && orderItems.some((item) => {
@@ -124,6 +124,15 @@ export async function POST(req) {
       return !cleanText(item.material_type) || !Number.isInteger(quantity) || quantity < 1 || quantity > 10000;
     })) {
       return NextResponse.json({ success: false, error: 'Each cart item needs a material and valid quantity' }, { status: 400 });
+    }
+    if (!isCart) {
+      const quantity = Number.parseFloat(String(quantity_text || ''));
+      if (!cleanText(material_type) || !Number.isFinite(quantity) || quantity <= 0 || quantity > 100000000) {
+        return NextResponse.json({ success: false, error: 'Select a material and enter a valid quantity' }, { status: 400 });
+      }
+      if (orderIntent === 'buy' && (!Number.isInteger(quantity) || quantity > 10000)) {
+        return NextResponse.json({ success: false, error: 'Buy Now quantity must be a whole number between 1 and 10000' }, { status: 400 });
+      }
     }
 
     const client = await pool.connect();
@@ -133,13 +142,13 @@ export async function POST(req) {
       for (const item of orderItems) {
         let indicativeUnitPrice = null;
         const coverage = await client.query(`SELECT 1 WHERE EXISTS (
-          SELECT 1 FROM suppliers s WHERE LOWER(s.city)=LOWER($1)
+          SELECT 1 FROM suppliers s WHERE LOWER(TRIM(s.city))=LOWER(TRIM($1))
             AND s.status='approved' AND s.is_active=TRUE
             AND EXISTS (SELECT 1 FROM unnest(s.product_categories) cat WHERE LOWER(cat)=LOWER($2))
         ) OR EXISTS (
           SELECT 1 FROM supplier_materials m WHERE m.supplier_id=0 AND m.is_available=TRUE AND m.quantity>0
             AND LOWER(TRIM(m.category))=LOWER(TRIM($2))
-            AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(COALESCE(m.available_cities, '[]'::jsonb)) city WHERE LOWER(city)=LOWER($1))
+            AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(COALESCE(m.available_cities, '[]'::jsonb)) city WHERE LOWER(TRIM(city))=LOWER(TRIM($1)))
         )`, [canonicalCity, cleanText(item.category_name)]);
         if (!coverage.rows.length) {
           const failure = new Error(`${item.category_name} is not available for delivery in ${canonicalCity}.`);
@@ -149,11 +158,26 @@ export async function POST(req) {
         if (item.product_id) {
           const requestedQuantity = isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10);
           const productResult = await client.query(
-            `SELECT name, category, unit, quantity, price, bulk_pricing, is_available, supplier_id, available_cities FROM supplier_materials WHERE id=$1 FOR UPDATE`,
+            `SELECT m.name, m.category, m.unit, m.quantity, m.price, m.bulk_pricing, m.is_available,
+                    m.supplier_id,
+                    CASE
+                      WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
+                      WHEN m.supplier_id <> 0 AND s.city IS NOT NULL THEN jsonb_build_array(s.city)
+                      ELSE '[]'::jsonb
+                    END AS available_cities,
+                    CASE WHEN m.supplier_id = 0 THEN TRUE
+                         ELSE COALESCE(s.status = 'approved' AND s.is_active = TRUE, FALSE)
+                    END AS supplier_available
+             FROM supplier_materials m
+             LEFT JOIN suppliers s ON s.id = m.supplier_id
+             WHERE m.id=$1
+             FOR UPDATE OF m`,
             [item.product_id]
           );
           const product = productResult.rows[0];
-          if (!product || !product.is_available || product.name !== item.material_type || (product.category && product.category !== item.category_name)) {
+          if (!product || !product.is_available || !product.supplier_available
+            || product.name.trim().toLowerCase() !== cleanText(item.material_type)?.trim().toLowerCase()
+            || (product.category && product.category.trim().toLowerCase() !== cleanText(item.category_name)?.trim().toLowerCase())) {
             const failure = new Error('A product in your order has changed or is unavailable. Refresh Shop Now and try again.');
             failure.status = 409;
             throw failure;
@@ -164,7 +188,7 @@ export async function POST(req) {
             failure.status = 409;
             throw failure;
           }
-          if (product.supplier_id === 0 && !(product.available_cities || []).some((city) => city.toLowerCase() === canonicalCity.toLowerCase())) {
+          if (!(product.available_cities || []).some((city) => city.trim().toLowerCase() === canonicalCity.trim().toLowerCase())) {
             const failure = new Error(`${product.name} is not available for delivery in ${canonicalCity}.`);
             failure.status = 409;
             throw failure;

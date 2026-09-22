@@ -49,9 +49,15 @@ export function displayUnit(value, fallback = 'unit') {
 }
 
 export function productCanOrder(product, selectedCity) {
-  const cityUnavailable = Boolean(selectedCity && product.supplier_id === 0 && !product.available_cities?.some((city) => city.toLowerCase() === selectedCity.toLowerCase()));
+  const normalizedCity = String(selectedCity || '').trim().toLowerCase();
+  const cityUnavailable = Boolean(
+    normalizedCity &&
+    product.available_cities?.length &&
+    !product.available_cities.some((city) => city.trim().toLowerCase() === normalizedCity)
+  );
   return !cityUnavailable && (!product.fromSupplier || Number(product.quantity) > 0);
 }
+
 
 // ── Product Card — HomeRun style ───────────────────────────────────────────────
 function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, onDetails, selectedCity }) {
@@ -60,9 +66,11 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   const compareAt = Number(product.compare_at_price);
   const discount = hasPrice && compareAt > price
     ? Math.round((1 - price / compareAt) * 100) : 0;
+  const normalizedCity = String(selectedCity || '').trim().toLowerCase();
   const cityUnavailable = Boolean(
-    selectedCity && product.supplier_id === 0 &&
-    !product.available_cities?.some((c) => c.toLowerCase() === selectedCity.toLowerCase())
+    normalizedCity &&
+    product.available_cities?.length &&
+    !product.available_cities.some((c) => c.trim().toLowerCase() === normalizedCity)
   );
   const canOrder = productCanOrder(product, selectedCity);
 
