@@ -31,7 +31,7 @@ export default function ContactPage() {
             <div>
               <p className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-[0.4em] mb-4">Get In Touch</p>
               <h1 className={`text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-8 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-                Let's Talk <br /> <span className="text-[var(--brand-blue)]">Business.</span>
+                Let&apos;s Talk <br /> <span className="text-[var(--brand-blue)]">Business.</span>
               </h1>
             </div>
 

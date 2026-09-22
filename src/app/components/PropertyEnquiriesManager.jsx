@@ -351,7 +351,7 @@ export default function PropertyEnquiriesManager({ isDarkMode }) {
 
                     {item.message && (
                       <div className="mt-3 p-2.5 rounded-lg bg-zinc-500/5 border border-zinc-500/10 text-xs text-zinc-300 leading-relaxed italic">
-                        "{item.message}"
+                        &ldquo;{item.message}&rdquo;
                       </div>
                     )}
 

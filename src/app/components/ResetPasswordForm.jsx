@@ -147,7 +147,7 @@ function ResetForm({ loginHref, accentColor }) {
                   onBlur={e=>e.target.style.borderColor=border}
                 />
                 {confirm && password !== confirm && (
-                  <div style={{ fontSize:'0.75rem', color:'#ef4444', marginTop:'0.35rem' }}>Passwords don't match</div>
+                  <div style={{ fontSize:'0.75rem', color:'#ef4444', marginTop:'0.35rem' }}>Passwords don&apos;t match</div>
                 )}
               </div>
 

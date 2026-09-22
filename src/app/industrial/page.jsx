@@ -224,7 +224,7 @@ export default function IndustrialPage() {
             <span className="block text-[var(--brand-blue)]">Properties</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-            Warehouses, factories, logistics hubs, cold storages and industrial plots — buy, sell or lease across Delhi NCR's major industrial corridors.
+            Warehouses, factories, logistics hubs, cold storages and industrial plots — buy, sell or lease across Delhi NCR&apos;s major industrial corridors.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-8">
             {[

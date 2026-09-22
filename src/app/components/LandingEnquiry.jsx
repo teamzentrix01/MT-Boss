@@ -197,7 +197,7 @@ const LandingEnquiry = ({ landingPage = "general" }) => {
           </button>
 
           <p className="text-[10px] text-gray-400 text-center">
-            We'll get back to you within 24 hours
+            We&apos;ll get back to you within 24 hours
           </p>
         </div>
       </form>

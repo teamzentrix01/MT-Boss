@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { properties } from "../../data/properties";
 import EnquiryForm from "../../components/buy-sale/EnquiryForm";
 
@@ -17,8 +18,11 @@ export default function PropertyDetailPage() {
       setDark(html.classList.contains("dark-mode"));
     });
     observer.observe(html, { attributes: true, attributeFilter: ["class"] });
-    setDark(html.classList.contains("dark-mode"));
-    return () => observer.disconnect();
+    const frame = requestAnimationFrame(() => setDark(html.classList.contains("dark-mode")));
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, []);
 
   if (!property) {
@@ -28,12 +32,12 @@ export default function PropertyDetailPage() {
           <p className={`text-xs font-black uppercase tracking-widest ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
             Property not found
           </p>
-          <a
+          <Link
             href="/buy-sale"
             className="mt-4 inline-block px-6 py-2 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest rounded-sm"
           >
             Back to Listings
-          </a>
+          </Link>
         </div>
       </main>
     );
@@ -59,9 +63,9 @@ export default function PropertyDetailPage() {
       {/* Breadcrumb */}
       <div className={`py-4 px-4 border-b ${dark ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-100"}`}>
         <div className="max-w-7xl mx-auto flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
-          <a href="/" className={`${dark ? "text-zinc-500 hover:text-[var(--brand-blue)]" : "text-zinc-400 hover:text-zinc-800"} transition-colors`}>Home</a>
+          <Link href="/" className={`${dark ? "text-zinc-500 hover:text-[var(--brand-blue)]" : "text-zinc-400 hover:text-zinc-800"} transition-colors`}>Home</Link>
           <span className={dark ? "text-zinc-700" : "text-gray-300"}>›</span>
-          <a href="/buy-sale" className={`${dark ? "text-zinc-500 hover:text-[var(--brand-blue)]" : "text-zinc-400 hover:text-zinc-800"} transition-colors`}>Buy and Sale</a>
+          <Link href="/buy-sale" className={`${dark ? "text-zinc-500 hover:text-[var(--brand-blue)]" : "text-zinc-400 hover:text-zinc-800"} transition-colors`}>Buy and Sale</Link>
           <span className={dark ? "text-zinc-700" : "text-gray-300"}>›</span>
           <span className="text-[var(--brand-blue)]">{property.title}</span>
         </div>

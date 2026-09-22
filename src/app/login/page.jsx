@@ -523,7 +523,7 @@ export default function LoginPage() {
             </div>
 
             <div className="lp-signup">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href={redirectParam ? `/signup?redirect=${encodeURIComponent(redirectParam)}` : '/signup'}>
                 Create one
               </Link>

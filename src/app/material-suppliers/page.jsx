@@ -591,7 +591,7 @@ export default function MaterialSuppliersPage() {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)]" />
                   <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                    I confirm that all information provided is accurate and that my business holds valid legal registrations. I agree to MTBOSS Construction's supplier terms and quality standards.
+                    I confirm that all information provided is accurate and that my business holds valid legal registrations. I agree to MTBOSS Construction&apos;s supplier terms and quality standards.
                   </span>
                 </label>
               </div>
