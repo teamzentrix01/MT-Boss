@@ -47,7 +47,7 @@
 .store-hero p{max-width:530px;font-size:14px;line-height:1.6;color:#465039;margin:17px 0 23px}
 .shop-page .store-hero-button{display:inline-flex;align-items:center;gap:10px;background:#153d27!important;color:#fff!important;border-radius:9px;padding:13px 18px!important;font-size:13px;font-weight:800}
 .shop-page .store-hero-button:hover{background:#0a2e18!important;color:#fff!important}
-.store-hero-photo{background:linear-gradient(90deg,#f9d94a11,transparent 30%),url('/images/banners/materials.jpg') center 50%/cover no-repeat;position:relative}
+.store-hero-photo{background:#d5e9fc;position:relative}
 .store-hero-photo-label{position:absolute;right:22px;bottom:22px;display:flex;align-items:center;gap:8px;background:#fff;padding:11px 14px;border-radius:8px;font-size:12px;font-weight:800;color:#24693e;box-shadow:0 10px 30px #0003}
 .store-promos{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:22px 0 46px}
 .store-promo{min-height:102px;border-radius:13px;padding:20px;display:flex;align-items:center;gap:15px}
@@ -89,6 +89,7 @@
 .store-product-price{font-size:11px;min-height:30px;margin-top:auto;color:#68746b}
 .store-product-price strong{font-size:13px;color:#18261d}
 .store-product-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0 6px}
+.store-product-actions-single{grid-template-columns:1fr}
 .shop-page .store-quote-btn,.shop-page .store-buy-btn{min-height:31px;border-radius:6px!important;font-size:10px;font-weight:900;padding:5px 2px!important;white-space:nowrap}
 .shop-page .store-quote-btn{border:1px solid #137341!important;color:#126c3c!important;background:#fff!important}
 .shop-page .store-quote-btn:hover{background:#edf8f0!important;color:#126c3c!important}
@@ -160,7 +161,7 @@
 .store-eyebrow,.store-hero h1{color:#183657}
 .store-hero h1 em{color:var(--brand-blue-deep)}
 .store-hero p{color:#445b75}
-.store-hero-photo{background:#d5e9fc}
+.store-hero-picture{display:contents}
 .store-hero-photo img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .store-hero-photo-label{color:var(--brand-blue-deep)}
 .store-promo-0{background:#e7f3ff;color:#205c91}
@@ -179,6 +180,8 @@
 .shop-page .store-quote-btn{border-color:var(--brand-blue)!important;color:var(--brand-blue-deep)!important;background:#fff!important}
 .shop-page .store-quote-btn:hover{background:#edf7ff!important;color:var(--brand-blue-deep)!important}
 .shop-page .store-buy-btn,.shop-page .store-buy-btn:hover{background:var(--brand-blue)!important;color:#fff!important}
+.shop-page button.store-buy-btn:hover:not(:disabled),.shop-page button.store-buy-btn:active:not(:disabled),.shop-page button.store-buy-btn:focus-visible:not(:disabled){background-color:var(--brand-blue)!important;background-image:none!important;color:#fff!important;border-color:var(--brand-blue)!important}
+.shop-page button.store-detail-buy:hover:not(:disabled),.shop-page button.store-detail-add:hover:not(:disabled){background-color:var(--brand-blue)!important;background-image:none!important;color:#fff!important;border-color:var(--brand-blue)!important}
 .shop-page .store-add-btn,.shop-page .store-add-btn:hover{background:#eef7ff!important;border-color:#badcf8!important;color:var(--brand-blue-deep)!important}
 .store-quantity-control{background:#e8f4ff;color:var(--brand-blue-deep)}
 .shop-page .store-quantity-control button,.shop-page .store-cart-quantity button,.shop-page .store-cart-empty button{color:var(--brand-blue-deep)!important}
@@ -208,38 +211,40 @@
 .store-detail-dialog{position:relative;display:grid;grid-template-columns:minmax(0,44%) minmax(0,56%);width:min(960px,100%);max-height:calc(100dvh - 40px);overflow:auto;background:#fff;border-radius:18px;box-shadow:0 24px 80px #06162f66}
 .shop-page .store-detail-close{position:absolute;right:15px;top:15px;z-index:2;padding:6px!important;border-radius:50%;background:#fff!important;color:#233a56!important}
 .store-detail-gallery{padding:26px;background:#edf5ff}.store-detail-gallery .store-visual{height:350px;border-radius:12px}.store-detail-thumbs{display:flex;gap:8px;overflow:auto;margin-top:10px}.store-detail-thumbs img{width:70px;height:70px;object-fit:cover;border-radius:7px}
-.store-detail-info{padding:38px 35px;overflow:auto}.store-detail-info h2{font-size:27px;line-height:1.2;margin:12px 0 7px}.store-detail-info>p{color:var(--store-muted);font-size:13px;line-height:1.55}.store-detail-price{margin:20px 0;font-size:20px;font-weight:900;color:var(--brand-blue-deep)}.store-detail-price del{margin-left:10px;color:#8a96a5;font-size:14px;font-weight:500}.store-detail-info h3{font-size:14px;margin:22px 0 10px}.store-specs div{display:flex;justify-content:space-between;gap:20px;padding:8px 0;border-bottom:1px solid var(--store-border);font-size:12px}.store-specs dt{color:var(--store-muted)}.store-specs dd{font-weight:700;text-align:right}.store-bulk-tiers{display:flex;flex-wrap:wrap;gap:7px}.store-bulk-tiers span{padding:8px 10px;border-radius:7px;background:#e8f4ff;color:var(--brand-blue-deep);font-size:11px;font-weight:800}.store-detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:25px}.shop-page .store-detail-actions button{padding:11px 14px!important;border:1px solid var(--brand-blue)!important;border-radius:8px!important;background:var(--brand-blue)!important;color:#fff!important;font-size:12px;font-weight:800}.shop-page .store-detail-actions button:first-child{background:#fff!important;color:var(--brand-blue-deep)!important}
+.store-detail-info{padding:38px 35px;overflow:auto}.store-detail-info h2{font-size:27px;line-height:1.2;margin:12px 0 7px}.store-detail-info>p{color:var(--store-muted);font-size:13px;line-height:1.55}.store-detail-price{margin:20px 0;font-size:20px;font-weight:900;color:var(--brand-blue-deep)}.store-detail-price del{margin-left:10px;color:#8a96a5;font-size:14px;font-weight:500}.store-detail-info h3{font-size:14px;margin:22px 0 10px}.store-specs div{display:flex;justify-content:space-between;gap:20px;padding:8px 0;border-bottom:1px solid var(--store-border);font-size:12px}.store-specs dt{color:var(--store-muted)}.store-specs dd{font-weight:700;text-align:right}.store-bulk-tiers{display:flex;flex-wrap:wrap;gap:7px}.store-bulk-tiers span{padding:8px 10px;border-radius:7px;background:#e8f4ff;color:var(--brand-blue-deep);font-size:11px;font-weight:800}.store-detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:25px}.shop-page .store-detail-actions button{padding:11px 14px!important;border:1px solid var(--brand-blue)!important;border-radius:8px!important;background:var(--brand-blue)!important;color:#fff!important;font-size:12px;font-weight:800}.shop-page .store-detail-actions .store-detail-quote{background:#fff!important;color:var(--brand-blue-deep)!important}.shop-page .store-detail-actions button:disabled,.shop-page .store-product-actions button:disabled,.shop-page .store-add-btn:disabled{cursor:not-allowed;opacity:.55}
 .dark-mode .store-catalog-tools select,.dark-mode .store-detail-dialog{background:#17263b;color:#e8f1fc;border-color:#34455b}.dark-mode .store-detail-gallery{background:#1d3048}.dark-mode .store-detail-info>p,.dark-mode .store-specs dt{color:#a6b8ce}.dark-mode .store-bulk-tiers span{background:#254668;color:#d9ecff}
 @media(max-width:700px){.store-detail-dialog{grid-template-columns:1fr}.store-detail-gallery{padding:15px}.store-detail-gallery .store-visual{height:220px}.store-detail-info{padding:22px}.store-detail-info h2{font-size:21px}.store-catalog-tools{justify-content:flex-start}}
 
-/* The main site navigation remains above the shop toolbar. */
-.shop-html,.shop-route{overflow-x:clip}
-.shop-route .site-navbar{position:relative;top:auto}
+/* The global site navbar is visible on Shop Now but remains part of normal
+   document flow. Only the two storefront bars below it are sticky. */
+.shop-html,.shop-route{overflow-x:visible!important}
+.shop-route .site-navbar{position:relative!important;top:auto!important;z-index:9300!important}
 
-/* ── FIXED SHOP HEADER ────────────────────────────────────────────────────────
-   position:sticky fails when any ancestor has overflow-x:clip (all browsers).
-   Using position:fixed instead — it ignores ancestor overflow entirely.
-   padding-top on .shop-page compensates so content is not hidden behind it.
-   ──────────────────────────────────────────────────────────────────────────── */
+/* The shop toolbar sticks only after the normal site navbar scrolls away. */
 .shop-page>.store-header{
-  position:fixed;
+  position:sticky;
   top:0;
-  left:0;
   width:100%;
   z-index:9200;
-  height:82px
+  height:var(--shop-header-height)
 }
-/* Push ALL shop-page content below the fixed header */
 .shop-page{
-  padding-top:82px
+  --shop-header-height:82px;
+  --shop-category-height:48px;
+  padding-top:0
 }
-/* Category nav sticks just below the fixed store-header */
+/* Product/category names stick directly below the sticky shop toolbar. */
 .store-category-nav{
   position:sticky;
-  top:82px;
-  z-index:9100
+  top:var(--shop-header-height);
+  z-index:9100;
+  box-sizing:border-box;
+  height:var(--shop-category-height)
 }
+@media(max-width:800px){.shop-page{--shop-header-height:120px}.shop-page>.store-header{height:var(--shop-header-height)}}
+@media(max-width:560px){.shop-page{--shop-header-height:120px}.shop-page>.store-header{height:var(--shop-header-height)}}
 .store-brand{height:auto;gap:8px;letter-spacing:0}
+.store-brand-picture{display:block;flex:none;line-height:0}
 .store-brand img{display:block;width:auto;height:46px;max-width:125px;object-fit:contain}
 .store-brand small{margin:0;font-size:10px;letter-spacing:2px;color:var(--brand-blue-deep)!important}
 .store-admin-add{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:none;white-space:nowrap;padding:11px 12px;border:1px solid var(--brand-blue);border-radius:8px;background:#eff8ff;color:var(--brand-blue-deep)!important;font-size:12px;font-weight:800}
@@ -335,7 +340,7 @@
 @media(max-width:560px){.store-overlay{padding:12px}.store-cart-drawer{width:100%;height:min(680px,88dvh);max-height:calc(100dvh - 24px);border-radius:14px}.store-drawer-head{padding:19px}.store-cart-bottom{padding:18px}}
 
 @media(max-width:800px){.store-header-inner{grid-template-columns:auto minmax(0,1fr) auto auto}.store-brand{grid-column:1}.store-brand img{height:39px;max-width:105px}.store-location-wrap{grid-column:2;min-width:0}.store-admin-add{grid-column:3;padding:9px;font-size:11px}.shop-page .store-cart-button{grid-column:4}.store-search{grid-column:1/5}.store-category-nav{scrollbar-width:none}.store-category-nav::-webkit-scrollbar{display:none}.store-category-nav>div{min-width:max-content;justify-content:flex-start;padding:0 12px;gap:4px}.shop-page .store-category-nav button{padding:12px 9px!important}}
-@media(max-width:560px){.store-header-inner{grid-template-columns:max-content minmax(0,1fr) max-content}.store-brand{grid-column:1}.store-brand img{height:34px;max-width:92px}.store-brand small{font-size:8px;letter-spacing:1px}.store-location-wrap{grid-column:2;min-width:0}.store-location span{min-width:0}.store-location small{max-width:120px;overflow:hidden;text-overflow:ellipsis}.store-admin-add{grid-row:3;grid-column:1/-1;width:100%}.shop-page .store-cart-button{grid-column:3}.store-search{grid-column:1/-1}}
+@media(max-width:560px){.store-header-inner{grid-template-columns:max-content minmax(0,1fr) max-content max-content}.store-brand{grid-column:1}.store-brand img{height:34px;max-width:92px}.store-brand small{font-size:8px;letter-spacing:1px}.store-location-wrap{grid-column:2;min-width:0}.store-location span{min-width:0}.store-location small{max-width:105px;overflow:hidden;text-overflow:ellipsis}.store-admin-add{grid-row:1;grid-column:3;width:40px;height:40px;padding:9px!important;gap:0;overflow:hidden;font-size:0}.store-admin-add svg{width:18px;height:18px}.shop-page .store-cart-button{grid-column:4}.store-search{grid-column:1/-1}}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    SCROLL-LOCK: Disable :hover on cards while the user is scrolling.
@@ -351,4 +356,35 @@
 .shop-page:not(.shop-is-scrolling) .store-category,
 .shop-page:not(.shop-is-scrolling) .store-product-card {
   pointer-events: auto;
+}
+
+/* Compact product cards with safe wrapping for two actions on every screen. */
+.store-product-grid{gap:11px}
+.store-visual{height:122px}
+.store-product-details{padding:9px 10px 10px}
+.store-product-tag{padding:3px 5px}
+.store-product-card h3,.store-product-title h3{min-height:31px;margin:7px 0 3px;line-height:1.24}
+.store-product-category{margin:0 0 7px;line-height:1.25}
+.store-product-price{min-height:24px;line-height:1.25}
+.store-product-price del{margin-top:1px}
+.store-product-actions{gap:5px;margin:5px 0 4px;min-width:0}
+.shop-page .store-quote-btn,.shop-page .store-buy-btn{min-width:0;min-height:29px;padding:4px 3px!important;line-height:1.15;white-space:normal;overflow-wrap:anywhere}
+.shop-page .store-add-btn,.store-quantity-control{min-height:29px}
+.store-detail-actions{display:grid;grid-template-columns:1fr;min-width:0}
+.store-detail-actions-priced{grid-template-columns:repeat(3,minmax(0,1fr))}
+.shop-page .store-detail-actions button{min-width:0;white-space:normal;line-height:1.2}
+
+@media(max-width:560px){
+  .store-product-grid{gap:8px}
+  .store-visual{height:96px}
+  .store-product-details{padding:8px}
+  .store-product-card h3,.store-product-title h3{min-height:29px;margin:6px 0 3px;font-size:11px;line-height:1.22}
+  .store-product-category{margin-bottom:6px;font-size:9px}
+  .store-product-price{min-height:22px;font-size:9px}
+  .store-product-price strong{font-size:12px}
+  .store-product-actions{gap:4px;margin-top:4px}
+  .shop-page .store-quote-btn,.shop-page .store-buy-btn{min-height:28px;font-size:8.5px}
+  .shop-page .store-add-btn,.store-quantity-control{min-height:28px;font-size:9px}
+  .store-detail-actions-priced{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .store-detail-actions-priced .store-detail-quote{grid-column:1/-1}
 }

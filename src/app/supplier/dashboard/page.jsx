@@ -265,9 +265,16 @@ function SupplierDashboardContent() {
           <div className="sd-order-cat">
             {e.category_emoji} {e.category_name}
           </div>
-          <span className="sd-badge" style={badgeStyle}>
-            {isTaken ? 'Taken' : statusLabel(e.status)}
-          </span>
+          <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            {e.order_intent && (
+              <span className="sd-badge" style={{ background: e.order_intent === 'quote' ? '#ede9fe' : '#dcfce7', color: e.order_intent === 'quote' ? '#6d28d9' : '#15803d' }}>
+                {e.order_intent === 'quote' ? 'Get Quote' : 'Direct order'}
+              </span>
+            )}
+            <span className="sd-badge" style={badgeStyle}>
+              {isTaken ? 'Taken' : statusLabel(e.status)}
+            </span>
+          </div>
         </div>
 
         {/* Material type + brand */}

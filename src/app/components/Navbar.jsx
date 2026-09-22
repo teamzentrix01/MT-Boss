@@ -179,11 +179,13 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0">
-            <img
-              src="/logo.png"
-              alt="MTBOSS"
-              className="h-12 sm:h-[58px] w-auto object-contain"
-            />
+            <picture className="block leading-none">
+              <img
+                src="/logo.png"
+                alt="MTBOSS"
+                className="block h-12 sm:h-[58px] w-auto object-contain"
+              />
+            </picture>
           </Link>
 
           {/* Desktop Nav */}

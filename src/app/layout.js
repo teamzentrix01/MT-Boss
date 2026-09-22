@@ -113,7 +113,7 @@ export default function RootLayout({ children }) {
       <head>
         <meta name="google-site-verification" content="_HIsDPgunnMsWo7iWtmz2fX3YW9aG406vj5zL02lWXY" />
       </head>
-      <body className={`transition-colors duration-500 ${isShopPage ? "shop-route overflow-x-clip" : "overflow-x-hidden"} ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+      <body className={`transition-colors duration-500 ${isShopPage ? "shop-route" : "overflow-x-hidden"} ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
         <PrivacyConsentGuard />
         <FreeWhatsAppNotifier />
         <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />

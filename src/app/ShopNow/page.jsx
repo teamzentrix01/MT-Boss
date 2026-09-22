@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCities } from "@/hooks/useCities";
-import Storefront from "./Storefront";
+import Storefront, { displayUnit } from "./Storefront";
 import { defaultShopStorefront } from "@/lib/shop-storefront-defaults";
 
 // Dark-mode watcher
@@ -38,6 +38,44 @@ function SectionLabel({ children, isDark }) {
   );
 }
 
+function getUnitPrice(product, quantity = 1) {
+  const basePrice = Number(product?.price);
+  if (!Number.isFinite(basePrice) || basePrice <= 0) return 0;
+  const tier = (product?.bulk_pricing || [])
+    .filter((entry) => quantity >= Number(entry.min_quantity))
+    .sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity))[0];
+  return tier ? Number(tier.price) : basePrice;
+}
+
+function getQuotePrice(category, selectedCity) {
+  if (!category) return null;
+  const cityPrices = category.city_prices && typeof category.city_prices === 'object'
+    ? category.city_prices
+    : {};
+  const cityEntry = selectedCity
+    ? Object.entries(cityPrices).find(([city]) => city.trim().toLowerCase() === selectedCity.trim().toLowerCase())
+    : null;
+  const cityRange = String(cityEntry?.[1]?.price_range || '').trim();
+  const generalRange = String(category.price_range || '').trim();
+  const range = cityRange || generalRange;
+  if (!range) return null;
+
+  const unit = displayUnit(cityEntry?.[1]?.unit || category.unit, '');
+  const normalizedRange = range.replace(/(\d)\s*-\s*(?=\d)/g, '$1–');
+  const withCurrency = /₹|\b(?:rs\.?|inr)\b/i.test(normalizedRange)
+    ? normalizedRange
+    : `₹${normalizedRange}`;
+  const display = unit && !withCurrency.toLowerCase().includes(unit.toLowerCase())
+    ? `${withCurrency}/${unit}`
+    : withCurrency;
+
+  return {
+    display,
+    unit,
+    label: cityRange ? selectedCity : 'General',
+  };
+}
+
 export default function ShopPage() {
   const isDarkMode = useDarkMode();
   const { cities: supportedCities } = useCities();
@@ -55,7 +93,12 @@ export default function ShopPage() {
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("mtboss-shop-cart") || "[]");
-      if (Array.isArray(saved)) setCart(saved.filter((item) => item?.product?.id && Number.isInteger(item.quantity) && item.quantity > 0));
+      if (Array.isArray(saved)) setCart(saved.filter((item) => (
+        item?.product?.id
+        && Number(item.product.price) > 0
+        && Number.isInteger(item.quantity)
+        && item.quantity > 0
+      )));
     } catch { /* Ignore stale cart data. */ }
     setCartReady(true);
   }, []);
@@ -83,11 +126,11 @@ export default function ShopPage() {
   useEffect(() => {
     if (!cartReady || !productsLoaded || !categories.length) return;
     setCart((previous) => previous.flatMap((item) => {
-      if (!item.product?.product_id) return [item];
+      if (!item.product?.product_id) return [];
       const current = allProducts.find((product) => product.id === item.product.product_id);
       const category = categories.find((entry) => entry.name.toLowerCase() === current?.category?.toLowerCase())
         || categories.find((entry) => current?.name?.toLowerCase().includes(entry.name.toLowerCase()));
-      if (!current || !category || Number(current.quantity) < 1) return [];
+      if (!current || !category || Number(current.price) <= 0 || Number(current.quantity) < 1) return [];
       return [{ product: { ...item.product, ...current, category, image: current.image_url, fromSupplier: true, product_id: current.id }, quantity: Math.min(item.quantity, current.quantity) }];
     }));
   }, [allProducts, cartReady, categories, productsLoaded]);
@@ -107,6 +150,13 @@ export default function ShopPage() {
   const [submittedOrder, setSubmittedOrder] = useState(null);
   const [submitting, setSubmitting]         = useState(false);
   const [submitError, setSubmitError]       = useState("");
+
+  useEffect(() => {
+    if (!isModalOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [isModalOpen]);
 
   // Contact / delivery fields
   const [formData, setFormData] = useState({
@@ -183,6 +233,10 @@ export default function ShopPage() {
   };
 
   const addToCart = (product) => {
+    if (!(Number(product?.price) > 0)) {
+      openModal(product.category, product, "quote");
+      return;
+    }
     setCart((previous) => {
       const existing = previous.find((item) => item.product.id === product.id);
       const limit = product.fromSupplier ? Math.max(0, Number(product.quantity) || 0) : 10000;
@@ -418,30 +472,40 @@ export default function ShopPage() {
   const inp = `w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--brand-blue-lighter)] transition-all ${inputCls}`;
   const sel = `w-full px-3 py-2 rounded-lg border-2 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--brand-blue-lighter)] transition-all ${selectCls}`;
   const lbl = `block text-[10px] font-bold mb-1 ${labelText} uppercase tracking-wide`;
+  const selectedQuantity = Math.max(1, Number.parseInt(formData.quantity, 10) || 1);
+  const selectedUnitPrice = getUnitPrice(selectedProduct, selectedQuantity);
+  const selectedProductTotal = selectedUnitPrice * selectedQuantity;
+  const cartProductTotal = cart.reduce((sum, item) => sum + getUnitPrice(item.product, item.quantity) * item.quantity, 0);
+  const quotePrice = getQuotePrice(selectedCategory, selectedCity);
 
   // ── render ──────────────────────────────────────────────────────────────────
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} />
+      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, Number(product?.price) > 0 ? "buy" : "quote")} onCheckout={openCartCheckout} />
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] flex items-start justify-center p-3 sm:p-4 overflow-hidden">
-          <div className={`${modalBg} rounded-2xl shadow-2xl w-full max-w-lg border overflow-hidden max-h-[calc(100vh-2rem)] flex flex-col`}>
+        <div className="fixed inset-0 z-[20000] flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4">
+          <div className={`${modalBg} flex max-h-[calc(100dvh-1rem)] w-full max-w-xl flex-col overflow-hidden rounded-2xl border shadow-2xl sm:max-h-[calc(100dvh-2rem)]`}>
 
             {/* Modal Header */}
-            <div className={`flex items-center justify-between px-6 py-4 border-b ${modalHead}`}>
-              <div>
-                <p className="text-xs font-bold tracking-widest uppercase text-[var(--brand-blue)] mb-0.5">{modalMode === "quote" ? "Request Quote" : "Checkout"}</p>
-                <h2 className={`text-lg font-extrabold ${headText} flex items-center gap-2`}>
-                  {modalMode === "cart" ? (submitted ? "Cart order placed" : `Your cart (${cart.length} materials)`) : <>{selectedCategory?.emoji || "📦"} {selectedCategory?.name}</>}
+            <div className={`sticky top-0 z-20 flex flex-none items-center justify-between gap-4 border-b px-4 py-3 sm:px-6 ${modalHead} ${isDarkMode ? "bg-zinc-900" : "bg-white"}`}>
+              <div className="min-w-0">
+                <p className="mb-0.5 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--brand-blue)]">{modalMode === "quote" ? "Get Quote" : "Checkout"}</p>
+                <h2 className={`truncate text-base font-extrabold sm:text-lg ${headText}`}>
+                  {modalMode === "cart"
+                    ? (submitted ? "Cart order placed" : `Your cart (${cart.length} materials)`)
+                    : (selectedProduct?.name || selectedCategory?.name)}
                 </h2>
+                {modalMode !== "cart" && selectedProduct?.name && (
+                  <p className={`mt-0.5 truncate text-[10px] font-semibold ${subText}`}>{selectedCategory?.emoji || "📦"} {selectedCategory?.name}</p>
+                )}
               </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className={`p-2 rounded-full transition-all ${isDarkMode ? "text-zinc-400 hover:bg-zinc-800 hover:text-white" : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"}`}
-                aria-label="Close quote form"
+                className={`flex h-9 w-9 flex-none items-center justify-center rounded-full transition-all ${isDarkMode ? "text-zinc-400 hover:bg-zinc-800 hover:text-white" : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"}`}
+                aria-label="Close form"
               >
                 <X size={18} />
               </button>
@@ -452,9 +516,11 @@ export default function ShopPage() {
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--brand-blue)] text-2xl text-gray-950">
                   ✓
                 </div>
-                <h3 className={`text-xl font-black ${headText}`}>{modalMode === "quote" ? "Quote requested" : "Order request placed"}</h3>
+                <h3 className={`text-xl font-black ${headText}`}>{modalMode === "quote" ? "Quote requested" : "Order placed"}</h3>
                 <p className={`mt-2 text-sm ${subText}`}>
-                  Your order request has been received. Order will be placed within 24 to 48 hrs after supplier confirmation.
+                  {modalMode === "quote"
+                    ? "Your requirement has been received. A supplier will share a price quote for it."
+                    : "Your order has been received and will be confirmed by the supplier within 24 to 48 hours."}
                 </p>
                 {submittedOrder?.order_reference && (
                   <p className={`mt-3 text-xs font-black uppercase tracking-wider ${headText}`}>
@@ -483,7 +549,7 @@ export default function ShopPage() {
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="p-6 overflow-y-auto">
+              <form onSubmit={handleSubmit} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 font-sans sm:px-6">
                 <div className="mb-4">
                   <label className={lbl}>Delivery City *</label>
                   <div className="flex gap-2 items-end">
@@ -545,48 +611,46 @@ export default function ShopPage() {
                 {modalMode === "cart" ? (
                   <div className={`rounded-xl border px-4 py-3 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
                     <p className={`text-xs font-bold mb-2 ${headText}`}>Materials in your order</p>
-                    {cart.map((item) => <p key={item.product.id} className={`text-xs py-1 ${subText}`}>{item.product.name} · {item.quantity} {item.product.unit}</p>)}
-                    <p className={`text-[10px] mt-2 ${subText}`}>Final pricing and delivery are confirmed by the supplier.</p>
+                    {cart.map((item) => {
+                      const itemUnitPrice = getUnitPrice(item.product, item.quantity);
+                      return <p key={item.product.id} className={`text-xs py-1 ${subText}`}>{item.product.name} · {item.quantity} {displayUnit(item.product.unit)} · ₹{(itemUnitPrice * item.quantity).toLocaleString("en-IN")}</p>;
+                    })}
+                    <div className={`mt-2 flex items-center justify-between border-t pt-2 ${isDarkMode ? "border-zinc-700" : "border-gray-200"}`}>
+                      <span className={`text-xs font-bold ${headText}`}>Product total</span>
+                      <strong className={`text-sm ${headText}`}>₹{cartProductTotal.toLocaleString("en-IN")}</strong>
+                    </div>
+                    <p className={`text-[10px] mt-2 ${subText}`}>Delivery charges, if applicable, are confirmed separately.</p>
                   </div>
                 ) : <>
-                {(() => {
-                  if (Number(selectedProduct?.price) > 0) {
-                    return (
-                      <div className={`rounded-xl border px-4 py-3 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
-                        <p className={`text-[9px] font-bold uppercase tracking-widest ${subText}`}>Indicative supplier price</p>
-                        <p className={`text-sm font-bold mt-1 ${headText}`}>₹{Number(selectedProduct.price).toLocaleString("en-IN")} / {selectedProduct.unit || "unit"}</p>
-                        <p className={`text-[10px] mt-1 ${subText}`}>Final price and delivery are confirmed by the supplier.</p>
-                      </div>
-                    );
-                  }
-                  if (selectedCategory?.price_range) {
-                    return (
-                      <div className={`rounded-xl border px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
-                        <div>
-                          <p className={`text-[9px] font-bold uppercase tracking-widest mb-0.5 ${isDarkMode ? "text-zinc-400" : "text-gray-500"}`}>
-                            Indicative Price Range
-                          </p>
-                          <p className={`text-sm font-bold ${isDarkMode ? "text-zinc-200" : "text-gray-800"}`}>
-                            {selectedCategory.price_range}
-                          </p>
-                          {selectedCategory.unit && (
-                            <p className={`text-[10px] ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>{selectedCategory.unit}</p>
-                          )}
-                        </div>
-                        <span className={`text-[9px] font-bold px-2 py-1 rounded ${isDarkMode ? "bg-zinc-700 text-zinc-400" : "bg-gray-200 text-gray-500"}`}>
-                          General
-                        </span>
-                      </div>
-                    );
-                  }
-                  return (
-                    <div className={`rounded-xl border px-4 py-2.5 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
-                      <p className={`text-[10px] font-semibold ${isDarkMode ? "text-zinc-400" : "text-gray-500"}`}>
-                        Price will be quoted by a verified supplier{selectedCity ? ` for ${selectedCity}` : ""}.
-                      </p>
+                {modalMode === "buy" ? (
+                  <div className={`rounded-xl border px-4 py-3 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
+                    <p className={`text-[9px] font-bold uppercase tracking-widest ${subText}`}>Order pricing</p>
+                    <div className="mt-1 flex items-center justify-between gap-3">
+                      <p className={`text-sm font-bold ${headText}`}>₹{selectedUnitPrice.toLocaleString("en-IN")} / {displayUnit(selectedProduct?.unit)}</p>
+                      <p className={`text-sm font-black ${headText}`}>Total: ₹{selectedProductTotal.toLocaleString("en-IN")}</p>
                     </div>
-                  );
-                })()}
+                    <p className={`text-[10px] mt-1 ${subText}`}>Product price is fixed for the selected quantity. Delivery charges, if applicable, are confirmed separately.</p>
+                  </div>
+                ) : (
+                  quotePrice ? (
+                    <div className={`mb-4 flex items-center justify-between gap-4 rounded-2xl border px-5 py-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
+                      <div className="min-w-0">
+                        <p className={`text-[10px] font-black uppercase tracking-widest ${subText}`}>Indicative Price Range</p>
+                        <p className={`mt-1 text-xl font-black leading-tight ${headText}`}>{quotePrice.display}</p>
+                        {quotePrice.unit && <p className={`mt-1 text-xs ${subText}`}>{quotePrice.unit}</p>}
+                      </div>
+                      <span className={`shrink-0 rounded-lg px-3 py-2 text-[10px] font-black ${isDarkMode ? "bg-zinc-700 text-zinc-300" : "bg-gray-200 text-gray-500"}`}>
+                        {quotePrice.label}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className={`rounded-xl border px-4 py-3 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
+                      <p className={`text-[9px] font-bold uppercase tracking-widest ${subText}`}>Get Quote</p>
+                      <p className={`text-xs font-semibold mt-1 ${headText}`}>Price will be shared by a verified supplier.</p>
+                      <p className={`text-[10px] mt-1 ${subText}`}>The final quote depends on quantity, specification and delivery location{selectedCity ? ` in ${selectedCity}` : ""}.</p>
+                    </div>
+                  )
+                )}
 
                 {/* ── SECTION 1 — Material Details ───────────────────── */}
                 <SectionLabel isDark={isDarkMode}>📦 Material Details</SectionLabel>
@@ -710,8 +774,8 @@ export default function ShopPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                   {modalMode !== "cart" && <>
                   <div>
-                    <label className={lbl}>Quantity Required</label>
-                    <input type={modalMode === "buy" ? "number" : "text"} min={modalMode === "buy" ? "1" : undefined} max={modalMode === "buy" ? "10000" : undefined} step={modalMode === "buy" ? "1" : undefined} name="quantity" value={formData.quantity} onChange={handleInputChange} required={modalMode === "buy"} placeholder="e.g. 500" className={inp} />
+                    <label className={lbl}>Quantity Required *</label>
+                    <input type="number" min={modalMode === "buy" ? "1" : "0.01"} max={modalMode === "buy" ? "10000" : "100000000"} step={modalMode === "buy" ? "1" : "any"} name="quantity" value={formData.quantity} onChange={handleInputChange} required placeholder="e.g. 500" className={inp} />
                   </div>
                   <div>
                     <label className={lbl}>SKU / Unit</label>
@@ -858,7 +922,7 @@ export default function ShopPage() {
                   disabled={submitting}
                   className="w-full bg-[var(--brand-blue)] hover:bg-sky-500 disabled:opacity-60 text-gray-900 font-extrabold py-3 px-4 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 text-sm tracking-wide"
                 >
-                  {submitting ? "Submitting…" : modalMode === "quote" ? "Get Quote →" : "Place Order Request →"}
+                  {submitting ? "Submitting…" : modalMode === "quote" ? "Get Quote →" : "Place Order →"}
                 </button>
                 <button
                   type="button"

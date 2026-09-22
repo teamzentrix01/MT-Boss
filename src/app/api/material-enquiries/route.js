@@ -14,6 +14,7 @@ const ensureTable = createInitializationGuard(async () => {
       user_name               VARCHAR(255) NOT NULL,
       user_phone              VARCHAR(20)  NOT NULL,
       user_email              VARCHAR(255),
+      order_intent            VARCHAR(20),
       category_name           VARCHAR(255) NOT NULL,
       category_emoji          TEXT         DEFAULT '',
       material_type           VARCHAR(255),
@@ -51,6 +52,7 @@ const ensureTable = createInitializationGuard(async () => {
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS selected_city    VARCHAR(100)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS product_id       INTEGER`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS indicative_unit_price NUMERIC(10,2)`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS order_intent VARCHAR(20)`,
   ];
   for (const sql of migrations) {
     try { await pool.query(sql); } catch { /* already correct type or column exists */ }
@@ -80,6 +82,10 @@ export async function POST(req) {
       message, selected_city,
     } = body;
     const isCart = Array.isArray(body.items);
+    const orderIntent = cleanText(body.order_intent)?.toLowerCase() || (isCart ? 'cart' : 'quote');
+    if (!['quote', 'buy', 'cart'].includes(orderIntent) || (isCart && orderIntent !== 'cart') || (!isCart && orderIntent === 'cart')) {
+      return NextResponse.json({ success: false, error: 'Invalid shop order type' }, { status: 400 });
+    }
     if (isCart && (body.items.length === 0 || body.items.length > 20)) {
       return NextResponse.json({ success: false, error: 'Cart must contain 1 to 20 materials' }, { status: 400 });
     }
@@ -152,12 +158,18 @@ export async function POST(req) {
             failure.status = 409;
             throw failure;
           }
+          const hasFixedPrice = Number(product.price) > 0;
+          if (orderIntent !== 'quote' && !hasFixedPrice) {
+            const failure = new Error(`${product.name} is quote-only. Please use Get Quote instead of adding it to an order.`);
+            failure.status = 409;
+            throw failure;
+          }
           if (product.supplier_id === 0 && !(product.available_cities || []).some((city) => city.toLowerCase() === canonicalCity.toLowerCase())) {
             const failure = new Error(`${product.name} is not available for delivery in ${canonicalCity}.`);
             failure.status = 409;
             throw failure;
           }
-          if (body.order_intent !== 'quote' && Number.isInteger(requestedQuantity) && requestedQuantity > product.quantity) {
+          if (orderIntent !== 'quote' && Number.isInteger(requestedQuantity) && requestedQuantity > product.quantity) {
             const failure = new Error(`${product.name} has only ${product.quantity} ${product.unit || 'units'} available. Update your cart quantity.`);
             failure.status = 409;
             throw failure;
@@ -168,20 +180,24 @@ export async function POST(req) {
               .sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity))[0];
             indicativeUnitPrice = tier ? Number(tier.price) : Number(product.price);
           }
+        } else if (orderIntent !== 'quote') {
+          const failure = new Error('Direct orders require a fixed-price product. Please use Get Quote for custom materials.');
+          failure.status = 409;
+          throw failure;
         }
         const orderReference = `MO-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const itemQuantity = isCart ? `${item.quantity} ${cleanText(item.order_unit) || 'pcs'}` : quantity_text;
         const result = await client.query(
         `INSERT INTO material_enquiries
-           (user_id, order_reference, user_name, user_phone, user_email,
+           (user_id, order_reference, order_intent, user_name, user_phone, user_email,
             category_name, category_emoji, product_id, indicative_unit_price,
             material_type, subcategory_name, brand_company,
             quantity_text, order_unit, delivery_date,
             delivery_address, latitude, longitude, message, selected_city)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
-         RETURNING id, order_reference, status, created_at`,
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
+         RETURNING id, order_reference, order_intent, status, created_at`,
         [
-          user.id, orderReference, cleanName, cleanPhone, cleanEmail || user.email || null,
+          user.id, orderReference, orderIntent, cleanName, cleanPhone, cleanEmail || user.email || null,
           cleanText(item.category_name), item.category_emoji || '', item.product_id || null, indicativeUnitPrice,
           cleanText(item.material_type) || null, cleanText(item.subcategory_name) || null, cleanText(item.brand_company) || null,
           itemQuantity || null, cleanText(item.order_unit) || null, delivery_date || null,
@@ -192,8 +208,8 @@ export async function POST(req) {
         await addMaterialOrderEvent(client, {
           orderId: result.rows[0].id,
           status: 'open',
-          title: 'Order placed',
-          note: 'Your material order has been received.',
+          title: orderIntent === 'quote' ? 'Quote requested' : 'Order placed',
+          note: orderIntent === 'quote' ? 'Your Get Quote request has been received.' : 'Your material order has been received.',
           actorRole: 'user',
           actorId: user.id,
           actorName: cleanName,
