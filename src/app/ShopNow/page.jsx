@@ -244,10 +244,7 @@ export default function ShopPage() {
   };
 
   const addToCart = (product) => {
-    if (!(Number(product?.price) > 0)) {
-      openModal(product.category, product, "quote");
-      return;
-    }
+    if (!(Number(product?.price) > 0)) return;
     setCart((previous) => {
       const existing = previous.find((item) => item.product.id === product.id);
       const limit = product.fromSupplier ? Math.max(0, Number(product.quantity) || 0) : 10000;
@@ -493,7 +490,7 @@ export default function ShopPage() {
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, Number(product?.price) > 0 ? "buy" : "quote")} onCheckout={openCartCheckout} />
+      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} />
 
       {isModalOpen && mounted && createPortal(
         <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>
