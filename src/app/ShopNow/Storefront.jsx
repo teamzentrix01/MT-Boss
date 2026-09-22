@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -175,6 +176,37 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   );
 }
 
+// ── Section helper ───────────────────────────────────────────────────────────
+function ProductGrid({
+  items = [],
+  cart = [],
+  onAdd = () => {},
+  onChangeQty = () => {},
+  onQuote = () => {},
+  onBuy = () => {},
+  onDetails = () => {},
+  selectedCity = "",
+}) {
+  return (
+    <div className="hr-product-grid">
+      {items.map((product) => (
+        <ProductCard
+          key={product.id}
+          product={product}
+          quantity={cart.find((i) => i.product.id === product.id)?.quantity || 0}
+          canAdd={cart.length < 20}
+          onAdd={onAdd}
+          onChangeQty={onChangeQty}
+          onQuote={onQuote}
+          onBuy={onBuy}
+          onDetails={onDetails}
+          selectedCity={selectedCity}
+        />
+      ))}
+    </div>
+  );
+}
+
 // ── Main Storefront component ─────────────────────────────────────────────────
 export default function Storefront({
   categories, products, content, loading, cities,
@@ -346,23 +378,6 @@ export default function Storefront({
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   };
 
-  // ── Section helper ───────────────────────────────────────────────────────────
-  const ProductGrid = ({ items }) => (
-    <div className="hr-product-grid">
-      {items.map((product) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          quantity={cart.find((i) => i.product.id === product.id)?.quantity || 0}
-          canAdd={cart.length < 20}
-          onAdd={onAdd} onChangeQty={onChangeQty}
-          onQuote={onQuote} onBuy={onBuy}
-          onDetails={setDetailsProduct}
-          selectedCity={selectedCity}
-        />
-      ))}
-    </div>
-  );
 
   // ── Render ───────────────────────────────────────────────────────────────────
   return (
@@ -563,7 +578,16 @@ export default function Storefront({
               </div>
               <span className="store-section-note">Get a quote or order directly</span>
             </div>
-            <ProductGrid items={featured} />
+            <ProductGrid
+              items={featured}
+              cart={cart}
+              onAdd={onAdd}
+              onChangeQty={onChangeQty}
+              onQuote={onQuote}
+              onBuy={onBuy}
+              onDetails={setDetailsProduct}
+              selectedCity={selectedCity}
+            />
           </section>
         )}
 
@@ -577,7 +601,16 @@ export default function Storefront({
               </div>
               <span className="store-section-note">Savings shown against original price</span>
             </div>
-            <ProductGrid items={deals} />
+            <ProductGrid
+              items={deals}
+              cart={cart}
+              onAdd={onAdd}
+              onChangeQty={onChangeQty}
+              onQuote={onQuote}
+              onBuy={onBuy}
+              onDetails={setDetailsProduct}
+              selectedCity={selectedCity}
+            />
           </section>
         )}
 
@@ -591,7 +624,16 @@ export default function Storefront({
               </div>
               <span className="store-section-note">Recently added products</span>
             </div>
-            <ProductGrid items={arrivals} />
+            <ProductGrid
+              items={arrivals}
+              cart={cart}
+              onAdd={onAdd}
+              onChangeQty={onChangeQty}
+              onQuote={onQuote}
+              onBuy={onBuy}
+              onDetails={setDetailsProduct}
+              selectedCity={selectedCity}
+            />
           </section>
         )}
 
@@ -644,7 +686,18 @@ export default function Storefront({
           {loading
             ? <div className="store-loading">Loading materials…</div>
             : visible.length
-              ? <ProductGrid items={visible} />
+              ? (
+                <ProductGrid
+                  items={visible}
+                  cart={cart}
+                  onAdd={onAdd}
+                  onChangeQty={onChangeQty}
+                  onQuote={onQuote}
+                  onBuy={onBuy}
+                  onDetails={setDetailsProduct}
+                  selectedCity={selectedCity}
+                />
+              )
               : <div className="store-empty">No materials found. Try another search or category.</div>}
         </section>
       </main>
