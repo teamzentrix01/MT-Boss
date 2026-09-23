@@ -1,5 +1,23 @@
 export const defaultHeroBanners = [
   {
+    id: 'default-construction',
+    service_name: 'Construction',
+    label: 'PLANNING TO COMPLETION',
+    title: 'Your vision.',
+    subtitle: 'Built to last.',
+    description: 'Bring your residential, commercial or industrial project to life with engineering excellence and timely delivery.',
+    image_url: '/images/banners/construction.jpg',
+    cloudinary_public_id: '',
+    image_alt: 'Construction workers and engineers building modern architectural infrastructure',
+    image_position: 'center',
+    cta_text: 'Get a Construction Quote',
+    cta_href: '/CTASection/get-quote',
+    secondary_cta_text: 'Explore Services',
+    secondary_cta_href: '/Services/all',
+    sort_order: 1,
+    is_active: true,
+  },
+  {
     id: 'default-services',
     service_name: 'Home Services',
     label: 'CARE FOR EVERY CORNER',
