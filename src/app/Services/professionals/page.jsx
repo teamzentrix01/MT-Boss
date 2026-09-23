@@ -3,8 +3,19 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCities } from '@/hooks/useCities';
 
-const CATEGORIES = ['All', 'Interior Designer', 'Architect', 'Landscape Designer',
-  'Civil Engineer', 'Vastu Consultant', 'Home Stager', 'Other'];
+const CATEGORIES = [
+  'All',
+  'Construction Experts',
+  'Architecture',
+  'Civil Engineer',
+  'Interior Designer',
+  'Vastu Consultant',
+  'Construction Loan',
+  'Construction Legal Advisor',
+  'Cost Approvals',
+  'Constructions NOC',
+  'Property Consultant',
+];
 
 function useDark() {
   const [dark, setDark] = useState(false);
@@ -76,6 +87,7 @@ function SingleImageUpload({ label, value, onChange, isDark, required }) {
       <div style={{ display:'flex',gap:'10px',alignItems:'center' }}>
         {value && (
           <div style={{ position:'relative',flexShrink:0 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={value} alt="Preview" style={{ width:'56px',height:'56px',objectFit:'cover',border:`1px solid ${t.border}`,borderRadius:'2px' }} />
             <button type="button" onClick={()=>onChange('')}
               style={{ position:'absolute',top:'-6px',right:'-6px',width:'18px',height:'18px',borderRadius:'50%',background:'#ef4444',border:'none',color:'#fff',fontSize:'10px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1 }}>✕</button>
@@ -122,6 +134,7 @@ function MultiImageUpload({ label, value = [], onChange, isDark }) {
         <div style={{ display:'flex',gap:'8px',flexWrap:'wrap',marginBottom:'8px' }}>
           {value.map((url,i)=>(
             <div key={i} style={{ position:'relative' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={url} alt="" style={{ width:'52px',height:'52px',objectFit:'cover',border:`1px solid ${t.border}`,borderRadius:'2px' }} />
               <button type="button" onClick={()=>remove(i)}
                 style={{ position:'absolute',top:'-6px',right:'-6px',width:'18px',height:'18px',borderRadius:'50%',background:'#ef4444',border:'none',color:'#fff',fontSize:'10px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1 }}>✕</button>
@@ -328,7 +341,10 @@ function ProfileModal({ pro, isDark, onEnquire, onClose }) {
           <button onClick={onClose} style={{ position:'absolute',top:'12px',right:'12px',background:'none',border:'1px solid rgba(255,255,255,0.2)',borderRadius:'2px',width:'28px',height:'28px',cursor:'pointer',color:'#fff',fontSize:'14px',display:'flex',alignItems:'center',justifyContent:'center' }}>✕</button>
           <div style={{ display:'flex',gap:'20px',alignItems:'flex-start' }}>
             {pro.profile_picture
-              ? <img src={pro.profile_picture} alt={pro.name} loading="lazy" decoding="async" style={{ width:'80px',height:'80px',borderRadius:'2px',objectFit:'cover',border:`2px solid ${t.accent}`,flexShrink:0 }} />
+              ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={pro.profile_picture} alt={pro.name} loading="lazy" decoding="async" style={{ width:'80px',height:'80px',borderRadius:'2px',objectFit:'cover',border:`2px solid ${t.accent}`,flexShrink:0 }} />
+              )
               : <div style={{ width:'80px',height:'80px',borderRadius:'2px',background:t.accent,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'28px',flexShrink:0,color:t.accentFg,fontWeight:800 }}>{pro.name?.[0]?.toUpperCase()}</div>
             }
             <div style={{ flex:1 }}>
@@ -371,6 +387,7 @@ function ProfileModal({ pro, isDark, onEnquire, onClose }) {
               <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))',gap:'8px',marginBottom:'24px' }}>
                 {portfolio.map((url,i)=>(
                   <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={url} alt={`Portfolio ${i+1}`} loading="lazy" decoding="async" style={{ width:'100%',aspectRatio:'1',objectFit:'cover',border:`1px solid ${t.border}` }} onError={e=>{e.target.style.display='none';}} />
                   </a>
                 ))}
@@ -412,7 +429,10 @@ function ProCard({ pro, isDark, onClick }) {
                boxShadow:hov?(isDark?'0 8px 24px color-mix(in srgb, var(--brand-blue) 12%, transparent)':'0 8px 24px rgba(0,0,0,0.12)'):'none' }}>
       <div style={{ height:'200px',position:'relative',overflow:'hidden',background:isDark?'#1a1a1a':'#f3f4f6' }}>
         {pro.profile_picture
-          ? <img src={pro.profile_picture} alt={pro.name} loading="lazy" decoding="async" style={{ width:'100%',height:'100%',objectFit:'cover' }} />
+          ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={pro.profile_picture} alt={pro.name} loading="lazy" decoding="async" style={{ width:'100%',height:'100%',objectFit:'cover' }} />
+          )
           : <div style={{ width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'52px',color:isDark?'#333':'#d1d5db' }}>👤</div>
         }
         <div style={{ position:'absolute',bottom:0,left:0,right:0,background:'linear-gradient(transparent,rgba(0,0,0,0.85))',padding:'20px 12px 10px' }}>
