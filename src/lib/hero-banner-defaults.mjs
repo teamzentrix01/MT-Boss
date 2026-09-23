@@ -6,7 +6,7 @@ export const defaultHeroBanners = [
     title: 'Your vision.',
     subtitle: 'Built to last.',
     description: 'Bring your residential, commercial or industrial project to life with engineering excellence and timely delivery.',
-    image_url: '/images/banners/construction.jpg',
+    image_url: '/images/banners/construction.jpg?v=workers-banner-v2',
     cloudinary_public_id: '',
     image_alt: 'Construction workers and engineers building modern architectural infrastructure',
     image_position: 'center',
