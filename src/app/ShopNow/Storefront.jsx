@@ -9,6 +9,7 @@ import {
   Search, ShieldCheck, ShoppingCart, Truck, Wrench, X,
 } from "lucide-react";
 import "./shop.css";
+import ShopCategoryNav from "./ShopCategoryNav";
 
 function categoryStyle(name = "") {
   const value = name.toLowerCase();
@@ -141,10 +142,15 @@ export default function Storefront({ categories, products, content, loading, cit
   }, []);
 
   useEffect(() => {
-    const requested = new URLSearchParams(window.location.search).get('category');
+    const params = new URLSearchParams(window.location.search);
+    const requested = params.get('category');
+    const query = params.get('q') || '';
     const match = categories.find((category) => category.name.toLowerCase() === requested?.toLowerCase());
-    if (!match) return undefined;
-    const frame = requestAnimationFrame(() => setActiveCategory(match.id));
+    if (!match && !query) return undefined;
+    const frame = requestAnimationFrame(() => {
+      if (match) setActiveCategory(match.id);
+      if (query) setSearch(query);
+    });
     return () => cancelAnimationFrame(frame);
   }, [categories]);
 
@@ -232,14 +238,17 @@ export default function Storefront({ categories, products, content, loading, cit
     setCartOpen(true);
   };
 
-  const chooseCategory = (id) => {
+  const chooseCategory = (id, options = {}) => {
+    const nextSearch = typeof options.search === "string" ? options.search : "";
     setActiveCategory(id);
     setBrandFilter('all');
-    setSearch("");
+    setSearch(nextSearch);
     const url = new URL(window.location.href);
     const selected = categories.find((category) => String(category.id) === String(id));
     if (selected) url.searchParams.set('category', selected.name);
     else url.searchParams.delete('category');
+    if (nextSearch) url.searchParams.set('q', nextSearch);
+    else url.searchParams.delete('q');
     window.history.replaceState(window.history.state, '', url);
     // Wait for React to remove the other catalogue sections before calculating
     // the target position. Scrolling against the old layout lands at the footer.
@@ -271,7 +280,15 @@ export default function Storefront({ categories, products, content, loading, cit
         </div>
       </header>
 
-      {categories.length > 0 && <nav className="store-category-nav" aria-label="Shop categories"><div>{categories.map((category) => <button type="button" key={category.id} onClick={() => chooseCategory(category.id)}>{category.name}</button>)}</div></nav>}
+      {categories.length > 0 && (
+        <ShopCategoryNav
+          categories={categories}
+          products={products}
+          activeCategory={activeCategory}
+          activeSearch={search}
+          onSelectCategory={chooseCategory}
+        />
+      )}
 
       <main className="store-main">
         <div className="store-breadcrumb"><Link href="/">Home</Link><span>/</span><strong>Shop materials</strong></div>
