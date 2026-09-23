@@ -18,7 +18,6 @@ export const CATEGORY_NAV_TREE = [
       'Marble',
       'Glass',
       'Waterproofing',
-      'Chemicals',
     ],
   },
   {
@@ -35,11 +34,12 @@ export const CATEGORY_NAV_TREE = [
     id: 'electrical',
     label: 'Electrical',
     children: [
-      'Wires',
-      'MCB & Distribution Boards',
-      'Switches & Sockets',
-      'Electrical Conduits',
-      'Lighting',
+      'Sockets',
+      'Switches',
+      'MCB',
+      'Distribution Board (DB)',
+      'LED Lights',
+      'Electrical Cables',
     ],
   },
 ];
@@ -59,6 +59,12 @@ export const CATEGORY_NAV_ALIASES = {
   chemicals: ['chemical', 'construction chemicals'],
   plywood: ['ply', 'ply wood'],
   hpl: ['high pressure laminate', 'laminate'],
+  sockets: ['socket', 'switches & sockets', 'switch & socket'],
+  switches: ['switch', 'switches & sockets', 'switch & socket'],
+  mcb: ['mcbs', 'mcb & distribution boards', 'miniature circuit breaker'],
+  'distribution board (db)': ['distribution board', 'db', 'distribution boards', 'mcb & distribution boards'],
+  'led lights': ['led light', 'led', 'lighting', 'lights', 'light'],
+  'electrical cables': ['electrical cable', 'cables', 'cable', 'wires', 'wire', 'wiring'],
   'aggregate (barjri)': ['aggregate ( barjri)', 'aggregate(barjri)', 'barjri', 'bajri', 'aggregate (bajri)'],
   'coarse sand': ['course sand'],
   'fine sand': ['finesand'],
@@ -145,8 +151,8 @@ export function resolveDirectNavItem(label, categories = [], products = []) {
   return { label, categoryId: null, search: '', disabled: true };
 }
 
-/** Top-level nav buttons without a dropdown (shown after All). */
-export const DIRECT_NAV_BUTTONS = ['Paints'];
+/** Top-level nav buttons without a dropdown (shown after parent menus; Paints last). */
+export const DIRECT_NAV_BUTTONS = ['Chemicals', 'Paints'];
 
 /**
  * Resolve the static tree against live shop categories and products.
