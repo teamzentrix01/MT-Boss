@@ -152,28 +152,6 @@ export default function ShopCategoryNav({
         >
           All
         </button>
-        {directButtons.map((item) => {
-          const isActive = item.categoryId != null
-            && String(item.categoryId) === String(activeCategory)
-            && !normalizeName(activeSearch);
-          return (
-            <button
-              key={item.label}
-              type="button"
-              className={`store-category-all-btn${isActive ? " is-active" : ""}${item.disabled ? " is-disabled" : ""}`}
-              disabled={item.disabled}
-              aria-disabled={item.disabled}
-              title={item.disabled ? "Coming soon" : undefined}
-              onClick={() => {
-                if (item.disabled || item.categoryId == null) return;
-                closeMenu();
-                onSelectCategory?.(item.categoryId);
-              }}
-            >
-              {item.label}
-            </button>
-          );
-        })}
         {parents.map((parent) => {
           const isOpen = openId === parent.id;
           const hasActiveChild = parent.children.some((child) => leafIsActive(child));
@@ -237,6 +215,28 @@ export default function ShopCategoryNav({
                 })}
               </div>
             </div>
+          );
+        })}
+        {directButtons.map((item) => {
+          const isActive = item.categoryId != null
+            && String(item.categoryId) === String(activeCategory)
+            && !normalizeName(activeSearch);
+          return (
+            <button
+              key={item.label}
+              type="button"
+              className={`store-category-all-btn${isActive ? " is-active" : ""}${item.disabled ? " is-disabled" : ""}`}
+              disabled={item.disabled}
+              aria-disabled={item.disabled}
+              title={item.disabled ? "Coming soon" : undefined}
+              onClick={() => {
+                if (item.disabled || item.categoryId == null) return;
+                closeMenu();
+                onSelectCategory?.(item.categoryId);
+              }}
+            >
+              {item.label}
+            </button>
           );
         })}
       </div>
