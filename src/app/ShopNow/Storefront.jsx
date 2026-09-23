@@ -51,7 +51,7 @@ function productCanOrder(product, selectedCity) {
 
 function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, onDetails, selectedCity }) {
   const price = Number(product.price);
-  const hasPrice = Number.isFinite(price) && price > 0;
+  const hasFixedPrice = Number.isFinite(price) && price > 0;
   const normalizedCity = selectedCity.trim().toLowerCase();
   const cityUnavailable = Boolean(normalizedCity && product.available_cities?.length && !product.available_cities.some((city) => city.trim().toLowerCase() === normalizedCity));
   const canOrder = productCanOrder(product, selectedCity);
@@ -63,22 +63,22 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
         <button type="button" className="store-product-title" onClick={() => onDetails(product)}><h3>{product.name}</h3></button>
         <p className="store-product-category">{product.category.name}{product.unit ? ` · ${product.unit}` : ""}</p>
         <div className="store-product-price">
-          <strong>Price on request</strong>
+          <strong>{hasFixedPrice ? `₹${price.toLocaleString('en-IN')} / ${displayUnit(product.unit)}` : 'Price on request'}</strong>
         </div>
         {cityUnavailable && <span className="store-stock-note">Not delivered in {selectedCity}</span>}
         {product.fromSupplier && Number(product.quantity) === 0 && <span className="store-stock-note">Currently unavailable</span>}
         <div className="store-product-actions">
           <button type="button" className="store-quote-btn" disabled={!canOrder} onClick={() => onQuote(product)}>{canOrder ? 'Get Quote' : 'Unavailable'}</button>
-          <button type="button" className="store-buy-btn" disabled={!canOrder || !hasPrice} title={!hasPrice ? 'Exact price is required for Buy Now' : undefined} onClick={() => onBuy(product)}>{canOrder ? 'Buy Now' : 'Unavailable'}</button>
+          <button type="button" className="store-buy-btn" disabled={!canOrder} onClick={() => onBuy(product)}>{canOrder ? 'Buy Now' : 'Unavailable'}</button>
         </div>
-        {hasPrice && quantity ? (
+        {quantity ? (
           <div className="store-quantity-control" aria-label={`${product.name} quantity in cart`}>
             <button type="button" onClick={() => onChangeQty(product.id, -1)} aria-label={`Remove one ${product.name}`}><Minus size={15} /></button>
             <span>{quantity} in cart</span>
             <button type="button" onClick={() => onChangeQty(product.id, 1)} aria-label={`Add one ${product.name}`}><Plus size={15} /></button>
           </div>
         ) : (
-          <button type="button" className="store-add-btn" disabled={!hasPrice || !canAdd || !canOrder} title={!hasPrice ? 'Exact price is required for cart orders' : undefined} onClick={() => onAdd(product)}><Plus size={15} /> {!canOrder ? 'Unavailable' : canAdd ? "Add to cart" : "Cart limit reached"}</button>
+          <button type="button" className="store-add-btn" disabled={!canAdd || !canOrder} onClick={() => onAdd(product)}><Plus size={15} /> {!canOrder ? 'Unavailable' : canAdd ? "Add to cart" : "Cart limit reached"}</button>
         )}
       </div>
     </article>
@@ -94,7 +94,10 @@ export default function Storefront({ categories, products, content, loading, cit
   const [detailsProduct, setDetailsProduct] = useState(null);
   const [sortBy, setSortBy] = useState('featured');
   const [brandFilter, setBrandFilter] = useState('all');
+  const [cartOverlayTop, setCartOverlayTop] = useState(0);
   const searchScrolled = useRef(false);
+  const catalogScrollFrame = useRef(null);
+  const storeHeaderRef = useRef(null);
 
   // When user types a search term, scroll the catalog into view automatically
   useEffect(() => {
@@ -130,6 +133,10 @@ export default function Storefront({ categories, products, content, loading, cit
       document.removeEventListener('scroll', onScroll, { capture: true });
       clearTimeout(timer);
     };
+  }, []);
+
+  useEffect(() => () => {
+    if (catalogScrollFrame.current) cancelAnimationFrame(catalogScrollFrame.current);
   }, []);
 
   useEffect(() => {
@@ -174,6 +181,7 @@ export default function Storefront({ categories, products, content, loading, cit
       price: product.price,
       image: product.image_url,
       description: product.description,
+      quote_price_range: product.quote_price_range,
       brand: product.brand,
       compare_at_price: product.compare_at_price,
       images: product.images,
@@ -209,7 +217,19 @@ export default function Storefront({ categories, products, content, loading, cit
   const arrivals = catalog.filter((product) => product.fromSupplier && product.created_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 6);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const pricedTotal = cart.reduce((sum, item) => sum + unitPrice(item.product, item.quantity) * item.quantity, 0);
+  const hasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
   const detailsCanOrder = detailsProduct ? productCanOrder(detailsProduct, selectedCity) : false;
+  const detailsHasFixedPrice = Number(detailsProduct?.price) > 0;
+
+  const toggleCart = () => {
+    if (cartOpen) {
+      setCartOpen(false);
+      return;
+    }
+    const headerBottom = storeHeaderRef.current?.getBoundingClientRect().bottom || 0;
+    setCartOverlayTop(Math.max(0, Math.ceil(headerBottom)));
+    setCartOpen(true);
+  };
 
   const chooseCategory = (id) => {
     setActiveCategory(id);
@@ -220,14 +240,21 @@ export default function Storefront({ categories, products, content, loading, cit
     if (selected) url.searchParams.set('category', selected.name);
     else url.searchParams.delete('category');
     window.history.replaceState(window.history.state, '', url);
-    document.getElementById("store-products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Wait for React to remove the other catalogue sections before calculating
+    // the target position. Scrolling against the old layout lands at the footer.
+    if (catalogScrollFrame.current) cancelAnimationFrame(catalogScrollFrame.current);
+    catalogScrollFrame.current = requestAnimationFrame(() => {
+      catalogScrollFrame.current = requestAnimationFrame(() => {
+        document.getElementById("store-products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
     // Immediately drop focus from the clicked card so :focus style never sticks during scroll
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   };
 
   return (
-    <div className="shop-page">
-      <header className="store-header">
+    <div className={`shop-page${cartOpen ? ' store-cart-is-open' : ''}`}>
+      <header className="store-header" ref={storeHeaderRef}>
         <div className="store-header-inner">
           <Link href="/" className="store-brand" aria-label="MT Boss home"><picture className="store-brand-picture"><img src="/logo.png" alt="MT Boss" /></picture><small>SHOP</small></Link>
           <div className="store-location-wrap">
@@ -239,7 +266,7 @@ export default function Storefront({ categories, products, content, loading, cit
           <label className="store-search"><Search size={20} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={content.search_placeholder} aria-label="Search materials" /></label>
           {isAdmin && <Link href="/dashboard?tab=shop-products" className="store-admin-add"><Plus size={17} /> Add Product</Link>}
           <Link href="/material-orders?role=user" className="store-orders" title="Track orders"><ClipboardList size={20} /><span>Orders</span></Link>
-          <button type="button" className="store-cart-button" onClick={() => setCartOpen(true)}><ShoppingCart size={20} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
+          <button type="button" className="store-cart-button" onClick={toggleCart} aria-expanded={cartOpen} aria-controls="store-cart-dialog"><ShoppingCart size={20} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
         </div>
       </header>
 
@@ -272,7 +299,7 @@ export default function Storefront({ categories, products, content, loading, cit
 
         <section className="store-section store-catalog" id="store-products" aria-labelledby="store-products-heading">
           <div className="store-section-heading"><div><span className="store-section-kicker">THE CATALOGUE</span><h2 id="store-products-heading">{searchTerm ? `Results for “${search}”` : activeCategory === "all" ? content.catalog_heading : categories.find((category) => String(category.id) === String(activeCategory))?.name || "Materials"}</h2></div><span className="store-section-note">{visible.length} items</span></div>
-          <div className="store-filter-row"><button type="button" className={activeCategory === "all" ? "is-active" : ""} onClick={() => setActiveCategory("all")}>All</button>{categories.map((category) => <button key={category.id} type="button" className={String(activeCategory) === String(category.id) ? "is-active" : ""} onClick={() => setActiveCategory(category.id)}>{category.name}</button>)}</div>
+          <div className="store-filter-row"><button type="button" className={activeCategory === "all" ? "is-active" : ""} onClick={() => chooseCategory("all")}>All</button>{categories.map((category) => <button key={category.id} type="button" className={String(activeCategory) === String(category.id) ? "is-active" : ""} onClick={() => chooseCategory(category.id)}>{category.name}</button>)}</div>
           <div className="store-catalog-tools"><label>Brand <select value={brandFilter} onChange={(event) => setBrandFilter(event.target.value)}><option value="all">All brands</option>{brands.map((brand) => <option key={brand} value={brand}>{brand}</option>)}</select></label><label>Sort by <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="featured">Featured</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name: A to Z</option></select></label></div>
           {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found. Try another search or category.</div>}
         </section>
@@ -290,13 +317,13 @@ export default function Storefront({ categories, products, content, loading, cit
               <span className="store-product-tag">{detailsProduct.brand || detailsProduct.category.name}</span>
               <h2>{detailsProduct.name}</h2>
               <p>{detailsProduct.category.name} · {displayUnit(detailsProduct.unit)}</p>
-              <div className="store-detail-price">Price on request</div>
+              <div className="store-detail-price">{detailsHasFixedPrice ? `₹${Number(detailsProduct.price).toLocaleString('en-IN')} / ${displayUnit(detailsProduct.unit)}` : 'Price on request'}</div>
               {detailsProduct.description && <p className="store-detail-description">{detailsProduct.description}</p>}
               {Object.keys(detailsProduct.specifications || {}).length > 0 && <><h3>Specifications</h3><dl className="store-specs">{Object.entries(detailsProduct.specifications).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{value}</dd></div>)}</dl></>}
               <div className="store-detail-actions store-detail-actions-priced">
                 <button type="button" className="store-detail-quote" disabled={!detailsCanOrder} onClick={() => { onQuote(detailsProduct); setDetailsProduct(null); }}>{detailsCanOrder ? 'Get Quote' : 'Unavailable'}</button>
-                <button type="button" className="store-detail-buy" disabled={!detailsCanOrder || !(Number(detailsProduct.price) > 0)} title={!(Number(detailsProduct.price) > 0) ? 'Exact price is required for Buy Now' : undefined} onClick={() => { onBuy(detailsProduct); setDetailsProduct(null); }}>{detailsCanOrder ? 'Buy Now' : 'Unavailable'}</button>
-                <button type="button" className="store-detail-add" disabled={!detailsCanOrder || !(Number(detailsProduct.price) > 0) || cart.length >= 20} title={!(Number(detailsProduct.price) > 0) ? 'Exact price is required for cart orders' : undefined} onClick={() => onAdd(detailsProduct)}>Add to cart</button>
+                <button type="button" className="store-detail-buy" disabled={!detailsCanOrder} onClick={() => { onBuy(detailsProduct); setDetailsProduct(null); }}>{detailsCanOrder ? 'Buy Now' : 'Unavailable'}</button>
+                <button type="button" className="store-detail-add" disabled={!detailsCanOrder || cart.length >= 20} onClick={() => onAdd(detailsProduct)}>Add to cart</button>
               </div>
             </div>
           </section>
@@ -304,8 +331,8 @@ export default function Storefront({ categories, products, content, loading, cit
       )}
 
       {cartOpen && (
-        <div className="store-overlay" onClick={() => setCartOpen(false)}>
-          <aside className="store-cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping cart" onClick={(e) => e.stopPropagation()}>
+        <div className="store-overlay store-cart-overlay" style={{ '--store-cart-top': `${cartOverlayTop}px` }} onClick={() => setCartOpen(false)}>
+          <aside id="store-cart-dialog" className="store-cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping cart" onClick={(e) => e.stopPropagation()}>
             <div className="store-drawer-head"><div><span>YOUR SELECTION</span><h2>My cart <small>({cartCount} items)</small></h2></div><button type="button" aria-label="Close cart" onClick={() => setCartOpen(false)}><X size={23} /></button></div>
             {cart.length ? <>
               <div className="store-cart-list">{cart.map((item) => {
@@ -314,18 +341,18 @@ export default function Storefront({ categories, products, content, loading, cit
                   <ProductVisual compact image={item.product.image} category={item.product.category} name={item.product.name} />
                   <div>
                     <strong>{item.product.name}</strong>
-                    <span>{item.product.category.name} · ₹{itemUnitPrice.toLocaleString('en-IN')} / {displayUnit(item.product.unit)}</span>
-                    <span>Line total: ₹{(itemUnitPrice * item.quantity).toLocaleString('en-IN')}</span>
+                    <span>{item.product.category.name} · {itemUnitPrice > 0 ? `₹${itemUnitPrice.toLocaleString('en-IN')} / ${displayUnit(item.product.unit)}` : 'Price on confirmation'}</span>
+                    <span>{itemUnitPrice > 0 ? `Line total: ₹${(itemUnitPrice * item.quantity).toLocaleString('en-IN')}` : 'Supplier will confirm the price'}</span>
                     <div className="store-cart-quantity"><button type="button" onClick={() => onChangeQty(item.product.id, -1)} aria-label={`Remove one ${item.product.name}`}><Minus size={14} /></button><b>{item.quantity}</b><button type="button" onClick={() => onChangeQty(item.product.id, 1)} aria-label={`Add one ${item.product.name}`}><Plus size={14} /></button></div>
                   </div>
                 </div>;
               })}</div>
               <div className="store-cart-bottom">
-                <div className="store-cart-estimate"><span>Product total</span><strong>₹{pricedTotal.toLocaleString("en-IN")}</strong></div>
+                <div className="store-cart-estimate"><span>{hasUnpricedItems ? 'Current total' : 'Product total'}</span><strong>{pricedTotal > 0 ? `₹${pricedTotal.toLocaleString("en-IN")}` : 'On confirmation'}{pricedTotal > 0 && hasUnpricedItems ? ' + quote items' : ''}</strong></div>
                 <p>Delivery charges, if applicable, are confirmed separately.</p>
                 <button type="button" className="store-checkout-button" onClick={() => { setCartOpen(false); onCheckout(); }}>Continue to checkout <ArrowRight size={18} /></button>
               </div>
-            </> : <div className="store-cart-empty"><ShoppingCart size={48} /><h3>Your cart is empty</h3><p>Add fixed-price materials to place an order together.</p><button type="button" onClick={() => setCartOpen(false)}>Continue shopping</button></div>}
+            </> : <div className="store-cart-empty"><ShoppingCart size={48} /><h3>Your cart is empty</h3><p>Add materials to place an order together.</p><button type="button" onClick={() => setCartOpen(false)}>Continue shopping</button></div>}
           </aside>
         </div>
       )}

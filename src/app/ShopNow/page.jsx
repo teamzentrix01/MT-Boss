@@ -46,7 +46,7 @@ function getUnitPrice(product, quantity = 1) {
   return tier ? Number(tier.price) : basePrice;
 }
 
-function getQuotePrice(category, selectedCity) {
+function getQuotePrice(category, selectedCity, product = null) {
   if (!category) return null;
   const cityPrices = category.city_prices && typeof category.city_prices === 'object'
     ? category.city_prices
@@ -56,10 +56,11 @@ function getQuotePrice(category, selectedCity) {
     : null;
   const cityRange = String(cityEntry?.[1]?.price_range || '').trim();
   const generalRange = String(category.price_range || '').trim();
-  const range = cityRange || generalRange;
+  const productRange = String(product?.quote_price_range || '').trim();
+  const range = productRange || cityRange || generalRange;
   if (!range) return null;
 
-  const unit = displayUnit(cityEntry?.[1]?.unit || category.unit, '');
+  const unit = productRange ? '' : displayUnit(cityEntry?.[1]?.unit || category.unit, '');
   const normalizedRange = range.replace(/(\d)\s*-\s*(?=\d)/g, '$1–');
   const withCurrency = /₹|\b(?:rs\.?|inr)\b/i.test(normalizedRange)
     ? normalizedRange
@@ -71,7 +72,7 @@ function getQuotePrice(category, selectedCity) {
   return {
     display,
     unit,
-    label: cityRange ? selectedCity : 'General',
+    label: productRange ? 'Product range' : cityRange ? selectedCity : 'General',
   };
 }
 
@@ -94,7 +95,6 @@ export default function ShopPage() {
       const saved = JSON.parse(localStorage.getItem("mtboss-shop-cart") || "[]");
       if (Array.isArray(saved)) setCart(saved.filter((item) => (
         item?.product?.id
-        && Number(item.product.price) > 0
         && Number.isInteger(item.quantity)
         && item.quantity > 0
       )));
@@ -125,11 +125,17 @@ export default function ShopPage() {
   useEffect(() => {
     if (!cartReady || !productsLoaded || !categories.length) return;
     setCart((previous) => previous.flatMap((item) => {
-      if (!item.product?.product_id) return [];
+      if (!item.product?.product_id) {
+        const category = categories.find((entry) => String(entry.id) === String(item.product?.category?.id))
+          || categories.find((entry) => entry.name.toLowerCase() === item.product?.category?.name?.toLowerCase());
+        const validNames = Array.isArray(category?.types) && category.types.length ? category.types : [category?.name];
+        if (!category || !validNames.some((name) => name?.toLowerCase() === item.product?.name?.toLowerCase())) return [];
+        return [{ product: { ...item.product, category }, quantity: Math.min(item.quantity, 10000) }];
+      }
       const current = allProducts.find((product) => product.id === item.product.product_id);
       const category = categories.find((entry) => entry.name.toLowerCase() === current?.category?.toLowerCase())
         || categories.find((entry) => current?.name?.toLowerCase().includes(entry.name.toLowerCase()));
-      if (!current || !category || Number(current.price) <= 0 || Number(current.quantity) < 1) return [];
+      if (!current || !category || Number(current.quantity) < 1) return [];
       return [{ product: { ...item.product, ...current, category, image: current.image_url, fromSupplier: true, product_id: current.id }, quantity: Math.min(item.quantity, current.quantity) }];
     }));
   }, [allProducts, cartReady, categories, productsLoaded]);
@@ -242,7 +248,6 @@ export default function ShopPage() {
   };
 
   const addToCart = (product) => {
-    if (!(Number(product?.price) > 0)) return;
     setCart((previous) => {
       const existing = previous.find((item) => item.product.id === product.id);
       const limit = product.fromSupplier ? Math.max(0, Number(product.quantity) || 0) : 10000;
@@ -482,7 +487,8 @@ export default function ShopPage() {
   const selectedUnitPrice = getUnitPrice(selectedProduct, selectedQuantity);
   const selectedProductTotal = selectedUnitPrice * selectedQuantity;
   const cartProductTotal = cart.reduce((sum, item) => sum + getUnitPrice(item.product, item.quantity) * item.quantity, 0);
-  const quotePrice = getQuotePrice(selectedCategory, selectedCity);
+  const cartHasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
+  const quotePrice = getQuotePrice(selectedCategory, selectedCity, selectedProduct);
 
   // ── render ──────────────────────────────────────────────────────────────────
   return (
@@ -491,7 +497,7 @@ export default function ShopPage() {
       <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} />
 
       {isModalOpen && mounted && createPortal(
-        <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>
+        <div className="shop-checkout-modal fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>
           <div className={`${modalBg} flex max-h-[calc(100dvh-1rem)] w-full max-w-xl flex-col overflow-hidden rounded-2xl border shadow-2xl sm:max-h-[calc(100dvh-2rem)]`}>
 
             {/* Modal Header */}
@@ -619,11 +625,11 @@ export default function ShopPage() {
                     <p className={`text-xs font-bold mb-2 ${headText}`}>Materials in your order</p>
                     {cart.map((item) => {
                       const itemUnitPrice = getUnitPrice(item.product, item.quantity);
-                      return <p key={item.product.id} className={`text-xs py-1 ${subText}`}>{item.product.name} · {item.quantity} {displayUnit(item.product.unit)} · ₹{(itemUnitPrice * item.quantity).toLocaleString("en-IN")}</p>;
+                      return <p key={item.product.id} className={`text-xs py-1 ${subText}`}>{item.product.name} · {item.quantity} {displayUnit(item.product.unit)} · {itemUnitPrice > 0 ? `₹${(itemUnitPrice * item.quantity).toLocaleString("en-IN")}` : 'Price on confirmation'}</p>;
                     })}
                     <div className={`mt-2 flex items-center justify-between border-t pt-2 ${isDarkMode ? "border-zinc-700" : "border-gray-200"}`}>
-                      <span className={`text-xs font-bold ${headText}`}>Product total</span>
-                      <strong className={`text-sm ${headText}`}>₹{cartProductTotal.toLocaleString("en-IN")}</strong>
+                      <span className={`text-xs font-bold ${headText}`}>{cartHasUnpricedItems ? 'Current total' : 'Product total'}</span>
+                      <strong className={`text-sm ${headText}`}>{cartProductTotal > 0 ? `₹${cartProductTotal.toLocaleString("en-IN")}` : 'On confirmation'}{cartProductTotal > 0 && cartHasUnpricedItems ? ' + quote items' : ''}</strong>
                     </div>
                     <p className={`text-[10px] mt-2 ${subText}`}>Delivery charges, if applicable, are confirmed separately.</p>
                   </div>
@@ -631,11 +637,16 @@ export default function ShopPage() {
                 {modalMode === "buy" ? (
                   <div className={`rounded-xl border px-4 py-3 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
                     <p className={`text-[9px] font-bold uppercase tracking-widest ${subText}`}>Order pricing</p>
-                    <div className="mt-1 flex items-center justify-between gap-3">
-                      <p className={`text-sm font-bold ${headText}`}>₹{selectedUnitPrice.toLocaleString("en-IN")} / {displayUnit(selectedProduct?.unit)}</p>
-                      <p className={`text-sm font-black ${headText}`}>Total: ₹{selectedProductTotal.toLocaleString("en-IN")}</p>
-                    </div>
-                    <p className={`text-[10px] mt-1 ${subText}`}>Product price is fixed for the selected quantity. Delivery charges, if applicable, are confirmed separately.</p>
+                    {selectedUnitPrice > 0 ? <>
+                      <div className="mt-1 flex items-center justify-between gap-3">
+                        <p className={`text-sm font-bold ${headText}`}>₹{selectedUnitPrice.toLocaleString("en-IN")} / {displayUnit(selectedProduct?.unit)}</p>
+                        <p className={`text-sm font-black ${headText}`}>Total: ₹{selectedProductTotal.toLocaleString("en-IN")}</p>
+                      </div>
+                      <p className={`text-[10px] mt-1 ${subText}`}>Product price is fixed for the selected quantity. Delivery charges, if applicable, are confirmed separately.</p>
+                    </> : <>
+                      <p className={`mt-1 text-base font-black ${headText}`}>Price on confirmation</p>
+                      <p className={`text-[10px] mt-1 ${subText}`}>The supplier will confirm one final price before processing the order.</p>
+                    </>}
                   </div>
                 ) : (
                   quotePrice ? (

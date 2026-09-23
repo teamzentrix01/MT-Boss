@@ -17,6 +17,7 @@
 .shop-admin-card p{color:var(--shop-admin-muted);font-size:13px}
 .shop-admin-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .shop-admin-fields label{display:flex;flex-direction:column;gap:7px;color:var(--shop-admin-text);font-size:12px;font-weight:700}
+.shop-admin-fields label>small{color:var(--shop-admin-muted);font-size:10px;font-weight:500;line-height:1.4}
 .shop-admin-fields input,.shop-admin-fields select,.shop-admin-fields textarea{width:100%;min-height:39px;border:1px solid var(--shop-admin-border);border-radius:7px;background:var(--shop-admin-input);color:var(--shop-admin-text);padding:9px 11px;font:13px Arial,sans-serif}
 .shop-admin-fields textarea{resize:vertical}
 .shop-admin-wide{grid-column:1/-1}

@@ -4,7 +4,19 @@
 /* Reset ALL buttons inside the shop page — override the global animated-button system completely */
 .shop-page button{background-color:transparent!important;background-image:none!important;background-position:initial!important;background-size:initial!important;border-color:transparent!important;box-shadow:none!important;color:inherit!important;transform:none!important;transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease!important;will-change:auto!important}
 /* No residual animation on any pointer interaction — background-color MUST be here to prevent globals.css blue leak */
-.shop-page button:hover:not(:disabled),.shop-page button:active:not(:disabled),.shop-page button:focus,.shop-page button:focus-visible{background-color:transparent!important;background-image:none!important;background-position:initial!important;background-size:initial!important;box-shadow:none!important;transform:none!important}
+.shop-page button:hover:where(:not(:disabled)),.shop-page button:active:where(:not(:disabled)),.shop-page button:focus,.shop-page button:focus-visible{background-color:transparent!important;background-image:none!important;background-position:initial!important;background-size:initial!important;box-shadow:none!important;transform:none!important}
+
+/* The checkout is portalled outside .shop-page, so neutralise the global
+   white sliding button animation here as well. */
+.shop-checkout-modal button,
+.shop-checkout-modal button:hover:not(:disabled),
+.shop-checkout-modal button:active:not(:disabled),
+.shop-checkout-modal button:focus-visible{
+  background-image:none!important;
+  background-position:initial!important;
+  background-size:initial!important;
+  transform:none!important;
+}
 /* Only show a thin keyboard-focus ring — never on mouse/touch clicks */
 .shop-page button:focus:not(:focus-visible){outline:none!important;box-shadow:none!important}
 .shop-page button:focus-visible,.shop-page a:focus-visible,.shop-page input:focus-visible,.shop-page select:focus-visible{outline:2px solid var(--brand-blue,#2196F3)!important;outline-offset:2px}
@@ -253,7 +265,7 @@
    Full blue bg hover caused 'stuck blue' during scroll-wheel scrolling on desktop.
    A border highlight is barely visible if it persists momentarily during scroll. */
 @media(hover:hover) and (pointer:fine){.shop-page .store-category:hover{background:transparent!important;border-color:#a9d7fa!important;box-shadow:0 9px 25px #2196f31c!important;color:inherit!important}}
-.store-catalog{scroll-margin-top:130px}
+.store-catalog{scroll-margin-top:calc(var(--shop-header-height) + var(--shop-category-height) + 12px)}
 
 /* ── Neutralise the global button animation for all shop card-internal buttons ─ */
 /* These selectors must be specific enough to beat globals.css !important rules. */
@@ -338,6 +350,17 @@
 .store-cart-empty{min-height:290px;display:flex;align-items:center;justify-content:center;flex-direction:column}
 @media(max-width:800px){.store-cart-drawer{width:min(640px,100%);height:min(720px,85dvh)}}
 @media(max-width:560px){.store-overlay{padding:12px}.store-cart-drawer{width:100%;height:min(680px,88dvh);max-height:calc(100dvh - 24px);border-radius:14px}.store-drawer-head{padding:19px}.store-cart-bottom{padding:18px}}
+
+/* Keep the cart trigger visible while its dialog is open. The overlay begins
+   at the measured bottom edge of the sticky store header. */
+.shop-page.store-cart-is-open>.store-header{z-index:10030}
+.store-cart-overlay{
+  top:var(--store-cart-top,0px);
+  height:auto;
+}
+.store-cart-overlay .store-cart-drawer{
+  max-height:calc(100dvh - var(--store-cart-top,0px) - 20px);
+}
 
 @media(max-width:800px){.store-header-inner{grid-template-columns:auto minmax(0,1fr) auto auto}.store-brand{grid-column:1}.store-brand img{height:39px;max-width:105px}.store-location-wrap{grid-column:2;min-width:0}.store-admin-add{grid-column:3;padding:9px;font-size:11px}.shop-page .store-cart-button{grid-column:4}.store-search{grid-column:1/5}.store-category-nav{scrollbar-width:none}.store-category-nav::-webkit-scrollbar{display:none}.store-category-nav>div{min-width:max-content;justify-content:flex-start;padding:0 12px;gap:4px}.shop-page .store-category-nav button{padding:12px 9px!important}}
 @media(max-width:560px){.store-header-inner{grid-template-columns:max-content minmax(0,1fr) max-content max-content}.store-brand{grid-column:1}.store-brand img{height:34px;max-width:92px}.store-brand small{font-size:8px;letter-spacing:1px}.store-location-wrap{grid-column:2;min-width:0}.store-location span{min-width:0}.store-location small{max-width:105px;overflow:hidden;text-overflow:ellipsis}.store-admin-add{grid-row:1;grid-column:3;width:40px;height:40px;padding:9px!important;gap:0;overflow:hidden;font-size:0}.store-admin-add svg{width:18px;height:18px}.shop-page .store-cart-button{grid-column:4}.store-search{grid-column:1/-1}}

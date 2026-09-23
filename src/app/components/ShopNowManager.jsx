@@ -7,7 +7,7 @@ import { defaultShopStorefront } from '@/lib/shop-storefront-defaults';
 import './ShopNowManager.css';
 
 const units = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
-const emptyProduct = { name: '', description: '', category: '', price: '', compare_at_price: '', brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
+const emptyProduct = { name: '', description: '', category: '', quote_price_range: '', price: '', compare_at_price: '', brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
 const fields = [
   ['hero_kicker', 'Banner eyebrow'], ['hero_title', 'Banner title'],
   ['hero_highlight', 'Highlighted title'], ['hero_description', 'Banner description'],
@@ -73,7 +73,7 @@ function ProductManager() {
     setEditingId(product.id);
     setForm({
       name: product.name || '', description: product.description || '', category: product.category || '',
-      price: product.price ?? '', compare_at_price: product.compare_at_price ?? '', brand: product.brand || '', unit: product.unit || '', quantity: product.quantity ?? 0,
+      quote_price_range: product.quote_price_range || '', price: product.price ?? '', compare_at_price: product.compare_at_price ?? '', brand: product.brand || '', unit: product.unit || '', quantity: product.quantity ?? 0,
       image_url: product.image_url || '', available_cities: product.available_cities || [], is_available: product.is_available !== false,
     });
     setGalleryText((product.images || []).join('\n'));
@@ -118,7 +118,7 @@ function ProductManager() {
     try {
       const response = await fetch('/api/admin/shop-products', {
         method: 'PUT', headers: adminHeaders(),
-        body: JSON.stringify({ ...product, is_available: !product.is_available }),
+        body: JSON.stringify({ id: product.id, action: 'toggle', is_available: !product.is_available }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not update product');
@@ -150,14 +150,15 @@ function ProductManager() {
   };
 
   return <div className="shop-admin-panel">
-    <div className="shop-admin-heading"><div><h2>Products</h2><p>Set a selling price for Buy Now + cart, or leave it blank for the separate Get Quote flow. Supplier uploads appear here too.</p></div><button type="button" onClick={load}>Refresh</button></div>
+    <div className="shop-admin-heading"><div><h2>Products</h2><p>Every product needs a Get Quote range and a fixed Buy Now price. Supplier uploads appear here too.</p></div><button type="button" onClick={load}>Refresh</button></div>
     {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
     <form id="shop-product-form" className="shop-admin-card" onSubmit={save}>
       <h3>{editingId ? 'Edit product' : 'Add product'}</h3>
       <div className="shop-admin-fields">
         <label>Product name *<input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
         <label>Category *<select required value={form.category} onChange={(e) => { const cat = categories.find((item) => item.name === e.target.value); setForm({ ...form, category: e.target.value, unit: cat?.unit || form.unit }); }}><option value="">Select category</option>{categories.map((cat) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}</select></label>
-        <label>Selling price (₹)<input type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Leave blank for Get Quote only" /></label>
+        <label>Get Quote price range (₹) *<input required type="text" maxLength={100} value={form.quote_price_range} onChange={(e) => setForm({ ...form, quote_price_range: e.target.value })} placeholder="Example: 40-80" /><small>Enter a minimum and maximum lump-sum range, e.g. 40-80.</small></label>
+        <label>Buy Now fixed price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Example: 60" /></label>
         <label>Original price (₹, optional)<input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} placeholder="Shows discount when above selling price" /></label>
         <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
         <label>Unit *<select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">Select unit</option>{units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select></label>
@@ -171,7 +172,7 @@ function ProductManager() {
       </div>
       <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-upload">{uploading ? 'Uploading...' : 'Upload image'}<input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden /></label>{form.image_url && <img className="shop-admin-thumb" src={form.image_url} alt="Product preview" />}<button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
     </form>
-    <div className="shop-admin-card"><h3>All products ({products.length})</h3>{loading ? <p>Loading products...</p> : products.length ? <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Price / unit</th><th>Source</th><th>Status</th><th>Actions</th></tr></thead><tbody>{products.map((product) => <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{Number(product.price) > 0 ? `₹${Number(product.price).toLocaleString('en-IN')} / ${product.unit || 'unit'}` : 'Get Quote only'}</td><td>{product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td><td>{product.is_available ? 'Visible' : 'Hidden'}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button><button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button><button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>)}</tbody></table></div> : <p>No products yet. Add the first product above.</p>}</div>
+    <div className="shop-admin-card"><h3>All products ({products.length})</h3>{loading ? <p>Loading products...</p> : products.length ? <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Get Quote range</th><th>Buy Now price / unit</th><th>Source</th><th>Status</th><th>Actions</th></tr></thead><tbody>{products.map((product) => <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{Number(product.price) > 0 ? `₹${Number(product.price).toLocaleString('en-IN')} / ${product.unit || 'unit'}` : '—'}</td><td>{product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td><td>{product.is_available ? 'Visible' : 'Hidden'}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button><button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button><button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>)}</tbody></table></div> : <p>No products yet. Add the first product above.</p>}</div>
   </div>;
 }
 

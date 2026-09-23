@@ -182,12 +182,6 @@ export async function POST(req) {
             failure.status = 409;
             throw failure;
           }
-          const hasFixedPrice = Number(product.price) > 0;
-          if (orderIntent !== 'quote' && !hasFixedPrice) {
-            const failure = new Error(`${product.name} is quote-only. Please use Get Quote instead of adding it to an order.`);
-            failure.status = 409;
-            throw failure;
-          }
           if (!(product.available_cities || []).some((city) => city.trim().toLowerCase() === canonicalCity.trim().toLowerCase())) {
             const failure = new Error(`${product.name} is not available for delivery in ${canonicalCity}.`);
             failure.status = 409;
@@ -204,10 +198,6 @@ export async function POST(req) {
               .sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity))[0];
             indicativeUnitPrice = tier ? Number(tier.price) : Number(product.price);
           }
-        } else if (orderIntent !== 'quote') {
-          const failure = new Error('Direct orders require a fixed-price product. Please use Get Quote for custom materials.');
-          failure.status = 409;
-          throw failure;
         }
         const orderReference = `MO-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const itemQuantity = isCart ? `${item.quantity} ${cleanText(item.order_unit) || 'pcs'}` : quantity_text;

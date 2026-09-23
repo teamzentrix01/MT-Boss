@@ -9,6 +9,7 @@ const ensureTable = createInitializationGuard(async () => {
       supplier_id INTEGER NOT NULL,
       name VARCHAR(255) NOT NULL,
       description TEXT,
+      quote_price_range VARCHAR(100),
       price NUMERIC(10,2),
       unit VARCHAR(100),
       quantity INTEGER DEFAULT 0,
@@ -27,6 +28,7 @@ const ensureTable = createInitializationGuard(async () => {
   `);
   await pool.query(`ALTER TABLE supplier_materials
     ADD COLUMN IF NOT EXISTS brand VARCHAR(120),
+    ADD COLUMN IF NOT EXISTS quote_price_range VARCHAR(100),
     ADD COLUMN IF NOT EXISTS compare_at_price NUMERIC(10,2),
     ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb,
     ADD COLUMN IF NOT EXISTS specifications JSONB DEFAULT '{}'::jsonb,
@@ -45,7 +47,7 @@ export async function GET(req) {
     const category = String(searchParams.get('category') || '').trim();
 
     const result = await pool.query(
-      `SELECT m.id, m.supplier_id, m.name, m.description, m.price, m.unit, m.quantity, m.image_url, m.category,
+      `SELECT m.id, m.supplier_id, m.name, m.description, m.quote_price_range, m.price, m.unit, m.quantity, m.image_url, m.category,
               m.brand, m.compare_at_price, m.images, m.specifications, m.bulk_pricing,
               CASE
                 WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
@@ -67,6 +69,7 @@ export async function GET(req) {
       supplier_id: row.supplier_id,
       name: row.name,
       description: row.description || '',
+      quote_price_range: row.quote_price_range || '',
       price: row.price,
       unit: row.unit || '',
       quantity: row.quantity,

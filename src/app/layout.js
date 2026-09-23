@@ -13,7 +13,9 @@ import { usePathname } from "next/navigation";
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   const isShopPage = pathname?.toLowerCase() === "/shopnow";
+  const isHomePage = pathname === "/";
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [homePopupDismissed, setHomePopupDismissed] = useState(false);
 
 
   // 1. Page load hote hi localStorage se theme check karein
@@ -123,8 +125,10 @@ export default function RootLayout({ children }) {
         {/* Floating Chatbot Assistant Widget */}
         <ChatbotWidget isDarkMode={isDarkMode} />
 
-        {/* On-Arrival Project Consultation Modal */}
-        {!isShopPage && <LeadConsultationModal isDarkMode={isDarkMode} />}
+        {/* On-arrival consultation popup is exclusive to the home page. */}
+        {isHomePage && !homePopupDismissed && (
+          <LeadConsultationModal isDarkMode={isDarkMode} onDismiss={() => setHomePopupDismissed(true)} />
+        )}
 
         {/* Floating WhatsApp support button */}
         {isShopPage && COMPANY_CONTACT.telHref && <a

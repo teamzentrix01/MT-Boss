@@ -9,6 +9,7 @@ const ensureTable = createInitializationGuard(async () => {
     supplier_id INTEGER NOT NULL,
     name VARCHAR(255) NOT NULL,
     description TEXT,
+    quote_price_range VARCHAR(100),
     price NUMERIC(10,2),
     unit VARCHAR(100),
     quantity INTEGER DEFAULT 0,
@@ -26,6 +27,7 @@ const ensureTable = createInitializationGuard(async () => {
   )`);
   await pool.query(`ALTER TABLE supplier_materials
     ADD COLUMN IF NOT EXISTS brand VARCHAR(120),
+    ADD COLUMN IF NOT EXISTS quote_price_range VARCHAR(100),
     ADD COLUMN IF NOT EXISTS compare_at_price NUMERIC(10,2),
     ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb,
     ADD COLUMN IF NOT EXISTS specifications JSONB DEFAULT '{}'::jsonb,
@@ -44,9 +46,17 @@ async function validProduct(body, { allowUnassigned = false } = {}) {
     [category]
   ) : { rows: [{ name: '', unit: body.unit || 'pcs' }] };
   if (!categoryResult.rows.length) return { error: 'Choose an existing Shop Now category' };
-  const rawPrice = body.price === '' || body.price === null || body.price === undefined ? null : Number(body.price);
-  if (rawPrice !== null && (!Number.isFinite(rawPrice) || rawPrice <= 0 || rawPrice > 99999999.99)) {
-    return { error: 'Enter a positive selling price, or leave it blank for Get Quote' };
+  const quotePriceRange = String(body.quote_price_range || '').trim();
+  const rangeMatch = quotePriceRange.match(/^(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)\s*[-–]\s*(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)$/i);
+  if (!rangeMatch) return { error: 'Enter the required Get Quote price range like 40-80' };
+  const quoteMinimum = Number(rangeMatch[1]);
+  const quoteMaximum = Number(rangeMatch[2]);
+  if (!(quoteMinimum > 0) || quoteMaximum <= quoteMinimum || quoteMaximum > 99999999.99) {
+    return { error: 'Get Quote maximum price must be greater than its minimum, e.g. 40-80' };
+  }
+  const rawPrice = Number(body.price);
+  if (!Number.isFinite(rawPrice) || rawPrice <= 0 || rawPrice > 99999999.99) {
+    return { error: 'Enter the required positive Buy Now fixed price' };
   }
   const quantity = Number(body.quantity ?? 0);
   if (!Number.isInteger(quantity) || quantity < 0 || quantity > 100000000) {
@@ -67,6 +77,7 @@ async function validProduct(body, { allowUnassigned = false } = {}) {
     name,
     category: categoryResult.rows[0].name,
     description: String(body.description || '').trim().slice(0, 2000),
+    quote_price_range: `${quoteMinimum}-${quoteMaximum}`,
     price: rawPrice,
     unit: String(body.unit || categoryResult.rows[0].unit || 'pcs').trim().slice(0, 100),
     quantity,
@@ -85,7 +96,7 @@ export async function GET(req) {
   if (!requireRole(req, 'admin')) return unauthorized();
   try {
     await ensureTable();
-    const result = await pool.query(`SELECT id, supplier_id, name, description, price, unit,
+    const result = await pool.query(`SELECT id, supplier_id, name, description, quote_price_range, price, unit,
       quantity, image_url, category, brand, compare_at_price, images, specifications, bulk_pricing, available_cities, is_available, created_at
       FROM supplier_materials ORDER BY created_at DESC, id DESC`);
     return NextResponse.json({ success: true, data: result.rows });
@@ -103,9 +114,9 @@ export async function POST(req) {
     if (parsed.error) return NextResponse.json({ success: false, error: parsed.error }, { status: 400 });
     const p = parsed.value;
     const result = await pool.query(`INSERT INTO supplier_materials
-      (supplier_id, name, description, price, unit, quantity, image_url, category, brand, compare_at_price, images, specifications, bulk_pricing, available_cities, is_available)
-      VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10::jsonb, $11::jsonb, $12::jsonb, $13::jsonb, $14) RETURNING *`,
-      [p.name, p.description, p.price, p.unit, p.quantity, p.image_url, p.category, p.brand, p.compare_at_price, JSON.stringify(p.images), JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing), JSON.stringify(p.available_cities), p.is_available]);
+      (supplier_id, name, description, quote_price_range, price, unit, quantity, image_url, category, brand, compare_at_price, images, specifications, bulk_pricing, available_cities, is_available)
+      VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb, $12::jsonb, $13::jsonb, $14::jsonb, $15) RETURNING *`,
+      [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url, p.category, p.brand, p.compare_at_price, JSON.stringify(p.images), JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing), JSON.stringify(p.available_cities), p.is_available]);
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
     console.error('POST admin shop-products error:', error);
@@ -120,14 +131,22 @@ export async function PUT(req) {
     const body = await req.json();
     const id = Number(body.id);
     if (!Number.isInteger(id) || id < 1) return NextResponse.json({ success: false, error: 'Valid product ID required' }, { status: 400 });
+    if (body.action === 'toggle') {
+      const toggled = await pool.query(
+        'UPDATE supplier_materials SET is_available=$1, updated_at=NOW() WHERE id=$2 RETURNING *',
+        [body.is_available === true, id]
+      );
+      if (!toggled.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+      return NextResponse.json({ success: true, data: toggled.rows[0] });
+    }
     const parsed = await validProduct(body, { allowUnassigned: true });
     if (parsed.error) return NextResponse.json({ success: false, error: parsed.error }, { status: 400 });
     const p = parsed.value;
     const result = await pool.query(`UPDATE supplier_materials SET name=$1, description=$2,
-      price=$3, unit=$4, quantity=$5, image_url=$6, category=$7,
-      brand=$8, compare_at_price=$9, images=$10::jsonb, specifications=$11::jsonb,
-      bulk_pricing=$12::jsonb, available_cities=$13::jsonb, is_available=$14, updated_at=NOW() WHERE id=$15 RETURNING *`,
-      [p.name, p.description, p.price, p.unit, p.quantity, p.image_url, p.category, p.brand, p.compare_at_price, JSON.stringify(p.images), JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing), JSON.stringify(p.available_cities), p.is_available, id]);
+      quote_price_range=$3, price=$4, unit=$5, quantity=$6, image_url=$7, category=$8,
+      brand=$9, compare_at_price=$10, images=$11::jsonb, specifications=$12::jsonb,
+      bulk_pricing=$13::jsonb, available_cities=$14::jsonb, is_available=$15, updated_at=NOW() WHERE id=$16 RETURNING *`,
+      [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url, p.category, p.brand, p.compare_at_price, JSON.stringify(p.images), JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing), JSON.stringify(p.available_cities), p.is_available, id]);
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
