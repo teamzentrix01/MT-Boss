@@ -8,7 +8,7 @@ import PortfolioProjectCard from "../../components/PortfolioProjectCard";
 export default function ProjectGallery() {
   const [filter, setFilter] = useState("All");
   const [isDark, setIsDark] = useState(false);
-  const categories = ["All", "Commercial", "Residential", "Hospitality", "Industrial"];
+  const categories = ["All", "Commercial", "Residential", "Hospitality", "Industrial", "Ongoing Projects"];
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {

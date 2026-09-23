@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -260,7 +261,7 @@ export default function Storefront({ categories, products, content, loading, cit
           <div className="store-section-heading"><div><span className="store-section-kicker">START SHOPPING</span><h2 id="store-categories-heading">{content.categories_heading}</h2></div><span className="store-section-note">Pick a category to see materials</span></div>
           {loading ? <div className="store-loading">Loading categories...</div> : categories.length ? <div className="store-category-grid">{categories.map((category) => {
             const { tone, Icon } = categoryStyle(category.name);
-            return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}><span className="store-category-art">{category.image ? <img src={category.image} alt="" loading="lazy" /> : <Icon size={37} strokeWidth={1.5} />}</span><strong>{category.name}</strong><span>Explore <ArrowRight size={13} /></span></button>;
+            return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}><span className="store-category-art">{category.image ? <>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={category.image} alt="" loading="lazy" /></> : <Icon size={37} strokeWidth={1.5} />}</span><strong>{category.name}</strong><span>Explore <ArrowRight size={13} /></span></button>;
           })}</div> : <div className="store-empty">Categories are being added. Please check back soon.</div>}
         </section>
 

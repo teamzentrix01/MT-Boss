@@ -272,7 +272,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
             <Link
               href="/ShopNow"
-              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+              className="px-4 2xl:px-5 py-2 text-xs 2xl:text-sm font-semibold whitespace-nowrap bg-[var(--brand-blue)] text-black rounded-md hover:bg-[var(--brand-blue-dark)] transition-all duration-200"
             >
               Shop Now
             </Link>
