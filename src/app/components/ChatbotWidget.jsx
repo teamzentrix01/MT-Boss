@@ -4,9 +4,11 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 const QUICK_ACTIONS = [
+  { label: '🏗️ Construction Services', href: '/Services/professionals', prompt: 'Tell me about the construction services offered by MT Boss.' },
+  { label: '🤝 Agents', href: '/Services/agents', prompt: 'How can I connect with MT Boss agents?' },
   { label: '🧮 Cost Calculator', href: '/calculator', prompt: 'What are the current house construction rates and packages?' },
   { label: '📦 Buy Materials', href: '/ShopNow', prompt: 'What are the wholesale prices for Cement and TMT Steel?' },
-  { label: '🏠 Bareilly Plots', href: '/buy-sale', prompt: 'Show me verified plots and properties in Bareilly and UP' },
+  { label: '🏡 Plots & Properties', href: '/buy-sale', prompt: 'Show me verified plots and properties in Bareilly and UP' },
   { label: '💼 Franchise Info', href: '/franchise', prompt: 'What are the MT-Boss franchise investment models and requirements?' },
 ];
 
@@ -16,11 +18,13 @@ const INITIAL_MESSAGE = {
 
 I am your official AI Project Advisor. You can ask me anything in **English** or **Hinglish** regarding construction, materials, properties, or franchise partnerships:
 
+- 🏗️ **Construction Services** ([Explore](/Services/professionals))
+- 🤝 **Agents** ([Connect with Agents](/Services/agents))
 - 🧮 **House Construction Cost** ([Live Calculator](/calculator))
 - 📦 **Wholesale Building Materials** ([Shop Now](/ShopNow))
 - 🏡 **Plots & Properties** ([Explore Properties](/buy-sale))
 - 💼 **Franchise Partnership** ([Franchise Portal](/franchise))
-- 💬 **Direct WhatsApp Support:** [+91 94584 10866](https://wa.me/919458410866)`,
+- 💬 **WhatsApp Support:** [+91 94584 10866](https://wa.me/919458410866)`,
 };
 
 export default function ChatbotWidget({ isDarkMode }) {
