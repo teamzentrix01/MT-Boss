@@ -399,6 +399,43 @@ button[aria-expanded]:hover * {
   transform: none !important;
   box-shadow: none !important;
 }
+
+/* Chatbot quick-action pills: solid blue, full label, no gradient clip */
+.chatbot-quick-strip {
+  scrollbar-width: thin;
+}
+.chatbot-quick-action {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap !important;
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid var(--brand-blue) !important;
+  background-color: var(--brand-blue) !important;
+  background-image: none !important;
+  background-position: initial !important;
+  background-size: initial !important;
+  color: #111 !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+  will-change: auto !important;
+}
+.chatbot-quick-action:hover,
+.chatbot-quick-action:active,
+.chatbot-quick-action:focus-visible {
+  background-color: var(--brand-blue, #1976d2) !important;
+  background-image: none !important;
+  border-color: var(--brand-blue, #1976d2) !important;
+  color: #111 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
 .privacy-consent-field {
   width: 100%;
   margin: 14px 0;

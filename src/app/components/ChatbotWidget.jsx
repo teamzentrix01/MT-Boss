@@ -305,12 +305,13 @@ export default function ChatbotWidget({ isDarkMode }) {
             </div>
 
             {/* Quick Action Navigation Strip */}
-            <div className="px-3 py-2 bg-zinc-900/60 border-b border-white/5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            <div className="chatbot-quick-strip px-3 py-2 bg-zinc-900/60 border-b border-white/5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               {QUICK_ACTIONS.map((qa, i) => (
                 <button
                   key={i}
+                  type="button"
                   onClick={() => handleSend(qa.prompt)}
-                  className="whitespace-nowrap px-2.5 py-1 rounded-full text-[10px] font-semibold bg-white/5 hover:bg-sky-500 hover:text-black border border-white/10 hover:border-sky-400 transition-all text-zinc-300"
+                  className="chatbot-quick-action"
                 >
                   {qa.label}
                 </button>
