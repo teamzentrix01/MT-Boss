@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, CheckCircle2, ChevronDown, ClipboardList, Grid3X3,
@@ -10,6 +10,19 @@ import {
 } from "lucide-react";
 import "./shop.css";
 import ShopCategoryNav from "./ShopCategoryNav";
+
+function OptimizedImage({ src, alt = '', ...props }) {
+  let unoptimized = false;
+  try {
+    if (!String(src).startsWith('/')) {
+      const hostname = new URL(src).hostname;
+      unoptimized = hostname !== 'res.cloudinary.com' && hostname !== 'images.unsplash.com';
+    }
+  } catch {
+    unoptimized = true;
+  }
+  return <Image src={src} alt={alt} unoptimized={unoptimized} {...props} />;
+}
 
 function categoryStyle(name = "") {
   const value = name.toLowerCase();
@@ -27,7 +40,13 @@ function ProductVisual({ image, category, name, compact = false }) {
   return (
     <div className={`store-visual store-visual-${tone}${compact ? " store-visual-compact" : ""}`}>
       {image || category?.image ? (
-        <img src={image || category.image} alt={name} loading="lazy" />
+        <OptimizedImage
+          src={image || category.image}
+          alt={name}
+          fill
+          sizes={compact ? '68px' : '(max-width: 560px) 50vw, (max-width: 1100px) 25vw, 220px'}
+          quality={70}
+        />
       ) : (
         <><span className="store-visual-ring" /><Icon size={compact ? 27 : 54} strokeWidth={1.4} aria-hidden="true" /></>
       )}
@@ -269,7 +288,7 @@ export default function Storefront({ categories, products, content, loading, cit
     <div className={`shop-page${cartOpen ? ' store-cart-is-open' : ''}`}>
       <header className="store-header" ref={storeHeaderRef}>
         <div className="store-header-inner">
-          <Link href="/" className="store-brand" aria-label="MT Boss home"><picture className="store-brand-picture"><img src="/logo.png" alt="MT Boss" /></picture><small>SHOP</small></Link>
+          <Link href="/" className="store-brand" aria-label="MT Boss home"><picture className="store-brand-picture"><Image src="/logo.png" alt="MT Boss" width={46} height={46} sizes="(max-width: 560px) 34px, (max-width: 800px) 39px, 46px" /></picture><small>SHOP</small></Link>
           <div className="store-location-wrap">
             <button type="button" className="store-location" onClick={() => setCityOpen(!cityOpen)} aria-expanded={cityOpen}>
               <MapPin size={20} /><span><strong>Deliver to {selectedCity || "your city"}</strong><small>{selectedCity ? "Change location" : "Select delivery location"}</small></span><ChevronDown size={16} />
@@ -297,7 +316,7 @@ export default function Storefront({ categories, products, content, loading, cit
         <div className="store-breadcrumb"><Link href="/">Home</Link><span>/</span><strong>Shop materials</strong></div>
         <section className="store-hero">
           <div className="store-hero-copy"><span className="store-eyebrow">{content.hero_kicker}</span><h1>{content.hero_title} <em>{content.hero_highlight}</em></h1><p>{content.hero_description}</p><button type="button" className="store-hero-button" onClick={() => chooseCategory("all")}>{content.hero_button} <ArrowRight size={18} /></button></div>
-          <div className="store-hero-photo" role="img" aria-label="Construction materials"><picture className="store-hero-picture"><img src={content.hero_image} alt="" /></picture><span className="store-hero-photo-label"><CheckCircle2 size={17} /> {content.hero_badge}</span></div>
+          <div className="store-hero-photo" role="img" aria-label="Construction materials"><picture className="store-hero-picture"><OptimizedImage src={content.hero_image} alt="" fill sizes="(max-width: 560px) 100vw, 48vw" quality={75} priority /></picture><span className="store-hero-photo-label"><CheckCircle2 size={17} /> {content.hero_badge}</span></div>
         </section>
 
         <section className="store-promos" aria-label="Shopping benefits">
@@ -308,7 +327,7 @@ export default function Storefront({ categories, products, content, loading, cit
           <div className="store-section-heading"><div><span className="store-section-kicker">START SHOPPING</span><h2 id="store-categories-heading">{content.categories_heading}</h2></div><span className="store-section-note">Pick a category to see materials</span></div>
           {loading ? <div className="store-loading">Loading categories...</div> : categories.length ? <div className="store-category-grid">{categories.map((category) => {
             const { tone, Icon } = categoryStyle(category.name);
-            return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}><span className="store-category-art">{category.image ? <img src={category.image} alt="" loading="lazy" /> : <Icon size={37} strokeWidth={1.5} />}</span><strong>{category.name}</strong><span>Explore <ArrowRight size={13} /></span></button>;
+            return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}><span className="store-category-art">{category.image ? <OptimizedImage src={category.image} alt="" fill sizes="(max-width: 560px) 33vw, 180px" quality={70} /> : <Icon size={37} strokeWidth={1.5} />}</span><strong>{category.name}</strong><span>Explore <ArrowRight size={13} /></span></button>;
           })}</div> : <div className="store-empty">Categories are being added. Please check back soon.</div>}
         </section>
 
@@ -332,7 +351,7 @@ export default function Storefront({ categories, products, content, loading, cit
             <button type="button" className="store-detail-close" onClick={() => setDetailsProduct(null)} aria-label="Close product details"><X size={22} /></button>
             <div className="store-detail-gallery">
               <ProductVisual image={detailsProduct.image} category={detailsProduct.category} name={detailsProduct.name} />
-              {detailsProduct.images?.length > 0 && <div className="store-detail-thumbs">{detailsProduct.images.map((url) => <img key={url} src={url} alt={`${detailsProduct.name} additional view`} loading="lazy" />)}</div>}
+              {detailsProduct.images?.length > 0 && <div className="store-detail-thumbs">{detailsProduct.images.map((url) => <OptimizedImage key={url} src={url} width={70} height={70} sizes="70px" quality={70} alt={`${detailsProduct.name} additional view`} />)}</div>}
             </div>
             <div className="store-detail-info">
               <span className="store-product-tag">{detailsProduct.brand || detailsProduct.category.name}</span>

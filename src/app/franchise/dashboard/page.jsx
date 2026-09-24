@@ -1,13 +1,17 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import FreeTimeSlotsManager from '@/app/components/FreeTimeSlotsManager';
-import FranchiseOperationsManager from '@/app/components/FranchiseOperationsManager';
 import {
   EMPTY_FRANCHISE_PERMISSIONS,
   normalizeFranchisePermissions,
 } from '@/lib/franchise-permissions';
+
+const deferredPanelLoading = () => <div className="fd-empty">Loading workspace...</div>;
+const FreeTimeSlotsManager = dynamic(() => import('@/app/components/FreeTimeSlotsManager'), { loading: deferredPanelLoading });
+const FranchiseOperationsManager = dynamic(() => import('@/app/components/FranchiseOperationsManager'), { loading: deferredPanelLoading });
 
 const CATEGORIES = ['Commercial', 'Residential', 'Hospitality', 'Industrial', 'IT Infrastructure', 'Luxury Home'];
 const leadStatuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
@@ -103,6 +107,8 @@ export default function FranchiseDashboardPage() {
     }
 
     initialize();
+    // The fetch helpers are stable page-local functions used only during boot.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   useEffect(() => {
@@ -128,12 +134,14 @@ export default function FranchiseDashboardPage() {
         setPermissions(currentPermissions);
         localStorage.setItem('franchise', JSON.stringify(data.data));
 
-        if (currentPermissions['projects.view']) await fetchProjects(tok);
+        const refreshTasks = [];
+        if (currentPermissions['projects.view']) refreshTasks.push(fetchProjects(tok));
         else setProjects([]);
-        if (currentPermissions['agents.view']) await fetchAgents(tok);
+        if (currentPermissions['agents.view']) refreshTasks.push(fetchAgents(tok));
         else setAgents([]);
-        if (currentPermissions['leads.view']) await fetchLeads(tok);
+        if (currentPermissions['leads.view']) refreshTasks.push(fetchLeads(tok));
         else setLeads([]);
+        await Promise.all(refreshTasks);
       } catch {
         // Keep the current screen during a temporary network failure.
       }
@@ -147,7 +155,7 @@ export default function FranchiseDashboardPage() {
     // Access is revalidated periodically so admin changes take effect without
     // requiring the franchise user to sign in again.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [permissions, router]);
+  }, [router]);
 
   const fetchProjects = async (tok = token()) => {
     const res = await fetch('/api/franchise/projects', {
@@ -463,7 +471,7 @@ export default function FranchiseDashboardPage() {
           <div className="fd-grid">
             {projects.map(project => (
               <article className="fd-card" key={project.id}>
-                {project.image_url && <img src={project.image_url} alt={project.title} />}
+                {project.image_url && <Image src={project.image_url} alt={project.title} width={640} height={330} quality={75} />}
                 <div className="fd-card-body">
                   <div className="fd-card-title">{project.title}</div>
                   <div className="fd-muted">{project.category} | {project.location || franchise?.city}</div>
@@ -591,7 +599,7 @@ export default function FranchiseDashboardPage() {
 
               <div>
                 <label className="fd-label">Project image *</label>
-                {form.image_url && <img className="fd-preview" src={form.image_url} alt="Project preview" />}
+                {form.image_url && <Image className="fd-preview" src={form.image_url} alt="Project preview" width={640} height={360} quality={75} />}
                 <input ref={fileRef} type="file" accept="image/*" onChange={uploadImage} className="fd-input fd-file" disabled={uploading || (Boolean(editProject) && !can('projects.manage_images'))} />
                 {uploading && <div className="fd-muted">Uploading image...</div>}
               </div>

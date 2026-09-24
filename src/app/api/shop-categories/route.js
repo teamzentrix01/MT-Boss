@@ -5,6 +5,13 @@ import { createInitializationGuard, handleApiError, isDatabaseConnectionError } 
 import { fallbackResponse, fallbackShopCategories } from '@/lib/public-fallbacks';
 import { normalizeManagedCityList } from '@/lib/cities';
 
+let publicCategoriesCache = { expiresAt: 0, rows: null };
+const publicCacheHeaders = { 'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300' };
+
+function invalidatePublicCategoriesCache() {
+  publicCategoriesCache = { expiresAt: 0, rows: null };
+}
+
 async function canonicalCityPrices(value) {
   const prices = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
   const requested = Object.keys(prices);
@@ -56,11 +63,21 @@ export async function GET(req) {
     const isAdmin = searchParams.get('admin') === 'true';
     if (isAdmin && !requireRole(req, 'admin')) return unauthorized();
 
+    if (!isAdmin && publicCategoriesCache.rows && publicCategoriesCache.expiresAt > Date.now()) {
+      return NextResponse.json({ success: true, data: publicCategoriesCache.rows }, { headers: publicCacheHeaders });
+    }
+
     const result = isAdmin
       ? await pool.query(`SELECT * FROM shop_categories ORDER BY sort_order ASC, id ASC`)
       : await pool.query(`SELECT * FROM shop_categories WHERE is_active = TRUE ORDER BY sort_order ASC, id ASC`);
 
-    return NextResponse.json({ success: true, data: result.rows });
+    if (!isAdmin) {
+      publicCategoriesCache = { expiresAt: Date.now() + 60000, rows: result.rows };
+    }
+    return NextResponse.json(
+      { success: true, data: result.rows },
+      isAdmin ? undefined : { headers: publicCacheHeaders },
+    );
   } catch (error) {
     console.error('GET shop-categories error:', error.message);
     if (isDatabaseConnectionError(error)) {
@@ -101,6 +118,7 @@ export async function POST(req) {
         JSON.stringify(normalizedCityPrices),
       ]
     );
+    invalidatePublicCategoriesCache();
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (e) {
     console.error('POST shop-categories error:', e);
@@ -140,6 +158,7 @@ export async function PUT(req) {
     );
     if (result.rows.length === 0)
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    invalidatePublicCategoriesCache();
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (e) {
     console.error('PUT shop-categories error:', e);
@@ -167,6 +186,7 @@ export async function PATCH(req) {
     } catch (e) { await client.query('ROLLBACK'); throw e; }
     finally { client.release(); }
 
+    invalidatePublicCategoriesCache();
     return NextResponse.json({ success: true });
   } catch (e) {
     console.error('PATCH shop-categories error:', e);
@@ -187,6 +207,7 @@ export async function DELETE(req) {
     const result = await pool.query(`DELETE FROM shop_categories WHERE id=$1 RETURNING id`, [id]);
     if (result.rows.length === 0)
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    invalidatePublicCategoriesCache();
     return NextResponse.json({ success: true });
   } catch (e) {
     console.error('DELETE shop-categories error:', e);

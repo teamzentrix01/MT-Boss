@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useCities } from "@/hooks/useCities";
@@ -85,6 +85,8 @@ export default function ShopPage() {
   const [catsLoading, setCatsLoading] = useState(true);
   const [allProducts, setAllProducts] = useState([]);
   const [productsLoaded, setProductsLoaded] = useState(false);
+  const productsLastLoadedAtRef = useRef(0);
+  const productsRequestRef = useRef(null);
   const [storeContent, setStoreContent] = useState(defaultShopStorefront);
   const [cart, setCart] = useState([]);
   const [cartReady, setCartReady] = useState(false);
@@ -114,17 +116,28 @@ export default function ShopPage() {
       .finally(() => setCatsLoading(false));
   }, []);
 
-  const loadProducts = useCallback(async () => {
-    try {
-      const response = await fetch("/api/shop-material-options", { cache: "no-store" });
-      const data = await response.json();
-      if (!response.ok || !data.success) throw new Error(data.error || "Could not load shop products");
-      setAllProducts(data.data?.products || []);
-    } catch (error) {
-      console.error("Could not refresh Shop Now products:", error);
-    } finally {
-      setProductsLoaded(true);
-    }
+  const loadProducts = useCallback(async (force = false) => {
+    const now = Date.now();
+    if (!force && productsLastLoadedAtRef.current && now - productsLastLoadedAtRef.current < 30000) return;
+    if (productsRequestRef.current) return productsRequestRef.current;
+
+    const request = (async () => {
+      try {
+        const endpoint = force ? "/api/shop-material-options?fresh=1" : "/api/shop-material-options";
+        const response = await fetch(endpoint, { cache: force ? "no-store" : "default" });
+        const data = await response.json();
+        if (!response.ok || !data.success) throw new Error(data.error || "Could not load shop products");
+        setAllProducts(data.data?.products || []);
+        productsLastLoadedAtRef.current = Date.now();
+      } catch (error) {
+        console.error("Could not refresh Shop Now products:", error);
+      } finally {
+        setProductsLoaded(true);
+        productsRequestRef.current = null;
+      }
+    })();
+    productsRequestRef.current = request;
+    return request;
   }, []);
 
   useEffect(() => {
@@ -134,7 +147,7 @@ export default function ShopPage() {
       if (document.visibilityState === "visible") loadProducts();
     };
     const refreshFromProductChange = (event) => {
-      if (event.type !== "storage" || event.key === "mtboss-shop-products-updated") loadProducts();
+      if (event.type !== "storage" || event.key === "mtboss-shop-products-updated") loadProducts(true);
     };
 
     window.addEventListener("focus", refreshVisibleShop);

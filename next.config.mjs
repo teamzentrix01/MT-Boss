@@ -7,6 +7,10 @@ dotenv.config({ path: "src/.env" });
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /* config options here */
+  // Keep development/HMR artifacts separate from production builds. Running
+  // `next build` while `next dev` is open must not replace the live router
+  // runtime, otherwise Next can dispatch Link prefetches against an old queue.
+  distDir: process.env.NODE_ENV === 'development' ? '.next-dev' : '.next',
   reactCompiler: true,
   images: {
     remotePatterns: [

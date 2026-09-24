@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { createInitializationGuard } from '@/lib/api-utils';
 
+const productCache = new Map();
+const PRODUCT_CACHE_TTL_MS = 15000;
+
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS supplier_materials (
@@ -47,6 +50,14 @@ export async function GET(req) {
     await ensureTable();
     const { searchParams } = new URL(req.url);
     const category = String(searchParams.get('category') || '').trim();
+    const bypassCache = searchParams.get('fresh') === '1';
+    const cacheKey = category.toLowerCase();
+    const cached = productCache.get(cacheKey);
+    if (!bypassCache && cached?.expiresAt > Date.now()) {
+      return NextResponse.json(cached.payload, {
+        headers: { 'Cache-Control': 'public, max-age=15, s-maxage=30, stale-while-revalidate=120' },
+      });
+    }
 
     const result = await pool.query(
       `SELECT m.id, m.supplier_id, m.vendor_id, m.name, m.description, m.quote_price_range, m.price, m.unit, m.quantity, m.image_url, m.category,
@@ -92,17 +103,18 @@ export async function GET(req) {
       created_at: row.created_at,
     }));
 
-    return NextResponse.json(
-      {
-        success: true,
-        data: {
-          products,
-          types: uniq(products.map((p) => p.name)),
-          units: uniq(products.map((p) => p.unit)),
-        },
+    const payload = {
+      success: true,
+      data: {
+        products,
+        types: uniq(products.map((p) => p.name)),
+        units: uniq(products.map((p) => p.unit)),
       },
-      { headers: { 'Cache-Control': 'no-store, max-age=0' } }
-    );
+    };
+    productCache.set(cacheKey, { expiresAt: Date.now() + PRODUCT_CACHE_TTL_MS, payload });
+    return NextResponse.json(payload, {
+      headers: { 'Cache-Control': 'public, max-age=15, s-maxage=30, stale-while-revalidate=120' },
+    });
   } catch (error) {
     console.error('GET shop-material-options error:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
