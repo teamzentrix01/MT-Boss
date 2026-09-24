@@ -1,4 +1,4 @@
-export const CONSTRUCTION_HERO_IMAGE_URL = '/images/banners/construction.jpg?v=workers-banner-v2';
+export const CONSTRUCTION_HERO_IMAGE_URL = '/images/banners/construction.jpg';
 
 export const defaultHeroBanners = [
   {

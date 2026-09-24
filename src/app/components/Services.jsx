@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link"; 
 
 const featuredServices = [
@@ -52,11 +53,12 @@ function ServiceCard({ service, index, isDark }) {
         transition: `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`,
       }}
     >
-      <img
+      <Image
         src={service.image}
         alt={service.title}
+        fill
+        sizes="(max-width: 767px) 100vw, 33vw"
         loading="lazy"
-        decoding="async"
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-80"
       />
       

@@ -3,14 +3,8 @@ import Hero from './components/Hero';
 // import AboutSection from './components/About';
 import Services from './components/Services';
 import QuickServices from './components/QuickServices';
-import PropertyCTA from './components/PropertyCTA';
-import AgentCTA from './components/AgentCTA';
-import FranchiseCTA from './components/FranchiseCTA';
-import ShopCTA from './components/ShopCTA';
-import CalculatorCTA from './components/CalculatorCTA';
 // import TestimonialsSection from './components/Testimonal';
-import FeaturedProjects from './components/FeaturedProjects';
-import ExperienceSection from './components/ExperienceSection';
+import DeferredHomeSections from './components/DeferredHomeSections';
 
 // ---------- METADATA ----------
 export const metadata = {
@@ -138,13 +132,7 @@ const Page = () => {
       {/* <AboutSection /> */}
       <QuickServices />
       <Services />
-      <CalculatorCTA />
-      <ShopCTA />
-      <PropertyCTA />
-      <FranchiseCTA />
-      <AgentCTA />
-      <FeaturedProjects />
-      <ExperienceSection />
+      <DeferredHomeSections />
       {/* <TestimonialsSection /> */}
     </div>
   );

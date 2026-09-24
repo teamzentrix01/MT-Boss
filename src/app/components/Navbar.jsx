@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import GlobalSearch from "./GlobalSearch";
@@ -179,13 +180,14 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0">
-            <picture className="block leading-none">
-              <img
-                src="/logo.png"
-                alt="MTBOSS"
-                className="block h-12 sm:h-[58px] w-auto object-contain"
-              />
-            </picture>
+            <Image
+              src="/logo.png"
+              alt="MTBOSS"
+              width={58}
+              height={58}
+              sizes="(max-width: 639px) 48px, 58px"
+              className="block h-12 sm:h-[58px] w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Nav */}

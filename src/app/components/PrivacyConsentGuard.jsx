@@ -36,8 +36,10 @@ function consentElement() {
 export default function PrivacyConsentGuard() {
   useEffect(() => {
     let scheduled = false;
+    let scheduledHandle = null;
     const syncForms = () => {
       scheduled = false;
+      scheduledHandle = null;
       document.querySelectorAll('form').forEach((form) => {
         if (!isPersonalDataForm(form)) return;
         const consent = consentElement();
@@ -49,7 +51,11 @@ export default function PrivacyConsentGuard() {
     const scheduleSync = () => {
       if (scheduled) return;
       scheduled = true;
-      requestAnimationFrame(syncForms);
+      if ('requestIdleCallback' in window) {
+        scheduledHandle = window.requestIdleCallback(syncForms, { timeout: 750 });
+      } else {
+        scheduledHandle = window.setTimeout(syncForms, 50);
+      }
     };
     const observer = new MutationObserver(scheduleSync);
     const removeInjectedConsent = () => {
@@ -62,9 +68,13 @@ export default function PrivacyConsentGuard() {
     document.addEventListener('click', beforeNavigation, true);
     window.addEventListener('popstate', removeInjectedConsent);
     window.addEventListener('pagehide', removeInjectedConsent);
-    syncForms();
+    scheduleSync();
     return () => {
       observer.disconnect();
+      if (scheduledHandle !== null) {
+        if ('cancelIdleCallback' in window) window.cancelIdleCallback(scheduledHandle);
+        else window.clearTimeout(scheduledHandle);
+      }
       document.removeEventListener('click', beforeNavigation, true);
       window.removeEventListener('popstate', removeInjectedConsent);
       window.removeEventListener('pagehide', removeInjectedConsent);

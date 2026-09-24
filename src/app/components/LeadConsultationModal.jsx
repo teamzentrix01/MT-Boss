@@ -47,11 +47,11 @@ export default function LeadConsultationModal({ isDarkMode, onDismiss }) {
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    // Show shortly after the home page opens. Dismissal is remembered by the
-    // root layout for the current visit and resets on a full page refresh.
+    // Keep the initial render and first interaction clear before showing this
+    // non-critical prompt. Dismissal is remembered for the current visit.
     const timer = setTimeout(() => {
       setIsOpen(true);
-    }, 800);
+    }, 2500);
     return () => clearTimeout(timer);
   }, []);
 

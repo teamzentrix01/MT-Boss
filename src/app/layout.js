@@ -1,14 +1,19 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Navbar from "./components/Navbar";
 import "./globals.css";
 import Footer from "./components/Footer";
 import { COMPANY_CONTACT } from "./lib/company";
 import PrivacyConsentGuard from "./components/PrivacyConsentGuard";
 import FreeWhatsAppNotifier from "./components/FreeWhatsAppNotifier";
-import ChatbotWidget from "./components/ChatbotWidget";
-import LeadConsultationModal from "./components/LeadConsultationModal";
 import { usePathname } from "next/navigation";
+
+const ChatbotWidget = dynamic(() => import("./components/ChatbotWidget"), { ssr: false });
+const LeadConsultationModal = dynamic(
+  () => import("./components/LeadConsultationModal"),
+  { ssr: false }
+);
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -16,6 +21,7 @@ export default function RootLayout({ children }) {
   const isHomePage = pathname === "/";
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [homePopupDismissed, setHomePopupDismissed] = useState(false);
+  const [deferredWidgetsReady, setDeferredWidgetsReady] = useState(false);
 
 
   // 1. Page load hote hi localStorage se theme check karein
@@ -26,6 +32,18 @@ export default function RootLayout({ children }) {
       document.documentElement.classList.toggle("dark-mode", dark);
     });
     return () => cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    const showDeferredWidgets = () => setDeferredWidgetsReady(true);
+
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(showDeferredWidgets, { timeout: 1500 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timerId = window.setTimeout(showDeferredWidgets, 1000);
+    return () => window.clearTimeout(timerId);
   }, []);
 
   useEffect(() => {
@@ -123,10 +141,10 @@ export default function RootLayout({ children }) {
         <Footer />
 
         {/* Floating Chatbot Assistant Widget */}
-        <ChatbotWidget isDarkMode={isDarkMode} />
+        {deferredWidgetsReady && <ChatbotWidget isDarkMode={isDarkMode} />}
 
         {/* On-arrival consultation popup is exclusive to the home page. */}
-        {isHomePage && !homePopupDismissed && (
+        {deferredWidgetsReady && isHomePage && !homePopupDismissed && (
           <LeadConsultationModal isDarkMode={isDarkMode} onDismiss={() => setHomePopupDismissed(true)} />
         )}
 

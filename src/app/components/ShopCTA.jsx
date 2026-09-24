@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 function useDarkMode() {
@@ -21,7 +22,7 @@ function useInView(threshold = 0.08) {
     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
-  }, []);
+  }, [threshold]);
   return [ref, visible];
 }
 
@@ -57,11 +58,12 @@ function CategoryCard({ cat, dark, idx, visible }) {
       {/* Image or emoji banner */}
       <div className={`relative overflow-hidden flex items-center justify-center ${dark ? "bg-zinc-900" : "bg-zinc-50"}`} style={{ height: 110 }}>
         {cat.image ? (
-          <img
+          <Image
             src={cat.image}
             alt={cat.name}
+            fill
+            sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 180px"
             loading="lazy"
-            decoding="async"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80"
           />
         ) : (

@@ -6,8 +6,30 @@ import { fallbackPrimaryServices, fallbackResponse } from '@/lib/public-fallback
 import { normalizeCityList } from '@/lib/service-cities';
 
 const ensurePrimaryServiceCities = createInitializationGuard(async () => {
-  await pool.query(`ALTER TABLE primary_services ADD COLUMN IF NOT EXISTS cities TEXT[] NOT NULL DEFAULT '{}'`);
+  await pool.query(`
+    ALTER TABLE primary_services
+      ADD COLUMN IF NOT EXISTS cities TEXT[] NOT NULL DEFAULT '{}',
+      ADD COLUMN IF NOT EXISTS sort_order INT NOT NULL DEFAULT 0
+  `);
 });
+
+const PUBLIC_CACHE_TTL_MS = 60 * 1000;
+let publicServicesCache = null;
+let publicServicesCachedAt = 0;
+
+function clearPublicServicesCache() {
+  publicServicesCache = null;
+  publicServicesCachedAt = 0;
+}
+
+function publicJson(body, status = 200) {
+  return NextResponse.json(body, {
+    status,
+    headers: {
+      'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300',
+    },
+  });
+}
 
 // GET — public, no auth. Supports ?slug=xyz for single record.
 export async function GET(req) {
@@ -16,15 +38,25 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get('slug');
 
+    if (publicServicesCache && Date.now() - publicServicesCachedAt < PUBLIC_CACHE_TTL_MS) {
+      if (slug) {
+        const service = publicServicesCache.find((item) => item.slug === slug);
+        return service
+          ? publicJson({ success: true, data: service })
+          : publicJson({ error: 'Service not found' }, 404);
+      }
+      return publicJson({ success: true, data: publicServicesCache });
+    }
+
     if (slug) {
       const result = await pool.query(
         `SELECT * FROM primary_services WHERE slug = $1`,
         [slug]
       );
       if (result.rows.length === 0) {
-        return NextResponse.json({ error: 'Service not found' }, { status: 404 });
+        return publicJson({ error: 'Service not found' }, 404);
       }
-      return NextResponse.json({ success: true, data: result.rows[0] });
+      return publicJson({ success: true, data: result.rows[0] });
     }
 
     // Order by sort_order if the column exists, fall back to id
@@ -36,7 +68,9 @@ export async function GET(req) {
     } catch {
       result = await pool.query(`SELECT * FROM primary_services ORDER BY id ASC`);
     }
-    return NextResponse.json({ success: true, data: result.rows });
+    publicServicesCache = result.rows;
+    publicServicesCachedAt = Date.now();
+    return publicJson({ success: true, data: result.rows });
   } catch (error) {
     console.error('GET primary-services error:', error.message);
     if (isDatabaseConnectionError(error)) {
@@ -59,6 +93,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
+    clearPublicServicesCache();
     await ensurePrimaryServiceCities();
 
     const {
@@ -112,6 +147,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
+    clearPublicServicesCache();
     await ensurePrimaryServiceCities();
 
     const {
@@ -172,6 +208,7 @@ export async function PUT(req) {
 export async function PATCH(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
+    clearPublicServicesCache();
 
     const { items } = await req.json(); // [{ id, sort_order }, ...]
     if (!Array.isArray(items) || items.length === 0) {
@@ -211,6 +248,7 @@ export async function PATCH(req) {
 export async function DELETE(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
+    clearPublicServicesCache();
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
