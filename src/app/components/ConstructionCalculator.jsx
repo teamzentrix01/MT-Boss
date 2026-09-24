@@ -80,9 +80,11 @@ const FLOOR_OPTIONS = [
 const CATEGORY_SPECS = [
   {
     key: 'Steel',
+    shopCategoryPattern: /steel|tmt|sariya|rebar/,
     title: 'Steel',
     type: 'Mandatory',
-    unit: 'kg',
+    unit: 'meter',
+    forceUnit: true,
     factor: 3.8,
     phase: 'Structure',
     fallbackPrice: 66,
@@ -94,6 +96,7 @@ const CATEGORY_SPECS = [
   },
   {
     key: 'Cement',
+    shopCategoryPattern: /cement/,
     title: 'Cement',
     type: 'Mandatory',
     unit: 'bag',
@@ -108,6 +111,7 @@ const CATEGORY_SPECS = [
   },
   {
     key: 'Bricks',
+    shopCategoryPattern: /brick|block/,
     title: 'Bricks / Blocks',
     type: 'Mandatory',
     unit: 'piece',
@@ -122,6 +126,7 @@ const CATEGORY_SPECS = [
   },
   {
     key: 'Sand',
+    shopCategoryPattern: /sand|reta/,
     title: 'Reta / Sand',
     type: 'Mandatory',
     unit: 'cft',
@@ -135,6 +140,7 @@ const CATEGORY_SPECS = [
   },
   {
     key: 'Aggregate',
+    shopCategoryPattern: /aggregate|bajri|barjri|gitti|grit/,
     title: 'Aggregate / Bajri',
     type: 'Mandatory',
     unit: 'cft',
@@ -148,6 +154,7 @@ const CATEGORY_SPECS = [
   },
   {
     key: 'Plumbing',
+    shopCategoryPattern: /plumb|pipe|cpvc/,
     title: 'Plumbing',
     type: 'Recommended',
     unit: 'set',
@@ -161,6 +168,7 @@ const CATEGORY_SPECS = [
   },
   {
     key: 'Wiring',
+    shopCategoryPattern: /wir|cable|electric/,
     title: 'Electrical Wiring',
     type: 'Recommended',
     unit: 'bundle',
@@ -174,6 +182,7 @@ const CATEGORY_SPECS = [
   },
   {
     key: 'Putty',
+    shopCategoryPattern: /putty/,
     title: 'Wall Putty',
     type: 'Recommended',
     unit: 'bag',
@@ -187,6 +196,7 @@ const CATEGORY_SPECS = [
   },
   {
     key: 'Paints',
+    shopCategoryPattern: /paint/,
     title: 'Paint',
     type: 'Recommended',
     unit: 'bucket',
@@ -201,6 +211,7 @@ const CATEGORY_SPECS = [
   },
   {
     key: 'Window',
+    shopCategoryPattern: /window/,
     title: 'Windows',
     type: 'Recommended',
     unit: 'piece',
@@ -211,6 +222,7 @@ const CATEGORY_SPECS = [
   },
   {
     key: 'Door',
+    shopCategoryPattern: /door/,
     title: 'Doors',
     type: 'Recommended',
     unit: 'piece',
@@ -313,10 +325,67 @@ function normalizeProduct(product, spec, index) {
     ...product,
     id: product.id || `${spec.key}-fallback-${index}`,
     category: product.category || spec.key,
-    unit: product.unit || spec.unit,
+    unit: spec.forceUnit ? spec.unit : product.unit || spec.unit,
     badge: product.badge || spec.type,
     isFallback: !product.id,
   };
+}
+
+const UNIT_ALIASES = {
+  kg: ['kg', 'kgs', 'kilogram', 'kilograms'],
+  ton: ['ton', 'tons', 'tonne', 'tonnes'],
+  quintal: ['quintal', 'quintals', 'qtl'],
+  bag: ['bag', 'bags'],
+  piece: ['piece', 'pieces', 'pcs', 'pc', 'nos'],
+  cft: ['cft', 'cu ft', 'cubic feet'],
+  brass: ['brass'],
+  set: ['set', 'sets'],
+  bundle: ['bundle', 'bundles'],
+  bucket: ['bucket', 'buckets'],
+};
+
+// BOQ units contained in one product unit, e.g. 1 ton = 1000 kg, 1 brass = 100 cft.
+const UNIT_CONVERSIONS = {
+  kg: { kg: 1, ton: 1000, quintal: 100 },
+  cft: { cft: 1, brass: 100 },
+};
+
+function canonicalUnit(unit) {
+  const value = String(unit || '').trim().toLowerCase().replace(/^per\s+/, '');
+  return Object.keys(UNIT_ALIASES).find((key) => UNIT_ALIASES[key].includes(value)) || value;
+}
+
+function unitsPerProductUnit(productUnit, specUnit) {
+  const from = canonicalUnit(productUnit);
+  if (from === specUnit) return 1;
+  return UNIT_CONVERSIONS[specUnit]?.[from] || null;
+}
+
+// Real shop products for one BOQ row and Quality Package, cheapest first (then first-added).
+// Products whose unit can't be converted to the BOQ unit are skipped so totals stay correct.
+function getTierProducts(spec, tierProducts, city, quality) {
+  const tier = String(quality || '').toLowerCase();
+  return tierProducts
+    .filter((product) => product.quality_tier === tier)
+    .filter((product) => spec.shopCategoryPattern.test(String(product.category || '').toLowerCase()))
+    .filter((product) => {
+      const cities = Array.isArray(product.available_cities) ? product.available_cities : [];
+      return !cities.length || cities.some((item) => String(item).toLowerCase() === String(city).toLowerCase());
+    })
+    .map((product) => {
+      const ratio = spec.forceUnit ? 1 : unitsPerProductUnit(product.unit, spec.unit);
+      if (!ratio) return null;
+      return {
+        ...product,
+        id: `shop-${product.id}`,
+        price: Number(product.price) / ratio,
+        unit: spec.unit,
+        badge: spec.type,
+        isTierProduct: true,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.price - b.price || new Date(a.created_at) - new Date(b.created_at));
 }
 
 function escapeHtml(value) {
@@ -510,6 +579,7 @@ function buildReportHtml(snapshot) {
 
 export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
   const [products, setProducts] = useState([]);
+  const [tierProducts, setTierProducts] = useState([]);
   const [settings, setSettings] = useState(() => mergeCalculatorSettings());
   const [calculatorCities, setCalculatorCities] = useState(Object.keys(CITY_RATES));
   const [loading, setLoading] = useState(true);
@@ -565,6 +635,10 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
       }
     };
     fetchCalculatorData();
+    fetch('/api/calculator-tier-products', { cache: 'no-store' })
+      .then((response) => response.json())
+      .then((data) => { if (data.success) setTierProducts(data.data || []); })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -613,10 +687,11 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
         isProductAvailableForSelection(product, project.city, project.quality)
       );
       const fallback = spec.fallbackProducts.map((product, index) => normalizeProduct(product, spec, index));
-      map.set(spec.key, categoryProducts.length > 0 ? availableProducts : fallback);
+      const tierMatches = getTierProducts(spec, tierProducts, project.city, project.quality);
+      map.set(spec.key, tierMatches.length > 0 ? tierMatches : categoryProducts.length > 0 ? availableProducts : fallback);
     });
     return map;
-  }, [products, project.city, project.quality]);
+  }, [products, tierProducts, project.city, project.quality]);
 
   useEffect(() => {
     setSelectedProducts((current) => {
@@ -741,6 +816,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
 
   const updateProject = (key, value) => {
     setProject((current) => ({ ...current, [key]: value }));
+    if (key === 'quality') setSelectedProducts({});
   };
 
   const selectProduct = (categoryKey, productId) => {
@@ -1050,6 +1126,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
         .boq-amount { text-align: right; }
         .boq-amount strong { display: block; font-size: .96rem; color: var(--boq-text); }
         .boq-amount span { display: block; color: var(--boq-muted); font-size: .72rem; margin-top: 3px; }
+        .boq-tier-notice { margin: 6px 0 0; color: var(--boq-muted); font-size: .72rem; font-weight: 700; }
         .boq-summary { position: sticky; top: 18px; overflow: hidden; }
         .boq-total-band { background: #17211c; color: #fff; padding: 20px; }
         .boq-total-band span { display: block; color: rgba(255,255,255,.7); font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
@@ -1334,6 +1411,9 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                               <span>{spec.phase}</span>
                               {item && <span>{formatNumber(item.quantity)} {item.product?.unit || spec.unit}</span>}
                             </div>
+                            {isIncluded && options.length > 0 && !options[0].isTierProduct && (
+                              <p className="boq-tier-notice">Estimated market rate — no {project.quality} product listed yet</p>
+                            )}
                           </div>
                           <div className="boq-select-wrap">
                             {spec.type === 'Mandatory' ? null : (
@@ -1358,7 +1438,9 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                               )}
                               {options.map((product) => (
                                 <option key={product.id} value={product.id}>
-                                  {product.name}
+                                  {product.isTierProduct
+                                    ? `${product.brand && !product.name.toLowerCase().includes(product.brand.toLowerCase()) ? `${product.brand} ` : ''}${product.name} — ${formatCurrency(product.price)} / ${spec.unit}`
+                                    : product.name}
                                 </option>
                               ))}
                             </select>
