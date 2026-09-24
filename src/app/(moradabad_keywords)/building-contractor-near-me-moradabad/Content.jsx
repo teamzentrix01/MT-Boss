@@ -8,19 +8,19 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Contractor Near Me in Moradabad — A Complete Local Guide
+            Building Contractor Near Me in Moradabad — A Complete Local Guide
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Typing &quot;civil contractor near me&quot; into a search bar while sitting in Moradabad usually means you want someone local — reachable quickly, familiar with the area, and not a distant company that takes days to respond. Proximity matters in construction because it directly affects response time, frequency of site visits, material delivery speed, and overall accountability. This guide explains why choosing a nearby civil contractor matters, what to check before hiring one, and why MTBOSS Construction Private Limited  based in Moradabad, is a strong local option worth considering.
+                Typing &quot;building contractor near me&quot; into a search bar while sitting in Moradabad usually means you want someone local — reachable quickly, familiar with the area, and not a distant company that takes days to respond. Proximity matters in construction because it directly affects response time, frequency of site visits, material delivery speed, and overall accountability. This guide explains why choosing a nearby building contractor matters, what to check before hiring one, and why MTBOSS Construction Private Limited based in Moradabad, is a strong local option worth considering.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why &quot;Near Me&quot; Matters When Hiring a Civil Contractor
+                Why &quot;Near Me&quot; Matters When Hiring a Building Contractor
               </h3>
               <p className="mb-3">
                 Searching for a local contractor isn&apos;t just about convenience — it directly impacts project quality and speed. Key reasons proximity matters:
@@ -39,10 +39,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Does a Local Civil Contractor Actually Do?
+                What Does a Local Building Contractor Actually Do?
               </h3>
               <p className="mb-3">
-                A local civil contractor near you typically manages the entire construction lifecycle, including:
+                A local building contractor near you typically manages the entire construction lifecycle, including:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Conducting an on-site survey and feasibility check</li>
@@ -59,7 +59,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Moradabad Residents Prefer a Nearby Civil Contractor Over an Outside Company
+                Why Moradabad Residents Prefer a Nearby Building Contractor Over an Outside Company
               </h3>
               <p className="mb-3">
                 Moradabad&apos;s growing residential and commercial sector has increased local demand for dependable contractors. Here&apos;s why locals lean toward a &quot;near me&quot; option:
@@ -76,7 +76,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Services a Local Civil Contractor Near You Should Offer
+                Services a Local Building Contractor Near You Should Offer
               </h3>
               <p className="mb-3">
                 A dependable local contractor should cover a wide range of construction and related needs:
@@ -130,7 +130,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBOSS Is a Strong &quot;Civil Contractor Near Me&quot; Option in Moradabad
+                Why MTBOSS Is a Strong &quot;Building Contractor Near Me&quot; Option in Moradabad
               </h3>
               <p className="mb-3">
                 Based on their published company profile, MTBOSS Construction Private Limited operates directly out of Moradabad and offers a wide service ecosystem for local customers:
@@ -153,13 +153,13 @@ const Content = () => {
                 <li>Instant WhatsApp support for fast local queries and quotes</li>
               </ul>
               <p className="mt-3">
-                For someone specifically searching &quot;civil contractor near me&quot; in Moradabad, having a locally headquartered company with this scale of service is a practical advantage over outside contractors.
+                For someone specifically searching &quot;building contractor near me&quot; in Moradabad, having a locally headquartered company with this scale of service is a practical advantage over outside contractors.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How to Verify a Local Civil Contractor Before Hiring
+                How to Verify a Local Building Contractor Before Hiring
               </h3>
               <p className="mb-3">
                 Even when a contractor is nearby, don&apos;t skip due diligence. Check the following:
@@ -204,7 +204,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Step-by-Step Process Local Civil Contractors Typically Follow
+                Step-by-Step Process Local Building Contractors Typically Follow
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Consultation &amp; Local Site Visit</strong> — Discussing requirements in person</li>
@@ -222,7 +222,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Advantages of Choosing a Nearby Civil Contractor Over a Distant One
+                Advantages of Choosing a Nearby Building Contractor Over a Distant One
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Immediate availability for urgent site visits</li>
@@ -236,7 +236,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Mistakes When Searching for a &quot;Civil Contractor Near Me&quot;
+                Common Mistakes When Searching for a &quot;Building Contractor Near Me&quot;
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Assuming proximity alone guarantees quality — always verify credentials too</li>
@@ -250,7 +250,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact a Civil Contractor Near You in Moradabad
+                Contact a Building Contractor Near You in Moradabad
               </h3>
               <p className="mb-3">
                 If you&apos;re ready to start your project with a contractor based right here in Moradabad, reach out directly:
@@ -274,7 +274,7 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Who is a reliable &quot;civil contractor near me&quot; in Moradabad?</strong>
+                  <strong>Q1. Who is a reliable &quot;building contractor near me&quot; in Moradabad?</strong>
                   <br />
                   MTBOSS Construction Private Limited, locally based in Moradabad with 22+ years of experience.
                 </li>
@@ -299,9 +299,14 @@ const Content = () => {
                   Basic, Standard, Premium, and Luxury, suited to different budgets.
                 </li>
                 <li>
-                  <strong>Q6. Does MTBOSS also offer home repair services locally?</strong>
+                  <strong>Q7. Does MTBOSS also offer home repair services locally?</strong>
                   <br />
                   Yes, including electrical, plumbing, AC repair, painting, and pest control.
+                </li>
+                <li>
+                  <strong>Q8. Can I buy construction materials directly from MTBOSS?</strong>
+                  <br />
+                  Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates.
                 </li>
               </ul>
             </section>

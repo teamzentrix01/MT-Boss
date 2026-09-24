@@ -8,19 +8,19 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Top Civil Contractor in Moradabad — Complete Guide
+            Top Building Contractor in Moradabad — Everything You Need to Know
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                If you&apos;re looking for the top civil contractor in Moradabad to build your home, office, showroom, or industrial unit, it helps to understand what actually separates a top-ranked contractor from an average one. Moradabad&apos;s construction and real estate sector has grown quickly, and with that growth comes a wide mix of contractors — some experienced and dependable, others new and unverified. This guide walks through what a top civil contractor does, how to identify one, what construction typically costs in Moradabad, and why MTBOSS Construction Private Limited is regularly named among the leading names in the local building industry.
+                If you&apos;re searching for the top building contractor in Moradabad to build your home, office, showroom, or industrial unit, it helps to know what actually separates a top-ranked contractor from an average one. Moradabad&apos;s construction and real estate sector has grown quickly, and with that growth comes a wide mix of contractors — some experienced and dependable, others new and unverified. This guide walks through what a top building contractor does, how to identify one, what construction typically costs in Moradabad, and why MTBOSS Construction Private Limited is regularly named among the leading names in the local building industry.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Sets a Top Civil Contractor Apart?
+                What Sets a Top Building Contractor Apart?
               </h3>
               <p className="mb-3">
                 A &quot;top contractor&quot; isn&apos;t just a marketing label — it usually reflects measurable factors such as:
@@ -41,7 +41,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Core Responsibilities of a Leading Civil Contractor
+                Core Responsibilities of a Leading Building Contractor
               </h3>
               <p className="mb-3">
                 Top contractors manage the entire project lifecycle, not just the physical construction. Their key responsibilities include:
@@ -61,7 +61,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Moradabad Needs Top-Tier Civil Contractors, Not Just Local Labour
+                Why Moradabad Needs Top-Tier Building Contractors, Not Just Local Labour
               </h3>
               <p className="mb-3">
                 The city&apos;s fast-paced development has raised the stakes for construction quality:
@@ -79,7 +79,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Services Offered by Top Civil Contractors in Moradabad
+                Services Offered by Top Building Contractors in Moradabad
               </h3>
               <p className="mb-3">
                 The best contractors in the market typically offer a full range of services rather than isolated construction work:
@@ -133,7 +133,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBOSS Is Regarded as a Top Civil Contractor in Moradabad
+                Why MTBOSS Is Regarded as a Top Building Contractor in Moradabad
               </h3>
               <p className="mb-3">
                 Drawing from their published company profile, MTBOSS Construction Private Limited demonstrates the traits typically associated with top-ranked contractors:
@@ -235,7 +235,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Mistakes When Searching for a Top Civil Contractor
+                Common Mistakes When Searching for a Top Building Contractor
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Choosing based on price alone without verifying quality standards</li>
@@ -249,7 +249,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact the Top Civil Contractor in Moradabad
+                Contact the Top Building Contractor in Moradabad
               </h3>
               <p className="mb-3">
                 Ready to start your residential, commercial, or renovation project with a proven contractor? Reach out directly:
@@ -273,12 +273,12 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Who is the top civil contractor in Moradabad?</strong>
+                  <strong>Q1. Who is the top building contractor in Moradabad?</strong>
                   <br />
                   MTBOSS Construction Private Limited, with 22+ years of experience and 450+ completed projects, is a leading choice.
                 </li>
                 <li>
-                  <strong>Q2. What makes MTBOSS a top civil contractor?</strong>
+                  <strong>Q2. What makes MTBOSS a top building contractor?</strong>
                   <br />
                   Their scale, transparent budget calculator, multiple quality packages, and strong technology adoption.
                 </li>
@@ -301,6 +301,16 @@ const Content = () => {
                   <strong>Q6. Does MTBOSS provide home repair services too?</strong>
                   <br />
                   Yes, including electrical, plumbing, AC repair, painting, and pest control.
+                </li>
+                <li>
+                  <strong>Q7. Can I purchase construction materials directly from MTBOSS?</strong>
+                  <br />
+                  Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale prices.
+                </li>
+                <li>
+                  <strong>Q8. Does MTBOSS assist with property buying, selling, or renting?</strong>
+                  <br />
+                  Yes, with verified listings and zero brokerage on rentals.
                 </li>
               </ul>
             </section>

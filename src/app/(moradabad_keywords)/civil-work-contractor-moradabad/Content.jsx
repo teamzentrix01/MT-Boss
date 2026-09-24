@@ -13,11 +13,8 @@ const Content = () => {
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Introduction
-              </h3>
               <p>
-                Hiring the right civil work contractor in Moradabad determines whether the structural foundation of your building — the part you can&apos;t see once finishing work covers it up — is done correctly. Civil work contractors specialize in the physical, structural side of construction: foundation, masonry, framing, and related structural tasks. This guide explains what a civil work contractor specifically handles, how their role differs from a general builder, what to check before hiring one, and why MTBOSS Construction Private Limited (www.mtboss.in) is a trusted option for this kind of work in Moradabad.
+                Hiring the right civil work contractor in Moradabad determines whether the structural foundation of your building — the part you can&apos;t see once finishing work covers it up — is done correctly. Civil work contractors specialize in the physical, structural side of construction: foundation, masonry, framing, and related structural tasks. This guide explains what a civil work contractor specifically handles, how their role differs from a general builder, what to check before hiring one, and why MTBOSS Construction Private Limited is a trusted option for this kind of work in Moradabad.
               </p>
             </section>
 
@@ -25,44 +22,124 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 What Does a Civil Work Contractor Specialize In?
               </h3>
-              <p>
-                Unlike a general contractor who may focus more on project management, a civil work contractor typically specializes in hands-on structural execution including site excavation and ground levelling, foundation and footing construction, column, beam, and slab casting, brickwork and masonry for load-bearing and partition walls, plastering of interior and exterior surfaces, waterproofing of roofs, terraces, and wet areas, basic structural repairs and crack treatment, and coordination with structural engineers on reinforcement details.
+              <p className="mb-3">
+                Unlike a general contractor who may focus more on project management, a civil work contractor typically specializes in hands-on structural execution:
               </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Site excavation and ground levelling</li>
+                <li>Foundation and footing construction</li>
+                <li>Column, beam, and slab casting</li>
+                <li>Brickwork and masonry for load-bearing and partition walls</li>
+                <li>Plastering of interior and exterior surfaces</li>
+                <li>Waterproofing of roofs, terraces, and wet areas</li>
+                <li>Basic structural repairs and crack treatment</li>
+                <li>Coordination with structural engineers on reinforcement details</li>
+              </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Civil Work Contractor vs. General Builder — What&apos;s the Difference?
               </h3>
-              <p>
-                Understanding this distinction helps you know exactly who to hire. A civil work contractor focuses specifically on structural and masonry execution. A general builder or construction company usually manages the entire project, including civil work, MEP, and finishing. Large construction companies often employ or subcontract civil work teams internally. For a full home or commercial build, hiring a full-service company avoids coordination gaps between multiple contractors. For isolated repairs like foundation cracks or wall dampness, a specialized civil work contractor alone may be sufficient.
+              <p className="mb-3">
+                Understanding this distinction helps you know exactly who to hire:
               </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>A civil work contractor focuses specifically on structural and masonry execution</li>
+                <li>A general builder or construction company usually manages the entire project, including civil work, MEP, and finishing</li>
+                <li>Large construction companies often employ or subcontract civil work teams internally</li>
+                <li>For a full home or commercial build, hiring a full-service company avoids coordination gaps between multiple contractors</li>
+                <li>For isolated repairs (like foundation cracks or wall dampness), a specialized civil work contractor alone may be sufficient</li>
+              </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Why Hiring the Right Civil Work Contractor Matters
               </h3>
-              <p>
-                Civil work forms the structural skeleton of any building, so mistakes here are costly and hard to reverse. Weak or improperly cured foundations lead to long-term settlement issues. Poor masonry reduces wall strength and load-bearing capacity. Incorrect waterproofing leads to leakage and dampness within a few years. Substandard structural work can fail municipal safety inspections. Fixing civil work defects after finishing is far more expensive than doing it right initially. Structural safety directly affects the long-term value and resale potential of the property.
+              <p className="mb-3">
+                Civil work forms the structural skeleton of any building, so mistakes here are costly and hard to reverse:
               </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Weak or improperly cured foundations lead to long-term settlement issues</li>
+                <li>Poor masonry reduces wall strength and load-bearing capacity</li>
+                <li>Incorrect waterproofing leads to leakage and dampness within a few years</li>
+                <li>Substandard structural work can fail municipal safety inspections</li>
+                <li>Fixing civil work defects after finishing is far more expensive than doing it right initially</li>
+                <li>Structural safety directly affects the long-term value and resale potential of the property</li>
+              </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Types of Civil Work Contracting Needed in Moradabad
               </h3>
-              <p>
-                Civil work contractors are typically engaged for different categories of structural work. Residential civil work includes foundation and footing for houses and villas, structural framing for multi-storey homes (G+1, G+2, etc.), brickwork and masonry for walls and partitions, and plastering, waterproofing, and structural finishing. Commercial civil work covers foundation and structural work for office buildings, civil work for retail showrooms and shopping complexes, and structural framing for hotels and hospitality projects. Industrial civil work includes foundation and structural work for warehouses, civil work for manufacturing sheds and factory units, and industrial flooring and drainage systems. Repair and renovation civil work covers structural crack repair and reinforcement, re-plastering and waterproofing of old structures, and foundation strengthening for additional floor construction. Related supporting services include electrical and plumbing coordination alongside civil work, material supply for cement, steel, bricks, and sand, and painting and finishing after civil work completion.
+              <p className="mb-3">
+                Civil work contractors are typically engaged for different categories of structural work:
               </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">1. Residential Civil Work</h4>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Foundation and footing for houses and villas</li>
+                <li>Structural framing for multi-storey homes (G+1, G+2, etc.)</li>
+                <li>Brickwork and masonry for walls and partitions</li>
+                <li>Plastering, waterproofing, and structural finishing</li>
+              </ul>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">2. Commercial Civil Work</h4>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Foundation and structural work for office buildings</li>
+                <li>Civil work for retail showrooms and shopping complexes</li>
+                <li>Structural framing for hotels and hospitality projects</li>
+              </ul>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">3. Industrial Civil Work</h4>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Foundation and structural work for warehouses</li>
+                <li>Civil work for manufacturing sheds and factory units</li>
+                <li>Industrial flooring and drainage systems</li>
+              </ul>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">4. Repair &amp; Renovation Civil Work</h4>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Structural crack repair and reinforcement</li>
+                <li>Re-plastering and waterproofing of old structures</li>
+                <li>Foundation strengthening for additional floor construction</li>
+              </ul>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">5. Related Supporting Services</h4>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Electrical and plumbing coordination alongside civil work</li>
+                <li>Material supply for cement, steel, bricks, and sand</li>
+                <li>Painting and finishing after civil work completion</li>
+              </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Why MTBOSS Is a Dependable Civil Work Contractor in Moradabad
               </h3>
-              <p>
-                Based on their published company profile, MTBOSS Construction Private Limited brings structured, professionally managed civil work capability to Moradabad. They bring 22+ years of industry experience, founded in 2002 as a small contracting firm, with 450+ completed projects across residential, commercial, and industrial categories, and 12 million+ square feet built reflecting large-scale structural work capability. Their team includes 150+ trained professionals such as engineers, supervisors, and technicians. They offer a free construction budget calculator providing instant, location-based BOQ estimates, four quality packages — Basic, Standard, Premium, and Luxury — for varied budgets, in-house teams capable of managing foundation-to-finishing civil work, a verified property marketplace for buying, selling, and renting with zero rental brokerage, direct wholesale material supply for cement, steel, bricks, tiles, and paints, franchise opportunities for entrepreneurs entering the construction business, an agent commission program with earnings on referrals, a technology-integrated construction process using AI and BIM since 2018, industry recognition as &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024, and instant WhatsApp support for quick queries and quotes. Because MTBOSS manages civil work as part of a broader, coordinated construction service — rather than as an isolated subcontracted task — clients avoid the common problem of gaps between separate civil, electrical, and finishing teams.
+              <p className="mb-3">
+                Based on their published company profile, MTBOSS Construction Private Limited brings structured, professionally managed civil work capability to Moradabad:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
+                <li>450+ completed projects across residential, commercial, and industrial categories</li>
+                <li>12 million+ square feet built, reflecting large-scale structural work capability</li>
+                <li>150+ trained professionals, including engineers, supervisors, and technicians</li>
+                <li>Free Construction Budget Calculator offering instant, location-based BOQ estimates</li>
+                <li>Four quality packages — Basic, Standard, Premium, and Luxury — for varied budgets</li>
+                <li>In-house teams capable of managing foundation-to-finishing civil work</li>
+                <li>Verified property marketplace for buying, selling, and renting with zero rental brokerage</li>
+                <li>Direct wholesale material supply for cement, steel, bricks, tiles, and paints</li>
+                <li>Franchise opportunities for entrepreneurs entering the construction business</li>
+                <li>Agent commission program with earnings on referrals</li>
+                <li>Technology-integrated construction process, using AI and BIM since 2018</li>
+                <li>Industry recognition — &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024</li>
+                <li>Instant WhatsApp support for quick queries and quotes</li>
+              </ul>
+              <p className="mt-3">
+                Because MTBOSS manages civil work as part of a broader, coordinated construction service — rather than as an isolated subcontracted task — clients avoid the common problem of gaps between separate civil, electrical, and finishing teams.
               </p>
             </section>
 
@@ -70,17 +147,42 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 How to Choose the Right Civil Work Contractor
               </h3>
-              <p>
-                Before hiring a civil work contractor, run through this checklist: confirm years of experience specifically in structural and masonry work, ask for a portfolio showing completed foundation or structural projects, request a detailed written cost estimate before work begins, verify the grade and certification of cement, steel, and bricks used, check if they conduct soil testing before finalizing foundation design, ask about structural warranty and defect-liability coverage, read genuine client reviews and request references, confirm proper licensing and municipal compliance, test their responsiveness via call, email, or WhatsApp, compare at least 2–3 quotes before finalizing, and insist on a written contract with clear timelines and payment stages.
+              <p className="mb-3">
+                Before hiring a civil work contractor, run through this checklist:
               </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Confirm years of experience specifically in structural and masonry work</li>
+                <li>Ask for a portfolio showing completed foundation or structural projects</li>
+                <li>Request a detailed, written cost estimate before work begins</li>
+                <li>Verify the grade and certification of cement, steel, and bricks used</li>
+                <li>Check if they conduct soil testing before finalizing foundation design</li>
+                <li>Ask about structural warranty and defect-liability coverage</li>
+                <li>Read genuine client reviews and request references</li>
+                <li>Confirm proper licensing and municipal compliance</li>
+                <li>Test their responsiveness via call, email, or WhatsApp</li>
+                <li>Compare at least 2–3 quotes before finalizing</li>
+                <li>Insist on a written contract with clear timelines and payment stages</li>
+              </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Civil Work Contractor Cost Factors in Moradabad
               </h3>
-              <p>
-                Several factors influence the cost charged by a civil work contractor including plot location and site accessibility for material transport, number of floors planned (Ground, G+1, G+2, etc.), foundation type and grade of steel/cement used, extent of masonry and internal partition work, waterproofing and structural finishing requirements, current market rates for cement, steel, and skilled labour, and whether the contract is for labour only or labour plus materials. For reference, sample estimates for a 1,000 sq. ft. G+1 standard-quality home typically fall around ₹700–₹800 per sq. ft. overall, with civil and structural work forming a major share of that total.
+              <p className="mb-3">
+                Several factors influence the cost charged by a civil work contractor:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Plot location and site accessibility for material transport</li>
+                <li>Number of floors planned (Ground, G+1, G+2, etc.)</li>
+                <li>Foundation type and grade of steel/cement used</li>
+                <li>Extent of masonry and internal partition work</li>
+                <li>Waterproofing and structural finishing requirements</li>
+                <li>Current market rates for cement, steel, and skilled labour</li>
+                <li>Whether the contract is for labour only or labour plus materials</li>
+              </ul>
+              <p className="mt-3">
+                For reference, sample estimates for a 1,000 sq. ft. G+1 standard-quality home typically fall around ₹700–₹800 per sq. ft. overall, with civil and structural work forming a major share of that total.
               </p>
             </section>
 
@@ -88,35 +190,64 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Step-by-Step Process Followed by Civil Work Contractors
               </h3>
-              <p>
-                Civil work contractors follow a structured process starting with site survey and soil testing to assess ground conditions before starting, followed by excavation and levelling to prepare the site for foundation work. Next comes foundation and footing to lay the structural base of the building, then structural framing involving column, beam, and slab casting. Masonry and brickwork handle building walls and internal partitions, followed by plastering to smooth internal and external wall surfaces. Waterproofing treats roofs, terraces, and wet areas, then quality inspection checks structural integrity before handover, and finally handover for finishing passes the structure to finishing teams.
-              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li><strong>Site Survey &amp; Soil Testing</strong> — Assessing ground conditions before starting</li>
+                <li><strong>Excavation &amp; Levelling</strong> — Preparing the site for foundation work</li>
+                <li><strong>Foundation &amp; Footing</strong> — Laying the structural base of the building</li>
+                <li><strong>Structural Framing</strong> — Column, beam, and slab casting</li>
+                <li><strong>Masonry &amp; Brickwork</strong> — Building walls and internal partitions</li>
+                <li><strong>Plastering</strong> — Smoothing internal and external wall surfaces</li>
+                <li><strong>Waterproofing</strong> — Treating roofs, terraces, and wet areas</li>
+                <li><strong>Quality Inspection</strong> — Checking structural integrity before handover</li>
+                <li><strong>Handover for Finishing</strong> — Passing the structure to finishing teams</li>
+              </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Benefits of Hiring a Locally Established Civil Work Contractor
               </h3>
-              <p>
-                Hiring a locally established civil work contractor offers better understanding of Moradabad&apos;s soil type and climate conditions, established local supplier relationships reducing material delays, familiarity with Moradabad Municipal Corporation&apos;s approval procedures, faster on-site visits and closer supervision during structural work, easier communication in the local language and context, and quicker response for post-construction structural repairs.
-              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Better understanding of Moradabad&apos;s soil type and climate conditions</li>
+                <li>Established local supplier relationships, reducing material delays</li>
+                <li>Familiarity with Moradabad Municipal Corporation&apos;s approval procedures</li>
+                <li>Faster on-site visits and closer supervision during structural work</li>
+                <li>Easier communication in the local language and context</li>
+                <li>Quicker response for post-construction structural repairs</li>
+              </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Common Mistakes to Avoid When Hiring a Civil Work Contractor
               </h3>
-              <p>
-                Common mistakes include selecting the lowest quote without verifying material grade and workmanship, skipping soil testing before finalizing the foundation design, not visiting the site regularly during the structural work phase, ignoring waterproofing until leakage problems appear later, hiring separate uncoordinated contractors for civil, electrical, and finishing work, and not clarifying whether the quoted price includes labour only or labour plus materials.
-              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Selecting the lowest quote without verifying material grade and workmanship</li>
+                <li>Skipping soil testing before finalizing the foundation design</li>
+                <li>Not visiting the site regularly during the structural work phase</li>
+                <li>Ignoring waterproofing until leakage problems appear later</li>
+                <li>Hiring separate, uncoordinated contractors for civil, electrical, and finishing work</li>
+                <li>Not clarifying whether the quoted price includes labour only or labour plus materials</li>
+              </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Contact a Civil Work Contractor in Moradabad
               </h3>
-              <p>
-                If you need foundation, structural, or masonry work handled professionally, get in touch directly: Company: MTBOSS Construction Private Limited, Website: www.mtboss.in, Email: mtboss2016@gmail.com, Phone/Call: +91 94584 10866, WhatsApp: Chat on WhatsApp, Office Address: Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India. Try the free online Construction Budget Calculator for an instant estimate, then follow up by phone or WhatsApp for a formal, detailed quote.
+              <p className="mb-3">
+                If you need foundation, structural, or masonry work handled professionally, get in touch directly:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
+                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
+                <li><strong>Phone / Call:</strong> +91 94584 10866</li>
+                <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
+                <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
+              </ul>
+              <p className="mt-3">
+                Try the free online Construction Budget Calculator for an instant estimate, then follow up by phone or WhatsApp for a formal, detailed quote.
               </p>
             </section>
 
@@ -124,9 +255,43 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Frequently Asked Questions (FAQs)
               </h3>
-              <p>
-                Q1. What does a civil work contractor specifically handle? Foundation, structural framing, masonry, plastering, and waterproofing work. Q2. Who is a reliable civil work contractor in Moradabad? MTBOSS Construction Private Limited, with 22+ years of experience and 450+ completed projects. Q3. What is the difference between a civil work contractor and a builder? A civil work contractor focuses on structural execution; a builder manages the full project including MEP and finishing. Q4. What is the average civil work cost per square foot in Moradabad? Around ₹700–₹800 per sq. ft. overall, with structural work forming a major share. Q5. Does MTBOSS provide a free civil work estimate? Yes, their online Budget Calculator gives an instant, free BOQ-based estimate. Q6. Can I contact MTBOSS on WhatsApp? Yes, message them directly at wa.me/9458410866. Q7. Does MTBOSS handle industrial civil work too? Yes, including warehouses, factory sheds, and industrial infrastructure. Q8. Can I buy construction materials directly from MTBOSS? Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates. Q9. Does MTBOSS coordinate civil work with electrical and plumbing teams? Yes, their in-house teams handle civil, MEP, and finishing work together. Q10. How long does foundation-to-structural work take for a home? Typically 3–5 months for a standard G+1 home, depending on design. Q11. Does MTBOSS offer franchise opportunities? Yes, for entrepreneurs interested in starting a construction business under their brand. Q12. How do I get a formal quote for civil work from MTBOSS? Call +91 94584 10866, email mtboss2016@gmail.com, message on WhatsApp, or visit www.mtboss.in.
-              </p>
+              <ul className="list-disc list-inside space-y-2 ml-4">
+                <li>
+                  <strong>Q1. What does a civil work contractor specifically handle?</strong>
+                  <br />
+                  Foundation, structural framing, masonry, plastering, and waterproofing work.
+                </li>
+                <li>
+                  <strong>Q2. Who is a reliable civil work contractor in Moradabad?</strong>
+                  <br />
+                  MTBOSS Construction Private Limited, with 22+ years of experience and 450+ completed projects.
+                </li>
+                <li>
+                  <strong>Q3. What is the difference between a civil work contractor and a builder?</strong>
+                  <br />
+                  A civil work contractor focuses on structural execution; a builder manages the full project including MEP and finishing.
+                </li>
+                <li>
+                  <strong>Q4. What is the average civil work cost per square foot in Moradabad?</strong>
+                  <br />
+                  Around ₹700–₹800 per sq. ft. overall, with structural work forming a major share.
+                </li>
+                <li>
+                  <strong>Q5. Does MTBOSS provide a free civil work estimate?</strong>
+                  <br />
+                  Yes, their online Budget Calculator gives an instant, free BOQ-based estimate.
+                </li>
+                <li>
+                  <strong>Q7. Does MTBOSS handle industrial civil work too?</strong>
+                  <br />
+                  Yes, including warehouses, factory sheds, and industrial infrastructure.
+                </li>
+                <li>
+                  <strong>Q8. Can I buy construction materials directly from MTBOSS?</strong>
+                  <br />
+                  Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates.
+                </li>
+              </ul>
             </section>
           </div>
         </div>

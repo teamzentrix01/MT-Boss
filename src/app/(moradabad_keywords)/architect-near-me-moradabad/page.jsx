@@ -1,4 +1,4 @@
-// app/(moradabad_keywords)/construction-company-in-moradabad/page.jsx
+// app/(moradabad_keywords)/architect-near-me-in-moradabad/page.jsx
 import Banner from './Banner';
 import Content from './Content';
 import QuickServices from '../../components/QuickServices';
@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Best Construction Company in Moradabad | MTBOSS',
+  title: 'Architect Near Me in Moradabad | Design & Build Guide',
   description:
-    'Looking for a trusted construction company in Moradabad? MTBOSS offers commercial, residential & industrial construction with 22+ years of experience. Get a free quote today.',
+    'Searching for an "architect near me" in Moradabad? Learn what to look for, typical costs, and how design-and-build firms like MTBOSS can help. Call now!',
   keywords:
-    'construction company in moradabad, best construction company moradabad, building contractor moradabad, house construction moradabad, construction services moradabad',
+    'architect near me Moradabad, house architect Moradabad, best architect near me, residential architect Moradabad, commercial architect Moradabad, architect for house design, architect contact number Moradabad, design and build company Moradabad, MTBOSS Moradabad, house design near me',
   alternates: {
-    canonical: 'https://www.mtboss.in/construction-company-in-moradabad',
+    canonical: 'https://www.mtboss.in/architect-near-me-in-moradabad',
   },
   openGraph: {
-    title: 'Best Construction Company in Moradabad | MTBOSS',
+    title: 'Architect Near Me in Moradabad | Design & Build Guide',
     description:
-      'Trusted construction company in Moradabad — commercial, residential & industrial construction with 22+ years of experience.',
-    url: 'https://www.mtboss.in/construction-company-in-moradabad',
+      'Searching for an "architect near me" in Moradabad? Learn what to look for, typical costs, and how design-and-build firms like MTBOSS can help. Call now!',
+    url: 'https://www.mtboss.in/architect-near-me-in-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-construction-moradabad.jpg',
+        url: 'https://www.mtboss.in/og-architect-near-me-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Construction Company in Moradabad - MTBOSS',
+        alt: 'Architect Near Me in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Best Construction Company in Moradabad | MTBOSS',
+    title: 'Architect Near Me in Moradabad | Design & Build Guide',
     description:
-      'Trusted construction company in Moradabad — commercial, residential & industrial construction with 22+ years of experience.',
-    images: ['https://www.mtboss.in/og-construction-moradabad.jpg'],
+      'Searching for an "architect near me" in Moradabad? Learn what to look for, typical costs, and how design-and-build firms like MTBOSS can help. Call now!',
+    images: ['https://www.mtboss.in/og-architect-near-me-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,7 +48,7 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/construction-company-in-moradabad',
+  url: 'https://www.mtboss.in/architect-near-me-in-moradabad',
   telephone: '+91-9458410866',
   email: 'mtboss2016@gmail.com',
   address: {
@@ -57,7 +57,6 @@ const localBusinessSchema = {
     addressLocality: 'Moradabad',
     addressRegion: 'Uttar Pradesh',
     addressCountry: 'IN',
-    // postalCode: 'ADD_PIN_CODE_HERE'
   },
   areaServed: {
     '@type': 'City',
