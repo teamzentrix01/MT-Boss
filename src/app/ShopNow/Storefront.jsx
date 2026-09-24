@@ -16,7 +16,7 @@ function OptimizedImage({ src, alt = '', ...props }) {
   try {
     if (!String(src).startsWith('/')) {
       const hostname = new URL(src).hostname;
-      unoptimized = hostname !== 'res.cloudinary.com' && hostname !== 'images.unsplash.com';
+      unoptimized = hostname !== 'res.cloudinary.com' && hostname !== 'images.unsplash.com' && !hostname.endsWith('pinimg.com');
     }
   } catch {
     unoptimized = true;
