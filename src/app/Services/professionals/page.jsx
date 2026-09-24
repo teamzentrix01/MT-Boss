@@ -12,7 +12,7 @@ const CATEGORIES = [
   'Vastu Consultant',
   'Construction Loan',
   'Construction Legal Advisor',
-  'Cost Approvals',
+  'Government Approvals',
   'Constructions NOC',
   'Property Consultant',
 ];
