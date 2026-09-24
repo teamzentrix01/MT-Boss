@@ -37,6 +37,7 @@ const FALLBACK = [
 ];
 
 function CategoryCard({ cat, dark, idx, visible }) {
+  const [imgError, setImgError] = useState(false);
   const types = Array.isArray(cat.types)
     ? cat.types
     : (typeof cat.types === "string" ? JSON.parse(cat.types || "[]") : []);
@@ -57,13 +58,14 @@ function CategoryCard({ cat, dark, idx, visible }) {
     >
       {/* Image or emoji banner */}
       <div className={`relative overflow-hidden flex items-center justify-center ${dark ? "bg-zinc-900" : "bg-zinc-50"}`} style={{ height: 110 }}>
-        {cat.image ? (
+        {cat.image && !imgError ? (
           <Image
             src={cat.image}
             alt={cat.name}
             fill
             sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 180px"
             loading="lazy"
+            onError={() => setImgError(true)}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80"
           />
         ) : (
