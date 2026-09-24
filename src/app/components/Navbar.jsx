@@ -186,6 +186,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               width={58}
               height={58}
               sizes="(max-width: 639px) 48px, 58px"
+              loading="eager"
+              fetchPriority="high"
               className="block h-12 sm:h-[58px] w-auto object-contain"
             />
           </Link>
