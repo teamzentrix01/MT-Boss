@@ -194,7 +194,7 @@ export default function TestimonialsPage() {
 
             {/* Review Text */}
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed text-center mb-8 max-w-2xl mx-auto italic">
-              "{t.review}"
+              &ldquo;{t.review}&rdquo;
             </p>
 
             {/* Divider */}
@@ -289,7 +289,7 @@ export default function TestimonialsPage() {
               >
                 <StarRating rating={item.rating} />
                 <p className="text-sm text-gray-600 leading-relaxed mt-3 mb-5 italic">
-                  "{item.review.slice(0, 120)}..."
+                  &ldquo;{item.review.slice(0, 120)}...&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
                   <img

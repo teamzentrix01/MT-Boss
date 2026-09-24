@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 
 /* ── dark-mode hook ─────────────────────────────────────────────────────────── */
@@ -168,7 +169,8 @@ export default function ProfessionalProfilePage() {
           {/* Avatar */}
           <div style={{ flexShrink: 0 }}>
             {pro.profile_picture
-              ? <img src={pro.profile_picture} alt={pro.name}
+              ? <Image src={pro.profile_picture} alt={pro.name} width={140} height={140}
+                  sizes="140px"
                   style={{ width: '140px', height: '140px', objectFit: 'cover', display: 'block', border: `3px solid ${t.accent}` }} />
               : <div style={{ width: '140px', height: '140px', background: t.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '56px', color: t.accentFg, fontWeight: 900, border: `3px solid ${t.accent}`, flexShrink: 0 }}>
                   {pro.name?.[0]?.toUpperCase()}
@@ -328,9 +330,10 @@ export default function ProfessionalProfilePage() {
                     {portfolio.map((url, i) => (
                       <div key={i} className="port-thumb" onClick={() => setLightbox(i)}
                         style={{ aspectRatio: '1', overflow: 'hidden', border: `1px solid ${t.border}`, position: 'relative' }}>
-                        <img src={url} alt={`Work ${i + 1}`}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                          onError={e => { e.target.parentElement.style.display = 'none'; }} />
+                        <Image src={url} alt={`Work ${i + 1}`} fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 1120px) 25vw, 180px"
+                          style={{ objectFit: 'cover' }}
+                          onError={e => { e.currentTarget.parentElement.style.display = 'none'; }} />
                         <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0)', transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <span style={{ color: '#fff', fontSize: '20px', opacity: 0, transition: 'opacity 0.2s' }}>🔍</span>
                         </div>
@@ -425,8 +428,12 @@ export default function ProfessionalProfilePage() {
               ‹
             </button>
           )}
-          <img src={portfolio[lightbox]} alt={`Work ${lightbox + 1}`} onClick={e => e.stopPropagation()}
-            style={{ maxWidth: '90vw', maxHeight: '88vh', objectFit: 'contain', border: `2px solid ${t.accent}` }} />
+          <div onClick={e => e.stopPropagation()}
+            style={{ position: 'relative', width: '90vw', height: '88vh' }}>
+            <Image src={portfolio[lightbox]} alt={`Work ${lightbox + 1}`} fill
+              sizes="90vw"
+              style={{ objectFit: 'contain', border: `2px solid ${t.accent}` }} />
+          </div>
           {lightbox < portfolio.length - 1 && (
             <button onClick={e => { e.stopPropagation(); setLightbox(lightbox + 1); }}
               style={{ position: 'fixed', right: '16px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', width: '44px', height: '44px', cursor: 'pointer', fontSize: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

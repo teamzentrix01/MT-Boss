@@ -190,7 +190,7 @@ export default function VendorPendingPage() {
             </div>
 
             <p className="pending-subtitle">
-              We'll send you an email notification as soon as your account is approved. You can then log in and start using your vendor dashboard.
+              We&apos;ll send you an email notification as soon as your account is approved. You can then log in and start using your vendor dashboard.
             </p>
 
             <div className="pending-buttons">

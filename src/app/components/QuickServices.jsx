@@ -25,6 +25,50 @@ function slugFromService(service) {
     .replace(/^-+|-+$/g, "");
 }
 
+async function readQuickServicesResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+
+  if (!contentType.toLowerCase().includes("application/json")) {
+    // Next.js can briefly serve an HTML error document while an API route is
+    // compiling in development. Never pass that document to response.json().
+    throw new Error(
+      `Quick services returned a non-JSON response (${response.status}).`
+    );
+  }
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data?.error || `Quick services request failed (${response.status}).`);
+  }
+
+  return data;
+}
+
+async function loadQuickServices(signal) {
+  let lastError;
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const response = await fetch("/api/quick-services", {
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+        signal,
+      });
+      return await readQuickServicesResponse(response);
+    } catch (error) {
+      if (error.name === "AbortError") throw error;
+      lastError = error;
+
+      // Retry once after a first-load Turbopack compilation response.
+      if (attempt === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 export default function QuickServices() {
   const [headerRef, headerVisible] = useInView(0.1);
   const [gridRef, gridVisible] = useInView(0.05);
@@ -44,18 +88,27 @@ export default function QuickServices() {
 
   // Fetch from API — same as /quick/page.jsx
   useEffect(() => {
+    const controller = new AbortController();
+    let active = true;
+
     const fetchServices = async () => {
       try {
-        const res = await fetch("/api/quick-services");
-        const data = await res.json();
-        if (data.success) setServices(data.data);
+        const data = await loadQuickServices(controller.signal);
+        if (active && data.success) setServices(data.data);
       } catch (error) {
-        console.error("Error fetching quick services:", error);
+        if (error.name !== "AbortError") {
+          console.error("Error fetching quick services:", error);
+        }
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
     fetchServices();
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, []);
 
   const themeYellow = "var(--brand-blue)";

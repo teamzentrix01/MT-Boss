@@ -5,11 +5,6 @@ import PropertyGrid from "../components/buy-sale/PropertyGrid";
 import { properties } from "../data/properties";
 
 export default function BuySalePage() {
-  const isDarkMode =
-    typeof window !== "undefined"
-      ? document.documentElement.classList.contains("dark")
-      : true;
-
   const [filtered, setFiltered] = useState(properties);
   const [dark, setDark] = useState(true);
 
@@ -19,8 +14,11 @@ export default function BuySalePage() {
       setDark(html.classList.contains("dark-mode"));
     });
     observer.observe(html, { attributes: true, attributeFilter: ["class"] });
-    setDark(html.classList.contains("dark-mode"));
-    return () => observer.disconnect();
+    const frame = requestAnimationFrame(() => setDark(html.classList.contains("dark-mode")));
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, []);
 
   const handleFilter = (filters) => {

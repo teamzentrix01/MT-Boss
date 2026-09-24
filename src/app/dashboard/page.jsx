@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense, useCallback, useRef } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
@@ -1112,8 +1113,8 @@ function AdminDashboard() {
                                 {imgUrls.length > 0 ? (
                                   <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
                                     {imgUrls.slice(0, 3).map((url, i) => (
-                                      <img key={i} src={url} alt="" style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)' }}
-                                        onError={ev => { ev.target.style.display = 'none'; }} />
+                                      <Image key={i} src={url} alt="" width={36} height={36} unoptimized style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)' }}
+                                        onError={ev => { ev.currentTarget.style.display = 'none'; }} />
                                     ))}
                                     {imgUrls.length > 3 && <span style={{ fontSize: '0.72rem', color: 'var(--muted)', fontWeight: 700 }}>+{imgUrls.length - 3}</span>}
                                   </div>
@@ -1419,7 +1420,7 @@ function AdminDashboard() {
                             </td>
                             <td style={{ padding: '0.6rem 0.875rem' }}>
                               {item.site_image_url ? (
-                                <img src={item.site_image_url} alt="Site" style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)' }} />
+                                <Image src={item.site_image_url} alt="Site" width={48} height={48} unoptimized style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)' }} />
                               ) : <span style={{ color: 'var(--muted)' }}>-</span>}
                             </td>
                             <td style={{ padding: '0.6rem 0.875rem' }}>
@@ -1499,7 +1500,7 @@ function AdminDashboard() {
                   <div style={{ marginBottom: '1rem' }}>
                     <div className="modal-field-label" style={{ marginBottom: '0.375rem' }}>Site Image</div>
                     <a href={q.site_image_url} target="_blank" rel="noopener noreferrer">
-                      <img src={q.site_image_url} alt="Site upload" style={{ width: '100%', maxHeight: 320, objectFit: 'cover', borderRadius: 6, border: '1px solid var(--border)' }} />
+                      <Image src={q.site_image_url} alt="Site upload" width={720} height={320} unoptimized style={{ width: '100%', height:'auto', maxHeight: 320, objectFit: 'cover', borderRadius: 6, border: '1px solid var(--border)' }} />
                     </a>
                   </div>
                 )}
@@ -1702,9 +1703,9 @@ function AdminDashboard() {
                       {imgUrls.map((url, idx) => (
                         <div key={idx} style={{ border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', background: 'var(--bg)' }}>
                           <a href={url} target="_blank" rel="noreferrer" style={{ display: 'block' }}>
-                            <img src={url} alt={imgNames[idx] || `Image ${idx + 1}`}
+                            <Image src={url} alt={imgNames[idx] || `Image ${idx + 1}`} width={340} height={280} unoptimized
                               style={{ width: '100%', height: '140px', objectFit: 'cover', display: 'block' }}
-                              onError={ev => { ev.target.parentElement.parentElement.style.display = 'none'; }} />
+                              onError={ev => { ev.currentTarget.parentElement.parentElement.style.display = 'none'; }} />
                           </a>
                           <div style={{ padding: '0.45rem 0.6rem', display: 'flex', gap: '0.3rem' }}>
                             <a href={url} target="_blank" rel="noreferrer"
@@ -1743,7 +1744,7 @@ function AdminDashboard() {
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.75rem', marginTop: '0.875rem' }}>
                         {siteImgUrls.map((url, idx) => (
                           <a key={url} href={url} target="_blank" rel="noreferrer" style={{ border: '1px solid var(--border)', borderRadius: 6, overflow: 'hidden', display: 'block', background: 'var(--bg)' }}>
-                            <img src={url} alt={siteImgNames[idx] || `Site photo ${idx + 1}`} style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }} />
+                            <Image src={url} alt={siteImgNames[idx] || `Site photo ${idx + 1}`} width={280} height={240} unoptimized style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }} />
                           </a>
                         ))}
                       </div>

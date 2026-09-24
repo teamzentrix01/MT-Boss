@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import FilterBar from "../../components/buy-sale/FilterBar";
 import PropertyGrid from "../../components/buy-sale/PropertyGrid";
 import { properties } from "../../data/properties";
@@ -17,8 +18,11 @@ export default function PlotsPage() {
       setDark(html.classList.contains("dark-mode"));
     });
     observer.observe(html, { attributes: true, attributeFilter: ["class"] });
-    setDark(html.classList.contains("dark-mode"));
-    return () => observer.disconnect();
+    const frame = requestAnimationFrame(() => setDark(html.classList.contains("dark-mode")));
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, []);
 
   const handleFilter = (filters) => {
@@ -59,13 +63,13 @@ export default function PlotsPage() {
 
         {/* Breadcrumb */}
         <div className="flex items-center justify-center gap-2 mt-4 text-[10px] font-black uppercase tracking-widest">
-          <a href="/" className="text-zinc-500 hover:text-[var(--brand-blue)] transition-colors">
+          <Link href="/" className="text-zinc-500 hover:text-[var(--brand-blue)] transition-colors">
             Home
-          </a>
+          </Link>
           <span className="text-zinc-700">›</span>
-          <a href="/buy-sale" className="text-zinc-500 hover:text-[var(--brand-blue)] transition-colors">
+          <Link href="/buy-sale" className="text-zinc-500 hover:text-[var(--brand-blue)] transition-colors">
             Buy and Sale
-          </a>
+          </Link>
           <span className="text-zinc-700">›</span>
           <span className="text-[var(--brand-blue)]">Plots and Apartments</span>
         </div>

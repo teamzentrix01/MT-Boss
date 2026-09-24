@@ -14,6 +14,7 @@ const ensureTable = createInitializationGuard(async () => {
       user_name               VARCHAR(255) NOT NULL,
       user_phone              VARCHAR(20)  NOT NULL,
       user_email              VARCHAR(255),
+      order_intent            VARCHAR(20),
       category_name           VARCHAR(255) NOT NULL,
       category_emoji          TEXT         DEFAULT '',
       material_type           VARCHAR(255),
@@ -51,6 +52,7 @@ const ensureTable = createInitializationGuard(async () => {
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS selected_city    VARCHAR(100)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS product_id       INTEGER`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS indicative_unit_price NUMERIC(10,2)`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS order_intent VARCHAR(20)`,
   ];
   for (const sql of migrations) {
     try { await pool.query(sql); } catch { /* already correct type or column exists */ }
@@ -80,6 +82,10 @@ export async function POST(req) {
       message, selected_city,
     } = body;
     const isCart = Array.isArray(body.items);
+    const orderIntent = cleanText(body.order_intent)?.toLowerCase() || (isCart ? 'cart' : 'quote');
+    if (!['quote', 'buy', 'cart'].includes(orderIntent) || (isCart && orderIntent !== 'cart') || (!isCart && orderIntent === 'cart')) {
+      return NextResponse.json({ success: false, error: 'Invalid shop order type' }, { status: 400 });
+    }
     if (isCart && (body.items.length === 0 || body.items.length > 20)) {
       return NextResponse.json({ success: false, error: 'Cart must contain 1 to 20 materials' }, { status: 400 });
     }
@@ -110,7 +116,7 @@ export async function POST(req) {
     }
     const lat = Number(latitude);
     const lng = Number(longitude);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
       return NextResponse.json({ success: false, error: 'Live location is required for material enquiries' }, { status: 400 });
     }
     if (isCart && orderItems.some((item) => {
@@ -118,6 +124,15 @@ export async function POST(req) {
       return !cleanText(item.material_type) || !Number.isInteger(quantity) || quantity < 1 || quantity > 10000;
     })) {
       return NextResponse.json({ success: false, error: 'Each cart item needs a material and valid quantity' }, { status: 400 });
+    }
+    if (!isCart) {
+      const quantity = Number.parseFloat(String(quantity_text || ''));
+      if (!cleanText(material_type) || !Number.isFinite(quantity) || quantity <= 0 || quantity > 100000000) {
+        return NextResponse.json({ success: false, error: 'Select a material and enter a valid quantity' }, { status: 400 });
+      }
+      if (orderIntent === 'buy' && (!Number.isInteger(quantity) || quantity > 10000)) {
+        return NextResponse.json({ success: false, error: 'Buy Now quantity must be a whole number between 1 and 10000' }, { status: 400 });
+      }
     }
 
     const client = await pool.connect();
@@ -127,13 +142,13 @@ export async function POST(req) {
       for (const item of orderItems) {
         let indicativeUnitPrice = null;
         const coverage = await client.query(`SELECT 1 WHERE EXISTS (
-          SELECT 1 FROM suppliers s WHERE LOWER(s.city)=LOWER($1)
+          SELECT 1 FROM suppliers s WHERE LOWER(TRIM(s.city))=LOWER(TRIM($1))
             AND s.status='approved' AND s.is_active=TRUE
             AND EXISTS (SELECT 1 FROM unnest(s.product_categories) cat WHERE LOWER(cat)=LOWER($2))
         ) OR EXISTS (
           SELECT 1 FROM supplier_materials m WHERE m.supplier_id=0 AND m.is_available=TRUE AND m.quantity>0
             AND LOWER(TRIM(m.category))=LOWER(TRIM($2))
-            AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(COALESCE(m.available_cities, '[]'::jsonb)) city WHERE LOWER(city)=LOWER($1))
+            AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(COALESCE(m.available_cities, '[]'::jsonb)) city WHERE LOWER(TRIM(city))=LOWER(TRIM($1)))
         )`, [canonicalCity, cleanText(item.category_name)]);
         if (!coverage.rows.length) {
           const failure = new Error(`${item.category_name} is not available for delivery in ${canonicalCity}.`);
@@ -143,21 +158,36 @@ export async function POST(req) {
         if (item.product_id) {
           const requestedQuantity = isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10);
           const productResult = await client.query(
-            `SELECT name, category, unit, quantity, price, bulk_pricing, is_available, supplier_id, available_cities FROM supplier_materials WHERE id=$1 FOR UPDATE`,
+            `SELECT m.name, m.category, m.unit, m.quantity, m.price, m.bulk_pricing, m.is_available,
+                    m.supplier_id,
+                    CASE
+                      WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
+                      WHEN m.supplier_id <> 0 AND s.city IS NOT NULL THEN jsonb_build_array(s.city)
+                      ELSE '[]'::jsonb
+                    END AS available_cities,
+                    CASE WHEN m.supplier_id = 0 THEN TRUE
+                         ELSE COALESCE(s.status = 'approved' AND s.is_active = TRUE, FALSE)
+                    END AS supplier_available
+             FROM supplier_materials m
+             LEFT JOIN suppliers s ON s.id = m.supplier_id
+             WHERE m.id=$1
+             FOR UPDATE OF m`,
             [item.product_id]
           );
           const product = productResult.rows[0];
-          if (!product || !product.is_available || product.name !== item.material_type || (product.category && product.category !== item.category_name)) {
+          if (!product || !product.is_available || !product.supplier_available
+            || product.name.trim().toLowerCase() !== cleanText(item.material_type)?.trim().toLowerCase()
+            || (product.category && product.category.trim().toLowerCase() !== cleanText(item.category_name)?.trim().toLowerCase())) {
             const failure = new Error('A product in your order has changed or is unavailable. Refresh Shop Now and try again.');
             failure.status = 409;
             throw failure;
           }
-          if (product.supplier_id === 0 && !(product.available_cities || []).some((city) => city.toLowerCase() === canonicalCity.toLowerCase())) {
+          if (!(product.available_cities || []).some((city) => city.trim().toLowerCase() === canonicalCity.trim().toLowerCase())) {
             const failure = new Error(`${product.name} is not available for delivery in ${canonicalCity}.`);
             failure.status = 409;
             throw failure;
           }
-          if (body.order_intent !== 'quote' && Number.isInteger(requestedQuantity) && requestedQuantity > product.quantity) {
+          if (orderIntent !== 'quote' && Number.isInteger(requestedQuantity) && requestedQuantity > product.quantity) {
             const failure = new Error(`${product.name} has only ${product.quantity} ${product.unit || 'units'} available. Update your cart quantity.`);
             failure.status = 409;
             throw failure;
@@ -173,15 +203,15 @@ export async function POST(req) {
         const itemQuantity = isCart ? `${item.quantity} ${cleanText(item.order_unit) || 'pcs'}` : quantity_text;
         const result = await client.query(
         `INSERT INTO material_enquiries
-           (user_id, order_reference, user_name, user_phone, user_email,
+           (user_id, order_reference, order_intent, user_name, user_phone, user_email,
             category_name, category_emoji, product_id, indicative_unit_price,
             material_type, subcategory_name, brand_company,
             quantity_text, order_unit, delivery_date,
             delivery_address, latitude, longitude, message, selected_city)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
-         RETURNING id, order_reference, status, created_at`,
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
+         RETURNING id, order_reference, order_intent, status, created_at`,
         [
-          user.id, orderReference, cleanName, cleanPhone, cleanEmail || user.email || null,
+          user.id, orderReference, orderIntent, cleanName, cleanPhone, cleanEmail || user.email || null,
           cleanText(item.category_name), item.category_emoji || '', item.product_id || null, indicativeUnitPrice,
           cleanText(item.material_type) || null, cleanText(item.subcategory_name) || null, cleanText(item.brand_company) || null,
           itemQuantity || null, cleanText(item.order_unit) || null, delivery_date || null,
@@ -192,8 +222,8 @@ export async function POST(req) {
         await addMaterialOrderEvent(client, {
           orderId: result.rows[0].id,
           status: 'open',
-          title: 'Order placed',
-          note: 'Your material order has been received.',
+          title: orderIntent === 'quote' ? 'Quote requested' : 'Order placed',
+          note: orderIntent === 'quote' ? 'Your Get Quote request has been received.' : 'Your material order has been received.',
           actorRole: 'user',
           actorId: user.id,
           actorName: cleanName,

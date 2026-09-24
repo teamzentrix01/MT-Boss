@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { DEFAULT_BLOGS } from '@/lib/blog-defaults.mjs';
+import '../blog.css';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -166,7 +167,7 @@ export default async function BlogDetailPage({ params }) {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white transition-colors duration-300">
+    <div className="blog-page blog-detail-page min-h-screen bg-zinc-50 text-zinc-900 transition-colors duration-300">
       
       {/* JSON-LD Script for SEO */}
       <script
@@ -276,7 +277,7 @@ export default async function BlogDetailPage({ params }) {
         )}
 
         {/* Author Bio Box */}
-        <div className="mt-12 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 shadow-lg flex items-start gap-4">
+        <div className="blog-surface mt-12 p-6 rounded-2xl border border-zinc-200 shadow-lg flex items-start gap-4">
           <div className="w-12 h-12 rounded-2xl bg-[var(--brand-blue)] text-black font-black flex items-center justify-center text-xl flex-shrink-0">
             MT
           </div>
@@ -335,7 +336,7 @@ export default async function BlogDetailPage({ params }) {
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
-                  className="group rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow hover:shadow-xl transition-all duration-300"
+                  className="blog-card group rounded-2xl overflow-hidden border border-zinc-200 shadow hover:shadow-xl transition-all duration-300"
                 >
                   <div className="h-40 overflow-hidden relative bg-zinc-800">
                     <img

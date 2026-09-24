@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback, useRef } from 'react';
+import Image from 'next/image';
 import { useCities } from '@/hooks/useCities';
 
 /* ── theme ──────────────────────────────────────────────────────────────────── */
@@ -57,7 +58,7 @@ function ImageUpload({ value, onChange, t }) {
       <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
         {value && (
           <div style={{ position: 'relative', flexShrink: 0 }}>
-            <img src={value} alt="preview" style={{ width: '64px', height: '64px', objectFit: 'cover', border: `1px solid ${t.border}`, borderRadius: '4px' }} />
+            <Image src={value} alt="preview" width={64} height={64} unoptimized style={{ width: '64px', height: '64px', objectFit: 'cover', border: `1px solid ${t.border}`, borderRadius: '4px' }} />
             <button type="button" onClick={() => onChange('')}
               style={{ position: 'absolute', top: '-7px', right: '-7px', width: '18px', height: '18px', borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
           </div>
@@ -131,7 +132,7 @@ function EmojiUpload({ emojiText, emojiImage, onTextChange, onImageChange, t }) 
         </div>
         {emojiImage && (
           <div style={{ position: 'relative', flexShrink: 0 }}>
-            <img src={emojiImage} alt="emoji" style={{ width: '40px', height: '40px', objectFit: 'cover', border: `1px solid ${t.border}`, borderRadius: '4px' }} />
+            <Image src={emojiImage} alt="emoji" width={40} height={40} unoptimized style={{ width: '40px', height: '40px', objectFit: 'cover', border: `1px solid ${t.border}`, borderRadius: '4px' }} />
             <button type="button" onClick={() => onImageChange('')}
               style={{ position: 'absolute', top: '-8px', right: '-8px', width: '18px', height: '18px', borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
           </div>
@@ -516,7 +517,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                 {(form.label || form.emoji || emojiImage) && (
                   <div style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px' }}>
                     {emojiImage ? (
-                      <img src={emojiImage} alt="emoji" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', border: `1px solid ${t.border}` }} />
+                      <Image src={emojiImage} alt="emoji" width={40} height={40} unoptimized style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', border: `1px solid ${t.border}` }} />
                     ) : (
                       <span style={{ fontSize: '32px' }}>{form.emoji}</span>
                     )}
@@ -768,10 +769,10 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                       {/* image */}
                       <td style={{ padding: '8px 14px', width: '60px' }}>
                         {cat.image
-                          ? <img src={cat.image} alt={cat.name} style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '4px', border: `1px solid ${t.border}` }} />
+                          ? <Image src={cat.image} alt={cat.name} width={48} height={48} unoptimized style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '4px', border: `1px solid ${t.border}` }} />
                           : <div style={{ width: '48px', height: '48px', background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>
                               {cat.emoji_image 
-                                ? <img src={cat.emoji_image} alt="emoji" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '2px' }} />
+                                ? <Image src={cat.emoji_image} alt="emoji" width={40} height={40} unoptimized style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '2px' }} />
                                 : cat.emoji
                               }
                             </div>

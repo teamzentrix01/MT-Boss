@@ -5,9 +5,18 @@
  
 "use client";
 import { Suspense, useState, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { redirectToPayU } from '@/lib/payu-client';
-import MaterialOrdersPanel from '@/app/components/MaterialOrdersPanel';
+
+const panelLoading = () => <div className="min-h-48 flex items-center justify-center text-sm opacity-60">Loading panel...</div>;
+const MaterialOrdersPanel = dynamic(() => import('@/app/components/MaterialOrdersPanel'), { loading: panelLoading });
+const VendorShopProductsManager = dynamic(
+  () => import('@/app/components/ShopNowManager').then((module) => module.VendorShopProductsManager),
+  { loading: panelLoading },
+);
+const VENDOR_TABS = ['notifications', 'leads', 'history', 'packages', 'profile', 'materials', 'products'];
 
 function ServiceIcon({ icon, className = "h-8 w-8" }) {
   const value = String(icon || "").trim();
@@ -15,10 +24,12 @@ function ServiceIcon({ icon, className = "h-8 w-8" }) {
 
   if (isImage) {
     return (
-      <img
+      <Image
         src={value}
         alt=""
-        loading="lazy"
+        width={32}
+        height={32}
+        unoptimized
         className={`${className} shrink-0 rounded-sm object-cover`}
       />
     );
@@ -57,10 +68,14 @@ function VendorDashboardContent() {
   const [extraAmount, setExtraAmount] = useState("");
   const [vendorNote, setVendorNote] = useState("");
   const [completeLoading, setCompleteLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("notifications");
+  const [activeTab, setActiveTab] = useState(() => {
+    const requestedTab = searchParams.get('tab');
+    return VENDOR_TABS.includes(requestedTab) ? requestedTab : 'notifications';
+  });
   const [vendorProfile, setVendorProfile] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const editModeRef = useRef(false);
+  const profileLoadedRef = useRef(false);
   const incomingBookingsRef = useRef(null);
   const activeBookingRef = useRef(null);
   const [profileForm, setProfileForm] = useState({ shop_name: "", phone: "", city: "", state: "", description: "" });
@@ -108,59 +123,78 @@ function VendorDashboardContent() {
     }
  
     const refresh = () => {
-      if (document.visibilityState === 'visible') fetchVendorData(token);
+      if (document.visibilityState === 'visible') fetchVendorData(token, activeTab);
     };
     refresh();
-    const interval = setInterval(refresh, 5000); // Poll every 5 seconds while visible
+    const shouldPoll = activeTab === 'notifications' || activeTab === 'leads';
+    const interval = shouldPoll ? setInterval(refresh, 20000) : null;
     document.addEventListener('visibilitychange', refresh);
     return () => {
-      clearInterval(interval);
+      if (interval) clearInterval(interval);
       document.removeEventListener('visibilitychange', refresh);
     };
-  }, [router]);
+    // Each dashboard tab loads only the data it displays. Live tabs refresh at
+    // a modest interval instead of hitting every vendor endpoint every 5s.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router, activeTab]);
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (['notifications', 'leads', 'history', 'packages', 'profile', 'materials'].includes(tab)) {
+    if (VENDOR_TABS.includes(tab)) {
       setActiveTab(tab);
       if (tab === 'packages') loadPackages();
     }
   }, [searchParams]);
  
-  async function fetchVendorData(token) {
+  async function fetchVendorData(token, tab = activeTab) {
     try {
-      const [notRes, bookRes, compRes, profRes, leadRes] = await Promise.all([
-        fetch("/api/vendor/notifications", { headers: { Authorization: `Bearer ${token}` } }),
-        fetch("/api/vendor/bookings?type=active", { headers: { Authorization: `Bearer ${token}` } }),
-        fetch("/api/vendor/bookings?type=completed", { headers: { Authorization: `Bearer ${token}` } }),
-        fetch("/api/vendor/profile", { headers: { Authorization: `Bearer ${token}` } }),
-        fetch("/api/vendor/leads", { headers: { Authorization: `Bearer ${token}` } }),
-      ]);
+      const headers = { Authorization: `Bearer ${token}` };
+      const requests = [];
+      const addRequest = (key, url) => requests.push(
+        fetch(url, { headers }).then(async (response) => ({ key, response, data: await response.json() })),
+      );
 
-      const [notData, bookData, compData, profData, leadData] = await Promise.all([
-        notRes.json(), bookRes.json(), compRes.json(), profRes.json(), leadRes.json(),
-      ]);
-      if ([notRes, bookRes, compRes, profRes, leadRes].some((response) => response.status === 401 || response.status === 403)) {
+      if (tab === 'notifications') {
+        addRequest('notifications', '/api/vendor/notifications');
+        addRequest('active', '/api/vendor/bookings?type=active');
+        addRequest('completed', '/api/vendor/bookings?type=completed');
+      } else if (tab === 'leads') {
+        addRequest('leads', '/api/vendor/leads');
+      } else if (tab === 'history') {
+        addRequest('completed', '/api/vendor/bookings?type=completed');
+      }
+      if (!profileLoadedRef.current || tab === 'profile') addRequest('profile', '/api/vendor/profile');
+
+      const results = await Promise.all(requests);
+      if (results.some(({ response }) => response.status === 401 || response.status === 403)) {
         localStorage.removeItem('vendor-token');
         setLoading(false);
         router.replace('/vendor/login');
         return;
       }
-      if (notData.success) setNotifications(notData.notifications);
-      if (leadData.success) {
+
+      const resultByKey = Object.fromEntries(results.map(({ key, data }) => [key, data]));
+      const notData = resultByKey.notifications;
+      const bookData = resultByKey.active;
+      const compData = resultByKey.completed;
+      const profData = resultByKey.profile;
+      const leadData = resultByKey.leads;
+
+      if (notData?.success) setNotifications(notData.notifications);
+      if (leadData?.success) {
         setVendorLeads(leadData.data || []);
         setVendorLeadCounts(leadData.counts || { incoming: 0, active: 0, awaiting_payment: 0, completed: 0 });
       }
 
       let awaitingPaymentCount = 0;
-      if (bookData.success && bookData.bookings.length > 0) {
+      if (bookData?.success && bookData.bookings.length > 0) {
         setActiveBooking(bookData.bookings[0]);
         awaitingPaymentCount = bookData.bookings.filter((b) => b.status === 'AWAITING_PAYMENT').length;
-      } else {
+      } else if (bookData) {
         setActiveBooking(null);
       }
 
-      if (compData.success) {
+      if (compData?.success) {
         setCompletedCount(compData.bookings.length + awaitingPaymentCount);
         setCompletedBookings(compData.bookings);
         const earned = compData.bookings.reduce((sum, b) => sum + parseFloat(b.vendor_earning || 0), 0);
@@ -168,7 +202,8 @@ function VendorDashboardContent() {
         // Update stats card label too
       }
 
-      if (profData.success) {
+      if (profData?.success) {
+        profileLoadedRef.current = true;
         setVendorProfile(profData.vendor);
         if (!editModeRef.current) {
           setSelectedServices((profData.vendor.services || []).map((s) => s.id));
@@ -545,10 +580,25 @@ function VendorDashboardContent() {
             <h1 className="max-w-full text-[clamp(2rem,13vw,3.25rem)] sm:text-4xl font-black uppercase leading-[0.95] break-words">
               Vendor Dashboard
             </h1>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab("products");
+                window.requestAnimationFrame(() => {
+                  window.requestAnimationFrame(() => {
+                    document.getElementById('vendor-shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  });
+                });
+              }}
+              className="mt-4 inline-flex items-center justify-center rounded-lg bg-[var(--brand-blue)] px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg transition-transform hover:scale-105"
+            >
+              + Add Product
+            </button>
             <p className={`text-sm ${muted} mt-2 break-words`}>{vendorProfile?.shop_name || "My Shop"} · {vendorProfile?.city || ""}</p>
           </div>
           <div className={`grid w-full min-w-0 grid-cols-2 overflow-hidden border ${isDark ? "border-zinc-800" : "border-zinc-200"} sm:flex sm:w-auto sm:flex-wrap lg:shrink-0`}>
             {[
+              { key: "products", label: "Products" },
               { key: "materials", label: "Material Orders" },
               { key: "notifications", label: "📬 Bookings" },
               { key: "leads", label: "Lead Track" },
@@ -578,7 +628,9 @@ function VendorDashboardContent() {
           </div>
         </div>
  
-        {activeTab === "materials" ? (
+        {activeTab === "products" ? (
+          <VendorShopProductsManager />
+        ) : activeTab === "materials" ? (
           <MaterialOrdersPanel role="vendor" embedded />
         ) : activeTab === "leads" ? (
           <div className="space-y-5">

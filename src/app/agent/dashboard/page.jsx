@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const leadStatuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
@@ -42,7 +42,11 @@ function AgentDashboardContent() {
   const [unreadActivityCount, setUnreadActivityCount] = useState(0);
   const [selectedProject, setSelectedProject] = useState(null);
   const [projectOps, setProjectOps] = useState({ payments: [], labour: [], contractors: [], materials: [], expenses: [], transport: [] });
-  const [activeTab, setActiveTab] = useState('leads');
+  const [activeTab, setActiveTab] = useState(() => {
+    const requestedTab = searchParams.get('tab');
+    return ['leads', 'projects', 'schedule', 'activity', 'profile'].includes(requestedTab) ? requestedTab : 'leads';
+  });
+  const loadedTabsRef = useRef(new Set());
   const [message, setMessage] = useState('');
   const [editLead, setEditLead] = useState(null);
   const [leadSaving, setLeadSaving] = useState(false);
@@ -104,20 +108,29 @@ function AgentDashboardContent() {
   }, []);
 
   useEffect(() => {
-    loadData();
+    loadData(activeTab);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
       if (localStorage.getItem('agent-token')) {
-        refreshLeads();
-        loadActivities(true);
+        if (activeTab === 'leads') refreshLeads();
+        if (activeTab === 'activity') loadActivities(true);
       }
     }, 20000);
     return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (loading || !agent || loadedTabsRef.current.has(activeTab)) return;
+    if (activeTab === 'leads') refreshLeads();
+    if (activeTab === 'projects') loadProjects();
+    if (activeTab === 'schedule') loadSchedule();
+    if (activeTab === 'activity') loadActivities();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, agent, loading]);
 
   function token() {
     return localStorage.getItem('agent-token');
@@ -146,37 +159,36 @@ function AgentDashboardContent() {
     return res;
   }
 
-  async function loadData() {
+  async function loadData(tab = 'leads') {
     setLoading(true);
     try {
-      const [profileRes, leadsRes, scheduleRes, activityRes, projectsRes] = await Promise.all([
+      const endpoint = {
+        leads: '/api/agent/leads',
+        schedule: '/api/agent/schedule',
+        activity: '/api/agent/activity',
+        projects: '/api/agent/projects',
+      }[tab];
+      const [profileRes, tabRes] = await Promise.all([
         authFetch('/api/agent/profile'),
-        authFetch('/api/agent/leads'),
-        authFetch('/api/agent/schedule'),
-        authFetch('/api/agent/activity'),
-        authFetch('/api/agent/projects'),
+        endpoint ? authFetch(endpoint) : Promise.resolve(null),
       ]);
-
-      if (!profileRes || !leadsRes || !scheduleRes) return;
-
+      if (!profileRes) return;
       const profileData = await profileRes.json();
-      const leadsData = await leadsRes.json();
-      const scheduleData = await scheduleRes.json();
-      const activityData = activityRes ? await activityRes.json() : null;
-      const projectsData = projectsRes ? await projectsRes.json() : null;
+      const tabData = tabRes ? await tabRes.json() : null;
 
       if (profileData.success) {
         setAgent(profileData.agent);
         localStorage.setItem('agent', JSON.stringify(profileData.agent));
         if (profileData.agent.must_change_password) setActiveTab('profile');
       }
-      if (leadsData.success) setLeads(leadsData.data || []);
-      if (scheduleData.success) setSchedule(scheduleData.data || []);
-      if (activityData?.success) {
-        setActivities(activityData.data || []);
-        setUnreadActivityCount(activityData.unread_count || 0);
+      if (tab === 'leads' && tabData?.success) setLeads(tabData.data || []);
+      if (tab === 'schedule' && tabData?.success) setSchedule(tabData.data || []);
+      if (tab === 'projects' && tabData?.success) setProjects(tabData.data || []);
+      if (tab === 'activity' && tabData?.success) {
+        setActivities(tabData.data || []);
+        setUnreadActivityCount(tabData.unread_count || 0);
       }
-      if (projectsData?.success) setProjects(projectsData.data || []);
+      loadedTabsRef.current.add(tab);
     } finally {
       setLoading(false);
     }
@@ -186,14 +198,30 @@ function AgentDashboardContent() {
     const res = await authFetch('/api/agent/projects');
     if (!res) return;
     const data = await res.json();
-    if (data.success) setProjects(data.data || []);
+    if (data.success) {
+      setProjects(data.data || []);
+      loadedTabsRef.current.add('projects');
+    }
+  }
+
+  async function loadSchedule() {
+    const res = await authFetch('/api/agent/schedule');
+    if (!res) return;
+    const data = await res.json();
+    if (data.success) {
+      setSchedule(data.data || []);
+      loadedTabsRef.current.add('schedule');
+    }
   }
 
   async function refreshLeads() {
     const res = await authFetch('/api/agent/leads');
     if (!res) return;
     const data = await res.json();
-    if (data.success) setLeads(data.data || []);
+    if (data.success) {
+      setLeads(data.data || []);
+      loadedTabsRef.current.add('leads');
+    }
   }
 
   async function openProject(project) {
@@ -334,6 +362,7 @@ function AgentDashboardContent() {
       if (data.success) {
         setActivities(data.data || []);
         setUnreadActivityCount(data.unread_count || 0);
+        loadedTabsRef.current.add('activity');
       } else if (!silent) {
         setMessage(data.error || 'Activity could not be loaded.');
       }
@@ -589,8 +618,6 @@ function AgentDashboardContent() {
                 key={tab}
                 onClick={() => {
                   setActiveTab(tab);
-                  if (tab === 'projects') loadProjects();
-                  if (tab === 'activity') loadActivities();
                 }}
                 disabled={agent?.must_change_password && tab !== 'profile'}
                 className={`px-5 py-2.5 border text-[10px] font-black uppercase tracking-widest ${activeTab === tab ? 'bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black' : `${card} ${muted}`}`}

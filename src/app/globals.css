@@ -35,10 +35,10 @@ svg {
 }
 
 
-@layer base {
-  body {
-    @apply font-serif;
-  }
+
+/* body font — equivalent to Tailwind's font-serif utility */
+body {
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 
@@ -62,12 +62,19 @@ a[href][class*="uppercase"][class*="border"] {
   box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand-blue) 24%, transparent) !important;
   color: #111 !important;
   transition:
-    background-position 2s cubic-bezier(.16,1,.3,1),
-    border-color 2s cubic-bezier(.16,1,.3,1),
-    box-shadow 420ms ease,
-    color 2s cubic-bezier(.16,1,.3,1),
-    transform 220ms cubic-bezier(.2,.8,.2,1) !important;
-  will-change: transform, background-position, box-shadow;
+    background-position 350ms cubic-bezier(.16,1,.3,1),
+    border-color 350ms cubic-bezier(.16,1,.3,1),
+    box-shadow 260ms ease,
+    color 350ms cubic-bezier(.16,1,.3,1),
+    transform 180ms cubic-bezier(.2,.8,.2,1) !important;
+  will-change: auto;
+}
+
+/* Let the browser skip layout and paint work for home sections that are still
+   well below the viewport. The intrinsic size keeps scrolling stable. */
+.home-deferred-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
 button:hover:not(:disabled),
@@ -111,7 +118,7 @@ a[class*="-btn"]:focus-visible,
 a[class*="btn-"]:focus-visible,
 a[href][class*="uppercase"][class*="bg-"]:focus-visible,
 a[href][class*="uppercase"][class*="border"]:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--brand-blue) 30%, white);
+  outline: 3px solid rgba(33, 150, 243, 0.35); /* color-mix fallback: brand-blue 30% + white */
   outline-offset: 3px;
 }
 
@@ -218,6 +225,7 @@ button[aria-disabled="true"],
   color: #111 !important;
 }
 
+/* Apply the aria-expanded blue style globally. The shop page overrides this below in shop.css. */
 button[aria-expanded] {
   background: var(--brand-blue) !important;
   background-image: none !important;
@@ -235,6 +243,22 @@ button[aria-expanded]:hover {
 button[aria-expanded] *,
 button[aria-expanded]:hover * {
   color: inherit !important;
+}
+
+/* Shop page: card image & title buttons must never inherit global button animation */
+.shop-page .store-product-image-button,
+.shop-page .store-product-title,
+.shop-page .store-bulk-link {
+  background-color: transparent !important;
+  background-image: none !important;
+  background-position: initial !important;
+  background-size: initial !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  transform: none !important;
+  transition: none !important;
+  will-change: auto !important;
 }
 
 /* Segmented property-form choices must show their actual pressed state. */
@@ -289,7 +313,7 @@ button[aria-expanded]:hover * {
 .faq-panel {
   background: #111 !important;
   color: #fff !important;
-  border-top: 1px solid color-mix(in srgb, var(--brand-blue) 55%, transparent);
+  border-top: 1px solid rgba(33, 150, 243, 0.55); /* color-mix fallback: brand-blue 55% + transparent */
 }
 
 .qs-choice-active {
@@ -337,7 +361,7 @@ button[aria-expanded]:hover * {
     max-width: 100%;
     overflow-x: auto;
     white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
+  /* -webkit-overflow-scrolling: touch; — removed: deprecated, no effect in modern browsers */
   }
 
   .booking-table th,
@@ -382,13 +406,50 @@ button[aria-expanded]:hover * {
   transform: none !important;
   box-shadow: none !important;
 }
+
+/* Chatbot quick-action pills: solid blue, full label, no gradient clip */
+.chatbot-quick-strip {
+  scrollbar-width: thin;
+}
+.chatbot-quick-action {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap !important;
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid var(--brand-blue) !important;
+  background-color: var(--brand-blue) !important;
+  background-image: none !important;
+  background-position: initial !important;
+  background-size: initial !important;
+  color: #111 !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+  will-change: auto !important;
+}
+.chatbot-quick-action:hover,
+.chatbot-quick-action:active,
+.chatbot-quick-action:focus-visible {
+  background-color: var(--brand-blue, #1976d2) !important;
+  background-image: none !important;
+  border-color: var(--brand-blue, #1976d2) !important;
+  color: #111 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
 .privacy-consent-field {
   width: 100%;
   margin: 14px 0;
   padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border: 1px solid rgba(0, 0, 0, 0.18); /* color-mix fallback: currentColor 18% + transparent */
   border-radius: 8px;
-  background: color-mix(in srgb, currentColor 4%, transparent);
+  background: rgba(0, 0, 0, 0.04); /* color-mix fallback: currentColor 4% + transparent */
   color: inherit;
   box-sizing: border-box;
 }

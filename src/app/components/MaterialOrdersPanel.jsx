@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import '@/app/material-orders/material-orders.css';
 
 const TOKEN_KEYS = {
   admin: 'token',
@@ -42,10 +43,10 @@ function formatDate(value, withTime = false) {
 }
 
 function statusTone(status) {
-  if (['delivered', 'fulfilled'].includes(status)) return '#16a34a';
-  if (status === 'cancelled') return '#dc2626';
-  if (['dispatched', 'out_for_delivery'].includes(status)) return '#7c3aed';
-  return '#2563eb';
+  if (['delivered', 'fulfilled'].includes(status)) return '#15803d';
+  if (status === 'cancelled') return '#b91c1c';
+  if (['dispatched', 'out_for_delivery'].includes(status)) return '#6d28d9';
+  return '#1d4ed8';
 }
 
 export default function MaterialOrdersPanel({ role = 'user', embedded = false }) {
@@ -123,34 +124,34 @@ export default function MaterialOrdersPanel({ role = 'user', embedded = false })
   };
 
   if (loading) {
-    return <div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500">Loading material orders…</div>;
+    return <div className="material-orders-panel material-orders-surface rounded-xl border p-10 text-center text-sm">Loading material orders…</div>;
   }
 
   return (
-    <section className={embedded ? '' : 'mx-auto max-w-5xl'}>
+    <section className={`material-orders-panel ${embedded ? '' : 'mx-auto max-w-5xl'}`}>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">
+          <p className="material-orders-eyebrow text-[10px] font-black uppercase tracking-[0.3em]">
             {role === 'user' ? 'Purchase History' : 'Assigned Material Orders'}
           </p>
-          <h1 className="mt-1 text-2xl font-black uppercase text-zinc-900">
+          <h1 className="material-orders-title mt-1 text-2xl font-black uppercase">
             {role === 'user' ? 'My Material Purchases' : 'Manage Material Orders'}
           </h1>
-          <p className="mt-1 text-sm text-zinc-500">
+          <p className="material-orders-subtitle mt-1 text-sm">
             {role === 'user'
               ? 'Follow every update from order placement through delivery.'
               : 'Only orders assigned to this account are shown here.'}
           </p>
         </div>
-        <button type="button" onClick={() => loadOrders()} className="rounded-lg border border-zinc-300 px-4 py-2 text-xs font-bold text-zinc-700">
+        <button type="button" onClick={() => loadOrders()} className="material-orders-refresh rounded-lg border px-4 py-2 text-xs font-bold">
           Refresh
         </button>
       </div>
 
-      {error && <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+      {error && <div className="material-orders-error mb-4 rounded-lg border p-3 text-sm">{error}</div>}
 
       {orders.length === 0 ? (
-        <div className="rounded-xl border border-zinc-200 bg-white p-12 text-center">
+        <div className="material-orders-surface rounded-xl border p-12 text-center">
           <div className="text-3xl">📦</div>
           <p className="mt-3 font-bold text-zinc-800">No material orders found</p>
           <p className="mt-1 text-sm text-zinc-500">
@@ -168,45 +169,35 @@ export default function MaterialOrdersPanel({ role = 'user', embedded = false })
             return (
               <article
                 key={order.id}
-                className={`overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm ${role === 'user' ? 'cursor-pointer transition hover:border-blue-400' : ''}`}
-                onClick={() => {
-                  if (role === 'user') setExpanded(isExpanded ? null : order.id);
-                }}
-                onKeyDown={(event) => {
-                  if (role === 'user' && (event.key === 'Enter' || event.key === ' ')) {
-                    setExpanded(isExpanded ? null : order.id);
-                  }
-                }}
-                role={role === 'user' ? 'button' : undefined}
-                tabIndex={role === 'user' ? 0 : undefined}
-                aria-expanded={role === 'user' ? isExpanded : undefined}
+                className="material-order-card overflow-hidden rounded-xl border shadow-sm"
               >
                 <div className="p-5">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
-                      <div className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                      <div className="material-order-reference text-[10px] font-black uppercase tracking-widest">
+                        {order.order_intent && <span className="material-order-intent mr-2 rounded px-2 py-1">{order.order_intent === 'quote' ? 'Quote request' : 'Direct order'}</span>}
                         {order.order_reference || `Material Order #${order.id}`}
                       </div>
-                      <h2 className="mt-1 text-lg font-black text-zinc-900">
+                      <h2 className="material-order-title mt-2 text-lg font-black">
                         {order.category_emoji} {order.category_name}
                       </h2>
-                      <p className="mt-1 text-sm text-zinc-500">
+                      <p className="material-order-description mt-1 text-sm">
                         {[order.material_type, order.subcategory_name, order.brand_company].filter(Boolean).join(' · ') || 'Material request'}
                       </p>
                     </div>
                     <span
-                      className="rounded-full px-3 py-1 text-xs font-black uppercase text-white"
+                      className="material-order-status rounded-full px-3 py-1 text-xs font-black uppercase"
                       style={{ backgroundColor: statusTone(order.status) }}
                     >
                       {STATUS_LABELS[order.status] || order.status}
                     </span>
                   </div>
 
-                  <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
-                    <div><span className="block text-[10px] font-bold uppercase text-zinc-400">Quantity</span>{order.quantity_text || '—'}</div>
-                    <div><span className="block text-[10px] font-bold uppercase text-zinc-400">Delivery City</span>{order.selected_city || '—'}</div>
-                    <div><span className="block text-[10px] font-bold uppercase text-zinc-400">Assigned To</span>{order.assigned_name || order.accepted_by_shop || 'Awaiting assignment'}</div>
-                    <div><span className="block text-[10px] font-bold uppercase text-zinc-400">Estimated Delivery</span>{formatDate(order.estimated_delivery_date)}</div>
+                  <div className="material-order-meta-grid mt-5 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+                    <div><span className="material-order-meta-label block text-[10px] font-bold uppercase">Quantity</span>{order.quantity_text || '—'}</div>
+                    <div><span className="material-order-meta-label block text-[10px] font-bold uppercase">Delivery City</span>{order.selected_city || '—'}</div>
+                    <div><span className="material-order-meta-label block text-[10px] font-bold uppercase">Assigned To</span>{order.assigned_name || order.accepted_by_shop || 'Awaiting assignment'}</div>
+                    <div><span className="material-order-meta-label block text-[10px] font-bold uppercase">Estimated Delivery</span>{formatDate(order.estimated_delivery_date)}</div>
                   </div>
 
                   <button
@@ -215,15 +206,17 @@ export default function MaterialOrdersPanel({ role = 'user', embedded = false })
                       event.stopPropagation();
                       setExpanded(isExpanded ? null : order.id);
                     }}
-                    className="mt-4 text-xs font-black uppercase tracking-wider text-blue-600"
+                    className="material-orders-toggle mt-4 text-xs font-black uppercase tracking-wider"
+                    aria-expanded={isExpanded}
+                    aria-controls={`material-order-details-${order.id}`}
                   >
                     {isExpanded ? 'Hide details' : 'View tracking history'}
                   </button>
                 </div>
 
                 {isExpanded && (
-                  <div className="border-t border-zinc-100 bg-zinc-50 p-5" onClick={(event) => event.stopPropagation()}>
-                    <div className="mb-6 grid gap-4 rounded-lg border border-zinc-200 bg-white p-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
+                  <div id={`material-order-details-${order.id}`} className="material-order-details border-t p-5">
+                    <div className="material-order-overview mb-6 grid gap-4 rounded-lg border p-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Purchased On</span>{formatDate(order.created_at, true)}</div>
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Requested Delivery</span>{formatDate(order.delivery_date)}</div>
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Brand / Company</span>{order.brand_company || '—'}</div>
@@ -299,7 +292,7 @@ export default function MaterialOrdersPanel({ role = 'user', embedded = false })
                           type="button"
                           disabled={saving === order.id}
                           onClick={() => updateOrder(order)}
-                          className="mt-3 rounded-lg bg-blue-600 px-5 py-2 text-xs font-black uppercase text-white disabled:opacity-50"
+                          className="material-orders-update mt-3 rounded-lg px-5 py-2 text-xs font-black uppercase disabled:opacity-50"
                         >
                           {saving === order.id ? 'Saving…' : 'Update Order'}
                         </button>

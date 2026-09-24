@@ -1,9 +1,15 @@
 'use client';
 
 import { Suspense, useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { redirectToPayU } from '@/lib/payu-client';
-import MaterialOrdersPanel from '@/app/components/MaterialOrdersPanel';
+
+const MaterialOrdersPanel = dynamic(() => import('@/app/components/MaterialOrdersPanel'), {
+  loading: () => <div className="sd-loading">Loading order tracking...</div>,
+});
+const SUPPLIER_TABS = ['tracking', 'orders', 'earnings', 'packages', 'profile'];
 
 export default function SupplierDashboard() {
   return (
@@ -19,7 +25,10 @@ function SupplierDashboardContent() {
   const [supplier, setSupplier] = useState(null);
   const [dark, setDark] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('orders');
+  const [activeTab, setActiveTab] = useState(() => {
+    const requestedTab = searchParams.get('tab');
+    return SUPPLIER_TABS.includes(requestedTab) ? requestedTab : 'orders';
+  });
 
   // ── Product categories fetched from DB ────────────────────────────────────
   const [productCategories, setProductCategories] = useState([]);
@@ -62,14 +71,6 @@ function SupplierDashboardContent() {
   }, []);
 
   useEffect(() => {
-    // Fetch shop categories from same DB table ShopNow uses
-    fetch('/api/shop-categories')
-      .then(r => r.json())
-      .then(d => { if (d.success) setProductCategories(d.data); })
-      .catch(console.error);
-  }, []);
-
-  useEffect(() => {
     const supplierData = localStorage.getItem('supplier');
     const tok = localStorage.getItem('supplier-token');
     if (!tok || !supplierData) { router.push('/supplier/login'); return; }
@@ -78,8 +79,6 @@ function SupplierDashboardContent() {
       setSupplier(parsed);
       setSelectedCats(parsed.product_categories || []);
       setLoading(false);
-      fetchOrders(tok);
-      fetchEarnings(tok);
     } catch { router.push('/supplier/login'); }
   }, [router]);
 
@@ -87,13 +86,27 @@ function SupplierDashboardContent() {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (['orders', 'earnings', 'packages', 'profile'].includes(tab)) {
+    if (SUPPLIER_TABS.includes(tab)) {
       setActiveTab(tab);
-      if (tab === 'orders') fetchOrders();
-      if (tab === 'earnings') fetchEarnings();
-      if (tab === 'packages') loadPackages();
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (!supplier) return;
+
+    if (activeTab === 'orders') fetchOrders();
+    if (activeTab === 'earnings') fetchEarnings();
+    if (activeTab === 'packages') loadPackages();
+    if (activeTab === 'profile' && productCategories.length === 0) {
+      fetch('/api/shop-categories')
+        .then((response) => response.json())
+        .then((data) => { if (data.success) setProductCategories(data.data); })
+        .catch(console.error);
+    }
+    // Load the active panel only; these loaders intentionally stay outside the
+    // dependency list so a response state update cannot trigger another fetch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, supplier]);
 
   // ── Product Categories ────────────────────────────────────────────────────
   const saveCategories = async () => {
@@ -265,9 +278,16 @@ function SupplierDashboardContent() {
           <div className="sd-order-cat">
             {e.category_emoji} {e.category_name}
           </div>
-          <span className="sd-badge" style={badgeStyle}>
-            {isTaken ? 'Taken' : statusLabel(e.status)}
-          </span>
+          <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            {e.order_intent && (
+              <span className="sd-badge" style={{ background: e.order_intent === 'quote' ? '#ede9fe' : '#dcfce7', color: e.order_intent === 'quote' ? '#6d28d9' : '#15803d' }}>
+                {e.order_intent === 'quote' ? 'Get Quote' : 'Direct order'}
+              </span>
+            )}
+            <span className="sd-badge" style={badgeStyle}>
+              {isTaken ? 'Taken' : statusLabel(e.status)}
+            </span>
+          </div>
         </div>
 
         {/* Material type + brand */}
@@ -454,9 +474,6 @@ function SupplierDashboardContent() {
               <button key={t.id} className={`sd-tab${activeTab === t.id ? ' active' : ''}`}
                 onClick={() => {
                   setActiveTab(t.id);
-                  if (t.id === 'earnings') fetchEarnings();
-                  if (t.id === 'orders')   fetchOrders();
-                  if (t.id === 'packages') loadPackages();
                 }}>
                 {t.label}
               </button>
@@ -722,7 +739,7 @@ function SupplierDashboardContent() {
                               onClick={() => setSelectedCats(prev => prev.includes(cat.name) ? prev.filter(c => c !== cat.name) : [...prev, cat.name])}
                               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 0.875rem', border: `2px solid ${on ? '#10b981' : border}`, borderRadius: 9, cursor: 'pointer', background: on ? (dark ? '#0a2a1a' : '#f0fdf4') : (dark ? '#1a1a1a' : '#f8f8f8'), transition: 'all .15s' }}>
                               {cat.image
-                                ? <img src={cat.image} alt={cat.name} style={{ width: '1.2rem', height: '1.2rem', objectFit: 'cover', borderRadius: '2px', flexShrink: 0 }} />
+                                ? <Image src={cat.image} alt={cat.name} width={20} height={20} unoptimized style={{ width: '1.2rem', height: '1.2rem', objectFit: 'cover', borderRadius: '2px', flexShrink: 0 }} />
                                 : <span style={{ fontSize: '1.2rem' }}>{cat.emoji || '🛒'}</span>
                               }
                               <span style={{ fontSize: '0.78rem', fontWeight: 700, color: text, flex: 1, lineHeight: 1.3 }}>{cat.name}</span>

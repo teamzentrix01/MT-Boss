@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import GlobalSearch from "./GlobalSearch";
@@ -179,10 +180,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0">
-            <img
+            <Image
               src="/logo.png"
               alt="MTBOSS"
-              className="h-12 sm:h-[58px] w-auto object-contain"
+              width={58}
+              height={58}
+              sizes="(max-width: 639px) 48px, 58px"
+              loading="eager"
+              fetchPriority="high"
+              className="block h-12 sm:h-[58px] w-auto object-contain"
             />
           </Link>
 
@@ -221,9 +227,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   >
                     <p className="text-sm font-bold">{item.label}</p>
                     <p
-                      className={`text-[11px] mt-0.5 ${
-                        isDarkMode ? "text-zinc-600" : "text-zinc-400"
-                      }`}
+                      className={`text-[11px] mt-0.5 ${isDarkMode ? "text-zinc-600" : "text-zinc-400"
+                        }`}
                     >
                       {item.sub}
                     </p>
@@ -270,24 +275,18 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </Link>
 
             <Link
-              href="/FeaturedProjects/ProjectGallery"
-              className={`inline-flex px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
-            >
-              Portfolio
-            </Link>
-
-            <Link
               href="/ShopNow"
-              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+              className="inline-flex items-center gap-1.5 px-4 2xl:px-5 py-2 text-xs 2xl:text-sm font-semibold whitespace-nowrap bg-[var(--brand-blue)] text-black rounded-md hover:bg-[var(--brand-blue-dark)] transition-all duration-200"
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
+                className="h-3.5 w-3.5 2xl:h-4 2xl:w-4 fill-current"
+                aria-hidden="true"
+              >
+                <path d="M24 48C10.7 48 0 58.7 0 72C0 85.3 10.7 96 24 96L69.3 96C73.2 96 76.5 98.8 77.2 102.6L129.3 388.9C135.5 423.1 165.3 448 200.1 448L456 448C469.3 448 480 437.3 480 424C480 410.7 469.3 400 456 400L200.1 400C188.5 400 178.6 391.7 176.5 380.3L171.4 352L475 352C505.8 352 532.2 330.1 537.9 299.8L568.9 133.9C572.6 114.2 557.5 96 537.4 96L124.7 96L124.3 94C119.5 67.4 96.3 48 69.2 48L24 48zM208 576C234.5 576 256 554.5 256 528C256 501.5 234.5 480 208 480C181.5 480 160 501.5 160 528C160 554.5 181.5 576 208 576zM432 576C458.5 576 480 554.5 480 528C480 501.5 458.5 480 432 480C405.5 480 384 501.5 384 528C384 554.5 405.5 576 432 576z" />
+              </svg>
               Shop Now
-            </Link>
-
-            <Link
-              href="/blog"
-              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
-            >
-              Blogs
             </Link>
           </div>
 
@@ -303,11 +302,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               type="button"
               aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               title={isDarkMode ? "Light mode" : "Dark mode"}
-              className={`nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md border transition-all ${
-                isDarkMode
-                  ? "nav-theme-toggle-dark border-zinc-700 bg-zinc-900 text-zinc-200"
-                  : "nav-theme-toggle-light border-gray-300 bg-white text-zinc-700"
-              }`}
+              className={`nav-theme-toggle flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md border transition-all ${isDarkMode
+                ? "nav-theme-toggle-dark border-zinc-700 bg-zinc-900 text-zinc-200"
+                : "nav-theme-toggle-light border-gray-300 bg-white text-zinc-700"
+                }`}
             >
               {isDarkMode ? (
                 <svg
@@ -332,19 +330,17 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             {!loading ? (
               user ? (
                 // Logged In User
-                <div className={`flex min-w-0 items-center gap-1.5 px-2 py-1.5 rounded-lg border transition-all ${
-                  isDarkMode 
-                    ? 'border-zinc-700 bg-zinc-900/50' 
-                    : 'border-gray-200 bg-gray-50'
-                }`}>
+                <div className={`flex min-w-0 items-center gap-1.5 px-2 py-1.5 rounded-lg border transition-all ${isDarkMode
+                  ? 'border-zinc-700 bg-zinc-900/50'
+                  : 'border-gray-200 bg-gray-50'
+                  }`}>
                   <div
-                    className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                      user.role === 'admin' ? 'bg-red-500'
+                    className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${user.role === 'admin' ? 'bg-red-500'
                       : user.role === 'vendor' ? 'bg-green-500'
-                      : user.role === 'supplier' ? 'bg-sky-500'
-                      : user.role === 'franchise' ? 'bg-[var(--brand-blue-deep)]'
-                      : 'bg-blue-500'
-                    } text-white`}
+                        : user.role === 'supplier' ? 'bg-sky-500'
+                          : user.role === 'franchise' ? 'bg-[var(--brand-blue-deep)]'
+                            : 'bg-blue-500'
+                      } text-white`}
                   >
                     {(user.name || user.shop_name || user.email || 'U')[0].toUpperCase()}
                   </div>
@@ -358,21 +354,19 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   </div>
                   <button
                     onClick={handleDashboard}
-                    className={`nav-control nav-dashboard px-2 2xl:px-3 py-1 text-[11px] 2xl:text-xs font-semibold rounded-md transition-all whitespace-nowrap 2xl:ml-1 ${
-                      isDarkMode
-                        ? 'border border-zinc-500 text-zinc-300 hover:bg-zinc-700'
-                        : 'border border-gray-400 text-gray-700 hover:bg-gray-200'
-                    }`}
+                    className={`nav-control nav-dashboard px-2 2xl:px-3 py-1 text-[11px] 2xl:text-xs font-semibold rounded-md transition-all whitespace-nowrap 2xl:ml-1 ${isDarkMode
+                      ? 'border border-zinc-500 text-zinc-300 hover:bg-zinc-700'
+                      : 'border border-gray-400 text-gray-700 hover:bg-gray-200'
+                      }`}
                   >
                     Dashboard
                   </button>
                   <button
                     onClick={handleLogout}
-                    className={`nav-control nav-logout px-2 2xl:px-3 py-1 text-[11px] 2xl:text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
-                      isDarkMode
-                        ? 'bg-red-600 text-white hover:bg-red-700'
-                        : 'bg-red-500 text-white hover:bg-red-600'
-                    }`}
+                    className={`nav-control nav-logout px-2 2xl:px-3 py-1 text-[11px] 2xl:text-xs font-semibold rounded-md transition-all whitespace-nowrap ${isDarkMode
+                      ? 'bg-red-600 text-white hover:bg-red-700'
+                      : 'bg-red-500 text-white hover:bg-red-600'
+                      }`}
                   >
                     Logout
                   </button>
@@ -382,11 +376,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 <>
                   <Link
                     href="/login"
-                    className={`px-5 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-                      isDarkMode
-                        ? 'text-[var(--brand-blue)] border border-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
-                        : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)] hover:bg-sky-50'
-                    }`}
+                    className={`px-5 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${isDarkMode
+                      ? 'text-[var(--brand-blue)] border border-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
+                      : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)] hover:bg-sky-50'
+                      }`}
                   >
                     Sign In
                   </Link>
@@ -407,11 +400,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               <div className="flex min-w-0 items-center gap-1 mr-0.5">
                 <Link
                   href="/login"
-                  className={`whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 border rounded transition-all duration-200 ${
-                    isDarkMode
-                      ? 'text-[var(--brand-blue)] border-[var(--brand-blue)] hover:bg-[var(--brand-blue)]'
-                      : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)]'
-                  }`}
+                  className={`whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 border rounded transition-all duration-200 ${isDarkMode
+                    ? 'text-[var(--brand-blue)] border-[var(--brand-blue)] hover:bg-[var(--brand-blue)]'
+                    : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)]'
+                    }`}
                 >
                   Sign In
                 </Link>
@@ -428,19 +420,17 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               type="button"
               aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               title={isDarkMode ? "Light mode" : "Dark mode"}
-              className={`nav-theme-toggle flex h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 items-center justify-center rounded-full border ${
-                isDarkMode ? 'nav-theme-toggle-dark border-zinc-700 bg-zinc-900 text-zinc-200' : 'nav-theme-toggle-light border-gray-300 bg-white text-zinc-700'
-              }`}
+              className={`nav-theme-toggle flex h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 items-center justify-center rounded-full border ${isDarkMode ? 'nav-theme-toggle-dark border-zinc-700 bg-zinc-900 text-zinc-200' : 'nav-theme-toggle-light border-gray-300 bg-white text-zinc-700'
+                }`}
             >
               {isDarkMode ? '☀️' : '🌙'}
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`nav-control p-1.5 sm:p-2 rounded-md ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:bg-gray-100'
-              }`}
+              className={`nav-control p-1.5 sm:p-2 rounded-md ${isDarkMode
+                ? 'text-zinc-300 hover:bg-zinc-800'
+                : 'text-zinc-600 hover:bg-gray-100'
+                }`}
             >
               {isOpen ? (
                 <svg
@@ -485,16 +475,14 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
         />
       )}
       <div
-        className={`xl:hidden fixed inset-x-0 top-16 z-[120] transition-all duration-300 ${
-          isOpen
-            ? 'visible translate-y-0 opacity-100'
-            : 'invisible -translate-y-3 opacity-0 pointer-events-none'
-        }`}
+        className={`xl:hidden fixed inset-x-0 top-16 z-[120] transition-all duration-300 ${isOpen
+          ? 'visible translate-y-0 opacity-100'
+          : 'invisible -translate-y-3 opacity-0 pointer-events-none'
+          }`}
       >
         <div
-          className={`${
-            isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-gray-100'
-          } border-t px-4 py-4 space-y-1 max-h-[calc(100dvh-4rem)] overflow-y-auto shadow-2xl`}
+          className={`${isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-gray-100'
+            } border-t px-4 py-4 space-y-1 max-h-[calc(100dvh-4rem)] overflow-y-auto shadow-2xl`}
         >
           <div className="pb-3">
             <GlobalSearch user={user} isDarkMode={isDarkMode} onNavigate={() => setIsOpen(false)} />
@@ -507,11 +495,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               key={link.label}
               href={link.href}
               onClick={closeMobileMenu}
-              className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
+              className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+                }`}
             >
               {link.label}
             </Link>
@@ -521,17 +508,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           <div>
             <button
               onClick={() => setServicesOpen(!servicesOpen)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
+              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+                }`}
             >
               Services
               <svg
-                className={`w-4 h-4 transition-transform ${
-                  servicesOpen ? 'rotate-180' : ''
-                }`}
+                className={`w-4 h-4 transition-transform ${servicesOpen ? 'rotate-180' : ''
+                  }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -551,11 +536,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                     key={s.label}
                     href={s.href}
                     onClick={closeMobileMenu}
-                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${
-                      isDarkMode
-                        ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                        : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
-                    }`}
+                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${isDarkMode
+                      ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                      : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
+                      }`}
                   >
                     {s.label}
                   </Link>
@@ -568,17 +552,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           <div>
             <button
               onClick={() => setPropertyOpen(!propertyOpen)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
+              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+                }`}
             >
               Property
               <svg
-                className={`w-4 h-4 transition-transform ${
-                  propertyOpen ? 'rotate-180' : ''
-                }`}
+                className={`w-4 h-4 transition-transform ${propertyOpen ? 'rotate-180' : ''
+                  }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -598,11 +580,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                     key={s.label}
                     href={s.href}
                     onClick={closeMobileMenu}
-                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${
-                      isDarkMode
-                        ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                        : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
-                    }`}
+                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${isDarkMode
+                      ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                      : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
+                      }`}
                   >
                     {s.label}
                   </Link>
@@ -614,9 +595,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           {[
             { label: 'Construction', href: '/Services/all' },
             { label: 'Budget Calculator', href: '/calculator' },
-            { label: 'Portfolio', href: '/FeaturedProjects/ProjectGallery' },
-            { label: 'Shop Now', href: '/ShopNow' },
-            { label: 'Blogs & Guides', href: '/blog' },
+            { label: 'Shop Now', href: '/ShopNow', icon: 'cart' },
             { label: 'Careers', href: '/careers' },
             { label: 'Contact', href: '/contact' },
           ].map((link) => (
@@ -624,12 +603,21 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               key={link.label}
               href={link.href}
               onClick={closeMobileMenu}
-              className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
+              className={`flex items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+                }`}
             >
+              {link.icon === 'cart' && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 640 640"
+                  className="h-4 w-4 fill-current"
+                  aria-hidden="true"
+                >
+                  <path d="M24 48C10.7 48 0 58.7 0 72C0 85.3 10.7 96 24 96L69.3 96C73.2 96 76.5 98.8 77.2 102.6L129.3 388.9C135.5 423.1 165.3 448 200.1 448L456 448C469.3 448 480 437.3 480 424C480 410.7 469.3 400 456 400L200.1 400C188.5 400 178.6 391.7 176.5 380.3L171.4 352L475 352C505.8 352 532.2 330.1 537.9 299.8L568.9 133.9C572.6 114.2 557.5 96 537.4 96L124.7 96L124.3 94C119.5 67.4 96.3 48 69.2 48L24 48zM208 576C234.5 576 256 554.5 256 528C256 501.5 234.5 480 208 480C181.5 480 160 501.5 160 528C160 554.5 181.5 576 208 576zM432 576C458.5 576 480 554.5 480 528C480 501.5 458.5 480 432 480C405.5 480 384 501.5 384 528C384 554.5 405.5 576 432 576z" />
+                </svg>
+              )}
               {link.label}
             </Link>
           ))}
@@ -637,33 +625,30 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           <Link
             href="/agent"
             onClick={closeMobileMenu}
-            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-              isDarkMode
-                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-            }`}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
           >
             Become an Agent
           </Link>
           <Link
             href="/agent/login"
             onClick={closeMobileMenu}
-            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-              isDarkMode
-                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-            }`}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
           >
             Agent Login
           </Link>
           <Link
             href="/franchise"
             onClick={closeMobileMenu}
-            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-              isDarkMode
-                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-            }`}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
           >
             Franchise
           </Link>
@@ -677,21 +662,19 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 </div>
                 <button
                   onClick={handleDashboard}
-                  className={`nav-control nav-dashboard w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
-                    isDarkMode
-                      ? 'border border-zinc-600 text-zinc-300 hover:bg-zinc-800'
-                      : 'border border-gray-300 text-gray-600 hover:bg-gray-100'
-                  }`}
+                  className={`nav-control nav-dashboard w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${isDarkMode
+                    ? 'border border-zinc-600 text-zinc-300 hover:bg-zinc-800'
+                    : 'border border-gray-300 text-gray-600 hover:bg-gray-100'
+                    }`}
                 >
                   Dashboard
                 </button>
                 <button
                   onClick={handleLogout}
-                  className={`nav-control nav-logout w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
-                    isDarkMode
-                      ? 'bg-red-600 text-white hover:bg-red-700'
-                      : 'bg-red-500 text-white hover:bg-red-600'
-                  }`}
+                  className={`nav-control nav-logout w-full text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${isDarkMode
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-red-500 text-white hover:bg-red-600'
+                    }`}
                 >
                   Logout
                 </button>
@@ -701,11 +684,10 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 <Link
                   href="/login"
                   onClick={closeMobileMenu}
-                  className={`block text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${
-                    isDarkMode
-                      ? 'text-[var(--brand-blue)] border border-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
-                      : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)] hover:bg-sky-50'
-                  }`}
+                  className={`block text-center px-5 py-2.5 text-sm font-semibold rounded-md transition-all ${isDarkMode
+                    ? 'text-[var(--brand-blue)] border border-[var(--brand-blue)] hover:bg-[var(--brand-blue)] hover:text-black'
+                    : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)] hover:bg-sky-50'
+                    }`}
                 >
                   Sign In
                 </Link>

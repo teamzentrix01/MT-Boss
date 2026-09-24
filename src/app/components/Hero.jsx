@@ -2,9 +2,15 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
-import { defaultHeroBanners } from '@/lib/hero-banner-defaults.mjs';
+import { CONSTRUCTION_HERO_IMAGE_URL, defaultHeroBanners } from '@/lib/hero-banner-defaults.mjs';
 import HeroBannerSlide from './HeroBannerSlide';
 import styles from './Hero.module.css';
+
+const withCanonicalConstructionImage = banners => banners.map(banner => (
+  banner.service_name?.trim().toLowerCase() === 'construction'
+    ? { ...banner, image_url: CONSTRUCTION_HERO_IMAGE_URL, cloudinary_public_id: '' }
+    : banner
+));
 
 export default function Hero() {
   const [slides, setSlides] = useState(defaultHeroBanners);
@@ -19,7 +25,7 @@ export default function Hero() {
       .then(response => response.ok ? response.json() : null)
       .then(data => {
         if (data?.success && Array.isArray(data.data)) {
-          setSlides(data.data);
+          setSlides(withCanonicalConstructionImage(data.data));
           setCurrent(0);
         }
       }).catch(() => {});

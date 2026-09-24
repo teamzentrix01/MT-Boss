@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import PortfolioProjectCard from "@/app/components/PortfolioProjectCard";
@@ -303,7 +304,7 @@ export default function ServiceDetailPage() {
 
       {/* ── Hero ── */}
       <section className="relative order-1 h-[58vh] min-h-[420px] flex items-end overflow-hidden">
-        <img src={service.image} alt={service.title} className="absolute inset-0 w-full h-full object-cover" />
+        {service.image && <Image src={service.image} alt={service.title} fill sizes="100vw" quality={80} priority className="object-cover" />}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
         <div className="relative z-10 max-w-4xl mx-auto px-6 pb-14 w-full">
           <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-3">MTBOSS Construction</p>

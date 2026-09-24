@@ -858,12 +858,12 @@ export default function UserDashboard() {
                           <p className="text-xs font-bold mt-1 text-zinc-800 dark:text-zinc-200">{enquiry.enquirer_name}</p>
                           <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">📞 {enquiry.enquirer_phone}</p>
                           {enquiry.enquirer_email && <p className="text-xs text-zinc-600 dark:text-zinc-400">✉️ {enquiry.enquirer_email}</p>}
-                          {enquiry.message && <p className="mt-2 text-xs italic opacity-80">"{enquiry.message}"</p>}
+                          {enquiry.message && <p className="mt-2 text-xs italic opacity-80">&ldquo;{enquiry.message}&rdquo;</p>}
                         </div>
                       )}
 
                       {!isOwner && enquiry.message && (
-                        <p className={`mt-3 text-xs italic ${muted}`}>Your message: "{enquiry.message}"</p>
+                        <p className={`mt-3 text-xs italic ${muted}`}>Your message: &ldquo;{enquiry.message}&rdquo;</p>
                       )}
                     </div>
 

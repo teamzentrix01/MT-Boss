@@ -97,14 +97,14 @@ export async function GET(req) {
         dbCheck = await pool.query(
           `SELECT 1 WHERE EXISTS (
              SELECT 1 FROM suppliers s
-             WHERE LOWER(s.city) = LOWER($1)
+             WHERE LOWER(TRIM(s.city)) = LOWER(TRIM($1))
                AND s.status = 'approved' AND s.is_active = TRUE
                AND EXISTS (SELECT 1 FROM unnest(s.product_categories) cat WHERE LOWER(cat) = LOWER($2))
            ) OR EXISTS (
              SELECT 1 FROM supplier_materials m
              WHERE m.supplier_id = 0 AND m.is_available = TRUE AND m.quantity > 0
                AND LOWER(TRIM(m.category)) = LOWER(TRIM($2))
-               AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(COALESCE(m.available_cities, '[]'::jsonb)) available_city WHERE LOWER(available_city) = LOWER($1))
+               AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(COALESCE(m.available_cities, '[]'::jsonb)) available_city WHERE LOWER(TRIM(available_city)) = LOWER(TRIM($1)))
            )`,
           [city.trim(), cleanName]
         );

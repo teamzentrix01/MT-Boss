@@ -1,13 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import ShopCategoriesManager from './ShopCategoriesManager';
 import { defaultShopStorefront } from '@/lib/shop-storefront-defaults';
 import './ShopNowManager.css';
 
 const units = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
-const emptyProduct = { name: '', description: '', category: '', price: '', compare_at_price: '', brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
+const emptyProduct = { name: '', description: '', category: '', quote_price_range: '', price: '', compare_at_price: '', brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
 const fields = [
   ['hero_kicker', 'Banner eyebrow'], ['hero_title', 'Banner title'],
   ['hero_highlight', 'Highlighted title'], ['hero_description', 'Banner description'],
@@ -18,10 +19,26 @@ const fields = [
   ['catalog_heading', 'Catalogue heading'], ['footer_tagline', 'Footer tagline'],
 ];
 
-const adminHeaders = () => ({
+const shopHeaders = (ownerRole = 'admin') => ({
   'Content-Type': 'application/json',
-  Authorization: `Bearer ${localStorage.getItem('admin-token') || localStorage.getItem('token') || ''}`,
+  Authorization: `Bearer ${ownerRole === 'vendor'
+    ? localStorage.getItem('vendor-token') || ''
+    : localStorage.getItem('admin-token') || localStorage.getItem('token') || ''}`,
 });
+
+async function readApiJson(response) {
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.toLowerCase().includes('application/json')) {
+    throw new Error(`Shop product service returned an invalid response (${response.status}). Please refresh after restarting the development server.`);
+  }
+  return response.json();
+}
+
+function notifyShopProductsUpdated() {
+  try { localStorage.setItem('mtboss-shop-products-updated', String(Date.now())); }
+  catch { /* Same-tab refresh event still keeps Shop Now in sync. */ }
+  window.dispatchEvent(new Event('mtbossShopProductsUpdated'));
+}
 
 async function uploadImage(file) {
   const cloud = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
@@ -36,7 +53,9 @@ async function uploadImage(file) {
   return data.secure_url;
 }
 
-function ProductManager() {
+function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
+  const isVendor = ownerRole === 'vendor';
+  const productEndpoint = isVendor ? '/api/vendor/shop-products' : '/api/admin/shop-products';
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cities, setCities] = useState([]);
@@ -54,18 +73,18 @@ function ProductManager() {
     setLoading(true);
     try {
       const [productRes, categoryRes, cityRes] = await Promise.all([
-        fetch('/api/admin/shop-products', { headers: adminHeaders() }),
-        fetch('/api/shop-categories?admin=true', { headers: adminHeaders() }),
+        fetch(productEndpoint, { headers: shopHeaders(ownerRole) }),
+        fetch(isVendor ? '/api/shop-categories' : '/api/shop-categories?admin=true', { headers: shopHeaders(ownerRole) }),
         fetch('/api/cities'),
       ]);
-      const [productData, categoryData, cityData] = await Promise.all([productRes.json(), categoryRes.json(), cityRes.json()]);
+      const [productData, categoryData, cityData] = await Promise.all([readApiJson(productRes), readApiJson(categoryRes), readApiJson(cityRes)]);
       if (!productRes.ok || !categoryRes.ok || !cityRes.ok) throw new Error(productData.error || categoryData.error || cityData.error || 'Could not load shop data');
       setProducts(productData.data || []);
       setCategories(categoryData.data || []);
       setCities(cityData.cities || []);
     } catch (error) { setNotice(error.message); }
     finally { setLoading(false); }
-  }, []);
+  }, [isVendor, ownerRole, productEndpoint]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -73,14 +92,14 @@ function ProductManager() {
     setEditingId(product.id);
     setForm({
       name: product.name || '', description: product.description || '', category: product.category || '',
-      price: product.price ?? '', compare_at_price: product.compare_at_price ?? '', brand: product.brand || '', unit: product.unit || '', quantity: product.quantity ?? 0,
+      quote_price_range: product.quote_price_range || '', price: product.price ?? '', compare_at_price: product.compare_at_price ?? '', brand: product.brand || '', unit: product.unit || '', quantity: product.quantity ?? 0,
       image_url: product.image_url || '', available_cities: product.available_cities || [], is_available: product.is_available !== false,
     });
     setGalleryText((product.images || []).join('\n'));
     setSpecsText(Object.entries(product.specifications || {}).map(([key, value]) => `${key}: ${value}`).join('\n'));
     setBulkText((product.bulk_pricing || []).map((tier) => `${tier.min_quantity}: ${tier.price}`).join('\n'));
     setNotice('');
-    document.getElementById('shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById(formId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const reset = () => { setEditingId(null); setForm(emptyProduct); setGalleryText(''); setSpecsText(''); setBulkText(''); setNotice(''); };
@@ -101,12 +120,13 @@ function ProductManager() {
         if (!minimum || !price || !Number.isInteger(Number(minimum)) || Number(minimum) < 2 || Number(price) <= 0) throw new Error('Bulk prices: use Quantity: Price, for example 10: 415');
         return { min_quantity: Number(minimum), price: Number(price) };
       });
-      const response = await fetch('/api/admin/shop-products', {
-        method: editingId ? 'PUT' : 'POST', headers: adminHeaders(),
+      const response = await fetch(productEndpoint, {
+        method: editingId ? 'PUT' : 'POST', headers: shopHeaders(ownerRole),
         body: JSON.stringify({ ...form, images: parseLines(galleryText), specifications, bulk_pricing, ...(editingId ? { id: editingId } : {}) }),
       });
-      const data = await response.json();
+      const data = await readApiJson(response);
       if (!response.ok) throw new Error(data.error || 'Could not save product');
+      notifyShopProductsUpdated();
       reset();
       setNotice(editingId ? 'Product updated.' : 'Product added.');
       await load();
@@ -116,12 +136,13 @@ function ProductManager() {
 
   const toggle = async (product) => {
     try {
-      const response = await fetch('/api/admin/shop-products', {
-        method: 'PUT', headers: adminHeaders(),
-        body: JSON.stringify({ ...product, is_available: !product.is_available }),
+      const response = await fetch(productEndpoint, {
+        method: 'PUT', headers: shopHeaders(ownerRole),
+        body: JSON.stringify({ id: product.id, action: 'toggle', is_available: !product.is_available }),
       });
-      const data = await response.json();
+      const data = await readApiJson(response);
       if (!response.ok) throw new Error(data.error || 'Could not update product');
+      notifyShopProductsUpdated();
       await load();
     } catch (error) { setNotice(error.message); }
   };
@@ -129,9 +150,10 @@ function ProductManager() {
   const remove = async (product) => {
     if (!window.confirm(`Delete ${product.name}?`)) return;
     try {
-      const response = await fetch(`/api/admin/shop-products?id=${product.id}`, { method: 'DELETE', headers: adminHeaders() });
-      const data = await response.json();
+      const response = await fetch(`${productEndpoint}?id=${product.id}`, { method: 'DELETE', headers: shopHeaders(ownerRole) });
+      const data = await readApiJson(response);
       if (!response.ok) throw new Error(data.error || 'Could not delete product');
+      notifyShopProductsUpdated();
       setNotice('Product deleted.');
       await load();
     } catch (error) { setNotice(error.message); }
@@ -150,14 +172,15 @@ function ProductManager() {
   };
 
   return <div className="shop-admin-panel">
-    <div className="shop-admin-heading"><div><h2>Products</h2><p>Manage product name, image, category, price, unit, stock and visibility. Supplier uploads appear here too.</p></div><button type="button" onClick={load}>Refresh</button></div>
+    <div className="shop-admin-heading"><div><h2>{isVendor ? 'My products' : 'Products'}</h2><p>Every product needs a Get Quote range and a fixed Buy Now price.{!isVendor && ' Supplier and vendor uploads appear here too.'}</p></div><button type="button" onClick={load}>Refresh</button></div>
     {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
-    <form id="shop-product-form" className="shop-admin-card" onSubmit={save}>
+    <form id={formId} className="shop-admin-card" onSubmit={save}>
       <h3>{editingId ? 'Edit product' : 'Add product'}</h3>
       <div className="shop-admin-fields">
         <label>Product name *<input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
         <label>Category *<select required value={form.category} onChange={(e) => { const cat = categories.find((item) => item.name === e.target.value); setForm({ ...form, category: e.target.value, unit: cat?.unit || form.unit }); }}><option value="">Select category</option>{categories.map((cat) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}</select></label>
-        <label>Price (₹, optional)<input type="number" min="0" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Price on request if empty" /></label>
+        <label>Get Quote price range (₹) *<input required type="text" maxLength={100} value={form.quote_price_range} onChange={(e) => setForm({ ...form, quote_price_range: e.target.value })} placeholder="Example: 40-80" /><small>Enter a minimum and maximum lump-sum range, e.g. 40-80.</small></label>
+        <label>Buy Now fixed price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Example: 60" /></label>
         <label>Original price (₹, optional)<input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} placeholder="Shows discount when above selling price" /></label>
         <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
         <label>Unit *<select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">Select unit</option>{units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select></label>
@@ -167,11 +190,11 @@ function ProductManager() {
         <label className="shop-admin-wide">More product images (one URL per line)<textarea rows="3" value={galleryText} onChange={(e) => setGalleryText(e.target.value)} /></label>
         <label className="shop-admin-wide">Specifications (one Name: Value per line)<textarea rows="3" value={specsText} onChange={(e) => setSpecsText(e.target.value)} placeholder="Grade: PPC&#10;Pack size: 50 kg" /></label>
         <label className="shop-admin-wide">Bulk prices (one Quantity: Price per line)<textarea rows="3" value={bulkText} onChange={(e) => setBulkText(e.target.value)} placeholder="10: 415&#10;30: 405" /></label>
-        <fieldset className="shop-admin-wide shop-admin-city-field"><legend>Delivery cities for this product</legend><div>{cities.map((city) => <label key={city}><input type="checkbox" checked={form.available_cities.includes(city)} onChange={(event) => setForm({ ...form, available_cities: event.target.checked ? [...form.available_cities, city] : form.available_cities.filter((item) => item !== city) })} /> {city}</label>)}</div><small>Select the cities where this admin product can actually be delivered.</small></fieldset>
+        <fieldset className="shop-admin-wide shop-admin-city-field"><legend>Delivery cities for this product</legend><div>{cities.map((city) => <label key={city}><input type="checkbox" checked={form.available_cities.includes(city)} onChange={(event) => setForm({ ...form, available_cities: event.target.checked ? [...form.available_cities, city] : form.available_cities.filter((item) => item !== city) })} /> {city}</label>)}</div><small>Select the cities where this product can actually be delivered.</small></fieldset>
       </div>
-      <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-upload">{uploading ? 'Uploading...' : 'Upload image'}<input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden /></label>{form.image_url && <img className="shop-admin-thumb" src={form.image_url} alt="Product preview" />}<button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
+      <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-upload">{uploading ? 'Uploading...' : 'Upload image'}<input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden /></label>{form.image_url && <Image className="shop-admin-thumb" src={form.image_url} alt="Product preview" width={43} height={43} unoptimized />}<button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
     </form>
-    <div className="shop-admin-card"><h3>All products ({products.length})</h3>{loading ? <p>Loading products...</p> : products.length ? <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Price / unit</th><th>Source</th><th>Status</th><th>Actions</th></tr></thead><tbody>{products.map((product) => <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{product.price === null ? 'Quote' : `₹${Number(product.price).toLocaleString('en-IN')}`} / {product.unit || 'unit'}</td><td>{product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td><td>{product.is_available ? 'Visible' : 'Hidden'}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button><button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button><button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>)}</tbody></table></div> : <p>No products yet. Add the first product above.</p>}</div>
+    <div className="shop-admin-card"><h3>{isVendor ? 'My products' : 'All products'} ({products.length})</h3>{loading ? <p>Loading products...</p> : products.length ? <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isVendor && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{products.map((product) => <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{Number(product.price) > 0 ? `₹${Number(product.price).toLocaleString('en-IN')} / ${product.unit || 'unit'}` : '—'}</td>{!isVendor && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{product.is_available ? 'Visible' : 'Hidden'}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button><button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button><button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>)}</tbody></table></div> : <p>No products yet. Add the first product above.</p>}</div>
   </div>;
 }
 
@@ -183,7 +206,7 @@ function AppearanceManager() {
   const [notice, setNotice] = useState('');
 
   useEffect(() => {
-    fetch('/api/shop-storefront').then((response) => response.json())
+    fetch('/api/shop-storefront').then(readApiJson)
       .then((data) => { if (data.success) setContent(data.data); else setNotice(data.error || 'Could not load storefront'); })
       .catch((error) => setNotice(error.message)).finally(() => setLoading(false));
   }, []);
@@ -193,8 +216,8 @@ function AppearanceManager() {
     setSaving(true);
     setNotice('');
     try {
-      const response = await fetch('/api/shop-storefront', { method: 'PUT', headers: adminHeaders(), body: JSON.stringify(content) });
-      const data = await response.json();
+      const response = await fetch('/api/shop-storefront', { method: 'PUT', headers: shopHeaders(), body: JSON.stringify(content) });
+      const data = await readApiJson(response);
       if (!response.ok) throw new Error(data.error || 'Could not save storefront');
       setContent(data.data);
       setNotice('Storefront content saved.');
@@ -229,5 +252,16 @@ export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }
     <div className="shop-admin-toolbar"><div><h2>Shop Now Manager</h2><p>Add products and manage what customers see on Shop Now.</p></div><button type="button" onClick={openAddProduct}>+ Add Product</button></div>
     <div className="shop-admin-tabs" role="tablist" aria-label="Shop Now management"><button type="button" role="tab" aria-selected={tab === 'categories'} className={tab === 'categories' ? 'active' : ''} onClick={() => setTab('categories')}>Categories</button><button type="button" role="tab" aria-selected={tab === 'products'} className={tab === 'products' ? 'active' : ''} onClick={() => setTab('products')}>Products</button><button type="button" role="tab" aria-selected={tab === 'content'} className={tab === 'content' ? 'active' : ''} onClick={() => setTab('content')}>Storefront Content</button></div>
     {tab === 'categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}{tab === 'products' && <ProductManager />}{tab === 'content' && <AppearanceManager />}
+  </div>;
+}
+
+export function VendorShopProductsManager() {
+  const openAddProduct = () => {
+    requestAnimationFrame(() => document.getElementById('vendor-shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+
+  return <div className="shop-admin-root">
+    <div className="shop-admin-toolbar"><div><h2>Shop Products</h2><p>Add and manage the products customers can order from your shop.</p></div><button type="button" onClick={openAddProduct}>+ Add Product</button></div>
+    <ProductManager ownerRole="vendor" formId="vendor-shop-product-form" />
   </div>;
 }

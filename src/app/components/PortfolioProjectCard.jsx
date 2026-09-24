@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function PortfolioProjectCard({
   project,
@@ -29,11 +30,12 @@ export default function PortfolioProjectCard({
       >
         <div className="relative aspect-[4/3] shrink-0 overflow-hidden bg-zinc-800">
           {image ? (
-            <img
+            <Image
               src={image}
               alt={project.title || project.name || "MTBoss project"}
+              fill
+              sizes="(max-width: 767px) 100vw, 33vw"
               loading="lazy"
-              decoding="async"
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
           ) : (

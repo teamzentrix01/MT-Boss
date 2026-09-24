@@ -20,9 +20,9 @@ function MaterialOrdersContent() {
   const config = ROLE_CONFIG[role];
 
   return (
-    <main className="min-h-screen bg-zinc-50 px-4 py-8 font-serif sm:px-6">
+    <main className="material-orders-page min-h-screen px-4 py-8 sm:px-6">
       <div className="mx-auto mb-5 max-w-5xl">
-        <Link href={config.back} className="text-xs font-black uppercase tracking-wider text-blue-600">
+        <Link href={config.back} className="material-orders-back text-xs font-black uppercase tracking-wider">
           ← {config.label}
         </Link>
       </div>
@@ -33,7 +33,7 @@ function MaterialOrdersContent() {
 
 export default function MaterialOrdersPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-zinc-50 p-10 text-center">Loading orders…</div>}>
+    <Suspense fallback={<div className="material-orders-page min-h-screen p-10 text-center">Loading orders…</div>}>
       <MaterialOrdersContent />
     </Suspense>
   );

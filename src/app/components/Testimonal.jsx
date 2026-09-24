@@ -208,7 +208,7 @@ export default function TestimonialsSection() {
               isDark ? "text-gray-400" : "text-gray-700"
             }`}
           >
-            "{t.review}"
+            &ldquo;{t.review}&rdquo;
           </p>
 
           <div className="flex flex-col items-center gap-4">

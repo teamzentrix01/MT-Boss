@@ -31,7 +31,7 @@ const TIME_SLOTS = [
   'Evening (05:00 PM - 08:30 PM)',
 ];
 
-export default function LeadConsultationModal({ isDarkMode }) {
+export default function LeadConsultationModal({ isDarkMode, onDismiss }) {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -47,23 +47,17 @@ export default function LeadConsultationModal({ isDarkMode }) {
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    // Disable popup on mobile screens (< 768px)
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
-      return;
-    }
-    // Show popup after 15 seconds of page load on desktop
+    // Keep the initial render and first interaction clear before showing this
+    // non-critical prompt. Dismissal is remembered for the current visit.
     const timer = setTimeout(() => {
       setIsOpen(true);
-    }, 15000);
+    }, 2500);
     return () => clearTimeout(timer);
   }, []);
 
-  // Listen to global open event (e.g. from CTA buttons) - desktop only
+  // Listen to global open event (e.g. from CTA buttons).
   useEffect(() => {
     const handleOpen = () => {
-      if (typeof window !== 'undefined' && window.innerWidth < 768) {
-        return;
-      }
       setIsOpen(true);
     };
     window.addEventListener('open-consultation-modal', handleOpen);
@@ -72,6 +66,7 @@ export default function LeadConsultationModal({ isDarkMode }) {
 
   const handleClose = () => {
     setIsOpen(false);
+    onDismiss?.();
   };
 
   const handleChange = (e) => {
@@ -119,11 +114,11 @@ export default function LeadConsultationModal({ isDarkMode }) {
   if (!isOpen) return null;
 
   return (
-    <div className="hidden md:flex fixed inset-0 z-[100000] items-center justify-center p-4 md:p-6 bg-black/75 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-[100000] flex items-center justify-center p-3 md:p-6 bg-black/75 backdrop-blur-sm animate-fadeIn">
       
       {/* ── MODAL CONTAINER (DESKTOP ONLY) ── */}
       <div 
-        className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-3xl shadow-2xl border border-white/20 flex flex-row overflow-hidden animate-scaleUp transition-all duration-300 bg-zinc-950 text-white"
+        className="relative w-full max-w-4xl max-h-[94vh] overflow-y-auto rounded-2xl md:rounded-3xl shadow-2xl border border-white/20 flex flex-col md:flex-row overflow-hidden animate-scaleUp transition-all duration-300 bg-zinc-950 text-white"
         onClick={(e) => e.stopPropagation()}
       >
 
@@ -137,7 +132,7 @@ export default function LeadConsultationModal({ isDarkMode }) {
         </button>
 
         {/* ── LEFT PANEL (BRAND & VALUE PROPOSITION) ── */}
-        <div className="relative w-5/12 p-8 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-slate-950 via-sky-950 to-blue-950 border-r border-white/10">
+        <div className="relative hidden w-5/12 p-8 md:flex flex-col justify-between overflow-hidden bg-gradient-to-br from-slate-950 via-sky-950 to-blue-950 border-r border-white/10">
           
           {/* Subtle Background Pattern & Glow */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,180,216,0.25),transparent_60%)] pointer-events-none" />
@@ -205,7 +200,7 @@ export default function LeadConsultationModal({ isDarkMode }) {
         </div>
 
         {/* ── RIGHT PANEL (INTERACTIVE CONSULTATION FORM) ── */}
-        <div className="w-7/12 p-6 md:p-8 bg-zinc-950 flex flex-col justify-center">
+        <div className="w-full md:w-7/12 p-5 pt-12 md:p-8 bg-zinc-950 flex flex-col justify-center">
           {submitted ? (
             <div className="py-6 sm:py-8 text-center space-y-3 sm:space-y-4 animate-fadeIn">
               <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-full bg-emerald-500/20 border-2 border-emerald-400 text-emerald-400 flex items-center justify-center text-xl sm:text-2xl shadow-lg">

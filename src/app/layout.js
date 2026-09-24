@@ -1,19 +1,27 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Navbar from "./components/Navbar";
 import "./globals.css";
 import Footer from "./components/Footer";
 import { COMPANY_CONTACT } from "./lib/company";
 import PrivacyConsentGuard from "./components/PrivacyConsentGuard";
 import FreeWhatsAppNotifier from "./components/FreeWhatsAppNotifier";
-import ChatbotWidget from "./components/ChatbotWidget";
-import LeadConsultationModal from "./components/LeadConsultationModal";
 import { usePathname } from "next/navigation";
+
+const ChatbotWidget = dynamic(() => import("./components/ChatbotWidget"), { ssr: false });
+const LeadConsultationModal = dynamic(
+  () => import("./components/LeadConsultationModal"),
+  { ssr: false }
+);
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   const isShopPage = pathname?.toLowerCase() === "/shopnow";
+  const isHomePage = pathname === "/";
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [homePopupDismissed, setHomePopupDismissed] = useState(false);
+  const [deferredWidgetsReady, setDeferredWidgetsReady] = useState(false);
 
 
   // 1. Page load hote hi localStorage se theme check karein
@@ -24,6 +32,18 @@ export default function RootLayout({ children }) {
       document.documentElement.classList.toggle("dark-mode", dark);
     });
     return () => cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    const showDeferredWidgets = () => setDeferredWidgetsReady(true);
+
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(showDeferredWidgets, { timeout: 1500 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timerId = window.setTimeout(showDeferredWidgets, 1000);
+    return () => window.clearTimeout(timerId);
   }, []);
 
   useEffect(() => {
@@ -113,7 +133,7 @@ export default function RootLayout({ children }) {
       <head>
         <meta name="google-site-verification" content="_HIsDPgunnMsWo7iWtmz2fX3YW9aG406vj5zL02lWXY" />
       </head>
-      <body className={`transition-colors duration-500 ${isShopPage ? "shop-route overflow-x-clip" : "overflow-x-hidden"} ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+      <body className={`transition-colors duration-500 ${isShopPage ? "shop-route" : "overflow-x-hidden"} ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
         <PrivacyConsentGuard />
         <FreeWhatsAppNotifier />
         <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
@@ -121,13 +141,15 @@ export default function RootLayout({ children }) {
         <Footer />
 
         {/* Floating Chatbot Assistant Widget */}
-        <ChatbotWidget isDarkMode={isDarkMode} />
+        {deferredWidgetsReady && <ChatbotWidget isDarkMode={isDarkMode} />}
 
-        {/* On-Arrival Project Consultation Modal */}
-        {!isShopPage && <LeadConsultationModal isDarkMode={isDarkMode} />}
+        {/* On-arrival consultation popup is exclusive to the home page. */}
+        {deferredWidgetsReady && isHomePage && !homePopupDismissed && (
+          <LeadConsultationModal isDarkMode={isDarkMode} onDismiss={() => setHomePopupDismissed(true)} />
+        )}
 
-        {/* Floating WhatsApp support button */}
-        {isShopPage && COMPANY_CONTACT.telHref && <a
+        {/* Floating call support button */}
+        {COMPANY_CONTACT.telHref && <a
           href={COMPANY_CONTACT.telHref}
           aria-label={`Call MT Boss at ${COMPANY_CONTACT.phone}`}
           title={`Call ${COMPANY_CONTACT.phone}`}

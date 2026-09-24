@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { COMPANY_CONTACT } from "../lib/company";
-import ReviewModal from "./ReviewModal";
+
+const ReviewModal = dynamic(() => import("./ReviewModal"), { ssr: false });
 
 export default function Footer() {
   const [isDark, setIsDark] = useState(false);
@@ -25,6 +27,7 @@ export default function Footer() {
   const quickLinks = [
     { label: "Home", href: "/" },
     { label: "About Us", href: "/About-us" },
+    { label: "Portfolio", href: "/FeaturedProjects/ProjectGallery" },
     { label: "Blogs & Guides", href: "/blog" },
     { label: "Shop Now", href: "/ShopNow" },
     { label: "Careers", href: "/careers" },
@@ -221,11 +224,13 @@ export default function Footer() {
         </div>
       </div>
 
-      <ReviewModal
-        isOpen={isReviewOpen}
-        onClose={() => setIsReviewOpen(false)}
-        isDarkMode={isDark}
-      />
+      {isReviewOpen && (
+        <ReviewModal
+          isOpen
+          onClose={() => setIsReviewOpen(false)}
+          isDarkMode={isDark}
+        />
+      )}
     </footer>
   );
 }

@@ -47,6 +47,7 @@ export const ensureMaterialOrderSchema = createInitializationGuard(async () => {
       longitude DECIMAL(11,8),
       message TEXT,
       selected_city VARCHAR(100),
+      order_intent VARCHAR(20),
       status VARCHAR(50) DEFAULT 'open',
       accepted_by_supplier_id INTEGER,
       accepted_at TIMESTAMP,
@@ -65,7 +66,8 @@ export const ensureMaterialOrderSchema = createInitializationGuard(async () => {
       ADD COLUMN IF NOT EXISTS assigned_role VARCHAR(30),
       ADD COLUMN IF NOT EXISTS assigned_entity_id INTEGER,
       ADD COLUMN IF NOT EXISTS status_note TEXT,
-      ADD COLUMN IF NOT EXISTS estimated_delivery_date DATE
+      ADD COLUMN IF NOT EXISTS estimated_delivery_date DATE,
+      ADD COLUMN IF NOT EXISTS order_intent VARCHAR(20)
   `);
   await pool.query(`
     UPDATE material_enquiries
