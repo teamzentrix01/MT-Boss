@@ -229,7 +229,7 @@ export default function ChatbotWidget({ isDarkMode }) {
   return (
     <>
       {/* ── FLOATING LAUNCHER BUTTON ── */}
-      <div className="fixed bottom-6 right-24 z-[9998] flex items-center">
+      <div className="fixed bottom-15 right-24 z-[9998] flex items-center">
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}

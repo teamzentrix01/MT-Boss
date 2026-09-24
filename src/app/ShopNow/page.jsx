@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useCities } from "@/hooks/useCities";
@@ -114,13 +114,41 @@ export default function ShopPage() {
       .finally(() => setCatsLoading(false));
   }, []);
 
-  useEffect(() => {
-    fetch("/api/shop-material-options")
-      .then((response) => response.json())
-      .then((data) => { if (data.success) setAllProducts(data.data?.products || []); })
-      .catch(console.error)
-      .finally(() => setProductsLoaded(true));
+  const loadProducts = useCallback(async () => {
+    try {
+      const response = await fetch("/api/shop-material-options", { cache: "no-store" });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || "Could not load shop products");
+      setAllProducts(data.data?.products || []);
+    } catch (error) {
+      console.error("Could not refresh Shop Now products:", error);
+    } finally {
+      setProductsLoaded(true);
+    }
   }, []);
+
+  useEffect(() => {
+    loadProducts();
+
+    const refreshVisibleShop = () => {
+      if (document.visibilityState === "visible") loadProducts();
+    };
+    const refreshFromProductChange = (event) => {
+      if (event.type !== "storage" || event.key === "mtboss-shop-products-updated") loadProducts();
+    };
+
+    window.addEventListener("focus", refreshVisibleShop);
+    window.addEventListener("storage", refreshFromProductChange);
+    window.addEventListener("mtbossShopProductsUpdated", refreshFromProductChange);
+    document.addEventListener("visibilitychange", refreshVisibleShop);
+
+    return () => {
+      window.removeEventListener("focus", refreshVisibleShop);
+      window.removeEventListener("storage", refreshFromProductChange);
+      window.removeEventListener("mtbossShopProductsUpdated", refreshFromProductChange);
+      document.removeEventListener("visibilitychange", refreshVisibleShop);
+    };
+  }, [loadProducts]);
 
   useEffect(() => {
     if (!cartReady || !productsLoaded || !categories.length) return;

@@ -130,8 +130,8 @@ export default function RootLayout({ children }) {
           <LeadConsultationModal isDarkMode={isDarkMode} onDismiss={() => setHomePopupDismissed(true)} />
         )}
 
-        {/* Floating WhatsApp support button */}
-        {isShopPage && COMPANY_CONTACT.telHref && <a
+        {/* Floating call support button */}
+        {COMPANY_CONTACT.telHref && <a
           href={COMPANY_CONTACT.telHref}
           aria-label={`Call MT Boss at ${COMPANY_CONTACT.phone}`}
           title={`Call ${COMPANY_CONTACT.phone}`}

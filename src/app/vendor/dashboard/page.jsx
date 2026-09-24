@@ -8,6 +8,7 @@ import { Suspense, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { redirectToPayU } from '@/lib/payu-client';
 import MaterialOrdersPanel from '@/app/components/MaterialOrdersPanel';
+import { VendorShopProductsManager } from '@/app/components/ShopNowManager';
 
 function ServiceIcon({ icon, className = "h-8 w-8" }) {
   const value = String(icon || "").trim();
@@ -121,7 +122,7 @@ function VendorDashboardContent() {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (['notifications', 'leads', 'history', 'packages', 'profile', 'materials'].includes(tab)) {
+    if (['notifications', 'leads', 'history', 'packages', 'profile', 'materials', 'products'].includes(tab)) {
       setActiveTab(tab);
       if (tab === 'packages') loadPackages();
     }
@@ -545,10 +546,25 @@ function VendorDashboardContent() {
             <h1 className="max-w-full text-[clamp(2rem,13vw,3.25rem)] sm:text-4xl font-black uppercase leading-[0.95] break-words">
               Vendor Dashboard
             </h1>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab("products");
+                window.requestAnimationFrame(() => {
+                  window.requestAnimationFrame(() => {
+                    document.getElementById('vendor-shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  });
+                });
+              }}
+              className="mt-4 inline-flex items-center justify-center rounded-lg bg-[var(--brand-blue)] px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg transition-transform hover:scale-105"
+            >
+              + Add Product
+            </button>
             <p className={`text-sm ${muted} mt-2 break-words`}>{vendorProfile?.shop_name || "My Shop"} · {vendorProfile?.city || ""}</p>
           </div>
           <div className={`grid w-full min-w-0 grid-cols-2 overflow-hidden border ${isDark ? "border-zinc-800" : "border-zinc-200"} sm:flex sm:w-auto sm:flex-wrap lg:shrink-0`}>
             {[
+              { key: "products", label: "Products" },
               { key: "materials", label: "Material Orders" },
               { key: "notifications", label: "📬 Bookings" },
               { key: "leads", label: "Lead Track" },
@@ -578,7 +594,9 @@ function VendorDashboardContent() {
           </div>
         </div>
  
-        {activeTab === "materials" ? (
+        {activeTab === "products" ? (
+          <VendorShopProductsManager />
+        ) : activeTab === "materials" ? (
           <MaterialOrdersPanel role="vendor" embedded />
         ) : activeTab === "leads" ? (
           <div className="space-y-5">

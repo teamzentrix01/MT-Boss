@@ -91,7 +91,7 @@ export default function Storefront({ categories, products, content, loading, cit
   const [activeCategory, setActiveCategory] = useState("all");
   const [cartOpen, setCartOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [productManagerHref, setProductManagerHref] = useState('');
   const [detailsProduct, setDetailsProduct] = useState(null);
   const [sortBy, setSortBy] = useState('featured');
   const [brandFilter, setBrandFilter] = useState('all');
@@ -149,19 +149,22 @@ export default function Storefront({ categories, products, content, loading, cit
   }, [categories]);
 
   useEffect(() => {
-    const checkAdmin = () => {
+    const checkProductManagerAccess = () => {
       let hasAdminRole = false;
       try { hasAdminRole = JSON.parse(localStorage.getItem('user') || '{}').role === 'admin'; }
       catch { /* Ignore stale user data. */ }
-      setIsAdmin(Boolean(localStorage.getItem('admin-token')) || (Boolean(localStorage.getItem('token')) && hasAdminRole));
+      const hasAdminAccess = Boolean(localStorage.getItem('admin-token')) || (Boolean(localStorage.getItem('token')) && hasAdminRole);
+      if (hasAdminAccess) setProductManagerHref('/dashboard?tab=shop-products');
+      else if (localStorage.getItem('vendor-token')) setProductManagerHref('/vendor/dashboard?tab=products');
+      else setProductManagerHref('');
     };
-    const frame = requestAnimationFrame(checkAdmin);
-    window.addEventListener('storage', checkAdmin);
-    window.addEventListener('userLoggedIn', checkAdmin);
+    const frame = requestAnimationFrame(checkProductManagerAccess);
+    window.addEventListener('storage', checkProductManagerAccess);
+    window.addEventListener('userLoggedIn', checkProductManagerAccess);
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener('storage', checkAdmin);
-      window.removeEventListener('userLoggedIn', checkAdmin);
+      window.removeEventListener('storage', checkProductManagerAccess);
+      window.removeEventListener('userLoggedIn', checkProductManagerAccess);
     };
   }, []);
 
@@ -265,7 +268,7 @@ export default function Storefront({ categories, products, content, loading, cit
             {cityOpen && <div className="store-city-popover"><label htmlFor="store-city">Choose your city</label><select id="store-city" value={selectedCity} onChange={(e) => { setSelectedCity(e.target.value); setCityOpen(false); }}><option value="">Select city</option>{cities.map((city) => <option key={city} value={city}>{city}</option>)}</select><p>Availability is checked at checkout.</p></div>}
           </div>
           <label className="store-search"><Search size={20} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={content.search_placeholder} aria-label="Search materials" /></label>
-          {isAdmin && <Link href="/dashboard?tab=shop-products" className="store-admin-add"><Plus size={17} /> Add Product</Link>}
+          {productManagerHref && <Link href={productManagerHref} className="store-admin-add"><Plus size={17} /> Add Product</Link>}
           <Link href="/material-orders?role=user" className="store-orders" title="Track orders"><ClipboardList size={20} /><span>Orders</span></Link>
           <button type="button" className="store-cart-button" onClick={toggleCart} aria-expanded={cartOpen} aria-controls="store-cart-dialog"><ShoppingCart size={20} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
         </div>
