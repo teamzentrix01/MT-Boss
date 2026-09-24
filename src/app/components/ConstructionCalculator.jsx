@@ -366,7 +366,7 @@ function unitsPerProductUnit(productUnit, specUnit) {
 function getTierProducts(spec, tierProducts, city, quality) {
   const tier = String(quality || '').toLowerCase();
   return tierProducts
-    .filter((product) => product.quality_tier === tier)
+    .filter((product) => product.quality_tier === tier || product.quality_tier === 'all')
     .filter((product) => spec.shopCategoryPattern.test(String(product.category || '').toLowerCase()))
     .filter((product) => {
       const cities = Array.isArray(product.available_cities) ? product.available_cities : [];

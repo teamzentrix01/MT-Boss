@@ -51,7 +51,7 @@ async function validProduct(body, { allowUnassigned = false } = {}) {
   ) : { rows: [{ name: '', unit: body.unit || 'pcs' }] };
   if (!categoryResult.rows.length) return { error: 'Choose an existing Shop Now category' };
   const qualityTier = normalizeQualityTier(body.quality_tier);
-  if (!qualityTier) return { error: 'Choose a Quality Tier: Basic, Standard, Premium or Luxury' };
+  if (!qualityTier) return { error: 'Choose a Quality Tier: All, Basic, Standard, Premium or Luxury' };
   const quotePriceRange = String(body.quote_price_range || '').trim();
   const rangeMatch = quotePriceRange.match(/^(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)\s*[-–]\s*(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)$/i);
   if (!rangeMatch) return { error: 'Enter the required Get Quote price range like 40-80' };
