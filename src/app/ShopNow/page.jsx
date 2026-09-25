@@ -89,6 +89,8 @@ export default function ShopPage() {
   const productsRequestRef = useRef(null);
   const [storeContent, setStoreContent] = useState(defaultShopStorefront);
   const [cart, setCart] = useState([]);
+  const [shippingQuote, setShippingQuote] = useState(null);
+  const [shippingQuoteError, setShippingQuoteError] = useState('');
   const [cartReady, setCartReady] = useState(false);
   const [modalMode, setModalMode] = useState("quote");
 
@@ -307,6 +309,19 @@ export default function ShopPage() {
     if (!cart.length) return;
     openModal(cart[0].product.category, null, "cart");
   };
+
+  useEffect(() => {
+    const items = modalMode === 'cart'
+      ? cart.map((item) => ({ product_id: item.product.product_id, quantity: item.quantity }))
+      : selectedProduct?.product_id ? [{ product_id: selectedProduct.product_id, quantity: Math.max(1, Number(formData.quantity) || 1) }] : [];
+    if (!isModalOpen || !selectedCity || !items.length || items.some((item) => !item.product_id)) { setShippingQuote(null); setShippingQuoteError(''); return; }
+    let active = true;
+    fetch('/api/shipping-quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerCity: selectedCity, items }) })
+      .then((response) => response.json().then((data) => ({ response, data })))
+      .then(({ response, data }) => { if (!active) return; if (!response.ok || !data.success) throw new Error(data.error || 'Shipping could not be calculated'); setShippingQuote(data.data); setShippingQuoteError(''); })
+      .catch((error) => { if (active) { setShippingQuote(null); setShippingQuoteError(error.message); } });
+    return () => { active = false; };
+  }, [isModalOpen, modalMode, selectedCity, cart, selectedProduct?.product_id, formData.quantity]);
 
   useEffect(() => {
     if (!isModalOpen || !selectedCategory?.name) return;
@@ -648,6 +663,15 @@ export default function ShopPage() {
                 </div>
 
                 {/* ── CITY VERIFICATION STATUS ─────────────────────── */}
+                {(shippingQuote || shippingQuoteError) && (
+                  <div className={`rounded-xl border px-4 py-3 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
+                    <p className={`text-[9px] font-black uppercase tracking-widest ${subText}`}>Shipping estimate</p>
+                    {shippingQuote?.breakdown?.map((row, index) => <p key={`${row.vendorCity}-${index}`} className={`mt-1 text-xs font-semibold ${headText}`}>{row.label}</p>)}
+                    {shippingQuote?.totalShipping !== null && shippingQuote?.totalShipping !== undefined && <p className={`mt-2 text-sm font-black ${headText}`}>Total shipping: ₹{Number(shippingQuote.totalShipping).toLocaleString('en-IN')}</p>}
+                    {shippingQuoteError && <p className="mt-1 text-[10px] text-amber-600">{shippingQuoteError}</p>}
+                  </div>
+                )}
+
                 {selectedCity && cityVerified && !cityError && (
                   <div className={`rounded-xl border-2 px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-green-600 bg-green-900/20" : "border-green-500 bg-green-50"}`}>
                     <div>
