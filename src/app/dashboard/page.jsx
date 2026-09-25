@@ -36,6 +36,7 @@ const CitiesManager = dynamicManager(() => import('../components/CitiesManager')
 const FaqsManager = dynamicManager(() => import('../components/FaqsManager'));
 const ReviewsManager = dynamicManager(() => import('../components/ReviewsManager'));
 const BlogsManager = dynamicManager(() => import('../components/BlogsManager'));
+const ShippingSettingsManager = dynamicManager(() => import('../components/ShippingSettingsManager'));
 
 function hasResumeFile(resumeUrl) {
   const value = String(resumeUrl || '').trim();
@@ -382,6 +383,7 @@ function AdminDashboard() {
     { id: 'bookings',                   label: 'Service Bookings',          icon: '📝' },
     { id: 'shop-categories',            label: 'Shop Now Manager',          icon: '🛒' },
     { id: 'shop-products',              label: '+ Add Shop Product',        icon: '➕' },
+    { id: 'shipping-settings',          label: 'Shipping Settings',         icon: '🚚' },
     { id: 'suppliers',                  label: 'Suppliers',                 icon: '📦' },
     { id: 'vendors',                    label: 'Vendors',                   icon: '🏪' },
     { id: 'packages',                   label: 'Package Approvals',         icon: '📦' },
@@ -1374,6 +1376,7 @@ function AdminDashboard() {
           {activeTab === 'projects' && <ProjectsManager />}
           {activeTab === 'project-management' && <OperationalProjectsManager />}
           {(activeTab === 'shop-categories' || activeTab === 'shop-products') && <ShopNowManager key={activeTab} isDarkMode={isDarkMode} initialTab={activeTab === 'shop-products' ? 'products' : 'categories'} />}
+          {activeTab === 'shipping-settings' && <ShippingSettingsManager />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'revenue' && <RevenueManager isDarkMode={isDarkMode} />}
           {activeTab === 'free-slots' && <FreeTimeSlotsManager isDarkMode={isDarkMode} />}

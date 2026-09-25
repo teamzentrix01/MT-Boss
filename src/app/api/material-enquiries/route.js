@@ -6,6 +6,7 @@ import { resolveManagedCity } from '@/lib/cities';
 import { requireRole } from '@/lib/auth';
 import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material-orders';
 import { notifyAdminSubmission, deliverMaterialOrderReceipt } from '@/lib/customer-communications';
+import { calculateShipping, getShippingSettings } from '@/lib/shipping';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
@@ -53,6 +54,8 @@ const ensureTable = createInitializationGuard(async () => {
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS product_id       INTEGER`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS indicative_unit_price NUMERIC(10,2)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS order_intent VARCHAR(20)`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS shipping_cost NUMERIC(12,2) DEFAULT 0`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS shipping_breakdown JSONB DEFAULT '[]'::jsonb`,
   ];
   for (const sql of migrations) {
     try { await pool.query(sql); } catch { /* already correct type or column exists */ }
@@ -138,9 +141,33 @@ export async function POST(req) {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+      // Calculate shipping from server-side prices and vendor/source cities. The first
+      // enquiry in a source-city group owns that group's cost; the rest remain ₹0.
+      const productIds = orderItems.map((item) => Number(item.product_id)).filter((id) => Number.isInteger(id) && id > 0);
+      const shippingBySourceCity = new Map();
+      if (productIds.length) {
+        const shippingProducts = await client.query(`SELECT m.id, m.price, m.bulk_pricing,
+          COALESCE(NULLIF(TRIM(v.city), ''), NULLIF(TRIM(s.city), ''), CASE WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb))=1 THEN m.available_cities->>0 END) AS source_city
+          FROM supplier_materials m LEFT JOIN vendors v ON v.id=m.vendor_id LEFT JOIN suppliers s ON s.id=m.supplier_id
+          WHERE m.id=ANY($1::int[])`, [productIds]);
+        const quantities = new Map(orderItems.map((item) => [Number(item.product_id), isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10)]));
+        const groups = new Map();
+        for (const product of shippingProducts.rows) {
+          const quantity = quantities.get(product.id) || 1;
+          const tier = (Array.isArray(product.bulk_pricing) ? product.bulk_pricing : []).filter((entry) => quantity >= Number(entry.min_quantity)).sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity))[0];
+          const key = String(product.source_city || '').trim().toLowerCase();
+          const group = groups.get(key) || { vendorCity: product.source_city || '', orderValue: 0 };
+          group.orderValue += (tier ? Number(tier.price) : Number(product.price) || 0) * quantity;
+          groups.set(key, group);
+        }
+        const shipping = calculateShipping({ groups: [...groups.values()], customerCity: canonicalCity, settings: await getShippingSettings() });
+        shipping.breakdown.forEach((row) => shippingBySourceCity.set(String(row.vendorCity || '').trim().toLowerCase(), row));
+      }
+      const chargedShippingGroups = new Set();
       const orders = [];
       for (const item of orderItems) {
         let indicativeUnitPrice = null;
+        let sourceCity = '';
         const coverage = await client.query(`SELECT 1 WHERE EXISTS (
           SELECT 1 FROM suppliers s WHERE LOWER(TRIM(s.city))=LOWER(TRIM($1))
             AND s.status='approved' AND s.is_active=TRUE
@@ -159,7 +186,8 @@ export async function POST(req) {
           const requestedQuantity = isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10);
           const productResult = await client.query(
             `SELECT m.name, m.category, m.unit, m.quantity, m.price, m.bulk_pricing, m.is_available,
-                    m.supplier_id,
+                    m.supplier_id, m.vendor_id,
+                    COALESCE(NULLIF(TRIM(v.city), ''), NULLIF(TRIM(s.city), ''), CASE WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb))=1 THEN m.available_cities->>0 END) AS source_city,
                     CASE
                       WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
                       WHEN m.supplier_id <> 0 AND s.city IS NOT NULL THEN jsonb_build_array(s.city)
@@ -170,6 +198,7 @@ export async function POST(req) {
                     END AS supplier_available
              FROM supplier_materials m
              LEFT JOIN suppliers s ON s.id = m.supplier_id
+             LEFT JOIN vendors v ON v.id = m.vendor_id
              WHERE m.id=$1
              FOR UPDATE OF m`,
             [item.product_id]
@@ -198,17 +227,21 @@ export async function POST(req) {
               .sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity))[0];
             indicativeUnitPrice = tier ? Number(tier.price) : Number(product.price);
           }
+          sourceCity = product.source_city || '';
         }
         const orderReference = `MO-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const itemQuantity = isCart ? `${item.quantity} ${cleanText(item.order_unit) || 'pcs'}` : quantity_text;
+        const shippingRow = item.product_id ? shippingBySourceCity.get(String(sourceCity).trim().toLowerCase()) : null;
+        const shippingCost = shippingRow && !chargedShippingGroups.has(String(shippingRow.vendorCity || '').trim().toLowerCase()) ? shippingRow.shippingCost : 0;
+        if (shippingRow) chargedShippingGroups.add(String(shippingRow.vendorCity || '').trim().toLowerCase());
         const result = await client.query(
         `INSERT INTO material_enquiries
            (user_id, order_reference, order_intent, user_name, user_phone, user_email,
             category_name, category_emoji, product_id, indicative_unit_price,
             material_type, subcategory_name, brand_company,
             quantity_text, order_unit, delivery_date,
-            delivery_address, latitude, longitude, message, selected_city)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
+            delivery_address, latitude, longitude, message, selected_city, shipping_cost, shipping_breakdown)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23::jsonb)
          RETURNING id, order_reference, order_intent, status, created_at`,
         [
           user.id, orderReference, orderIntent, cleanName, cleanPhone, cleanEmail || user.email || null,
@@ -216,7 +249,7 @@ export async function POST(req) {
           cleanText(item.material_type) || null, cleanText(item.subcategory_name) || null, cleanText(item.brand_company) || null,
           itemQuantity || null, cleanText(item.order_unit) || null, delivery_date || null,
           delivery_address || null, lat, lng,
-          message || null, canonicalCity,
+          message || null, canonicalCity, shippingCost ?? 0, JSON.stringify(shippingRow ? [shippingRow] : []),
         ]
       );
         await addMaterialOrderEvent(client, {
