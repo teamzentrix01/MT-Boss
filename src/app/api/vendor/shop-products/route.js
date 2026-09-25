@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { QUALITY_TIER_COLUMN_SQL, normalizeQualityTier } from '@/lib/quality-tier';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`CREATE TABLE IF NOT EXISTS supplier_materials (
@@ -35,6 +36,7 @@ const ensureTable = createInitializationGuard(async () => {
     ADD COLUMN IF NOT EXISTS specifications JSONB DEFAULT '{}'::jsonb,
     ADD COLUMN IF NOT EXISTS bulk_pricing JSONB DEFAULT '[]'::jsonb,
     ADD COLUMN IF NOT EXISTS available_cities JSONB DEFAULT '[]'::jsonb`);
+  await pool.query(QUALITY_TIER_COLUMN_SQL);
   await pool.query('CREATE INDEX IF NOT EXISTS supplier_materials_vendor_id_idx ON supplier_materials(vendor_id)');
 });
 
@@ -64,6 +66,8 @@ async function validProduct(body) {
     [category]
   );
   if (!categoryResult.rows.length) return { error: 'Choose an active Shop Now category' };
+  const qualityTier = normalizeQualityTier(body.quality_tier);
+  if (!qualityTier) return { error: 'Choose a Quality Tier: All, Basic, Standard, Premium or Luxury' };
 
   const quotePriceRange = String(body.quote_price_range || '').trim();
   const rangeMatch = quotePriceRange.match(/^(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)\s*[-–]\s*(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)$/i);
@@ -112,6 +116,7 @@ async function validProduct(body) {
     bulk_pricing: bulkPricing.map((tier) => ({ min_quantity: Number(tier.min_quantity), price: Number(tier.price) })).sort((a, b) => a.min_quantity - b.min_quantity),
     available_cities: [...new Set(availableCities.map((city) => city.trim()).filter(Boolean))],
     is_available: body.is_available !== false,
+    quality_tier: qualityTier,
   } };
 }
 
@@ -123,7 +128,7 @@ export async function GET(req) {
     const result = await pool.query(
       `SELECT id, supplier_id, vendor_id, name, description, quote_price_range, price, unit,
               quantity, image_url, category, brand, compare_at_price, images, specifications,
-              bulk_pricing, available_cities, is_available, created_at
+              bulk_pricing, available_cities, is_available, quality_tier, created_at
        FROM supplier_materials
        WHERE vendor_id=$1
        ORDER BY created_at DESC, id DESC`,
@@ -148,14 +153,14 @@ export async function POST(req) {
       `INSERT INTO supplier_materials
        (supplier_id, vendor_id, name, description, quote_price_range, price, unit, quantity,
         image_url, category, brand, compare_at_price, images, specifications, bulk_pricing,
-        available_cities, is_available)
+        available_cities, is_available, quality_tier)
        VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::jsonb,
-               $13::jsonb, $14::jsonb, $15::jsonb, $16)
+               $13::jsonb, $14::jsonb, $15::jsonb, $16, $17)
        RETURNING *`,
       [vendor.id, p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity,
         p.image_url, p.category, p.brand, p.compare_at_price, JSON.stringify(p.images),
         JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing),
-        JSON.stringify(p.available_cities), p.is_available]
+        JSON.stringify(p.available_cities), p.is_available, p.quality_tier]
     );
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
@@ -190,12 +195,12 @@ export async function PUT(req) {
       `UPDATE supplier_materials SET name=$1, description=$2, quote_price_range=$3, price=$4,
         unit=$5, quantity=$6, image_url=$7, category=$8, brand=$9, compare_at_price=$10,
         images=$11::jsonb, specifications=$12::jsonb, bulk_pricing=$13::jsonb,
-        available_cities=$14::jsonb, is_available=$15, updated_at=NOW()
+        available_cities=$14::jsonb, is_available=$15, quality_tier=$18, updated_at=NOW()
        WHERE id=$16 AND vendor_id=$17 RETURNING *`,
       [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url,
         p.category, p.brand, p.compare_at_price, JSON.stringify(p.images),
         JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing),
-        JSON.stringify(p.available_cities), p.is_available, id, vendor.id]
+        JSON.stringify(p.available_cities), p.is_available, id, vendor.id, p.quality_tier]
     );
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: result.rows[0] });
