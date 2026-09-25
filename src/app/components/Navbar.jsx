@@ -194,10 +194,17 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </Link>
 
             <Link
+              href="/quick"
+              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+            >
+              Services
+            </Link>
+
+            <Link
               href="/Services/professionals"
               className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
             >
-              Professional Services
+              Professionals
             </Link>
 
             {/* Property */}
@@ -489,6 +496,17 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           ))}
 
           <Link
+            href="/quick"
+            onClick={closeMobileMenu}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
+          >
+            Services
+          </Link>
+
+          <Link
             href="/Services/professionals"
             onClick={closeMobileMenu}
             className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
@@ -496,7 +514,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
               }`}
           >
-            Professional Services
+            Professionals
           </Link>
 
           {/* Mobile Property */}
