@@ -70,14 +70,24 @@ function productCanOrder(product, selectedCity) {
   return !cityUnavailable && (!product.fromSupplier || Number(product.quantity) > 0);
 }
 
+function discountPercent(product) {
+  const price = Number(product?.price);
+  const originalPrice = Number(product?.compare_at_price);
+  return originalPrice > price && price > 0
+    ? Math.round(((originalPrice - price) / originalPrice) * 100)
+    : 0;
+}
+
 function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, onDetails, selectedCity }) {
   const price = Number(product.price);
   const hasFixedPrice = Number.isFinite(price) && price > 0;
+  const discount = discountPercent(product);
   const normalizedCity = selectedCity.trim().toLowerCase();
   const cityUnavailable = Boolean(normalizedCity && product.available_cities?.length && !product.available_cities.some((city) => city.trim().toLowerCase() === normalizedCity));
   const canOrder = productCanOrder(product, selectedCity);
   return (
     <article className="store-product-card">
+      {discount > 0 && <span className="store-discount-badge">{discount}% OFF</span>}
       <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={product.image} category={product.category} name={product.name} /></button>
       <div className="store-product-details">
         <span className="store-product-tag">Available for quote</span>
@@ -213,6 +223,7 @@ export default function Storefront({ categories, products, content, loading, cit
       quote_price_range: product.quote_price_range,
       brand: product.brand,
       compare_at_price: product.compare_at_price,
+      is_featured_deal: product.is_featured_deal === true,
       images: product.images,
       specifications: product.specifications,
       bulk_pricing: product.bulk_pricing,
@@ -242,7 +253,7 @@ export default function Storefront({ categories, products, content, loading, cit
   )).sort((a, b) => sortBy === 'price-asc' ? (Number(a.price) || Infinity) - (Number(b.price) || Infinity) : sortBy === 'price-desc' ? (Number(b.price) || 0) - (Number(a.price) || 0) : sortBy === 'name' ? a.name.localeCompare(b.name) : 0);
   const brands = [...new Set(catalog.filter((product) => activeCategory === 'all' || String(product.category.id) === String(activeCategory)).map((product) => product.brand).filter(Boolean))].sort();
   const featured = categories.map((category) => catalog.find((product) => product.category.id === category.id)).filter(Boolean).slice(0, 8);
-  const deals = catalog.filter((product) => Number(product.price) > 0 && Number(product.compare_at_price) > Number(product.price)).sort((a, b) => (1 - Number(b.price) / Number(b.compare_at_price)) - (1 - Number(a.price) / Number(a.compare_at_price))).slice(0, 6);
+  const deals = catalog.filter((product) => product.is_featured_deal === true).sort((a, b) => discountPercent(b) - discountPercent(a)).slice(0, 6);
   const arrivals = catalog.filter((product) => product.fromSupplier && product.created_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 6);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const pricedTotal = cart.reduce((sum, item) => sum + unitPrice(item.product, item.quantity) * item.quantity, 0);

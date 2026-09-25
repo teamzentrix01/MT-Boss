@@ -21,6 +21,7 @@ const ensureTable = createInitializationGuard(async () => {
       category VARCHAR(255),
       brand VARCHAR(120),
       compare_at_price NUMERIC(10,2),
+      is_featured_deal BOOLEAN DEFAULT FALSE,
       images JSONB DEFAULT '[]'::jsonb,
       specifications JSONB DEFAULT '{}'::jsonb,
       bulk_pricing JSONB DEFAULT '[]'::jsonb,
@@ -35,6 +36,7 @@ const ensureTable = createInitializationGuard(async () => {
     ADD COLUMN IF NOT EXISTS brand VARCHAR(120),
     ADD COLUMN IF NOT EXISTS quote_price_range VARCHAR(100),
     ADD COLUMN IF NOT EXISTS compare_at_price NUMERIC(10,2),
+    ADD COLUMN IF NOT EXISTS is_featured_deal BOOLEAN DEFAULT FALSE,
     ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb,
     ADD COLUMN IF NOT EXISTS specifications JSONB DEFAULT '{}'::jsonb,
     ADD COLUMN IF NOT EXISTS bulk_pricing JSONB DEFAULT '[]'::jsonb,
@@ -61,7 +63,7 @@ export async function GET(req) {
 
     const result = await pool.query(
       `SELECT m.id, m.supplier_id, m.vendor_id, m.name, m.description, m.quote_price_range, m.price, m.unit, m.quantity, m.image_url, m.category,
-              m.brand, m.compare_at_price, m.images, m.specifications, m.bulk_pricing,
+              m.brand, m.compare_at_price, m.is_featured_deal, m.images, m.specifications, m.bulk_pricing,
               CASE
                 WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
                 WHEN m.vendor_id IS NOT NULL AND v.city IS NOT NULL THEN jsonb_build_array(v.city)
@@ -96,6 +98,7 @@ export async function GET(req) {
       category: row.category || '',
       brand: row.brand || '',
       compare_at_price: row.compare_at_price,
+      is_featured_deal: row.is_featured_deal === true,
       images: Array.isArray(row.images) ? row.images : [],
       specifications: row.specifications || {},
       bulk_pricing: Array.isArray(row.bulk_pricing) ? row.bulk_pricing : [],

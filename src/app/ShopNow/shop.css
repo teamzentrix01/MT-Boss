@@ -235,7 +235,7 @@
 .dark-mode .store-category-leaf small{color:#7f91a8}
 .shop-page .store-product-title{display:block;width:100%;padding:0!important;text-align:left}
 .shop-page .store-product-image-button{display:block;width:100%;padding:0!important}
-.store-product-card{position:relative}.store-discount-badge{position:absolute;left:8px;top:8px;z-index:2;padding:5px 7px;border-radius:5px;background:var(--brand-blue);color:#fff;font-size:9px;font-weight:900;box-shadow:0 2px 8px #0002}
+.store-product-card{position:relative}.store-discount-badge{position:absolute;left:8px;top:8px;z-index:2;padding:6px 9px;border-radius:5px;background:#f5a623;color:#293241;font-size:10px;font-weight:900;line-height:1;box-shadow:0 2px 8px #0003}
 .store-product-title h3{margin:11px 0 5px}
 .store-product-price del{display:block;margin-top:3px;color:#8a96a5;font-size:10px}
 .shop-page .store-bulk-link{align-self:flex-start;padding:4px 0!important;color:var(--brand-blue-deep)!important;font-size:10px;font-weight:800;text-decoration:underline}
