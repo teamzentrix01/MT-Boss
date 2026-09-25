@@ -35,7 +35,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [propertyOpen, setPropertyOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -103,7 +102,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     const frame = requestAnimationFrame(() => {
       setIsOpen(false);
       setPropertyOpen(false);
-      setServicesOpen(false);
     });
     return () => cancelAnimationFrame(frame);
   }, [pathname]);
@@ -118,7 +116,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   const closeMobileMenu = () => {
     setIsOpen(false);
     setPropertyOpen(false);
-    setServicesOpen(false);
   };
 
   const handleLogout = async () => {
@@ -152,11 +149,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     else if (user?.role === 'franchise') router.push('/franchise/dashboard');
     else router.push('/userdashboard');
   };
-
-  const serviceDropdown = [
-    { label: "Quick Services", href: "/quick" },
-    { label: "Professional Services", href: "/Services/professionals" },
-  ];
 
   const propertyDropdown = [
     { label: "🏠 Buy Property", href: "/property/buy", sub: "Browse verified listings" },
@@ -201,20 +193,12 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               Home
             </Link>
 
-            {/* Services */}
-            <DropdownButton label="Services" text={text} textHover={textHover} dropdownBg={dropdownBg}>
-              <div className="w-48">
-                {serviceDropdown.map((item) => (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className={`block px-4 py-2.5 text-sm transition-colors ${dropdownTxt}`}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </DropdownButton>
+            <Link
+              href="/Services/professionals"
+              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+            >
+              Professional Services
+            </Link>
 
             {/* Property */}
             <DropdownButton label="Property" text={text} textHover={textHover} dropdownBg={dropdownBg}>
@@ -504,49 +488,16 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </Link>
           ))}
 
-          {/* Mobile Services */}
-          <div>
-            <button
-              onClick={() => setServicesOpen(!servicesOpen)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
-                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
-            >
-              Services
-              <svg
-                className={`w-4 h-4 transition-transform ${servicesOpen ? 'rotate-180' : ''
-                  }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            {servicesOpen && (
-              <div className="ml-4 mt-1 space-y-1">
-                {serviceDropdown.map((s) => (
-                  <Link
-                    key={s.label}
-                    href={s.href}
-                    onClick={closeMobileMenu}
-                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${isDarkMode
-                      ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                      : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
-                      }`}
-                  >
-                    {s.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+          <Link
+            href="/Services/professionals"
+            onClick={closeMobileMenu}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
+          >
+            Professional Services
+          </Link>
 
           {/* Mobile Property */}
           <div>
