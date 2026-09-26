@@ -133,15 +133,28 @@ export default function ShopPage() {
     if (productsRequestRef.current) return productsRequestRef.current;
 
     const request = (async () => {
+      const endpoint = force ? "/api/shop-material-options?fresh=1" : "/api/shop-material-options";
       try {
-        const endpoint = force ? "/api/shop-material-options?fresh=1" : "/api/shop-material-options";
-        const response = await fetch(endpoint, { cache: force ? "no-store" : "default" });
-        const data = await response.json();
-        if (!response.ok || !data.success) throw new Error(data.error || "Could not load shop products");
-        setAllProducts(data.data?.products || []);
-        productsLastLoadedAtRef.current = Date.now();
-      } catch (error) {
-        console.error("Could not refresh Shop Now products:", error);
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          try {
+            const response = await fetch(endpoint, { cache: force ? "no-store" : "default" });
+            if (response.status === 503 && attempt === 0) {
+              await new Promise((resolve) => setTimeout(resolve, 500));
+              continue;
+            }
+            const data = await response.json();
+            if (!response.ok || !data.success) throw new Error(data.error || "Could not load shop products");
+            setAllProducts(data.data?.products || []);
+            productsLastLoadedAtRef.current = Date.now();
+            return;
+          } catch (error) {
+            if (attempt === 0 && error instanceof TypeError) {
+              await new Promise((resolve) => setTimeout(resolve, 500));
+              continue;
+            }
+            console.error("Could not refresh Shop Now products:", error);
+          }
+        }
       } finally {
         setProductsLoaded(true);
         productsRequestRef.current = null;
