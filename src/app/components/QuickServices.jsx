@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import QuickServiceIcon from './QuickServiceIcon';
+import { fallbackQuickServices } from "@/lib/public-fallbacks";
 
 function useInView(threshold = 0.1) {
   const ref = useRef(null);
@@ -29,52 +30,51 @@ async function readQuickServicesResponse(response) {
   const contentType = response.headers.get("content-type") || "";
 
   if (!contentType.toLowerCase().includes("application/json")) {
-    // Next.js can briefly serve an HTML error document while an API route is
-    // compiling in development. Never pass that document to response.json().
-    throw new Error(
-      `Quick services returned a non-JSON response (${response.status}).`
-    );
+    return null;
   }
 
   const data = await response.json();
   if (!response.ok) {
-    throw new Error(data?.error || `Quick services request failed (${response.status}).`);
+    return null;
   }
 
   return data;
 }
 
 async function loadQuickServices(signal) {
-  let lastError;
+  const delays = [400, 800, 1200];
 
-  for (let attempt = 0; attempt < 2; attempt += 1) {
+  for (let attempt = 0; attempt <= delays.length; attempt += 1) {
     try {
       const response = await fetch("/api/quick-services", {
         cache: "no-store",
         headers: { Accept: "application/json" },
         signal,
       });
-      return await readQuickServicesResponse(response);
+
+      const data = await readQuickServicesResponse(response);
+      if (data && data.success && Array.isArray(data.data)) {
+        return data;
+      }
     } catch (error) {
       if (error.name === "AbortError") throw error;
-      lastError = error;
+    }
 
-      // Retry once after a first-load Turbopack compilation response.
-      if (attempt === 0) {
-        await new Promise((resolve) => setTimeout(resolve, 250));
-      }
+    if (attempt < delays.length) {
+      await new Promise((resolve) => setTimeout(resolve, delays[attempt]));
     }
   }
 
-  throw lastError;
+  // Graceful fallback if development route compilation or network is delayed
+  return { success: true, data: fallbackQuickServices, fromFallback: true };
 }
 
 export default function QuickServices() {
   const [headerRef, headerVisible] = useInView(0.1);
   const [gridRef, gridVisible] = useInView(0.05);
   const [isDark, setIsDark] = useState(false);
-  const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [services, setServices] = useState(fallbackQuickServices);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const checkTheme = () => {
@@ -86,7 +86,7 @@ export default function QuickServices() {
     return () => observer.disconnect();
   }, []);
 
-  // Fetch from API — same as /quick/page.jsx
+  // Fetch from API — update with live services once route is ready
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
@@ -94,10 +94,32 @@ export default function QuickServices() {
     const fetchServices = async () => {
       try {
         const data = await loadQuickServices(controller.signal);
-        if (active && data.success) setServices(data.data);
+        if (active && data?.success && Array.isArray(data.data)) {
+          setServices(data.data);
+          // If fallback was used during initial compilation, try once more after a delay
+          if (data.fromFallback) {
+            setTimeout(async () => {
+              if (!active) return;
+              try {
+                const retryRes = await fetch("/api/quick-services", {
+                  cache: "no-store",
+                  headers: { Accept: "application/json" },
+                  signal: controller.signal,
+                });
+                const liveData = await readQuickServicesResponse(retryRes);
+                if (active && liveData?.success && Array.isArray(liveData.data)) {
+                  setServices(liveData.data);
+                }
+              } catch {
+                // Keep fallback data quietly
+              }
+            }, 2500);
+          }
+        }
       } catch (error) {
         if (error.name !== "AbortError") {
-          console.error("Error fetching quick services:", error);
+          // Keep fallback services without breaking the UI
+          setServices((prev) => (prev.length ? prev : fallbackQuickServices));
         }
       } finally {
         if (active) setLoading(false);

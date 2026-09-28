@@ -5,10 +5,15 @@ import { getShippingSettings, ensureShippingSchema } from '@/lib/shipping';
 
 export async function GET(req) {
   const isAdmin = requireRole(req, 'admin');
-  const isVendor = requireRole(req, 'vendor');
-  if (!isAdmin && !isVendor) return NextResponse.json({ success: false, error: 'Authorized access required' }, { status: 401 });
-  try { return NextResponse.json({ success: true, data: await getShippingSettings(), canEdit: Boolean(isAdmin) }); }
-  catch (error) { return NextResponse.json({ success: false, error: error.message }, { status: 500 }); }
+  try {
+    return NextResponse.json({
+      success: true,
+      data: await getShippingSettings(),
+      canEdit: Boolean(isAdmin),
+    });
+  } catch (error) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
 }
 
 export async function PUT(req) {
