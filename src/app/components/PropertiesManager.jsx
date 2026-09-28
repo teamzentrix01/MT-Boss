@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Eye, ShieldCheck, Ban, Trash2, X, ActionIconButton, House, RotateCcw } from '@/app/components/ui/icons';
 
 const STATUS_COLORS = {
-  pending:  { bg: 'sp-pending',  label: '⏳ Pending' },
-  verified: { bg: 'sp-verified', label: '✓ Verified' },
-  rejected: { bg: 'sp-rejected', label: '✕ Rejected' },
+  pending:  { bg: 'sp-pending',  label: 'Pending' },
+  verified: { bg: 'sp-verified', label: 'Verified' },
+  rejected: { bg: 'sp-rejected', label: 'Rejected' },
 };
 
 export default function PropertiesManager({ isDarkMode }) {
@@ -301,7 +302,7 @@ export default function PropertiesManager({ isDarkMode }) {
           <div className="pm-toggles">
             {['all','buy','rent'].map(t => (
               <button key={t} className={`pm-toggle${listFilter===t?' active':''}`} onClick={() => setListFilter(t)}>
-                {t === 'all' ? 'All' : t === 'buy' ? '⌂ Buy' : '⌂ Rent'}
+                {t === 'all' ? 'All' : t === 'buy' ? 'Buy' : 'Rent'}
               </button>
             ))}
           </div>
@@ -340,7 +341,7 @@ export default function PropertiesManager({ isDarkMode }) {
                         <div className="pm-thumb">
                           {Array.isArray(p.images) && p.images.length > 0
                             ? <img src={p.images[0]} alt="" onError={e => { e.target.style.display='none'; }} />
-                            : <div className="pm-thumb-placeholder">⌂</div>}
+                            : <div className="pm-thumb-placeholder"><House size={16} strokeWidth={1.75} /></div>}
                           <span className="pm-prop-name">{p.title}</span>
                         </div>
                       </td>
@@ -356,14 +357,34 @@ export default function PropertiesManager({ isDarkMode }) {
                       </td>
                       <td><span className={`badge-sm ${sc.bg}`}>{sc.label}</span></td>
                       <td onClick={e => e.stopPropagation()}>
-                        <div className="pm-actions">
+                        <div className="pm-actions" style={{ display:'flex', gap:'4px', alignItems:'center' }}>
+                          <ActionIconButton
+                            icon={Eye}
+                            label="View property details"
+                            onClick={() => setSelected(p)}
+                          />
                           {p.status !== 'verified' && (
-                            <button className="act-btn act-verify" onClick={() => action(p.id, 'verify')}>✓ Verify</button>
+                            <ActionIconButton
+                              icon={ShieldCheck}
+                              variant="success"
+                              label="Verify property"
+                              onClick={() => action(p.id, 'verify')}
+                            />
                           )}
                           {p.status !== 'rejected' && (
-                            <button className="act-btn act-reject" onClick={() => action(p.id, 'reject')}>✕ Reject</button>
+                            <ActionIconButton
+                              icon={Ban}
+                              variant="danger"
+                              label="Reject property"
+                              onClick={() => action(p.id, 'reject')}
+                            />
                           )}
-                          <button className="act-btn act-delete" onClick={() => handleDelete(p.id)}>🗑</button>
+                          <ActionIconButton
+                            icon={Trash2}
+                            variant="danger"
+                            label="Delete property"
+                            onClick={() => handleDelete(p.id)}
+                          />
                         </div>
                       </td>
                     </tr>
@@ -387,7 +408,9 @@ export default function PropertiesManager({ isDarkMode }) {
                   <div className="pm-modal-id">Property #{selected.id}</div>
                   <div className="pm-modal-title">{selected.title}</div>
                 </div>
-                <button className="pm-modal-close" onClick={() => setSelected(null)}>✕</button>
+                <button className="pm-modal-close" onClick={() => setSelected(null)} aria-label="Close modal">
+                  <X size={16} strokeWidth={1.75} aria-hidden="true" />
+                </button>
               </div>
 
               <div className="pm-modal-body">
@@ -463,15 +486,27 @@ export default function PropertiesManager({ isDarkMode }) {
                 {/* Actions */}
                 <div className="pm-modal-actions">
                   {selected.status !== 'verified' && (
-                    <button className="pm-modal-btn pm-modal-btn-verify" onClick={() => action(selected.id, 'verify')}>✓ Verify &amp; Publish</button>
+                    <button className="pm-modal-btn pm-modal-btn-verify" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'6px' }} onClick={() => action(selected.id, 'verify')}>
+                      <ShieldCheck size={16} strokeWidth={1.75} aria-hidden="true" />
+                      Verify &amp; Publish
+                    </button>
                   )}
                   {selected.status !== 'rejected' && (
-                    <button className="pm-modal-btn pm-modal-btn-reject" onClick={() => action(selected.id, 'reject')}>✕ Reject</button>
+                    <button className="pm-modal-btn pm-modal-btn-reject" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'6px' }} onClick={() => action(selected.id, 'reject')}>
+                      <Ban size={16} strokeWidth={1.75} aria-hidden="true" />
+                      Reject
+                    </button>
                   )}
                   {selected.status === 'rejected' && (
-                    <button className="pm-modal-btn pm-modal-btn-pending" onClick={() => action(selected.id, 'pending')}>↩ Move to Pending</button>
+                    <button className="pm-modal-btn pm-modal-btn-pending" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'6px' }} onClick={() => action(selected.id, 'pending')}>
+                      <RotateCcw size={16} strokeWidth={1.75} aria-hidden="true" />
+                      Move to Pending
+                    </button>
                   )}
-                  <button className="pm-modal-btn pm-modal-btn-delete" onClick={() => handleDelete(selected.id)}>🗑 Delete</button>
+                  <button className="pm-modal-btn pm-modal-btn-delete" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'6px' }} onClick={() => handleDelete(selected.id)}>
+                    <Trash2 size={16} strokeWidth={1.75} aria-hidden="true" />
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>

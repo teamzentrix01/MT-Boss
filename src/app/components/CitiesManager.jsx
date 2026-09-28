@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Pencil, Trash2, ActionIconButton } from '@/app/components/ui/icons';
 
 const emptyForm = { name: '', state: '', is_active: true, sort_order: 0 };
 
@@ -253,14 +254,19 @@ export default function CitiesManager() {
                     </span>
                   </td>
                   <td>
-                    <div className="city-row-actions">
-                      <button className="city-row-btn edit" type="button" onClick={() => startEdit(city)}>
-                        Edit
-                      </button>
-                      <button className="city-row-btn delete" type="button" onClick={() => remove(city)}
-                        disabled={deletingId === city.id}>
-                        {deletingId === city.id ? 'Deleting...' : 'Delete'}
-                      </button>
+                    <div className="city-row-actions" style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      <ActionIconButton
+                        icon={Pencil}
+                        label="Edit city"
+                        onClick={() => startEdit(city)}
+                      />
+                      <ActionIconButton
+                        icon={Trash2}
+                        variant="danger"
+                        label="Delete city"
+                        onClick={() => remove(city)}
+                        disabled={deletingId === city.id}
+                      />
                     </div>
                   </td>
                 </tr>

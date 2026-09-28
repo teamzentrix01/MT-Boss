@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { Eye, ShieldCheck, Ban, RefreshCw, X, ActionIconButton } from '@/app/components/ui/icons';
 
 /* ── tiny helpers ──────────────────────────────────────────────────────────── */
 const fmt  = (n) => `₹${parseFloat(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -563,18 +564,19 @@ export default function SupplierHubAdmin({ isDarkMode }) {
           </p>
         </div>
         <button onClick={() => { fetchSuppliers(); fetchEnquiries(); }}
-          style={{ padding:'0.4rem 0.875rem', background:'transparent', border:`1px solid ${border}`, borderRadius:6, color:muted, fontSize:'0.8125rem', cursor:'pointer' }}>
-          ↺ Refresh All
+          style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'0.4rem 0.875rem', background:'transparent', border:`1px solid ${border}`, borderRadius:6, color:muted, fontSize:'0.8125rem', cursor:'pointer' }}>
+          <RefreshCw size={14} strokeWidth={1.75} aria-hidden="true" />
+          Refresh All
         </button>
       </div>
 
       {/* Sub-tab bar */}
       <div style={{ display:'flex', borderBottom:`2px solid ${border}`, marginBottom:'1.5rem', overflowX:'auto', scrollbarWidth:'none' }}>
         {[
-          { id:'overview',   label:'📊 Overview'   },
-          { id:'enquiries',  label:'📋 Enquiries'  },
-          { id:'suppliers',  label:'🏪 Suppliers'  },
-          { id:'revenue',    label:'💰 Revenue'    },
+          { id:'overview',   label:'Overview'   },
+          { id:'enquiries',  label:'Enquiries'  },
+          { id:'suppliers',  label:'Suppliers'  },
+          { id:'revenue',    label:'Revenue'    },
         ].map(t => (
           <button key={t.id} style={tabBtn(t.id)} onClick={() => setTab(t.id)}>{t.label}</button>
         ))}
@@ -598,7 +600,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
           {pendingCount > 0 && (
             <div style={{ background:surface, border:`2px solid #f9731644`, borderRadius:10, marginBottom:'1.25rem', overflow:'hidden' }}>
               <div style={{ padding:'0.875rem 1.25rem', borderBottom:`1px solid ${border}`, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                <span style={{ fontWeight:700, fontSize:'0.875rem', color:'#f97316' }}>⚠️ {pendingCount} Supplier{pendingCount > 1 ? 's' : ''} Awaiting Approval</span>
+                <span style={{ fontWeight:700, fontSize:'0.875rem', color:'#f97316' }}>{pendingCount} Supplier{pendingCount > 1 ? 's' : ''} Awaiting Approval</span>
                 <button onClick={() => setTab('suppliers')} style={{ background:'#f97316', border:'none', borderRadius:6, padding:'0.35rem 0.875rem', color:'#fff', fontSize:'0.78rem', fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>
                   Review Now →
                 </button>
@@ -621,13 +623,25 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                         <td style={td({ color:muted })}>{s.city || '—'}</td>
                         <td style={td({ color:muted })}>{fmtD(s.created_at)}</td>
                         <td style={td()}>
-                          <div style={{ display:'flex', gap:'0.4rem' }}>
-                            <button onClick={() => setSelectedSupplier(s)}
-                              style={{ padding:'0.28rem 0.6rem', border:`1px solid ${border}`, borderRadius:6, background:'transparent', color:muted, fontSize:'0.75rem', cursor:'pointer' }}>View</button>
-                            <button onClick={() => handleApprove(s.id)} disabled={actionLoading === s.id}
-                              style={{ padding:'0.28rem 0.6rem', background:'#16a34a', border:'none', borderRadius:6, color:'#fff', fontSize:'0.75rem', fontWeight:700, cursor:'pointer', opacity:actionLoading===s.id?0.6:1 }}>✓ Approve</button>
-                            <button onClick={() => openRejectModal(s)}
-                              style={{ padding:'0.28rem 0.6rem', background:'#dc2626', border:'none', borderRadius:6, color:'#fff', fontSize:'0.75rem', fontWeight:700, cursor:'pointer' }}>✕</button>
+                          <div style={{ display:'flex', gap:'0.4rem', alignItems:'center' }}>
+                            <ActionIconButton
+                              icon={Eye}
+                              label="View supplier details"
+                              onClick={() => setSelectedSupplier(s)}
+                            />
+                            <ActionIconButton
+                              icon={ShieldCheck}
+                              variant="success"
+                              label="Approve supplier"
+                              onClick={() => handleApprove(s.id)}
+                              disabled={actionLoading === s.id}
+                            />
+                            <ActionIconButton
+                              icon={Ban}
+                              variant="danger"
+                              label="Reject supplier"
+                              onClick={() => openRejectModal(s)}
+                            />
                           </div>
                         </td>
                       </tr>
@@ -730,10 +744,11 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                       <td style={td({ color:'#f97316', fontWeight:700, whiteSpace:'nowrap' })}>{e.admin_commission ? fmt(e.admin_commission) : '—'}</td>
                       <td style={td({ color:muted, whiteSpace:'nowrap' })}>{fmtD(e.created_at)}</td>
                       <td style={td()}>
-                        <button onClick={ev => { ev.stopPropagation(); openEnquiry(e); }}
-                          style={{ padding:'0.25rem 0.6rem', border:`1px solid ${border}`, borderRadius:5, background:'transparent', color:muted, fontSize:'0.72rem', cursor:'pointer' }}>
-                          View
-                        </button>
+                        <ActionIconButton
+                          icon={Eye}
+                          label="View enquiry details"
+                          onClick={ev => { ev.stopPropagation(); openEnquiry(e); }}
+                        />
                       </td>
                     </tr>
                   ))}
@@ -800,21 +815,44 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                         <td style={td({ color:'#f97316', fontWeight:700, whiteSpace:'nowrap' })}>{fmt(s.total_commission)}</td>
                         <td style={td({ color:muted, whiteSpace:'nowrap' })}>{fmtD(s.created_at)}</td>
                         <td style={td()}>
-                          <div style={{ display:'flex', gap:'0.35rem', flexWrap:'nowrap' }}>
-                            <button onClick={() => setSelectedSupplier(s)} style={{ padding:'0.28rem 0.6rem', border:`1px solid ${border}`, borderRadius:6, background:'transparent', color:muted, fontSize:'0.72rem', cursor:'pointer', whiteSpace:'nowrap' }}>View</button>
+                          <div style={{ display:'flex', gap:'0.35rem', flexWrap:'nowrap', alignItems:'center' }}>
+                            <ActionIconButton
+                              icon={Eye}
+                              label="View supplier details"
+                              onClick={() => setSelectedSupplier(s)}
+                            />
                             {s.status === 'pending' && <>
-                              <button onClick={() => handleApprove(s.id)} disabled={actionLoading===s.id}
-                                style={{ padding:'0.28rem 0.6rem', background:'#16a34a', border:'none', borderRadius:6, color:'#fff', fontSize:'0.72rem', fontWeight:700, cursor:'pointer', opacity:actionLoading===s.id?0.6:1 }}>✓</button>
-                              <button onClick={() => openRejectModal(s)}
-                                style={{ padding:'0.28rem 0.6rem', background:'#dc2626', border:'none', borderRadius:6, color:'#fff', fontSize:'0.72rem', fontWeight:700, cursor:'pointer' }}>✕</button>
+                              <ActionIconButton
+                                icon={ShieldCheck}
+                                variant="success"
+                                label="Approve supplier"
+                                onClick={() => handleApprove(s.id)}
+                                disabled={actionLoading===s.id}
+                              />
+                              <ActionIconButton
+                                icon={Ban}
+                                variant="danger"
+                                label="Reject supplier"
+                                onClick={() => openRejectModal(s)}
+                              />
                             </>}
                             {s.status === 'approved' && s.is_active && (
-                              <button onClick={() => handleDeactivate(s.id)} disabled={actionLoading===s.id}
-                                style={{ padding:'0.28rem 0.6rem', background:'#f97316', border:'none', borderRadius:6, color:'#fff', fontSize:'0.72rem', fontWeight:700, cursor:'pointer', opacity:actionLoading===s.id?0.6:1, whiteSpace:'nowrap' }}>⏸ Off</button>
+                              <ActionIconButton
+                                icon={Ban}
+                                variant="danger"
+                                label="Deactivate supplier"
+                                onClick={() => handleDeactivate(s.id)}
+                                disabled={actionLoading===s.id}
+                              />
                             )}
                             {s.status === 'approved' && !s.is_active && (
-                              <button onClick={() => handleActivate(s.id)} disabled={actionLoading===s.id}
-                                style={{ padding:'0.28rem 0.6rem', background:'#16a34a', border:'none', borderRadius:6, color:'#fff', fontSize:'0.72rem', fontWeight:700, cursor:'pointer', opacity:actionLoading===s.id?0.6:1, whiteSpace:'nowrap' }}>▶ On</button>
+                              <ActionIconButton
+                                icon={ShieldCheck}
+                                variant="success"
+                                label="Activate supplier"
+                                onClick={() => handleActivate(s.id)}
+                                disabled={actionLoading===s.id}
+                              />
                             )}
                           </div>
                         </td>
