@@ -220,9 +220,9 @@ export default function MobileStorefront({
   useEffect(() => {
     const loadShipping = () => {
       fetch("/api/shipping-settings")
-        .then((r) => r.json())
+        .then((r) => (r.ok && r.headers.get('content-type')?.includes('application/json') ? r.json() : null))
         .then((res) => {
-          if (res.success && res.data) setLocalShippingSettings(res.data);
+          if (res?.success && res.data) setLocalShippingSettings(res.data);
         })
         .catch(console.error);
     };
