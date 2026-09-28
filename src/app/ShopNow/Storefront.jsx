@@ -11,7 +11,6 @@ import {
 import "./shop.css";
 import ShopCategoryNav from "./ShopCategoryNav";
 import MobileStorefront from "./MobileStorefront";
-
 export function normalizeShopImageUrl(value) {
   const imageUrl = String(value || '').trim();
   if (!imageUrl) return '';
@@ -20,6 +19,31 @@ export function normalizeShopImageUrl(value) {
   // Older product records sometimes contain `uploads/file.jpg` without the
   // leading slash, which would otherwise resolve relative to /ShopNow.
   return `/${imageUrl}`;
+}
+
+function imageValue(value) {
+  if (typeof value === 'string') return value;
+  if (value && typeof value === 'object') return value.secure_url || value.url || value.image_url || '';
+  return '';
+}
+
+export function getProductImage(product, category = null) {
+  if (!product || typeof product !== 'object') return '';
+  const direct = [product.image, product.image_url, product.imageUrl, product.product_image]
+    .map(imageValue).find(Boolean);
+  if (direct) return normalizeShopImageUrl(direct);
+  const gallery = Array.isArray(product.images) ? product.images : [];
+  const galleryImage = gallery.map(imageValue).find(Boolean);
+  if (galleryImage) return normalizeShopImageUrl(galleryImage);
+
+  if (Array.isArray(category)) {
+    const catName = typeof product.category === 'object' ? product.category?.name : product.category;
+    const found = category.find((c) => c.name?.toLowerCase() === String(catName || '').trim().toLowerCase());
+    if (found?.image) return normalizeShopImageUrl(imageValue(found.image));
+  }
+  const cat = (category && !Array.isArray(category)) ? category : (typeof product.category === 'object' ? product.category : null);
+  if (cat?.image) return normalizeShopImageUrl(imageValue(cat.image));
+  return '';
 }
 
 export function ShopImage({ src, alt = '', ...props }) {
@@ -124,6 +148,7 @@ function discountPercent(product) {
 }
 
 function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, onDetails, selectedCity }) {
+  const productImage = getProductImage(product, product.category);
   const price = Number(product.price);
   const hasFixedPrice = Number.isFinite(price) && price > 0;
   const discount = discountPercent(product);
@@ -133,7 +158,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   return (
     <article className="store-product-card">
       {discount > 0 && <span className="store-discount-badge">{discount}% OFF</span>}
-      <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={product.image} category={product.category} name={product.name} /></button>
+      <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={productImage} category={product.category} name={product.name} /></button>
       <div className="store-product-details">
         <span className="store-product-tag">Available for quote</span>
         <button type="button" className="store-product-title" onClick={() => onDetails(product)}><h3>{product.name}</h3></button>
@@ -266,7 +291,7 @@ export default function Storefront({ categories, products, content, loading, cit
       category,
       unit: product.unit || category.unit || "unit",
       price: product.price,
-      image: product.image_url,
+      image: product.image_url || category?.image || "",
       description: product.description,
       quote_price_range: product.quote_price_range,
       brand: product.brand,
@@ -288,7 +313,7 @@ export default function Storefront({ categories, products, content, loading, cit
       category,
       unit: category.unit || "unit",
       price: null,
-      image: "",
+      image: category?.image || "",
       fromSupplier: false,
     }));
   }), [categories, products]);
@@ -444,7 +469,7 @@ export default function Storefront({ categories, products, content, loading, cit
           <section className="store-detail-dialog" role="dialog" aria-modal="true" aria-label={`${detailsProduct.name} details`} onClick={(event) => event.stopPropagation()}>
             <button type="button" className="store-detail-close" onClick={() => setDetailsProduct(null)} aria-label="Close product details"><X size={22} /></button>
             <div className="store-detail-gallery">
-              <ProductVisual image={detailsProduct.image} category={detailsProduct.category} name={detailsProduct.name} />
+              <ProductVisual image={getProductImage(detailsProduct, detailsProduct.category)} category={detailsProduct.category} name={detailsProduct.name} />
               {detailsProduct.images?.length > 0 && <div className="store-detail-thumbs">{detailsProduct.images.map((url) => <OptimizedImage key={url} src={url} width={70} height={70} sizes="70px" quality={70} alt={`${detailsProduct.name} additional view`} />)}</div>}
             </div>
             <div className="store-detail-info">
@@ -473,7 +498,7 @@ export default function Storefront({ categories, products, content, loading, cit
                 const itemUnitPrice = unitPrice(item.product, item.quantity);
                 const itemKey = item.product?.id ? `${item.product.id}` : `cart-item-${index}`;
                 return <div className="store-cart-item" key={itemKey}>
-                  <ProductVisual compact image={item.product.image} category={item.product.category} name={item.product.name} />
+                  <ProductVisual compact image={getProductImage(item.product, item.product.category)} category={item.product.category} name={item.product.name} />
                   <div>
                     <strong>{item.product.name}</strong>
                     <span>{item.product.category?.name || 'Material'}{item.product.unit ? ` · ${displayUnit(item.product.unit)}` : ''} · {itemUnitPrice > 0 ? `₹${itemUnitPrice.toLocaleString('en-IN')} / ${displayUnit(item.product.unit)}` : 'Price on confirmation'}</span>

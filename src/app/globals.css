@@ -46,11 +46,11 @@ h1, h2, h3, h4, h5, h6, button, a {
   font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif !important;
 }
 
-button,
-[role="button"],
+button:not(.action-icon-btn):not(.orders-customer-name-btn):not(.orders-btn):not([class*="no-global-btn"]),
+[role="button"]:not(.action-icon-btn):not(.orders-customer-name-btn):not(.orders-btn),
 a.btn,
 a[class~="btn"],
-a[class*="-btn"],
+a[class*="-btn"]:not(.action-icon-btn),
 a[class*="btn-"],
 a[href][class*="uppercase"][class*="bg-"],
 a[href][class*="uppercase"][class*="border"] {
@@ -70,6 +70,45 @@ a[href][class*="uppercase"][class*="border"] {
   will-change: auto;
 }
 
+/* Table action buttons, customer name buttons, and flat admin buttons */
+.action-icon-btn,
+.orders-customer-name-btn,
+.orders-btn {
+  background-image: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: all 0.15s ease !important;
+}
+
+.action-icon-btn {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.action-icon-btn:hover:not(:disabled) {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #94a3b8 !important;
+  color: #000000 !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.orders-customer-name-btn,
+.orders-customer-name-btn:hover,
+.orders-customer-name-btn:active,
+.orders-customer-name-btn:focus {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  color: inherit !important;
+  text-decoration: underline !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+}
+
 /* Let the browser skip layout and paint work for home sections that are still
    well below the viewport. The intrinsic size keeps scrolling stable. */
 .home-deferred-section {
@@ -77,8 +116,8 @@ a[href][class*="uppercase"][class*="border"] {
   contain-intrinsic-size: auto 600px;
 }
 
-button:hover:not(:disabled),
-[role="button"]:hover,
+button:hover:not(:disabled):not(.action-icon-btn):not(.orders-customer-name-btn):not(.orders-btn):not([class*="no-global-btn"]),
+[role="button"]:hover:not(.action-icon-btn):not(.orders-customer-name-btn):not(.orders-btn),
 a.btn:hover,
 a[class~="btn"]:hover,
 a[class*="-btn"]:hover,
@@ -96,8 +135,8 @@ a[href][class*="uppercase"][class*="border"]:hover {
   transform: translateY(-3px) scale(1.015);
 }
 
-button:active:not(:disabled),
-[role="button"]:active,
+button:active:not(:disabled):not(.action-icon-btn):not(.orders-customer-name-btn):not(.orders-btn):not([class*="no-global-btn"]),
+[role="button"]:active:not(.action-icon-btn):not(.orders-customer-name-btn):not(.orders-btn),
 a.btn:active,
 a[class~="btn"]:active,
 a[class*="-btn"]:active,

@@ -1,5 +1,3 @@
-/** Static HomeRun-style parent → child nav for the shop category bar. */
-
 export const CATEGORY_NAV_TREE = [
   {
     id: 'building-materials',
