@@ -1,4 +1,4 @@
-// app/(moradabad_keywords)/best-architect-in-moradabad/page.jsx
+// app/(moradabad_keywords)/top-architect-in-moradabad/page.jsx
 import Banner from "./Banner";
 import Content from "./Content";
 import QuickServices from "../../components/QuickServices";
@@ -6,26 +6,26 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Best Architect in Moradabad: How to Choose | MTBOSS",
+  title: "Top Architect in Moradabad: Design Trends & Services | MTBOSS",
   description:
-    "Wondering who is the best architect in Moradabad? Learn what to check before hiring, and how MTBOSS offers design, construction and materials in one place. Call +91 94584 10866.",
+    "Discover what sets a top architect in Moradabad apart: modern design, smart planning and reliable construction. Explore MTBOSS services and call +91 94584 10866 for a free quote.",
   keywords:
-    "best architect in Moradabad, top architect in Moradabad, best architect near me Moradabad, best house architect Moradabad, best commercial architect Moradabad, how to choose architect Moradabad, architect fees Moradabad, architect and builder Moradabad, house plan Moradabad, building design Moradabad, construction company Moradabad, MTBOSS construction Moradabad, trusted architect Moradabad, affordable architect Moradabad, architect consultation Moradabad",
+    "top architect in Moradabad, top architects Moradabad, leading architect Moradabad, modern house design Moradabad, 3D elevation Moradabad, smart home design Moradabad, sustainable building design Moradabad, architect and contractor Moradabad, luxury home architect Moradabad, commercial building design Moradabad, house design trends 2026, construction company Moradabad, MTBOSS construction Moradabad, architectural consultant Moradabad, building planning Moradabad",
   alternates: {
-    canonical: "https://www.mtboss.in/best-architect-in-moradabad",
+    canonical: "https://www.mtboss.in/top-architect-in-moradabad",
   },
   openGraph: {
-    title: "Best Architect in Moradabad: How to Choose | MTBOSS",
+    title: "Top Architect in Moradabad: Design Trends & Services | MTBOSS",
     description:
-      "Wondering who is the best architect in Moradabad? Learn what to check before hiring, and how MTBOSS offers design, construction and materials in one place. Call +91 94584 10866.",
-    url: "https://www.mtboss.in/best-architect-in-moradabad",
+      "Discover what sets a top architect in Moradabad apart: modern design, smart planning and reliable construction. Explore MTBOSS services and call +91 94584 10866 for a free quote.",
+    url: "https://www.mtboss.in/top-architect-in-moradabad",
     siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-best-architect-moradabad.jpg",
+        url: "https://www.mtboss.in/og-top-architect-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Best Architect in Moradabad - MTBOSS Construction",
+        alt: "Top Architect in Moradabad - MTBOSS Construction",
       },
     ],
     locale: "en_IN",
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Best Architect in Moradabad: How to Choose | MTBOSS",
+    title: "Top Architect in Moradabad: Design Trends & Services | MTBOSS",
     description:
-      "Wondering who is the best architect in Moradabad? Learn what to check before hiring, and how MTBOSS offers design, construction and materials in one place. Call +91 94584 10866.",
-    images: ["https://www.mtboss.in/og-best-architect-moradabad.jpg"],
+      "Discover what sets a top architect in Moradabad apart: modern design, smart planning and reliable construction. Explore MTBOSS services and call +91 94584 10866 for a free quote.",
+    images: ["https://www.mtboss.in/og-top-architect-moradabad.jpg"],
   },
   robots: {
     index: true,
@@ -49,7 +49,7 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/best-architect-in-moradabad",
+    url: "https://www.mtboss.in/top-architect-in-moradabad",
     telephone: "+91-9458410866",
     email: "mtboss2016@gmail.com",
     address: {
@@ -84,9 +84,9 @@ export default function Page() {
   const serviceSchema = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Architect Selection and Construction Services in Moradabad",
+    name: "Top Architect and Construction Services in Moradabad",
     description:
-      "MTBOSS provides guidance on choosing the right architect, along with architectural design coordination, construction execution and material supply for residential, commercial and industrial projects in Moradabad.",
+      "MTBOSS provides architectural design coordination, modern design trends guidance, construction execution and material supply for residential, commercial and industrial projects in Moradabad.",
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
