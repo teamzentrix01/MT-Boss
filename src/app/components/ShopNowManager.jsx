@@ -12,15 +12,32 @@ import './ShopNowManager.css';
 
 const units = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
 const emptyProduct = { name: '', description: '', category: '', quality_tier: '', quote_price_range: '', price: '', compare_at_price: '', is_featured_deal: false, brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
-const fields = [
+const mobileHeaderFields = [
+  ['delivery_tagline', 'Delivery Tagline (e.g. 60 Mins delivery)'],
+  ['search_placeholder', 'Search Placeholder (e.g. Search for Cement, TMT Bars, Tiles...)'],
+  ['trust_badge_1', 'Trust Badge 1 (e.g. Free Delivery)'],
+  ['trust_badge_2', 'Trust Badge 2 (e.g. 2% Cashback)'],
+  ['trust_badge_3', 'Trust Badge 3 (e.g. Pay on Delivery)'],
+  ['trust_badge_4', 'Trust Badge 4 (e.g. 60 Mins Express)'],
+];
+
+const mobileBannerFields = [
+  ['mobile_banner_pill', 'Top Badge / Pill (e.g. ⚡ Delivered in 60 mins)'],
+  ['mobile_banner_subpill', 'Top Sub-badge (e.g. Direct Factory Rates)'],
+  ['mobile_banner_title', 'Promo Banner Heading'],
+  ['mobile_banner_btn', 'CTA Button Text (e.g. Request Bulk Quote)'],
+];
+
+const desktopBannerFields = [
   ['hero_kicker', 'Banner eyebrow'], ['hero_title', 'Banner title'],
   ['hero_highlight', 'Highlighted title'], ['hero_description', 'Banner description'],
   ['hero_badge', 'Image badge text'],
-  ['hero_button', 'Banner button'], ['search_placeholder', 'Search placeholder'],
+  ['hero_button', 'Banner button'],
   ['categories_heading', 'Categories heading'], ['featured_heading', 'Featured heading'],
   ['deals_heading', 'Deals heading'], ['arrivals_heading', 'New arrivals heading'],
   ['catalog_heading', 'Catalogue heading'], ['footer_tagline', 'Footer tagline'],
 ];
+
 
 const shopHeaders = (ownerRole = 'admin') => ({
   'Content-Type': 'application/json',
@@ -229,7 +246,11 @@ function AppearanceManager() {
       const data = await readApiJson(response);
       if (!response.ok) throw new Error(data.error || 'Could not save storefront');
       setContent(data.data);
-      setNotice('Storefront content saved.');
+      notifyShopProductsUpdated();
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('mtbossShopProductsUpdated'));
+      }
+      setNotice('Storefront content saved successfully.');
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
   };
@@ -248,7 +269,131 @@ function AppearanceManager() {
     finally { setUploading(false); event.target.value = ''; }
   };
 
-  return <div className="shop-admin-panel"><div className="shop-admin-heading"><div><h2>Storefront content</h2><p>Edit the Shop Now banner, promotion cards, headings and search text. Colors follow the MT Boss blue theme.</p></div><Link href="/ShopNow" target="_blank">Preview Shop Now</Link></div>{notice && <p className="shop-admin-notice" role="status">{notice}</p>}{loading ? <p>Loading storefront...</p> : <form className="shop-admin-card" onSubmit={save}><h3>Banner and page text</h3><div className="shop-admin-fields">{fields.map(([key, label]) => <label key={key}>{label}<input value={content[key]} onChange={(e) => setContent({ ...content, [key]: e.target.value })} /></label>)}<label className="shop-admin-wide">Banner image URL<input value={content.hero_image} onChange={(e) => setContent({ ...content, hero_image: e.target.value })} /></label></div><div className="shop-admin-form-footer"><label className="shop-admin-upload">{uploading ? 'Uploading...' : 'Upload banner image'}<input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden /></label></div><h3>Promotion cards</h3><div className="shop-admin-fields">{content.promos.map((promo, index) => <div className="shop-admin-promo" key={index}><strong>Card {index + 1}</strong><label>Title<input value={promo.title} onChange={(e) => updatePromo(index, 'title', e.target.value)} /></label><label>Subtitle<input value={promo.subtitle} onChange={(e) => updatePromo(index, 'subtitle', e.target.value)} /></label></div>)}</div><div className="shop-admin-form-footer"><button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save storefront'}</button></div></form>}</div>;
+  return <div className="shop-admin-panel">
+    <div className="shop-admin-heading">
+      <div>
+        <h2>Storefront Content Manager</h2>
+        <p>Manage Mobile Quick-Commerce Header, Trust Badges, Promo Banners, and Desktop Storefront Text.</p>
+      </div>
+      <Link href="/ShopNow" target="_blank">Preview Shop Now</Link>
+    </div>
+    {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
+    {loading ? <p>Loading storefront...</p> : (
+      <form onSubmit={save}>
+        {/* 1. Mobile Quick-Commerce Header & Trust Strip */}
+        <div className="shop-admin-card">
+          <h3>📱 Mobile Header & Trust Badges</h3>
+          <p style={{ marginBottom: 16 }}>Configure the delivery tagline, search bar placeholder, and the 4 quick trust badges displayed at the top of the mobile storefront.</p>
+          <div className="shop-admin-fields">
+            {mobileHeaderFields.map(([key, label]) => (
+              <label key={key}>
+                {label}
+                <input
+                  value={content[key] ?? ''}
+                  onChange={(e) => setContent({ ...content, [key]: e.target.value })}
+                />
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* 2. Mobile Promo Banner (Special Bulk Order Offer) */}
+        <div className="shop-admin-card">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+            <h3 style={{ margin: 0 }}>⚡ Mobile Promo Banner (Special Bulk Order Offer)</h3>
+            <label className="shop-admin-check" style={{ margin: 0 }}>
+              <input
+                type="checkbox"
+                checked={content.mobile_banner_enabled !== false}
+                onChange={(e) => setContent({ ...content, mobile_banner_enabled: e.target.checked })}
+              /> Show Promo Banner
+            </label>
+          </div>
+          <p style={{ marginBottom: 16 }}>Customize the dark promotional banner shown on the mobile storefront home/discovery feed.</p>
+          <div className="shop-admin-fields">
+            {mobileBannerFields.map(([key, label]) => (
+              <label key={key}>
+                {label}
+                <input
+                  value={content[key] ?? ''}
+                  onChange={(e) => setContent({ ...content, [key]: e.target.value })}
+                />
+              </label>
+            ))}
+            <label className="shop-admin-wide">
+              Banner Description
+              <textarea
+                rows={2}
+                value={content.mobile_banner_desc ?? ''}
+                onChange={(e) => setContent({ ...content, mobile_banner_desc: e.target.value })}
+                placeholder="Verified suppliers for Cement, TMT Bars, Brick & Sand with immediate site dispatch."
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* 3. Desktop Storefront Banner & Headings */}
+        <div className="shop-admin-card">
+          <h3>🖥️ Desktop Banner & Page Text</h3>
+          <div className="shop-admin-fields">
+            {desktopBannerFields.map(([key, label]) => (
+              <label key={key}>
+                {label}
+                <input
+                  value={content[key] ?? ''}
+                  onChange={(e) => setContent({ ...content, [key]: e.target.value })}
+                />
+              </label>
+            ))}
+            <label className="shop-admin-wide">
+              Banner image URL
+              <input
+                value={content.hero_image ?? ''}
+                onChange={(e) => setContent({ ...content, hero_image: e.target.value })}
+              />
+            </label>
+          </div>
+          <div className="shop-admin-form-footer">
+            <label className="shop-admin-upload">
+              {uploading ? 'Uploading...' : 'Upload banner image'}
+              <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden />
+            </label>
+          </div>
+        </div>
+
+        {/* 4. Desktop Promotion Cards */}
+        <div className="shop-admin-card">
+          <h3>🎁 Desktop Promotion Cards</h3>
+          <div className="shop-admin-fields">
+            {content.promos.map((promo, index) => (
+              <div className="shop-admin-promo" key={index}>
+                <strong>Card {index + 1}</strong>
+                <label>
+                  Title
+                  <input
+                    value={promo.title}
+                    onChange={(e) => updatePromo(index, 'title', e.target.value)}
+                  />
+                </label>
+                <label>
+                  Subtitle
+                  <input
+                    value={promo.subtitle}
+                    onChange={(e) => updatePromo(index, 'subtitle', e.target.value)}
+                  />
+                </label>
+              </div>
+            ))}
+          </div>
+          <div className="shop-admin-form-footer" style={{ marginTop: 20 }}>
+            <button type="submit" disabled={saving}>
+              {saving ? 'Saving...' : 'Save Storefront Content'}
+            </button>
+          </div>
+        </div>
+      </form>
+    )}
+  </div>;
 }
 
 export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }) {

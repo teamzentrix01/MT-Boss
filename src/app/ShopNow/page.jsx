@@ -205,11 +205,36 @@ export default function ShopPage() {
     }));
   }, [allProducts, cartReady, categories, productsLoaded]);
 
+  const [shippingSettings, setShippingSettings] = useState(null);
+
   useEffect(() => {
-    fetch("/api/shop-storefront")
-      .then((response) => response.json())
-      .then((data) => { if (data.success) setStoreContent(data.data); })
-      .catch(console.error);
+    const loadStoreContent = () => {
+      fetch("/api/shop-storefront")
+        .then((response) => response.json())
+        .then((data) => { if (data.success) setStoreContent(data.data); })
+        .catch(console.error);
+    };
+    loadStoreContent();
+
+    const loadShipping = () => {
+      fetch("/api/shipping-settings")
+        .then((response) => response.json())
+        .then((data) => { if (data.success && data.data) setShippingSettings(data.data); })
+        .catch(console.error);
+    };
+    loadShipping();
+
+    const handleRefresh = () => {
+      loadStoreContent();
+      loadShipping();
+    };
+
+    window.addEventListener("focus", handleRefresh);
+    window.addEventListener("mtbossShopProductsUpdated", handleRefresh);
+    return () => {
+      window.removeEventListener("focus", handleRefresh);
+      window.removeEventListener("mtbossShopProductsUpdated", handleRefresh);
+    };
   }, []);
 
   // ── modal state ────────────────────────────────────────────────────────────
@@ -593,7 +618,7 @@ export default function ShopPage() {
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} />
+      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} />
 
       {isModalOpen && mounted && createPortal(
         <div className="shop-checkout-modal fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>

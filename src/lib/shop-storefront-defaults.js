@@ -13,6 +13,19 @@ export const defaultShopStorefront = {
   arrivals_heading: 'New arrivals',
   catalog_heading: 'Browse all materials',
   footer_tagline: 'Construction materials, made easier to source.',
+  // Mobile Quick-Commerce Header & Badges
+  delivery_tagline: '60 Mins delivery',
+  trust_badge_1: 'Free Delivery',
+  trust_badge_2: '2% Cashback',
+  trust_badge_3: 'Pay on Delivery',
+  trust_badge_4: '60 Mins Express',
+  // Mobile Promo Banner (Bulk Offer)
+  mobile_banner_pill: '⚡ Delivered in 60 mins',
+  mobile_banner_subpill: 'Direct Factory Rates',
+  mobile_banner_title: 'Save up to 25% on Bulk Construction Materials',
+  mobile_banner_desc: 'Verified suppliers for Cement, TMT Bars, Brick & Sand with immediate site dispatch.',
+  mobile_banner_btn: 'Request Bulk Quote',
+  mobile_banner_enabled: true,
   promos: [
     { title: 'Material for every job', subtitle: 'From structure to finishing' },
     { title: 'Verified suppliers', subtitle: 'Shop with more confidence' },
@@ -24,13 +37,19 @@ const textFields = [
   'hero_kicker', 'hero_title', 'hero_highlight', 'hero_description',
   'hero_image', 'hero_badge', 'hero_button', 'search_placeholder', 'categories_heading',
   'featured_heading', 'deals_heading', 'arrivals_heading', 'catalog_heading', 'footer_tagline',
+  'delivery_tagline', 'trust_badge_1', 'trust_badge_2', 'trust_badge_3', 'trust_badge_4',
+  'mobile_banner_pill', 'mobile_banner_subpill', 'mobile_banner_title', 'mobile_banner_desc',
+  'mobile_banner_btn',
 ];
 
 export function normalizeShopStorefront(value = {}) {
   const result = { ...defaultShopStorefront };
   for (const field of textFields) {
     const text = String(value?.[field] ?? '').trim();
-    if (text) result[field] = text.slice(0, field === 'hero_image' ? 1000 : 300);
+    if (text) result[field] = text.slice(0, field === 'hero_image' ? 1000 : 500);
+  }
+  if (value?.mobile_banner_enabled !== undefined) {
+    result.mobile_banner_enabled = Boolean(value.mobile_banner_enabled);
   }
   result.promos = defaultShopStorefront.promos.map((fallback, index) => ({
     title: String(value?.promos?.[index]?.title || fallback.title).trim().slice(0, 100),
@@ -38,3 +57,4 @@ export function normalizeShopStorefront(value = {}) {
   }));
   return result;
 }
+
