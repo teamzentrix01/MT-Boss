@@ -17,6 +17,7 @@ const ensureTable = createInitializationGuard(async () => {
     quantity INTEGER DEFAULT 0,
     image_url TEXT,
     category VARCHAR(255),
+    subcategory VARCHAR(255),
     brand VARCHAR(120),
     compare_at_price NUMERIC(10,2),
     is_featured_deal BOOLEAN DEFAULT FALSE,
@@ -31,6 +32,7 @@ const ensureTable = createInitializationGuard(async () => {
   await pool.query(`ALTER TABLE supplier_materials
     ADD COLUMN IF NOT EXISTS vendor_id INTEGER,
     ADD COLUMN IF NOT EXISTS brand VARCHAR(120),
+    ADD COLUMN IF NOT EXISTS subcategory VARCHAR(255),
     ADD COLUMN IF NOT EXISTS quote_price_range VARCHAR(100),
     ADD COLUMN IF NOT EXISTS compare_at_price NUMERIC(10,2),
     ADD COLUMN IF NOT EXISTS is_featured_deal BOOLEAN DEFAULT FALSE,
@@ -105,6 +107,7 @@ async function validProduct(body) {
   return { value: {
     name,
     category: categoryResult.rows[0].name,
+    subcategory: String(body.subcategory || '').trim().slice(0, 255),
     description: String(body.description || '').trim().slice(0, 2000),
     quote_price_range: `${quoteMinimum}-${quoteMaximum}`,
     price,
@@ -130,7 +133,7 @@ export async function GET(req) {
     if (!vendor) return unauthorized();
     const result = await pool.query(
       `SELECT id, supplier_id, vendor_id, name, description, quote_price_range, price, unit,
-              quantity, image_url, category, brand, compare_at_price, is_featured_deal, images, specifications,
+              quantity, image_url, category, subcategory, brand, compare_at_price, is_featured_deal, images, specifications,
               bulk_pricing, available_cities, is_available, quality_tier, created_at
        FROM supplier_materials
        WHERE vendor_id=$1
@@ -155,13 +158,13 @@ export async function POST(req) {
     const result = await pool.query(
       `INSERT INTO supplier_materials
        (supplier_id, vendor_id, name, description, quote_price_range, price, unit, quantity,
-        image_url, category, brand, compare_at_price, is_featured_deal, images, specifications, bulk_pricing,
+        image_url, category, subcategory, brand, compare_at_price, is_featured_deal, images, specifications, bulk_pricing,
         available_cities, is_available, quality_tier)
-       VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::jsonb,
-               $14::jsonb, $15::jsonb, $16::jsonb, $17, $18)
+       VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14::jsonb,
+               $15::jsonb, $16::jsonb, $17::jsonb, $18, $19)
        RETURNING *`,
       [vendor.id, p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity,
-        p.image_url, p.category, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images),
+        p.image_url, p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images),
         JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing),
         JSON.stringify(p.available_cities), p.is_available, p.quality_tier]
     );
@@ -196,12 +199,12 @@ export async function PUT(req) {
     const p = parsed.value;
     const result = await pool.query(
       `UPDATE supplier_materials SET name=$1, description=$2, quote_price_range=$3, price=$4,
-        unit=$5, quantity=$6, image_url=$7, category=$8, brand=$9, compare_at_price=$10,
-        is_featured_deal=$11, images=$12::jsonb, specifications=$13::jsonb, bulk_pricing=$14::jsonb,
-        available_cities=$15::jsonb, is_available=$16, quality_tier=$19, updated_at=NOW()
-       WHERE id=$17 AND vendor_id=$18 RETURNING *`,
+        unit=$5, quantity=$6, image_url=$7, category=$8, subcategory=$9, brand=$10, compare_at_price=$11,
+        is_featured_deal=$12, images=$13::jsonb, specifications=$14::jsonb, bulk_pricing=$15::jsonb,
+        available_cities=$16::jsonb, is_available=$17, quality_tier=$20, updated_at=NOW()
+       WHERE id=$18 AND vendor_id=$19 RETURNING *`,
       [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url,
-        p.category, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images),
+        p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images),
         JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing),
         JSON.stringify(p.available_cities), p.is_available, id, vendor.id, p.quality_tier]
     );

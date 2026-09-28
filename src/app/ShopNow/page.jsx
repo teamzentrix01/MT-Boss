@@ -85,6 +85,7 @@ export default function ShopPage() {
   const [categories, setCategories] = useState([]);
   const [catsLoading, setCatsLoading] = useState(true);
   const [allProducts, setAllProducts] = useState([]);
+  const [offers, setOffers] = useState([]);
   const [productsLoaded, setProductsLoaded] = useState(false);
   const productsLastLoadedAtRef = useRef(0);
   const productsRequestRef = useRef(null);
@@ -125,6 +126,13 @@ export default function ShopPage() {
       .then((d) => { if (d.success) setCategories(d.data); })
       .catch(console.error)
       .finally(() => setCatsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/shop-offers')
+      .then((response) => response.json())
+      .then((data) => { if (data.success) setOffers(data.data || []); })
+      .catch(console.error);
   }, []);
 
   const loadProducts = useCallback(async (force = false) => {

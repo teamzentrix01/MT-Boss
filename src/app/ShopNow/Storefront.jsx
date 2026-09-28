@@ -147,6 +147,28 @@ function discountPercent(product) {
     : 0;
 }
 
+function offerMatches(offer, product, category) {
+  const same = (left, right) => !left || String(left).trim().toLowerCase() === String(right || '').trim().toLowerCase();
+  return same(offer.category, category?.name) && same(offer.subcategory, product.subcategory) && same(offer.brand, product.brand);
+}
+
+function applyOffer(product, offer) {
+  if (!offer || !(Number(product.price) > 0)) return product;
+  const basePrice = Number(product.price);
+  const discount = offer.discount_type === 'fixed'
+    ? Number(offer.discount_value)
+    : basePrice * Number(offer.discount_value) / 100;
+  const salePrice = Math.max(0.01, Number((basePrice - discount).toFixed(2)));
+  if (salePrice >= basePrice) return product;
+  const percent = Math.round(((basePrice - salePrice) / basePrice) * 100);
+  return {
+    ...product,
+    price: salePrice,
+    compare_at_price: Math.max(Number(product.compare_at_price) || 0, basePrice),
+    offer: { ...offer, display_badge: offer.badge_text || `${percent}% OFF` },
+  };
+}
+
 function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, onDetails, selectedCity }) {
   const productImage = getProductImage(product, product.category);
   const price = Number(product.price);
@@ -157,7 +179,9 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   const canOrder = productCanOrder(product, selectedCity);
   return (
     <article className="store-product-card">
-      {discount > 0 && <span className="store-discount-badge">{discount}% OFF</span>}
+      {(product.offer?.display_badge || discount > 0) && (
+        <span className="store-discount-badge">{product.offer?.display_badge || `${discount}% OFF`}</span>
+      )}
       <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={productImage} category={product.category} name={product.name} /></button>
       <div className="store-product-details">
         <span className="store-product-tag">Available for quote</span>
@@ -165,6 +189,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
         <p className="store-product-category">{product.category.name}{product.unit ? ` · ${product.unit}` : ""}</p>
         <div className="store-product-price">
           <strong>{hasFixedPrice ? `₹${price.toLocaleString('en-IN')} / ${displayUnit(product.unit)}` : 'Price on request'}</strong>
+          {hasFixedPrice && Number(product.compare_at_price) > price && <del>₹{Number(product.compare_at_price).toLocaleString('en-IN')}</del>}
         </div>
         {cityUnavailable && <span className="store-stock-note">Not delivered in {selectedCity}</span>}
         {product.fromSupplier && Number(product.quantity) === 0 && <span className="store-stock-note">Currently unavailable</span>}
@@ -186,7 +211,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   );
 }
 
-export default function Storefront({ categories, products, content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout, activeCoupon, couponCalculation, couponOffers, onApplyCoupon, onSelectCoupon, onClearCoupon, shippingSettings }) {
+export default function Storefront({ categories, products, offers = [], content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout, activeCoupon, couponCalculation, couponOffers, onApplyCoupon, onSelectCoupon, onClearCoupon, shippingSettings }) {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [cartOpen, setCartOpen] = useState(false);
@@ -289,6 +314,7 @@ export default function Storefront({ categories, products, content, loading, cit
       product_id: product.id,
       name: product.name,
       category,
+      subcategory: product.subcategory,
       unit: product.unit || category.unit || "unit",
       price: product.price,
       image: product.image_url || category?.image || "",
@@ -305,7 +331,14 @@ export default function Storefront({ categories, products, content, loading, cit
       available_cities: product.available_cities,
       created_at: product.created_at,
       fromSupplier: true,
-    }));
+    })).map((product) => {
+      const matchingOffers = offers.filter((offer) => offerMatches(offer, product, category));
+      const offer = matchingOffers.sort((a, b) => {
+        const score = (item) => (item.category ? 4 : 0) + (item.subcategory ? 2 : 0) + (item.brand ? 1 : 0);
+        return score(b) - score(a) || Number(a.sort_order) - Number(b.sort_order);
+      })[0];
+      return applyOffer(product, offer);
+    });
     const names = Array.isArray(category.types) && category.types.length ? category.types : [category.name];
     return names.map((name, index) => ({
       id: `catalog-${category.id}-${index}`,
@@ -316,7 +349,7 @@ export default function Storefront({ categories, products, content, loading, cit
       image: category?.image || "",
       fromSupplier: false,
     }));
-  }), [categories, products]);
+  }), [categories, products, offers]);
 
   const dedupeProducts = (list) => {
     const seen = new Set();
