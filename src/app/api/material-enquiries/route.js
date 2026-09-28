@@ -4,10 +4,11 @@ import { cleanText, normalizePhone, validateContactFields } from '@/lib/validati
 import { createInitializationGuard } from '@/lib/api-utils';
 import { resolveManagedCity } from '@/lib/cities';
 import { requireRole } from '@/lib/auth';
+import { BLOCKED_ACCOUNT_MESSAGE, requireActiveUser } from '@/lib/user-moderation';
 import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material-orders';
 import { notifyAdminSubmission, deliverMaterialOrderReceipt } from '@/lib/customer-communications';
 import { calculateShipping, getShippingSettings } from '@/lib/shipping';
-import { calculateCoupon, couponIsCurrentlyActive } from '@/lib/coupon-calculations';
+import { calculateCoupon, couponIsCurrentlyActive, productHasOffer } from '@/lib/coupon-calculations';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
@@ -57,6 +58,8 @@ const ensureTable = createInitializationGuard(async () => {
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS order_intent VARCHAR(20)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS shipping_cost NUMERIC(12,2) DEFAULT 0`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS shipping_breakdown JSONB DEFAULT '[]'::jsonb`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS product_total NUMERIC(12,2) DEFAULT 0`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS grand_total NUMERIC(12,2) DEFAULT 0`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS coupon_code VARCHAR(60)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS coupon_discount NUMERIC(12,2) DEFAULT 0`,
   ];
@@ -65,12 +68,23 @@ const ensureTable = createInitializationGuard(async () => {
   }
 });
 
+function couponAppliesToProduct(coupon, product) {
+  if (!coupon || productHasOffer(product)) return false;
+  const categories = Array.isArray(coupon.applicable_categories) ? coupon.applicable_categories : [];
+  return !categories.length || categories.some((category) => (
+    String(category).trim().toLowerCase() === String(product.category || '').trim().toLowerCase()
+  ));
+}
+
 // ── POST — submit enquiry from ShopNow page ───────────────────────────────────
 export async function POST(req) {
   try {
     await ensureTable();
     await ensureMaterialOrderSchema();
-    const user = requireRole(req, 'user');
+    const { user, blocked } = await requireActiveUser(req);
+    if (blocked) {
+      return NextResponse.json({ success: false, error: BLOCKED_ACCOUNT_MESSAGE }, { status: 403 });
+    }
     if (!user) {
       return NextResponse.json(
         { success: false, error: 'Please login as a customer to place and track this order' },
@@ -145,6 +159,7 @@ export async function POST(req) {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+      await client.query('UPDATE users SET delivery_city = $1 WHERE id = $2', [canonicalCity, user.id]);
       let validatedCoupon = null;
       let couponDiscount = 0;
       if (isCart && Number.isInteger(couponId) && couponId > 0) {
@@ -187,10 +202,11 @@ export async function POST(req) {
         shipping.breakdown.forEach((row) => shippingBySourceCity.set(String(row.vendorCity || '').trim().toLowerCase(), row));
       }
       const chargedShippingGroups = new Set();
-      let couponRecorded = false;
+      let remainingCouponDiscount = couponDiscount;
       const orders = [];
       for (const item of orderItems) {
         let indicativeUnitPrice = null;
+        let productTotal = 0;
         let sourceCity = '';
         const coverage = await client.query(`SELECT 1 WHERE EXISTS (
           SELECT 1 FROM suppliers s WHERE LOWER(TRIM(s.city))=LOWER(TRIM($1))
@@ -209,7 +225,7 @@ export async function POST(req) {
         if (item.product_id) {
           const requestedQuantity = isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10);
           const productResult = await client.query(
-            `SELECT m.name, m.category, m.unit, m.quantity, m.price, m.bulk_pricing, m.is_available,
+            `SELECT m.name, m.category, m.unit, m.quantity, m.price, m.compare_at_price, m.bulk_pricing, m.is_available,
                     m.supplier_id, m.vendor_id,
                     COALESCE(NULLIF(TRIM(v.city), ''), NULLIF(TRIM(s.city), ''), CASE WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb))=1 THEN m.available_cities->>0 END) AS source_city,
                     CASE
@@ -251,21 +267,35 @@ export async function POST(req) {
               .sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity))[0];
             indicativeUnitPrice = tier ? Number(tier.price) : Number(product.price);
           }
+          productTotal = Math.max(0, Number(indicativeUnitPrice) || 0) * requestedQuantity;
           sourceCity = product.source_city || '';
         }
         const orderReference = `MO-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const itemQuantity = isCart ? `${item.quantity} ${cleanText(item.order_unit) || 'pcs'}` : quantity_text;
         const shippingRow = item.product_id ? shippingBySourceCity.get(String(sourceCity).trim().toLowerCase()) : null;
         const shippingCost = shippingRow && !chargedShippingGroups.has(String(shippingRow.vendorCity || '').trim().toLowerCase()) ? shippingRow.shippingCost : 0;
+        if (orderIntent !== 'quote' && shippingRow?.shippingCost === null) {
+          const failure = new Error('Shipping is not configured for this delivery route.');
+          failure.status = 409;
+          throw failure;
+        }
         if (shippingRow) chargedShippingGroups.add(String(shippingRow.vendorCity || '').trim().toLowerCase());
+        const appliedCouponDiscount = couponAppliesToProduct(validatedCoupon, product)
+          ? Math.min(productTotal, remainingCouponDiscount)
+          : 0;
+        remainingCouponDiscount -= appliedCouponDiscount;
+        const couponCode = appliedCouponDiscount > 0
+          ? (validatedCoupon?.code || 'AUTO')
+          : null;
+        const grandTotal = Math.max(0, productTotal - appliedCouponDiscount) + (Number(shippingCost) || 0);
         const result = await client.query(
         `INSERT INTO material_enquiries
            (user_id, order_reference, order_intent, user_name, user_phone, user_email,
             category_name, category_emoji, product_id, indicative_unit_price,
             material_type, subcategory_name, brand_company,
             quantity_text, order_unit, delivery_date,
-            delivery_address, latitude, longitude, message, selected_city, shipping_cost, shipping_breakdown, coupon_code, coupon_discount)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23::jsonb,$24,$25)
+            delivery_address, latitude, longitude, message, selected_city, product_total, shipping_cost, grand_total, shipping_breakdown, coupon_code, coupon_discount)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25::jsonb,$26,$27)
          RETURNING id, order_reference, order_intent, status, created_at`,
         [
           user.id, orderReference, orderIntent, cleanName, cleanPhone, cleanEmail || user.email || null,
@@ -273,11 +303,10 @@ export async function POST(req) {
           cleanText(item.material_type) || null, cleanText(item.subcategory_name) || null, cleanText(item.brand_company) || null,
           itemQuantity || null, cleanText(item.order_unit) || null, delivery_date || null,
           delivery_address || null, lat, lng,
-          message || null, canonicalCity, shippingCost ?? 0, JSON.stringify(shippingRow ? [shippingRow] : []),
-          couponRecorded ? null : validatedCoupon?.code || (validatedCoupon ? 'AUTO' : null), couponRecorded ? 0 : couponDiscount,
+          message || null, canonicalCity, productTotal, shippingCost ?? 0, grandTotal, JSON.stringify(shippingRow ? [shippingRow] : []),
+          couponCode, appliedCouponDiscount,
         ]
       );
-        couponRecorded = couponRecorded || Boolean(validatedCoupon);
         await addMaterialOrderEvent(client, {
           orderId: result.rows[0].id,
           status: 'open',
@@ -287,15 +316,21 @@ export async function POST(req) {
           actorId: user.id,
           actorName: cleanName,
         });
-        orders.push({ ...result.rows[0], product_id: item.product_id || null, indicative_unit_price: indicativeUnitPrice, category_name: item.category_name, material_type: item.material_type, quantity_text: itemQuantity, order_unit: item.order_unit });
+        orders.push({ ...result.rows[0], product_id: item.product_id || null, indicative_unit_price: indicativeUnitPrice, product_total: productTotal, shipping_cost: Number(shippingCost) || 0, coupon_discount: appliedCouponDiscount, grand_total: grandTotal, category_name: item.category_name, material_type: item.material_type, quantity_text: itemQuantity, order_unit: item.order_unit });
       }
       await client.query('COMMIT');
+      const totals = orders.reduce((summary, order) => ({
+        productTotal: summary.productTotal + Number(order.product_total || 0),
+        couponDiscount: summary.couponDiscount + Number(order.coupon_discount || 0),
+        shippingCost: summary.shippingCost + Number(order.shipping_cost || 0),
+        grandTotal: summary.grandTotal + Number(order.grand_total || 0),
+      }), { productTotal: 0, couponDiscount: 0, shippingCost: 0, grandTotal: 0 });
       const targetEmail = cleanEmail || user.email;
       await Promise.allSettled(orders.flatMap((order) => [
         notifyAdminSubmission({ type: 'material order', name: cleanName, phone: cleanPhone, email: targetEmail, reference: order.order_reference, details: { Category: order.category_name, Material: order.material_type, Quantity: order.quantity_text, Unit: order.order_unit, City: canonicalCity } }),
         deliverMaterialOrderReceipt({ email: targetEmail, customerName: cleanName, phone: cleanPhone, category: order.category_name, material: order.material_type, quantity: order.quantity_text, unit: order.order_unit, city: canonicalCity, orderReference: order.order_reference, deliveryAddress: delivery_address }),
       ]));
-      return NextResponse.json({ success: true, data: isCart ? { orders } : orders[0] }, { status: 201 });
+      return NextResponse.json({ success: true, data: isCart ? { orders, totals } : { ...orders[0], totals } }, { status: 201 });
 
     } catch (error) {
       await client.query('ROLLBACK');

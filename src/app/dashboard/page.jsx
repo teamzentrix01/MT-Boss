@@ -18,7 +18,9 @@ const ShopNowManager = dynamicManager(() => import('../components/ShopNowManager
 const PropertiesManager = dynamicManager(() => import('../components/PropertiesManager'));
 const ProjectsManager = dynamicManager(() => import('../components/ProjectsManager'));
 const OperationalProjectsManager = dynamicManager(() => import('../components/OperationalProjectsManager'));
+const PartyProjectManagement = dynamicManager(() => import('../components/PartyProjectManagement'));
 const VendorManagementAdmin = dynamicManager(() => import('../components/VendorManagementAdmin'));
+const UserManagementAdmin = dynamicManager(() => import('../components/UserManagementAdmin'));
 const SupplierHubAdmin = dynamicManager(() => import('../components/SupplierHubAdmin'));
 const FranchisesManager = dynamicManager(() => import('./franchises/page'));
 const AgentsManager = dynamicManager(() => import('./agents/page'));
@@ -37,6 +39,10 @@ const FaqsManager = dynamicManager(() => import('../components/FaqsManager'));
 const ReviewsManager = dynamicManager(() => import('../components/ReviewsManager'));
 const BlogsManager = dynamicManager(() => import('../components/BlogsManager'));
 const ShippingSettingsManager = dynamicManager(() => import('../components/ShippingSettingsManager'));
+const PmDashboard = dynamicManager(() => import('../components/PmDashboard'));
+const PmAuditLog  = dynamicManager(() => import('../components/PmAuditLog'));
+const PmBenchmarks = dynamicManager(() => import('../components/PmBenchmarks'));
+
 
 function hasResumeFile(resumeUrl) {
   const value = String(resumeUrl || '').trim();
@@ -1241,6 +1247,7 @@ function AdminDashboard() {
           )}
 
           {activeTab === 'vendors' && <VendorManagementAdmin isDarkMode={isDarkMode} />}
+          {activeTab === 'users' && <UserManagementAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'suppliers' && <SupplierHubAdmin isDarkMode={isDarkMode} />}
 
           {activeTab === 'packages' && (
@@ -1375,6 +1382,11 @@ function AdminDashboard() {
           {activeTab === 'franchises' && <FranchisesManager />}
           {activeTab === 'projects' && <ProjectsManager />}
           {activeTab === 'project-management' && <OperationalProjectsManager />}
+          {activeTab === 'party-project-management' && <PartyProjectManagement />}
+          {activeTab === 'pm-reports' && <PartyProjectManagement initialScreen="reports" />}
+          {activeTab === 'pm-benchmarks' && <PmBenchmarks />}
+          {activeTab === 'pm-dashboard' && <PmDashboard />}
+          {activeTab === 'pm-audit'     && <PmAuditLog />}
           {(activeTab === 'shop-categories' || activeTab === 'shop-products') && <ShopNowManager key={activeTab} isDarkMode={isDarkMode} initialTab={activeTab === 'shop-products' ? 'products' : 'categories'} />}
           {activeTab === 'shipping-settings' && <ShippingSettingsManager />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}

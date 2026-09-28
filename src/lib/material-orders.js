@@ -50,6 +50,8 @@ export const ensureMaterialOrderSchema = createInitializationGuard(async () => {
       order_intent VARCHAR(20),
       shipping_cost NUMERIC(12,2) DEFAULT 0,
       shipping_breakdown JSONB DEFAULT '[]'::jsonb,
+      product_total NUMERIC(12,2) DEFAULT 0,
+      grand_total NUMERIC(12,2) DEFAULT 0,
       status VARCHAR(50) DEFAULT 'open',
       accepted_by_supplier_id INTEGER,
       accepted_at TIMESTAMP,
@@ -72,6 +74,8 @@ export const ensureMaterialOrderSchema = createInitializationGuard(async () => {
       ADD COLUMN IF NOT EXISTS order_intent VARCHAR(20)
       ,ADD COLUMN IF NOT EXISTS shipping_cost NUMERIC(12,2) DEFAULT 0
       ,ADD COLUMN IF NOT EXISTS shipping_breakdown JSONB DEFAULT '[]'::jsonb
+      ,ADD COLUMN IF NOT EXISTS product_total NUMERIC(12,2) DEFAULT 0
+      ,ADD COLUMN IF NOT EXISTS grand_total NUMERIC(12,2) DEFAULT 0
   `);
   await pool.query(`
     UPDATE material_enquiries

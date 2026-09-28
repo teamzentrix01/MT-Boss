@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { getJwtSecret, setAuthCookie } from '@/lib/auth';
 import crypto from 'crypto';
 import { isAdminEmail } from '@/lib/admin-email';
+import { BLOCKED_ACCOUNT_MESSAGE, ensureUserModerationSchema } from '@/lib/user-moderation';
 
 function appUrl(req) {
   const configured = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || '').trim();
@@ -26,6 +27,7 @@ export async function GET(req) {
   }
 
   try {
+    await ensureUserModerationSchema();
     // Exchange code for tokens
     const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
@@ -64,6 +66,10 @@ export async function GET(req) {
     );
 
     const user = result.rows[0];
+    const status = await pool.query('SELECT is_blocked FROM users WHERE id=$1', [user.id]);
+    if (status.rows[0]?.is_blocked) {
+      return NextResponse.redirect(`${baseUrl}/login?error=${encodeURIComponent(BLOCKED_ACCOUNT_MESSAGE)}`);
+    }
     const role = isAdminEmail(user.email) ? 'admin' : 'user';
     const redirectTo = role === 'admin' ? '/dashboard' : '/userdashboard';
 
@@ -72,6 +78,7 @@ export async function GET(req) {
       getJwtSecret(),
       { expiresIn: '7d' }
     );
+    await pool.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [user.id]);
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS oauth_login_codes (
