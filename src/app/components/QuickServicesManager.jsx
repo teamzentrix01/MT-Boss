@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import QuickServiceIcon from './QuickServiceIcon';
 import { getQuickServiceTotal } from '@/lib/quick-service-pricing';
+import { Pencil, Trash2, ActionIconButton } from '@/app/components/ui/icons';
 
 const QUICK_SERVICE_DURATION = '15 mins';
 
@@ -622,9 +623,9 @@ export default function QuickServicesManager({ isDarkMode }) {
                     </td>
                     <td style={{ color: 'var(--qs-muted)' }}>{service.duration}</td>
                     <td>
-                      <div className="qs-row-actions">
-                        <button className="qs-act qs-act-edit" onClick={() => handleEdit(service)}>✏ Edit</button>
-                        <button className="qs-act qs-act-delete" onClick={() => handleDelete(service.id)}>🗑 Delete</button>
+                      <div className="qs-row-actions" style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                        <ActionIconButton icon={Pencil} label="Edit quick service" onClick={() => handleEdit(service)} />
+                        <ActionIconButton icon={Trash2} variant="danger" label="Delete quick service" onClick={() => handleDelete(service.id)} />
                       </div>
                     </td>
                   </tr>

@@ -37,6 +37,52 @@ const FaqsManager = dynamicManager(() => import('../components/FaqsManager'));
 const ReviewsManager = dynamicManager(() => import('../components/ReviewsManager'));
 const BlogsManager = dynamicManager(() => import('../components/BlogsManager'));
 const ShippingSettingsManager = dynamicManager(() => import('../components/ShippingSettingsManager'));
+const OrdersHistoryManager = dynamicManager(() => import('../components/OrdersHistoryManager'));
+
+import {
+  LayoutDashboard,
+  UserCog,
+  Calculator,
+  FileText,
+  Briefcase,
+  BriefcaseBusiness,
+  ClipboardList,
+  MapPin,
+  Building,
+  Mail,
+  Store,
+  CalendarClock,
+  HelpCircle,
+  Star,
+  ImageIcon,
+  Newspaper,
+  Layers,
+  MessageSquare,
+  Users,
+  Building2,
+  FolderKanban,
+  House,
+  Zap,
+  Wrench,
+  CircleDollarSign,
+  CalendarDays,
+  Tags,
+  ShoppingCart,
+  PlusCircle,
+  Truck,
+  HardHat,
+  PackageCheck,
+  Eye,
+  Trash2,
+  Download,
+  LogOut,
+  X,
+  Clock,
+  CheckCircle2,
+  ShieldCheck,
+  Ban,
+  ActionIconButton,
+} from '@/app/components/ui/icons';
 
 function hasResumeFile(resumeUrl) {
   const value = String(resumeUrl || '').trim();
@@ -332,10 +378,10 @@ function AdminDashboard() {
   }, [activeTab, fetchPrimaryServiceEnquiries]);
 
   const stats = [
-    { label: 'Pending Bookings', value: pendingBookings, icon: '⏳', color: 'a' },
-    { label: 'Active (On Way/Work)', value: activeVendorBookings, icon: '🚀', color: 'b' },
-    { label: 'Completed Bookings', value: completedBookings, icon: '✓', color: 'c' },
-    { label: 'Pending Vendors', value: pendingVendors, icon: '🏪', color: 'd' },
+    { label: 'Pending Bookings', value: pendingBookings, icon: Clock, color: 'a' },
+    { label: 'Active (On Way/Work)', value: activeVendorBookings, icon: Truck, color: 'b' },
+    { label: 'Completed Bookings', value: completedBookings, icon: CheckCircle2, color: 'c' },
+    { label: 'Pending Vendors', value: pendingVendors, icon: HardHat, color: 'd' },
   ];
 
   const getStatusColor = (status) => {
@@ -354,39 +400,40 @@ function AdminDashboard() {
   };
   const primaryServiceStatuses = ['Pending', 'Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
   const tabs = [
-    { id: 'overview',                   label: 'Overview',                  icon: '▦'  },
-    { id: 'agents',                     label: 'Agents',                    icon: '👤' },
-    { id: 'calculator',                 label: 'Calculator',                icon: '🧮' },
-    { id: 'calculator-quotes',          label: 'Calculator Quotes',         icon: '✉'  },
-    { id: 'hero-banners',              label: 'Hero Banners',              icon: '🖼️' },
-    { id: 'faqs',                       label: 'FAQs Management',           icon: '❓' },
-    { id: 'reviews',                    label: 'Customer Reviews',          icon: '⭐' },
-    { id: 'blogs',                     label: 'SEO Blogs & Articles',      icon: '📰' },
-    { id: 'career-enquiries',           label: 'Career Enquiry',            icon: '✉'  },
-    { id: 'jobs',                       label: 'New Jobs',                  icon: '💼' },
-    { id: 'lead-management',            label: 'Lead Management',           icon: '📋' },
-    { id: 'office-locations',           label: 'Office Locations',          icon: 'LOC' },
-    { id: 'cities',                     label: 'Cities',                    icon: 'CITY' },
-    { id: 'submissions',                label: 'Contact Forms',             icon: '✉'  },
-    { id: 'franchises',                 label: 'Franchises',                icon: '🏢' },
-    { id: 'free-slots',                 label: 'Free Time Slots',           icon: '📅' },
-    { id: 'primary-services',           label: 'Construction Services',     icon: '⊞'  },
-    { id: 'primary-service-enquiries',  label: 'Construction Enquiry',      icon: '✉'  },
-    { id: 'professional-enquiries',     label: 'Professional Enquiries',    icon: '💬' },
-    { id: 'professionals',              label: 'Professional Services',     icon: '👔' },
-    { id: 'project-management',         label: 'Project Management',       icon: '📋' },
-    { id: 'projects',                   label: 'Portfolio Projects',        icon: '🏗️' },
-    { id: 'properties',                 label: 'Properties',                icon: '⌂'  },
-    { id: 'quick-enquiries',            label: 'Quick Enquiry',             icon: '⚡' },
-    { id: 'quick-services',             label: 'Quick Services',            icon: '⚡' },
-    { id: 'revenue',                    label: 'Revenue & Earnings',        icon: '💸' },
-    { id: 'bookings',                   label: 'Service Bookings',          icon: '📝' },
-    { id: 'shop-categories',            label: 'Shop Now Manager',          icon: '🛒' },
-    { id: 'shop-products',              label: '+ Add Shop Product',        icon: '➕' },
-    { id: 'shipping-settings',          label: 'Shipping Settings',         icon: '🚚' },
-    { id: 'suppliers',                  label: 'Suppliers',                 icon: '📦' },
-    { id: 'vendors',                    label: 'Vendors',                   icon: '🏪' },
-    { id: 'packages',                   label: 'Package Approvals',         icon: '📦' },
+    { id: 'overview',                   label: 'Overview',                  icon: LayoutDashboard },
+    { id: 'agents',                     label: 'Agents',                    icon: UserCog },
+    { id: 'calculator',                 label: 'Calculator',                icon: Calculator },
+    { id: 'calculator-quotes',          label: 'Calculator Quotes',         icon: FileText },
+    { id: 'hero-banners',              label: 'Hero Banners',              icon: ImageIcon },
+    { id: 'faqs',                       label: 'FAQs Management',           icon: HelpCircle },
+    { id: 'reviews',                    label: 'Customer Reviews',          icon: Star },
+    { id: 'blogs',                     label: 'SEO Blogs & Articles',      icon: Newspaper },
+    { id: 'career-enquiries',           label: 'Career Enquiry',            icon: Briefcase },
+    { id: 'jobs',                       label: 'New Jobs',                  icon: BriefcaseBusiness },
+    { id: 'lead-management',            label: 'Lead Management',           icon: ClipboardList },
+    { id: 'office-locations',           label: 'Office Locations',          icon: MapPin },
+    { id: 'cities',                     label: 'Cities',                    icon: Building },
+    { id: 'submissions',                label: 'Contact Forms',             icon: Mail },
+    { id: 'franchises',                 label: 'Franchises',                icon: Store },
+    { id: 'free-slots',                 label: 'Free Time Slots',           icon: CalendarClock },
+    { id: 'primary-services',           label: 'Construction Services',     icon: Layers },
+    { id: 'primary-service-enquiries',  label: 'Construction Enquiry',      icon: MessageSquare },
+    { id: 'professional-enquiries',     label: 'Professional Enquiries',    icon: MessageSquare },
+    { id: 'professionals',              label: 'Professional Services',     icon: Users },
+    { id: 'project-management',         label: 'Project Management',       icon: Building2 },
+    { id: 'projects',                   label: 'Portfolio Projects',        icon: FolderKanban },
+    { id: 'properties',                 label: 'Properties',                icon: House },
+    { id: 'quick-enquiries',            label: 'Quick Enquiry',             icon: Zap },
+    { id: 'quick-services',             label: 'Quick Services',            icon: Wrench },
+    { id: 'revenue',                    label: 'Revenue & Earnings',        icon: CircleDollarSign },
+    { id: 'bookings',                   label: 'Service Bookings',          icon: CalendarDays },
+    { id: 'orders-history',             label: 'Orders History',            icon: ClipboardList },
+    { id: 'shop-categories',            label: 'Shop Now Manager',          icon: ShoppingCart },
+    { id: 'shop-products',              label: '+ Add Shop Product',        icon: PlusCircle },
+    { id: 'shipping-settings',          label: 'Shipping Settings',         icon: Truck },
+    { id: 'suppliers',                  label: 'Suppliers',                 icon: Truck },
+    { id: 'vendors',                    label: 'Vendors',                   icon: HardHat },
+    { id: 'packages',                   label: 'Package Approvals',         icon: PackageCheck },
   ];
 
   const openCareerEnquiry = (application) => {
@@ -835,9 +882,11 @@ function AdminDashboard() {
               <div className="dash-subtitle">Manage properties, forms, vendors &amp; services</div>
             </div>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <button className="dash-export-btn">↗ Export</button>
-              <button className="dash-logout-btn" onClick={handleLogout}>
-                ⎋ Logout
+              <button className="dash-export-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <Download size={14} strokeWidth={1.75} aria-hidden="true" /> Export
+              </button>
+              <button className="dash-logout-btn" onClick={handleLogout} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <LogOut size={14} strokeWidth={1.75} aria-hidden="true" /> Logout
               </button>
             </div>
           </div>
@@ -847,16 +896,21 @@ function AdminDashboard() {
         {/* Tab Bar */}
         <div className="dash-tabs-bar">
           <div className="dash-tabs-inner">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`dash-tab${activeTab === tab.id ? ' active' : ''}`}
-              >
-                <span className="dash-tab-icon">{tab.icon}</span>
-                {tab.label}
-              </button>
-            ))}
+            {tabs.map((tab) => {
+              const TabIcon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`dash-tab${activeTab === tab.id ? ' active' : ''}`}
+                >
+                  <span className="dash-tab-icon">
+                    {TabIcon ? (typeof TabIcon === 'string' ? TabIcon : <TabIcon size={16} strokeWidth={1.75} aria-hidden="true" />) : null}
+                  </span>
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -867,15 +921,20 @@ function AdminDashboard() {
           {activeTab === 'overview' && (
             <>
               <div className="dash-stats">
-                {stats.map((s, i) => (
-                  <div key={i} className={`stat-card stat-card-${['a', 'b', 'c', 'd'][i]}`}>
-                    <div>
-                      <div className="stat-label">{s.label}</div>
-                      <div className="stat-value">{s.value}</div>
+                {stats.map((s, i) => {
+                  const StatIcon = s.icon;
+                  return (
+                    <div key={i} className={`stat-card stat-card-${['a', 'b', 'c', 'd'][i]}`}>
+                      <div>
+                        <div className="stat-label">{s.label}</div>
+                        <div className="stat-value">{s.value}</div>
+                      </div>
+                      <span className="stat-icon">
+                        {StatIcon ? (typeof StatIcon === 'string' ? StatIcon : <StatIcon size={24} strokeWidth={1.75} aria-hidden="true" />) : null}
+                      </span>
                     </div>
-                    <span className="stat-icon">{s.icon}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Admin Earnings */}
@@ -1029,7 +1088,11 @@ function AdminDashboard() {
                           <td style={{ padding: '0.6rem 0.875rem' }}><span className={`badge ${getStatusColor(item.status)}`}>{item.status}</span></td>
                           <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.created_at).toLocaleDateString()}</td>
                           <td style={{ padding: '0.6rem 0.875rem' }}>
-                            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '600', padding: 0 }} onClick={() => setSelectedSubmission(item)}>View</button>
+                            <ActionIconButton
+                              icon={Eye}
+                              label="View contact submission"
+                              onClick={() => setSelectedSubmission(item)}
+                            />
                           </td>
                         </tr>
                       ))}
@@ -1147,10 +1210,11 @@ function AdminDashboard() {
                                 <div style={{ fontSize: '0.68rem' }}>{new Date(item.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</div>
                               </td>
                               <td style={{ padding: '0.6rem 0.875rem' }}>
-                                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '700', padding: 0, whiteSpace: 'nowrap' }}
-                                  onClick={() => setSelectedPrimaryServiceEnquiry(item)}>
-                                  View All
-                                </button>
+                                <ActionIconButton
+                                  icon={Eye}
+                                  label="View enquiry details"
+                                  onClick={() => setSelectedPrimaryServiceEnquiry(item)}
+                                />
                               </td>
                             </tr>
                           );
@@ -1213,7 +1277,11 @@ function AdminDashboard() {
                           <td style={{ padding: '0.6rem 0.875rem' }}><span className={`badge ${getStatusColor(item.status)}`}>{item.status}</span></td>
                           <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.created_at).toLocaleDateString()}</td>
                           <td style={{ padding: '0.6rem 0.875rem' }}>
-                            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '600', padding: 0 }} onClick={() => openCareerEnquiry(item)}>View</button>
+                            <ActionIconButton
+                              icon={Eye}
+                              label="View career application"
+                              onClick={() => openCareerEnquiry(item)}
+                            />
                           </td>
                         </tr>
                       ))}
@@ -1282,19 +1350,19 @@ function AdminDashboard() {
                             <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700', color: 'var(--accent)' }}>{item.package_name}</td>
                             <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700' }}>₹{Number(item.package_price).toLocaleString('en-IN')}</td>
                             <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_purchased_at).toLocaleString('en-IN')}</td>
-                            <td style={{ padding: '0.6rem 0.875rem', display: 'flex', gap: '0.5rem' }}>
-                              <button
+                            <td style={{ padding: '0.6rem 0.875rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                              <ActionIconButton
+                                icon={ShieldCheck}
+                                variant="success"
+                                label="Approve package"
                                 onClick={() => handlePackageAction(item.type, item.id, 'approve')}
-                                style={{ padding: '0.35rem 0.65rem', border: 'none', background: '#10b981', color: '#fff', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
-                              >
-                                Approve
-                              </button>
-                              <button
+                              />
+                              <ActionIconButton
+                                icon={Ban}
+                                variant="danger"
+                                label="Reject package"
                                 onClick={() => handlePackageAction(item.type, item.id, 'reject')}
-                                style={{ padding: '0.35rem 0.65rem', border: 'none', background: '#ef4444', color: '#fff', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
-                              >
-                                Reject
-                              </button>
+                              />
                             </td>
                           </tr>
                         ))}
@@ -1378,6 +1446,7 @@ function AdminDashboard() {
           {(activeTab === 'shop-categories' || activeTab === 'shop-products') && <ShopNowManager key={activeTab} isDarkMode={isDarkMode} initialTab={activeTab === 'shop-products' ? 'products' : 'categories'} />}
           {activeTab === 'shipping-settings' && <ShippingSettingsManager />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
+          {activeTab === 'orders-history' && <OrdersHistoryManager isDarkMode={isDarkMode} />}
           {activeTab === 'revenue' && <RevenueManager isDarkMode={isDarkMode} />}
           {activeTab === 'free-slots' && <FreeTimeSlotsManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services-pricing' && <QuickServicesPricing isDarkMode={isDarkMode} />}
@@ -1433,10 +1502,11 @@ function AdminDashboard() {
                               {new Date(item.created_at).toLocaleDateString('en-IN')}
                             </td>
                             <td style={{ padding: '0.6rem 0.875rem' }}>
-                              <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: '0.8125rem', fontWeight: '700', padding: 0, whiteSpace: 'nowrap' }}
-                                onClick={() => setSelectedCalculatorQuote(item)}>
-                                View All
-                              </button>
+                              <ActionIconButton
+                                icon={Eye}
+                                label="View calculator quote"
+                                onClick={() => setSelectedCalculatorQuote(item)}
+                              />
                             </td>
                           </tr>
                         );
@@ -1469,7 +1539,9 @@ function AdminDashboard() {
               <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 'min(860px, calc(100vw - 2rem))', maxHeight: '90vh', overflowY: 'auto' }}>
                 <div className="modal-head">
                   <span className="modal-title">Calculator Quote Details</span>
-                  <button className="modal-close" onClick={() => setSelectedCalculatorQuote(null)}>✕</button>
+                  <button className="modal-close" onClick={() => setSelectedCalculatorQuote(null)} aria-label="Close" title="Close">
+                    <X size={18} strokeWidth={1.75} aria-hidden="true" />
+                  </button>
                 </div>
 
                 <div className="modal-grid">
@@ -1560,7 +1632,9 @@ function AdminDashboard() {
             <div className="modal" onClick={e => e.stopPropagation()}>
               <div className="modal-head">
                 <span className="modal-title">Submission Details</span>
-                <button className="modal-close" onClick={() => setSelectedSubmission(null)}>✕</button>
+                <button className="modal-close" onClick={() => setSelectedSubmission(null)} aria-label="Close" title="Close">
+                  <X size={18} strokeWidth={1.75} aria-hidden="true" />
+                </button>
               </div>
 
               <div className="modal-grid">
@@ -1626,7 +1700,9 @@ function AdminDashboard() {
                       {new Date(enq.created_at).toLocaleString('en-IN')}
                     </div>
                   </div>
-                  <button className="modal-close" onClick={() => setSelectedPrimaryServiceEnquiry(null)}>✕</button>
+                  <button className="modal-close" onClick={() => setSelectedPrimaryServiceEnquiry(null)} aria-label="Close" title="Close">
+                    <X size={18} strokeWidth={1.75} aria-hidden="true" />
+                  </button>
                 </div>
 
                 {/* ── Section 1: Enquirer ── */}
@@ -1797,7 +1873,9 @@ function AdminDashboard() {
             <div className="modal" onClick={e => e.stopPropagation()}>
               <div className="modal-head">
                 <span className="modal-title">Career Enquiry Details</span>
-                <button className="modal-close" onClick={() => setSelectedCareerEnquiry(null)}>x</button>
+                <button className="modal-close" onClick={() => setSelectedCareerEnquiry(null)} aria-label="Close" title="Close">
+                  <X size={18} strokeWidth={1.75} aria-hidden="true" />
+                </button>
               </div>
 
               <div className="modal-grid">
