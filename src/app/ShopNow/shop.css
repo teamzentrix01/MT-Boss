@@ -176,7 +176,7 @@
 .store-eyebrow,.store-hero h1{color:#183657}
 .store-hero h1 em{color:var(--brand-blue-deep)}
 .store-hero p{color:#445b75}
-.store-hero-picture{display:contents}
+.store-hero-picture{position:relative;display:block;width:100%;height:100%}
 .store-hero-photo img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .store-hero-photo-label{color:var(--brand-blue-deep)}
 .store-promo-0{background:#e7f3ff;color:#205c91}

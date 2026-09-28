@@ -467,7 +467,10 @@ export default function Storefront({ categories, products, offers = [], content,
           <div className="store-breadcrumb"><Link href="/">Home</Link><span>/</span><strong>Shop materials</strong></div>
           <section className="store-hero">
             <div className="store-hero-copy"><span className="store-eyebrow">{content.hero_kicker}</span><h1>{content.hero_title} <em>{content.hero_highlight}</em></h1><p>{content.hero_description}</p><button type="button" className="store-hero-button" onClick={() => chooseCategory("all")}>{content.hero_button} <ArrowRight size={18} /></button></div>
-            <div className="store-hero-photo" role="img" aria-label="Construction materials"><picture className="store-hero-picture"><OptimizedImage src={content.hero_image} alt="" fill sizes="(max-width: 560px) 100vw, 48vw" quality={75} priority /></picture><span className="store-hero-photo-label"><CheckCircle2 size={17} /> {content.hero_badge}</span></div>
+            <div className="store-hero-photo" role="img" aria-label="Construction materials" style={{ position: 'relative' }}>
+              <OptimizedImage src={content.hero_image} alt="" fill sizes="(max-width: 560px) 100vw, 48vw" quality={75} priority />
+              <span className="store-hero-photo-label"><CheckCircle2 size={17} /> {content.hero_badge}</span>
+            </div>
           </section>
 
           <section className="store-promos" aria-label="Shopping benefits">
