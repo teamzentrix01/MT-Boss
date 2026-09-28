@@ -1864,6 +1864,8 @@ CREATE TABLE public.supplier_materials (
     quantity integer DEFAULT 0,
     image_url text,
     category character varying(255),
+    compare_at_price numeric(10,2),
+    is_featured_deal boolean DEFAULT false,
     is_available boolean DEFAULT true,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone DEFAULT now()

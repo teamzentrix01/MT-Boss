@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useState, useEffect, useRef } from "react";
+import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useCities } from "@/hooks/useCities";
 import Storefront, { displayUnit } from "./Storefront";
 import { defaultShopStorefront } from "@/lib/shop-storefront-defaults";
+import { calculateCoupon } from "@/lib/coupon-calculations";
 // Dark-mode watcher
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -89,6 +90,10 @@ export default function ShopPage() {
   const productsRequestRef = useRef(null);
   const [storeContent, setStoreContent] = useState(defaultShopStorefront);
   const [cart, setCart] = useState([]);
+  const [coupons, setCoupons] = useState([]);
+  const [manualCoupon, setManualCoupon] = useState(null);
+  const [shippingQuote, setShippingQuote] = useState(null);
+  const [shippingQuoteError, setShippingQuoteError] = useState('');
   const [cartReady, setCartReady] = useState(false);
   const [modalMode, setModalMode] = useState("quote");
 
@@ -102,6 +107,12 @@ export default function ShopPage() {
       )));
     } catch { /* Ignore stale cart data. */ }
     setCartReady(true);
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/shop-coupons').then((response) => response.json()).then((data) => {
+      if (data.success) setCoupons(data.data || []);
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -122,15 +133,28 @@ export default function ShopPage() {
     if (productsRequestRef.current) return productsRequestRef.current;
 
     const request = (async () => {
+      const endpoint = force ? "/api/shop-material-options?fresh=1" : "/api/shop-material-options";
       try {
-        const endpoint = force ? "/api/shop-material-options?fresh=1" : "/api/shop-material-options";
-        const response = await fetch(endpoint, { cache: force ? "no-store" : "default" });
-        const data = await response.json();
-        if (!response.ok || !data.success) throw new Error(data.error || "Could not load shop products");
-        setAllProducts(data.data?.products || []);
-        productsLastLoadedAtRef.current = Date.now();
-      } catch (error) {
-        console.error("Could not refresh Shop Now products:", error);
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          try {
+            const response = await fetch(endpoint, { cache: force ? "no-store" : "default" });
+            if (response.status === 503 && attempt === 0) {
+              await new Promise((resolve) => setTimeout(resolve, 500));
+              continue;
+            }
+            const data = await response.json();
+            if (!response.ok || !data.success) throw new Error(data.error || "Could not load shop products");
+            setAllProducts(data.data?.products || []);
+            productsLastLoadedAtRef.current = Date.now();
+            return;
+          } catch (error) {
+            if (attempt === 0 && error instanceof TypeError) {
+              await new Promise((resolve) => setTimeout(resolve, 500));
+              continue;
+            }
+            console.error("Could not refresh Shop Now products:", error);
+          }
+        }
       } finally {
         setProductsLoaded(true);
         productsRequestRef.current = null;
@@ -303,10 +327,42 @@ export default function ShopPage() {
     .map((item) => item.product.id === id ? { ...item, quantity: Math.max(0, Math.min(item.product.fromSupplier ? Math.max(0, Number(item.product.quantity) || 0) : 10000, 10000, item.quantity + delta)) } : item)
     .filter((item) => item.quantity > 0));
 
+  const autoCoupon = useMemo(() => coupons.filter((coupon) => !coupon.code)
+    .map((coupon) => ({ coupon, calculation: calculateCoupon(cart, coupon) }))
+    .filter(({ calculation }) => calculation.eligible)
+    .sort((a, b) => b.calculation.discount - a.calculation.discount)[0]?.coupon || null, [cart, coupons]);
+  const activeCoupon = manualCoupon || autoCoupon;
+  const couponCalculation = useMemo(() => calculateCoupon(cart, activeCoupon), [cart, activeCoupon]);
+  const couponOffers = useMemo(() => coupons.map((coupon) => ({ coupon, calculation: calculateCoupon(cart, coupon) })), [cart, coupons]);
+  const selectCoupon = (coupon) => {
+    setManualCoupon(coupon);
+    const calculation = calculateCoupon(cart, coupon);
+    return calculation.eligible ? { coupon, calculation } : { coupon, calculation, error: `Add ₹${calculation.gap.toLocaleString('en-IN')} more of regular-price items to unlock this coupon.` };
+  };
+  const applyCouponCode = (code) => {
+    const coupon = coupons.find((item) => item.code && item.code.toLowerCase() === String(code).trim().toLowerCase());
+    if (!coupon) return { error: 'This coupon is invalid, inactive, or expired.' };
+    return selectCoupon(coupon);
+  };
+  const clearCoupon = () => setManualCoupon(null);
+
   const openCartCheckout = () => {
     if (!cart.length) return;
     openModal(cart[0].product.category, null, "cart");
   };
+
+  useEffect(() => {
+    const items = modalMode === 'cart'
+      ? cart.map((item) => ({ product_id: item.product.product_id, quantity: item.quantity }))
+      : selectedProduct?.product_id ? [{ product_id: selectedProduct.product_id, quantity: Math.max(1, Number(formData.quantity) || 1) }] : [];
+    if (!isModalOpen || !selectedCity || !items.length || items.some((item) => !item.product_id)) { setShippingQuote(null); setShippingQuoteError(''); return; }
+    let active = true;
+    fetch('/api/shipping-quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerCity: selectedCity, items }) })
+      .then((response) => response.json().then((data) => ({ response, data })))
+      .then(({ response, data }) => { if (!active) return; if (!response.ok || !data.success) throw new Error(data.error || 'Shipping could not be calculated'); setShippingQuote(data.data); setShippingQuoteError(''); })
+      .catch((error) => { if (active) { setShippingQuote(null); setShippingQuoteError(error.message); } });
+    return () => { active = false; };
+  }, [isModalOpen, modalMode, selectedCity, cart, selectedProduct?.product_id, formData.quantity]);
 
   useEffect(() => {
     if (!isModalOpen || !selectedCategory?.name) return;
@@ -464,6 +520,7 @@ export default function ShopPage() {
           longitude:       locationCoords?.longitude || null,
           message:         formData.message || null,
           selected_city:   selectedCity,
+          coupon_id: activeCoupon?.id || null,
       };
       if (modalMode === "cart") {
         payload.items = cart.map((item) => ({
@@ -528,6 +585,7 @@ export default function ShopPage() {
   const selectedUnitPrice = getUnitPrice(selectedProduct, selectedQuantity);
   const selectedProductTotal = selectedUnitPrice * selectedQuantity;
   const cartProductTotal = cart.reduce((sum, item) => sum + getUnitPrice(item.product, item.quantity) * item.quantity, 0);
+  const cartFinalTotal = Math.max(0, cartProductTotal - couponCalculation.discount);
   const cartHasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
   const quotePrice = getQuotePrice(selectedCategory, selectedCity, selectedProduct);
 
@@ -535,7 +593,7 @@ export default function ShopPage() {
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} />
+      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} />
 
       {isModalOpen && mounted && createPortal(
         <div className="shop-checkout-modal fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>
@@ -648,6 +706,15 @@ export default function ShopPage() {
                 </div>
 
                 {/* ── CITY VERIFICATION STATUS ─────────────────────── */}
+                {(shippingQuote || shippingQuoteError) && (
+                  <div className={`rounded-xl border px-4 py-3 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
+                    <p className={`text-[9px] font-black uppercase tracking-widest ${subText}`}>Shipping estimate</p>
+                    {shippingQuote?.breakdown?.map((row, index) => <p key={`${row.vendorCity}-${index}`} className={`mt-1 text-xs font-semibold ${headText}`}>{row.label}</p>)}
+                    {shippingQuote?.totalShipping !== null && shippingQuote?.totalShipping !== undefined && <p className={`mt-2 text-sm font-black ${headText}`}>Total shipping: ₹{Number(shippingQuote.totalShipping).toLocaleString('en-IN')}</p>}
+                    {shippingQuoteError && <p className="mt-1 text-[10px] text-amber-600">{shippingQuoteError}</p>}
+                  </div>
+                )}
+
                 {selectedCity && cityVerified && !cityError && (
                   <div className={`rounded-xl border-2 px-4 py-3 mb-4 flex items-center justify-between ${isDarkMode ? "border-green-600 bg-green-900/20" : "border-green-500 bg-green-50"}`}>
                     <div>
@@ -668,9 +735,13 @@ export default function ShopPage() {
                       const itemUnitPrice = getUnitPrice(item.product, item.quantity);
                       return <p key={item.product.id} className={`text-xs py-1 ${subText}`}>{item.product.name} · {item.quantity} {displayUnit(item.product.unit)} · {itemUnitPrice > 0 ? `₹${(itemUnitPrice * item.quantity).toLocaleString("en-IN")}` : 'Price on confirmation'}</p>;
                     })}
+                    {couponCalculation.offerAmount > 0 && <p className={`mt-2 text-xs ${subText}`}>Items with existing offers: ₹{couponCalculation.offerAmount.toLocaleString('en-IN')} <span className="text-amber-600">(offer already applied)</span></p>}
+                    {couponCalculation.regularAmount > 0 && <p className={`mt-1 text-xs ${subText}`}>Other items: ₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</p>}
+                    {activeCoupon && couponCalculation.eligible && <p className="mt-1 text-xs font-bold text-green-600">Coupon {activeCoupon.code ? `“${activeCoupon.code}”` : 'offer'} applied: -₹{couponCalculation.discount.toLocaleString('en-IN')}</p>}
+                    {activeCoupon && !couponCalculation.eligible && <p className="mt-1 text-xs font-semibold text-amber-600">Add ₹{couponCalculation.gap.toLocaleString('en-IN')} more of regular-price items to unlock this coupon.</p>}
                     <div className={`mt-2 flex items-center justify-between border-t pt-2 ${isDarkMode ? "border-zinc-700" : "border-gray-200"}`}>
-                      <span className={`text-xs font-bold ${headText}`}>{cartHasUnpricedItems ? 'Current total' : 'Product total'}</span>
-                      <strong className={`text-sm ${headText}`}>{cartProductTotal > 0 ? `₹${cartProductTotal.toLocaleString("en-IN")}` : 'On confirmation'}{cartProductTotal > 0 && cartHasUnpricedItems ? ' + quote items' : ''}</strong>
+                      <span className={`text-xs font-bold ${headText}`}>Total</span>
+                      <strong className={`text-sm ${headText}`}>{cartFinalTotal > 0 ? `₹${cartFinalTotal.toLocaleString("en-IN")}` : 'On confirmation'}{cartFinalTotal > 0 && cartHasUnpricedItems ? ' + quote items' : ''}</strong>
                     </div>
                     <p className={`text-[10px] mt-2 ${subText}`}>Delivery charges, if applicable, are confirmed separately.</p>
                   </div>

@@ -1,33 +1,33 @@
 {
-  "name": "mt_boss",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "@emailjs/browser": "^4.4.1",
-    "axios": "^1.16.0",
-    "bcryptjs": "^3.0.3",
-    "dotenv": "^17.4.2",
-    "jsonwebtoken": "^9.0.3",
-    "lucide-react": "^1.16.0",
-    "next": "16.2.2",
-    "nodemailer": "^8.0.7",
-    "pg": "^8.20.0",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^25.7.0",
-    "@types/pg": "^8.20.0",
-    "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.2",
-    "tailwindcss": "^4"
-  }
+    "name": "mt_boss",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "node --use-system-ca node_modules/next/dist/bin/next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "eslint"
+    },
+    "dependencies": {
+        "@emailjs/browser": "^4.4.1",
+        "axios": "^1.16.0",
+        "bcryptjs": "^3.0.3",
+        "dotenv": "^17.4.2",
+        "jsonwebtoken": "^9.0.3",
+        "lucide-react": "^1.16.0",
+        "next": "16.2.2",
+        "nodemailer": "^8.0.7",
+        "pg": "^8.20.0",
+        "react": "19.2.4",
+        "react-dom": "19.2.4"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "^4",
+        "@types/node": "^25.7.0",
+        "@types/pg": "^8.20.0",
+        "babel-plugin-react-compiler": "1.0.0",
+        "eslint": "^9",
+        "eslint-config-next": "16.2.2",
+        "tailwindcss": "^4"
+    }
 }

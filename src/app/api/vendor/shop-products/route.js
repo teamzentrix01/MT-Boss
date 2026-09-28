@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { QUALITY_TIER_COLUMN_SQL, normalizeQualityTier } from '@/lib/quality-tier';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`CREATE TABLE IF NOT EXISTS supplier_materials (
@@ -18,6 +19,7 @@ const ensureTable = createInitializationGuard(async () => {
     category VARCHAR(255),
     brand VARCHAR(120),
     compare_at_price NUMERIC(10,2),
+    is_featured_deal BOOLEAN DEFAULT FALSE,
     images JSONB DEFAULT '[]'::jsonb,
     specifications JSONB DEFAULT '{}'::jsonb,
     bulk_pricing JSONB DEFAULT '[]'::jsonb,
@@ -31,10 +33,12 @@ const ensureTable = createInitializationGuard(async () => {
     ADD COLUMN IF NOT EXISTS brand VARCHAR(120),
     ADD COLUMN IF NOT EXISTS quote_price_range VARCHAR(100),
     ADD COLUMN IF NOT EXISTS compare_at_price NUMERIC(10,2),
+    ADD COLUMN IF NOT EXISTS is_featured_deal BOOLEAN DEFAULT FALSE,
     ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb,
     ADD COLUMN IF NOT EXISTS specifications JSONB DEFAULT '{}'::jsonb,
     ADD COLUMN IF NOT EXISTS bulk_pricing JSONB DEFAULT '[]'::jsonb,
     ADD COLUMN IF NOT EXISTS available_cities JSONB DEFAULT '[]'::jsonb`);
+  await pool.query(QUALITY_TIER_COLUMN_SQL);
   await pool.query('CREATE INDEX IF NOT EXISTS supplier_materials_vendor_id_idx ON supplier_materials(vendor_id)');
 });
 
@@ -64,6 +68,8 @@ async function validProduct(body) {
     [category]
   );
   if (!categoryResult.rows.length) return { error: 'Choose an active Shop Now category' };
+  const qualityTier = normalizeQualityTier(body.quality_tier);
+  if (!qualityTier) return { error: 'Choose a Quality Tier: All, Basic, Standard, Premium or Luxury' };
 
   const quotePriceRange = String(body.quote_price_range || '').trim();
   const rangeMatch = quotePriceRange.match(/^(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)\s*[-–]\s*(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)$/i);
@@ -107,11 +113,13 @@ async function validProduct(body) {
     image_url: String(body.image_url || '').trim().slice(0, 1000),
     brand: String(body.brand || '').trim().slice(0, 120),
     compare_at_price: compareAtPrice,
+    is_featured_deal: body.is_featured_deal === true,
     images: images.map((url) => url.trim()).filter(Boolean),
     specifications,
     bulk_pricing: bulkPricing.map((tier) => ({ min_quantity: Number(tier.min_quantity), price: Number(tier.price) })).sort((a, b) => a.min_quantity - b.min_quantity),
     available_cities: [...new Set(availableCities.map((city) => city.trim()).filter(Boolean))],
     is_available: body.is_available !== false,
+    quality_tier: qualityTier,
   } };
 }
 
@@ -122,8 +130,8 @@ export async function GET(req) {
     if (!vendor) return unauthorized();
     const result = await pool.query(
       `SELECT id, supplier_id, vendor_id, name, description, quote_price_range, price, unit,
-              quantity, image_url, category, brand, compare_at_price, images, specifications,
-              bulk_pricing, available_cities, is_available, created_at
+              quantity, image_url, category, brand, compare_at_price, is_featured_deal, images, specifications,
+              bulk_pricing, available_cities, is_available, quality_tier, created_at
        FROM supplier_materials
        WHERE vendor_id=$1
        ORDER BY created_at DESC, id DESC`,
@@ -147,15 +155,15 @@ export async function POST(req) {
     const result = await pool.query(
       `INSERT INTO supplier_materials
        (supplier_id, vendor_id, name, description, quote_price_range, price, unit, quantity,
-        image_url, category, brand, compare_at_price, images, specifications, bulk_pricing,
-        available_cities, is_available)
-       VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::jsonb,
-               $13::jsonb, $14::jsonb, $15::jsonb, $16)
+        image_url, category, brand, compare_at_price, is_featured_deal, images, specifications, bulk_pricing,
+        available_cities, is_available, quality_tier)
+       VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::jsonb,
+               $14::jsonb, $15::jsonb, $16::jsonb, $17, $18)
        RETURNING *`,
       [vendor.id, p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity,
-        p.image_url, p.category, p.brand, p.compare_at_price, JSON.stringify(p.images),
+        p.image_url, p.category, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images),
         JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing),
-        JSON.stringify(p.available_cities), p.is_available]
+        JSON.stringify(p.available_cities), p.is_available, p.quality_tier]
     );
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
@@ -189,13 +197,13 @@ export async function PUT(req) {
     const result = await pool.query(
       `UPDATE supplier_materials SET name=$1, description=$2, quote_price_range=$3, price=$4,
         unit=$5, quantity=$6, image_url=$7, category=$8, brand=$9, compare_at_price=$10,
-        images=$11::jsonb, specifications=$12::jsonb, bulk_pricing=$13::jsonb,
-        available_cities=$14::jsonb, is_available=$15, updated_at=NOW()
-       WHERE id=$16 AND vendor_id=$17 RETURNING *`,
+        is_featured_deal=$11, images=$12::jsonb, specifications=$13::jsonb, bulk_pricing=$14::jsonb,
+        available_cities=$15::jsonb, is_available=$16, quality_tier=$19, updated_at=NOW()
+       WHERE id=$17 AND vendor_id=$18 RETURNING *`,
       [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url,
-        p.category, p.brand, p.compare_at_price, JSON.stringify(p.images),
+        p.category, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images),
         JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing),
-        JSON.stringify(p.available_cities), p.is_available, id, vendor.id]
+        JSON.stringify(p.available_cities), p.is_available, id, vendor.id, p.quality_tier]
     );
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: result.rows[0] });

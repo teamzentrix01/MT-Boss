@@ -16,7 +16,8 @@ const VendorShopProductsManager = dynamic(
   () => import('@/app/components/ShopNowManager').then((module) => module.VendorShopProductsManager),
   { loading: panelLoading },
 );
-const VENDOR_TABS = ['notifications', 'leads', 'history', 'packages', 'profile', 'materials', 'products'];
+const ShippingSettingsManager = dynamic(() => import('@/app/components/ShippingSettingsManager'), { loading: panelLoading });
+const VENDOR_TABS = ['notifications', 'leads', 'history', 'packages', 'profile', 'materials', 'products', 'shipping'];
 
 function ServiceIcon({ icon, className = "h-8 w-8" }) {
   const value = String(icon || "").trim();
@@ -599,6 +600,7 @@ function VendorDashboardContent() {
           <div className={`grid w-full min-w-0 grid-cols-2 overflow-hidden border ${isDark ? "border-zinc-800" : "border-zinc-200"} sm:flex sm:w-auto sm:flex-wrap lg:shrink-0`}>
             {[
               { key: "products", label: "Products" },
+              { key: "shipping", label: "Shipping" },
               { key: "materials", label: "Material Orders" },
               { key: "notifications", label: "📬 Bookings" },
               { key: "leads", label: "Lead Track" },
@@ -630,6 +632,8 @@ function VendorDashboardContent() {
  
         {activeTab === "products" ? (
           <VendorShopProductsManager />
+        ) : activeTab === "shipping" ? (
+          <ShippingSettingsManager vendor city={vendorProfile?.city} />
         ) : activeTab === "materials" ? (
           <MaterialOrdersPanel role="vendor" embedded />
         ) : activeTab === "leads" ? (

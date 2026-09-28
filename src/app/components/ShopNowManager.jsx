@@ -4,11 +4,14 @@ import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import ShopCategoriesManager from './ShopCategoriesManager';
+import ShippingSettingsManager from './ShippingSettingsManager';
+import ShopCouponsManager from './ShopCouponsManager';
 import { defaultShopStorefront } from '@/lib/shop-storefront-defaults';
+import { QUALITY_TIER_OPTIONS, qualityTierLabel } from '@/lib/quality-tier';
 import './ShopNowManager.css';
 
 const units = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
-const emptyProduct = { name: '', description: '', category: '', quote_price_range: '', price: '', compare_at_price: '', brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
+const emptyProduct = { name: '', description: '', category: '', quality_tier: '', quote_price_range: '', price: '', compare_at_price: '', is_featured_deal: false, brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
 const fields = [
   ['hero_kicker', 'Banner eyebrow'], ['hero_title', 'Banner title'],
   ['hero_highlight', 'Highlighted title'], ['hero_description', 'Banner description'],
@@ -68,6 +71,11 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [notice, setNotice] = useState('');
+  const [tierFilter, setTierFilter] = useState('any');
+  const untieredCount = products.filter((product) => !product.quality_tier).length;
+  const visibleProducts = tierFilter === 'any'
+    ? products
+    : products.filter((product) => (tierFilter === 'none' ? !product.quality_tier : product.quality_tier === tierFilter));
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -91,8 +99,8 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
   const edit = (product) => {
     setEditingId(product.id);
     setForm({
-      name: product.name || '', description: product.description || '', category: product.category || '',
-      quote_price_range: product.quote_price_range || '', price: product.price ?? '', compare_at_price: product.compare_at_price ?? '', brand: product.brand || '', unit: product.unit || '', quantity: product.quantity ?? 0,
+      name: product.name || '', description: product.description || '', category: product.category || '', quality_tier: product.quality_tier || '',
+      quote_price_range: product.quote_price_range || '', price: product.price ?? '', compare_at_price: product.compare_at_price ?? '', is_featured_deal: product.is_featured_deal === true, brand: product.brand || '', unit: product.unit || '', quantity: product.quantity ?? 0,
       image_url: product.image_url || '', available_cities: product.available_cities || [], is_available: product.is_available !== false,
     });
     setGalleryText((product.images || []).join('\n'));
@@ -179,9 +187,10 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
       <div className="shop-admin-fields">
         <label>Product name *<input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
         <label>Category *<select required value={form.category} onChange={(e) => { const cat = categories.find((item) => item.name === e.target.value); setForm({ ...form, category: e.target.value, unit: cat?.unit || form.unit }); }}><option value="">Select category</option>{categories.map((cat) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}</select></label>
+        <label>Quality Tier *<select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}><option value="">Select quality tier</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}</select><small>Used by the Budget Calculator to match this product to a Quality Package.</small></label>
         <label>Get Quote price range (₹) *<input required type="text" maxLength={100} value={form.quote_price_range} onChange={(e) => setForm({ ...form, quote_price_range: e.target.value })} placeholder="Example: 40-80" /><small>Enter a minimum and maximum lump-sum range, e.g. 40-80.</small></label>
         <label>Buy Now fixed price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Example: 60" /></label>
-        <label>Original price (₹, optional)<input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} placeholder="Shows discount when above selling price" /></label>
+        <label>Original price (₹, optional)<input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} placeholder="Shows discount when above selling price" /><small>A discount badge is calculated automatically when this is above the Buy Now price.</small></label>
         <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
         <label>Unit *<select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">Select unit</option>{units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select></label>
         <label>Quantity available<input type="number" min="0" step="1" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} /></label>
@@ -192,9 +201,9 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
         <label className="shop-admin-wide">Bulk prices (one Quantity: Price per line)<textarea rows="3" value={bulkText} onChange={(e) => setBulkText(e.target.value)} placeholder="10: 415&#10;30: 405" /></label>
         <fieldset className="shop-admin-wide shop-admin-city-field"><legend>Delivery cities for this product</legend><div>{cities.map((city) => <label key={city}><input type="checkbox" checked={form.available_cities.includes(city)} onChange={(event) => setForm({ ...form, available_cities: event.target.checked ? [...form.available_cities, city] : form.available_cities.filter((item) => item !== city) })} /> {city}</label>)}</div><small>Select the cities where this product can actually be delivered.</small></fieldset>
       </div>
-      <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-upload">{uploading ? 'Uploading...' : 'Upload image'}<input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden /></label>{form.image_url && <Image className="shop-admin-thumb" src={form.image_url} alt="Product preview" width={43} height={43} unoptimized />}<button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
+      <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-check"><input type="checkbox" checked={form.is_featured_deal} onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })} /> Feature in Deals of the Week</label><label className="shop-admin-upload">{uploading ? 'Uploading...' : 'Upload image'}<input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden /></label>{form.image_url && <Image className="shop-admin-thumb" src={form.image_url} alt="Product preview" width={43} height={43} unoptimized />}<button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
     </form>
-    <div className="shop-admin-card"><h3>{isVendor ? 'My products' : 'All products'} ({products.length})</h3>{loading ? <p>Loading products...</p> : products.length ? <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isVendor && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{products.map((product) => <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{Number(product.price) > 0 ? `₹${Number(product.price).toLocaleString('en-IN')} / ${product.unit || 'unit'}` : '—'}</td>{!isVendor && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{product.is_available ? 'Visible' : 'Hidden'}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button><button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button><button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>)}</tbody></table></div> : <p>No products yet. Add the first product above.</p>}</div>
+    <div className="shop-admin-card"><div className="shop-admin-list-head"><h3>{isVendor ? 'My products' : 'All products'} ({tierFilter === 'any' ? products.length : `${visibleProducts.length} of ${products.length}`})</h3><label className="shop-admin-tier-filter">Quality Tier<select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}><option value="any">All products</option><option value="none">No Quality Tier set ({untieredCount})</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.value === 'all' ? 'All tiers' : tier.label}</option>)}</select></label></div>{loading ? <p>Loading products...</p> : !products.length ? <p>No products yet. Add the first product above.</p> : !visibleProducts.length ? <p>No products match this Quality Tier filter.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Quality</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isVendor && <th>Discount</th>}{!isVendor && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{visibleProducts.map((product) => { const price = Number(product.price); const originalPrice = Number(product.compare_at_price); const discountPercent = originalPrice > price && price > 0 ? Math.round(((originalPrice - price) / originalPrice) * 100) : null; return <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{qualityTierLabel(product.quality_tier) || <span className="shop-admin-tier-missing">Not set</span>}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{price > 0 ? `₹${price.toLocaleString('en-IN')} / ${product.unit || 'unit'}` : '—'}</td>{!isVendor && <td>{discountPercent === null ? '—' : `${discountPercent}% OFF`}</td>}{!isVendor && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{product.is_available ? 'Visible' : 'Hidden'}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button><button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button><button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>; })}</tbody></table></div>}</div>
   </div>;
 }
 
@@ -250,8 +259,8 @@ export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }
   };
   return <div className="shop-admin-root">
     <div className="shop-admin-toolbar"><div><h2>Shop Now Manager</h2><p>Add products and manage what customers see on Shop Now.</p></div><button type="button" onClick={openAddProduct}>+ Add Product</button></div>
-    <div className="shop-admin-tabs" role="tablist" aria-label="Shop Now management"><button type="button" role="tab" aria-selected={tab === 'categories'} className={tab === 'categories' ? 'active' : ''} onClick={() => setTab('categories')}>Categories</button><button type="button" role="tab" aria-selected={tab === 'products'} className={tab === 'products' ? 'active' : ''} onClick={() => setTab('products')}>Products</button><button type="button" role="tab" aria-selected={tab === 'content'} className={tab === 'content' ? 'active' : ''} onClick={() => setTab('content')}>Storefront Content</button></div>
-    {tab === 'categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}{tab === 'products' && <ProductManager />}{tab === 'content' && <AppearanceManager />}
+    <div className="shop-admin-tabs" role="tablist" aria-label="Shop Now management"><button type="button" role="tab" aria-selected={tab === 'categories'} className={tab === 'categories' ? 'active' : ''} onClick={() => setTab('categories')}>Categories</button><button type="button" role="tab" aria-selected={tab === 'products'} className={tab === 'products' ? 'active' : ''} onClick={() => setTab('products')}>Products</button><button type="button" role="tab" aria-selected={tab === 'content'} className={tab === 'content' ? 'active' : ''} onClick={() => setTab('content')}>Storefront Content</button><button type="button" role="tab" aria-selected={tab === 'shipping'} className={tab === 'shipping' ? 'active' : ''} onClick={() => setTab('shipping')}>Shipping Settings</button><button type="button" role="tab" aria-selected={tab === 'coupons'} className={tab === 'coupons' ? 'active' : ''} onClick={() => setTab('coupons')}>Promotions & Coupons</button></div>
+    {tab === 'categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}{tab === 'products' && <ProductManager />}{tab === 'content' && <AppearanceManager />}{tab === 'shipping' && <ShippingSettingsManager />}{tab === 'coupons' && <ShopCouponsManager />}
   </div>;
 }
 

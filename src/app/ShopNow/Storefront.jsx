@@ -70,14 +70,24 @@ function productCanOrder(product, selectedCity) {
   return !cityUnavailable && (!product.fromSupplier || Number(product.quantity) > 0);
 }
 
+function discountPercent(product) {
+  const price = Number(product?.price);
+  const originalPrice = Number(product?.compare_at_price);
+  return originalPrice > price && price > 0
+    ? Math.round(((originalPrice - price) / originalPrice) * 100)
+    : 0;
+}
+
 function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, onDetails, selectedCity }) {
   const price = Number(product.price);
   const hasFixedPrice = Number.isFinite(price) && price > 0;
+  const discount = discountPercent(product);
   const normalizedCity = selectedCity.trim().toLowerCase();
   const cityUnavailable = Boolean(normalizedCity && product.available_cities?.length && !product.available_cities.some((city) => city.trim().toLowerCase() === normalizedCity));
   const canOrder = productCanOrder(product, selectedCity);
   return (
     <article className="store-product-card">
+      {discount > 0 && <span className="store-discount-badge">{discount}% OFF</span>}
       <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={product.image} category={product.category} name={product.name} /></button>
       <div className="store-product-details">
         <span className="store-product-tag">Available for quote</span>
@@ -106,7 +116,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   );
 }
 
-export default function Storefront({ categories, products, content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout }) {
+export default function Storefront({ categories, products, content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout, activeCoupon, couponCalculation, couponOffers, onApplyCoupon, onSelectCoupon, onClearCoupon }) {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [cartOpen, setCartOpen] = useState(false);
@@ -116,6 +126,9 @@ export default function Storefront({ categories, products, content, loading, cit
   const [sortBy, setSortBy] = useState('featured');
   const [brandFilter, setBrandFilter] = useState('all');
   const [cartOverlayTop, setCartOverlayTop] = useState(0);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponNotice, setCouponNotice] = useState('');
+  const [offersOpen, setOffersOpen] = useState(false);
   const searchScrolled = useRef(false);
   const catalogScrollFrame = useRef(null);
   const storeHeaderRef = useRef(null);
@@ -213,6 +226,7 @@ export default function Storefront({ categories, products, content, loading, cit
       quote_price_range: product.quote_price_range,
       brand: product.brand,
       compare_at_price: product.compare_at_price,
+      is_featured_deal: product.is_featured_deal === true,
       images: product.images,
       specifications: product.specifications,
       bulk_pricing: product.bulk_pricing,
@@ -242,7 +256,7 @@ export default function Storefront({ categories, products, content, loading, cit
   )).sort((a, b) => sortBy === 'price-asc' ? (Number(a.price) || Infinity) - (Number(b.price) || Infinity) : sortBy === 'price-desc' ? (Number(b.price) || 0) - (Number(a.price) || 0) : sortBy === 'name' ? a.name.localeCompare(b.name) : 0);
   const brands = [...new Set(catalog.filter((product) => activeCategory === 'all' || String(product.category.id) === String(activeCategory)).map((product) => product.brand).filter(Boolean))].sort();
   const featured = categories.map((category) => catalog.find((product) => product.category.id === category.id)).filter(Boolean).slice(0, 8);
-  const deals = catalog.filter((product) => Number(product.price) > 0 && Number(product.compare_at_price) > Number(product.price)).sort((a, b) => (1 - Number(b.price) / Number(b.compare_at_price)) - (1 - Number(a.price) / Number(a.compare_at_price))).slice(0, 6);
+  const deals = catalog.filter((product) => product.is_featured_deal === true).sort((a, b) => discountPercent(b) - discountPercent(a)).slice(0, 6);
   const arrivals = catalog.filter((product) => product.fromSupplier && product.created_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 6);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const pricedTotal = cart.reduce((sum, item) => sum + unitPrice(item.product, item.quantity) * item.quantity, 0);
@@ -389,6 +403,17 @@ export default function Storefront({ categories, products, content, loading, cit
               })}</div>
               <div className="store-cart-bottom">
                 <div className="store-cart-estimate"><span>{hasUnpricedItems ? 'Current total' : 'Product total'}</span><strong>{pricedTotal > 0 ? `₹${pricedTotal.toLocaleString("en-IN")}` : 'On confirmation'}{pricedTotal > 0 && hasUnpricedItems ? ' + quote items' : ''}</strong></div>
+                <div className="store-coupon-box">
+                  {activeCoupon?.code ? <div className="store-coupon-applied"><span>Coupon <b>{activeCoupon.code}</b>{couponCalculation?.eligible ? ` applied: -₹${couponCalculation.discount.toLocaleString('en-IN')}` : ' selected'}</span><button type="button" onClick={() => { onClearCoupon(); setCouponCode(''); setCouponNotice(''); }}>Remove</button></div> : <form onSubmit={(event) => { event.preventDefault(); const result = onApplyCoupon(couponCode); setCouponNotice(result.error || `Coupon ${result.coupon?.code} applied.`); }}><label htmlFor="store-coupon-code">Have a coupon?</label><div><input id="store-coupon-code" value={couponCode} onChange={(event) => setCouponCode(event.target.value.toUpperCase())} placeholder="Enter coupon code" /><button type="submit" disabled={!couponCode.trim()}>Apply</button></div></form>}
+                  {couponNotice && <p className={couponNotice.startsWith('Coupon') ? 'is-success' : ''}>{couponNotice}</p>}
+                  {activeCoupon && !couponCalculation?.eligible && <p>Add ₹{couponCalculation.gap.toLocaleString('en-IN')} more of regular-price items to unlock this coupon. Offer-priced items do not count.</p>}
+                </div>
+                {!activeCoupon?.code && <button type="button" className="store-view-offers" onClick={() => setOffersOpen((open) => !open)}>{offersOpen ? 'Hide available offers' : `View available offers${couponOffers?.length ? ` (${couponOffers.length})` : ''}`}</button>}
+                {offersOpen && !activeCoupon?.code && <div className="store-available-offers">{couponOffers?.length ? couponOffers.map(({ coupon, calculation }) => <div className={`store-available-offer${calculation.eligible ? ' is-eligible' : ''}`} key={coupon.id}><div><strong>{coupon.code || 'Automatic offer'}</strong><span>{coupon.discount_type === 'percentage' ? `${coupon.discount_value}% OFF${Number(coupon.max_discount_cap) > 0 ? ` up to ₹${coupon.max_discount_cap}` : ''}` : `₹${coupon.discount_value} OFF`}</span><small>On regular-price items of ₹{coupon.min_cart_value.toLocaleString('en-IN')} or more{coupon.applicable_categories?.length ? ` · Valid on: ${coupon.applicable_categories.join(', ')}` : ' · Valid on all products'}</small>{!calculation.eligible && <em>Add ₹{calculation.gap.toLocaleString('en-IN')} more to unlock</em>}</div>{!coupon.code ? <b>{calculation.eligible ? 'Automatically applied' : 'Auto offer'}</b> : <button type="button" disabled={!calculation.eligible} onClick={() => { const result = onSelectCoupon(coupon); setCouponNotice(result.error || `Coupon ${coupon.code} applied.`); setCouponCode(coupon.code); setOffersOpen(false); }}>{calculation.eligible ? 'Apply' : 'Locked'}</button>}</div>) : <p>No active offers right now.</p>}</div>}
+                {couponCalculation?.offerAmount > 0 && <div className="store-cart-breakdown"><span>Items with existing offers</span><strong>₹{couponCalculation.offerAmount.toLocaleString('en-IN')}</strong><small>Offer already applied</small></div>}
+                {couponCalculation?.regularAmount > 0 && <div className="store-cart-breakdown"><span>Other items</span><strong>₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</strong></div>}
+                {activeCoupon && couponCalculation?.eligible && <div className="store-cart-breakdown store-cart-coupon-discount"><span>{activeCoupon.code ? `Coupon “${activeCoupon.code}” applied` : 'Automatic coupon applied'}</span><strong>-₹{couponCalculation.discount.toLocaleString('en-IN')}</strong></div>}
+                {activeCoupon && couponCalculation?.eligible && <div className="store-cart-estimate"><span>Discounted total</span><strong>₹{Math.max(0, pricedTotal - couponCalculation.discount).toLocaleString('en-IN')}</strong></div>}
                 <p>Delivery charges, if applicable, are confirmed separately.</p>
                 <button type="button" className="store-checkout-button" onClick={() => { setCartOpen(false); onCheckout(); }}>Continue to checkout <ArrowRight size={18} /></button>
               </div>

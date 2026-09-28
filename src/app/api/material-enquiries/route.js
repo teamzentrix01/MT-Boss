@@ -6,6 +6,8 @@ import { resolveManagedCity } from '@/lib/cities';
 import { requireRole } from '@/lib/auth';
 import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material-orders';
 import { notifyAdminSubmission, deliverMaterialOrderReceipt } from '@/lib/customer-communications';
+import { calculateShipping, getShippingSettings } from '@/lib/shipping';
+import { calculateCoupon, couponIsCurrentlyActive } from '@/lib/coupon-calculations';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
@@ -53,6 +55,10 @@ const ensureTable = createInitializationGuard(async () => {
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS product_id       INTEGER`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS indicative_unit_price NUMERIC(10,2)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS order_intent VARCHAR(20)`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS shipping_cost NUMERIC(12,2) DEFAULT 0`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS shipping_breakdown JSONB DEFAULT '[]'::jsonb`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS coupon_code VARCHAR(60)`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS coupon_discount NUMERIC(12,2) DEFAULT 0`,
   ];
   for (const sql of migrations) {
     try { await pool.query(sql); } catch { /* already correct type or column exists */ }
@@ -82,6 +88,7 @@ export async function POST(req) {
       message, selected_city,
     } = body;
     const isCart = Array.isArray(body.items);
+    const couponId = Number(body.coupon_id);
     const orderIntent = cleanText(body.order_intent)?.toLowerCase() || (isCart ? 'cart' : 'quote');
     if (!['quote', 'buy', 'cart'].includes(orderIntent) || (isCart && orderIntent !== 'cart') || (!isCart && orderIntent === 'cart')) {
       return NextResponse.json({ success: false, error: 'Invalid shop order type' }, { status: 400 });
@@ -138,9 +145,53 @@ export async function POST(req) {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+      let validatedCoupon = null;
+      let couponDiscount = 0;
+      if (isCart && Number.isInteger(couponId) && couponId > 0) {
+        const couponResult = await client.query('SELECT * FROM shop_coupons WHERE id=$1', [couponId]);
+        const coupon = couponResult.rows[0];
+        if (!coupon || !couponIsCurrentlyActive(coupon)) {
+          const failure = new Error('The selected coupon is no longer active.'); failure.status = 409; throw failure;
+        }
+        const couponProductIds = orderItems.map((item) => Number(item.product_id)).filter((id) => Number.isInteger(id) && id > 0);
+        const couponProducts = couponProductIds.length ? await client.query('SELECT id, price, compare_at_price, category, bulk_pricing FROM supplier_materials WHERE id=ANY($1::int[])', [couponProductIds]) : { rows: [] };
+        const productsById = new Map(couponProducts.rows.map((product) => [product.id, product]));
+        const serverCart = orderItems.map((item) => ({ product: productsById.get(Number(item.product_id)), quantity: Number(item.quantity) })).filter((item) => item.product);
+        const calculation = calculateCoupon(serverCart, coupon);
+        if (!calculation.eligible) {
+          const failure = new Error(`Add ₹${calculation.gap.toLocaleString('en-IN')} more of regular-price items to use this coupon.`); failure.status = 409; throw failure;
+        }
+        validatedCoupon = coupon;
+        couponDiscount = calculation.discount;
+      }
+      // Calculate shipping from server-side prices and vendor/source cities. The first
+      // enquiry in a source-city group owns that group's cost; the rest remain ₹0.
+      const productIds = orderItems.map((item) => Number(item.product_id)).filter((id) => Number.isInteger(id) && id > 0);
+      const shippingBySourceCity = new Map();
+      if (productIds.length) {
+        const shippingProducts = await client.query(`SELECT m.id, m.price, m.bulk_pricing,
+          COALESCE(NULLIF(TRIM(v.city), ''), NULLIF(TRIM(s.city), ''), CASE WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb))=1 THEN m.available_cities->>0 END) AS source_city
+          FROM supplier_materials m LEFT JOIN vendors v ON v.id=m.vendor_id LEFT JOIN suppliers s ON s.id=m.supplier_id
+          WHERE m.id=ANY($1::int[])`, [productIds]);
+        const quantities = new Map(orderItems.map((item) => [Number(item.product_id), isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10)]));
+        const groups = new Map();
+        for (const product of shippingProducts.rows) {
+          const quantity = quantities.get(product.id) || 1;
+          const tier = (Array.isArray(product.bulk_pricing) ? product.bulk_pricing : []).filter((entry) => quantity >= Number(entry.min_quantity)).sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity))[0];
+          const key = String(product.source_city || '').trim().toLowerCase();
+          const group = groups.get(key) || { vendorCity: product.source_city || '', orderValue: 0 };
+          group.orderValue += (tier ? Number(tier.price) : Number(product.price) || 0) * quantity;
+          groups.set(key, group);
+        }
+        const shipping = calculateShipping({ groups: [...groups.values()], customerCity: canonicalCity, settings: await getShippingSettings() });
+        shipping.breakdown.forEach((row) => shippingBySourceCity.set(String(row.vendorCity || '').trim().toLowerCase(), row));
+      }
+      const chargedShippingGroups = new Set();
+      let couponRecorded = false;
       const orders = [];
       for (const item of orderItems) {
         let indicativeUnitPrice = null;
+        let sourceCity = '';
         const coverage = await client.query(`SELECT 1 WHERE EXISTS (
           SELECT 1 FROM suppliers s WHERE LOWER(TRIM(s.city))=LOWER(TRIM($1))
             AND s.status='approved' AND s.is_active=TRUE
@@ -159,7 +210,8 @@ export async function POST(req) {
           const requestedQuantity = isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10);
           const productResult = await client.query(
             `SELECT m.name, m.category, m.unit, m.quantity, m.price, m.bulk_pricing, m.is_available,
-                    m.supplier_id,
+                    m.supplier_id, m.vendor_id,
+                    COALESCE(NULLIF(TRIM(v.city), ''), NULLIF(TRIM(s.city), ''), CASE WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb))=1 THEN m.available_cities->>0 END) AS source_city,
                     CASE
                       WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
                       WHEN m.supplier_id <> 0 AND s.city IS NOT NULL THEN jsonb_build_array(s.city)
@@ -170,6 +222,7 @@ export async function POST(req) {
                     END AS supplier_available
              FROM supplier_materials m
              LEFT JOIN suppliers s ON s.id = m.supplier_id
+             LEFT JOIN vendors v ON v.id = m.vendor_id
              WHERE m.id=$1
              FOR UPDATE OF m`,
             [item.product_id]
@@ -198,17 +251,21 @@ export async function POST(req) {
               .sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity))[0];
             indicativeUnitPrice = tier ? Number(tier.price) : Number(product.price);
           }
+          sourceCity = product.source_city || '';
         }
         const orderReference = `MO-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const itemQuantity = isCart ? `${item.quantity} ${cleanText(item.order_unit) || 'pcs'}` : quantity_text;
+        const shippingRow = item.product_id ? shippingBySourceCity.get(String(sourceCity).trim().toLowerCase()) : null;
+        const shippingCost = shippingRow && !chargedShippingGroups.has(String(shippingRow.vendorCity || '').trim().toLowerCase()) ? shippingRow.shippingCost : 0;
+        if (shippingRow) chargedShippingGroups.add(String(shippingRow.vendorCity || '').trim().toLowerCase());
         const result = await client.query(
         `INSERT INTO material_enquiries
            (user_id, order_reference, order_intent, user_name, user_phone, user_email,
             category_name, category_emoji, product_id, indicative_unit_price,
             material_type, subcategory_name, brand_company,
             quantity_text, order_unit, delivery_date,
-            delivery_address, latitude, longitude, message, selected_city)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
+            delivery_address, latitude, longitude, message, selected_city, shipping_cost, shipping_breakdown, coupon_code, coupon_discount)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23::jsonb,$24,$25)
          RETURNING id, order_reference, order_intent, status, created_at`,
         [
           user.id, orderReference, orderIntent, cleanName, cleanPhone, cleanEmail || user.email || null,
@@ -216,9 +273,11 @@ export async function POST(req) {
           cleanText(item.material_type) || null, cleanText(item.subcategory_name) || null, cleanText(item.brand_company) || null,
           itemQuantity || null, cleanText(item.order_unit) || null, delivery_date || null,
           delivery_address || null, lat, lng,
-          message || null, canonicalCity,
+          message || null, canonicalCity, shippingCost ?? 0, JSON.stringify(shippingRow ? [shippingRow] : []),
+          couponRecorded ? null : validatedCoupon?.code || (validatedCoupon ? 'AUTO' : null), couponRecorded ? 0 : couponDiscount,
         ]
       );
+        couponRecorded = couponRecorded || Boolean(validatedCoupon);
         await addMaterialOrderEvent(client, {
           orderId: result.rows[0].id,
           status: 'open',
