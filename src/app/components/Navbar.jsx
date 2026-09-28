@@ -392,15 +392,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 <Link
                   href="/login"
                   className={`whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 border rounded transition-all duration-200 ${isDarkMode
-                    ? 'text-[var(--brand-blue)] border-[var(--brand-blue)] hover:bg-[var(--brand-blue)]'
-                    : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)]'
+                    ? 'text-sky-400 border-sky-400 hover:bg-sky-950/40'
+                    : 'text-[#0284c7] border-[#0284c7] hover:bg-sky-50'
                     }`}
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/signup"
-                  className="hidden min-[430px]:inline-flex whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 bg-[var(--brand-blue)] text-black rounded hover:bg-[var(--brand-blue-dark)] transition-all duration-200"
+                  className="inline-flex whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 bg-[#0284c7] text-white rounded hover:bg-[#0369a1] transition-all duration-200"
                 >
                   Sign Up
                 </Link>

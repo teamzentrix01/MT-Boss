@@ -10,6 +10,51 @@ import {
 } from "lucide-react";
 import "./shop.css";
 import ShopCategoryNav from "./ShopCategoryNav";
+import MobileStorefront from "./MobileStorefront";
+
+export function normalizeShopImageUrl(value) {
+  const imageUrl = String(value || '').trim();
+  if (!imageUrl) return '';
+  if (/^(?:https?:|data:image\/|blob:|\/)/i.test(imageUrl)) return imageUrl;
+  if (/^(?:www\.)/i.test(imageUrl)) return `https://${imageUrl}`;
+  // Older product records sometimes contain `uploads/file.jpg` without the
+  // leading slash, which would otherwise resolve relative to /ShopNow.
+  return `/${imageUrl}`;
+}
+
+export function ShopImage({ src, alt = '', ...props }) {
+  const normalizedSrc = normalizeShopImageUrl(src);
+  if (!normalizedSrc) return null;
+
+  const isExternal = /^https?:\/\//i.test(normalizedSrc);
+  let isNextImageSafe = !isExternal;
+  try {
+    const hostname = new URL(normalizedSrc).hostname;
+    isNextImageSafe = hostname === 'res.cloudinary.com'
+      || hostname === 'images.unsplash.com'
+      || hostname.endsWith('pinimg.com');
+  } catch {
+    isNextImageSafe = !isExternal;
+  }
+
+  // Product URLs can point to any supplier's CDN. Use a regular image for
+  // those URLs so Next.js remote-host allowlisting cannot hide valid images.
+  if (isExternal && !isNextImageSafe) {
+    const { fill, sizes, quality, priority, unoptimized, style, ...imgProps } = props;
+    return <img
+      {...imgProps}
+      src={normalizedSrc}
+      alt={alt}
+      loading={priority ? 'eager' : 'lazy'}
+      style={{
+        ...(fill ? { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' } : {}),
+        ...style,
+      }}
+    />;
+  }
+
+  return <Image src={normalizedSrc} alt={alt} {...props} unoptimized={!isNextImageSafe} />;
+}
 
 function OptimizedImage({ src, alt = '', ...props }) {
   let unoptimized = false;
@@ -21,7 +66,7 @@ function OptimizedImage({ src, alt = '', ...props }) {
   } catch {
     unoptimized = true;
   }
-  return <Image src={src} alt={alt} unoptimized={unoptimized} {...props} />;
+  return <ShopImage src={src} alt={alt} unoptimized={unoptimized} {...props} />;
 }
 
 function categoryStyle(name = "") {
@@ -116,7 +161,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   );
 }
 
-export default function Storefront({ categories, products, content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout, activeCoupon, couponCalculation, couponOffers, onApplyCoupon, onSelectCoupon, onClearCoupon }) {
+export default function Storefront({ categories, products, content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout, activeCoupon, couponCalculation, couponOffers, onApplyCoupon, onSelectCoupon, onClearCoupon, shippingSettings }) {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [cartOpen, setCartOpen] = useState(false);
@@ -248,16 +293,26 @@ export default function Storefront({ categories, products, content, loading, cit
     }));
   }), [categories, products]);
 
+  const dedupeProducts = (list) => {
+    const seen = new Set();
+    return list.filter((p) => {
+      const k = p?.product_id ? `supplier-${p.product_id}` : p?.id;
+      if (!k || seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  };
+
   const searchTerm = search.trim().toLowerCase();
-  const visible = catalog.filter((product) => (
+  const visible = dedupeProducts(catalog.filter((product) => (
     (activeCategory === "all" || String(product.category.id) === String(activeCategory)) &&
     (brandFilter === 'all' || product.brand === brandFilter) &&
     (!searchTerm || `${product.name} ${product.category.name}`.toLowerCase().includes(searchTerm))
-  )).sort((a, b) => sortBy === 'price-asc' ? (Number(a.price) || Infinity) - (Number(b.price) || Infinity) : sortBy === 'price-desc' ? (Number(b.price) || 0) - (Number(a.price) || 0) : sortBy === 'name' ? a.name.localeCompare(b.name) : 0);
+  )).sort((a, b) => sortBy === 'price-asc' ? (Number(a.price) || Infinity) - (Number(b.price) || Infinity) : sortBy === 'price-desc' ? (Number(b.price) || 0) - (Number(a.price) || 0) : sortBy === 'name' ? a.name.localeCompare(b.name) : 0));
   const brands = [...new Set(catalog.filter((product) => activeCategory === 'all' || String(product.category.id) === String(activeCategory)).map((product) => product.brand).filter(Boolean))].sort();
-  const featured = categories.map((category) => catalog.find((product) => product.category.id === category.id)).filter(Boolean).slice(0, 8);
-  const deals = catalog.filter((product) => product.is_featured_deal === true).sort((a, b) => discountPercent(b) - discountPercent(a)).slice(0, 6);
-  const arrivals = catalog.filter((product) => product.fromSupplier && product.created_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 6);
+  const featured = dedupeProducts(categories.map((category) => catalog.find((product) => product.category.id === category.id)).filter(Boolean)).slice(0, 8);
+  const deals = dedupeProducts(catalog.filter((product) => product.is_featured_deal === true).sort((a, b) => discountPercent(b) - discountPercent(a))).slice(0, 6);
+  const arrivals = dedupeProducts(catalog.filter((product) => product.fromSupplier && product.created_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at))).slice(0, 6);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const pricedTotal = cart.reduce((sum, item) => sum + unitPrice(item.product, item.quantity) * item.quantity, 0);
   const hasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
@@ -300,14 +355,38 @@ export default function Storefront({ categories, products, content, loading, cit
 
   return (
     <div className={`shop-page${cartOpen ? ' store-cart-is-open' : ''}`}>
-      <header className="store-header" ref={storeHeaderRef}>
+      {/* Mobile Quick-Commerce View (viewport <= 768px) */}
+      <div className="storefront-mobile">
+        <MobileStorefront
+          categories={categories}
+          products={products}
+          catalog={catalog}
+          content={content}
+          loading={loading}
+          cities={cities}
+          selectedCity={selectedCity}
+          setSelectedCity={setSelectedCity}
+          cart={cart}
+          onAdd={onAdd}
+          onChangeQty={onChangeQty}
+          onQuote={onQuote}
+          onBuy={onBuy}
+          onCheckout={onCheckout}
+          onDetails={setDetailsProduct}
+          shippingSettings={shippingSettings}
+        />
+      </div>
+
+      {/* Desktop Storefront View (viewport > 768px) */}
+      <div className="storefront-desktop">
+        <header className="store-header" ref={storeHeaderRef}>
         <div className="store-header-inner">
           <Link href="/" className="store-brand" aria-label="MT Boss home"><picture className="store-brand-picture"><Image src="/logo.png" alt="MT Boss" width={46} height={46} sizes="(max-width: 560px) 34px, (max-width: 800px) 39px, 46px" /></picture><small>SHOP</small></Link>
           <div className="store-location-wrap">
             <button type="button" className="store-location" onClick={() => setCityOpen(!cityOpen)} aria-expanded={cityOpen}>
               <MapPin size={20} /><span><strong>Deliver to {selectedCity || "your city"}</strong><small>{selectedCity ? "Change location" : "Select delivery location"}</small></span><ChevronDown size={16} />
             </button>
-            {cityOpen && <div className="store-city-popover"><label htmlFor="store-city">Choose your city</label><select id="store-city" value={selectedCity} onChange={(e) => { setSelectedCity(e.target.value); setCityOpen(false); }}><option value="">Select city</option>{cities.map((city) => <option key={city} value={city}>{city}</option>)}</select><p>Availability is checked at checkout.</p></div>}
+            {cityOpen && <div className="store-city-popover"><label htmlFor="store-city">Choose your city</label><select id="store-city" value={selectedCity} onChange={(e) => { setSelectedCity(e.target.value); setCityOpen(false); }}><option value="">Select city</option>{[...new Set(cities)].map((city) => <option key={city} value={city}>{city}</option>)}</select><p>Availability is checked at checkout.</p></div>}
           </div>
           <label className="store-search"><Search size={20} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={content.search_placeholder} aria-label="Search materials" /></label>
           {productManagerHref && <Link href={productManagerHref} className="store-admin-add"><Plus size={17} /> Add Product</Link>}
@@ -341,7 +420,7 @@ export default function Storefront({ categories, products, content, loading, cit
           <div className="store-section-heading"><div><span className="store-section-kicker">START SHOPPING</span><h2 id="store-categories-heading">{content.categories_heading}</h2></div><span className="store-section-note">Pick a category to see materials</span></div>
           {loading ? <div className="store-loading">Loading categories...</div> : categories.length ? <div className="store-category-grid">{categories.map((category) => {
             const { tone, Icon } = categoryStyle(category.name);
-            return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}><span className="store-category-art">{category.image ? <OptimizedImage src={category.image} alt="" fill sizes="(max-width: 560px) 33vw, 180px" quality={70} /> : <Icon size={37} strokeWidth={1.5} />}</span><strong>{category.name}</strong><span>Explore <ArrowRight size={13} /></span></button>;
+            return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}><span className="store-category-art" style={{ position: 'relative', display: 'block' }}>{category.image ? <OptimizedImage src={category.image} alt="" fill sizes="(max-width: 560px) 33vw, 180px" quality={70} /> : <Icon size={37} strokeWidth={1.5} />}</span><strong>{category.name}</strong><span>Explore <ArrowRight size={13} /></span></button>;
           })}</div> : <div className="store-empty">Categories are being added. Please check back soon.</div>}
         </section>
 
@@ -358,6 +437,7 @@ export default function Storefront({ categories, products, content, loading, cit
           {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found. Try another search or category.</div>}
         </section>
       </main>
+      </div>
 
       {detailsProduct && (
         <div className="store-overlay" onClick={() => setDetailsProduct(null)}>
@@ -389,13 +469,14 @@ export default function Storefront({ categories, products, content, loading, cit
           <aside id="store-cart-dialog" className="store-cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping cart" onClick={(e) => e.stopPropagation()}>
             <div className="store-drawer-head"><div><span>YOUR SELECTION</span><h2>My cart <small>({cartCount} items)</small></h2></div><button type="button" aria-label="Close cart" onClick={() => setCartOpen(false)}><X size={23} /></button></div>
             {cart.length ? <>
-              <div className="store-cart-list">{cart.map((item) => {
+              <div className="store-cart-list">{cart.map((item, index) => {
                 const itemUnitPrice = unitPrice(item.product, item.quantity);
-                return <div className="store-cart-item" key={item.product.id}>
+                const itemKey = item.product?.id ? `${item.product.id}` : `cart-item-${index}`;
+                return <div className="store-cart-item" key={itemKey}>
                   <ProductVisual compact image={item.product.image} category={item.product.category} name={item.product.name} />
                   <div>
                     <strong>{item.product.name}</strong>
-                    <span>{item.product.category.name} · {itemUnitPrice > 0 ? `₹${itemUnitPrice.toLocaleString('en-IN')} / ${displayUnit(item.product.unit)}` : 'Price on confirmation'}</span>
+                    <span>{item.product.category?.name || 'Material'}{item.product.unit ? ` · ${displayUnit(item.product.unit)}` : ''} · {itemUnitPrice > 0 ? `₹${itemUnitPrice.toLocaleString('en-IN')} / ${displayUnit(item.product.unit)}` : 'Price on confirmation'}</span>
                     <span>{itemUnitPrice > 0 ? `Line total: ₹${(itemUnitPrice * item.quantity).toLocaleString('en-IN')}` : 'Supplier will confirm the price'}</span>
                     <div className="store-cart-quantity"><button type="button" onClick={() => onChangeQty(item.product.id, -1)} aria-label={`Remove one ${item.product.name}`}><Minus size={14} /></button><b>{item.quantity}</b><button type="button" onClick={() => onChangeQty(item.product.id, 1)} aria-label={`Add one ${item.product.name}`}><Plus size={14} /></button></div>
                   </div>
