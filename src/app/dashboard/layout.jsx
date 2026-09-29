@@ -184,7 +184,7 @@ export default function DashboardLayout({ children }) {
   const hoverBg = isDarkMode ? 'hover:bg-slate-800/60' : 'hover:bg-slate-50';
 
   return (
-    <div className="flex h-[calc(100dvh-4rem)] overflow-hidden bg-slate-900">
+    <div className="admin-dashboard-root flex h-[calc(100dvh-4rem)] overflow-hidden bg-slate-900">
       {sidebarOpen && (
         <div
           aria-label="Close dashboard menu"
