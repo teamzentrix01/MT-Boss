@@ -4131,6 +4131,9 @@
 .mobile-chip:focus,
 .mobile-chip:active {
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-height: 32px;
   min-width: 44px;
   padding: 4px 12px !important;
