@@ -477,15 +477,13 @@ export default function Storefront({ categories, products, offers = [], content,
           </div>
         </header>
 
-        {categories.length > 0 && (
-          <ShopCategoryNav
-            categories={categories}
-            products={products}
-            activeCategory={activeCategory}
-            activeSearch={search}
-            onSelectCategory={chooseCategory}
-          />
-        )}
+        <ShopCategoryNav
+          categories={categories}
+          products={products}
+          activeCategory={activeCategory}
+          activeSearch={search}
+          onSelectCategory={chooseCategory}
+        />
 
         <main className="store-main">
           <div className="store-breadcrumb"><Link href="/">Home</Link><span>/</span><strong>Shop materials</strong></div>
