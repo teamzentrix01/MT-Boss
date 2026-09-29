@@ -646,6 +646,7 @@ export default function ShopPage() {
   const selectedProductTotal = selectedUnitPrice * selectedQuantity;
   const cartProductTotal = cart.reduce((sum, item) => sum + getUnitPrice(item.product, item.quantity) * item.quantity, 0);
   const cartFinalTotal = Math.max(0, cartProductTotal - couponCalculation.discount);
+  const cartTotalWithShipping = cartFinalTotal + (shippingQuote?.totalShipping || 0);
   const cartHasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
   const quotePrice = getQuotePrice(selectedCategory, selectedCity, selectedProduct);
 
@@ -653,7 +654,7 @@ export default function ShopPage() {
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} />
+      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} shippingQuote={shippingQuote} />
 
       {isModalOpen && mounted && createPortal(
         <div className="shop-checkout-modal fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>
@@ -799,11 +800,18 @@ export default function ShopPage() {
                     {couponCalculation.regularAmount > 0 && <p className={`mt-1 text-xs ${subText}`}>Other items: ₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</p>}
                     {activeCoupon && couponCalculation.eligible && <p className="mt-1 text-xs font-bold text-green-600">Coupon {activeCoupon.code ? `“${activeCoupon.code}”` : 'offer'} applied: -₹{couponCalculation.discount.toLocaleString('en-IN')}</p>}
                     {activeCoupon && !couponCalculation.eligible && <p className="mt-1 text-xs font-semibold text-amber-600">Add ₹{couponCalculation.gap.toLocaleString('en-IN')} more of regular-price items to unlock this coupon.</p>}
+                    {shippingQuote?.totalShipping !== null && shippingQuote?.totalShipping !== undefined && (
+                      <p className={`mt-1 text-xs ${subText}`}>Shipping charges: ₹{Number(shippingQuote.totalShipping).toLocaleString('en-IN')}</p>
+                    )}
                     <div className={`mt-2 flex items-center justify-between border-t pt-2 ${isDarkMode ? "border-zinc-700" : "border-gray-200"}`}>
                       <span className={`text-xs font-bold ${headText}`}>Total</span>
-                      <strong className={`text-sm ${headText}`}>{cartFinalTotal > 0 ? `₹${cartFinalTotal.toLocaleString("en-IN")}` : 'On confirmation'}{cartFinalTotal > 0 && cartHasUnpricedItems ? ' + quote items' : ''}</strong>
+                      <strong className={`text-sm ${headText}`}>{cartTotalWithShipping > 0 ? `₹${cartTotalWithShipping.toLocaleString("en-IN")}` : 'On confirmation'}{cartTotalWithShipping > 0 && cartHasUnpricedItems ? ' + quote items' : ''}</strong>
                     </div>
-                    <p className={`text-[10px] mt-2 ${subText}`}>Delivery charges, if applicable, are confirmed separately.</p>
+                    {shippingQuote?.totalShipping ? (
+                      <p className={`text-[10px] mt-2 ${subText}`}>Total includes applicable shipping charges.</p>
+                    ) : (
+                      <p className={`text-[10px] mt-2 ${subText}`}>Delivery charges, if applicable, are confirmed separately.</p>
+                    )}
                   </div>
                 ) : <>
                 {modalMode === "buy" ? (

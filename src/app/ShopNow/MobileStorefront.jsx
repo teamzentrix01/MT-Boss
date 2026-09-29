@@ -205,6 +205,7 @@ export default function MobileStorefront({
   onApplyCoupon = () => ({ error: 'Coupon service unavailable' }),
   onSelectCoupon = () => ({ error: 'Coupon service unavailable' }),
   onClearCoupon = () => { },
+  shippingQuote = null,
 }) {
   const [mobileView, setMobileView] = useState("home"); // "home" | "listing" | "orders" | "account"
   const [activeCategoryId, setActiveCategoryId] = useState(null);
@@ -444,6 +445,7 @@ export default function MobileStorefront({
   const hasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
   const couponDiscount = (activeCoupon && couponCalculation?.eligible) ? (Number(couponCalculation.discount) || 0) : 0;
   const cartFinalTotal = Math.max(0, cartSubtotal - couponDiscount);
+  const cartTotalWithShipping = cartFinalTotal + (shippingQuote?.totalShipping || 0);
 
   const navigateToCategory = (cat) => {
     setActiveCategoryId(cat.id);
@@ -1653,9 +1655,37 @@ export default function MobileStorefront({
                     </div>
                   )}
 
-                  <p className="text-[10.5px] text-gray-500 mb-3">
-                    Delivery charges, if applicable, are confirmed separately.
-                  </p>
+                  {shippingQuote?.totalShipping !== null && shippingQuote?.totalShipping !== undefined && (
+                    <div className="flex items-center justify-between text-sm mb-2">
+                      <span className="text-gray-500 font-medium">
+                        Shipping
+                      </span>
+                      <span className="font-black text-sm text-[#12283F]">
+                        ₹{Number(shippingQuote.totalShipping).toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                  )}
+
+                  {(activeCoupon || shippingQuote?.totalShipping) && (
+                    <div className="flex items-center justify-between text-sm mb-2 border-t pt-2 border-gray-200">
+                      <span className="text-gray-900 font-bold">
+                        Final Total
+                      </span>
+                      <span className="font-black text-base text-[#12283F]">
+                        ₹{cartTotalWithShipping.toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                  )}
+
+                  {shippingQuote?.totalShipping ? (
+                    <p className="text-[10.5px] text-gray-500 mb-3">
+                      Total includes applicable shipping charges.
+                    </p>
+                  ) : (
+                    <p className="text-[10.5px] text-gray-500 mb-3">
+                      Delivery charges, if applicable, are confirmed separately.
+                    </p>
+                  )}
 
                   <button
                     type="button"

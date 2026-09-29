@@ -607,7 +607,7 @@ const COLOR_OPTIONS = [
   { value: 'gray',   label: 'Gray',    dot: '#6b7280' },
 ];
 
-const EMPTY = { name: '', emoji: '🛒', label: '', label_color: 'yellow', price_range: '', unit: '' };
+const EMPTY = { name: '', emoji: '🛒', label: '', label_color: 'yellow', price_range: '', unit: '', shipping_charge: 0 };
 
 const SKU_UNITS = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
 
@@ -678,6 +678,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
       name: cat.name || '', emoji: cat.emoji || '🛒',
       label: cat.label || '', label_color: cat.label_color || 'yellow',
       price_range: cat.price_range || '', unit: cat.unit || '',
+      shipping_charge: cat.shipping_charge || 0,
     });
     setImage(cat.image || '');
     setEmojiImage(cat.emoji_image || '');
@@ -896,6 +897,21 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                       <option key={unit} value={unit}>{unit}</option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label style={lbl}>Shipping Charge (₹)</label>
+                  <input
+                    type="number"
+                    className="sc-inp"
+                    style={inp}
+                    value={form.shipping_charge}
+                    onChange={e => setForm(f => ({ ...f, shipping_charge: e.target.value }))}
+                    placeholder="e.g. 150"
+                  />
+                  <small style={{ fontSize: '10px', color: t.muted, marginTop: '4px', display: 'block' }}>
+                    Delivery cost applied for this category.
+                  </small>
                 </div>
 
                 {/* Preview */}
@@ -1120,7 +1136,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    {['⠿', 'Image', 'Name', 'Types', 'Badge', 'Price Range', 'Status', 'Actions'].map((h, i) => (
+                    {['⠿', 'Image', 'Name', 'Types', 'Badge', 'Price Range', 'Shipping (₹)', 'Status', 'Actions'].map((h, i) => (
                       <th key={i} style={{ padding: '10px 14px', textAlign: 'left', color: t.sub, fontWeight: 700, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: t.tHead, whiteSpace: 'nowrap', borderBottom: `1px solid ${t.border}` }}>{h}</th>
                     ))}
                   </tr>
@@ -1186,6 +1202,9 @@ export default function ShopCategoriesManager({ isDarkMode }) {
 
                       {/* price */}
                       <td style={{ padding: '10px 14px', color: t.sub, whiteSpace: 'nowrap' }}>{cat.price_range || '—'}</td>
+
+                      {/* shipping charge */}
+                      <td style={{ padding: '10px 14px', color: t.sub, whiteSpace: 'nowrap' }}>{cat.shipping_charge ? `₹${cat.shipping_charge}` : '—'}</td>
 
                       {/* status toggle */}
                       <td style={{ padding: '10px 14px' }}>
