@@ -372,7 +372,24 @@ export default function Storefront({ categories, products, offers = [], content,
   const featured = dedupeProducts(categories.map((category) => catalog.find((product) => product.category.id === category.id)).filter(Boolean)).slice(0, 8);
   const deals = dedupeProducts(catalog.filter((product) => product.is_featured_deal === true).sort((a, b) => discountPercent(b) - discountPercent(a))).slice(0, 6);
   const arrivals = dedupeProducts(catalog.filter((product) => product.fromSupplier && product.created_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at))).slice(0, 6);
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartCount = useMemo(() => {
+    if (!Array.isArray(cart) || cart.length === 0) return 0;
+    const uniqueCategories = new Set();
+    cart.forEach((item) => {
+      const p = item?.product || {};
+      const cat = p.category;
+      let name = '';
+      if (typeof cat === 'object' && cat !== null) {
+        name = cat.name || cat.title || String(cat.id || '');
+      } else if (typeof cat === 'string') {
+        name = cat;
+      }
+      if (!name) name = p.category_name || p.categoryName || '';
+      const key = (name || p.name || String(p.id || '')).trim().toLowerCase();
+      if (key) uniqueCategories.add(key);
+    });
+    return uniqueCategories.size;
+  }, [cart]);
   const pricedTotal = cart.reduce((sum, item) => sum + unitPrice(item.product, item.quantity) * item.quantity, 0);
   const hasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
   const detailsCanOrder = detailsProduct ? productCanOrder(detailsProduct, selectedCity) : false;
@@ -534,7 +551,7 @@ export default function Storefront({ categories, products, offers = [], content,
       {cartOpen && (
         <div className="store-overlay store-cart-overlay" style={{ '--store-cart-top': `${cartOverlayTop}px` }} onClick={() => setCartOpen(false)}>
           <aside id="store-cart-dialog" className="store-cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping cart" onClick={(e) => e.stopPropagation()}>
-            <div className="store-drawer-head"><div><span>YOUR SELECTION</span><h2>My cart <small>({cartCount} items)</small></h2></div><button type="button" aria-label="Close cart" onClick={() => setCartOpen(false)}><X size={23} /></button></div>
+            <div className="store-drawer-head"><div><span>YOUR SELECTION</span><h2>My cart <small>({cartCount} {cartCount === 1 ? 'category' : 'categories'})</small></h2></div><button type="button" aria-label="Close cart" onClick={() => setCartOpen(false)}><X size={23} /></button></div>
             {cart.length ? <>
               <div className="store-cart-list">{cart.map((item, index) => {
                 const itemUnitPrice = unitPrice(item.product, item.quantity);
