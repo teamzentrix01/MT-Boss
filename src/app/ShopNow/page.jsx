@@ -7,6 +7,7 @@ import { useCities } from "@/hooks/useCities";
 import Storefront, { displayUnit } from "./Storefront";
 import { defaultShopStorefront } from "@/lib/shop-storefront-defaults";
 import { calculateCoupon } from "@/lib/coupon-calculations";
+import { getCartStep } from "@/lib/cart-step";
 // Dark-mode watcher
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -37,6 +38,7 @@ function SectionLabel({ children, isDark }) {
     </div>
   );
 }
+
 
 function getUnitPrice(product, quantity = 1) {
   const basePrice = Number(product?.price);
@@ -362,16 +364,27 @@ export default function ShopPage() {
   const addToCart = (product) => {
     setCart((previous) => {
       const existing = previous.find((item) => item.product.id === product.id);
+      const step = getCartStep(product);
       const limit = product.fromSupplier ? Math.max(0, Number(product.quantity) || 0) : 10000;
       if (limit === 0) return previous;
-      if (existing) return previous.map((item) => item.product.id === product.id ? { ...item, quantity: Math.min(item.quantity + 1, limit, 10000) } : item);
+      if (existing) return previous.map((item) =>
+        item.product.id === product.id
+          ? { ...item, quantity: Math.min(item.quantity + step, limit, 10000) }
+          : item
+      );
       if (previous.length >= 20) return previous;
-      return [...previous, { product, quantity: 1 }];
+      return [...previous, { product, quantity: step }];
     });
   };
 
   const changeCartQuantity = (id, delta) => setCart((previous) => previous
-    .map((item) => item.product.id === id ? { ...item, quantity: Math.max(0, Math.min(item.product.fromSupplier ? Math.max(0, Number(item.product.quantity) || 0) : 10000, 10000, item.quantity + delta)) } : item)
+    .map((item) => {
+      if (item.product.id !== id) return item;
+      const step = getCartStep(item.product);
+      const limit = item.product.fromSupplier ? Math.max(0, Number(item.product.quantity) || 0) : 10000;
+      const newQty = Math.max(0, Math.min(limit, 10000, item.quantity + delta * step));
+      return { ...item, quantity: newQty };
+    })
     .filter((item) => item.quantity > 0));
 
   const autoCoupon = useMemo(() => coupons.filter((coupon) => !coupon.code)

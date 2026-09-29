@@ -34,6 +34,7 @@ import {
   Zap,
 } from "lucide-react";
 import { displayUnit, getProductImage, ShopImage } from "./Storefront";
+import { getCartStep } from "@/lib/cart-step";
 import { CATEGORY_NAV_TREE } from "./categoryNavTree";
 import GlobalSearch from "../components/GlobalSearch";
 import QuickServices from "../components/QuickServices";

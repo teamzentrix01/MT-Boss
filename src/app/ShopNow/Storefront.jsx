@@ -11,6 +11,7 @@ import {
 import "./shop.css";
 import ShopCategoryNav from "./ShopCategoryNav";
 import MobileStorefront from "./MobileStorefront";
+import { getCartStep } from "@/lib/cart-step";
 export function normalizeShopImageUrl(value) {
   const imageUrl = String(value || '').trim();
   if (!imageUrl) return '';
