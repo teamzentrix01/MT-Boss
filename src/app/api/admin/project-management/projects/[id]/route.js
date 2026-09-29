@@ -101,23 +101,32 @@ export async function GET(req, { params }) {
          FROM pm_other_expenses
          WHERE project_id = $1 AND NOT is_deleted
          GROUP BY project_id
+       ),
+       ind_labour AS (
+         SELECT l.project_id, SUM(la.wage_amount) amount
+         FROM pm_labor l
+         JOIN pm_labor_attendance la ON la.labor_id = l.id
+         WHERE l.project_id = $1
+         GROUP BY l.project_id
        )
        SELECT p.*, pa.name party_name,
          COALESCE(pt.received, 0) received,
          p.contract_value - COALESCE(pt.received, 0) pending,
          GREATEST(0, CURRENT_DATE - p.start_date::date) days_running,
-         COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) total_labour_cost,
+         COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) total_labour_cost,
+         COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) vendor_labour_cost,
+         COALESCE(il.amount, 0) individual_labour_cost,
          COALESCE(l.amount, 0) daily_labour_cost,
          COALESCE(cd.amount, 0) contract_labour_cost,
          COALESCE(m.amount, 0) total_vendor_material_cost,
          COALESCE(dm.amount, 0) direct_material_cost,
          COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) total_material_cost,
          COALESCE(oe.amount, 0) total_other_expenses,
-         (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) total_expense,
+         (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) total_expense,
          COALESCE(vp.amount, 0) total_paid_to_vendors,
          (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(m.amount, 0)) - COALESCE(vp.amount, 0) total_vendor_balance_pending,
-         COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_or_loss,
-         COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_so_far
+         COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_or_loss,
+         COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_so_far
        FROM pm_projects p
        JOIN pm_parties pa ON pa.id = p.party_id
        LEFT JOIN party_totals pt ON pt.project_id = p.id
@@ -127,6 +136,7 @@ export async function GET(req, { params }) {
        LEFT JOIN contract_due cd ON cd.project_id = p.id
        LEFT JOIN direct_mat dm ON dm.project_id = p.id
        LEFT JOIN other_exp oe ON oe.project_id = p.id
+       LEFT JOIN ind_labour il ON il.project_id = p.id
        WHERE p.id = $1`,
       [id]
     );

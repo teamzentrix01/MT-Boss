@@ -529,6 +529,9 @@ function AdminDashboard() {
 
         /* ── Base ── */
         .dash-root {
+          min-height: 100%;
+          display: flex;
+          flex-direction: column;
           background: var(--bg);
           font-family: 'DM Sans', system-ui, sans-serif;
           color: var(--text);
@@ -619,8 +622,14 @@ function AdminDashboard() {
 
         /* ── Content ── */
         .dash-content {
-          max-width: 1280px; margin: 0 auto;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          max-width: 1280px;
+          width: 100%;
+          margin: 0 auto;
           padding: 1.25rem 1.5rem;
+          box-sizing: border-box;
         }
 
         /* ── Stat Cards ── */
@@ -831,7 +840,7 @@ function AdminDashboard() {
         }
       `}</style>
 
-      <div className="dash-root">
+      <div className={`dash-root${isDarkMode ? ' dark-mode' : ''}`}>
         {/* Header */}
         {activeTab === 'overview' && (
         <div className="dash-header">
@@ -1381,12 +1390,12 @@ function AdminDashboard() {
           {activeTab === 'agents' && <AgentsManager />}
           {activeTab === 'franchises' && <FranchisesManager />}
           {activeTab === 'projects' && <ProjectsManager />}
-          {activeTab === 'project-management' && <OperationalProjectsManager />}
-          {activeTab === 'party-project-management' && <PartyProjectManagement />}
-          {activeTab === 'pm-reports' && <PartyProjectManagement initialScreen="reports" />}
-          {activeTab === 'pm-benchmarks' && <PmBenchmarks />}
-          {activeTab === 'pm-dashboard' && <PmDashboard />}
-          {activeTab === 'pm-audit'     && <PmAuditLog />}
+          {activeTab === 'project-management' && <OperationalProjectsManager isDarkMode={isDarkMode} />}
+          {activeTab === 'party-project-management' && <PartyProjectManagement isDarkMode={isDarkMode} />}
+          {activeTab === 'pm-reports' && <PartyProjectManagement initialScreen="reports" isDarkMode={isDarkMode} />}
+          {activeTab === 'pm-benchmarks' && <PmBenchmarks isDarkMode={isDarkMode} />}
+          {activeTab === 'pm-dashboard' && <PmDashboard isDarkMode={isDarkMode} />}
+          {activeTab === 'pm-audit'     && <PmAuditLog isDarkMode={isDarkMode} />}
           {(activeTab === 'shop-categories' || activeTab === 'shop-products') && <ShopNowManager key={activeTab} isDarkMode={isDarkMode} initialTab={activeTab === 'shop-products' ? 'products' : 'categories'} />}
           {activeTab === 'shipping-settings' && <ShippingSettingsManager />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}

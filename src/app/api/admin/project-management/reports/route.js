@@ -134,7 +134,9 @@ export async function GET(req) {
         { key: 'project_name', label: 'Project' },
         { key: 'party_name', label: 'Client / Party' },
         { key: 'contract_value', label: 'Contract Value (₹)' },
-        { key: 'labour_cost', label: 'Labour Cost (₹)' },
+        { key: 'vendor_labour_cost', label: 'Vendor Labour (₹)' },
+        { key: 'individual_labour_cost', label: 'Individual Labour (₹)' },
+        { key: 'labour_cost', label: 'Total Labour (₹)' },
         { key: 'material_cost', label: 'Material Cost (₹)' },
         { key: 'other_expenses', label: 'Other Expenses (₹)' },
         { key: 'total_expense', label: 'Total Expense (₹)' },
@@ -149,6 +151,12 @@ export async function GET(req) {
            FROM pm_project_vendors pv
            LEFT JOIN pm_attendance a ON a.project_vendor_id = pv.id
            GROUP BY pv.project_id
+         ),
+         ind_labour AS (
+           SELECT l.project_id, COALESCE(SUM(la.wage_amount), 0) AS cost
+           FROM pm_labor l
+           JOIN pm_labor_attendance la ON la.labor_id = l.id
+           GROUP BY l.project_id
          ),
          vendor_mat AS (
            SELECT pv.project_id, SUM(m.amount) AS cost
@@ -178,20 +186,77 @@ export async function GET(req) {
          SELECT
            p.id AS project_id, p.name AS project_name, pa.name AS party_name,
            p.contract_value,
-           COALESCE(l.cost, 0) AS labour_cost,
+           COALESCE(l.cost, 0) AS vendor_labour_cost,
+           COALESCE(il.cost, 0) AS individual_labour_cost,
+           COALESCE(l.cost, 0) + COALESCE(il.cost, 0) AS labour_cost,
            COALESCE(vm.cost, 0) + COALESCE(dm.cost, 0) AS material_cost,
            COALESCE(oe.cost, 0) AS other_expenses,
-           COALESCE(l.cost, 0) + COALESCE(vm.cost, 0) + COALESCE(dm.cost, 0) + COALESCE(oe.cost, 0) AS total_expense,
+           COALESCE(l.cost, 0) + COALESCE(il.cost, 0) + COALESCE(vm.cost, 0) + COALESCE(dm.cost, 0) + COALESCE(oe.cost, 0) AS total_expense,
            COALESCE(rcv.amt, 0) AS received,
-           COALESCE(rcv.amt, 0) - (COALESCE(l.cost, 0) + COALESCE(vm.cost, 0) + COALESCE(dm.cost, 0) + COALESCE(oe.cost, 0)) AS profit_or_loss
+           COALESCE(rcv.amt, 0) - (COALESCE(l.cost, 0) + COALESCE(il.cost, 0) + COALESCE(vm.cost, 0) + COALESCE(dm.cost, 0) + COALESCE(oe.cost, 0)) AS profit_or_loss
          FROM pm_projects p
          JOIN pm_parties pa ON pa.id = p.party_id
          LEFT JOIN labour l ON l.project_id = p.id
+         LEFT JOIN ind_labour il ON il.project_id = p.id
          LEFT JOIN vendor_mat vm ON vm.project_id = p.id
          LEFT JOIN direct_mat dm ON dm.project_id = p.id
          LEFT JOIN other_exp oe ON oe.project_id = p.id
          LEFT JOIN rcv ON rcv.project_id = p.id
          ORDER BY p.name`
+      );
+      data = r.rows;
+
+    } else if (type === 'labor_summary') {
+      reportTitle = 'Labor & Worker Summary';
+      headers = [
+        { key: 'labor_name', label: 'Worker Name' },
+        { key: 'phone', label: 'Phone' },
+        { key: 'trade', label: 'Trade' },
+        { key: 'vendor_name', label: 'Linked Vendor' },
+        { key: 'project_name', label: 'Project' },
+        { key: 'daily_rate', label: 'Daily Rate (₹)' },
+        { key: 'days_present', label: 'Days Present' },
+        { key: 'days_half_day', label: 'Days Half-Day' },
+        { key: 'total_earned', label: 'Total Earned (₹)' },
+        { key: 'total_paid', label: 'Total Paid (₹)' },
+        { key: 'balance_due', label: 'Balance Due (₹)' },
+        { key: 'status', label: 'Status' },
+      ];
+
+      const r = await pool.query(
+        `WITH att AS (
+           SELECT la.labor_id,
+                  COUNT(*) FILTER (WHERE la.status = 'present') AS days_present,
+                  COUNT(*) FILTER (WHERE la.status = 'half_day') AS days_half_day,
+                  COALESCE(SUM(la.wage_amount), 0) AS total_earned
+           FROM pm_labor_attendance la
+           GROUP BY la.labor_id
+         ),
+         pay AS (
+           SELECT lp.labor_id, COALESCE(SUM(lp.amount), 0) AS total_paid
+           FROM pm_labor_payments lp
+           WHERE NOT lp.is_deleted
+           GROUP BY lp.labor_id
+         )
+         SELECT
+           l.name AS labor_name, COALESCE(l.phone, '—') AS phone, COALESCE(l.trade, '—') AS trade,
+           COALESCE(v.name, 'Independent') AS vendor_name,
+           p.name AS project_name,
+           l.daily_rate,
+           COALESCE(att.days_present, 0) AS days_present,
+           COALESCE(att.days_half_day, 0) AS days_half_day,
+           COALESCE(att.total_earned, 0) AS total_earned,
+           COALESCE(pay.total_paid, 0) AS total_paid,
+           COALESCE(att.total_earned, 0) - COALESCE(pay.total_paid, 0) AS balance_due,
+           CASE WHEN l.is_active THEN 'Active' ELSE 'Inactive' END AS status
+         FROM pm_labor l
+         JOIN pm_projects p ON p.id = l.project_id
+         LEFT JOIN pm_vendors v ON v.id = l.vendor_id
+         LEFT JOIN att ON att.labor_id = l.id
+         LEFT JOIN pay ON pay.labor_id = l.id
+         WHERE ($1::bigint IS NULL OR l.project_id = $1)
+         ORDER BY p.name, l.name`,
+        [projectId]
       );
       data = r.rows;
 

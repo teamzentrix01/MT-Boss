@@ -23,7 +23,7 @@ async function apiFetch(url, opts = {}) {
   return json;
 }
 
-export default function PmBenchmarks() {
+export default function PmBenchmarks({ isDarkMode }) {
   const [activeTab, setActiveTab] = useState('projects'); // 'projects' | 'summary' | 'estimate' | 'calculator' | 'trends'
   const [role, setRole] = useState('admin');
   const [loading, setLoading] = useState(true);
@@ -153,8 +153,8 @@ export default function PmBenchmarks() {
   const [estResult, setEstResult] = useState(null);
   const [estLoading, setEstLoading] = useState(false);
 
-  const calculateEstimate = async (e) => {
-    if (e) e.preventDefault();
+  const calculateEstimate = useCallback(async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
     try {
       setEstLoading(true);
       const res = await apiFetch('/api/admin/project-management/benchmarks/estimate', {
@@ -167,13 +167,20 @@ export default function PmBenchmarks() {
     } finally {
       setEstLoading(false);
     }
-  };
+  }, [estInput]);
 
   useEffect(() => {
     if (activeTab === 'estimate' && !estResult) {
-      calculateEstimate();
+      let ignore = false;
+      (async () => {
+        await Promise.resolve();
+        if (!ignore) {
+          calculateEstimate();
+        }
+      })();
+      return () => { ignore = true; };
     }
-  }, [activeTab]);
+  }, [activeTab, estResult, calculateEstimate]);
 
   const downloadEstimatePdf = () => {
     const sp = new URLSearchParams(estInput).toString();
@@ -312,7 +319,21 @@ export default function PmBenchmarks() {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: 1300, margin: '0 auto', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div
+      className={isDarkMode ? 'dark-mode' : ''}
+      style={{
+        padding: '20px',
+        maxWidth: 1300,
+        width: '100%',
+        margin: '0 auto',
+        minHeight: '100%',
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        boxSizing: 'border-box',
+        fontFamily: 'system-ui, -apple-system, sans-serif'
+      }}
+    >
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
         <div>

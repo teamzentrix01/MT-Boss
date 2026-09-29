@@ -54,6 +54,13 @@ export async function GET(req) {
           WHERE pv.project_id IN (SELECT id FROM projects)
           GROUP BY pv.project_id
         ),
+        ind_labour AS (
+          SELECT l.project_id, COALESCE(SUM(la.wage_amount), 0) AS amount
+          FROM pm_labor l
+          JOIN pm_labor_attendance la ON la.labor_id = l.id
+          WHERE l.project_id IN (SELECT id FROM projects)
+          GROUP BY l.project_id
+        ),
         vmat AS (
           SELECT pv.project_id, COALESCE(SUM(s.amount), 0) AS amount
           FROM pm_project_vendors pv
@@ -76,17 +83,20 @@ export async function GET(req) {
         SELECT pr.*,
           COALESCE(rc.received, 0)                                                      AS received,
           pr.contract_value - COALESCE(rc.received, 0)                                  AS pending,
-          COALESCE(l.amount,  0)                                                         AS labour_cost,
+          COALESCE(l.amount,  0) + COALESCE(il.amount, 0)                                AS labour_cost,
+          COALESCE(l.amount,  0)                                                         AS vendor_labour_cost,
+          COALESCE(il.amount, 0)                                                         AS individual_labour_cost,
           COALESCE(vm.amount, 0) + COALESCE(mr.amount, 0)                               AS material_cost,
           COALESCE(oe.amount, 0)                                                         AS other_cost,
-          COALESCE(l.amount, 0) + COALESCE(vm.amount,0) + COALESCE(mr.amount,0) + COALESCE(oe.amount,0) AS total_expense,
-          COALESCE(rc.received,0) - (COALESCE(l.amount,0)+COALESCE(vm.amount,0)+COALESCE(mr.amount,0)+COALESCE(oe.amount,0)) AS profit
+          COALESCE(l.amount, 0) + COALESCE(il.amount, 0) + COALESCE(vm.amount,0) + COALESCE(mr.amount,0) + COALESCE(oe.amount,0) AS total_expense,
+          COALESCE(rc.received,0) - (COALESCE(l.amount,0)+COALESCE(il.amount, 0)+COALESCE(vm.amount,0)+COALESCE(mr.amount,0)+COALESCE(oe.amount,0)) AS profit
         FROM projects pr
-        LEFT JOIN party_rcv rc ON rc.project_id = pr.id
-        LEFT JOIN labour    l  ON l.project_id  = pr.id
-        LEFT JOIN vmat      vm ON vm.project_id = pr.id
-        LEFT JOIN mrcv      mr ON mr.project_id = pr.id
-        LEFT JOIN other_exp oe ON oe.project_id = pr.id
+        LEFT JOIN party_rcv  rc ON rc.project_id = pr.id
+        LEFT JOIN labour     l  ON l.project_id  = pr.id
+        LEFT JOIN ind_labour il ON il.project_id = pr.id
+        LEFT JOIN vmat       vm ON vm.project_id = pr.id
+        LEFT JOIN mrcv       mr ON mr.project_id = pr.id
+        LEFT JOIN other_exp  oe ON oe.project_id = pr.id
         ORDER BY
           CASE pr.status WHEN 'running' THEN 0 WHEN 'on_hold' THEN 1 WHEN 'completed' THEN 2 ELSE 3 END,
           pr.start_date DESC
@@ -102,7 +112,13 @@ export async function GET(req) {
           )::date AS mo
         ),
         m_rcv  AS (SELECT date_trunc('month',payment_date)::date mo, SUM(amount) v FROM pm_party_payments        WHERE NOT is_deleted AND payment_date >= CURRENT_DATE-interval '6 months' GROUP BY 1),
-        m_lab  AS (SELECT date_trunc('month',attendance_date)::date mo, SUM(wage_amount) v FROM pm_attendance    WHERE attendance_date >= CURRENT_DATE-interval '6 months' GROUP BY 1),
+        m_lab  AS (
+          SELECT mo, SUM(v) v FROM (
+            SELECT date_trunc('month',attendance_date)::date mo, SUM(wage_amount) v FROM pm_attendance WHERE attendance_date >= CURRENT_DATE-interval '6 months' GROUP BY 1
+            UNION ALL
+            SELECT date_trunc('month',attendance_date)::date mo, SUM(wage_amount) v FROM pm_labor_attendance WHERE attendance_date >= CURRENT_DATE-interval '6 months' GROUP BY 1
+          ) t GROUP BY 1
+        ),
         m_vmat AS (SELECT date_trunc('month',supply_date)::date mo, SUM(amount) v FROM pm_vendor_material_supply WHERE NOT is_deleted AND supply_date >= CURRENT_DATE-interval '6 months' GROUP BY 1),
         m_mrcv AS (SELECT date_trunc('month',received_date)::date mo, SUM(amount) v FROM pm_material_received    WHERE NOT is_deleted AND received_date >= CURRENT_DATE-interval '6 months' GROUP BY 1),
         m_oth  AS (SELECT date_trunc('month',expense_date)::date mo, SUM(amount) v FROM pm_other_expenses        WHERE NOT is_deleted AND expense_date >= CURRENT_DATE-interval '6 months' GROUP BY 1)

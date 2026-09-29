@@ -79,7 +79,7 @@ const usedBlank = { material_id: '', quantity: '', used_date: today(), used_for:
 const adjustmentBlank = { material_id: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', note: '' };
 const expenseBlank = { category: 'transport', amount: '', expense_date: today(), note: '' };
 
-export default function PartyProjectManagement({ initialScreen = 'parties' }) {
+export default function PartyProjectManagement({ initialScreen = 'parties', isDarkMode }) {
   // Navigation: 'parties' | 'party' | 'partyForm' | 'project' | 'projectForm' | 'reports'
   const [screen, setScreen] = useState(initialScreen);
   const [role, setRole] = useState('admin');
@@ -157,6 +157,27 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
     material_id: '',
     note: '',
   });
+
+  // ── Labor (Individual Worker) State ───────────────────────────────────────
+  const [projectLabors, setProjectLabors] = useState([]);
+  const [laborSubTab, setLaborSubTab] = useState('list'); // 'list' | 'attendance' | 'payments'
+  const [selectedLabor, setSelectedLabor] = useState(null);
+  const [addLaborModal, setAddLaborModal] = useState(false);
+  const [editingLaborId, setEditingLaborId] = useState(null);
+  const [laborForm, setLaborForm] = useState({ name: '', phone: '', trade: '', vendor_id: '', daily_rate: '' });
+  const [laborAttendanceDate, setLaborAttendanceDate] = useState(today());
+  const [laborAttendanceRows, setLaborAttendanceRows] = useState([]);
+  const [savingLaborAttendance, setSavingLaborAttendance] = useState(false);
+  const [laborPaymentsList, setLaborPaymentsList] = useState([]);
+  const [laborPaymentFilterLabor, setLaborPaymentFilterLabor] = useState('');
+  const [laborPaymentFilterFrom, setLaborPaymentFilterFrom] = useState('');
+  const [laborPaymentFilterTo, setLaborPaymentFilterTo] = useState('');
+  const [laborPaymentModal, setLaborPaymentModal] = useState(false);
+  const [laborPaymentForm, setLaborPaymentForm] = useState({ labor_id: '', amount: '', payment_date: today(), mode: 'cash', note: '' });
+  const [editingLaborPaymentId, setEditingLaborPaymentId] = useState(null);
+  const [laborCalendarMonth, setLaborCalendarMonth] = useState(() => today().slice(0, 7));
+  const [laborAttendanceHistory, setLaborAttendanceHistory] = useState([]);
+  const [laborPaymentsHistory, setLaborPaymentsHistory] = useState([]);
 
   // ── Phase 3: Materials & Stock State ───────────────────────────────────────
   const [materialsMaster, setMaterialsMaster] = useState([]);
@@ -269,20 +290,85 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
     }
   }, [project?.id]);
 
+  // ── Load Labor Data ────────────────────────────────────────────────────────
+  const loadProjectLabors = useCallback(async (projId) => {
+    const pid = projId || project?.id;
+    if (!pid) return;
+    try {
+      const d = await api(`/api/admin/project-management/labor?projectId=${pid}&pageSize=200`);
+      setProjectLabors(d.data || []);
+    } catch (e) {
+      console.error('Error loading labor:', e);
+    }
+  }, [project?.id]);
+
+  const loadLaborAttendance = useCallback(async (date, projId) => {
+    const pid = projId || project?.id;
+    const d = date || laborAttendanceDate;
+    if (!pid || !d) return;
+    try {
+      const r = await api(`/api/admin/project-management/labor/attendance?projectId=${pid}&date=${d}`);
+      const rows = (r.data || []).map((row) => ({
+        ...row,
+        name: row.name || row.labor_name || '',
+        status: row.attendance_id ? (row.attendance_status || row.status || 'present') : (row.status || 'present'),
+        wage_amount: row.attendance_id ? Number(row.wage_amount) : Number(row.daily_rate || 0),
+      }));
+      setLaborAttendanceRows(rows);
+    } catch (e) {
+      console.error('Error loading labor attendance:', e);
+    }
+  }, [project?.id, laborAttendanceDate]);
+
+  const loadLaborPayments = useCallback(async (projId, laborId, from, to) => {
+    const pid = projId || project?.id;
+    if (!pid) return;
+    try {
+      const q = new URLSearchParams({
+        projectId: String(pid),
+        laborId: laborId || '',
+        from: from || '',
+        to: to || '',
+        pageSize: '100',
+      });
+      const r = await api(`/api/admin/project-management/labor/payments?${q.toString()}`);
+      setLaborPaymentsList(r.data || []);
+    } catch (e) {
+      console.error('Error loading labor payments:', e);
+    }
+  }, [project?.id]);
+
+  const openLaborDetail = async (labor) => {
+    try {
+      setSelectedLabor(labor);
+      const [attRes, payRes] = await Promise.all([
+        api(`/api/admin/project-management/labor/attendance?laborId=${labor.id}&month=${laborCalendarMonth}`).catch(() => ({ data: [] })),
+        api(`/api/admin/project-management/labor/payments?projectId=${project.id}&laborId=${labor.id}&pageSize=100`).catch(() => ({ data: [] })),
+      ]);
+      setLaborAttendanceHistory(attRes.data || []);
+      setLaborPaymentsHistory(payRes.data || []);
+    } catch (e) {
+      setMessage(e.message);
+    }
+  };
+
   // ── Show Single Project Overview ─────────────────────────────────────────────
   const showProject = async (id) => {
     try {
-      const [projRes, ppRes, pvRes, vListRes] = await Promise.all([
+      const [projRes, ppRes, pvRes, vListRes, laborRes] = await Promise.all([
         api(`/api/admin/project-management/projects/${id}`),
         api(`/api/admin/project-management/payments?projectId=${id}&page=1&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/project-vendors?projectId=${id}&page=1&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/vendors?page=1&pageSize=100`).catch(() => ({ data: [] })),
+        api(`/api/admin/project-management/labor?projectId=${id}&pageSize=200`).catch(() => ({ data: [] })),
       ]);
       setProject(projRes.data);
       setPartyPayments(ppRes.data || []);
       setProjectVendors(pvRes.data || []);
       setAllVendorsMaster(vListRes.data || []);
+      setProjectLabors(laborRes.data || []);
       setSelectedVendor(null);
+      setSelectedLabor(null);
       setScreen('project');
       setProjectTab('materials');
       loadPhase3ProjectData(id);
@@ -296,14 +382,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
     const pid = projId || project?.id;
     if (!pid) return;
     try {
-      const [projRes, pvRes, ppRes] = await Promise.all([
+      const [projRes, pvRes, ppRes, laborRes] = await Promise.all([
         api(`/api/admin/project-management/projects/${pid}`),
         api(`/api/admin/project-management/project-vendors?projectId=${pid}&page=1&pageSize=100`),
         api(`/api/admin/project-management/payments?projectId=${pid}&page=1&pageSize=100`),
+        api(`/api/admin/project-management/labor?projectId=${pid}&pageSize=200`).catch(() => ({ data: [] })),
       ]);
       setProject(projRes.data);
       setProjectVendors(pvRes.data || []);
       setPartyPayments(ppRes.data || []);
+      setProjectLabors(laborRes.data || []);
       loadPhase3ProjectData(pid);
     } catch (e) {
       setMessage(e.message);
@@ -550,6 +638,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
       } else if (kind === 'expense') {
         await api(`/api/admin/project-management/other-expenses/${id}`, { method: 'DELETE' });
         refreshProjectData();
+      } else if (kind === 'labor') {
+        await api(`/api/admin/project-management/labor/${id}`, { method: 'DELETE' });
+        loadProjectLabors(project.id);
+        refreshProjectData();
+      } else if (kind === 'laborPayment') {
+        await api(`/api/admin/project-management/labor/payments/${id}`, { method: 'DELETE' });
+        loadLaborPayments(project.id, laborPaymentFilterLabor, laborPaymentFilterFrom, laborPaymentFilterTo);
+        if (selectedLabor) openLaborDetail(selectedLabor);
+        refreshProjectData();
       }
       setMessage('Record deleted successfully');
     } catch (e) {
@@ -644,20 +741,22 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
     if (!project?.id) return;
     try {
       const attData = await api(`/api/admin/project-management/attendance?projectId=${project.id}&date=${date}`).catch(() => ({ data: [] }));
-      const existingMap = new Map((attData.data || []).map((a) => [Number(a.project_vendor_id), a]));
+      const existingMap = new Map((attData.data || []).map((a) => [Number(a.project_vendor_id || a.id), a]));
       const dailyVendors = projectVendors.filter((pv) => pv.pay_type === 'daily_wage');
 
       const rows = dailyVendors.map((pv) => {
         const ex = existingMap.get(Number(pv.id));
+        const hasLinkedLabor = Boolean(ex?.has_linked_labor);
         return {
           project_vendor_id: pv.id,
           vendor_name: pv.vendor_name,
           trade: pv.trade,
-          status: ex ? ex.status : 'present',
+          status: ex && ex.attendance_id ? ex.attendance_status : (hasLinkedLabor ? 'absent' : (ex?.status || 'present')),
           workers_count: ex ? Number(ex.workers_count) : 1,
           rate_per_worker: ex ? Number(ex.rate_per_worker) : Number(pv.daily_rate || 0),
-          wage_amount: ex ? Number(ex.wage_amount) : Number(pv.daily_rate || 0),
+          wage_amount: hasLinkedLabor ? 0 : (ex ? Number(ex.wage_amount) : Number(pv.daily_rate || 0)),
           note: ex ? ex.note || '' : '',
+          has_linked_labor: hasLinkedLabor,
         };
       });
       setAttendanceRows(rows);
@@ -679,13 +778,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
         method: 'POST',
         body: JSON.stringify({
           attendance_date: attendanceDate,
-          records: attendanceRows.map((r) => ({
-            project_vendor_id: r.project_vendor_id,
-            status: r.status,
-            workers_count: r.workers_count,
-            rate_per_worker: r.rate_per_worker,
-            note: r.note,
-          })),
+          records: attendanceRows
+            .filter((r) => !r.has_linked_labor)
+            .map((r) => ({
+              project_vendor_id: r.project_vendor_id,
+              status: r.status,
+              workers_count: r.workers_count,
+              rate_per_worker: r.rate_per_worker,
+              note: r.note,
+            })),
         }),
       });
       setMessage('Attendance saved for all vendors');
@@ -764,8 +865,131 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
     }
   };
 
+  // ── Labor (Individual Worker) Handlers ─────────────────────────────────────
+  useEffect(() => {
+    if (projectTab === 'labor' && project?.id) {
+      if (laborSubTab === 'list') {
+        loadProjectLabors(project.id);
+      } else if (laborSubTab === 'attendance') {
+        loadLaborAttendance(laborAttendanceDate, project.id);
+      } else if (laborSubTab === 'payments') {
+        loadLaborPayments(project.id, laborPaymentFilterLabor, laborPaymentFilterFrom, laborPaymentFilterTo);
+      }
+    }
+  }, [projectTab, laborSubTab, laborAttendanceDate, laborPaymentFilterLabor, laborPaymentFilterFrom, laborPaymentFilterTo, loadProjectLabors, loadLaborAttendance, loadLaborPayments, project?.id]);
+
+  const saveLabor = async (e) => {
+    e.preventDefault();
+    if (!project?.id) return;
+    try {
+      const payload = {
+        project_id: project.id,
+        name: laborForm.name,
+        phone: laborForm.phone,
+        trade: laborForm.trade,
+        vendor_id: laborForm.vendor_id ? Number(laborForm.vendor_id) : null,
+        daily_rate: Number(laborForm.daily_rate || 0),
+        is_active: laborForm.is_active !== undefined ? laborForm.is_active : true,
+      };
+
+      if (editingLaborId) {
+        await api(`/api/admin/project-management/labor/${editingLaborId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(payload),
+        });
+        setMessage('Labor worker updated successfully');
+      } else {
+        await api('/api/admin/project-management/labor', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+        setMessage('Labor worker added successfully');
+      }
+      setAddLaborModal(false);
+      setEditingLaborId(null);
+      setLaborForm({ name: '', phone: '', trade: '', vendor_id: '', daily_rate: '', is_active: true });
+      loadProjectLabors(project.id);
+      refreshProjectData(project.id);
+    } catch (err) {
+      setMessage(err.message);
+    }
+  };
+
+  const saveAllLaborAttendance = async () => {
+    if (!project?.id) return;
+    setSavingLaborAttendance(true);
+    try {
+      const payloadEntries = laborAttendanceRows.map((r) => ({
+        labor_id: Number(r.labor_id || r.id),
+        attendance_date: laborAttendanceDate,
+        status: r.status || 'present',
+        note: r.note || '',
+      }));
+
+      await api('/api/admin/project-management/labor/attendance', {
+        method: 'PUT',
+        body: JSON.stringify({
+          project_id: project.id,
+          attendance_date: laborAttendanceDate,
+          entries: payloadEntries,
+          records: payloadEntries,
+        }),
+      });
+      setMessage('Labor attendance saved successfully');
+      loadLaborAttendance(laborAttendanceDate, project.id);
+      loadProjectLabors(project.id);
+      refreshProjectData(project.id);
+    } catch (e) {
+      setMessage(e.message);
+    } finally {
+      setSavingLaborAttendance(false);
+    }
+  };
+
+  const saveLaborPayment = async (e) => {
+    e.preventDefault();
+    if (!project?.id) return;
+    try {
+      if (editingLaborPaymentId) {
+        await api(`/api/admin/project-management/labor/payments/${editingLaborPaymentId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            amount: Number(laborPaymentForm.amount),
+            payment_date: laborPaymentForm.payment_date,
+            mode: laborPaymentForm.mode,
+            note: laborPaymentForm.note,
+          }),
+        });
+        setMessage('Labor payment updated successfully');
+      } else {
+        await api('/api/admin/project-management/labor/payments', {
+          method: 'POST',
+          body: JSON.stringify({
+            labor_id: Number(laborPaymentForm.labor_id),
+            amount: Number(laborPaymentForm.amount),
+            payment_date: laborPaymentForm.payment_date,
+            mode: laborPaymentForm.mode,
+            note: laborPaymentForm.note,
+          }),
+        });
+        setMessage('Labor payment recorded successfully');
+      }
+      setLaborPaymentModal(false);
+      setEditingLaborPaymentId(null);
+      setLaborPaymentForm({ labor_id: '', amount: '', payment_date: today(), mode: 'cash', note: '' });
+      loadLaborPayments(project.id, laborPaymentFilterLabor, laborPaymentFilterFrom, laborPaymentFilterTo);
+      loadProjectLabors(project.id);
+      if (selectedLabor) {
+        openLaborDetail(selectedLabor);
+      }
+      refreshProjectData(project.id);
+    } catch (e) {
+      setMessage(e.message);
+    }
+  };
+
   return (
-    <section className="pm-container">
+    <section className={`pm-container${isDarkMode ? ' dark-mode' : ''}`}>
       {/* ── TOP NAV BAR ───────────────────────────────────────────────────── */}
       <div className="bar" style={{ justifyContent: 'space-between', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
@@ -945,38 +1169,55 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
               </button>
             </div>
 
-            <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))' }}>
-              <div className="stat">
-                <small>Contract Value</small>
-                <b>{INR(party.party.total_contract_value)}</b>
-              </div>
-              <div className="stat">
-                <small>Received</small>
-                <b style={{ color: '#16a34a' }}>{INR(party.party.total_received)}</b>
-              </div>
-              <div className="stat">
-                <small>Pending</small>
-                <b style={{ color: '#dc2626' }}>{INR(party.party.total_pending)}</b>
-              </div>
-              {!isSupervisor && (
-                <>
+            {(() => {
+              const projectsList = party.projects || [];
+              const liveContractValue = projectsList.length > 0
+                ? projectsList.reduce((acc, p) => acc + Number(p.contract_value || 0), 0)
+                : Number(party.party.total_contract_value || 0);
+              const liveReceived = projectsList.length > 0
+                ? projectsList.reduce((acc, p) => acc + Number(p.received || 0), 0)
+                : Number(party.party.total_received || 0);
+              const livePending = liveContractValue - liveReceived;
+              const liveExpense = projectsList.length > 0
+                ? projectsList.reduce((acc, p) => acc + Number(p.total_expense || 0), 0)
+                : Number(party.party.total_expense || 0);
+              const liveProfit = liveReceived - liveExpense;
+
+              return (
+                <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))' }}>
                   <div className="stat">
-                    <small>Total Party Expense</small>
-                    <b style={{ color: '#b45309' }}>{INR(party.party.total_expense)}</b>
+                    <small>Contract Value</small>
+                    <b>{INR(liveContractValue)}</b>
                   </div>
-                  <div className="stat" style={{ background: Number(party.party.total_profit) >= 0 ? '#f0fdf4' : '#fef2f2' }}>
-                    <small style={{ color: Number(party.party.total_profit) >= 0 ? '#166534' : '#991b1b' }}>Net Profit</small>
-                    <b style={{ color: Number(party.party.total_profit) >= 0 ? '#16a34a' : '#dc2626' }}>
-                      {INR(party.party.total_profit)}
-                    </b>
+                  <div className="stat">
+                    <small>Received</small>
+                    <b style={{ color: '#16a34a' }}>{INR(liveReceived)}</b>
                   </div>
-                </>
-              )}
-              <div className="stat">
-                <small>Projects</small>
-                <b>{party.projects.length}</b>
-              </div>
-            </div>
+                  <div className="stat">
+                    <small>Pending</small>
+                    <b style={{ color: '#dc2626' }}>{INR(livePending)}</b>
+                  </div>
+                  {!isSupervisor && (
+                    <>
+                      <div className="stat">
+                        <small>Total Party Expense</small>
+                        <b style={{ color: '#b45309' }}>{INR(liveExpense)}</b>
+                      </div>
+                      <div className="stat" style={{ background: Number(liveProfit) >= 0 ? '#f0fdf4' : '#fef2f2' }}>
+                        <small style={{ color: Number(liveProfit) >= 0 ? '#166534' : '#991b1b' }}>Net Profit</small>
+                        <b style={{ color: Number(liveProfit) >= 0 ? '#16a34a' : '#dc2626' }}>
+                          {INR(liveProfit)}
+                        </b>
+                      </div>
+                    </>
+                  )}
+                  <div className="stat">
+                    <small>Projects</small>
+                    <b>{party.projects.length}</b>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           <table>
@@ -1113,6 +1354,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
                   <div className="stat">
                     <small>Total Labour Cost</small>
                     <b>{INR(project.total_labour_cost)}</b>
+                    <span style={{ fontSize: 10, color: '#64748b', display: 'block', marginTop: 2 }}>
+                      Vendor: {INR(project.vendor_labour_cost ?? (Number(project.daily_labour_cost || 0) + Number(project.contract_labour_cost || 0)))} | Labor: {INR(project.individual_labour_cost || 0)}
+                    </span>
                   </div>
                   <div className="stat">
                     <small>Total Material Cost</small>
@@ -1145,7 +1389,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
           </div>
 
           {/* Subtabs Navigation */}
-          {!selectedVendor ? (
+          {!selectedVendor && !selectedLabor ? (
             <>
               <div className="subtabs">
                 <button
@@ -1171,6 +1415,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
                   onClick={() => setProjectTab('attendance')}
                 >
                   📅 Daily Attendance
+                </button>
+                <button
+                  className={projectTab === 'labor' ? 'active' : ''}
+                  onClick={() => {
+                    setProjectTab('labor');
+                    setSelectedLabor(null);
+                  }}
+                >
+                  🦺 Labor ({projectLabors.length})
                 </button>
                 {!isSupervisor && (
                   <>
@@ -1792,29 +2045,40 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
                     </thead>
                     <tbody>
                       {attendanceRows.map((row, idx) => (
-                        <tr key={row.project_vendor_id}>
-                          <td><b>{row.vendor_name}</b></td>
+                        <tr key={row.project_vendor_id} style={{ opacity: row.has_linked_labor ? 0.75 : 1 }}>
+                          <td>
+                            <b>{row.vendor_name}</b>
+                            {row.has_linked_labor && (
+                              <div style={{ fontSize: 11, color: '#b45309', background: '#fef3c7', padding: '2px 6px', borderRadius: 4, display: 'inline-block', marginTop: 3 }}>
+                                ⚠️ Tracked under Labor tab
+                              </div>
+                            )}
+                          </td>
                           <td>{row.trade || '—'}</td>
                           <td>
-                            <div style={{ display: 'flex', gap: 4 }}>
-                              {['present', 'half_day', 'absent'].map((st) => (
-                                <button
-                                  key={st}
-                                  type="button"
-                                  onClick={() => {
-                                    const next = [...attendanceRows];
-                                    next[idx].status = st;
-                                    const mult = st === 'present' ? 1 : st === 'half_day' ? 0.5 : 0;
-                                    next[idx].wage_amount = mult * Number(next[idx].workers_count) * Number(next[idx].rate_per_worker);
-                                    setAttendanceRows(next);
-                                  }}
-                                  className={row.status === st ? 'active-btn' : 'muted'}
-                                  style={{ padding: '3px 8px', fontSize: 11 }}
-                                >
-                                  {st === 'present' ? 'Present' : st === 'half_day' ? 'Half Day' : 'Absent'}
-                                </button>
-                              ))}
-                            </div>
+                            {row.has_linked_labor ? (
+                              <span style={{ fontSize: 11, color: '#64748b', fontStyle: 'italic' }}>Individual Workers Active</span>
+                            ) : (
+                              <div style={{ display: 'flex', gap: 4 }}>
+                                {['present', 'half_day', 'absent'].map((st) => (
+                                  <button
+                                    key={st}
+                                    type="button"
+                                    onClick={() => {
+                                      const next = [...attendanceRows];
+                                      next[idx].status = st;
+                                      const mult = st === 'present' ? 1 : st === 'half_day' ? 0.5 : 0;
+                                      next[idx].wage_amount = mult * Number(next[idx].workers_count) * Number(next[idx].rate_per_worker);
+                                      setAttendanceRows(next);
+                                    }}
+                                    className={row.status === st ? 'active-btn' : 'muted'}
+                                    style={{ padding: '3px 8px', fontSize: 11 }}
+                                  >
+                                    {st === 'present' ? 'Present' : st === 'half_day' ? 'Half Day' : 'Absent'}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
                           </td>
                           <td>
                             <input
@@ -1822,6 +2086,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
                               min="0.5"
                               step="0.5"
                               value={row.workers_count}
+                              disabled={row.has_linked_labor}
                               onChange={(e) => {
                                 const next = [...attendanceRows];
                                 next[idx].workers_count = e.target.value;
@@ -1837,6 +2102,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
                               type="number"
                               min="0"
                               value={row.rate_per_worker}
+                              disabled={row.has_linked_labor}
                               onChange={(e) => {
                                 const next = [...attendanceRows];
                                 next[idx].rate_per_worker = e.target.value;
@@ -1847,14 +2113,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
                               style={{ width: 90 }}
                             />
                           </td>
-                          <td style={{ fontWeight: 700, color: '#16a34a' }}>
-                            {INR(row.wage_amount)}
+                          <td style={{ fontWeight: 700, color: row.has_linked_labor ? '#64748b' : '#16a34a' }}>
+                            {row.has_linked_labor ? '₹0 (via Labor)' : INR(row.wage_amount)}
                           </td>
                           <td>
                             <input
                               type="text"
                               placeholder="Note..."
                               value={row.note}
+                              disabled={row.has_linked_labor}
                               onChange={(e) => {
                                 const next = [...attendanceRows];
                                 next[idx].note = e.target.value;
@@ -2074,8 +2341,390 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
                   </table>
                 </div>
               )}
+
+              {/* ── TAB: LABOR (INDIVIDUAL WORKERS) ────────────────────────────── */}
+              {projectTab === 'labor' && (
+                <div>
+                  {/* Sub-navigation for Labor: Workers List, Daily Attendance, Payments */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <button
+                        className={laborSubTab === 'list' ? 'active-btn' : 'muted'}
+                        onClick={() => setLaborSubTab('list')}
+                      >
+                        👷 Laborers ({projectLabors.length})
+                      </button>
+                      <button
+                        className={laborSubTab === 'attendance' ? 'active-btn' : 'muted'}
+                        onClick={() => {
+                          setLaborSubTab('attendance');
+                          loadLaborAttendance(laborAttendanceDate, project.id);
+                        }}
+                      >
+                        📅 Daily Attendance
+                      </button>
+                      {!isSupervisor && (
+                        <button
+                          className={laborSubTab === 'payments' ? 'active-btn' : 'muted'}
+                          onClick={() => {
+                            setLaborSubTab('payments');
+                            loadLaborPayments(project.id);
+                          }}
+                        >
+                          💸 Labor Payments ({laborPaymentsList.length})
+                        </button>
+                      )}
+                    </div>
+
+                    <div>
+                      {laborSubTab === 'list' && (
+                        <button
+                          onClick={() => {
+                            setLaborForm({ name: '', phone: '', trade: '', vendor_id: '', daily_rate: '', is_active: true });
+                            setEditingLaborId(null);
+                            setAddLaborModal(true);
+                          }}
+                        >
+                          + Add Labor
+                        </button>
+                      )}
+                      {laborSubTab === 'attendance' && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ fontSize: 13, fontWeight: 600 }}>Date:</span>
+                          <input
+                            type="date"
+                            value={laborAttendanceDate}
+                            onChange={(e) => {
+                              setLaborAttendanceDate(e.target.value);
+                              loadLaborAttendance(e.target.value, project.id);
+                            }}
+                            style={{ maxWidth: 160 }}
+                          />
+                          <button onClick={saveAllLaborAttendance} disabled={savingLaborAttendance}>
+                            {savingLaborAttendance ? 'Saving...' : '💾 Save Attendance'}
+                          </button>
+                        </div>
+                      )}
+                      {laborSubTab === 'payments' && !isSupervisor && (
+                        <button
+                          onClick={() => {
+                            setLaborPaymentForm({ labor_id: projectLabors[0]?.id || '', amount: '', payment_date: today(), mode: 'cash', note: '' });
+                            setEditingLaborPaymentId(null);
+                            setLaborPaymentModal(true);
+                          }}
+                        >
+                          + Record Labor Payment
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 1. LABOR LIST */}
+                  {laborSubTab === 'list' && (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Labor Name</th>
+                          <th>Trade</th>
+                          <th>Contractor / Vendor</th>
+                          <th>Daily Rate</th>
+                          <th>Total Earned</th>
+                          {!isSupervisor && <th>Total Paid</th>}
+                          {!isSupervisor && <th>Balance Due</th>}
+                          <th>Status</th>
+                          <th style={{ textAlign: 'right' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {projectLabors.map((lab) => {
+                          const isOverpaid = Number(lab.balance_due || 0) < 0;
+                          return (
+                            <tr key={lab.id}>
+                              <td>
+                                <b>{lab.name}</b>
+                                {lab.phone && <div style={{ fontSize: 11, color: '#64748b' }}>{lab.phone}</div>}
+                              </td>
+                              <td>{lab.trade || 'Helper'}</td>
+                              <td>
+                                {lab.vendor_name ? (
+                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                    <span style={{ fontSize: 11, background: '#f1f5f9', color: '#334155', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
+                                      🏢 {lab.vendor_name}
+                                    </span>
+                                  </span>
+                                ) : (
+                                  <span style={{ fontSize: 11, background: '#ecfdf5', color: '#047857', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
+                                    ⚡ Independent
+                                  </span>
+                                )}
+                              </td>
+                              <td style={{ fontWeight: 600 }}>{INR(lab.daily_rate)}/day</td>
+                              <td style={{ fontWeight: 600 }}>{INR(lab.total_earned)}</td>
+                              {!isSupervisor && <td style={{ color: '#16a34a', fontWeight: 600 }}>{INR(lab.total_paid)}</td>}
+                              {!isSupervisor && (
+                                <td>
+                                  <b style={{ color: isOverpaid ? '#dc2626' : '#0f172a' }}>
+                                    {INR(lab.balance_due)}
+                                  </b>
+                                  {isOverpaid && (
+                                    <span className="badge badge-overused" style={{ marginLeft: 4 }}>
+                                      ⚠️ Overpaid
+                                    </span>
+                                  )}
+                                </td>
+                              )}
+                              <td>
+                                <span className={`badge ${lab.is_active ? 'badge-active' : 'badge-completed'}`}>
+                                  {lab.is_active ? 'Active' : 'Inactive'}
+                                </span>
+                              </td>
+                              <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                                <button onClick={() => openLaborDetail(lab)}>
+                                  View Details &rarr;
+                                </button>
+                                <button
+                                  className="muted"
+                                  onClick={() => {
+                                    setLaborForm({
+                                      name: lab.name,
+                                      phone: lab.phone || '',
+                                      trade: lab.trade || '',
+                                      vendor_id: lab.vendor_id || '',
+                                      daily_rate: lab.daily_rate,
+                                      is_active: lab.is_active,
+                                    });
+                                    setEditingLaborId(lab.id);
+                                    setAddLaborModal(true);
+                                  }}
+                                >
+                                  Edit
+                                </button>
+                                <button className="danger" onClick={() => del('labor', lab.id)}>
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {projectLabors.length === 0 && (
+                          <tr>
+                            <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                              No laborers added to this project yet. Click &ldquo;+ Add Labor&rdquo; above.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  )}
+
+                  {/* 2. LABOR ATTENDANCE SUB-TAB (Grouped by Vendor or Independent) */}
+                  {laborSubTab === 'attendance' && (
+                    <div>
+                      {(() => {
+                        const groups = {};
+                        laborAttendanceRows.forEach((r) => {
+                          const key = r.vendor_name ? `Vendor: ${r.vendor_name}` : 'Independent (Direct Workers)';
+                          if (!groups[key]) groups[key] = [];
+                          groups[key].push(r);
+                        });
+
+                        const groupKeys = Object.keys(groups);
+                        if (groupKeys.length === 0) {
+                          return (
+                            <div style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                              No active laborers found for this project. Add laborers in the Labor tab first.
+                            </div>
+                          );
+                        }
+
+                        return groupKeys.map((grpTitle) => (
+                          <div key={grpTitle} className="card" style={{ marginBottom: 16 }}>
+                            <h4 style={{ margin: '0 0 10px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span>{grpTitle.startsWith('Vendor') ? '🏢' : '⚡'}</span>
+                              <span>{grpTitle}</span>
+                              <span style={{ fontSize: 12, color: '#64748b', fontWeight: 'normal' }}>
+                                ({groups[grpTitle].length} {groups[grpTitle].length === 1 ? 'worker' : 'workers'})
+                              </span>
+                            </h4>
+
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Labor Name</th>
+                                  <th>Trade</th>
+                                  <th>Daily Rate</th>
+                                  <th>Status</th>
+                                  <th>Wage Amount</th>
+                                  <th>Note</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {groups[grpTitle].map((row) => {
+                                  const idx = laborAttendanceRows.findIndex((x) => x.labor_id === row.labor_id);
+                                  return (
+                                    <tr key={row.labor_id}>
+                                      <td>
+                                        <b>{row.name}</b>
+                                        {row.phone && <span style={{ fontSize: 11, color: '#64748b', display: 'block' }}>{row.phone}</span>}
+                                      </td>
+                                      <td>{row.trade || 'Helper'}</td>
+                                      <td>{INR(row.daily_rate)}/day</td>
+                                      <td>
+                                        <div style={{ display: 'flex', gap: 4 }}>
+                                          {['present', 'half_day', 'absent'].map((st) => (
+                                            <button
+                                              key={st}
+                                              type="button"
+                                              onClick={() => {
+                                                const next = [...laborAttendanceRows];
+                                                next[idx].status = st;
+                                                const mult = st === 'present' ? 1 : st === 'half_day' ? 0.5 : 0;
+                                                next[idx].wage_amount = mult * Number(row.daily_rate || 0);
+                                                setLaborAttendanceRows(next);
+                                              }}
+                                              className={row.status === st ? 'active-btn' : 'muted'}
+                                              style={{ padding: '3px 8px', fontSize: 11 }}
+                                            >
+                                              {st === 'present' ? 'Present' : st === 'half_day' ? 'Half Day' : 'Absent'}
+                                            </button>
+                                          ))}
+                                        </div>
+                                      </td>
+                                      <td style={{ fontWeight: 700, color: '#16a34a' }}>
+                                        {INR(row.wage_amount)}
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          placeholder="Note..."
+                                          value={row.note || ''}
+                                          onChange={(e) => {
+                                            const next = [...laborAttendanceRows];
+                                            next[idx].note = e.target.value;
+                                            setLaborAttendanceRows(next);
+                                          }}
+                                          style={{ width: 140 }}
+                                        />
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  )}
+
+                  {/* 3. LABOR PAYMENTS SUB-TAB */}
+                  {laborSubTab === 'payments' && !isSupervisor && (
+                    <div>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
+                        <select
+                          value={laborPaymentFilterLabor}
+                          onChange={(e) => setLaborPaymentFilterLabor(e.target.value)}
+                          style={{ maxWidth: 200 }}
+                        >
+                          <option value="">All Laborers</option>
+                          {projectLabors.map((l) => (
+                            <option key={l.id} value={l.id}>{l.name} ({l.trade || 'Helper'})</option>
+                          ))}
+                        </select>
+
+                        <input
+                          type="date"
+                          value={laborPaymentFilterFrom}
+                          onChange={(e) => setLaborPaymentFilterFrom(e.target.value)}
+                          placeholder="From Date"
+                          style={{ maxWidth: 150 }}
+                        />
+
+                        <input
+                          type="date"
+                          value={laborPaymentFilterTo}
+                          onChange={(e) => setLaborPaymentFilterTo(e.target.value)}
+                          placeholder="To Date"
+                          style={{ maxWidth: 150 }}
+                        />
+
+                        {(laborPaymentFilterLabor || laborPaymentFilterFrom || laborPaymentFilterTo) && (
+                          <button
+                            className="muted"
+                            onClick={() => {
+                              setLaborPaymentFilterLabor('');
+                              setLaborPaymentFilterFrom('');
+                              setLaborPaymentFilterTo('');
+                            }}
+                          >
+                            Clear Filters
+                          </button>
+                        )}
+                      </div>
+
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>Laborer</th>
+                            <th>Trade</th>
+                            <th>Amount</th>
+                            <th>Mode</th>
+                            <th>Note</th>
+                            <th style={{ textAlign: 'right' }}>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {laborPaymentsList.map((p) => (
+                            <tr key={p.id}>
+                              <td>{p.payment_date}</td>
+                              <td><b>{p.labor_name}</b></td>
+                              <td>{p.trade || '—'}</td>
+                              <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
+                              <td>
+                                <span className="badge badge-active" style={{ textTransform: 'uppercase', fontSize: 10 }}>
+                                  {p.mode}
+                                </span>
+                              </td>
+                              <td>{p.note || '—'}</td>
+                              <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                                <button
+                                  className="muted"
+                                  onClick={() => {
+                                    setLaborPaymentForm({
+                                      labor_id: p.labor_id,
+                                      amount: p.amount,
+                                      payment_date: p.payment_date,
+                                      mode: p.mode,
+                                      note: p.note || '',
+                                    });
+                                    setEditingLaborPaymentId(p.id);
+                                    setLaborPaymentModal(true);
+                                  }}
+                                >
+                                  Edit
+                                </button>
+                                <button className="danger" onClick={() => del('laborPayment', p.id)}>
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                          {laborPaymentsList.length === 0 && (
+                            <tr>
+                              <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                No labor payments recorded yet. Click &ldquo;+ Record Labor Payment&rdquo; above.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
             </>
-          ) : (
+          ) : selectedVendor ? (
             /* ── VENDOR DETAIL SCREEN (ATTENDANCE CALENDAR & MATERIAL HISTORY) ── */
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
@@ -2256,6 +2905,374 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
                   </table>
                 </div>
               )}
+            </div>
+          ) : selectedLabor ? (
+            /* ── LABOR DETAIL SCREEN (ATTENDANCE CALENDAR & PAYMENT HISTORY) ── */
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <button className="muted" onClick={() => setSelectedLabor(null)}>
+                  &larr; Back to Project Overview
+                </button>
+                {!isSupervisor && (
+                  <button
+                    onClick={() => {
+                      setLaborPaymentForm({
+                        labor_id: selectedLabor.id,
+                        amount: '',
+                        payment_date: today(),
+                        mode: 'cash',
+                        note: '',
+                      });
+                      setEditingLaborPaymentId(null);
+                      setLaborPaymentModal(true);
+                    }}
+                  >
+                    + Record Labor Payment
+                  </button>
+                )}
+              </div>
+
+              <div className="card" style={{ marginBottom: 16 }}>
+                <h3 style={{ margin: 0, fontSize: 18 }}>{selectedLabor.name}</h3>
+                <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 13 }}>
+                  Trade: <b>{selectedLabor.trade || 'Helper'}</b> &bull; Rate: <b>{INR(selectedLabor.daily_rate)}/day</b> &bull; Contractor:{' '}
+                  <b>{selectedLabor.vendor_name ? selectedLabor.vendor_name : 'Independent (Direct Worker)'}</b>
+                  {selectedLabor.phone ? ` • Phone: ${selectedLabor.phone}` : ''}
+                </p>
+                <div className="stats" style={{ marginTop: 12 }}>
+                  <div className="stat">
+                    <small>Total Earned</small>
+                    <b>{INR(selectedLabor.total_earned)}</b>
+                  </div>
+                  {!isSupervisor && (
+                    <>
+                      <div className="stat">
+                        <small>Total Paid</small>
+                        <b style={{ color: '#16a34a' }}>{INR(selectedLabor.total_paid)}</b>
+                      </div>
+                      <div className="stat">
+                        <small>Balance Due</small>
+                        <b style={{ color: selectedLabor.balance_due < 0 ? '#dc2626' : '#0f172a' }}>
+                          {INR(selectedLabor.balance_due)}
+                        </b>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Monthly Attendance Calendar */}
+              <div className="card" style={{ marginBottom: 16 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <h4 style={{ margin: 0, fontSize: 15 }}>Attendance Calendar</h4>
+                  <input
+                    type="month"
+                    value={laborCalendarMonth}
+                    onChange={(e) => {
+                      setLaborCalendarMonth(e.target.value);
+                      api(`/api/admin/project-management/labor/attendance?laborId=${selectedLabor.id}&month=${e.target.value}`)
+                        .then((r) => setLaborAttendanceHistory(r.data || []))
+                        .catch(() => {});
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: 14, marginBottom: 12, fontSize: 12 }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ width: 12, height: 12, background: '#22c55e', borderRadius: 2 }} /> Present (1.0)
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ width: 12, height: 12, background: '#eab308', borderRadius: 2 }} /> Half Day (0.5)
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ width: 12, height: 12, background: '#ef4444', borderRadius: 2 }} /> Absent (0.0)
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(65px, 1fr))', gap: 6 }}>
+                  {Array.from({ length: 31 }).map((_, i) => {
+                    const dayStr = String(i + 1).padStart(2, '0');
+                    const dKey = `${laborCalendarMonth}-${dayStr}`;
+                    const match = laborAttendanceHistory.find((a) => a.attendance_date?.slice(0, 10) === dKey);
+                    let bg = '#f8fafc';
+                    let color = '#94a3b8';
+                    if (match) {
+                      if (match.status === 'present') { bg = '#dcfce7'; color = '#15803d'; }
+                      else if (match.status === 'half_day') { bg = '#fef9c3'; color = '#a16207'; }
+                      else if (match.status === 'absent') { bg = '#fee2e2'; color = '#b91c1c'; }
+                    }
+                    return (
+                      <div
+                        key={dKey}
+                        style={{
+                          background: bg,
+                          color,
+                          padding: '8px 4px',
+                          textAlign: 'center',
+                          borderRadius: 6,
+                          fontSize: 11,
+                          fontWeight: 700,
+                          border: '1px solid #e2e8f0',
+                        }}
+                      >
+                        <div>{i + 1}</div>
+                        <div style={{ fontSize: 9, marginTop: 2 }}>{match ? match.status : '—'}</div>
+                        {match && match.wage_amount > 0 && (
+                          <div style={{ fontSize: 9, marginTop: 1, color: '#16a34a' }}>{INR(match.wage_amount)}</div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Labor Payment History */}
+              {!isSupervisor && (
+                <div className="card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <h4 style={{ margin: 0, fontSize: 15 }}>Payment History</h4>
+                    <button
+                      onClick={() => {
+                        setLaborPaymentForm({
+                          labor_id: selectedLabor.id,
+                          amount: '',
+                          payment_date: today(),
+                          mode: 'cash',
+                          note: '',
+                        });
+                        setEditingLaborPaymentId(null);
+                        setLaborPaymentModal(true);
+                      }}
+                    >
+                      + Record Payment
+                    </button>
+                  </div>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Mode</th>
+                        <th>Note</th>
+                        <th style={{ textAlign: 'right' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {laborPaymentsHistory.map((p) => (
+                        <tr key={p.id}>
+                          <td>{p.payment_date}</td>
+                          <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
+                          <td>
+                            <span className="badge badge-active" style={{ textTransform: 'uppercase', fontSize: 10 }}>
+                              {p.mode}
+                            </span>
+                          </td>
+                          <td>{p.note || '—'}</td>
+                          <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                            <button
+                              className="danger"
+                              onClick={() => del('laborPayment', p.id)}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {laborPaymentsHistory.length === 0 && (
+                        <tr>
+                          <td colSpan={5} style={{ textAlign: 'center', padding: '1.5rem', color: '#64748b' }}>
+                            No payments recorded yet for this worker.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          ) : null}
+
+          {/* ── MODAL: ADD / EDIT LABOR ─────────────────────────────────────── */}
+          {addLaborModal && (
+            <div className="modal-overlay">
+              <form onSubmit={saveLabor} className="modal-card">
+                <h3 style={{ margin: '0 0 12px', fontSize: 17, color: '#0f172a' }}>
+                  {editingLaborId ? 'Edit Labor Worker' : 'Add Labor Worker to Project'}
+                </h3>
+
+                <div style={{ marginBottom: 12 }}>
+                  <Input
+                    label="Worker Full Name"
+                    name="name"
+                    value={laborForm.name}
+                    set={setLaborForm}
+                    required
+                    placeholder="e.g. Ramesh Kumar"
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
+                  <Input
+                    label="Phone Number"
+                    name="phone"
+                    value={laborForm.phone}
+                    set={setLaborForm}
+                    placeholder="e.g. 9876543210"
+                  />
+                  <Input
+                    label="Trade / Skill"
+                    name="trade"
+                    value={laborForm.trade}
+                    set={setLaborForm}
+                    placeholder="e.g. Mason, Helper, Painter, Carpenter"
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+                  <div>
+                    <label>
+                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
+                        Contractor / Linked Vendor
+                      </small>
+                      <select
+                        value={laborForm.vendor_id}
+                        onChange={(e) => setLaborForm({ ...laborForm, vendor_id: e.target.value })}
+                      >
+                        <option value="">Independent (Direct Worker / No Contractor)</option>
+                        {projectVendors.map((pv) => (
+                          <option key={pv.vendor_id || pv.id} value={pv.vendor_id}>
+                            🏢 {pv.vendor_name} ({pv.trade || 'Vendor'})
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <span style={{ fontSize: 10, color: '#64748b', display: 'block', marginTop: 2 }}>
+                      Leave Independent if directly hired without a contractor.
+                    </span>
+                  </div>
+
+                  <Input
+                    label="Daily Rate (₹/day)"
+                    name="daily_rate"
+                    type="number"
+                    value={laborForm.daily_rate}
+                    set={setLaborForm}
+                    required
+                    min="0"
+                    placeholder="e.g. 600"
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
+                  <button
+                    type="button"
+                    className="muted"
+                    onClick={() => {
+                      setAddLaborModal(false);
+                      setEditingLaborId(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit">
+                    {editingLaborId ? 'Update Laborer' : 'Add Laborer'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* ── MODAL: RECORD LABOR PAYMENT ─────────────────────────────────── */}
+          {laborPaymentModal && !isSupervisor && (
+            <div className="modal-overlay">
+              <form onSubmit={saveLaborPayment} className="modal-card">
+                <h3 style={{ margin: '0 0 12px', fontSize: 17, color: '#0f172a' }}>
+                  {editingLaborPaymentId ? 'Edit Labor Payment' : 'Record Labor Payment'}
+                </h3>
+
+                <div style={{ marginBottom: 12 }}>
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
+                      Select Laborer
+                    </small>
+                    <select
+                      required
+                      value={laborPaymentForm.labor_id}
+                      disabled={Boolean(editingLaborPaymentId || (selectedLabor && !editingLaborPaymentId))}
+                      onChange={(e) => setLaborPaymentForm({ ...laborPaymentForm, labor_id: e.target.value })}
+                    >
+                      <option value="">-- Choose Worker --</option>
+                      {projectLabors.map((lab) => (
+                        <option key={lab.id} value={lab.id}>
+                          {lab.name} ({lab.trade || 'Helper'}) — Bal: {INR(lab.balance_due)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
+                  <Input
+                    label="Amount (₹)"
+                    name="amount"
+                    type="number"
+                    value={laborPaymentForm.amount}
+                    set={setLaborPaymentForm}
+                    required
+                    min="1"
+                    placeholder="e.g. 3000"
+                  />
+                  <Input
+                    label="Payment Date"
+                    name="payment_date"
+                    type="date"
+                    value={laborPaymentForm.payment_date}
+                    set={setLaborPaymentForm}
+                    required
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
+                      Payment Mode
+                    </small>
+                    <select
+                      value={laborPaymentForm.mode}
+                      onChange={(e) => setLaborPaymentForm({ ...laborPaymentForm, mode: e.target.value })}
+                    >
+                      <option value="cash">Cash</option>
+                      <option value="bank">Bank Transfer</option>
+                      <option value="upi">UPI / Online</option>
+                      <option value="cheque">Cheque</option>
+                    </select>
+                  </label>
+
+                  <Input
+                    label="Note / Remarks"
+                    name="note"
+                    value={laborPaymentForm.note}
+                    set={setLaborPaymentForm}
+                    placeholder="e.g. Weekly wage, advance"
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
+                  <button
+                    type="button"
+                    className="muted"
+                    onClick={() => {
+                      setLaborPaymentModal(false);
+                      setEditingLaborPaymentId(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit">
+                    {editingLaborPaymentId ? 'Update Payment' : 'Save Payment'}
+                  </button>
+                </div>
+              </form>
             </div>
           )}
 
@@ -2739,7 +3756,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
                 { id: 'material_consumption', label: '2. Material Consumption' },
                 { id: 'stock_running', label: '3. Stock Across Running Projects' },
                 { id: 'vendor_balance', label: '4. Vendor Balance Summary' },
-                { id: 'party_summary', label: '5. Party-wise Contract & Payment' },
+                { id: 'labor_summary', label: '5. Labor & Worker Summary' },
+                { id: 'party_summary', label: '6. Party-wise Contract & Payment' },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -2751,8 +3769,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
               ))}
             </div>
 
-            {/* Optional Project Filter for consumption report */}
-            {reportType === 'material_consumption' && (
+            {/* Optional Project Filter for consumption and labor report */}
+            {(reportType === 'material_consumption' || reportType === 'labor_summary') && (
               <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 12, fontWeight: 600 }}>Filter Project:</span>
                 <select
@@ -2813,7 +3831,75 @@ export default function PartyProjectManagement({ initialScreen = 'parties' }) {
         .pm-container {
           padding: 16px;
           font-family: inherit;
-          color: #0f172a;
+          color: var(--text, #0f172a);
+          background: var(--bg, transparent);
+          min-height: 100%;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          box-sizing: border-box;
+        }
+        :global(.dark-mode) .pm-container,
+        .pm-container.dark-mode {
+          color: #f0f0f5;
+        }
+        :global(.dark-mode) .pm-container .card,
+        .pm-container.dark-mode .card,
+        :global(.dark-mode) .pm-container .modal-card,
+        .pm-container.dark-mode .modal-card,
+        :global(.dark-mode) .pm-container table,
+        .pm-container.dark-mode table {
+          background: #18181c;
+          border-color: #2a2a30;
+          color: #f0f0f5;
+        }
+        :global(.dark-mode) .pm-container th,
+        .pm-container.dark-mode th {
+          background: #1e1e24;
+          color: #a1a1aa;
+          border-bottom-color: #2a2a30;
+        }
+        :global(.dark-mode) .pm-container td,
+        .pm-container.dark-mode td {
+          border-bottom-color: #232328;
+          color: #f0f0f5;
+        }
+        :global(.dark-mode) .pm-container tr:hover td,
+        .pm-container.dark-mode tr:hover td {
+          background: #1e1e24;
+        }
+        :global(.dark-mode) .pm-container .stat,
+        .pm-container.dark-mode .stat {
+          background: #18181c;
+          border-color: #2a2a30;
+        }
+        :global(.dark-mode) .pm-container .stat b,
+        .pm-container.dark-mode .stat b {
+          color: #f0f0f5;
+        }
+        :global(.dark-mode) .pm-container .stat small,
+        .pm-container.dark-mode .stat small {
+          color: #a1a1aa;
+        }
+        :global(.dark-mode) .pm-container input,
+        .pm-container.dark-mode input,
+        :global(.dark-mode) .pm-container select,
+        .pm-container.dark-mode select,
+        :global(.dark-mode) .pm-container textarea,
+        .pm-container.dark-mode textarea {
+          background: #18181c;
+          color: #f0f0f5;
+          border-color: #2a2a30;
+        }
+        :global(.dark-mode) .pm-container button.muted,
+        .pm-container.dark-mode button.muted {
+          background: #27272a;
+          color: #e4e4e7;
+          border-color: #3f3f46;
+        }
+        :global(.dark-mode) .pm-container button.muted:hover,
+        .pm-container.dark-mode button.muted:hover {
+          background: #3f3f46;
         }
         .bar {
           display: flex;

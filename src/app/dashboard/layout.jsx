@@ -96,13 +96,14 @@ export default function DashboardLayout({ children }) {
   };
 
   const bgClass = isDarkMode ? 'bg-black' : 'bg-white';
+  const pageBgClass = isDarkMode ? 'bg-[#0f0f11]' : 'bg-[#f5f5f7]';
   const textPrimary = isDarkMode ? 'text-white' : 'text-black';
   const textSecondary = isDarkMode ? 'text-gray-400' : 'text-gray-600';
   const borderColor = isDarkMode ? 'border-[var(--brand-blue-light)]' : 'border-[var(--brand-blue)]';
   const hoverBg = isDarkMode ? 'hover:bg-[var(--brand-blue-dark)]/10' : 'hover:bg-sky-50';
 
   return (
-    <div className="flex h-[calc(100dvh-4rem)] overflow-hidden bg-gray-900">
+    <div className={`flex h-[calc(100dvh-4rem)] overflow-hidden ${pageBgClass}`}>
       {sidebarOpen && (
         <div
           aria-label="Close dashboard menu"
@@ -172,7 +173,7 @@ export default function DashboardLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className="h-full flex-1 min-w-0 overflow-y-auto overscroll-contain">
+      <main className={`h-full flex-1 min-w-0 overflow-y-auto overscroll-contain ${pageBgClass}`}>
         <div className={`lg:hidden sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 ${bgClass} ${borderColor}`}>
           <button
             type="button"

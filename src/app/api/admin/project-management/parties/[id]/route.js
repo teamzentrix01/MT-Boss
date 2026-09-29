@@ -37,12 +37,14 @@ export async function GET(req, { params }) {
          SELECT pv.project_id, SUM(a.wage_amount) amount
          FROM pm_project_vendors pv
          JOIN pm_attendance a ON a.project_vendor_id = pv.id
+         JOIN paged_projects p ON p.id = pv.project_id
          WHERE pv.pay_type = 'daily_wage'
          GROUP BY pv.project_id
        ),
        vendor_contract AS (
          SELECT pv.project_id, SUM(pv.contract_amount) amount
          FROM pm_project_vendors pv
+         JOIN paged_projects p ON p.id = pv.project_id
          WHERE pv.pay_type = 'contract'
          GROUP BY pv.project_id
        ),
@@ -50,32 +52,52 @@ export async function GET(req, { params }) {
          SELECT pv.project_id, SUM(m.amount) amount
          FROM pm_project_vendors pv
          JOIN pm_vendor_material_supply m ON m.project_vendor_id = pv.id
+         JOIN paged_projects p ON p.id = pv.project_id
          WHERE NOT m.is_deleted
          GROUP BY pv.project_id
        ),
        direct_mat AS (
-         SELECT project_id, SUM(amount) amount
-         FROM pm_material_received
-         WHERE NOT is_deleted AND vendor_supply_id IS NULL AND NOT transfer_in
-         GROUP BY project_id
+         SELECT mr.project_id, SUM(mr.amount) amount
+         FROM pm_material_received mr
+         JOIN paged_projects p ON p.id = mr.project_id
+         WHERE NOT mr.is_deleted AND mr.vendor_supply_id IS NULL AND NOT mr.transfer_in
+         GROUP BY mr.project_id
        ),
        other_exp AS (
-         SELECT project_id, SUM(amount) amount
-         FROM pm_other_expenses
-         WHERE NOT is_deleted
-         GROUP BY project_id
+         SELECT oe.project_id, SUM(oe.amount) amount
+         FROM pm_other_expenses oe
+         JOIN paged_projects p ON p.id = oe.project_id
+         WHERE NOT oe.is_deleted
+         GROUP BY oe.project_id
+       ),
+       ind_labour AS (
+         SELECT l.project_id, SUM(la.wage_amount) amount
+         FROM pm_labor l
+         JOIN pm_labor_attendance la ON la.labor_id = l.id
+         JOIN paged_projects p ON p.id = l.project_id
+         GROUP BY l.project_id
+       ),
+       party_projects_total AS (
+         SELECT COALESCE(SUM(contract_value), 0) AS contract_value
+         FROM pm_projects
+         WHERE party_id = $1
+       ),
+       party_payments_total AS (
+         SELECT COALESCE(SUM(pay.amount), 0) AS received
+         FROM pm_party_payments pay
+         JOIN pm_projects p ON p.id = pay.project_id
+         WHERE p.party_id = $1 AND NOT pay.is_deleted
        ),
        party_totals AS (
-         SELECT COALESCE(SUM(p.contract_value), 0) contract_value,
-                COALESCE(SUM(pay.amount) FILTER (WHERE NOT pay.is_deleted), 0) received
-         FROM pm_projects p
-         LEFT JOIN pm_party_payments pay ON pay.project_id = p.id
-         WHERE p.party_id = $1
+         SELECT ppt.contract_value, pyt.received
+         FROM party_projects_total ppt
+         CROSS JOIN party_payments_total pyt
        ),
        party_expenses AS (
          SELECT
            COALESCE((SELECT SUM(a.wage_amount) FROM pm_attendance a JOIN pm_project_vendors pv ON pv.id = a.project_vendor_id JOIN pm_projects p ON p.id = pv.project_id WHERE p.party_id = $1 AND pv.pay_type = 'daily_wage'), 0) +
            COALESCE((SELECT SUM(pv.contract_amount) FROM pm_project_vendors pv JOIN pm_projects p ON p.id = pv.project_id WHERE p.party_id = $1 AND pv.pay_type = 'contract'), 0) +
+           COALESCE((SELECT SUM(la.wage_amount) FROM pm_labor_attendance la JOIN pm_labor l ON l.id = la.labor_id JOIN pm_projects p ON p.id = l.project_id WHERE p.party_id = $1), 0) +
            COALESCE((SELECT SUM(m.amount) FROM pm_vendor_material_supply m JOIN pm_project_vendors pv ON pv.id = m.project_vendor_id JOIN pm_projects p ON p.id = pv.project_id WHERE p.party_id = $1 AND NOT m.is_deleted), 0) +
            COALESCE((SELECT SUM(mr.amount) FROM pm_material_received mr JOIN pm_projects p ON p.id = mr.project_id WHERE p.party_id = $1 AND NOT mr.is_deleted AND mr.vendor_supply_id IS NULL AND NOT mr.transfer_in), 0) +
            COALESCE((SELECT SUM(oe.amount) FROM pm_other_expenses oe JOIN pm_projects p ON p.id = oe.project_id WHERE p.party_id = $1 AND NOT oe.is_deleted), 0) AS total_party_expense
@@ -94,8 +116,8 @@ export async function GET(req, { params }) {
          COALESCE(py.received, 0) received,
          pp.contract_value - COALESCE(py.received, 0) pending,
          COALESCE(vl.amount, 0) + COALESCE(vc.amount, 0) + COALESCE(vm.amount, 0) AS total_vendor_cost,
-         COALESCE(vl.amount, 0) + COALESCE(vc.amount, 0) + COALESCE(vm.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0) AS total_expense,
-         COALESCE(py.received, 0) - (COALESCE(vl.amount, 0) + COALESCE(vc.amount, 0) + COALESCE(vm.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) AS profit_or_loss
+         COALESCE(vl.amount, 0) + COALESCE(vc.amount, 0) + COALESCE(il.amount, 0) + COALESCE(vm.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0) AS total_expense,
+         COALESCE(py.received, 0) - (COALESCE(vl.amount, 0) + COALESCE(vc.amount, 0) + COALESCE(il.amount, 0) + COALESCE(vm.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) AS profit_or_loss
        FROM party
        CROSS JOIN party_totals pt
        CROSS JOIN party_expenses pe
@@ -106,6 +128,7 @@ export async function GET(req, { params }) {
        LEFT JOIN vendor_mat vm ON vm.project_id = pp.id
        LEFT JOIN direct_mat dm ON dm.project_id = pp.id
        LEFT JOIN other_exp oe ON oe.project_id = pp.id
+       LEFT JOIN ind_labour il ON il.project_id = pp.id
        ORDER BY pp.created_at DESC`,
       [id, pageSize, offset]
     );

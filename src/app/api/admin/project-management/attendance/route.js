@@ -49,7 +49,11 @@ export async function GET(req) {
               COALESCE(a.workers_count, 1) workers_count,
               COALESCE(a.rate_per_worker, p.daily_rate) rate_per_worker,
               COALESCE(a.wage_amount, 0) wage_amount,
-              a.note
+              a.note,
+              EXISTS (
+                SELECT 1 FROM pm_labor l
+                WHERE l.project_id = p.project_id AND l.vendor_id = p.vendor_id AND l.is_active = TRUE
+              ) AS has_linked_labor
        FROM paged p
        JOIN pm_vendors v ON v.id = p.vendor_id
        LEFT JOIN pm_attendance a ON a.project_vendor_id = p.id AND a.attendance_date = $4
@@ -99,10 +103,22 @@ export async function PUT(req) {
           throw new Error('Invalid attendance entry');
         }
 
-        const pv = (
-          await client.query(`SELECT daily_rate FROM pm_project_vendors WHERE id = $1 AND pay_type = 'daily_wage'`, [id])
-        ).rows[0];
+        const pvRes = await client.query(
+          `SELECT pv.daily_rate, pv.project_id, pv.vendor_id, v.name AS vendor_name,
+                  EXISTS (
+                    SELECT 1 FROM pm_labor l
+                    WHERE l.project_id = pv.project_id AND l.vendor_id = pv.vendor_id AND l.is_active = TRUE
+                  ) AS has_linked_labor
+           FROM pm_project_vendors pv
+           JOIN pm_vendors v ON v.id = pv.vendor_id
+           WHERE pv.id = $1 AND pv.pay_type = 'daily_wage'`,
+          [id]
+        );
+        const pv = pvRes.rows[0];
         if (!pv) throw new Error('Daily-wage vendor assignment not found');
+        if (pv.has_linked_labor && status !== 'absent') {
+          throw new Error(`Vendor "${pv.vendor_name}" has individual laborers linked. Please record attendance in the Labor tab to avoid double counting.`);
+        }
 
         const snapshot = rate ?? Number(pv.daily_rate);
         const wage = status === 'present' ? workers * snapshot : status === 'half_day' ? workers * snapshot * 0.5 : 0;

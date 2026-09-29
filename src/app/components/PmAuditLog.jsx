@@ -57,7 +57,7 @@ function Drawer({ row, onClose }) {
   );
 }
 
-export default function PmAuditLog() {
+export default function PmAuditLog({ isDarkMode }) {
   const [rows, setRows] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, pageSize: 25, total: 0, totalPages: 1 });
   const [loading, setLoading] = useState(true);
@@ -77,7 +77,16 @@ export default function PmAuditLog() {
     setLoading(false);
   }, [filters]);
 
-  useEffect(() => { load(1); }, [filters]);
+  useEffect(() => {
+    let ignore = false;
+    (async () => {
+      await Promise.resolve();
+      if (!ignore) {
+        load(1);
+      }
+    })();
+    return () => { ignore = true; };
+  }, [load]);
 
   const cols = ['Date & Time', 'Admin', 'Record Type', 'Record ID', 'Action', 'Source', 'View'];
 
@@ -85,7 +94,7 @@ export default function PmAuditLog() {
     <>
       <style>{CSS}</style>
       <Drawer row={drawer} onClose={() => setDrawer(null)} />
-      <div className="pal-root">
+      <div className={`pal-root${isDarkMode ? ' dark-mode' : ''}`}>
         <div className="pal-header">
           <h1 className="pal-title">🗂 Activity Log</h1>
           <p className="pal-sub">Immutable record of all admin changes across PM tables</p>
@@ -151,8 +160,8 @@ export default function PmAuditLog() {
 
 const CSS = `
   .pal-root{--pal-bg:#f5f5f7;--pal-surface:#fff;--pal-border:#e2e2e7;--pal-text:#111113;--pal-muted:#6b6b76;--pal-accent:#2563eb;
-    background:var(--pal-bg);min-height:100%;font-family:'DM Sans',system-ui,sans-serif;color:var(--pal-text);padding:1.25rem}
-  .dark-mode .pal-root{--pal-bg:#0f0f11;--pal-surface:#18181c;--pal-border:#2a2a30;--pal-text:#f0f0f5;--pal-muted:#7c7c8a;--pal-accent:#60a5fa}
+    background:var(--pal-bg);min-height:100%;font-family:'DM Sans',system-ui,sans-serif;color:var(--pal-text);padding:1.25rem;flex:1;display:flex;flex-direction:column;box-sizing:border-box}
+  .dark-mode.pal-root, .dark-mode .pal-root{--pal-bg:#0f0f11;--pal-surface:#18181c;--pal-border:#2a2a30;--pal-text:#f0f0f5;--pal-muted:#7c7c8a;--pal-accent:#60a5fa}
   .pal-header{margin-bottom:1rem}
   .pal-title{font-size:1.3rem;font-weight:800;margin:0}
   .pal-sub{font-size:.78rem;color:var(--pal-muted);margin:.2rem 0 0}

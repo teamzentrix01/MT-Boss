@@ -54,6 +54,58 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
   ]) {
     await pool.query(sql);
   }
+
+  // Individual Labor Management tables
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS pm_labor (
+      id BIGSERIAL PRIMARY KEY,
+      project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,
+      vendor_id BIGINT NULL REFERENCES pm_vendors(id) ON DELETE SET NULL,
+      name VARCHAR(200) NOT NULL,
+      phone VARCHAR(30),
+      trade VARCHAR(120),
+      daily_rate NUMERIC(14,2) NOT NULL DEFAULT 0 CHECK(daily_rate >= 0),
+      is_active BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS pm_labor_attendance (
+      id BIGSERIAL PRIMARY KEY,
+      labor_id BIGINT NOT NULL REFERENCES pm_labor(id) ON DELETE RESTRICT,
+      attendance_date DATE NOT NULL,
+      status VARCHAR(20) NOT NULL CHECK(status IN ('present','absent','half_day')),
+      wage_amount NUMERIC(14,2) NOT NULL DEFAULT 0 CHECK(wage_amount >= 0),
+      note TEXT,
+      created_by TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(labor_id, attendance_date)
+    );
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS pm_labor_payments (
+      id BIGSERIAL PRIMARY KEY,
+      labor_id BIGINT NOT NULL REFERENCES pm_labor(id) ON DELETE RESTRICT,
+      amount NUMERIC(14,2) NOT NULL CHECK(amount > 0),
+      payment_date DATE NOT NULL,
+      mode VARCHAR(50),
+      note TEXT,
+      is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+      created_by TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ
+    );
+  `);
+  for (const sql of [
+    `CREATE INDEX IF NOT EXISTS pm_labor_proj_idx ON pm_labor(project_id)`,
+    `CREATE INDEX IF NOT EXISTS pm_labor_vendor_idx ON pm_labor(vendor_id)`,
+    `CREATE INDEX IF NOT EXISTS pm_labor_att_labor_idx ON pm_labor_attendance(labor_id)`,
+    `CREATE INDEX IF NOT EXISTS pm_labor_att_date_idx ON pm_labor_attendance(attendance_date)`,
+    `CREATE INDEX IF NOT EXISTS pm_labor_pay_labor_idx ON pm_labor_payments(labor_id)`,
+    `CREATE INDEX IF NOT EXISTS pm_labor_pay_date_idx ON pm_labor_payments(payment_date)`
+  ]) {
+    await pool.query(sql);
+  }
 });
 
 export function pageParams(searchParams) {

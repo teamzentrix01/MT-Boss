@@ -169,7 +169,7 @@ const ALERT_TYPE_LABELS = {
 };
 
 // ── Main Component ─────────────────────────────────────────────────────────────
-export default function PmDashboard() {
+export default function PmDashboard({ isDarkMode }) {
   const router = useRouter();
   const [data, setData] = useState(null);
   const [alerts, setAlerts] = useState(null);
@@ -224,8 +224,35 @@ export default function PmDashboard() {
     }
   }, []);
 
-  useEffect(() => { loadDashboard(); loadAlerts(); loadParties(); loadSettings(); }, []);
-  useEffect(() => { if (data) loadDashboard(false); }, [filters.partyId, filters.status, filters.dateFrom, filters.dateTo]);
+  useEffect(() => {
+    let ignore = false;
+    (async () => {
+      await Promise.resolve();
+      if (!ignore) {
+        loadDashboard();
+        loadAlerts();
+        loadParties();
+        loadSettings();
+      }
+    })();
+    return () => { ignore = true; };
+  }, [loadDashboard, loadAlerts, loadParties, loadSettings]);
+
+  const hasMounted = useRef(false);
+  useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+    let ignore = false;
+    (async () => {
+      await Promise.resolve();
+      if (!ignore) {
+        loadDashboard(false);
+      }
+    })();
+    return () => { ignore = true; };
+  }, [filters.partyId, filters.status, filters.dateFrom, filters.dateTo, loadDashboard]);
 
   async function dismissAlert(alertKey, snooze) {
     if (dismissing.current.has(alertKey)) return;
@@ -268,7 +295,7 @@ export default function PmDashboard() {
   return (
     <>
       <style>{CSS}</style>
-      <div className="pmd-root">
+      <div className={`pmd-root${isDarkMode ? ' dark-mode' : ''}`}>
         {/* Header */}
         <div className="pmd-header">
           <div>
@@ -450,8 +477,8 @@ export default function PmDashboard() {
 
 const CSS = `
   .pmd-root{--pm-bg:#f5f5f7;--pm-surface:#fff;--pm-border:#e2e2e7;--pm-text:#111113;--pm-muted:#6b6b76;--pm-accent:#2563eb;
-    background:var(--pm-bg);min-height:100%;font-family:'DM Sans',system-ui,sans-serif;color:var(--pm-text);padding:1.25rem}
-  .dark-mode .pmd-root{--pm-bg:#0f0f11;--pm-surface:#18181c;--pm-border:#2a2a30;--pm-text:#f0f0f5;--pm-muted:#7c7c8a;--pm-accent:#60a5fa}
+    background:var(--pm-bg);min-height:100%;font-family:'DM Sans',system-ui,sans-serif;color:var(--pm-text);padding:1.25rem;flex:1;display:flex;flex-direction:column;box-sizing:border-box}
+  .dark-mode.pmd-root, .dark-mode .pmd-root{--pm-bg:#0f0f11;--pm-surface:#18181c;--pm-border:#2a2a30;--pm-text:#f0f0f5;--pm-muted:#7c7c8a;--pm-accent:#60a5fa}
   .pmd-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
   .pmd-title{font-size:1.4rem;font-weight:800;margin:0}
   .pmd-sub{font-size:.78rem;color:var(--pm-muted);margin:.2rem 0 0}
