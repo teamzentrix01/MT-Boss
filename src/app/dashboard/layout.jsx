@@ -44,43 +44,43 @@ import {
 } from '@/app/components/ui/icons';
 
 const menuItems = [
-  { label: 'Overview',                  icon: LayoutDashboard,      tab: '' },
-  { label: 'Agents',                    icon: UserCog,              tab: 'agents' },
-  { label: 'Calculator',               icon: Calculator,           tab: 'calculator' },
-  { label: 'Calculator Quotes',        icon: FileText,             tab: 'calculator-quotes' },
-  { label: 'Career Enquiry',           icon: Briefcase,            tab: 'career-enquiries' },
-  { label: 'New Jobs',                 icon: BriefcaseBusiness,    tab: 'jobs' },
-  { label: 'Lead Management',          icon: ClipboardList,        tab: 'lead-management' },
-  { label: 'Office Locations',         icon: MapPin,               tab: 'office-locations' },
-  { label: 'Cities',                    icon: Building,             tab: 'cities' },
-  { label: 'Contact Forms',            icon: Mail,                 tab: 'submissions' },
-  { label: 'Franchises',               icon: Store,                tab: 'franchises' },
-  { label: 'Free Time Slots',          icon: CalendarClock,        tab: 'free-slots' },
-  { label: 'FAQs Management',          icon: HelpCircle,           tab: 'faqs' },
-  { label: 'Customer Reviews',         icon: Star,                 tab: 'reviews' },
-  { label: 'Hero Banners',             icon: ImageIcon,            tab: 'hero-banners' },
-  { label: 'SEO Blogs & Guides',       icon: Newspaper,            tab: 'blogs' },
+  { label: 'Overview', icon: LayoutDashboard, tab: '' },
+  { label: 'Agents', icon: UserCog, tab: 'agents' },
+  { label: 'Calculator', icon: Calculator, tab: 'calculator' },
+  { label: 'Calculator Quotes', icon: FileText, tab: 'calculator-quotes' },
+  { label: 'Career Enquiry', icon: Briefcase, tab: 'career-enquiries' },
+  { label: 'New Jobs', icon: BriefcaseBusiness, tab: 'jobs' },
+  { label: 'Customer Enquiries', icon: ClipboardList, tab: 'lead-management' },
+  { label: 'Office Locations', icon: MapPin, tab: 'office-locations' },
+  { label: 'Cities', icon: Building, tab: 'cities' },
+  { label: 'Contact Forms', icon: Mail, tab: 'submissions' },
+  { label: 'Franchises', icon: Store, tab: 'franchises' },
+  { label: 'Free Time Slots', icon: CalendarClock, tab: 'free-slots' },
+  { label: 'FAQs Management', icon: HelpCircle, tab: 'faqs' },
+  { label: 'Customer Reviews', icon: Star, tab: 'reviews' },
+  { label: 'Hero Banners', icon: ImageIcon, tab: 'hero-banners' },
+  { label: 'SEO Blogs & Guides', icon: Newspaper, tab: 'blogs' },
 
-  { label: 'Construction Services',    icon: Layers,               tab: 'primary-services' },
-  { label: 'Construction Enquiry',     icon: MessageSquare,        tab: 'primary-service-enquiries' },
-  { label: 'Professional Enquiries',   icon: MessageSquare,        tab: 'professional-enquiries' },
-  { label: 'Professional Services',    icon: Users,                tab: 'professionals' },
-  { label: 'Project Management',       icon: Building2,            tab: 'project-management' },
-  { label: 'Portfolio Projects',       icon: FolderKanban,         tab: 'projects' },
-  { label: 'Properties',               icon: House,                tab: 'properties' },
-  { label: 'Property Enquiries',       icon: MessageSquareText,    tab: 'property-enquiries' },
-  { label: 'Quick Enquiry',            icon: Zap,                  tab: 'quick-enquiries' },
-  { label: 'Quick Services',           icon: Wrench,               tab: 'quick-services' },
-  { label: 'Revenue & Earnings',       icon: CircleDollarSign,     tab: 'revenue' },
-  { label: 'Service Bookings',         icon: CalendarDays,         tab: 'bookings' },
-  { label: 'Orders History',           icon: ClipboardList,        tab: 'orders-history' },
-  { label: 'Service Pricing',          icon: Tags,                 tab: 'quick-services-pricing' },
-  { label: 'Shop Now Manager',         icon: ShoppingCart,         tab: 'shop-categories' },
-  { label: '+ Add Shop Product',       icon: PlusCircle,           tab: 'shop-products' },
-  { label: 'Shipping Settings',        icon: Truck,                tab: 'shipping-settings' },
-  { label: 'Suppliers',                icon: Truck,                tab: 'suppliers' },
-  { label: 'Vendors',                  icon: HardHat,              tab: 'vendors' },
-  { label: 'Package Approvals',        icon: PackageCheck,         tab: 'packages' },
+  { label: 'Construction Services', icon: Layers, tab: 'primary-services' },
+  { label: 'Construction Enquiry', icon: MessageSquare, tab: 'primary-service-enquiries' },
+  { label: 'Professional Enquiries', icon: MessageSquare, tab: 'professional-enquiries' },
+  { label: 'Professional Services', icon: Users, tab: 'professionals' },
+  { label: 'Project Management', icon: Building2, tab: 'project-management' },
+  { label: 'Portfolio Projects', icon: FolderKanban, tab: 'projects' },
+  { label: 'Properties', icon: House, tab: 'properties' },
+  { label: 'Property Enquiries', icon: MessageSquareText, tab: 'property-enquiries' },
+  { label: 'Quick Enquiry', icon: Zap, tab: 'quick-enquiries' },
+  { label: 'Quick Services', icon: Wrench, tab: 'quick-services' },
+  { label: 'Revenue & Earnings', icon: CircleDollarSign, tab: 'revenue' },
+  { label: 'Service Bookings', icon: CalendarDays, tab: 'bookings' },
+  { label: 'Orders History', icon: ClipboardList, tab: 'orders-history' },
+  { label: 'Service Pricing', icon: Tags, tab: 'quick-services-pricing' },
+  { label: 'Shop Now Manager', icon: ShoppingCart, tab: 'shop-categories' },
+  { label: '+ Add Shop Product', icon: PlusCircle, tab: 'shop-products' },
+  { label: 'Shipping Settings', icon: Truck, tab: 'shipping-settings' },
+  { label: 'Suppliers', icon: Truck, tab: 'suppliers' },
+  { label: 'Vendors', icon: HardHat, tab: 'vendors' },
+  { label: 'Package Approvals', icon: PackageCheck, tab: 'packages' },
 ];
 
 function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode }) {
@@ -99,20 +99,18 @@ function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode }) {
             href={item.tab ? `/dashboard?tab=${item.tab}` : '/dashboard'}
             onClick={closeSidebarOnMobile}
             title={item.label}
-            className={`flex items-center gap-3 px-2.5 py-2 rounded-lg transition-all ${
-              isActive
+            className={`flex items-center gap-3 px-2.5 py-2 rounded-lg transition-all ${isActive
                 ? 'bg-[rgba(33,150,243,0.12)] text-[#0284c7] font-semibold'
                 : isDarkMode
-                ? 'text-gray-300 hover:text-white hover:bg-white/5 font-medium'
-                : 'text-[#0f172a] hover:text-[#0284c7] hover:bg-slate-100/80 font-medium'
-            }`}
+                  ? 'text-gray-300 hover:text-white hover:bg-white/5 font-medium'
+                  : 'text-[#0f172a] hover:text-[#0284c7] hover:bg-slate-100/80 font-medium'
+              }`}
           >
             <span
-              className={`flex items-center justify-center shrink-0 w-8 h-8 rounded-md transition-colors ${
-                isActive
+              className={`flex items-center justify-center shrink-0 w-8 h-8 rounded-md transition-colors ${isActive
                   ? 'bg-[rgba(33,150,243,0.18)] text-[#0284c7]'
                   : 'text-current'
-              }`}
+                }`}
             >
               {IconComponent ? (
                 <IconComponent
