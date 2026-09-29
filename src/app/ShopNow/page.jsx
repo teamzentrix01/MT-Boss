@@ -77,6 +77,17 @@ function getQuotePrice(category, selectedCity, product = null) {
   };
 }
 
+async function parseJsonResponse(response) {
+  if (!response) return null;
+  const contentType = response.headers?.get?.('content-type') || '';
+  if (!contentType.toLowerCase().includes('application/json')) return null;
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
 export default function ShopPage() {
   const isDarkMode = useDarkMode();
   const { cities: supportedCities } = useCities();
@@ -85,6 +96,7 @@ export default function ShopPage() {
   const [categories, setCategories] = useState([]);
   const [catsLoading, setCatsLoading] = useState(true);
   const [allProducts, setAllProducts] = useState([]);
+  const [offers, setOffers] = useState([]);
   const [productsLoaded, setProductsLoaded] = useState(false);
   const productsLastLoadedAtRef = useRef(0);
   const productsRequestRef = useRef(null);
@@ -110,9 +122,12 @@ export default function ShopPage() {
   }, []);
 
   useEffect(() => {
-    fetch('/api/shop-coupons').then((response) => response.json()).then((data) => {
-      if (data.success) setCoupons(data.data || []);
-    }).catch(() => {});
+    fetch('/api/shop-coupons')
+      .then(parseJsonResponse)
+      .then((data) => {
+        if (data?.success) setCoupons(data.data || []);
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -121,10 +136,17 @@ export default function ShopPage() {
 
   useEffect(() => {
     fetch("/api/shop-categories")
-      .then((r) => r.json())
-      .then((d) => { if (d.success) setCategories(d.data); })
+      .then(parseJsonResponse)
+      .then((d) => { if (d?.success) setCategories(d.data || []); })
       .catch(console.error)
       .finally(() => setCatsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/shop-offers')
+      .then(parseJsonResponse)
+      .then((data) => { if (data?.success) setOffers(data.data || []); })
+      .catch(console.error);
   }, []);
 
   const loadProducts = useCallback(async (force = false) => {
@@ -142,8 +164,8 @@ export default function ShopPage() {
               await new Promise((resolve) => setTimeout(resolve, 500));
               continue;
             }
-            const data = await response.json();
-            if (!response.ok || !data.success) throw new Error(data.error || "Could not load shop products");
+            const data = await parseJsonResponse(response);
+            if (!response.ok || !data?.success) throw new Error(data?.error || "Could not load shop products");
             setAllProducts(data.data?.products || []);
             productsLastLoadedAtRef.current = Date.now();
             return;
@@ -210,16 +232,16 @@ export default function ShopPage() {
   useEffect(() => {
     const loadStoreContent = () => {
       fetch("/api/shop-storefront")
-        .then((response) => response.json())
-        .then((data) => { if (data.success) setStoreContent(data.data); })
+        .then(parseJsonResponse)
+        .then((data) => { if (data?.success) setStoreContent(data.data); })
         .catch(console.error);
     };
     loadStoreContent();
 
     const loadShipping = () => {
       fetch("/api/shipping-settings")
-        .then((response) => response.json())
-        .then((data) => { if (data.success && data.data) setShippingSettings(data.data); })
+        .then(parseJsonResponse)
+        .then((data) => { if (data?.success && data.data) setShippingSettings(data.data); })
         .catch(console.error);
     };
     loadShipping();
@@ -383,8 +405,8 @@ export default function ShopPage() {
     if (!isModalOpen || !selectedCity || !items.length || items.some((item) => !item.product_id)) { setShippingQuote(null); setShippingQuoteError(''); return; }
     let active = true;
     fetch('/api/shipping-quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerCity: selectedCity, items }) })
-      .then((response) => response.json().then((data) => ({ response, data })))
-      .then(({ response, data }) => { if (!active) return; if (!response.ok || !data.success) throw new Error(data.error || 'Shipping could not be calculated'); setShippingQuote(data.data); setShippingQuoteError(''); })
+      .then(async (response) => ({ response, data: await parseJsonResponse(response) }))
+      .then(({ response, data }) => { if (!active) return; if (!response.ok || !data?.success) throw new Error(data?.error || 'Shipping could not be calculated'); setShippingQuote(data.data); setShippingQuoteError(''); })
       .catch((error) => { if (active) { setShippingQuote(null); setShippingQuoteError(error.message); } });
     return () => { active = false; };
   }, [isModalOpen, modalMode, selectedCity, cart, selectedProduct?.product_id, formData.quantity]);
@@ -393,9 +415,9 @@ export default function ShopPage() {
     if (!isModalOpen || !selectedCategory?.name) return;
     setLoadingProductOptions(true);
     fetch(`/api/shop-material-options?category=${encodeURIComponent(selectedCategory.name)}`)
-      .then((r) => r.json())
+      .then(parseJsonResponse)
       .then((data) => {
-        if (data.success) setProductOptions(data.data || { products: [], types: [], units: [] });
+        if (data?.success) setProductOptions(data.data || { products: [], types: [], units: [] });
       })
       .catch(console.error)
       .finally(() => setLoadingProductOptions(false));

@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Eye, Download, RefreshCw, Plus, X, ActionIconButton } from '@/app/components/ui/icons';
 
 const statuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
 const stages = ['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost'];
@@ -221,8 +222,14 @@ export default function LeadManagementAdmin({ isDarkMode }) {
       <div className="section-head">
         <span className="section-head-title">Lead Management</span>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button onClick={exportExcel} style={{ border: 0, background: 'var(--accent)', color: '#111', borderRadius: 5, padding: '0.5rem 0.85rem', fontWeight: 900, cursor: 'pointer' }}>Export Excel</button>
-          <button onClick={loadLeads} style={{ border: `1px solid ${border}`, background: surface, color: text, borderRadius: 5, padding: '0.5rem 0.85rem', fontWeight: 800, cursor: 'pointer' }}>Refresh</button>
+          <button onClick={exportExcel} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, border: 0, background: 'var(--accent)', color: '#111', borderRadius: 5, padding: '0.5rem 0.85rem', fontWeight: 900, cursor: 'pointer' }}>
+            <Download size={15} strokeWidth={1.75} aria-hidden="true" />
+            Export Excel
+          </button>
+          <button onClick={loadLeads} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, border: `1px solid ${border}`, background: surface, color: text, borderRadius: 5, padding: '0.5rem 0.85rem', fontWeight: 800, cursor: 'pointer' }}>
+            <RefreshCw size={15} strokeWidth={1.75} aria-hidden="true" />
+            Refresh
+          </button>
         </div>
       </div>
 
@@ -295,7 +302,10 @@ export default function LeadManagementAdmin({ isDarkMode }) {
             <input style={inputStyle} value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} />
           </div>
         </div>
-        <button type="submit" style={{ marginTop: 12, border: 0, background: 'var(--accent)', color: '#111', borderRadius: 5, padding: '0.65rem 1rem', fontWeight: 900, cursor: 'pointer' }}>Add Lead</button>
+        <button type="submit" style={{ marginTop: 12, display: 'inline-flex', alignItems: 'center', gap: 6, border: 0, background: 'var(--accent)', color: '#111', borderRadius: 5, padding: '0.65rem 1rem', fontWeight: 900, cursor: 'pointer' }}>
+          <Plus size={16} strokeWidth={1.75} aria-hidden="true" />
+          Add Lead
+        </button>
       </form>
 
       <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 6, padding: '1rem' }}>
@@ -404,7 +414,11 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                   </td>
                   <td style={{ padding: '0.6rem', color: muted, whiteSpace: 'nowrap' }}>{lead.follow_up_date ? new Date(lead.follow_up_date).toLocaleDateString('en-IN') : '-'}</td>
                   <td style={{ padding: '0.6rem' }}>
-                    <button onClick={() => setSelected(lead)} style={{ border: 0, background: 'none', color: 'var(--accent)', fontWeight: 900, cursor: 'pointer' }}>View</button>
+                    <ActionIconButton
+                      icon={Eye}
+                      label="View lead details"
+                      onClick={() => setSelected(lead)}
+                    />
                   </td>
                 </tr>
               ))}
@@ -421,7 +435,9 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                 <div style={{ color: muted, fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '.08em' }}>Lead Details</div>
                 <div style={{ color: text, fontSize: '1.2rem', fontWeight: 900 }}>{selected.client_name}</div>
               </div>
-              <button onClick={() => setSelected(null)} style={{ border: `1px solid ${border}`, background: surface, color: text, borderRadius: 6, width: 36, height: 36, cursor: 'pointer' }}>x</button>
+              <button onClick={() => setSelected(null)} aria-label="Close modal" style={{ border: `1px solid ${border}`, background: surface, color: text, borderRadius: 6, width: 36, height: 36, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <X size={16} strokeWidth={1.75} aria-hidden="true" />
+              </button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 10 }}>
               {[

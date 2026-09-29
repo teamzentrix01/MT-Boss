@@ -33,7 +33,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { displayUnit } from "./Storefront";
+import { displayUnit, getProductImage, ShopImage } from "./Storefront";
 import { CATEGORY_NAV_TREE } from "./categoryNavTree";
 import GlobalSearch from "../components/GlobalSearch";
 
@@ -220,9 +220,9 @@ export default function MobileStorefront({
   useEffect(() => {
     const loadShipping = () => {
       fetch("/api/shipping-settings")
-        .then((r) => r.json())
+        .then((r) => (r.ok && r.headers.get('content-type')?.includes('application/json') ? r.json() : null))
         .then((res) => {
-          if (res.success && res.data) setLocalShippingSettings(res.data);
+          if (res?.success && res.data) setLocalShippingSettings(res.data);
         })
         .catch(console.error);
     };
@@ -639,6 +639,7 @@ export default function MobileStorefront({
                           onBuy={onBuy}
                           onDetails={onDetails}
                           selectedCity={selectedCity}
+                          categories={categories}
                         />
                       );
                     })}
@@ -725,7 +726,7 @@ export default function MobileStorefront({
                             >
                               <div className="mobile-category-circle">
                                 {cat.image ? (
-                                  <Image
+                                  <ShopImage
                                     src={cat.image}
                                     alt={cat.name}
                                     fill
@@ -793,6 +794,7 @@ export default function MobileStorefront({
                           selectedCity={selectedCity}
                           isFreeDeliveryActive={isFreeDeliveryActive}
                           freeDeliveryMinOrder={freeDeliveryMinOrder}
+                          categories={categories}
                         />
                       );
                     })}
@@ -830,7 +832,7 @@ export default function MobileStorefront({
                   >
                     <div className="mobile-subcat-icon-wrap">
                       {cat.image ? (
-                        <Image
+                        <ShopImage
                           src={cat.image}
                           alt={cat.name}
                           width={26}
@@ -905,6 +907,7 @@ export default function MobileStorefront({
                         selectedCity={selectedCity}
                         isFreeDeliveryActive={isFreeDeliveryActive}
                         freeDeliveryMinOrder={freeDeliveryMinOrder}
+                        categories={categories}
                       />
                     );
                   })}
@@ -1102,9 +1105,9 @@ export default function MobileStorefront({
                     return (
                       <div key={itemKey} className="mobile-cart-item">
                         <div className="mobile-cart-item-img">
-                          {item.product.image ? (
-                            <Image
-                              src={item.product.image}
+                          {getProductImage(item.product, item.product.category || categories) ? (
+                            <ShopImage
+                              src={getProductImage(item.product, item.product.category || categories)}
                               alt={item.product.name}
                               fill
                               sizes="50px"
@@ -1517,12 +1520,14 @@ function MobileProductCard({
   selectedCity,
   isFreeDeliveryActive = false,
   freeDeliveryMinOrder = 50000,
+  categories = [],
 }) {
   const price = Number(product.price) || 0;
   const hasFixedPrice = price > 0;
   const mrp = Number(product.compare_at_price) || (price > 0 ? Math.round(price * 1.08) : 0);
   const discount = getProductDiscount(product);
   const bulkPrice = getLowestBulkPrice(product);
+  const productImage = getProductImage(product, product.category || categories);
 
   const canOrder = !product.fromSupplier || Number(product.quantity) > 0;
   const isAvailable = canOrder;
@@ -1542,9 +1547,9 @@ function MobileProductCard({
           onClick={() => onDetails?.(product)}
           aria-label={`View ${product.name} details`}
         >
-          {product.image ? (
-            <Image
-              src={product.image}
+          {productImage ? (
+            <ShopImage
+              src={productImage}
               alt={product.name}
               fill
               sizes="84px"

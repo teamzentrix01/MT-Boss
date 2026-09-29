@@ -1,6 +1,6 @@
 'use client';
-
 import { useState, useEffect } from 'react';
+import { Eye, X, ActionIconButton } from '@/app/components/ui/icons';
 
 const STATUS_OPTIONS = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 
@@ -498,12 +498,11 @@ export default function AgentsPage() {
                           {new Date(agent.created_at).toLocaleDateString()}
                         </td>
                         <td>
-                          <button
-                            className="ag-view-btn"
+                          <ActionIconButton
+                            icon={Eye}
+                            label="View agent application"
                             onClick={e => { e.stopPropagation(); openAgent(agent); }}
-                          >
-                            View
-                          </button>
+                          />
                         </td>
                       </tr>
                     );
@@ -521,7 +520,14 @@ export default function AgentsPage() {
           <div className="ag-modal" onClick={e => e.stopPropagation()}>
             <div className="ag-modal-head">
               <span className="ag-modal-title">Agent Application</span>
-              <button className="ag-modal-close" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setShowActivity(false); setSelectedLead(null); setPendingStatus(''); }}>Close</button>
+              <button
+                className="ag-modal-close"
+                onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setShowActivity(false); setSelectedLead(null); setPendingStatus(''); }}
+                aria-label="Close modal"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <X size={16} strokeWidth={1.75} aria-hidden="true" />
+              </button>
             </div>
 
             <div className="ag-modal-grid">
