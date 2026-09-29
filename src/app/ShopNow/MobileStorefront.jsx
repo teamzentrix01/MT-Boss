@@ -36,6 +36,7 @@ import {
 import { displayUnit, getProductImage, ShopImage } from "./Storefront";
 import { CATEGORY_NAV_TREE } from "./categoryNavTree";
 import GlobalSearch from "../components/GlobalSearch";
+import QuickServices from "../components/QuickServices";
 
 function getCategoryIcon(name = "") {
   const val = name.toLowerCase();
@@ -800,6 +801,9 @@ export default function MobileStorefront({
                     })}
                   </div>
                 </section>
+
+                {/* Quick Home Services (At Your Doorstep) */}
+                <QuickServices className="pt-2 pb-8 px-3" />
               </>
             )}
           </div>
