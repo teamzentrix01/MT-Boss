@@ -79,7 +79,7 @@ function ServiceCard({ service, index, isDark }) {
           href={service.link} 
           className="px-8 py-3 bg-black text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-transform"
         >
-          View Details
+          Book a Visit
         </Link>
       </div>
     </div>
