@@ -8,18 +8,18 @@ import DeferredHomeSections from './components/DeferredHomeSections';
 
 // ---------- METADATA ----------
 export const metadata = {
-  title: 'Best Architect,  Interior Designer and Construction in Moradabad & Bareilly | MTBOSS',
+  title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBOSS',
   description:
-    'MTBOSS - best architect & interior designer, construction, modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
+    'MTBOSS - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
   keywords:
     'construction company near me, home services near me, electrician plumber near me, AC repair near me, pest control near me, building renovation near me, water tank cleaning near me, buy sell rent property near me, building materials online, construction cost calculator, contractor near me',
   alternates: {
     canonical: 'https://www.mtboss.in/',
   },
   openGraph: {
-    title: 'Best Architect,  Interior Designer and Construction in Moradabad & Bareilly | MTBOSS',
+    title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBOSS',
     description:
-      'MTBOSS - best architect & interior designer, construction, modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
+      'MTBOSS - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
     url: 'https://www.mtboss.in/',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
@@ -35,9 +35,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Best Architect,  Interior Designer and Construction in Moradabad & Bareilly | MTBOSS',
+    title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBOSS',
     description:
-      'MTBOSS - best architect & interior designer, construction, modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
+      'MTBOSS - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
     images: ['https://www.mtboss.in/icon.png'],
   },
 };
