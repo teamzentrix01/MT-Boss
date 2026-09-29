@@ -211,6 +211,388 @@ function TagListEditor({ label, helpText, items, onChange, placeholder, t }) {
   );
 }
 
+/* ── Sub-category / Sub-product Editor (modal form on the same page) ───────── */
+function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingIdx, setEditingIdx] = useState(null);
+  const [subForm, setSubForm] = useState({ name: '', image: '', price: '' });
+  const [uploading, setUploading] = useState(false);
+  const [formErr, setFormErr] = useState('');
+
+  const normalizeSub = (s) => {
+    if (typeof s === 'string') return { name: s, image: '', price: '' };
+    return {
+      name: String(s?.name || '').trim(),
+      image: String(s?.image || '').trim(),
+      price: String(s?.price || '').trim(),
+    };
+  };
+
+  const normalizedItems = (items || []).map(normalizeSub);
+
+  const openAdd = () => {
+    setEditingIdx(null);
+    setSubForm({ name: '', image: '', price: '' });
+    setFormErr('');
+    setModalOpen(true);
+  };
+
+  const openEdit = (idx) => {
+    setEditingIdx(idx);
+    setSubForm(normalizeSub(items[idx]));
+    setFormErr('');
+    setModalOpen(true);
+  };
+
+  const handleRemove = (idx) => {
+    onChange(items.filter((_, i) => i !== idx));
+  };
+
+  async function handleSubFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    setFormErr('');
+    try {
+      const url = await uploadToCloudinary(file);
+      setSubForm((prev) => ({ ...prev, image: url }));
+    } catch (err) {
+      setFormErr(err.message || 'Image upload failed');
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    const name = subForm.name.trim();
+    const image = subForm.image.trim();
+    const price = subForm.price.trim();
+
+    if (!name) {
+      setFormErr('Product / Sub-category name is required.');
+      return;
+    }
+    if (!image) {
+      setFormErr('Product image is required. Please upload an image or provide an image URL.');
+      return;
+    }
+    if (!price) {
+      setFormErr('Product price is required.');
+      return;
+    }
+
+    const itemData = {
+      name,
+      image,
+      price,
+    };
+
+    if (editingIdx !== null) {
+      const updated = items.map((it, idx) => (idx === editingIdx ? itemData : it));
+      onChange(updated);
+    } else {
+      const exists = normalizedItems.some(
+        (it) => it.name.toLowerCase() === name.toLowerCase()
+      );
+      if (exists) {
+        setFormErr('A sub-category with this name already exists.');
+        return;
+      }
+      onChange([...items, itemData]);
+    }
+    setModalOpen(false);
+  };
+
+  return (
+    <div style={{ marginBottom: '4px' }}>
+      <label style={{ fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '4px' }}>
+        {label}
+      </label>
+      {helpText && <p style={{ fontSize: '11px', color: t.muted, marginBottom: '10px' }}>{helpText}</p>}
+
+      {/* Existing Items Cards */}
+      {normalizedItems.length > 0 ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '8px', marginBottom: '12px' }}>
+          {normalizedItems.map((item, idx) => (
+            <div
+              key={idx}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                background: t.tagBg,
+                border: `1px solid ${t.border}`,
+                borderRadius: '6px',
+                padding: '8px 10px',
+                boxSizing: 'border-box',
+              }}
+            >
+              {/* Thumbnail */}
+              {item.image ? (
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px', border: `1px solid ${t.border}`, flexShrink: 0 }}
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+              ) : (
+                <div style={{ width: '42px', height: '42px', borderRadius: '4px', background: t.inputBg, border: `1px solid ${t.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>
+                  🏷️
+                </div>
+              )}
+
+              {/* Info */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ margin: 0, fontWeight: 700, fontSize: '12px', color: t.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.name}>
+                  {item.name}
+                </p>
+                {item.price ? (
+                  <span style={{ display: 'inline-block', marginTop: '3px', fontSize: '11px', fontWeight: 700, color: '#10b981', background: '#10b98115', border: '1px solid #10b98135', borderRadius: '3px', padding: '1px 6px' }}>
+                    {item.price.startsWith('₹') ? item.price : `₹${item.price}`}
+                  </span>
+                ) : (
+                  <span style={{ fontSize: '10px', color: t.muted, fontStyle: 'italic' }}>No price set</span>
+                )}
+              </div>
+
+              {/* Edit and Delete buttons */}
+              <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexShrink: 0 }}>
+                <button
+                  type="button"
+                  onClick={() => openEdit(idx)}
+                  title="Edit Sub-category"
+                  style={{
+                    background: t.inputBg,
+                    border: `1px solid ${t.border}`,
+                    borderRadius: '4px',
+                    padding: '4px 7px',
+                    color: t.text,
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  ✏️ Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRemove(idx)}
+                  title="Delete Sub-category"
+                  style={{
+                    background: '#ef444415',
+                    border: '1px solid #ef444430',
+                    borderRadius: '4px',
+                    padding: '4px 7px',
+                    color: '#ef4444',
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p style={{ fontSize: '11px', color: t.muted, margin: '0 0 10px', fontStyle: 'italic' }}>
+          No sub-categories added yet. Click &quot;+ Add Sub-category / Product&quot; to add one with name, image, and price.
+        </p>
+      )}
+
+      {/* Button to open form on same page */}
+      <button
+        type="button"
+        onClick={openAdd}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '8px 16px',
+          background: t.accent,
+          color: t.accentFg,
+          border: 'none',
+          borderRadius: '4px',
+          fontSize: '11px',
+          fontWeight: 800,
+          cursor: 'pointer',
+        }}
+      >
+        + Add Sub-category / Product
+      </button>
+
+      <p style={{ fontSize: '10px', color: t.muted, marginTop: '6px' }}>
+        &quot;Others&quot; option is added automatically for customers.
+      </p>
+
+      {/* ── Modal Form on the Same Page ─────────────────────────────── */}
+      {modalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(3px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '16px',
+          }}
+          onClick={() => { if (!uploading) setModalOpen(false); }}
+        >
+          <div
+            style={{
+              background: t.card,
+              border: `1px solid ${t.border}`,
+              borderRadius: '8px',
+              maxWidth: '460px',
+              width: '100%',
+              boxShadow: '0 24px 48px rgba(0,0,0,0.5)',
+              overflow: 'hidden',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '14px 18px',
+              borderBottom: `1px solid ${t.border}`,
+              background: t.inputBg,
+            }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '13px', fontWeight: 800, color: t.text }}>
+                  {editingIdx !== null ? '✏️ Edit Sub-category / Product' : '➕ Add Sub-category / Product'}
+                </h3>
+                <span style={{ fontSize: '10px', color: t.muted, fontWeight: 600, display: 'block', marginTop: '2px' }}>
+                  * All fields (Name, Image &amp; Price) are required
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                style={{ background: 'none', border: 'none', color: t.sub, fontSize: '18px', cursor: 'pointer', lineHeight: 1 }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Form Body */}
+            <div style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {/* Product Name */}
+              <div>
+                <label style={{ fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>
+                  Product / Sub-category Name *
+                </label>
+                <input
+                  autoFocus
+                  className="sc-inp"
+                  style={{ width: '100%', boxSizing: 'border-box', border: `1px solid ${t.border}`, borderRadius: '4px', padding: '9px 12px', background: t.inputBg, color: t.text, fontSize: '13px', outline: 'none' }}
+                  value={subForm.name}
+                  onChange={(e) => setSubForm((prev) => ({ ...prev, name: e.target.value }))}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSave(e); } }}
+                  placeholder='e.g. "OPC 43 & PPC", "White Cement", "Red Clay Bricks"'
+                  required
+                />
+              </div>
+
+              {/* Product Image */}
+              <div>
+                <label style={{ fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>
+                  Product Image *
+                </label>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '8px' }}>
+                  {subForm.image && (
+                    <div style={{ position: 'relative', flexShrink: 0 }}>
+                      <img
+                        src={subForm.image}
+                        alt="preview"
+                        style={{ width: '56px', height: '56px', objectFit: 'cover', border: `1px solid ${t.border}`, borderRadius: '4px' }}
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setSubForm((prev) => ({ ...prev, image: '' }))}
+                        style={{ position: 'absolute', top: '-6px', right: '-6px', width: '18px', height: '18px', borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+                  <label style={{ flex: 1, border: `1px dashed ${t.border}`, borderRadius: '4px', padding: '10px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', background: t.inputBg }}>
+                    <span style={{ fontSize: '16px' }}>{uploading ? '⏳' : '📁'}</span>
+                    <span style={{ fontSize: '11px', color: t.sub, fontWeight: 600 }}>
+                      {uploading ? 'Uploading…' : subForm.image ? 'Replace image' : 'Upload product image *'}
+                    </span>
+                    <input type="file" accept="image/*" onChange={handleSubFile} style={{ display: 'none' }} disabled={uploading} />
+                  </label>
+                </div>
+                <input
+                  className="sc-inp"
+                  style={{ width: '100%', boxSizing: 'border-box', border: `1px solid ${t.border}`, borderRadius: '4px', padding: '8px 10px', background: t.inputBg, color: t.text, fontSize: '12px', outline: 'none' }}
+                  value={subForm.image}
+                  onChange={(e) => setSubForm((prev) => ({ ...prev, image: e.target.value }))}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSave(e); } }}
+                  placeholder="Or paste product image URL *"
+                  required
+                />
+              </div>
+
+              {/* Price */}
+              <div>
+                <label style={{ fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>
+                  Price / Price Range *
+                </label>
+                <input
+                  className="sc-inp"
+                  style={{ width: '100%', boxSizing: 'border-box', border: `1px solid ${t.border}`, borderRadius: '4px', padding: '9px 12px', background: t.inputBg, color: t.text, fontSize: '13px', outline: 'none' }}
+                  value={subForm.price}
+                  onChange={(e) => setSubForm((prev) => ({ ...prev, price: e.target.value }))}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSave(e); } }}
+                  placeholder='e.g. ₹380 or ₹380–₹450 / bag'
+                  required
+                />
+                <small style={{ fontSize: '10px', color: t.muted, marginTop: '4px', display: 'block' }}>
+                  Price or price range displayed for this sub-category / product.
+                </small>
+              </div>
+
+              {formErr && (
+                <p style={{ color: '#ef4444', fontSize: '12px', margin: 0, padding: '6px 10px', background: '#ef444415', border: '1px solid #ef444430', borderRadius: '4px' }}>
+                  {formErr}
+                </p>
+              )}
+
+              {/* Footer Buttons */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '6px', paddingTop: '12px', borderTop: `1px solid ${t.border}` }}>
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  style={{ padding: '8px 16px', background: 'transparent', border: `1px solid ${t.border}`, borderRadius: '4px', color: t.sub, fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={uploading}
+                  style={{ padding: '8px 18px', background: t.accent, color: t.accentFg, border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
+                >
+                  {editingIdx !== null ? 'Save Changes' : '+ Add Sub-category'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── colour options ──────────────────────────────────────────────────────── */
 const COLOR_OPTIONS = [
   { value: 'yellow', label: 'Blue',    dot: 'var(--brand-blue)' },
@@ -315,7 +697,10 @@ export default function ShopCategoriesManager({ isDarkMode }) {
     if (!form.name.trim()) { flash('Name is required.', 'error'); return; }
     setSaving(true);
     try {
-      const payload = { ...form, image: image || null, emoji_image: emojiImage || null, types, subcategories, city_prices: cityPrices };
+      const derivedTypes = (subcategories && subcategories.length > 0)
+        ? subcategories.map(s => (typeof s === 'string' ? s : s?.name)).filter(Boolean)
+        : (types || []);
+      const payload = { ...form, image: image || null, emoji_image: emojiImage || null, types: derivedTypes, subcategories, city_prices: cityPrices };
       let res;
       if (editCat) {
         res = await fetch('/api/shop-categories', {
@@ -538,26 +923,13 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                   <ImageUpload value={image} onChange={setImage} t={t} />
                 </div>
 
-                {/* ── Types ─────────────────────────────────────────── */}
-                <div style={{ gridColumn: 'span 2', borderTop: `1px solid ${t.border}`, paddingTop: '20px', marginTop: '4px' }}>
-                  <TagListEditor
-                    label="Product Types"
-                    helpText="These appear as dropdown options when a customer requests a quote for this category."
-                    items={types}
-                    onChange={setTypes}
-                    placeholder='e.g. "OPC 43 Grade", "PPC", "White Cement"'
-                    t={t}
-                  />
-                </div>
-
                 {/* ── Subcategories ──────────────────────────────────── */}
-                <div style={{ gridColumn: 'span 2' }}>
-                  <TagListEditor
-                    label="Sub-categories (Optional)"
-                    helpText="Optional secondary classification shown after the type selection."
+                <div style={{ gridColumn: 'span 2', borderTop: `1px solid ${t.border}`, paddingTop: '20px', marginTop: '4px' }}>
+                  <SubcategoryListEditor
+                    label="Sub-categories / Products"
+                    helpText="Secondary classification with custom product name, image, and price."
                     items={subcategories}
                     onChange={setSubs}
-                    placeholder='e.g. "Rapid Setting", "Sulphate Resistant"'
                     t={t}
                   />
                 </div>
@@ -668,7 +1040,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                   )}
                   {subcategories.length > 0 && (
                     <div style={{ marginTop: '4px' }}>
-                      🗂 Sub-cats ({subcategories.length}): {subcategories.join(', ')} + <em>Others</em>
+                      🗂 Sub-cats ({subcategories.length}): {subcategories.map(s => typeof s === 'object' && s !== null ? s.name : s).join(', ')} + <em>Others</em>
                     </div>
                   )}
                 </div>

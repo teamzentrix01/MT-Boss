@@ -316,7 +316,7 @@ export default function ShopPage() {
   const dynamicTypes = productOptions.types || [];
   const dynamicUnits = productOptions.units || [];
   const catTypes    = (dynamicTypes.length > 0 ? dynamicTypes : (selectedCategory?.types || [])).filter(Boolean);
-  const catSubs     = (selectedCategory?.subcategories || []).filter(Boolean);
+  const catSubs     = (selectedCategory?.subcategories || []).map(s => typeof s === 'object' && s !== null ? s.name : s).filter(Boolean);
   const hasTypes    = catTypes.length > 0;
   const hasSubs     = catSubs.length  > 0;
   const categoryUnits = [

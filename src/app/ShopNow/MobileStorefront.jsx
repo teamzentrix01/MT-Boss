@@ -56,7 +56,10 @@ function getSubcategoriesForCategory(category) {
   if (!category) return ["All"];
   const list = [];
   if (Array.isArray(category.subcategories) && category.subcategories.length > 0) {
-    list.push(...category.subcategories);
+    category.subcategories.forEach((s) => {
+      const name = typeof s === 'object' && s !== null ? s.name : s;
+      if (name && !list.includes(name)) list.push(name);
+    });
   }
   if (Array.isArray(category.types) && category.types.length > 0) {
     category.types.forEach((t) => {
@@ -333,7 +336,7 @@ export default function MobileStorefront({
         p.category?.name?.toLowerCase() === activeCategory.name?.toLowerCase()
     );
     const subcats = Array.isArray(activeCategory.subcategories) && activeCategory.subcategories.length > 0
-      ? activeCategory.subcategories
+      ? activeCategory.subcategories.map(s => typeof s === 'object' && s !== null ? s.name : s).filter(Boolean)
       : getSubcategoriesForCategory(activeCategory).filter((s) => s !== "All");
     const brands = [...new Set(catProducts.map((p) => p.brand).filter(Boolean))];
     const options = ["All", ...subcats, ...brands].filter(Boolean);
