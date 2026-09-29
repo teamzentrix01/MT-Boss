@@ -3,8 +3,9 @@ import Hero from './components/Hero';
 // import AboutSection from './components/About';
 import Services from './components/Services';
 import QuickServices from './components/QuickServices';
-// import TestimonialsSection from './components/Testimonal';
+// import TestimonialsSection from './components/Testimonal';\r
 import DeferredHomeSections from './components/DeferredHomeSections';
+import { defaultHeroBanners, CONSTRUCTION_HERO_IMAGE_URL } from '@/lib/hero-banner-defaults.mjs';
 
 // ---------- METADATA ----------
 export const metadata = {
@@ -114,8 +115,34 @@ const homeServicesSchema = {
   },
 };
 
+// ---------- SERVER-SIDE BANNER FETCH ----------
+// Directly queries the DB at render time so ALL slides (including 5th) are
+// embedded in the HTML — zero client-side delay, zero layout shift.
+async function getHeroBanners() {
+  try {
+    // Dynamic import keeps the DB pool out of the client bundle
+    const { default: pool } = await import('@/lib/db');
+    const result = await pool.query(
+      'SELECT * FROM hero_banners WHERE is_active = true ORDER BY sort_order ASC, id ASC'
+    );
+    if (result.rows.length > 0) {
+      return result.rows.map(banner =>
+        banner.service_name?.trim().toLowerCase() === 'construction'
+          ? { ...banner, image_url: CONSTRUCTION_HERO_IMAGE_URL, cloudinary_public_id: '' }
+          : banner
+      );
+    }
+    return defaultHeroBanners;
+  } catch {
+    return defaultHeroBanners;
+  }
+}
+
 // ---------- PAGE ----------
-const Page = () => {
+const Page = async () => {
+  // Pre-fetch banners on the server so the Hero renders all slides instantly.
+  const heroBanners = await getHeroBanners();
+
   return (
     <div className="transition-colors duration-500">
       {/* JSON-LD structured data */}
@@ -128,7 +155,7 @@ const Page = () => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeServicesSchema) }}
       />
 
-      <Hero />
+      <Hero initialBanners={heroBanners} />
       {/* <AboutSection /> */}
       <QuickServices />
       <Services />
@@ -139,3 +166,4 @@ const Page = () => {
 };
 
 export default Page;
+
