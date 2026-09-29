@@ -49,9 +49,16 @@ export default function LeadConsultationModal({ isDarkMode, onDismiss }) {
   useEffect(() => {
     // Keep the initial render and first interaction clear before showing this
     // non-critical prompt. Dismissal is remembered for the current visit.
+    
+    // Do not auto-open on mobile devices
+    if (window.innerWidth <= 768) {
+      return;
+    }
+
+    // Auto-open after 10 seconds on desktop
     const timer = setTimeout(() => {
       setIsOpen(true);
-    }, 2500);
+    }, 10000);
     return () => clearTimeout(timer);
   }, []);
 
