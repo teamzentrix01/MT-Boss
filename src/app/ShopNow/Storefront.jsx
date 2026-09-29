@@ -432,6 +432,12 @@ export default function Storefront({ categories, products, offers = [], content,
           onCheckout={onCheckout}
           onDetails={setDetailsProduct}
           shippingSettings={shippingSettings}
+          activeCoupon={activeCoupon}
+          couponCalculation={couponCalculation}
+          couponOffers={couponOffers}
+          onApplyCoupon={onApplyCoupon}
+          onSelectCoupon={onSelectCoupon}
+          onClearCoupon={onClearCoupon}
         />
       </div>
 
