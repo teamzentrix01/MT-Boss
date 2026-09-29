@@ -414,7 +414,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               onClick={() => setIsOpen(!isOpen)}
               className={`nav-control p-1.5 sm:p-2 rounded-md ${isDarkMode
                 ? 'text-zinc-300 hover:bg-zinc-800'
-                : 'text-zinc-600 hover:bg-gray-100'
+                : 'text-black hover:bg-gray-100'
                 }`}
             >
               {isOpen ? (

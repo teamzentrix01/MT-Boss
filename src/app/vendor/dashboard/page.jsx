@@ -578,8 +578,8 @@ function VendorDashboardContent() {
         {/* Header */}
         <div className="flex flex-col gap-4 mb-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0 max-w-full">
-            <h1 className="max-w-full text-[clamp(2rem,13vw,3.25rem)] sm:text-4xl font-black uppercase leading-[0.95] break-words">
-              Vendor Dashboard
+            <h1 className="max-w-full text-[clamp(2rem,13vw,3.25rem)] sm:text-4xl font-black uppercase leading-[0.95]">
+              Vendor<br />Dashboard
             </h1>
             <button
               type="button"
@@ -1078,7 +1078,7 @@ function VendorDashboardContent() {
           <button
             type="button"
             onClick={openBookings}
-            className={`p-6 border ${card} text-left cursor-pointer hover:border-[var(--brand-blue)] transition-colors`}
+            className={`p-6 border ${card} text-left cursor-pointer hover:border-[var(--brand-blue)] transition-colors no-global-btn`}
           >
             <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Active</p>
             <p className="text-3xl font-black mt-2">{activeBooking ? 1 : 0}</p>

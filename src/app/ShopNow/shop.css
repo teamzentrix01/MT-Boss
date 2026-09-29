@@ -3354,7 +3354,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #1e293b !important;
+  color: #000000 !important;
 }
 
 .dark-mode .mobile-hamburger-btn {
