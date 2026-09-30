@@ -59,7 +59,7 @@ export async function GET(req) {
     await ensureProjectOpsSchema();
     const result = await pool.query(
       `SELECT id, title, category, location, description, image_url, cloudinary_public_id,
-              size, status, sort_order, created_at
+              size, status, sort_order, created_at, additional_images
          FROM projects
         WHERE project_kind = 'portfolio' AND status = 'published'
         ORDER BY COALESCE(sort_order, 0) ASC, created_at DESC`
@@ -82,7 +82,7 @@ export async function POST(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
 
-    const { title, category, location, description, image_url, cloudinary_public_id, size, status } = await req.json();
+    const { title, category, location, description, image_url, cloudinary_public_id, size, status, additional_images } = await req.json();
 
     if (!title || !image_url || !category) {
       return NextResponse.json({ success: false, error: 'Title, category and image are required' }, { status: 400 });
@@ -90,11 +90,11 @@ export async function POST(req) {
 
     await ensureProjectOpsSchema();
     const result = await pool.query(
-      `INSERT INTO projects (title, category, location, description, image_url, cloudinary_public_id, size, status, sort_order, project_kind)
+      `INSERT INTO projects (title, category, location, description, image_url, cloudinary_public_id, size, status, sort_order, project_kind, additional_images)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,
          (SELECT COALESCE(MAX(sort_order), 0) + 1 FROM projects WHERE project_kind = 'portfolio'),
-         'portfolio') RETURNING *`,
-      [title, category, location || '', description || '', image_url, cloudinary_public_id || '', size || 'small', status || 'published']
+         'portfolio', $9) RETURNING *`,
+      [title, category, location || '', description || '', image_url, cloudinary_public_id || '', size || 'small', status || 'published', additional_images ? JSON.stringify(additional_images) : '[]']
     );
 
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
@@ -141,13 +141,13 @@ export async function PATCH(req) {
       return NextResponse.json({ success: true });
     }
 
-    const { id, title, category, location, description, image_url, cloudinary_public_id, size, status } = payload;
+    const { id, title, category, location, description, image_url, cloudinary_public_id, size, status, additional_images } = payload;
 
     const result = await pool.query(
       `UPDATE projects SET title=$1, category=$2, location=$3, description=$4,
-       image_url=$5, cloudinary_public_id=$6, size=$7, status=$8
+       image_url=$5, cloudinary_public_id=$6, size=$7, status=$8, additional_images=$10
        WHERE id=$9 AND project_kind='portfolio' RETURNING *`,
-      [title, category, location, description, image_url, cloudinary_public_id, size, status, id]
+      [title, category, location, description, image_url, cloudinary_public_id, size, status, id, additional_images ? JSON.stringify(additional_images) : '[]']
     );
 
     return NextResponse.json({ success: true, data: result.rows[0] });
@@ -164,7 +164,7 @@ export async function DELETE(req) {
 
     await ensureProjectOpsSchema();
     const portfolioProject = await pool.query(
-      "SELECT id FROM projects WHERE id = $1 AND project_kind = 'portfolio'",
+      "SELECT id, additional_images FROM projects WHERE id = $1 AND project_kind = 'portfolio'",
       [id]
     );
     if (!portfolioProject.rows[0]) {
@@ -181,7 +181,25 @@ export async function DELETE(req) {
           api_key: process.env.CLOUDINARY_API_KEY,
           timestamp: Math.floor(Date.now() / 1000),
         }),
-      });
+      }).catch(e => console.error('Cloudinary delete error:', e));
+    }
+    
+    // Delete additional images
+    const projectRow = portfolioProject.rows[0];
+    if (projectRow.additional_images && Array.isArray(projectRow.additional_images)) {
+      for (const img of projectRow.additional_images) {
+        if (img.cloudinary_public_id) {
+          await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/destroy`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              public_id: img.cloudinary_public_id,
+              api_key: process.env.CLOUDINARY_API_KEY,
+              timestamp: Math.floor(Date.now() / 1000),
+            }),
+          }).catch(e => console.error('Cloudinary additional delete error:', e));
+        }
+      }
     }
 
     await pool.query("DELETE FROM projects WHERE id = $1 AND project_kind = 'portfolio'", [id]);

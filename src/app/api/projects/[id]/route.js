@@ -64,7 +64,7 @@ export async function GET(req, { params }) {
     await ensureProjectOpsSchema();
     const result = await pool.query(
       `SELECT id, title, category, location, description, image_url,
-              cloudinary_public_id, size, status, created_at
+              cloudinary_public_id, size, status, created_at, additional_images
          FROM projects
         WHERE id = $1 AND project_kind = 'portfolio' AND status = 'published'`,
       [id]
