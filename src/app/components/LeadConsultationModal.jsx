@@ -121,7 +121,7 @@ export default function LeadConsultationModal({ isDarkMode, onDismiss }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100000] flex items-center justify-center p-3 md:p-6 bg-black/75 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-[100000] hidden md:flex items-center justify-center p-3 md:p-6 bg-black/75 backdrop-blur-sm animate-fadeIn">
       
       {/* ── MODAL CONTAINER (DESKTOP ONLY) ── */}
       <div 
