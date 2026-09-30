@@ -1,6 +1,7 @@
 import React from "react";
 import LandingEnquiry from "../../components/LandingEnquiry";
 
+
 const Content = () => {
   return (
     <div className="min-h-screen bg-white pt-0">
@@ -8,296 +9,475 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Near Me in Moradabad — Complete Guide to Hiring the Right Design Partner
+            Architect Near Me in Moradabad: MT Boss
           </h2>
+
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Searching for an &quot;architect near me&quot; in Moradabad usually means you&apos;re at the very start of a construction journey — you have a plot, a rough idea, and you need someone to turn that into a workable design before construction can even begin. Choosing the right design partner matters because the architectural plan influences everything that follows: room layout, natural light, ventilation, structural feasibility, and ultimately how comfortable the finished building feels to live or work in. This guide explains what an architect actually does, how to evaluate one nearby, what design work typically costs in Moradabad, and how design-and-build construction companies like MTBOSS Construction Private Limited fit into this process.
+                When you type &quot;architect near me&quot; into your phone, you are looking for more than a name. You want someone close enough to visit your plot, familiar enough with Moradabad to plan for local conditions, and reliable enough to guide you from a rough idea to a finished building.
+              </p>
+              <p className="mt-3">
+                MT Boss is a Moradabad-based construction, property and home services company with its office on Harthala Kanth Road. Our team plans and designs homes, shops, showrooms, hotels and industrial buildings, and then builds them. That means one local team handles your drawings, approvals guidance, materials and construction, so you never have to coordinate between an architect, a contractor and a supplier.
+              </p>
+              <p className="mt-3">
+                This page explains our architectural services, the process we follow, cost factors and practical advice for choosing the right architect near you.
               </p>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Does an Architect Actually Do?
+                Why Choose a Local Architect in Moradabad
               </h3>
-              <p className="mb-3">
-                An architect&apos;s role goes well beyond drawing floor plans. Their responsibilities typically include:
-              </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Understanding the client&apos;s lifestyle, space requirements, and budget</li>
-                <li>Studying the plot&apos;s orientation, size, and surrounding context</li>
-                <li>Preparing floor plans, elevations, and 3D visualizations</li>
-                <li>Planning room layouts for functionality, light, and ventilation</li>
-                <li>Coordinating with structural engineers on load-bearing elements</li>
-                <li>Ensuring designs comply with local building bylaws and setback rules</li>
-                <li>Selecting materials, finishes, and design themes in consultation with the client</li>
-                <li>Preparing drawings needed for municipal approval submissions</li>
+                <li>
+                  <strong>Quick, regular site visits.</strong> Frequent visits keep the work accurate and catch mistakes early.
+                </li>
+                <li>
+                  <strong>Knowledge of local conditions.</strong> Heat, monsoon moisture, soil type, drainage and dust all affect design choices, and a local architect plans for them from the start.
+                </li>
+                <li>
+                  <strong>Understanding of local rules.</strong> Setbacks, height limits, coverage and approval processes differ across areas, and local experience saves time.
+                </li>
+                <li>
+                  <strong>Realistic costs.</strong> A local team knows current material and labour rates in Moradabad, so estimates are grounded in reality.
+                </li>
+                <li>
+                  <strong>Easy communication.</strong> Face-to-face meetings make it simpler to explain your ideas and review drawings together.
+                </li>
+                <li>
+                  <strong>Long-term support.</strong> If you need changes, repairs or an extension later, the same local team is close by.
+                </li>
               </ul>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why &quot;Near Me&quot; Matters When Searching for an Architect
+                Architectural Services by MT Boss in Moradabad
+              </h3>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Residential Architecture and House Design
+              </h4>
+              <p className="mb-3">
+                We design independent houses, duplexes, villas, farmhouses, builder floors and apartments. Each plan starts with your family size, lifestyle, budget and preferred style, and is shaped to give good light, airflow, privacy and storage.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Floor Plans and Space Planning
+              </h4>
+              <p className="mb-3">
+                Whether your plot is small or large, a well-planned layout makes every square foot count. Our 2D floor plans cover room sizes, kitchen and bathroom placement, staircase and parking, doors and windows, and furniture layout. We are used to the smaller and irregular plots common in Moradabad&apos;s older localities and new colonies.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                3D Elevation and Exterior Design
+              </h4>
+              <p className="mb-3">
+                Your building&apos;s front is the first thing people notice. Our 3D elevation views show colours, textures, balconies, railings and lighting before construction begins, so you can adjust the look with full confidence. We design modern, contemporary, minimalist and traditional Indian elevations.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Commercial Architecture
+              </h4>
+              <p className="mb-3">
+                We design shops, showrooms, offices, clinics, schools, coaching institutes, restaurants and banquet halls, with careful attention to visibility, customer flow, parking and fire safety.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Hotel and Hospitality Design
+              </h4>
+              <p className="mb-3">
+                For hotels, resorts and guest houses, we plan room mix, lobby flow, dining, back-of-house operations and guest comfort, so the building works well for visitors and staff.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Industrial and Warehouse Planning
+              </h4>
+              <p className="mb-3">
+                Moradabad&apos;s brass, handicraft and export industries need practical buildings. We plan factories, workshops, godowns and warehouses with proper truck movement, loading bays, ventilation and natural light.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Vastu-Friendly Planning
+              </h4>
+              <p className="mb-3">
+                If you follow Vastu, we place rooms, entrances, the kitchen, pooja room and staircase according to its guidelines, while keeping the layout modern and functional.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Renovation, Extension and Additional Floors
+              </h4>
+              <p className="mb-3">
+                We assess your existing structure and redesign it to add space, improve light and refresh the look, without unnecessary demolition.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Interior Design Coordination
+              </h4>
+              <p className="mb-3">
+                Because MT Boss also offers interiors, your architectural plan and your interior plan can be developed together for a seamless final result.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Architect and Builder Under One Roof at MT Boss
               </h3>
               <p className="mb-3">
-                Choosing a locally available architect or design partner offers real practical advantages:
+                Many owners hire an architect first and a builder later, and then find that the design costs more to build than expected, or that details do not match on site. MT Boss avoids this by keeping both roles in one company.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Easier in-person meetings to discuss design ideas and revisions</li>
-                <li>Better familiarity with Moradabad&apos;s local building bylaws and setback norms</li>
-                <li>Faster site visits to understand plot orientation and surroundings firsthand</li>
-                <li>Simpler coordination with local structural engineers and contractors</li>
-                <li>Quicker turnaround on design revisions during the planning phase</li>
-                <li>Local reputation and referrals make it easier to verify past work</li>
+                <li>
+                  <strong>Buildable designs.</strong> We plan what can be constructed within your budget and timeline.
+                </li>
+                <li>
+                  <strong>Cost awareness from day one.</strong> Estimates reflect real construction rates.
+                </li>
+                <li>
+                  <strong>Single accountability.</strong> One team answers for design and construction quality.
+                </li>
+                <li>
+                  <strong>Faster decisions.</strong> There is no delay while an architect and builder debate who is right.
+                </li>
+                <li>
+                  <strong>Material access.</strong> Through the MT Boss{" "}
+                  <a
+                    href="https://www.mtboss.in/ShopNow"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    materials store
+                  </a>
+                  , we source cement, TMT steel bars, bricks, tiles and paints at competitive rates.
+                </li>
+                <li>
+                  <strong>Support after handover.</strong> Our{" "}
+                  <a
+                    href="https://www.mtboss.in/quick"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    home services team
+                  </a>{" "}
+                  can handle electrical, plumbing, painting and AC needs.
+                </li>
               </ul>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What to Expect From a Good Architect or Design Partner
-              </h3>
-              <p className="mb-3">
-                Whether you hire an independent architect or a design-and-build company, expect the following:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>An initial consultation to understand your requirements and budget</li>
-                <li>A site visit to study the plot before starting any design work</li>
-                <li>Concept designs or 3D visualizations to review before finalizing plans</li>
-                <li>Clear communication about design fees and payment stages</li>
-                <li>Drawings prepared in a format usable for municipal approval</li>
-                <li>Coordination support with structural engineers for feasibility</li>
-                <li>Willingness to revise designs based on your feedback</li>
-              </ul>
-            </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Architect vs. Design-and-Build Company — What&apos;s the Difference?
+                What to Include in Your Architect Brief
               </h3>
               <p className="mb-3">
-                Understanding this distinction helps you decide which route fits your project:
+                A clear brief helps any architect give better advice. Before your first meeting, collect the following:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>An independent architect typically focuses only on design, leaving you to separately hire a contractor for construction</li>
-                <li>A design-and-build company combines architectural design coordination with actual construction execution under one roof</li>
-                <li>Hiring separately gives more design specialization but requires you to manage two different parties</li>
-                <li>A combined design-and-build approach reduces coordination gaps between design intent and on-site execution</li>
-                <li>For straightforward residential or commercial projects, a design-and-build company can simplify the entire process significantly</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Types of Design Services You Might Need in Moradabad
-              </h3>
-              <p className="mb-3">
-                Here are the common design service categories available:
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">1. Residential Design</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>New independent house or villa design</li>
-                <li>Multi-storey home layout planning (G+1, G+2, etc.)</li>
-                <li>Interior layout and space planning</li>
-                <li>Renovation and remodeling design for existing homes</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">2. Commercial Design</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Office layout and space planning</li>
-                <li>Retail showroom and shopping complex design</li>
-                <li>Hotel and hospitality space design</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">3. Structural Coordination</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Load-bearing design coordination with structural engineers</li>
-                <li>Foundation planning based on soil and plot conditions</li>
-                <li>BIM-based design coordination for construction accuracy</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">4. Supporting Construction Services</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Material selection guidance for finishes and fixtures</li>
-                <li>Coordination with civil contractors for design execution</li>
-                <li>Full construction execution once design is finalized</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBOSS Supports Design-and-Build Projects in Moradabad
-              </h3>
-              <p className="mb-3">
-                MTBOSS Construction Private Limited is primarily a construction and civil engineering company rather than a standalone architecture firm, but based on their published company profile, they offer integrated design coordination as part of their overall construction service:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
-                <li>450+ completed projects across residential, commercial, and industrial categories</li>
-                <li>12 million+ square feet built, reflecting experience across varied design and structural needs</li>
-                <li>150+ trained professionals, including engineers, supervisors, and technicians</li>
-                <li>Technology-integrated process, using AI and BIM (Building Information Modeling) since 2018 for design and structural planning</li>
-                <li>Free Construction Budget Calculator for instant, design-linked cost estimates</li>
-                <li>Four quality packages — Basic, Standard, Premium, and Luxury — matching different design and finish levels</li>
-                <li>Coordinated design-to-construction execution, avoiding the handoff gap between architect and contractor</li>
-                <li>Direct wholesale material supply for cement, steel, bricks, tiles, and paints</li>
-                <li>Industry recognition — &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024</li>
-                <li>Instant WhatsApp support for quick queries and quotes</li>
+                <li>
+                  <strong>Plot details:</strong> size, shape, facing direction and a copy of the plot papers or map.
+                </li>
+                <li>
+                  <strong>Location:</strong> the locality in Moradabad and the width of the approach road.
+                </li>
+                <li>
+                  <strong>Type of building:</strong> house, shop, showroom, office or factory.
+                </li>
+                <li>
+                  <strong>Rooms and needs:</strong> number of bedrooms, floors, parking, shops on the ground floor and future expansion.
+                </li>
+                <li>
+                  <strong>Budget range:</strong> even a rough figure helps the architect suggest suitable materials and design.
+                </li>
+                <li>
+                  <strong>Timeline:</strong> when you want to start and when you need to move in or open.
+                </li>
+                <li>
+                  <strong>Style preferences:</strong> save photos of homes or buildings you like.
+                </li>
+                <li>
+                  <strong>Special requirements:</strong> Vastu, elderly family members, children, work-from-home space or joint-family needs.
+                </li>
               </ul>
               <p className="mt-3">
-                For someone who wants a single accountable partner handling both design coordination and construction execution — rather than managing an architect and contractor separately — this combined approach can simplify the overall process.
+                You do not need every answer. Our team will help you fill in the gaps during the free consultation.
               </p>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How to Evaluate an Architect or Design Partner Before Hiring
+                MT Boss Design and Construction Process
               </h3>
               <p className="mb-3">
-                Use this checklist regardless of whether you&apos;re hiring an independent architect or a design-and-build company:
+                We keep the process clear so you always know what comes next.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Ask for a portfolio of previously designed and built projects</li>
-                <li>Confirm whether they offer 3D visualizations before finalizing plans</li>
-                <li>Check if design fees are charged separately or bundled with construction</li>
-                <li>Ask how many design revisions are included before extra charges apply</li>
-                <li>Confirm familiarity with Moradabad&apos;s local building bylaws and approval process</li>
-                <li>Ask if structural engineering coordination is included in their service</li>
-                <li>Read genuine client reviews and request references</li>
-                <li>Test their responsiveness via call, email, or WhatsApp</li>
-                <li>Get a written agreement covering design scope, fees, and timelines</li>
+                <li>
+                  <strong>Step 1: Free consultation and site visit.</strong> We listen to your needs, visit the plot and understand your budget and timeline.
+                </li>
+                <li>
+                  <strong>Step 2: Concept design.</strong> We prepare layout options and space planning. You review them and tell us what to change.
+                </li>
+                <li>
+                  <strong>Step 3: 3D elevation and detailed drawings.</strong> Once the concept is approved, we prepare 3D views and working drawings.
+                </li>
+                <li>
+                  <strong>Step 4: Budget and quotation.</strong> You receive a clear written estimate. For a quick early figure, try the MT Boss{" "}
+                  <a
+                    href="https://www.mtboss.in/calculator"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Construction Budget Calculator
+                  </a>
+                  .
+                </li>
+                <li>
+                  <strong>Step 5: Construction and supervision.</strong> If you choose MT Boss for construction, our team builds exactly to the approved design with regular site checks.
+                </li>
+                <li>
+                  <strong>Step 6: Finishing and handover.</strong> We complete finishing, inspection and cleaning, and hand over a building that is ready to use.
+                </li>
               </ul>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Design and Construction Cost Factors in Moradabad
+                Architect and Construction Cost Factors in Moradabad
               </h3>
               <p className="mb-3">
-                Several factors influence what you&apos;ll pay for design and subsequent construction:
+                Costs vary from project to project. The main factors are:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Plot size and complexity of the design required</li>
-                <li>Number of floors and rooms planned</li>
-                <li>Whether 3D visualization and detailed working drawings are included</li>
-                <li>Structural complexity requiring detailed engineering coordination</li>
-                <li>Quality package selected for eventual construction — Basic, Standard, Premium, or Luxury</li>
-                <li>Whether design and construction are bundled or hired separately</li>
+                <li>
+                  <strong>Plot and built-up area:</strong> more area means more material and labour.
+                </li>
+                <li>
+                  <strong>Design complexity:</strong> simple shapes cost less than elaborate elevations and custom features.
+                </li>
+                <li>
+                  <strong>Number of floors:</strong> additional floors need stronger structure and more material.
+                </li>
+                <li>
+                  <strong>Material quality:</strong> basic, standard and premium finishes differ greatly in price.
+                </li>
+                <li>
+                  <strong>Site conditions:</strong> soil, access and existing structures can affect foundation and labour costs.
+                </li>
+                <li>
+                  <strong>Finishing level:</strong> flooring, doors, windows, kitchen, bathrooms and paint all change the final figure.
+                </li>
               </ul>
               <p className="mt-3">
-                For reference, overall construction costs (including structural and finishing work) for a 1,000 sq. ft. G+1 standard-quality home in Moradabad typically fall around ₹700–₹800 per sq. ft., with design costs either bundled in or quoted separately depending on the service provider.
+                Architect fees are typically a small share of the total project cost, and good planning often saves far more than the fee itself by avoiding rework, wastage and structural mistakes. For a personal figure, request a{" "}
+                <a
+                  href="https://www.mtboss.in/CTASection/get-quote"
+                  className="text-blue-600 underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  free quote
+                </a>
+                .
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Step-by-Step Process From Design to Construction
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Initial Consultation</strong> — Discussing requirements, budget, and plot details</li>
-                <li><strong>Site Visit</strong> — Studying plot orientation, size, and surrounding context</li>
-                <li><strong>Concept Design</strong> — Preparing initial floor plans and layout options</li>
-                <li><strong>Design Finalization</strong> — Refining plans based on feedback, including 3D visuals if offered</li>
-                <li><strong>Municipal Approval</strong> — Submitting drawings for building plan sanction</li>
-                <li><strong>Structural Coordination</strong> — Finalizing load-bearing and foundation details</li>
-                <li><strong>Construction Execution</strong> — Building the structure per the approved design</li>
-                <li><strong>Finishing &amp; Handover</strong> — Completing interiors and final walkthrough</li>
-              </ul>
-            </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Benefits of Choosing a Locally Based Design Partner
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Faster, more frequent in-person design discussions</li>
-                <li>Better understanding of Moradabad&apos;s plot sizes, soil types, and local preferences</li>
-                <li>Easier coordination with local contractors and material suppliers</li>
-                <li>Familiarity with Moradabad Municipal Corporation&apos;s approval requirements</li>
-                <li>Quicker response for design revisions or on-site clarifications</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Mistakes When Searching for an Architect Near You
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Hiring based on lowest design fee without reviewing past project quality</li>
-                <li>Not clarifying how many design revisions are included before extra charges apply</li>
-                <li>Skipping a written agreement on design scope and payment stages</li>
-                <li>Assuming a design will automatically pass municipal approval without verification</li>
-                <li>Not asking whether structural coordination is included or needs to be arranged separately</li>
-                <li>Overlooking the benefits of a combined design-and-build approach when construction is also planned soon</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact a Design and Construction Partner in Moradabad
+                Designing for Moradabad&apos;s Climate and Lifestyle
               </h3>
               <p className="mb-3">
-                If you&apos;re planning a project and want architectural design coordination bundled with construction execution, reach out directly:
+                Good architecture responds to its surroundings. For projects in Moradabad, MT Boss focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
-                <li><strong>Phone / Call:</strong> +91 94584 10866</li>
-                <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
-                <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
+                <li>
+                  <strong>Heat management:</strong> shaded windows, cross ventilation and suitable wall and roof details to keep interiors cooler in summer.
+                </li>
+                <li>
+                  <strong>Monsoon protection:</strong> proper slopes, waterproofing and drainage to prevent dampness and seepage.
+                </li>
+                <li>
+                  <strong>Winter comfort:</strong> sunlight in living areas and well-sealed bedrooms.
+                </li>
+                <li>
+                  <strong>Natural light:</strong> larger openings in the right places to cut daytime electricity use.
+                </li>
+                <li>
+                  <strong>Energy saving:</strong> provision for solar panels and efficient lighting.
+                </li>
+                <li>
+                  <strong>Joint family and business needs:</strong> flexible layouts, extra storage and, where needed, commercial space on the ground floor with living space above.
+                </li>
               </ul>
               <p className="mt-3">
-                Try the free online Construction Budget Calculator for an initial estimate, then follow up by phone or WhatsApp to discuss your design and construction requirements together.
+                A climate-smart design lowers monthly bills and keeps the building comfortable for decades.
               </p>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Frequently Asked Questions (FAQs)
+                Popular House Design Styles in Moradabad
+              </h3>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Modern contemporary:</strong> clean lines, large windows, mixed textures and neat balconies.
+                </li>
+                <li>
+                  <strong>North Indian traditional:</strong> arches, jharokhas, courtyards and warm colours.
+                </li>
+                <li>
+                  <strong>Minimalist:</strong> simple shapes, calm colours and uncluttered interiors.
+                </li>
+                <li>
+                  <strong>Duplex and triplex homes:</strong> ideal for making the best use of a compact plot by building upward.
+                </li>
+                <li>
+                  <strong>Shop-plus-home designs:</strong> commercial space on the ground floor and family living above, very common in Moradabad.
+                </li>
+                <li>
+                  <strong>Brass-inspired details:</strong> as Moradabad is known as the Brass City, subtle brass accents in gates, nameplates and lighting add a local identity.
+                </li>
+              </ul>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Common Mistakes When Planning a Building
+              </h3>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Starting construction from a rough sketch instead of proper drawings.</li>
+                <li>Ignoring plot orientation, light and ventilation.</li>
+                <li>Not planning parking, staircase and future extension early.</li>
+                <li>Skipping structural design and soil checks.</li>
+                <li>Choosing an architect on price alone.</li>
+                <li>Hiring an architect and builder who do not coordinate.</li>
+                <li>Beginning work without a written quotation and schedule.</li>
+                <li>Forgetting electrical, plumbing and drainage layouts until late.</li>
+              </ul>
+              <p className="mt-3">
+                Getting a proper plan before the first brick is laid helps you avoid each of these.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                How to Choose an Architect Near You
+              </h3>
+              <p className="mb-3">
+                Whoever you hire, run through this checklist:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>They can show completed projects, not only computer images.</li>
+                <li>They understand local building rules and approval requirements.</li>
+                <li>They provide 3D elevation views before construction begins.</li>
+                <li>The quotation is itemised and in writing.</li>
+                <li>They coordinate with structural, electrical and plumbing work.</li>
+                <li>A named person supervises the site regularly.</li>
+                <li>The timeline is clear, along with the plan for delays.</li>
+                <li>Their address and contact details match their official website and Google listing.</li>
+                <li>They offer after-service support once the building is complete.</li>
+              </ul>
+              <p className="mt-3">
+                MT Boss welcomes every one of these checks and answers them openly during your free consultation.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Areas Served by MT Boss in Moradabad
+              </h3>
+              <p className="mb-3">
+                We work with home and business owners across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies and commercial belts.
+              </p>
+              <p>
+                Our office on Harthala Kanth Road keeps site visits across the city quick and convenient.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                MT Boss Architect FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. How do I find a good architect near me in Moradabad?</strong>
+                  <strong>Q1. Does MT Boss offer architect services in Moradabad?</strong>
                   <br />
-                  Check portfolios, ask for 3D visualizations, confirm bylaw familiarity, and compare at least 2–3 options.
+                  Yes. We handle house plans, 3D elevations, commercial design and construction.
                 </li>
                 <li>
-                  <strong>Q2. Is MTBOSS an architecture firm?</strong>
+                  <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  No, MTBOSS is a construction company that coordinates architectural and structural design as part of its build service.
+                  Yes. MT Boss offers a free consultation and site visit.
                 </li>
                 <li>
-                  <strong>Q3. Can MTBOSS help with house design and construction together?</strong>
+                  <strong>Q3. Can MT Boss also build my house?</strong>
                   <br />
-                  Yes, they offer coordinated design-to-construction execution using BIM technology.
+                  Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
                 <li>
-                  <strong>Q4. What is the average construction cost per square foot in Moradabad?</strong>
+                  <strong>Q4. Do you make 3D elevation designs?</strong>
                   <br />
-                  Around ₹700–₹800 per sq. ft. for standard-quality construction, including structural work.
+                  Yes. You see your building in 3D before construction begins.
                 </li>
                 <li>
-                  <strong>Q5. Does MTBOSS provide a free cost estimate?</strong>
+                  <strong>Q5. Do you design for small plots?</strong>
                   <br />
-                  Yes, their online Budget Calculator gives an instant, free BOQ-based estimate.
+                  Yes. We specialise in making small and irregular plots work well.
                 </li>
                 <li>
-                  <strong>Q6. Is it better to hire an architect separately or a design-and-build company?</strong>
+                  <strong>Q6. Can the plan follow Vastu?</strong>
                   <br />
-                  It depends on your preference — separate hiring offers design specialization, while a combined approach simplifies coordination.
+                  Yes. We prepare Vastu-friendly layouts whenever you ask for them.
                 </li>
                 <li>
-                  <strong>Q7. Does MTBOSS use modern design technology?</strong>
+                  <strong>Q7. Do you work on shops and commercial buildings?</strong>
                   <br />
-                  Yes, they have used AI and BIM (Building Information Modeling) since 2018.
+                  Yes. We design shops, showrooms, offices, hotels and industrial buildings.
+                </li>
+                <li>
+                  <strong>Q8. Can you renovate or extend my old house?</strong>
+                  <br />
+                  Yes. We assess the structure and redesign it to add space and light.
+                </li>
+                <li>
+                  <strong>Q9. Is the quotation itemised?</strong>
+                  <br />
+                  Yes. You get a written breakup of materials, labour and finishes.
+                </li>
+                <li>
+                  <strong>Q10. How do I contact MT Boss?</strong>
+                  <br />
+                  Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>
               </ul>
             </section>
           </div>
         </div>
+
 
         {/* Form Section */}
         <div className="w-full lg:w-[450px] p-8 order-2 lg:order-2">
@@ -309,5 +489,6 @@ const Content = () => {
     </div>
   );
 };
+
 
 export default Content;

@@ -1,6 +1,7 @@
 import React from "react";
 import LandingEnquiry from "../../components/LandingEnquiry";
 
+
 const Content = () => {
   return (
     <div className="min-h-screen bg-white pt-0">
@@ -8,300 +9,550 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Bungalow in Moradabad — Complete Guide
+            Architect for Bungalow in Moradabad: MT Boss
           </h2>
+
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                A bungalow offers a distinct kind of living experience — single-storey (or low-rise) spread-out living, larger open spaces, and a strong connection between indoor and outdoor areas. Designing and building a bungalow in Moradabad requires a different design approach compared to a compact multi-storey home, with more emphasis on horizontal space planning, garden integration, and single-level accessibility. This guide covers what bungalow design and construction involves, how it differs from multi-storey home design, typical costs, and how MTBOSS Construction Private Limited supports bungalow design coordination and construction execution in Moradabad.
+                A bungalow is more than a big house. It is a statement about how a family wants to live: with space to breathe, a garden to sit in, room for guests, parking for several vehicles and a design that still looks fresh twenty years from now. Because a bungalow uses a large plot and a large budget, every design decision is magnified. A good plan makes the house feel grand and comfortable. A weak plan leaves you with wasted rooms, hot corridors and high maintenance bills.
+              </p>
+              <p className="mt-3">
+                That is why an architect for a bungalow in Moradabad matters so much.
+              </p>
+              <p className="mt-3">
+                MT Boss is a Moradabad-based construction, property and home services company. Our team designs bungalows, villas, duplexes and independent houses, and then builds them. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to the day you move in.
+              </p>
+              <p className="mt-3">
+                This page covers our bungalow design services, plot planning, room layouts, elevation styles, costs and practical advice for choosing the right architect.
               </p>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Makes Bungalow Design Different From Multi-Storey Homes?
+                Bungalow Design Services by MT Boss in Moradabad
               </h3>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Complete Bungalow Design
+              </h4>
               <p className="mb-3">
-                Bungalow design prioritizes horizontal space planning rather than vertical stacking of floors:
+                We plan the whole property, not just the building: the house, gate, driveway, garden, boundary wall, parking and outdoor sitting areas, all working together.
               </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Larger plot area requirements since living space spreads across one or two levels rather than stacking upward</li>
-                <li>Greater emphasis on outdoor spaces — gardens, courtyards, and verandas</li>
-                <li>Single-level accessibility, which appeals to families with elderly members or accessibility needs</li>
-                <li>More design flexibility for open floor plans without staircase constraints</li>
-                <li>Roof design becomes a larger design consideration since there&apos;s less structural stacking</li>
-                <li>Often includes covered porches, sit-outs, or semi-open transitional spaces</li>
-              </ul>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Plot Study and Site Planning
+              </h4>
+              <p className="mb-3">
+                Before design begins, we study your plot papers, shape, facing direction, road width and surroundings. This decides where the house sits, how far it stands from the boundary and how sunlight and wind move through the site.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Floor Plans and Zoning
+              </h4>
+              <p className="mb-3">
+                We divide the bungalow into clear zones, such as public areas for guests, private areas for the family and service areas for staff and utilities, so the home feels organised and peaceful.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                3D Elevation and Exterior Design
+              </h4>
+              <p className="mb-3">
+                Our 3D views show the facade, entrance, balconies, lighting and landscaping before construction begins, so you can adjust the look with confidence.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Landscape and Outdoor Planning
+              </h4>
+              <p className="mb-3">
+                We plan lawns, trees, pathways, water features, seating spaces and outdoor lighting, so the garden becomes a real part of daily life.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Vastu-Friendly Layouts
+              </h4>
+              <p className="mb-3">
+                We place the entrance, kitchen, pooja room, bedrooms and staircase according to Vastu guidelines when you want them, without giving up modern comfort.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Interior Coordination
+              </h4>
+              <p className="mb-3">
+                Because MT Boss also offers interior design, your architectural and interior plans can be developed together, from staircase details to false ceilings and lighting.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Construction and Turnkey Execution
+              </h4>
+              <p className="mb-3">
+                If you want one team for everything, we build your bungalow exactly to the approved design with regular quality checks and progress updates.
+              </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose a Bungalow-Style Home?
-              </h3>
-              <p className="mb-3">
-                Families choose bungalow-style construction in Moradabad for several practical and lifestyle reasons:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Easier daily accessibility without navigating stairs, especially for elderly family members</li>
-                <li>More natural connection to outdoor spaces like gardens and courtyards</li>
-                <li>Often preferred for farmhouse-style properties or larger suburban plots</li>
-                <li>Design flexibility for open-plan living and entertaining spaces</li>
-                <li>Lower structural complexity compared to multi-storey homes in some cases</li>
-                <li>A distinct architectural character compared to typical multi-storey urban homes</li>
-              </ul>
-            </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Key Design Elements for a Well-Planned Bungalow
+                Why Bungalow Design Needs a Specialist Approach
               </h3>
               <p className="mb-3">
-                A well-planned bungalow typically addresses the following design elements:
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">1. Layout &amp; Space Planning</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Open living, dining, and family areas connected seamlessly</li>
-                <li>Bedroom wings separated from common areas for privacy</li>
-                <li>Covered verandas or porches as transitional outdoor-indoor spaces</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">2. Outdoor Integration</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Garden and landscaping planning as part of the overall design</li>
-                <li>Courtyard spaces for natural light and ventilation</li>
-                <li>Parking and driveway planning suited to larger plots</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">3. Roof &amp; Elevation Design</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Sloped or flat roof design based on climate and aesthetic preference</li>
-                <li>Elevation design that reflects the bungalow&apos;s character and street presence</li>
-                <li>Skylights or clerestory windows for additional natural light where beneficial</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">4. Accessibility &amp; Comfort</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Single-level or minimal-level layout for ease of movement</li>
-                <li>Wide doorways and corridors for comfortable accessibility</li>
-                <li>Natural cross-ventilation planning across the spread-out layout</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Bungalow Design and Construction Services You Might Need
-              </h3>
-              <p className="mb-3">
-                Bungalow projects typically involve the following service categories:
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">1. New Bungalow Design</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Complete floor plan and layout design for single or low-rise construction</li>
-                <li>Elevation and roof design</li>
-                <li>Garden and outdoor space planning</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">2. Interior &amp; Room-Level Design</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Bedroom wing and common area layout planning</li>
-                <li>Kitchen and dining space design suited to open layouts</li>
-                <li>Verandah and sit-out area design</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">3. Renovation &amp; Expansion Design</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Redesigning or expanding an existing bungalow layout</li>
-                <li>Adding covered outdoor spaces to existing structures</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">4. Supporting Construction Services</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Material and finish selection guidance</li>
-                <li>Coordination with civil contractors for design execution</li>
-                <li>Full construction execution once the design is finalized</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBOSS Supports Bungalow Design-and-Build Projects in Moradabad
-              </h3>
-              <p className="mb-3">
-                MTBOSS Construction Private Limited is primarily a construction and civil engineering company rather than a standalone architecture firm, but based on their published company profile, they offer bungalow and residential design coordination as part of their overall construction service:
+                A bungalow is not a scaled-up flat or a small house on a big plot. It has its own challenges, and good design solves them from the start.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
-                <li>450+ completed projects, including residential homes of varied formats</li>
-                <li>12 million+ square feet built, reflecting experience across varied home sizes and layouts</li>
-                <li>150+ trained professionals, including engineers, supervisors, and technicians</li>
-                <li>Technology-integrated process, using AI and BIM (Building Information Modeling) since 2018 for design and structural planning</li>
-                <li>Free Construction Budget Calculator for instant, design-linked cost estimates based on plot size</li>
-                <li>Four quality packages — Basic, Standard, Premium, and Luxury — matching different design and finish levels</li>
-                <li>Coordinated design-to-construction execution, avoiding the handoff gap between design and building teams</li>
-                <li>Direct wholesale material supply for cement, steel, bricks, tiles, and paints</li>
-                <li>Industry recognition — &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024</li>
-                <li>Instant WhatsApp support for quick queries and quotes</li>
+                <li>
+                  <strong>Larger structure, larger risk.</strong> Long spans, wide verandas and double-height spaces need careful structural design, coordinated with a qualified structural engineer.
+                </li>
+                <li>
+                  <strong>Bigger budget, bigger waste.</strong> A poorly planned bungalow can waste lakhs on rooms nobody uses and corridors nobody needs.
+                </li>
+                <li>
+                  <strong>Multiple vehicles and guests.</strong> Parking, driveway width and turning space must be planned early, not squeezed in later.
+                </li>
+                <li>
+                  <strong>Privacy and zoning.</strong> Guests, family and staff should each have comfortable movement without crossing each other.
+                </li>
+                <li>
+                  <strong>Heat and light.</strong> Large glass areas and open terraces look good but can raise cooling costs unless shaded properly.
+                </li>
+                <li>
+                  <strong>Long-term upkeep.</strong> Big lawns, large roofs and tall walls need durable materials and easy maintenance.
+                </li>
+                <li>
+                  <strong>Resale and prestige value.</strong> A well-designed bungalow holds its value far better than a generic one.
+                </li>
               </ul>
               <p className="mt-3">
-                For homeowners planning a bungalow — where garden integration, roof design, and single-level layout planning all need to work together — having design coordination closely linked with the construction team can help avoid gaps between the design intent and what&apos;s actually built.
+                Careful planning on paper is much cheaper than correcting mistakes in concrete.
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How to Evaluate a Bungalow Design Partner
-              </h3>
-              <p className="mb-3">
-                Use this checklist when choosing who will design your bungalow:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Ask for a portfolio specifically including bungalow or single-storey home projects</li>
-                <li>Confirm whether 3D visualizations are included before finalizing plans</li>
-                <li>Check how they approach garden and outdoor space integration</li>
-                <li>Ask how many design revisions are included before extra charges apply</li>
-                <li>Confirm familiarity with Moradabad&apos;s local building bylaws and plot size norms for bungalow-style construction</li>
-                <li>Ask if structural engineering coordination is included in their service</li>
-                <li>Read genuine client reviews and request references</li>
-                <li>Test their responsiveness via call, email, or WhatsApp</li>
-                <li>Get a written agreement covering design scope, fees, and timelines</li>
-              </ul>
-            </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Bungalow Design and Construction Cost Factors in Moradabad
+                Plot and Site Planning for Bungalows in Moradabad
               </h3>
               <p className="mb-3">
-                Several factors influence what you&apos;ll pay for bungalow design and construction:
+                Bungalows are generally built on larger plots, often in newer colonies and planned areas. The exact rules for setbacks, coverage and height depend on the locality and local authority, so we always check current requirements. These planning ideas apply in most cases:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Plot size, since bungalows typically require larger land area than multi-storey homes</li>
-                <li>Complexity of roof design (sloped, flat, or a combination)</li>
-                <li>Extent of outdoor space design, including gardens and courtyards</li>
-                <li>Whether 3D visualization and detailed working drawings are included</li>
-                <li>Quality package selected for eventual construction — Basic, Standard, Premium, or Luxury</li>
-                <li>Structural complexity, though generally lower than multi-storey homes</li>
+                <li>
+                  <strong>Placement on the plot.</strong> The house position decides sunlight, privacy and garden space. We usually balance a comfortable front lawn with a usable rear or side garden.
+                </li>
+                <li>
+                  <strong>Facing direction.</strong> East, west, north or south facing plots each need a different approach to light, heat and entrance planning.
+                </li>
+                <li>
+                  <strong>Driveway and parking.</strong> We plan gate width, turning radius and covered parking for the number of vehicles your family really uses, plus space for guests.
+                </li>
+                <li>
+                  <strong>Boundary wall and gate.</strong> The wall, gate and entrance canopy set the tone for the property and affect security and privacy.
+                </li>
+                <li>
+                  <strong>Levels and drainage.</strong> Correct plinth height and site slope keep water away from the house during the monsoon.
+                </li>
+                <li>
+                  <strong>Services placement.</strong> Water tank, septic or sewer connection, generator, solar panels and meters are planned so that they are accessible but hidden.
+                </li>
+                <li>
+                  <strong>Trees and shade.</strong> Existing trees are worth protecting, and new trees are planted where they cool the house and frame the view.
+                </li>
               </ul>
               <p className="mt-3">
-                For reference, overall construction costs for standard-quality homes in Moradabad typically fall around ₹700–₹800 per sq. ft., though bungalow projects often involve additional costs for landscaping and outdoor space development beyond the built-up area calculation.
+                MT Boss studies your actual plot papers and site before recommending a layout.
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Step-by-Step Bungalow Design and Construction Process
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Initial Consultation</strong> — Discussing family needs, lifestyle preferences, and plot details</li>
-                <li><strong>Site Visit</strong> — Studying plot size, orientation, and outdoor space potential</li>
-                <li><strong>Concept Design</strong> — Preparing initial floor plans, including outdoor space integration</li>
-                <li><strong>Design Finalization</strong> — Refining plans based on feedback, including 3D visuals if offered</li>
-                <li><strong>Municipal Approval</strong> — Submitting drawings for building plan sanction</li>
-                <li><strong>Structural Coordination</strong> — Finalizing foundation and roof structural details</li>
-                <li><strong>Construction Execution</strong> — Building the bungalow per the approved design</li>
-                <li><strong>Landscaping &amp; Finishing</strong> — Completing garden areas alongside interior finishing</li>
-              </ul>
-            </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Benefits of Choosing a Locally Based Bungalow Design Partner
+                Room-by-Room Bungalow Planning by MT Boss
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Faster, more frequent in-person design discussions</li>
-                <li>Better understanding of Moradabad&apos;s larger plot availability and local preferences</li>
-                <li>Easier coordination with local contractors and material suppliers</li>
-                <li>Familiarity with Moradabad Municipal Corporation&apos;s approval requirements for bungalow-style construction</li>
-                <li>Quicker response for design revisions or on-site clarifications</li>
+                <li>
+                  <strong>Entrance and foyer.</strong> A welcoming approach, covered porch and an entrance hall that sets the tone without showing the whole house at once.
+                </li>
+                <li>
+                  <strong>Drawing room and formal living.</strong> A separate guest space near the entrance, so visitors do not disturb private areas.
+                </li>
+                <li>
+                  <strong>Family living and dining.</strong> A comfortable, well-lit space at the heart of the house, connected to the kitchen and outdoor seating.
+                </li>
+                <li>
+                  <strong>Kitchen and pantry.</strong> Proper ventilation, an efficient work layout, generous storage and a utility or wet kitchen if needed.
+                </li>
+                <li>
+                  <strong>Bedrooms.</strong> Cross ventilation, privacy, walk-in or built-in wardrobes and attached bathrooms placed to avoid damp walls and noise.
+                </li>
+                <li>
+                  <strong>Master suite.</strong> A larger bedroom with dressing area, bathroom and a private balcony or garden view.
+                </li>
+                <li>
+                  <strong>Elderly and guest bedrooms.</strong> Ground-floor rooms for easy access, with safe bathrooms and step-free movement.
+                </li>
+                <li>
+                  <strong>Pooja room.</strong> A quiet, well-placed corner that suits your daily routine.
+                </li>
+                <li>
+                  <strong>Study, home office and library.</strong> Calm rooms with good light and sound separation.
+                </li>
+                <li>
+                  <strong>Staircase.</strong> Wide, comfortable and positioned to look good without stealing the best floor area.
+                </li>
+                <li>
+                  <strong>Terrace and balconies.</strong> Usable outdoor rooms with safe railings, shade and proper waterproofing.
+                </li>
+                <li>
+                  <strong>Staff rooms and utility areas.</strong> Servant quarters, store rooms, laundry and drying areas, kept separate but close enough for convenience.
+                </li>
+                <li>
+                  <strong>Garage and parking.</strong> Covered space for vehicles, with room to open doors comfortably and an easy exit to the road.
+                </li>
               </ul>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Mistakes When Planning a Bungalow Design
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Underestimating the plot area needed for a comfortable bungalow layout</li>
-                <li>Not planning outdoor and garden spaces alongside the built structure from the start</li>
-                <li>Skipping roof design consideration, which has a bigger visual impact on bungalows than multi-storey homes</li>
-                <li>Not clarifying how many design revisions are included before extra charges apply</li>
-                <li>Choosing the cheapest design service without reviewing past bungalow project quality</li>
-                <li>Not asking whether landscaping and outdoor space costs are included in the overall estimate</li>
-              </ul>
-            </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact a Bungalow Design and Construction Partner in Moradabad
+                Bungalow Elevation and Style Options
               </h3>
               <p className="mb-3">
-                If you&apos;re planning a bungalow and want design coordination bundled with construction execution, reach out directly:
+                The front of a bungalow is its signature. MT Boss designs elevations in several popular styles:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
-                <li><strong>Phone / Call:</strong> +91 94584 10866</li>
-                <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
-                <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
+                <li>
+                  <strong>Modern contemporary:</strong> clean lines, large glass areas, mixed textures and flat roofs with neat parapets.
+                </li>
+                <li>
+                  <strong>Classic and colonial:</strong> columns, arches, deep verandas, cornices and symmetrical facades.
+                </li>
+                <li>
+                  <strong>Luxury and neo-classical:</strong> stone cladding, grand entrances, detailed mouldings and statement lighting.
+                </li>
+                <li>
+                  <strong>North Indian traditional:</strong> jharokhas, courtyards, carved details and warm colours.
+                </li>
+                <li>
+                  <strong>Minimalist:</strong> simple shapes, quiet colours and carefully placed openings.
+                </li>
+                <li>
+                  <strong>Brass-inspired details:</strong> Moradabad is known as the Brass City, and subtle brass accents in gates, nameplates, railings and lighting add local identity.
+                </li>
               </ul>
               <p className="mt-3">
-                Try the free online Construction Budget Calculator for an initial estimate, then follow up by phone or WhatsApp to discuss your bungalow&apos;s specific design and construction requirements.
+                Our 3D views let you compare options side by side before you decide. We also check that the style you like works with your plot, climate and budget.
               </p>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Frequently Asked Questions (FAQs)
+                Vastu-Friendly Bungalow Design
+              </h3>
+              <p className="mb-3">
+                Many families in Moradabad want their bungalow to follow Vastu principles, especially for a home they plan to live in for decades. MT Boss plans the main entrance, kitchen, pooja room, bedrooms, staircase, water tank and toilets according to the guidance you follow, while keeping the layout practical.
+              </p>
+              <p className="mt-3">
+                If your family works with a particular Vastu consultant, we can follow their recommendations. If Vastu is not a priority, we design for light, ventilation and comfort instead. In either case, we explain trade-offs honestly, so you can decide with full information.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Climate-Smart Bungalow Design for Moradabad
+              </h3>
+              <p className="mb-3">
+                Large houses feel the climate more strongly, so smart design pays back every month. For bungalows in Moradabad, MT Boss focuses on:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Heat management:</strong> shaded windows, deep verandas, cross ventilation and suitable wall and roof details for cooler summers.
+                </li>
+                <li>
+                  <strong>Monsoon protection:</strong> correct plinth height, proper slopes, waterproofing and drainage to prevent dampness and seepage.
+                </li>
+                <li>
+                  <strong>Winter comfort:</strong> sunlight in living areas and well-sealed bedrooms.
+                </li>
+                <li>
+                  <strong>Natural light:</strong> well-placed openings, courtyards or skylights that cut daytime electricity use.
+                </li>
+                <li>
+                  <strong>Energy saving:</strong> roof space planned for solar panels, plus efficient lighting and cooling.
+                </li>
+                <li>
+                  <strong>Garden as a cooler:</strong> trees, lawns and water features that lower the temperature around the house.
+                </li>
+                <li>
+                  <strong>Dust control:</strong> sensible window design and easy-to-clean surfaces.
+                </li>
+              </ul>
+              <p className="mt-3">
+                A climate-smart bungalow stays comfortable and keeps running costs under control for decades.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                What to Include in Your Bungalow Design Brief
+              </h3>
+              <p className="mb-3">
+                A clear brief helps any architect give better advice. Before your first meeting, collect the following:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Plot details:</strong> size, shape, facing direction and a copy of the plot papers or map.
+                </li>
+                <li>
+                  <strong>Location:</strong> the colony or locality in Moradabad and the width of the approach road.
+                </li>
+                <li>
+                  <strong>Timeline:</strong> when you want to start and when you need to move in.
+                </li>
+                <li>
+                  <strong>Style preferences:</strong> saved photos of bungalows you like, plus colours and materials.
+                </li>
+                <li>
+                  <strong>Vastu and other wishes:</strong> any rules or preferences you want the design to follow.
+                </li>
+              </ul>
+              <p className="mt-3">
+                You do not need every answer. Our team will help you fill in the gaps during the free consultation.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                MT Boss Bungalow Design Process, Step by Step
+              </h3>
+              <p className="mb-3">
+                We keep the process clear so you always know what comes next.
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Step 1: Free consultation and site visit.</strong> We listen to your needs, visit the plot and understand your budget and timeline.
+                </li>
+                <li>
+                  <strong>Step 2: Site study and concept.</strong> We study the plot, then prepare zoning and layout options for your review.
+                </li>
+                <li>
+                  <strong>Step 3: 3D elevation and working drawings.</strong> Once the concept is approved, we prepare 3D views and detailed drawings, coordinated with structural, electrical and plumbing design.
+                </li>
+                <li>
+                  <strong>Step 4: Approvals guidance.</strong> We guide you on the drawings and documents typically needed for local approvals. Requirements vary by area, so please confirm final rules with the relevant authorities.
+                </li>
+                <li>
+                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate with materials, labour and finishes itemised. For a quick early figure, try the MT Boss{" "}
+                  <a
+                    href="https://www.mtboss.in/calculator"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Construction Budget Calculator
+                  </a>
+                  .
+                </li>
+                <li>
+                  <strong>Step 6: Construction and supervision.</strong> If you choose MT Boss to build, our team builds exactly to the approved design with regular site checks.
+                </li>
+                <li>
+                  <strong>Step 7: Finishing, landscaping and handover.</strong> We complete finishing, garden work, inspection and cleaning, and hand over a bungalow that is ready to live in.
+                </li>
+              </ul>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Bungalow Construction Cost Factors in Moradabad
+              </h3>
+              <p className="mb-3">
+                Costs vary widely from bungalow to bungalow. The main factors include:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Built-up area:</strong> more area means more material and labour.
+                </li>
+                <li>
+                  <strong>Design complexity:</strong> simple shapes cost less than curves, double heights, large cantilevers and elaborate elevations.
+                </li>
+                <li>
+                  <strong>Number of floors and basement:</strong> extra levels need stronger structure and more material.
+                </li>
+                <li>
+                  <strong>Material quality:</strong> flooring, stone, doors, windows, sanitaryware and fittings range from standard to luxury.
+                </li>
+                <li>
+                  <strong>Site work:</strong> boundary wall, gate, driveway, landscaping and outdoor lighting can form a large share of the budget.
+                </li>
+                <li>
+                  <strong>Services:</strong> solar panels, backup power, water treatment, home automation and cooling systems add cost.
+                </li>
+                <li>
+                  <strong>Interiors:</strong> kitchens, wardrobes, ceilings and lighting can rival the structure in cost.
+                </li>
+                <li>
+                  <strong>Site conditions:</strong> soil, access and land levels can affect foundation and labour costs.
+                </li>
+              </ul>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Smart Spending Advice from MT Boss
+              </h4>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Spend more on:</strong> structure, waterproofing, electrical and plumbing quality, doors, windows and roof insulation. These are hard and costly to fix later.
+                </li>
+                <li>
+                  <strong>Save on:</strong> decorative extras, imported fittings and items you can upgrade over time.
+                </li>
+              </ul>
+              <p className="mt-3">
+                Design fees are usually a small share of a bungalow&apos;s total cost, and good planning often saves far more than the fee through better layouts and less rework. MT Boss provides an itemised quote, so there are no hidden charges. For a personal estimate, request a{" "}
+                <a
+                  href="https://www.mtboss.in/CTASection/get-quote"
+                  className="text-blue-600 underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  free quote
+                </a>
+                .
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Common Bungalow Design Mistakes to Avoid
+              </h3>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Building from a rough sketch instead of proper drawings.</li>
+                <li>Ignoring plot orientation, sun path and wind direction.</li>
+                <li>Oversizing rooms while undersizing storage and utility spaces.</li>
+                <li>Underplanning parking, driveway width and turning space.</li>
+                <li>Using large glass areas without shading, which raises cooling bills.</li>
+                <li>Skipping structural design and soil checks.</li>
+                <li>Forgetting waterproofing on terraces, bathrooms and external walls.</li>
+                <li>Leaving landscaping, lighting and boundary wall planning to the end.</li>
+                <li>Choosing an elevation before checking that the layout supports it.</li>
+                <li>Hiring a designer and a builder who do not coordinate.</li>
+              </ul>
+              <p className="mt-3">
+                Careful planning at the start helps you avoid each of these.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                How to Choose an Architect for Your Bungalow
+              </h3>
+              <p className="mb-3">
+                Whoever you hire, use this checklist:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>They can show completed bungalows or villas, not only computer images.</li>
+                <li>They ask about your family, guests and lifestyle before drawing.</li>
+                <li>They understand local building rules, setbacks and approval requirements.</li>
+                <li>The timeline is clear, along with the plan for delays.</li>
+                <li>Their address and contact details match their official website and Google listing.</li>
+                <li>They offer after-service support once the bungalow is complete.</li>
+                <li>Professional details are shown where they apply.</li>
+              </ul>
+              <p className="mt-3">
+                MT Boss welcomes every one of these checks and answers them openly during your free consultation.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Areas Served by MT Boss in Moradabad
+              </h3>
+              <p className="mb-3">
+                We work with families across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with newer colonies and nearby plots.
+              </p>
+              <p>
+                Our office on Harthala Kanth Road keeps site visits quick and convenient.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                MT Boss Bungalow Architect FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. How is bungalow design different from a multi-storey home?</strong>
+                  <strong>Q1. Does MT Boss design bungalows in Moradabad?</strong>
                   <br />
-                  Bungalow design focuses on horizontal space planning, single-level accessibility, and outdoor integration rather than stacking floors.
+                  Yes. We design bungalows, villas, duplexes and independent houses.
                 </li>
                 <li>
-                  <strong>Q2. Does MTBOSS design bungalows in Moradabad?</strong>
+                  <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes, as a construction company, they coordinate residential design, including bungalow layouts, alongside construction execution.
+                  Yes. MT Boss offers a free consultation and site visit.
                 </li>
                 <li>
-                  <strong>Q3. How much plot area is typically needed for a bungalow?</strong>
+                  <strong>Q3. Can MT Boss also build my bungalow?</strong>
                   <br />
-                  Bungalows generally require larger plots than multi-storey homes since living space spreads horizontally.
+                  Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
                 <li>
-                  <strong>Q4. Does MTBOSS provide a free cost estimate for bungalow projects?</strong>
+                  <strong>Q4. Do you make 3D elevation designs?</strong>
                   <br />
-                  Yes, their online Budget Calculator gives an instant, free BOQ-based estimate.
+                  Yes. You see your bungalow in 3D before construction begins.
                 </li>
                 <li>
-                  <strong>Q5. Does bungalow construction cost more than a multi-storey home?</strong>
+                  <strong>Q5. Do you plan the garden and driveway too?</strong>
                   <br />
-                  Costs vary by design; bungalows often involve additional landscaping costs beyond the built-up area price.
+                  Yes. We plan the gate, driveway, parking, lawn and outdoor spaces with the house.
                 </li>
                 <li>
-                  <strong>Q6. Does MTBOSS use modern design technology for bungalow planning?</strong>
+                  <strong>Q6. Can the plan follow Vastu?</strong>
                   <br />
-                  Yes, they have used AI and BIM (Building Information Modeling) since 2018.
+                  Yes. We prepare Vastu-friendly layouts whenever you ask for them.
                 </li>
                 <li>
-                  <strong>Q7. Can I buy construction materials directly through MTBOSS for a bungalow project?</strong>
+                  <strong>Q7. Can you include staff rooms and a guest wing?</strong>
                   <br />
-                  Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates.
+                  Yes. We plan separate zones for family, guests and staff.
                 </li>
                 <li>
-                  <strong>Q8. Are bungalows suitable for families with elderly members?</strong>
+                  <strong>Q8. Can you design a bungalow on a corner or irregular plot?</strong>
                   <br />
-                  Yes, single-level accessibility is one of the main advantages of bungalow-style living.
+                  Yes. We turn awkward shapes into practical, attractive layouts.
+                </li>
+                <li>
+                  <strong>Q9. Is the quotation itemised?</strong>
+                  <br />
+                  Yes. You get a written breakup of materials, labour and finishes.
+                </li>
+                <li>
+                  <strong>Q10. How do I contact MT Boss?</strong>
+                  <br />
+                  Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>
               </ul>
             </section>
           </div>
         </div>
+
 
         {/* Form Section */}
         <div className="w-full lg:w-[450px] p-8 order-2 lg:order-2">
@@ -313,5 +564,6 @@ const Content = () => {
     </div>
   );
 };
+
 
 export default Content;
