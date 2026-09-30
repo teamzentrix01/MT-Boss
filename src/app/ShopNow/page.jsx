@@ -989,6 +989,7 @@ export default function ShopPage() {
                       onChange={(e) => setDeliveryDate(e.target.value)}
                       min={new Date().toISOString().split("T")[0]}
                       max="9999-12-31"
+                      suppressHydrationWarning
                       className={inp}
                     />
                   </div>

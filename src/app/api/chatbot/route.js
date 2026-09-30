@@ -138,23 +138,180 @@ Aap apne plot area ke hisaab se live estimate nikalne ke liye hamara [Constructi
 You can calculate an itemized material & labor budget using our [Construction Cost Calculator](/calculator), or reach our engineering team directly at **+91 94584 10866**.`;
   }
 
-  if (lower.includes('material') || lower.includes('cement') || lower.includes('steel') || lower.includes('tmt') || lower.includes('brick') || lower.includes('sand') || lower.includes('shop')) {
+  if (lower.includes('service') || lower.includes('construction') || lower.includes('contractor') || lower.includes('thekedar') || lower.includes('civil') || lower.includes('building')) {
     if (isHinglish) {
-      return `MTBoss par aap direct verified manufacturers se wholesale building materials order kar sakte hain:
+      return `MTBoss provide karta hai complete A-to-Z **Turnkey Construction & Civil Engineering Services**:
 
-- 📦 **TMT Steel:** Tata Tiscon, Jindal Panther, Kamdhenu (Fe500D / Fe550D)
-- 🧱 **Cement:** UltraTech, Ambuja, ACC, JK Super (OPC 43/53 & PPC)
-- 🚚 **Bricks & Sand:** Class 1 Red Bricks, Fly Ash Bricks, River Sand & Aggregates
+- 🏢 **Commercial & Residential Buildings:** Design, architect approval se lekar handover tak
+- 👷 **Expert Civil Contractors:** Certified engineers, quality materials aur timely delivery
+- 📑 **2D/3D Floor Plans & Approvals:** Vastu-compliant architectural drawings
 
-Pan-India doorstep delivery aur live price quotes ke liye hamara [Shop Now Portal](/ShopNow) dekhein.`;
+Explore karne ke liye hamara [Construction Services Page](/Services/all) dekhein ya direct site visit schedule karein!`;
     }
-    return `You can order wholesale construction materials directly from verified manufacturers on MTBOSS:
+    return `MTBOSS delivers comprehensive **Turnkey Construction & Civil Engineering Solutions**:
 
-- 📦 **TMT Steel:** Tata Tiscon, Jindal Panther, Kamdhenu (Fe500D / Fe550D)
-- 🧱 **Cement:** UltraTech, Ambuja, ACC, JK Super (OPC & PPC grades)
-- 🚚 **Masonry & Aggregates:** Class 1 Red Bricks, Eco Fly Ash Bricks, Sand & Crushed stone
+- 🏢 **Residential & Commercial Projects:** Architectural design, structural stability, and luxury finishing
+- 👷 **Expert Civil Engineering:** Experienced supervisors, certified quality materials, and milestone guarantees
+- 📑 **Architectural Blueprints:** 2D floor plans, 3D elevation designs, and Vastu compliance
 
-Visit our [Building Materials Shop](/ShopNow) for instant price quotations and Pan-India delivery.`;
+Visit our [Construction Services](/Services/all) portal to explore our projects or book a free site consultation.`;
+  }
+
+  if (lower.includes('agent') || lower.includes('broker') || lower.includes('commission') || lower.includes('referral') || lower.includes('earn')) {
+    if (isHinglish) {
+      return `MTBoss ke sath जुड़कर aap **Verified Agent** ban sakte hain aur har project/property referral par attractive commission kama sakte hain:
+
+- 💰 **Earn High Commission:** Har successful client referral par instant payout
+- 🤝 **Full Training & Backing:** MTBoss team ki taraf se complete sales aur technical support
+- 📱 **Agent Dashboard:** Apne referrals aur earnings ko live track karein
+
+Agent banne ke liye hamare [Agent Portal](/agent) par register karein ya [Agent Login](/agent/login) karein!`;
+    }
+    return `Join the **MTBOSS Agent Network** and earn high referral commissions on construction projects and property deals:
+
+- 💰 **Competitive Commission Slabs:** High-yield payout on successful deal closures
+- 🤝 **Comprehensive Support:** Full backend sales and marketing collateral provided
+- 📱 **Dedicated Portal:** Track deals and payouts transparently
+
+Register or log in via our [Agent Portal](/agent) to get started!`;
+  }
+
+  if (lower.includes('franchise') || lower.includes('dealership') || lower.includes('business') || lower.includes('partner') || lower.includes('invest')) {
+    if (isHinglish) {
+      return `MTBoss ke sath judkar aap apna successful **Construction & Building Materials Franchise** shuru kar sakte hain:
+
+- 🏢 **Franchise Models:** Associate Franchise, Regional Franchise aur Master Franchise
+- 📈 **High ROI:** 30% - 40% expected annual returns aur exclusive territory rights
+- 📦 **Supply Chain Support:** Centralized raw material procurement aur brand backing
+
+Poori jaankari ke liye hamare [Franchise Portal](/franchise) par visit karein ya call karein **+91 94584 10866**!`;
+    }
+    return `Partner with MTBOSS through our high-yield **Franchise Business Model**:
+
+- 🏢 **Franchise Tiers:** Associate (Tehsil level), Regional (District level), and Master Franchise (State level)
+- 📈 **Attractive ROI:** 30% - 40% projected annual return with territory exclusivity
+- 📦 **Full ERP & Supply Chain Support:** Centralized materials discounts and incoming qualified leads
+
+Explore details on our [Franchise Portal](/franchise) or contact our franchise desk at **+91 94584 10866**.`;
+  }
+
+  // SPECIFIC MATERIAL HANDLERS (Direct, accurate answers to what was asked)
+  if (lower.includes('brick') || lower.includes('eent') || lower.includes('int') || lower.includes('eet')) {
+    if (isHinglish) {
+      return `Haan ji! MTBoss par high-quality **Bricks & Blocks** wholesale rates par uplabdh hain:
+
+- 🧱 **Class 1 Red Bricks (Lal Eent):** High compressive strength, kiln-baked, standard size for strong brickwork
+- 🏗️ **Fly Ash Bricks:** Eco-friendly, uniform edges, plaster aur cement ki bachat
+- 🏢 **AAC Lightweight Blocks:** Soundproof, heat-insulating aur fast masonry construction ke liye
+
+Aap direct wholesale rate aur bulk delivery quote dekhne ke liye [Shop Now Portal](/ShopNow) visit kar sakte hain ya direct hume **+91 94584 10866** par contact kar sakte hain!`;
+    }
+    return `Yes! MTBOSS supplies multiple categories of high-grade **Bricks & Building Blocks** directly to your construction site:
+
+- 🧱 **Class 1 Kiln-Burnt Red Bricks:** Premium grade with high compressive strength and low water absorption (<15%).
+- 🏗️ **Fly Ash Bricks:** Machine-pressed, uniform dimensions, saving cement mortar and plaster.
+- 🏢 **Autoclaved Aerated Concrete (AAC) Lightweight Blocks:** High thermal insulation, earthquake resistant, and speeds up masonry work by 3x.
+
+Check live wholesale pricing and order on our [Building Materials Shop](/ShopNow) or call our material desk at **+91 94584 10866**.`;
+  }
+
+  if (lower.includes('cement')) {
+    if (isHinglish) {
+      return `MTBoss par India ke top brands ka **Certified Cement** direct factory wholesale rate par available hai:
+
+- 🏗️ **UltraTech Cement** (Super, Weather Plus & OPC 43/53)
+- 🛡️ **Ambuja Cement** (Ambuja Kawach & Roof Special)
+- ⭐ **ACC Cement** (Gold Water Shield & Suraksha PPC)
+- 🏢 **JK Super & Birla A1 Cement**
+
+Current wholesale rates aur bulk site delivery ke liye hamara [Shop Now Portal](/ShopNow) visit karein ya WhatsApp karein: **+91 94584 10866**!`;
+    }
+    return `MTBOSS delivers genuine, lab-certified **Cement** from India's top manufacturers at direct wholesale rates:
+
+- 🏗️ **UltraTech Cement:** PPC, Super & OPC 53 Grade for high-load structural casting.
+- 🛡️ **Ambuja Cement:** Ambuja Kawach (water repellent) & Roof Special.
+- ⭐ **ACC Gold & Suraksha:** Enhanced durability and dense concrete matrix.
+- 🏢 **JK Super & Lafarge Concreting Grades**
+
+Check bag rates and order bulk delivery on our [Building Materials Portal](/ShopNow).`;
+  }
+
+  if (lower.includes('steel') || lower.includes('sariya') || lower.includes('tmt') || lower.includes('iron') || lower.includes('loha')) {
+    if (isHinglish) {
+      return `MTBoss par certified **TMT Steel Bars (Sariya)** wholesale bundle aur ton rates par uplabdh hain:
+
+- 🏗️ **Top Brands:** Tata Tiscon, Jindal Panther, Kamdhenu, Rathi
+- 📏 **Sizes Available:** 8mm, 10mm, 12mm, 16mm, 20mm, 25mm
+- 🛡️ **Grades:** Fe500D aur Fe550D (High ductility, earthquake & corrosion resistant)
+
+Live price quotes aur weighbridge delivery ke liye [Shop Now Portal](/ShopNow) visit karein!`;
+    }
+    return `MTBOSS supplies certified primary and secondary **TMT Steel Rebars** with mill test certificates:
+
+- 🏗️ **Verified Brands:** Tata Tiscon, Jindal Panther, Kamdhenu, and Rathi Fe500D / Fe550D.
+- 📏 **Available Diameters:** 8mm, 10mm, 12mm, 16mm, 20mm, and 25mm.
+- 🛡️ **Quality Standard:** Superior bendability, high tensile strength, and anti-corrosive properties.
+
+Request site delivery quotes on our [Building Materials Shop](/ShopNow).`;
+  }
+
+  if (lower.includes('sand') || lower.includes('bajri') || lower.includes('ret') || lower.includes('reta') || lower.includes('gravel') || lower.includes('aggregate') || lower.includes('gitti')) {
+    if (isHinglish) {
+      return `MTBoss par standard construction ke liye verified **Sand & Aggregates** dumpers me available hain:
+
+- 🚚 **Yamuna / Ganga River Sand:** Clean, silt-free river sand for slab casting and brickwork
+- 🏗️ **Crushed Blue Granite Aggregates (Gitti):** 10mm & 20mm machine-crushed stone
+- 🧱 **Coarse M-Sand & P-Sand:** Screened for plastering and concrete work
+
+Truck-load delivery ke liye [Shop Now Portal](/ShopNow) dekhein ya call karein **+91 94584 10866**.`;
+    }
+    return `MTBOSS provides washed and graded **Sand & Aggregates** in bulk truckloads:
+
+- 🚚 **River Sand:** Washed, silt-free Yamuna and regional river sands for structural concrete.
+- 🏗️ **Blue Granite Aggregates:** 10mm & 20mm sharp-angled cubical stone for maximum bonding.
+- 🧱 **Screened M-Sand & Plaster Sand:** Quality tested for high compaction.
+
+Order bulk dispatch on our [Building Materials Shop](/ShopNow).`;
+  }
+
+  if (lower.includes('paint') || lower.includes('putty') || lower.includes('color') || lower.includes('rang')) {
+    if (isHinglish) {
+      return `MTBoss par sabhi top **Paints, Wall Putty & Waterproofing** products uplabdh hain:
+
+- 🎨 **Asian Paints & Berger:** Royale Luxury interior, Apex Ultima exterior weather-proof
+- 🧱 **JK & Birla Wall Putty:** Damp-resistant smooth white base
+- 💧 **Dr. Fixit Waterproofing:** Roof, basement aur bathroom sealing solutions
+
+Price catalog ke liye hamara [Shop Now Portal](/ShopNow) visit karein!`;
+    }
+    return `MTBOSS supplies leading **Paints, Wall Putties, and Waterproofing Systems**:
+
+- 🎨 **Paints:** Asian Paints, Berger, and Nerolac premium interior & exterior emulsions.
+- 🧱 **Wall Putty:** Birla White, JK Wall Care for ultra-smooth wall preparation.
+- 💧 **Waterproofing:** Dr. Fixit, Fosroc chemical compounds for foundation and roof slabs.
+
+Browse options on our [Building Materials Shop](/ShopNow).`;
+  }
+
+  if (lower.includes('material') || lower.includes('shop') || lower.includes('saman') || lower.includes('product')) {
+    if (isHinglish) {
+      return `MTBoss par aap direct verified manufacturers se sabhi **Wholesale Building Materials** order kar sakte hain:
+
+- 🧱 **Bricks & Blocks:** Red Bricks, Fly Ash, AAC Blocks
+- 🏗️ **Cement & Steel:** UltraTech, Ambuja, Tata Tiscon, Jindal Panther
+- 🚚 **Sand & Aggregates:** River Sand, 10mm/20mm Gitti
+- 🎨 **Paints, Putty & Plumbing:** Astral Pipes, Havells wiring, Asian Paints
+
+Direct rate dekhne aur order karne ke liye [Shop Now Portal](/ShopNow) visit karein!`;
+    }
+    return `You can order complete wholesale construction supplies directly on MTBOSS:
+
+- 🧱 **Bricks & AAC Blocks:** Class 1 Red Bricks, Fly Ash, Lightweight AAC Blocks
+- 🏗️ **Cement & Steel:** UltraTech, Ambuja, ACC, Tata Tiscon, Jindal Panther Fe500D
+- 🚚 **Aggregates & Sand:** River sand, 10mm & 20mm crushed stone
+- 🎨 **Finishing:** Paints, wall putty, CPVC plumbing, and fire-resistant electricals
+
+Visit our [Building Materials Shop](/ShopNow) for instant quotes and doorstep delivery.`;
   }
 
   if (lower.includes('property') || lower.includes('plot') || lower.includes('land') || lower.includes('flat') || lower.includes('bareilly') || lower.includes('moradabad') || lower.includes('buy') || lower.includes('sell')) {
@@ -198,9 +355,12 @@ You can also submit your inquiry on our [Contact Page](/contact).`;
   if (isHinglish) {
     return `Namaste! Main **MTBOSS AI Assistant** hoon. Main aapki kya madad kar sakta hoon?
 
-- 🏗️ **Makaan banane ka kharcha** janna hai ([Cost Calculator](/calculator))
+- 🏗️ **Construction Services** ([Explore Services](/Services/all))
+- 🧮 **Makaan banane ka kharcha** janna hai ([Cost Calculator](/calculator))
 - 📦 **Building Materials** order karne hain ([Shop Now](/ShopNow))
 - 🏠 **Plots & Properties** dekhni hain ([Properties](/buy-sale))
+- 🤝 **Agents Network** ([Agent Portal](/agent))
+- 💼 **Franchise Opportunity** ([Franchise](/franchise))
 - 💬 **Engineer se direct baat** karni hai ([+91 94584 10866](https://wa.me/919458410866))
 
 Aap apna requirement yahan likh sakte hain ya apna phone number share kar sakte hain!`;
@@ -208,23 +368,30 @@ Aap apna requirement yahan likh sakte hain ya apna phone number share kar sakte 
 
   return `Hello! I am the **MTBOSS AI Assistant**. How may I assist you with your project today?
 
-- 🏗️ **Calculate House Construction Cost** ([Cost Calculator](/calculator))
+- 🏗️ **Construction Services** ([Explore Services](/Services/all))
+- 🧮 **Calculate House Construction Cost** ([Cost Calculator](/calculator))
 - 📦 **Order Bulk Building Materials** ([Shop Now](/ShopNow))
 - 🏠 **Explore Verified Properties & Plots** ([Properties Portal](/buy-sale))
+- 🤝 **Agent Referral Network** ([Agent Portal](/agent))
+- 💼 **Franchise Opportunity** ([Franchise](/franchise))
 - 💬 **Speak with Project Engineer** ([+91 94584 10866](https://wa.me/919458410866))
 
 Feel free to ask any question or share your project details below!`;
 }
 
 export async function POST(req) {
+  let messages = [];
+  let lastUserMessage = '';
   try {
-    const { messages } = await req.json();
+    const body = await req.json();
+    messages = body?.messages;
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json({ success: false, error: 'Messages array required' }, { status: 400 });
     }
 
-    const lastUserMessage = messages[messages.length - 1]?.content || '';
+    const userMessages = messages.filter((m) => m.role === 'user');
+    lastUserMessage = (userMessages.length > 0 ? userMessages[userMessages.length - 1].content : messages[messages.length - 1]?.content) || '';
     const leadData = extractLeadInfo(lastUserMessage);
 
     // If user provided a phone number or email, trigger lead notification
@@ -325,9 +492,11 @@ export async function POST(req) {
     });
   } catch (error) {
     console.error('Chatbot route error:', error);
+    const userMessages = Array.isArray(messages) ? messages.filter((m) => m.role === 'user') : [];
+    const query = (userMessages.length > 0 ? userMessages[userMessages.length - 1].content : lastUserMessage) || '';
     return NextResponse.json({
       success: true,
-      reply: fallbackResponse(''),
+      reply: fallbackResponse(query),
       source: 'error_fallback',
     });
   }
