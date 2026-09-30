@@ -138,10 +138,34 @@ async function getHeroBanners() {
   }
 }
 
+// ---------- SERVER-SIDE QUICK SERVICES FETCH ----------
+async function getQuickServices() {
+  try {
+    const { default: pool } = await import('@/lib/db');
+    let result;
+    try {
+      result = await pool.query(
+        'SELECT * FROM quick_services ORDER BY COALESCE(sort_order, 0) ASC, id ASC'
+      );
+    } catch {
+      result = await pool.query('SELECT * FROM quick_services ORDER BY id ASC');
+    }
+    if (result.rows.length > 0) {
+      return result.rows;
+    }
+    const { fallbackQuickServices } = await import('@/lib/public-fallbacks');
+    return fallbackQuickServices;
+  } catch {
+    const { fallbackQuickServices } = await import('@/lib/public-fallbacks');
+    return fallbackQuickServices;
+  }
+}
+
 // ---------- PAGE ----------
 const Page = async () => {
   // Pre-fetch banners on the server so the Hero renders all slides instantly.
   const heroBanners = await getHeroBanners();
+  const quickServices = await getQuickServices();
 
   return (
     <div className="transition-colors duration-500">
@@ -157,7 +181,7 @@ const Page = async () => {
 
       <Hero initialBanners={heroBanners} />
       {/* <AboutSection /> */}
-      <QuickServices />
+      <QuickServices initialServices={quickServices} />
       <Services />
       <DeferredHomeSections />
       {/* <TestimonialsSection /> */}

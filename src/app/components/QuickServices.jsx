@@ -84,11 +84,11 @@ async function loadQuickServices(signal) {
   return { success: true, data: fallbackQuickServices, fromFallback: true };
 }
 
-export default function QuickServices({ className = "" }) {
+export default function QuickServices({ className = "", initialServices }) {
   const [headerRef, headerVisible] = useInView(0.1);
   const [gridRef, gridVisible] = useInView(0.05);
   const [isDark, setIsDark] = useState(false);
-  const [services, setServices] = useState(fallbackQuickServices);
+  const [services, setServices] = useState(initialServices || fallbackQuickServices);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -103,10 +103,16 @@ export default function QuickServices({ className = "" }) {
 
   // Fetch from API — update with live services once route is ready
   useEffect(() => {
+    // If we already have real data from the server, no need to fetch again
+    if (initialServices && initialServices.length > 3 && initialServices !== fallbackQuickServices) {
+      return;
+    }
+
     const controller = new AbortController();
     let active = true;
 
     const fetchServices = async () => {
+      setLoading(true);
       try {
         const data = await loadQuickServices(controller.signal);
         if (active && data?.success && Array.isArray(data.data)) {
@@ -146,7 +152,7 @@ export default function QuickServices({ className = "" }) {
       active = false;
       controller.abort();
     };
-  }, []);
+  }, [initialServices]);
 
   const themeYellow = "var(--brand-blue)";
   const visibleServices = services.slice(0, 20);
