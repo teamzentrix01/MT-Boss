@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { COMPANY_CONTACT } from '../lib/company';
 import { useCities } from '@/hooks/useCities';
+import { Pencil, Trash2, ActionIconButton } from '@/app/components/ui/icons';
 
 function theme(dark) {
   return {
@@ -282,9 +283,9 @@ export default function OfficeLocationsManager({ isDarkMode }) {
                         </span>
                       </td>
                       <td style={{ padding: '12px' }}>
-                        <div style={{ display: 'flex', gap: 8 }}>
-                          <button onClick={() => openEdit(office)} style={{ border: 0, background: 'transparent', color: t.accent, cursor: 'pointer', fontSize: 12, fontWeight: 800 }}>Edit</button>
-                          <button onClick={() => remove(office.id)} style={{ border: 0, background: 'transparent', color: '#ef4444', cursor: 'pointer', fontSize: 12, fontWeight: 800 }}>Delete</button>
+                        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                          <ActionIconButton icon={Pencil} label="Edit office location" onClick={() => openEdit(office)} />
+                          <ActionIconButton icon={Trash2} variant="danger" label="Delete office location" onClick={() => remove(office.id)} />
                         </div>
                       </td>
                     </tr>

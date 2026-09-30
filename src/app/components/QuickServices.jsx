@@ -8,12 +8,27 @@ function useInView(threshold = 0.1) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!window.IntersectionObserver) {
+      setInView(true);
+      return;
+    }
     const observer = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) setInView(true); },
       { threshold }
     );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
+    if (ref.current) {
+      observer.observe(ref.current);
+      const rect = ref.current.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) {
+        setInView(true);
+      }
+    }
+    const fallbackTimer = setTimeout(() => setInView(true), 600);
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallbackTimer);
+    };
   }, [threshold]);
   return [ref, inView];
 }
@@ -69,11 +84,11 @@ async function loadQuickServices(signal) {
   return { success: true, data: fallbackQuickServices, fromFallback: true };
 }
 
-export default function QuickServices() {
+export default function QuickServices({ className = "", initialServices }) {
   const [headerRef, headerVisible] = useInView(0.1);
   const [gridRef, gridVisible] = useInView(0.05);
   const [isDark, setIsDark] = useState(false);
-  const [services, setServices] = useState(fallbackQuickServices);
+  const [services, setServices] = useState(initialServices || fallbackQuickServices);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -88,10 +103,16 @@ export default function QuickServices() {
 
   // Fetch from API — update with live services once route is ready
   useEffect(() => {
+    // If we already have real data from the server, no need to fetch again
+    if (initialServices && initialServices.length > 3 && initialServices !== fallbackQuickServices) {
+      return;
+    }
+
     const controller = new AbortController();
     let active = true;
 
     const fetchServices = async () => {
+      setLoading(true);
       try {
         const data = await loadQuickServices(controller.signal);
         if (active && data?.success && Array.isArray(data.data)) {
@@ -131,7 +152,7 @@ export default function QuickServices() {
       active = false;
       controller.abort();
     };
-  }, []);
+  }, [initialServices]);
 
   const themeYellow = "var(--brand-blue)";
   const visibleServices = services.slice(0, 20);
@@ -152,7 +173,7 @@ export default function QuickServices() {
           overflow: hidden;
           cursor: pointer;
           transition: all 0.3s ease;
-          border: 1px solid ${isDark ? '#3f3f46' : '#f3f4f6'};
+          border: 1px solid ${isDark ? '#3f3f46' : '#e5e7eb'};
           background: ${isDark ? '#18181b' : '#ffffff'};
         }
         .qs-card:hover {
@@ -261,7 +282,7 @@ export default function QuickServices() {
         }
       `}</style>
 
-      <section className={`transition-colors duration-500 py-12 px-4 sm:px-6 ${isDark ? 'bg-black' : 'bg-white'}`}>
+      <section className={`transition-colors duration-500 ${className || 'py-12 px-4 sm:px-6'} ${isDark ? 'bg-black' : 'bg-white'}`}>
         <div className="max-w-6xl mx-auto">
 
 
@@ -290,8 +311,8 @@ export default function QuickServices() {
           {/* Services Grid — exact same layout as before */}
           <div
             ref={gridRef}
-            className="grid grid-cols-2 min-[420px]:grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 shadow-sm"
-            style={{ border: isDark ? "1px solid #3f3f46" : "1px solid #f3f4f6" }}
+            className="grid grid-cols-2 min-[480px]:grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 shadow-sm rounded-lg overflow-hidden"
+            style={{ border: isDark ? "1px solid #3f3f46" : "1px solid #e5e7eb" }}
           >
             {loading
               ? /* Skeleton — 20 placeholder cells matching the grid */
@@ -299,7 +320,7 @@ export default function QuickServices() {
                   <div
                     key={i}
                     className="flex flex-col items-center justify-center gap-1.5 py-4 px-2"
-                    style={{ border: `1px solid ${isDark ? '#3f3f46' : '#f3f4f6'}` }}
+                    style={{ border: `1px solid ${isDark ? '#3f3f46' : '#e5e7eb'}` }}
                   >
                     <div className="qs-skeleton rounded" style={{ width: 28, height: 28 }} />
                     <div className="qs-skeleton rounded" style={{ width: 44, height: 10 }} />

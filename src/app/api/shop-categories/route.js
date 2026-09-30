@@ -49,6 +49,7 @@ const ensureTable = createInitializationGuard(async () => {
     await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS subcategories JSONB DEFAULT '[]'`);
     await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS city_prices   JSONB DEFAULT '{}'`);
     await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS emoji_image   TEXT`);
+    await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS shipping_charge NUMERIC(10,2) DEFAULT 0`);
   } catch (error) {
     console.error('ensureTable error:', error.message);
     throw error;
@@ -97,7 +98,7 @@ export async function POST(req) {
     await ensureTable();
     if (!requireRole(req, 'admin')) return unauthorized();
 
-    const { name, image, emoji, emoji_image, label, label_color, price_range, unit, types, subcategories, city_prices } = await req.json();
+    const { name, image, emoji, emoji_image, label, label_color, price_range, unit, types, subcategories, city_prices, shipping_charge } = await req.json();
     if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     const normalizedCityPrices = await canonicalCityPrices(city_prices);
     if (!normalizedCityPrices) return NextResponse.json({ error: 'City prices must use active managed cities' }, { status: 400 });
@@ -107,8 +108,8 @@ export async function POST(req) {
     const result = await pool.query(
       `INSERT INTO shop_categories
          (name, image, emoji, emoji_image, label, label_color, price_range, unit, sort_order,
-          is_active, types, subcategories, city_prices, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,TRUE,$10::jsonb,$11::jsonb,$12::jsonb,NOW(),NOW())
+          is_active, types, subcategories, city_prices, shipping_charge, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,TRUE,$10::jsonb,$11::jsonb,$12::jsonb,$13,NOW(),NOW())
        RETURNING *`,
       [
         name, image || null, emoji || '🛒', emoji_image || null, label || '', label_color || 'yellow',
@@ -116,6 +117,7 @@ export async function POST(req) {
         JSON.stringify(Array.isArray(types) ? types : []),
         JSON.stringify(Array.isArray(subcategories) ? subcategories : []),
         JSON.stringify(normalizedCityPrices),
+        shipping_charge || 0,
       ]
     );
     invalidatePublicCategoriesCache();
@@ -134,7 +136,7 @@ export async function PUT(req) {
 
     const {
       id, name, image, emoji, emoji_image, label, label_color,
-      price_range, unit, is_active, types, subcategories, city_prices,
+      price_range, unit, is_active, types, subcategories, city_prices, shipping_charge,
     } = await req.json();
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
     const normalizedCityPrices = await canonicalCityPrices(city_prices);
@@ -145,14 +147,15 @@ export async function PUT(req) {
        SET name=$1, image=$2, emoji=$3, emoji_image=$4, label=$5, label_color=$6,
            price_range=$7, unit=$8, is_active=$9,
            types=$10::jsonb, subcategories=$11::jsonb,
-           city_prices=$12::jsonb, updated_at=NOW()
-       WHERE id=$13 RETURNING *`,
+           city_prices=$12::jsonb, shipping_charge=$13, updated_at=NOW()
+       WHERE id=$14 RETURNING *`,
       [
         name, image || null, emoji || '🛒', emoji_image || null, label || '', label_color || 'yellow',
         price_range || '', unit || '', is_active ?? true,
         JSON.stringify(Array.isArray(types) ? types : []),
         JSON.stringify(Array.isArray(subcategories) ? subcategories : []),
         JSON.stringify(normalizedCityPrices),
+        shipping_charge || 0,
         id,
       ]
     );

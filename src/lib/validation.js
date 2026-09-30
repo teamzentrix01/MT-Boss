@@ -35,3 +35,5 @@ export function validateContactFields({ name, email, phone, nameLabel = 'Name', 
   }
   return '';
 }
+
+export { formatIndianPhone, toIndianPhoneTel, normalizePhoneSearch } from './phone-utils.js';

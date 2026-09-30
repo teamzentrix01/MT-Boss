@@ -11,7 +11,7 @@ import { QUALITY_TIER_OPTIONS, qualityTierLabel } from '@/lib/quality-tier';
 import './ShopNowManager.css';
 
 const units = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
-const emptyProduct = { name: '', description: '', category: '', quality_tier: '', quote_price_range: '', price: '', compare_at_price: '', is_featured_deal: false, brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
+const emptyProduct = { name: '', description: '', category: '', subcategory: '', quality_tier: '', quote_price_range: '', price: '', compare_at_price: '', is_featured_deal: false, brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
 const mobileHeaderFields = [
   ['delivery_tagline', 'Delivery Tagline (e.g. 60 Mins delivery)'],
   ['search_placeholder', 'Search Placeholder (e.g. Search for Cement, TMT Bars, Tiles...)'],
@@ -116,7 +116,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
   const edit = (product) => {
     setEditingId(product.id);
     setForm({
-      name: product.name || '', description: product.description || '', category: product.category || '', quality_tier: product.quality_tier || '',
+      name: product.name || '', description: product.description || '', category: product.category || '', subcategory: product.subcategory || '', quality_tier: product.quality_tier || '',
       quote_price_range: product.quote_price_range || '', price: product.price ?? '', compare_at_price: product.compare_at_price ?? '', is_featured_deal: product.is_featured_deal === true, brand: product.brand || '', unit: product.unit || '', quantity: product.quantity ?? 0,
       image_url: product.image_url || '', available_cities: product.available_cities || [], is_available: product.is_available !== false,
     });
@@ -203,7 +203,8 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
       <h3>{editingId ? 'Edit product' : 'Add product'}</h3>
       <div className="shop-admin-fields">
         <label>Product name *<input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
-        <label>Category *<select required value={form.category} onChange={(e) => { const cat = categories.find((item) => item.name === e.target.value); setForm({ ...form, category: e.target.value, unit: cat?.unit || form.unit }); }}><option value="">Select category</option>{categories.map((cat) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}</select></label>
+        <label>Category *<select required value={form.category} onChange={(e) => { const cat = categories.find((item) => item.name === e.target.value); setForm({ ...form, category: e.target.value, subcategory: '', unit: cat?.unit || form.unit }); }}><option value="">Select category</option>{categories.map((cat) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}</select></label>
+        <label>Subcategory<select value={form.subcategory} onChange={(e) => setForm({ ...form, subcategory: e.target.value })}><option value="">Select subcategory</option>{(categories.find((cat) => cat.name === form.category)?.subcategories || []).map((subcategory) => { const name = typeof subcategory === 'object' && subcategory !== null ? subcategory.name : subcategory; return <option key={name} value={name}>{name}</option>; })}</select></label>
         <label>Quality Tier *<select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}><option value="">Select quality tier</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}</select><small>Used by the Budget Calculator to match this product to a Quality Package.</small></label>
         <label>Get Quote price range (₹) *<input required type="text" maxLength={100} value={form.quote_price_range} onChange={(e) => setForm({ ...form, quote_price_range: e.target.value })} placeholder="Example: 40-80" /><small>Enter a minimum and maximum lump-sum range, e.g. 40-80.</small></label>
         <label>Buy Now fixed price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Example: 60" /></label>
@@ -393,6 +394,68 @@ function AppearanceManager() {
         </div>
       </form>
     )}
+  </div>;
+}
+
+function OfferManager() {
+  const empty = { name: '', category: '', subcategory: '', brand: '', discount_type: 'percent', discount_value: '', badge_text: '', sort_order: 0, is_active: true, starts_at: '', ends_at: '' };
+  const [offers, setOffers] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [form, setForm] = useState(empty);
+  const [editingId, setEditingId] = useState(null);
+  const [notice, setNotice] = useState('');
+  const [loading, setLoading] = useState(true);
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [offersRes, categoriesRes] = await Promise.all([
+        fetch('/api/shop-offers?admin=true', { headers: shopHeaders() }),
+        fetch('/api/shop-categories?admin=true', { headers: shopHeaders() }),
+      ]);
+      const offersData = await readApiJson(offersRes);
+      const categoriesData = await readApiJson(categoriesRes);
+      if (!offersRes.ok) throw new Error(offersData.error || 'Could not load offers');
+      setOffers(offersData.data || []); setCategories(categoriesData.data || []);
+    } catch (error) { setNotice(error.message); }
+    finally { setLoading(false); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  const save = async (event) => {
+    event.preventDefault(); setNotice('');
+    try {
+      const response = await fetch('/api/shop-offers', { method: editingId ? 'PUT' : 'POST', headers: shopHeaders(), body: JSON.stringify({ ...form, ...(editingId ? { id: editingId } : {}) }) });
+      const data = await readApiJson(response);
+      if (!response.ok) throw new Error(data.error || 'Could not save offer');
+      setForm(empty); setEditingId(null); setNotice(editingId ? 'Offer updated.' : 'Offer created.'); await load();
+    } catch (error) { setNotice(error.message); }
+  };
+  const edit = (offer) => {
+    setEditingId(offer.id);
+    setForm({ ...empty, ...offer, starts_at: offer.starts_at ? String(offer.starts_at).slice(0, 16) : '', ends_at: offer.ends_at ? String(offer.ends_at).slice(0, 16) : '' });
+  };
+  const remove = async (offer) => {
+    if (!window.confirm(`Delete ${offer.name}?`)) return;
+    const response = await fetch(`/api/shop-offers?id=${offer.id}`, { method: 'DELETE', headers: shopHeaders() });
+    const data = await readApiJson(response); if (!response.ok) setNotice(data.error || 'Could not delete offer'); else { setNotice('Offer deleted.'); load(); }
+  };
+  const selectedCategory = categories.find((category) => category.name === form.category);
+  const subcategories = Array.isArray(selectedCategory?.subcategories) ? selectedCategory.subcategories : [];
+  return <div className="shop-admin-panel">
+    <div className="shop-admin-heading"><div><h2>Offers</h2><p>Show offer badges on Shop Now products by category, subcategory and/or brand. Blank targeting fields apply to everything.</p></div><button type="button" onClick={load}>Refresh</button></div>
+    {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
+    <form className="shop-admin-card" onSubmit={save}><h3>{editingId ? 'Edit offer' : 'Create offer'}</h3><div className="shop-admin-fields">
+      <label>Offer name *<input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Cement sale" /></label>
+      <label>Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value, subcategory: '' })}><option value="">All categories</option>{categories.map((category) => <option key={category.id} value={category.name}>{category.name}</option>)}</select></label>
+      <label>Subcategory<select value={form.subcategory} onChange={(e) => setForm({ ...form, subcategory: e.target.value })} disabled={!form.category}><option value="">All subcategories</option>{subcategories.map((item) => { const name = typeof item === 'object' && item !== null ? item.name : item; return <option key={name} value={name}>{name}</option>; })}</select></label>
+      <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
+      <label>Discount type<select value={form.discount_type} onChange={(e) => setForm({ ...form, discount_type: e.target.value })}><option value="percent">Percentage</option><option value="fixed">Fixed amount</option></select></label>
+      <label>Discount value *<input required type="number" min="0.01" step="0.01" max={form.discount_type === 'percent' ? '100' : undefined} value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: e.target.value })} /></label>
+      <label>Badge text<input maxLength={80} value={form.badge_text} onChange={(e) => setForm({ ...form, badge_text: e.target.value })} placeholder="6% OFF (blank = automatic)" /></label>
+      <label>Priority<input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: e.target.value })} /><small>Lower number wins when multiple offers match.</small></label>
+      <label>Start date/time<input type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} /></label>
+      <label>End date/time<input type="datetime-local" value={form.ends_at} onChange={(e) => setForm({ ...form, ends_at: e.target.value })} /></label>
+    </div><div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} /> Active</label><button type="submit">{editingId ? 'Save changes' : 'Create offer'}</button>{editingId && <button type="button" onClick={() => { setEditingId(null); setForm(empty); }}>Cancel</button>}</div></form>
+    <div className="shop-admin-card"><h3>Configured offers ({offers.length})</h3>{loading ? <p>Loading offers...</p> : !offers.length ? <p>No offers created yet.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Offer</th><th>Applies to</th><th>Discount</th><th>Status</th><th>Actions</th></tr></thead><tbody>{offers.map((offer) => <tr key={offer.id}><td><strong>{offer.name}</strong><small>{offer.badge_text || 'Automatic badge'}</small></td><td>{[offer.category, offer.subcategory, offer.brand].filter(Boolean).join(' · ') || 'All products'}</td><td>{offer.discount_type === 'percent' ? `${offer.discount_value}%` : `₹${offer.discount_value}`}</td><td>{offer.is_active ? 'Active' : 'Hidden'}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => { setEditingId(offer.id); edit(offer); }}>Edit</button><button type="button" onClick={() => remove(offer)}>Delete</button></div></td></tr>)}</tbody></table></div>}</div>
   </div>;
 }
 

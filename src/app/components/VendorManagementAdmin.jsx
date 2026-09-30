@@ -1,7 +1,7 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import QuickServiceIcon from './QuickServiceIcon';
+import { Eye, ShieldCheck, Ban, X, CircleUser, ActionIconButton } from '@/app/components/ui/icons';
 
 export default function VendorManagementAdmin({ isDarkMode }) {
   const [vendors, setVendors] = useState([]);
@@ -679,12 +679,11 @@ export default function VendorManagementAdmin({ isDarkMode }) {
                   </span>
                 </td>
                 <td>
-                  <button
-                    className="action-btn"
+                  <ActionIconButton
+                    icon={Eye}
+                    label="View vendor details"
                     onClick={() => openVendor(vendor)}
-                  >
-                    View Details
-                  </button>
+                  />
                 </td>
               </tr>
             ))}
@@ -705,8 +704,8 @@ export default function VendorManagementAdmin({ isDarkMode }) {
                   <img src={`/api/vendor/image/${selectedVendor.id}?type=profile`} alt="Profile"
                     style={{ width:52, height:52, borderRadius:'50%', objectFit:'cover', border:`2px solid ${isDarkMode?'#333':'#e2e2e7'}` }} />
                 ) : (
-                  <div style={{ width:52, height:52, borderRadius:'50%', background: isDarkMode?'#2a2a30':'#e5e7eb', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.4rem', flexShrink:0 }}>
-                    👤
+                  <div style={{ width:52, height:52, borderRadius:'50%', background: isDarkMode?'#2a2a30':'#e5e7eb', display:'flex', alignItems:'center', justifyContent:'center', color: isDarkMode?'#999':'#666', flexShrink:0 }}>
+                    <CircleUser size={28} strokeWidth={1.75} aria-hidden="true" />
                   </div>
                 )}
                 <div>
@@ -717,7 +716,9 @@ export default function VendorManagementAdmin({ isDarkMode }) {
                   )}
                 </div>
               </div>
-              <button className="modal-close" onClick={() => setSelectedVendor(null)}>✕</button>
+              <button className="modal-close" onClick={() => setSelectedVendor(null)} aria-label="Close modal">
+                <X size={18} strokeWidth={1.75} aria-hidden="true" />
+              </button>
             </div>
 
             {/* Basic Info */}
@@ -871,15 +872,17 @@ export default function VendorManagementAdmin({ isDarkMode }) {
             {/* Actions */}
             {isPendingVendor(selectedVendor) && (
               <div className="modal-actions">
-                <button className="modal-btn modal-btn-approve" onClick={() => handleApproveVendor(selectedVendor.id)}>
-                  ✓ Approve Vendor
+                <button className="modal-btn modal-btn-approve" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:6 }} onClick={() => handleApproveVendor(selectedVendor.id)}>
+                  <ShieldCheck size={16} strokeWidth={1.75} aria-hidden="true" />
+                  Approve Vendor
                 </button>
-                <button className="modal-btn modal-btn-reject"
+                <button className="modal-btn modal-btn-reject" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:6 }}
                   onClick={() => {
                     const reason = prompt('Enter reason for rejection:');
                     if (reason) handleRejectVendor(selectedVendor.id, reason);
                   }}>
-                  ✕ Reject
+                  <Ban size={16} strokeWidth={1.75} aria-hidden="true" />
+                  Reject
                 </button>
               </div>
             )}
@@ -888,8 +891,19 @@ export default function VendorManagementAdmin({ isDarkMode }) {
               <div className="modal-actions">
                 <button
                   className={`modal-btn ${selectedVendor.status === 'active' ? 'modal-btn-reject' : 'modal-btn-approve'}`}
+                  style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:6 }}
                   onClick={() => handleToggleStatus(selectedVendor.id, selectedVendor.status === 'active' ? 'inactive' : 'active')}>
-                  {selectedVendor.status === 'active' ? '⚠ Deactivate' : '✓ Activate'}
+                  {selectedVendor.status === 'active' ? (
+                    <>
+                      <Ban size={16} strokeWidth={1.75} aria-hidden="true" />
+                      Deactivate
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck size={16} strokeWidth={1.75} aria-hidden="true" />
+                      Activate
+                    </>
+                  )}
                 </button>
               </div>
             )}

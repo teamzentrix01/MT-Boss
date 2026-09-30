@@ -6,6 +6,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { formatIndianPhone, toIndianPhoneTel } from '@/lib/phone-utils';
+import { Eye, X, ActionIconButton } from '@/app/components/ui/icons';
 
 export default function BookingsManager({ isDarkMode, title = 'Service Bookings' }) {
   const [bookings, setBookings] = useState([]);
@@ -276,24 +278,15 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
                           {new Date(booking.created_at).toLocaleDateString()}
                         </td>
                         <td>
-                          <button
+                          <ActionIconButton
+                            icon={Eye}
+                            label="View booking details"
                             onClick={() => {
                               setSelectedBooking(booking);
                               setSelectedVendorId('');
                               setActionError('');
                             }}
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              color: 'var(--accent)',
-                              cursor: 'pointer',
-                              fontSize: '0.8125rem',
-                              fontWeight: '600',
-                              padding: 0,
-                            }}
-                          >
-                            View
-                          </button>
+                          />
                         </td>
                       </tr>
                     ))}
@@ -309,15 +302,19 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
             <h3 style={{ fontSize: '0.875rem', fontWeight: '700' }}>Booking Details</h3>
             <button
               onClick={() => setSelectedBooking(null)}
+              aria-label="Close details"
               style={{
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 color: 'var(--muted)',
+                padding: '4px',
               }}
             >
-              ✕
+              <X size={18} strokeWidth={1.75} aria-hidden="true" />
             </button>
           </div>
 
@@ -345,7 +342,18 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
             </div>
             <div className="detail-field">
               <div className="detail-label">Customer Phone</div>
-              <div className="detail-value">{selectedBooking.user_phone}</div>
+              <div className="detail-value">
+                {toIndianPhoneTel(selectedBooking.user_phone) ? (
+                  <a
+                    href={toIndianPhoneTel(selectedBooking.user_phone)}
+                    style={{ color: 'inherit', textDecoration: 'none', fontVariantNumeric: 'tabular-nums' }}
+                  >
+                    {formatIndianPhone(selectedBooking.user_phone)}
+                  </a>
+                ) : (
+                  formatIndianPhone(selectedBooking.user_phone)
+                )}
+              </div>
             </div>
             <div className="detail-field">
               <div className="detail-label">Sub Category</div>

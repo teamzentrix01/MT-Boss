@@ -7,6 +7,7 @@ import { useCities } from "@/hooks/useCities";
 import Storefront, { displayUnit } from "./Storefront";
 import { defaultShopStorefront } from "@/lib/shop-storefront-defaults";
 import { calculateCoupon } from "@/lib/coupon-calculations";
+import { getCartStep } from "@/lib/cart-step";
 // Dark-mode watcher
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -37,6 +38,7 @@ function SectionLabel({ children, isDark }) {
     </div>
   );
 }
+
 
 function getUnitPrice(product, quantity = 1) {
   const basePrice = Number(product?.price);
@@ -77,6 +79,17 @@ function getQuotePrice(category, selectedCity, product = null) {
   };
 }
 
+async function parseJsonResponse(response) {
+  if (!response) return null;
+  const contentType = response.headers?.get?.('content-type') || '';
+  if (!contentType.toLowerCase().includes('application/json')) return null;
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
 export default function ShopPage() {
   const isDarkMode = useDarkMode();
   const { cities: supportedCities } = useCities();
@@ -85,6 +98,7 @@ export default function ShopPage() {
   const [categories, setCategories] = useState([]);
   const [catsLoading, setCatsLoading] = useState(true);
   const [allProducts, setAllProducts] = useState([]);
+  const [offers, setOffers] = useState([]);
   const [productsLoaded, setProductsLoaded] = useState(false);
   const productsLastLoadedAtRef = useRef(0);
   const productsRequestRef = useRef(null);
@@ -110,9 +124,12 @@ export default function ShopPage() {
   }, []);
 
   useEffect(() => {
-    fetch('/api/shop-coupons').then((response) => response.json()).then((data) => {
-      if (data.success) setCoupons(data.data || []);
-    }).catch(() => {});
+    fetch('/api/shop-coupons')
+      .then(parseJsonResponse)
+      .then((data) => {
+        if (data?.success) setCoupons(data.data || []);
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -121,10 +138,17 @@ export default function ShopPage() {
 
   useEffect(() => {
     fetch("/api/shop-categories")
-      .then((r) => r.json())
-      .then((d) => { if (d.success) setCategories(d.data); })
+      .then(parseJsonResponse)
+      .then((d) => { if (d?.success) setCategories(d.data || []); })
       .catch(console.error)
       .finally(() => setCatsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/shop-offers')
+      .then(parseJsonResponse)
+      .then((data) => { if (data?.success) setOffers(data.data || []); })
+      .catch(console.error);
   }, []);
 
   const loadProducts = useCallback(async (force = false) => {
@@ -142,8 +166,8 @@ export default function ShopPage() {
               await new Promise((resolve) => setTimeout(resolve, 500));
               continue;
             }
-            const data = await response.json();
-            if (!response.ok || !data.success) throw new Error(data.error || "Could not load shop products");
+            const data = await parseJsonResponse(response);
+            if (!response.ok || !data?.success) throw new Error(data?.error || "Could not load shop products");
             setAllProducts(data.data?.products || []);
             productsLastLoadedAtRef.current = Date.now();
             return;
@@ -210,16 +234,16 @@ export default function ShopPage() {
   useEffect(() => {
     const loadStoreContent = () => {
       fetch("/api/shop-storefront")
-        .then((response) => response.json())
-        .then((data) => { if (data.success) setStoreContent(data.data); })
+        .then(parseJsonResponse)
+        .then((data) => { if (data?.success) setStoreContent(data.data); })
         .catch(console.error);
     };
     loadStoreContent();
 
     const loadShipping = () => {
       fetch("/api/shipping-settings")
-        .then((response) => response.json())
-        .then((data) => { if (data.success && data.data) setShippingSettings(data.data); })
+        .then(parseJsonResponse)
+        .then((data) => { if (data?.success && data.data) setShippingSettings(data.data); })
         .catch(console.error);
     };
     loadShipping();
@@ -294,7 +318,7 @@ export default function ShopPage() {
   const dynamicTypes = productOptions.types || [];
   const dynamicUnits = productOptions.units || [];
   const catTypes    = (dynamicTypes.length > 0 ? dynamicTypes : (selectedCategory?.types || [])).filter(Boolean);
-  const catSubs     = (selectedCategory?.subcategories || []).filter(Boolean);
+  const catSubs     = (selectedCategory?.subcategories || []).map(s => typeof s === 'object' && s !== null ? s.name : s).filter(Boolean);
   const hasTypes    = catTypes.length > 0;
   const hasSubs     = catSubs.length  > 0;
   const categoryUnits = [
@@ -340,16 +364,27 @@ export default function ShopPage() {
   const addToCart = (product) => {
     setCart((previous) => {
       const existing = previous.find((item) => item.product.id === product.id);
+      const step = getCartStep(product);
       const limit = product.fromSupplier ? Math.max(0, Number(product.quantity) || 0) : 10000;
       if (limit === 0) return previous;
-      if (existing) return previous.map((item) => item.product.id === product.id ? { ...item, quantity: Math.min(item.quantity + 1, limit, 10000) } : item);
+      if (existing) return previous.map((item) =>
+        item.product.id === product.id
+          ? { ...item, quantity: Math.min(item.quantity + step, limit, 10000) }
+          : item
+      );
       if (previous.length >= 20) return previous;
-      return [...previous, { product, quantity: 1 }];
+      return [...previous, { product, quantity: step }];
     });
   };
 
   const changeCartQuantity = (id, delta) => setCart((previous) => previous
-    .map((item) => item.product.id === id ? { ...item, quantity: Math.max(0, Math.min(item.product.fromSupplier ? Math.max(0, Number(item.product.quantity) || 0) : 10000, 10000, item.quantity + delta)) } : item)
+    .map((item) => {
+      if (item.product.id !== id) return item;
+      const step = getCartStep(item.product);
+      const limit = item.product.fromSupplier ? Math.max(0, Number(item.product.quantity) || 0) : 10000;
+      const newQty = Math.max(0, Math.min(limit, 10000, item.quantity + delta * step));
+      return { ...item, quantity: newQty };
+    })
     .filter((item) => item.quantity > 0));
 
   const autoCoupon = useMemo(() => coupons.filter((coupon) => !coupon.code)
@@ -383,8 +418,8 @@ export default function ShopPage() {
     if (!isModalOpen || !selectedCity || !items.length || items.some((item) => !item.product_id)) { setShippingQuote(null); setShippingQuoteError(''); return; }
     let active = true;
     fetch('/api/shipping-quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerCity: selectedCity, items }) })
-      .then((response) => response.json().then((data) => ({ response, data })))
-      .then(({ response, data }) => { if (!active) return; if (!response.ok || !data.success) throw new Error(data.error || 'Shipping could not be calculated'); setShippingQuote(data.data); setShippingQuoteError(''); })
+      .then(async (response) => ({ response, data: await parseJsonResponse(response) }))
+      .then(({ response, data }) => { if (!active) return; if (!response.ok || !data?.success) throw new Error(data?.error || 'Shipping could not be calculated'); setShippingQuote(data.data); setShippingQuoteError(''); })
       .catch((error) => { if (active) { setShippingQuote(null); setShippingQuoteError(error.message); } });
     return () => { active = false; };
   }, [isModalOpen, modalMode, selectedCity, cart, selectedProduct?.product_id, formData.quantity]);
@@ -393,9 +428,9 @@ export default function ShopPage() {
     if (!isModalOpen || !selectedCategory?.name) return;
     setLoadingProductOptions(true);
     fetch(`/api/shop-material-options?category=${encodeURIComponent(selectedCategory.name)}`)
-      .then((r) => r.json())
+      .then(parseJsonResponse)
       .then((data) => {
-        if (data.success) setProductOptions(data.data || { products: [], types: [], units: [] });
+        if (data?.success) setProductOptions(data.data || { products: [], types: [], units: [] });
       })
       .catch(console.error)
       .finally(() => setLoadingProductOptions(false));
@@ -611,6 +646,7 @@ export default function ShopPage() {
   const selectedProductTotal = selectedUnitPrice * selectedQuantity;
   const cartProductTotal = cart.reduce((sum, item) => sum + getUnitPrice(item.product, item.quantity) * item.quantity, 0);
   const cartFinalTotal = Math.max(0, cartProductTotal - couponCalculation.discount);
+  const cartTotalWithShipping = cartFinalTotal + (shippingQuote?.totalShipping || 0);
   const cartHasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
   const quotePrice = getQuotePrice(selectedCategory, selectedCity, selectedProduct);
 
@@ -618,7 +654,7 @@ export default function ShopPage() {
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} />
+      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} shippingQuote={shippingQuote} />
 
       {isModalOpen && mounted && createPortal(
         <div className="shop-checkout-modal fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>
@@ -764,11 +800,18 @@ export default function ShopPage() {
                     {couponCalculation.regularAmount > 0 && <p className={`mt-1 text-xs ${subText}`}>Other items: ₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</p>}
                     {activeCoupon && couponCalculation.eligible && <p className="mt-1 text-xs font-bold text-green-600">Coupon {activeCoupon.code ? `“${activeCoupon.code}”` : 'offer'} applied: -₹{couponCalculation.discount.toLocaleString('en-IN')}</p>}
                     {activeCoupon && !couponCalculation.eligible && <p className="mt-1 text-xs font-semibold text-amber-600">Add ₹{couponCalculation.gap.toLocaleString('en-IN')} more of regular-price items to unlock this coupon.</p>}
+                    {shippingQuote?.totalShipping !== null && shippingQuote?.totalShipping !== undefined && (
+                      <p className={`mt-1 text-xs ${subText}`}>Shipping charges: ₹{Number(shippingQuote.totalShipping).toLocaleString('en-IN')}</p>
+                    )}
                     <div className={`mt-2 flex items-center justify-between border-t pt-2 ${isDarkMode ? "border-zinc-700" : "border-gray-200"}`}>
                       <span className={`text-xs font-bold ${headText}`}>Total</span>
-                      <strong className={`text-sm ${headText}`}>{cartFinalTotal > 0 ? `₹${cartFinalTotal.toLocaleString("en-IN")}` : 'On confirmation'}{cartFinalTotal > 0 && cartHasUnpricedItems ? ' + quote items' : ''}</strong>
+                      <strong className={`text-sm ${headText}`}>{cartTotalWithShipping > 0 ? `₹${cartTotalWithShipping.toLocaleString("en-IN")}` : 'On confirmation'}{cartTotalWithShipping > 0 && cartHasUnpricedItems ? ' + quote items' : ''}</strong>
                     </div>
-                    <p className={`text-[10px] mt-2 ${subText}`}>Delivery charges, if applicable, are confirmed separately.</p>
+                    {shippingQuote?.totalShipping ? (
+                      <p className={`text-[10px] mt-2 ${subText}`}>Total includes applicable shipping charges.</p>
+                    ) : (
+                      <p className={`text-[10px] mt-2 ${subText}`}>Delivery charges, if applicable, are confirmed separately.</p>
+                    )}
                   </div>
                 ) : <>
                 {modalMode === "buy" ? (
@@ -954,6 +997,7 @@ export default function ShopPage() {
                       onChange={(e) => setDeliveryDate(e.target.value)}
                       min={new Date().toISOString().split("T")[0]}
                       max="9999-12-31"
+                      suppressHydrationWarning
                       className={inp}
                     />
                   </div>
