@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { getJwtSecret, setAuthCookie } from '@/lib/auth';
 import { isAdminEmail } from '@/lib/admin-email';
+import { BLOCKED_ACCOUNT_MESSAGE, ensureUserModerationSchema } from '@/lib/user-moderation';
 
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
@@ -14,6 +15,7 @@ const ADMIN_PASSWORD =
 
 export async function POST(req) {
   try {
+    await ensureUserModerationSchema();
     const { email, password } = await req.json();
     const normalizedEmail = String(email || '').trim().toLowerCase();
 
@@ -54,7 +56,7 @@ export async function POST(req) {
     }
 
     const result = await pool.query(
-       `SELECT id, email, password, name, 'user'::TEXT AS role
+       `SELECT id, email, password, name, is_blocked, 'user'::TEXT AS role
        FROM users
        WHERE LOWER(email) = $1`,
       [normalizedEmail]
@@ -69,12 +71,16 @@ export async function POST(req) {
     if (!isPasswordValid) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
+    if (user.is_blocked) {
+      return NextResponse.json({ error: BLOCKED_ACCOUNT_MESSAGE }, { status: 403 });
+    }
 
     // Database-backed admin accounts must retain their admin role. Previously
     // every row from `users` was forcibly downgraded to `user`, which sent the
     // admin to /userdashboard and made the navbar Dashboard button do the same.
     const userRole = isAdminEmail(user.email) ? 'admin' : 'user';
 
+    await pool.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [user.id]);
     const token = jwt.sign(
       { id: user.id, email: user.email, role: userRole },
       getJwtSecret(),

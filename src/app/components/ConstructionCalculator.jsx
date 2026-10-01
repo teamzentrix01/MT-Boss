@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   X,
 } from 'lucide-react';
+import { getEffectiveRate } from '@/lib/pm-calculator-bridge';
 
 const CITY_RATES = {
   Moradabad: { labour: 310, transport: 18, multiplier: 0.94 },
@@ -609,6 +610,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteMsg, setQuoteMsg] = useState('');
   const [devOtp, setDevOtp] = useState('');
+  const [rateOverrides, setRateOverrides] = useState({ useRealRates: false, overrides: [] });
 
   useEffect(() => {
     const fetchCalculatorData = async () => {
@@ -638,6 +640,17 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
     fetch('/api/calculator-tier-products', { cache: 'no-store' })
       .then((response) => response.json())
       .then((data) => { if (data.success) setTierProducts(data.data || []); })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/calculator-overrides')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setRateOverrides({ useRealRates: Boolean(data.useRealRates), overrides: data.overrides || [] });
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -719,13 +732,15 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
       const options = productsByCategory.get(spec.key) || [];
       const selected =
         options.find((product) => String(product.id) === String(selectedProducts[spec.key])) || options[0];
-      const baseFactor = selected?.factorOverride || settings.materialFactors[spec.key] || spec.factor;
+      const rawBaseFactor = selected?.factorOverride || settings.materialFactors[spec.key] || spec.factor;
+      const baseFactor = getEffectiveRate('qty_' + spec.key.toLowerCase(), project.quality, rawBaseFactor, rateOverrides);
       const structureMultiplier = spec.phase === 'Structure' ? foundation.materialMultiplier : 1;
       const finishMultiplier = spec.phase === 'Finishing' ? quality.finishMultiplier : 1;
       const factor = baseFactor * structureMultiplier * floorWastage * finishMultiplier;
       const rawQuantity = builtUpArea * factor;
       const quantity = Math.max(Math.ceil(rawQuantity), 1);
-      const basePrice = selected ? getProductPrice(selected, project.city, project.quality) : 0;
+      const rawBasePrice = selected ? getProductPrice(selected, project.city, project.quality) : 0;
+      const basePrice = getEffectiveRate('rate_' + spec.key.toLowerCase(), project.quality, rawBasePrice, rateOverrides);
       const price = Math.round(basePrice);
       const amount = quantity * price;
 
@@ -739,7 +754,8 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
     });
 
     const materialTotal = lineItems.reduce((sum, item) => sum + item.amount, 0);
-    const labourBase = builtUpArea * cityRate.labour * quality.labourMultiplier * foundation.labourMultiplier;
+    const effectiveLabourRate = getEffectiveRate('labour_rate', project.quality, cityRate.labour, rateOverrides);
+    const labourBase = builtUpArea * effectiveLabourRate * quality.labourMultiplier * foundation.labourMultiplier;
     const labourTotal = Math.round(labourBase);
     const transportTotal = Math.round(builtUpArea * cityRate.transport);
     const supervisionTotal = Math.round((materialTotal + labourTotal) * 0.035);
@@ -762,7 +778,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
       quality,
       foundation,
     };
-  }, [included, productsByCategory, project, selectedProducts, settings]);
+  }, [included, productsByCategory, project, selectedProducts, settings, rateOverrides]);
 
   const phaseTotals = estimate.lineItems.reduce((acc, item) => {
     acc[item.spec.phase] = (acc[item.spec.phase] || 0) + item.amount;

@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import PartyProjectManagement from '@/app/components/PartyProjectManagement';
 
 const leadStatuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
 const leadStages = ['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost'];
@@ -44,7 +45,7 @@ function AgentDashboardContent() {
   const [projectOps, setProjectOps] = useState({ payments: [], labour: [], contractors: [], materials: [], expenses: [], transport: [] });
   const [activeTab, setActiveTab] = useState(() => {
     const requestedTab = searchParams.get('tab');
-    return ['leads', 'projects', 'schedule', 'activity', 'profile'].includes(requestedTab) ? requestedTab : 'leads';
+    return ['leads', 'projects', 'schedule', 'activity', 'profile', 'project-management'].includes(requestedTab) ? requestedTab : 'leads';
   });
   const loadedTabsRef = useRef(new Set());
   const [message, setMessage] = useState('');
@@ -82,7 +83,7 @@ function AgentDashboardContent() {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (['leads', 'projects', 'schedule', 'activity', 'profile'].includes(tab)) {
+    if (['leads', 'projects', 'schedule', 'activity', 'profile', 'project-management'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
@@ -613,16 +614,17 @@ function AgentDashboardContent() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            {['leads', 'projects', 'schedule', 'activity', 'profile'].map((tab) => (
+            {['leads', 'projects', 'schedule', 'activity', 'profile', ...(agent?.has_project_management_access ? ['project-management'] : [])].map((tab) => (
               <button
                 key={tab}
                 onClick={() => {
                   setActiveTab(tab);
+                  router.push(`/agent/dashboard?tab=${tab}`);
                 }}
                 disabled={agent?.must_change_password && tab !== 'profile'}
                 className={`px-5 py-2.5 border text-[10px] font-black uppercase tracking-widest ${activeTab === tab ? 'bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black' : `${card} ${muted}`}`}
               >
-                {tab === 'activity' ? 'Activity Track' : tab}
+                {tab === 'activity' ? 'Activity Track' : tab === 'project-management' ? 'Project Management' : tab}
                 {tab === 'activity' && unreadActivityCount > 0 && (
                   <span className="ml-2 inline-flex min-w-5 h-5 px-1 items-center justify-center rounded-full bg-red-500 text-white text-[9px]">
                     {unreadActivityCount > 99 ? '99+' : unreadActivityCount}
@@ -1169,6 +1171,12 @@ function AgentDashboardContent() {
               <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="password" minLength={8} placeholder="New password (minimum 8 characters)" value={passwordForm.newPassword} onChange={(e) => setPasswordForm((f) => ({ ...f, newPassword: e.target.value }))} required />
               <button className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">Update Password</button>
             </form>
+          </section>
+        )}
+        
+        {activeTab === 'project-management' && agent?.has_project_management_access && (
+          <section className="animate-fade-in">
+            <PartyProjectManagement initialScreen="projects" isDarkMode={dark} isAgent={true} />
           </section>
         )}
       </div>

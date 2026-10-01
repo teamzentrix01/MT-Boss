@@ -3,10 +3,12 @@ import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { createPayURequest } from '@/lib/payu';
 import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
+import { BLOCKED_ACCOUNT_MESSAGE, requireActiveUser } from '@/lib/user-moderation';
 
 export async function POST(req, { params }) {
   try {
-    const user = requireRole(req, 'user');
+    const { user, blocked } = await requireActiveUser(req);
+    if (blocked) return NextResponse.json({ error: BLOCKED_ACCOUNT_MESSAGE }, { status: 403 });
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { id } = await params;
