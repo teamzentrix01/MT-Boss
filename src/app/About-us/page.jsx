@@ -94,7 +94,7 @@ function CompanyStory({ dark }) {
             </p>
             <p>
               We work with a practical operating principle: clear scope, responsible coordination, quality-conscious
-              execution, and timely support from first enquiry to project handover.
+              execution, and timely support from first enquiry to project handover
             </p>
           </div>
         </FadeIn>
