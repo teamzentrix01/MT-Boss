@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
 
 const VALID_ADJUSTMENT_TYPES = ['wastage', 'damage', 'return_to_supplier', 'transfer_out'];
 
 export async function GET(req) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
 
   try {
@@ -65,7 +66,7 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
 
   try {
@@ -109,10 +110,10 @@ export async function POST(req) {
       const adjRes = await c.query(
         `INSERT INTO pm_material_adjustments(
            project_id, material_id, adjustment_type, quantity,
-           adjustment_date, to_project_id, note, created_by, over_used
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+           adjustment_date, to_project_id, note, bill_url, bill_filename, created_by, over_used
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
          RETURNING *`,
-        [p, m, adjType, q, b.adjustment_date, toProjId, b.note || null, actor, isOverUsed]
+        [p, m, adjType, q, b.adjustment_date, toProjId, b.note || null, b.bill_url || null, b.bill_filename || null, actor, isOverUsed]
       );
       const adjRow = adjRes.rows[0];
 

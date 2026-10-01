@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementPhase5Schema } from '@/lib/project-management';
 
 export async function PATCH(req, { params }) {
-  if (!requireRole(req, 'admin')) return unauthorized();
+  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
     const id = Number((await params).id);

@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
 
 export async function PATCH(req, { params }) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
 
   try {
@@ -59,7 +60,7 @@ export async function PATCH(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
 
   try {

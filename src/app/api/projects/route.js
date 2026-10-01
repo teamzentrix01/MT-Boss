@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { handleApiError, isDatabaseConnectionError } from '@/lib/api-utils';
 import { fallbackProjects, fallbackResponse } from '@/lib/public-fallbacks';
 import { convertFinalLeadToProject, ensureProjectOpsSchema, getProjectSummaries } from '@/lib/project-ops';
@@ -13,7 +14,10 @@ export async function GET(req) {
     const kind = searchParams.get('kind');
     const isAdminView = status === 'all' || kind === 'operational';
 
-    if (isAdminView && !requireRole(req, 'admin')) return unauthorized();
+    if (isAdminView) {
+      const pmAccessResult = await requirePmAccess(req);
+      if (!pmAccessResult) return unauthorized();
+    }
 
     if (kind === 'operational') {
       await ensureAgentSchema();

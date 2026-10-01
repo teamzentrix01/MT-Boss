@@ -97,6 +97,30 @@ export default function AgentsPage() {
     }
   };
 
+  const togglePmAccess = async (id, currentAccess) => {
+    setUpdating(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/admin/agents/${id}/pm-access`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ has_project_management_access: !currentAccess }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Could not update PM access.');
+        return;
+      }
+      setAgents(prev => prev.map(a => a.id === id ? { ...a, has_project_management_access: !currentAccess } : a));
+      if (selected?.id === id) setSelected(prev => ({ ...prev, has_project_management_access: !currentAccess }));
+    } catch (err) {
+      setError(err.message || 'Could not update PM access.');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const openAgent = async (agent) => {
     setSelected(agent);
     setWorkspace(null);
@@ -465,7 +489,7 @@ export default function AgentsPage() {
               <table className="ag-table">
                 <thead>
                   <tr>
-                    {['Name', 'Contact', 'Location', 'Type', 'Experience', 'Status', 'Date', 'Action'].map(h => (
+                    {['Name', 'Contact', 'Location', 'Type', 'Experience', 'Status', 'PM Access', 'Date', 'Action'].map(h => (
                       <th key={h}>{h}</th>
                     ))}
                   </tr>
@@ -493,6 +517,13 @@ export default function AgentsPage() {
                           >
                             {agent.status}
                           </span>
+                        </td>
+                        <td>
+                          {agent.has_project_management_access ? (
+                            <span className="ag-badge" style={{ background: '#dbeafe', color: '#1e40af' }}>Granted</span>
+                          ) : (
+                            <span className="ag-badge" style={{ background: '#f1f5f9', color: '#64748b' }}>Not Granted</span>
+                          )}
                         </td>
                         <td className="ag-muted">
                           {new Date(agent.created_at).toLocaleDateString()}
@@ -609,6 +640,19 @@ export default function AgentsPage() {
                   style={{ color: '#b91c1c', borderColor: '#ef4444' }}
                 >
                   Disable Access
+                </button>
+                <button
+                  type="button"
+                  className="ag-close-btn"
+                  disabled={updating}
+                  onClick={() => {
+                    if (!selected.has_project_management_access || window.confirm("Are you sure you want to remove this agent's Project Management access?")) {
+                      togglePmAccess(selected.id, selected.has_project_management_access);
+                    }
+                  }}
+                  style={selected.has_project_management_access ? { color: '#b91c1c', borderColor: '#ef4444' } : { color: '#16a34a', borderColor: '#22c55e' }}
+                >
+                  {selected.has_project_management_access ? 'Revoke PM Access' : 'Grant PM Access'}
                 </button>
               </div>
             )}

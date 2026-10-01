@@ -1,12 +1,13 @@
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementPhase4Schema } from '@/lib/project-management';
 import { xlsxResponse, pdfHtmlResponse, inr, ddmmyyyy, tableHtml, escHtml } from '@/lib/pm-export';
 
 const MAX = 50_000;
 
 export async function GET(req) {
-  if (!requireRole(req, 'admin')) return unauthorized();
+  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementPhase4Schema();
     const sp = new URL(req.url).searchParams;

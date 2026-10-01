@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementSchema } from '@/lib/project-management';
 
 function toCsvString(headers, rows) {
@@ -19,7 +20,7 @@ function toCsvString(headers, rows) {
 }
 
 export async function GET(req) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
 
   try {

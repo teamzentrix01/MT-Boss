@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
 
 const okDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
 export async function PATCH(req, { params }) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
   try {
     await ensureProjectManagementSchema();
@@ -65,7 +66,7 @@ export async function PATCH(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
   try {
     await ensureProjectManagementSchema();

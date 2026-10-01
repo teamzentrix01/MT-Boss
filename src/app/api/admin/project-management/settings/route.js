@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementPhase5Schema } from '@/lib/project-management';
 
 const ALLOWED = ['party_payment_gap_days', 'contract_paid_warning_percent', 'use_real_rates'];
 
 export async function GET(req) {
-  if (!requireRole(req, 'admin')) return unauthorized();
+  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
     const r = await pool.query(`SELECT key, value, updated_at FROM pm_settings ORDER BY key`);
@@ -17,7 +18,7 @@ export async function GET(req) {
 }
 
 export async function PATCH(req) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();

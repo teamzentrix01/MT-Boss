@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementPhase5Schema } from '@/lib/project-management';
 
 // Default hardcoded / base calculator values for comparison
@@ -23,7 +24,7 @@ const CALCULATOR_DEFAULTS = [
 ];
 
 export async function GET(req) {
-  if (!requireRole(req, 'admin')) return unauthorized();
+  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
 

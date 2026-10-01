@@ -114,6 +114,7 @@ function makeCareerEditForm(application = {}) {
 function AdminDashboard() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(() => searchParams.get('tab') || 'overview');
+  const initialProjectId = searchParams.get('projectId') || null;
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
@@ -1391,7 +1392,7 @@ function AdminDashboard() {
           {activeTab === 'franchises' && <FranchisesManager />}
           {activeTab === 'projects' && <ProjectsManager />}
           {activeTab === 'project-management' && <OperationalProjectsManager isDarkMode={isDarkMode} />}
-          {activeTab === 'party-project-management' && <PartyProjectManagement isDarkMode={isDarkMode} />}
+          {activeTab === 'party-project-management' && <PartyProjectManagement isDarkMode={isDarkMode} initialProjectId={initialProjectId} />}
           {activeTab === 'pm-reports' && <PartyProjectManagement initialScreen="reports" isDarkMode={isDarkMode} />}
           {activeTab === 'pm-benchmarks' && <PmBenchmarks isDarkMode={isDarkMode} />}
           {activeTab === 'pm-dashboard' && <PmDashboard isDarkMode={isDarkMode} />}

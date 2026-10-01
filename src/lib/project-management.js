@@ -1,5 +1,32 @@
 import pool from '@/lib/db';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { verifyBearer } from '@/lib/auth';
+
+export async function requirePmAccess(req, projectId = null) {
+  // Check if they have an admin or site_supervisor token
+  const adminOrSupervisor = verifyBearer(req, 'admin') || verifyBearer(req, 'site_supervisor');
+  if (adminOrSupervisor && (adminOrSupervisor.role === 'admin' || adminOrSupervisor.role === 'site_supervisor')) {
+    return adminOrSupervisor;
+  }
+  
+  // Check if they have an agent token
+  const agent = verifyBearer(req, 'agent');
+  if (agent && agent.role === 'agent') {
+    const res = await pool.query('SELECT has_project_management_access FROM agents WHERE id = $1', [agent.id]);
+    if (res.rows[0]?.has_project_management_access) {
+      if (projectId) {
+        const assignmentRes = await pool.query(
+          'SELECT 1 FROM pm_project_agents WHERE project_id = $1 AND agent_id = $2',
+          [projectId, agent.id]
+        );
+        if (assignmentRes.rows.length === 0) return null; // Not assigned to this project
+      }
+      return agent;
+    }
+  }
+  
+  return null;
+}
 
 // Migrations are the source of truth. This guarded bootstrap makes fresh Neon
 // previews usable before the deployment migration runner has executed.
@@ -24,6 +51,32 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_material_used(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,material_id BIGINT NOT NULL REFERENCES pm_materials(id) ON DELETE RESTRICT,quantity NUMERIC(14,3) NOT NULL CHECK(quantity>0),used_date DATE NOT NULL,used_for TEXT,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ,over_used BOOLEAN NOT NULL DEFAULT FALSE)`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_material_adjustments(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,material_id BIGINT NOT NULL REFERENCES pm_materials(id) ON DELETE RESTRICT,adjustment_type VARCHAR(30) NOT NULL CHECK(adjustment_type IN ('wastage','damage','return_to_supplier','transfer_out')),quantity NUMERIC(14,3) NOT NULL CHECK(quantity>0),adjustment_date DATE NOT NULL,to_project_id BIGINT REFERENCES pm_projects(id) ON DELETE RESTRICT,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),over_used BOOLEAN NOT NULL DEFAULT FALSE)`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_other_expenses(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,category VARCHAR(30) NOT NULL CHECK(category IN ('transport','machine_rent','electricity_water','permit','misc')),amount NUMERIC(14,2) NOT NULL CHECK(amount>0),expense_date DATE NOT NULL,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
+  
+  // Phase 4: Multiple Agents per Project
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS pm_project_agents (
+      id BIGSERIAL PRIMARY KEY,
+      project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE CASCADE,
+      agent_id BIGINT NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
+      assigned_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      assigned_by TEXT,
+      UNIQUE(project_id, agent_id)
+    )
+  `);
+  await pool.query(`CREATE INDEX IF NOT EXISTS pm_project_agents_project_id_idx ON pm_project_agents(project_id)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS pm_project_agents_agent_id_idx ON pm_project_agents(agent_id)`);
+
+  // Phase 5: Lead to Project Conversion Link
+  await pool.query(`
+    DO $$ BEGIN
+      IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='pm_projects' AND column_name='source_lead_id') THEN
+        ALTER TABLE pm_projects ADD COLUMN source_lead_id BIGINT REFERENCES agent_leads(id) ON DELETE SET NULL;
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='agent_leads' AND column_name='converted_project_id') THEN
+        ALTER TABLE agent_leads ADD COLUMN converted_project_id BIGINT REFERENCES pm_projects(id) ON DELETE SET NULL;
+      END IF;
+    END $$;
+  `);
   
   // Phase 3 FK and indexes
   await pool.query(`

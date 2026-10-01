@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
 
 const okDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
 export async function GET(req) {
-  if (!requireRole(req, 'admin')) return unauthorized();
+  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementSchema();
     const s = new URL(req.url).searchParams;
@@ -48,7 +49,7 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
   try {
     await ensureProjectManagementSchema();
@@ -58,6 +59,7 @@ export async function POST(req) {
     const paymentDate = String(b.payment_date || '');
     const mode = b.mode ? String(b.mode).trim() : 'cash';
     const note = b.note ? String(b.note).trim() : null;
+    const transactionReference = b.transaction_reference ? String(b.transaction_reference).trim() : null;
 
     if (!Number.isInteger(laborId) || laborId <= 0) {
       return NextResponse.json({ success: false, error: 'Valid labor_id is required' }, { status: 400 });
@@ -74,10 +76,10 @@ export async function POST(req) {
       await client.query('BEGIN');
       const actor = actorFromAdmin(admin);
       const r = await client.query(
-        `INSERT INTO pm_labor_payments(labor_id, amount, payment_date, mode, note, created_by)
-         VALUES($1, $2, $3, $4, $5, $6)
+        `INSERT INTO pm_labor_payments(labor_id, amount, payment_date, mode, note, transaction_reference, created_by)
+         VALUES($1, $2, $3, $4, $5, $6, $7)
          RETURNING *`,
-        [laborId, amount, paymentDate, mode, note, actor]
+        [laborId, amount, paymentDate, mode, note, transactionReference, actor]
       );
       await writePmPhase2Audit(client, 'pm_labor_payments', r.rows[0].id, 'created', actor, null, r.rows[0]);
       await client.query('COMMIT');

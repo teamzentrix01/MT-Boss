@@ -1,10 +1,11 @@
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementPhase5Schema } from '@/lib/project-management';
 import { getEstimate } from '@/lib/pm-benchmarks';
 import { pdfHtmlResponse, inr, escHtml } from '@/lib/pm-export';
 
 export async function GET(req) {
-  if (!requireRole(req, 'admin')) return unauthorized();
+  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
     const sp = new URL(req.url).searchParams;

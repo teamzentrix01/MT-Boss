@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
 
 export async function GET(req) {
-  const admin = requireRole(req, ['admin', 'site_supervisor']);
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
 
   try {
@@ -61,7 +62,7 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const admin = requireRole(req, ['admin', 'site_supervisor']);
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
 
   try {

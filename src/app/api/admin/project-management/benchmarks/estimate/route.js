@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementPhase5Schema } from '@/lib/project-management';
 import { getEstimate } from '@/lib/pm-benchmarks';
 
 export async function POST(req) {
-  if (!requireRole(req, 'admin')) return unauthorized();
+  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
     const body = await req.json();

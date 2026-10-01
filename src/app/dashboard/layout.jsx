@@ -25,7 +25,15 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       try {
-        setUser(JSON.parse(localStorage.getItem('user') || '{}'));
+        let u = JSON.parse(localStorage.getItem('user'));
+        if (!u) {
+          const agentStr = localStorage.getItem('agent');
+          if (agentStr) {
+            u = JSON.parse(agentStr);
+            u.role = 'agent';
+          }
+        }
+        setUser(u || {});
       } catch {
         setUser({});
       }
@@ -38,6 +46,23 @@ export default function DashboardLayout({ children }) {
     syncSidebar();
     window.addEventListener('resize', syncSidebar);
     return () => window.removeEventListener('resize', syncSidebar);
+  }, []);
+
+  useEffect(() => {
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const res = await originalFetch(...args);
+      if (res.status === 403 && typeof args[0] === 'string' && args[0].includes('/api/admin/project-management')) {
+        let u = null;
+        try { u = JSON.parse(localStorage.getItem('agent')); } catch {}
+        if (u) {
+          alert('Your access to Project Management has been revoked. Contact admin.');
+          window.location.href = '/agent/dashboard';
+        }
+      }
+      return res;
+    };
+    return () => { window.fetch = originalFetch; };
   }, []);
 
   const menuItems = [
@@ -127,7 +152,19 @@ export default function DashboardLayout({ children }) {
 
         {/* Menu Items */}
         <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-2">
-          {menuItems.map((item) => (
+          {menuItems.filter(item => {
+            if (user?.role === 'agent') {
+              // Agents only see PM if they have access, and maybe Lead Management if they are allowed there.
+              // For PM items:
+              if (item.tab.includes('project-management') || item.tab.startsWith('pm-') || item.tab === 'projects') {
+                return !!user.has_project_management_access;
+              }
+              // Allow lead management if they use it from admin UI (though usually agents use agent UI)
+              if (item.tab === 'lead-management') return true;
+              return false;
+            }
+            return true;
+          }).map((item) => (
             <Link
               key={item.label}
               href={item.tab ? `/dashboard?tab=${item.tab}` : '/dashboard'}

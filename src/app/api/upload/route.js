@@ -18,10 +18,10 @@ export async function POST(req) {
     }
 
     // Validate file type
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
     if (!validTypes.includes(file.type)) {
       return Response.json(
-        { success: false, error: 'Invalid file type. Only JPG, PNG, WEBP allowed.' },
+        { success: false, error: 'Invalid file type. Only JPG, PNG, WEBP, and PDF allowed.' },
         { status: 400 }
       );
     }
@@ -37,7 +37,7 @@ export async function POST(req) {
     // Create unique filename
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(7);
-    const ext = file.type === 'image/jpeg' ? 'jpg' : file.type === 'image/png' ? 'png' : 'webp';
+    const ext = file.type === 'application/pdf' ? 'pdf' : file.type === 'image/jpeg' ? 'jpg' : file.type === 'image/png' ? 'png' : 'webp';
     const filename = `${timestamp}-${random}.${ext}`;
 
     // Convert file to buffer

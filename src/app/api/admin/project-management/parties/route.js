@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmAudit } from '@/lib/project-management';
 
 export async function GET(req) {
-  const admin = requireRole(req, 'admin'); if (!admin) return unauthorized();
+  const admin = await requirePmAccess(req); if (!admin) return unauthorized();
   try {
     await ensureProjectManagementSchema();
     const { searchParams } = new URL(req.url); const search = String(searchParams.get('search') || '').trim();
@@ -28,14 +29,39 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const admin = requireRole(req, 'admin'); if (!admin) return unauthorized();
+  const admin = await requirePmAccess(req); if (!admin) return unauthorized();
   try {
     await ensureProjectManagementSchema(); const body = await req.json(); const name = String(body.name || '').trim();
     if (!name) return NextResponse.json({ success:false, error:'Party name is required' }, {status:400});
     const client = await pool.connect(); try { await client.query('BEGIN');
-      const result = await client.query(`INSERT INTO pm_parties(name,phone,email,gst_no,address) VALUES($1,$2,$3,$4,$5) RETURNING *`, [name, body.phone?.trim() || null, body.email?.trim() || null, body.gst_no?.trim() || null, body.address?.trim() || null]);
-      await writePmAudit(client,'party',result.rows[0].id,'created',actorFromAdmin(admin),null,result.rows[0]); await client.query('COMMIT');
-      return NextResponse.json({success:true,data:result.rows[0]},{status:201});
+      let result;
+      let existingPartyRes;
+      let is_existing = false;
+
+      if (body.phone && body.phone.trim()) {
+        existingPartyRes = await client.query(
+          `SELECT * FROM pm_parties WHERE phone = $1 LIMIT 1`,
+          [body.phone.trim()]
+        );
+      }
+
+      if (!existingPartyRes || existingPartyRes.rows.length === 0) {
+        existingPartyRes = await client.query(
+          `SELECT * FROM pm_parties WHERE name ILIKE $1 LIMIT 1`,
+          [name]
+        );
+      }
+
+      if (existingPartyRes && existingPartyRes.rows.length > 0) {
+        result = existingPartyRes;
+        is_existing = true;
+      } else {
+        result = await client.query(`INSERT INTO pm_parties(name,phone,email,gst_no,address) VALUES($1,$2,$3,$4,$5) RETURNING *`, [name, body.phone?.trim() || null, body.email?.trim() || null, body.gst_no?.trim() || null, body.address?.trim() || null]);
+        await writePmAudit(client,'party',result.rows[0].id,'created',actorFromAdmin(admin),null,result.rows[0]); 
+      }
+      
+      await client.query('COMMIT');
+      return NextResponse.json({success:true, data:result.rows[0], is_existing},{status:201});
     } catch(error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); }
   } catch(error) { return NextResponse.json({success:false,error:error.message || 'Could not create party'},{status:500}); }
 }

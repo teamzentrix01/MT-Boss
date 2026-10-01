@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementPhase5Schema, actorFromAdmin, writePmAudit } from '@/lib/project-management';
 import { recomputeProjectBenchmark } from '@/lib/pm-benchmarks';
 
@@ -51,11 +52,12 @@ const valid = (b) => {
 };
 
 export async function GET(req, { params }) {
-  const admin = requireRole(req, 'admin');
+  const paramId = (await params).id;
+  const admin = await requirePmAccess(req, paramId);
   if (!admin) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
-    const id = Number((await params).id);
+    const id = Number(paramId);
     const result = await pool.query(
       `WITH party_totals AS (
          SELECT project_id, SUM(amount) received
@@ -149,11 +151,12 @@ export async function GET(req, { params }) {
 }
 
 export async function PATCH(req, { params }) {
-  const admin = requireRole(req, 'admin');
+  const paramId = (await params).id;
+  const admin = await requirePmAccess(req, paramId);
   if (!admin) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
-    const id = Number((await params).id);
+    const id = Number(paramId);
     const values = valid(await req.json());
     if (!Number.isInteger(id) || !values) {
       return NextResponse.json({ success: false, error: 'Provide valid project details' }, { status: 400 });
@@ -203,11 +206,12 @@ export async function PATCH(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  const admin = requireRole(req, 'admin');
+  const paramId = (await params).id;
+  const admin = await requirePmAccess(req, paramId);
   if (!admin) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
-    const id = Number((await params).id);
+    const id = Number(paramId);
     const client = await pool.connect();
     try {
       await client.query('BEGIN');

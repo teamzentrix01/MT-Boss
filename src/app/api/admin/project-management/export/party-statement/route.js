@@ -1,12 +1,13 @@
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementPhase4Schema } from '@/lib/project-management';
 import { xlsxResponse, pdfHtmlResponse, inr, ddmmyyyy, tableHtml, escHtml } from '@/lib/pm-export';
 
 const MAX_ROWS = 50_000;
 
 export async function GET(req) {
-  if (!requireRole(req, 'admin')) return unauthorized();
+  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementPhase4Schema();
     const sp = new URL(req.url).searchParams;
@@ -55,8 +56,8 @@ export async function GET(req) {
         ],
         [],
         ['Payment History'],
-        ['Date', 'Project', 'Amount', 'Mode', 'Note'],
-        ...payments.map(r => [ddmmyyyy(r.payment_date), r.project_name, Number(r.amount), r.mode||'', r.note||'']),
+        ['Date', 'Project', 'Amount', 'Mode', 'Note', 'Transaction Ref'],
+        ...payments.map(r => [ddmmyyyy(r.payment_date), r.project_name, Number(r.amount), r.mode||'', r.note||'', r.transaction_reference||'']),
       ];
       return xlsxResponse(rows.slice(0, MAX_ROWS), filename);
     }
@@ -74,9 +75,9 @@ export async function GET(req) {
     };
     const payCols = [
       { key:'date', label:'Date' }, { key:'project', label:'Project' },
-      { key:'amount', label:'Amount', num:true }, { key:'mode', label:'Mode' }, { key:'note', label:'Note' },
+      { key:'amount', label:'Amount', num:true }, { key:'mode', label:'Mode' }, { key:'note', label:'Note' }, { key:'ref', label:'Ref' },
     ];
-    const payRows = payments.map(r => ({ date:ddmmyyyy(r.payment_date), project:r.project_name, amount:inr(r.amount), mode:r.mode||'—', note:r.note||'—' }));
+    const payRows = payments.map(r => ({ date:ddmmyyyy(r.payment_date), project:r.project_name, amount:inr(r.amount), mode:r.mode||'—', note:r.note||'—', ref:r.transaction_reference||'—' }));
 
     const html = `
 <p><b>Party:</b> ${escHtml(party.name)}&nbsp;&nbsp;<b>Phone:</b> ${escHtml(party.phone||'—')}&nbsp;&nbsp;<b>GST:</b> ${escHtml(party.gst_no||'—')}</p>

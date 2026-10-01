@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
 
 export async function GET(req) {
-  const admin = requireRole(req, ['admin', 'site_supervisor']);
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
 
   try {
@@ -69,7 +70,7 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const admin = requireRole(req, ['admin', 'site_supervisor']);
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
 
   try {
@@ -100,12 +101,13 @@ export async function POST(req) {
       const r = await c.query(
         `INSERT INTO pm_material_received(
            project_id, material_id, supplier_name, supplier_vendor_id, vendor_supply_id,
-           quantity, rate, amount, received_date, challan_no, note, created_by
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+           quantity, rate, amount, received_date, challan_no, note, bill_url, bill_filename, created_by
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
          RETURNING *`,
         [
           p, m, b.supplier_name || null, b.supplier_vendor_id || null, b.vendor_supply_id || null,
-          q, rate, amount, b.received_date, b.challan_no || null, b.note || null, actor
+          q, rate, amount, b.received_date, b.challan_no || null, b.note || null,
+          b.bill_url || null, b.bill_filename || null, actor
         ]
       );
 

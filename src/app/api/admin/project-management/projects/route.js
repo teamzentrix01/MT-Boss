@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementPhase5Schema, pageParams, actorFromAdmin, writePmAudit } from '@/lib/project-management';
 import { recomputeProjectBenchmark } from '@/lib/pm-benchmarks';
 
@@ -8,7 +9,8 @@ function projectValues(body) {
   const name = String(body.name || '').trim();
   const partyId = Number(body.party_id);
   const contract = Number(body.contract_value);
-  if (!name || !Number.isInteger(partyId) || !body.start_date || !Number.isFinite(contract) || contract < 0) return null;
+  const startDate = body.start_date || new Date().toISOString().slice(0, 10);
+  if (!name || !Number.isInteger(partyId) || !Number.isFinite(contract) || contract < 0) return null;
   const area = body.built_up_area === '' || body.built_up_area == null ? null : Number(body.built_up_area);
   if (area !== null && (!Number.isFinite(area) || area < 0)) return null;
   const status = String(body.status || 'running');
@@ -27,7 +29,7 @@ function projectValues(body) {
     partyId,
     name,
     body.site_address?.trim() || null,
-    body.start_date,
+    startDate,
     body.expected_end_date || null,
     contract,
     area,
@@ -44,7 +46,7 @@ function projectValues(body) {
 }
 
 export async function GET(req) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
@@ -58,6 +60,7 @@ export async function GET(req) {
       `WITH paged AS (
          SELECT p.*, COUNT(*) OVER()::int total_count
          FROM pm_projects p
+         ${admin.role === 'agent' ? "JOIN pm_project_agents pa ON pa.project_id = p.id AND pa.agent_id = $6" : ""}
          WHERE ($1 = '' OR p.party_id = $1::bigint)
            AND ($2 = '' OR p.name ILIKE '%'||$2||'%' OR COALESCE(p.site_address,'') ILIKE '%'||$2||'%')
            AND ($3 = 'all' OR p.status = $3)
@@ -75,7 +78,9 @@ export async function GET(req) {
        JOIN pm_parties pa ON pa.id = p.party_id
        LEFT JOIN totals t ON t.project_id = p.id
        ORDER BY p.created_at DESC`,
-      [partyId, search, status, pageSize, offset]
+      admin.role === 'agent' 
+        ? [partyId, search, status, pageSize, offset, admin.id] 
+        : [partyId, search, status, pageSize, offset]
     );
 
     const total = Number(result.rows[0]?.total_count || 0);
@@ -90,7 +95,7 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();

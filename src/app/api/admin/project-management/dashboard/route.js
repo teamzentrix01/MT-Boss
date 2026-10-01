@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectManagementPhase4Schema } from '@/lib/project-management';
 
 // In-process cache: key → { data, at }
@@ -8,7 +9,7 @@ const cache = new Map();
 const CACHE_TTL = 60_000; // 60 s
 
 export async function GET(req) {
-  const admin = requireRole(req, 'admin');
+  const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
   try {
     await ensureProjectManagementPhase4Schema();

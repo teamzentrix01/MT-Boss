@@ -36,7 +36,7 @@ function Input({ label, name, type = 'text', value, set, required, placeholder, 
 
 async function api(path, opts = {}) {
   const token = typeof window !== 'undefined'
-    ? localStorage.getItem('admin-token') || localStorage.getItem('token') || ''
+    ? localStorage.getItem('admin-token') || localStorage.getItem('token') || localStorage.getItem('agent-token') || ''
     : '';
 
   const res = await fetch(path, {
@@ -52,6 +52,22 @@ async function api(path, opts = {}) {
   if (!res.ok || data.success === false) {
     throw new Error(data.error || 'Request failed');
   }
+  return data;
+}
+
+async function uploadFile(file) {
+  const token = typeof window !== 'undefined'
+    ? localStorage.getItem('admin-token') || localStorage.getItem('token') || ''
+    : '';
+  const fd = new FormData();
+  fd.append('file', file);
+  const res = await fetch('/api/upload', {
+    method: 'POST',
+    headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    body: fd,
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Upload failed');
   return data;
 }
 
@@ -74,14 +90,14 @@ const projectBlank = {
 };
 
 const materialBlank = { name: '', unit: 'kg', category: 'Civil', min_stock_level: 0, is_active: true };
-const receivedBlank = { material_id: '', quantity: '', rate: '', received_date: today(), supplier_name: '', challan_no: '', note: '' };
+const receivedBlank = { material_id: '', quantity: '', rate: '', received_date: today(), supplier_name: '', challan_no: '', note: '', bill_url: '', bill_filename: '' };
 const usedBlank = { material_id: '', quantity: '', used_date: today(), used_for: '', note: '' };
-const adjustmentBlank = { material_id: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', note: '' };
+const adjustmentBlank = { material_id: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', note: '', bill_url: '', bill_filename: '' };
 const expenseBlank = { category: 'transport', amount: '', expense_date: today(), note: '' };
 
-export default function PartyProjectManagement({ initialScreen = 'parties', isDarkMode }) {
+export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent }) {
   // Navigation: 'parties' | 'party' | 'partyForm' | 'project' | 'projectForm' | 'reports'
-  const [screen, setScreen] = useState(initialScreen);
+  const [screen, setScreen] = useState(initialProjectId ? 'project' : initialScreen);
   const [role, setRole] = useState('admin');
 
   // Parties state
@@ -100,7 +116,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
 
   // Phase 1: Party payments
   const [partyPayments, setPartyPayments] = useState([]);
-  const [partyPaymentForm, setPartyPaymentForm] = useState({ amount: '', payment_date: today(), mode: 'bank', note: '' });
+  const [partyPaymentForm, setPartyPaymentForm] = useState({ amount: '', payment_date: today(), mode: 'bank', note: '', transaction_reference: '' });
 
   // Phase 2: Project Vendors
   const [projectVendors, setProjectVendors] = useState([]);
@@ -144,6 +160,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
     mode: 'bank',
     payment_type: 'labour',
     note: '',
+    transaction_reference: '',
   });
 
   // Phase 2: Vendor Material Supply Modal
@@ -173,7 +190,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
   const [laborPaymentFilterFrom, setLaborPaymentFilterFrom] = useState('');
   const [laborPaymentFilterTo, setLaborPaymentFilterTo] = useState('');
   const [laborPaymentModal, setLaborPaymentModal] = useState(false);
-  const [laborPaymentForm, setLaborPaymentForm] = useState({ labor_id: '', amount: '', payment_date: today(), mode: 'cash', note: '' });
+  const [laborPaymentForm, setLaborPaymentForm] = useState({ labor_id: '', amount: '', payment_date: today(), mode: 'cash', note: '', transaction_reference: '' });
   const [editingLaborPaymentId, setEditingLaborPaymentId] = useState(null);
   const [laborCalendarMonth, setLaborCalendarMonth] = useState(() => today().slice(0, 7));
   const [laborAttendanceHistory, setLaborAttendanceHistory] = useState([]);
@@ -208,6 +225,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
   const [adjustmentForm, setAdjustmentForm] = useState(adjustmentBlank);
   const [editingAdjId, setEditingAdjId] = useState(null);
 
+  const [billFile, setBillFile] = useState(null);
+
   // Material detail timeline drawer
   const [timelineMaterial, setTimelineMaterial] = useState(null);
   const [timelineData, setTimelineData] = useState([]);
@@ -227,6 +246,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
   const [reportData, setReportData] = useState({ title: '', headers: [], data: [] });
   const [loadingReport, setLoadingReport] = useState(false);
   const [allProjectsList, setAllProjectsList] = useState([]);
+
+  // ── Agent Assignment State ────────────────────────────────────────────────
+  const [projectAgents, setProjectAgents] = useState([]);
+  const [allAgentsList, setAllAgentsList] = useState([]);
+  const [assignAgentModal, setAssignAgentModal] = useState(false);
+  const [assigningAgentId, setAssigningAgentId] = useState('');
 
   // Check supervisor role
   useEffect(() => {
@@ -249,9 +274,28 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
     }
   }, [search, pagination.page]);
 
+  const loadAgentProjects = useCallback(async () => {
+    try {
+      const d = await api(`/api/admin/project-management/projects?search=${encodeURIComponent(search)}&page=${pagination.page}&pageSize=20`);
+      setAllProjectsList(d.data || []);
+      setPagination(d.pagination || { page: 1, totalPages: 1 });
+    } catch (e) {
+      setMessage(e.message);
+    }
+  }, [search, pagination.page]);
+
   useEffect(() => {
     if (screen === 'parties') loadParties();
-  }, [screen, loadParties]);
+    if (screen === 'projects') loadAgentProjects();
+  }, [screen, loadParties, loadAgentProjects]);
+
+  // Auto-open a project if initialProjectId was passed (e.g. from Lead Management conversion)
+  useEffect(() => {
+    if (initialProjectId) {
+      showProject(initialProjectId);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialProjectId]);
 
   // ── Show Single Party ────────────────────────────────────────────────────────
   const showParty = async (id) => {
@@ -355,23 +399,58 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
   // ── Show Single Project Overview ─────────────────────────────────────────────
   const showProject = async (id) => {
     try {
-      const [projRes, ppRes, pvRes, vListRes, laborRes] = await Promise.all([
+      const [projRes, ppRes, pvRes, vListRes, laborRes, assignedAgentsRes, allAgentsRes] = await Promise.all([
         api(`/api/admin/project-management/projects/${id}`),
         api(`/api/admin/project-management/payments?projectId=${id}&page=1&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/project-vendors?projectId=${id}&page=1&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/vendors?page=1&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/labor?projectId=${id}&pageSize=200`).catch(() => ({ data: [] })),
+        api(`/api/admin/project-management/projects/${id}/agents`).catch(() => ({ data: [] })),
+        api(`/api/admin/lead-management`).catch(() => ({ agents: [] })),
       ]);
       setProject(projRes.data);
       setPartyPayments(ppRes.data || []);
       setProjectVendors(pvRes.data || []);
       setAllVendorsMaster(vListRes.data || []);
       setProjectLabors(laborRes.data || []);
+      setProjectAgents(assignedAgentsRes.data || []);
+      setAllAgentsList(allAgentsRes.agents || []);
       setSelectedVendor(null);
       setSelectedLabor(null);
       setScreen('project');
       setProjectTab('materials');
       loadPhase3ProjectData(id);
+    } catch (e) {
+      setMessage(e.message);
+    }
+  };
+
+  // ── Agent Assignment Functions ────────────────────────────────────────────────
+  const assignAgent = async () => {
+    if (!assigningAgentId || !project?.id) return;
+    try {
+      const res = await api(`/api/admin/project-management/projects/${project.id}/agents`, {
+        method: 'POST',
+        body: JSON.stringify({ agent_id: assigningAgentId }),
+      });
+      if (res.success !== false) {
+        const agentsRes = await api(`/api/admin/project-management/projects/${project.id}/agents`);
+        setProjectAgents(agentsRes.data || []);
+        setAssigningAgentId('');
+        setAssignAgentModal(false);
+      } else {
+        setMessage(res.error || 'Could not assign agent');
+      }
+    } catch (e) {
+      setMessage(e.message);
+    }
+  };
+
+  const removeAgent = async (agentId) => {
+    if (!project?.id) return;
+    try {
+      await api(`/api/admin/project-management/projects/${project.id}/agents/${agentId}`, { method: 'DELETE' });
+      setProjectAgents((prev) => prev.filter((a) => a.id !== agentId));
     } catch (e) {
       setMessage(e.message);
     }
@@ -463,22 +542,34 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
     e.preventDefault();
     if (!project?.id) return;
     try {
+      let bill_url = receivedForm.bill_url;
+      let bill_filename = receivedForm.bill_filename;
+      
+      if (billFile) {
+        const uploadData = await uploadFile(billFile);
+        bill_url = uploadData.url;
+        bill_filename = uploadData.filename;
+      }
+      
+      const payload = { ...receivedForm, project_id: project.id, bill_url, bill_filename };
+      
       if (editingReceivedId) {
         await api(`/api/admin/project-management/material-received/${editingReceivedId}`, {
           method: 'PATCH',
-          body: JSON.stringify(receivedForm),
+          body: JSON.stringify(payload),
         });
         setMessage('Material received entry updated');
       } else {
         await api('/api/admin/project-management/material-received', {
           method: 'POST',
-          body: JSON.stringify({ ...receivedForm, project_id: project.id }),
+          body: JSON.stringify(payload),
         });
         setMessage('Material received recorded successfully');
       }
       setReceivedModal(false);
       setEditingReceivedId(null);
       setReceivedForm(receivedBlank);
+      setBillFile(null);
       refreshProjectData(project.id);
     } catch (err) {
       setMessage(err.message);
@@ -520,16 +611,27 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
     e.preventDefault();
     if (!project?.id) return;
     try {
+      let bill_url = adjustmentForm.bill_url;
+      let bill_filename = adjustmentForm.bill_filename;
+      
+      if (billFile) {
+        const uploadData = await uploadFile(billFile);
+        bill_url = uploadData.url;
+        bill_filename = uploadData.filename;
+      }
+      
+      const payload = { ...adjustmentForm, project_id: project.id, bill_url, bill_filename };
+
       let res;
       if (editingAdjId) {
         res = await api(`/api/admin/project-management/material-adjustments/${editingAdjId}`, {
           method: 'PATCH',
-          body: JSON.stringify(adjustmentForm),
+          body: JSON.stringify(payload),
         });
       } else {
         res = await api('/api/admin/project-management/material-adjustments', {
           method: 'POST',
-          body: JSON.stringify({ ...adjustmentForm, project_id: project.id }),
+          body: JSON.stringify(payload),
         });
       }
       if (res.warning) {
@@ -539,6 +641,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
       setAdjustmentModal(false);
       setEditingAdjId(null);
       setAdjustmentForm(adjustmentBlank);
+      setBillFile(null);
       refreshProjectData(project.id);
     } catch (err) {
       setMessage(err.message);
@@ -579,13 +682,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
       if (partyForm.id) {
         await api(`/api/admin/project-management/parties/${partyForm.id}`, { method: 'PATCH', body: JSON.stringify(partyForm) });
         setMessage('Party updated');
+        setPartyForm(partyBlank);
+        setScreen('parties');
+        loadParties();
       } else {
-        await api('/api/admin/project-management/parties', { method: 'POST', body: JSON.stringify(partyForm) });
-        setMessage('Party created');
+        const res = await api('/api/admin/project-management/parties', { method: 'POST', body: JSON.stringify(partyForm) });
+        setMessage(res.is_existing ? 'Existing party found. You can add a project here.' : 'Party created');
+        setPartyForm(partyBlank);
+        // Open the party immediately
+        showParty(res.data.id);
       }
-      setPartyForm(partyBlank);
-      setScreen('parties');
-      loadParties();
     } catch (e) {
       setMessage(e.message);
     }
@@ -662,7 +768,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
         method: 'POST',
         body: JSON.stringify({ ...partyPaymentForm, project_id: project.id }),
       });
-      setPartyPaymentForm({ amount: '', payment_date: today(), mode: 'bank', note: '' });
+      setPartyPaymentForm({ amount: '', payment_date: today(), mode: 'bank', note: '', transaction_reference: '' });
       setMessage('Party payment recorded');
       refreshProjectData();
     } catch (e) {
@@ -835,6 +941,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
         mode: 'bank',
         payment_type: 'labour',
         note: '',
+        transaction_reference: '',
       });
       refreshProjectData();
       loadVendorPayments();
@@ -974,9 +1081,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
         });
         setMessage('Labor payment recorded successfully');
       }
-      setLaborPaymentModal(false);
+      setLaborPaymentForm(false);
       setEditingLaborPaymentId(null);
-      setLaborPaymentForm({ labor_id: '', amount: '', payment_date: today(), mode: 'cash', note: '' });
+      setLaborPaymentForm({ labor_id: '', amount: '', payment_date: today(), mode: 'cash', note: '', transaction_reference: '' });
       loadLaborPayments(project.id, laborPaymentFilterLabor, laborPaymentFilterFrom, laborPaymentFilterTo);
       loadProjectLabors(project.id);
       if (selectedLabor) {
@@ -1094,6 +1201,83 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                 <tr>
                   <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
                     No parties found. Click &ldquo;+ Add Party&rdquo; to get started.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          <div className="bar" style={{ marginTop: 14, justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 12, color: '#64748b' }}>
+              Page {pagination.page} / {pagination.totalPages || 1}
+            </span>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button
+                className="muted"
+                disabled={pagination.page <= 1}
+                onClick={() => setPagination((p) => ({ ...p, page: p.page - 1 }))}
+              >
+                Previous
+              </button>
+              <button
+                className="muted"
+                disabled={pagination.page >= pagination.totalPages}
+                onClick={() => setPagination((p) => ({ ...p, page: p.page + 1 }))}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {screen === 'projects' && (
+        <>
+          <div className="bar" style={{ marginBottom: 12 }}>
+            <input
+              placeholder="Search projects..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ maxWidth: 300 }}
+            />
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th>Contract Value</th>
+                <th>Received</th>
+                <th>Pending</th>
+                <th>Status</th>
+                <th style={{ textAlign: 'right' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {allProjectsList.map((p) => (
+                <tr key={p.id}>
+                  <td>
+                    <b>{p.name}</b>
+                    <br />
+                    <span style={{ fontSize: 11, color: '#64748b' }}>{p.site_address || 'No site address'}</span>
+                  </td>
+                  <td>{INR(p.contract_value)}</td>
+                  <td style={{ color: '#16a34a' }}>{INR(p.received)}</td>
+                  <td style={{ color: '#dc2626' }}>{INR(p.pending)}</td>
+                  <td>
+                    <span className={`badge ${p.status === 'completed' ? 'badge-completed' : 'badge-active'}`}>
+                      {p.status}
+                    </span>
+                  </td>
+                  <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                    <button onClick={() => showProject(p.id)}>Overview</button>
+                  </td>
+                </tr>
+              ))}
+              {allProjectsList.length === 0 && (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                    No assigned projects found.
                   </td>
                 </tr>
               )}
@@ -1323,6 +1507,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                 </p>
               </div>
               <div style={{ display: 'flex', gap: 6 }}>
+                {!isSupervisor && (
+                  <button onClick={() => setAssignAgentModal(true)}>+ Assign Agent</button>
+                )}
                 <button
                   className="muted"
                   onClick={() => {
@@ -1334,6 +1521,46 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                 </button>
               </div>
             </div>
+
+            {/* Assigned Agents */}
+            {projectAgents.length > 0 && (
+              <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600, alignSelf: 'center' }}>Agents:</span>
+                {projectAgents.map((a) => (
+                  <span key={a.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 20, padding: '2px 10px', fontSize: 12, fontWeight: 600, color: '#1d4ed8' }}>
+                    {a.name}
+                    {!isSupervisor && (
+                      <button onClick={() => removeAgent(a.id)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: 13, lineHeight: 1, padding: '0 2px' }}>&times;</button>
+                    )}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Assign Agent Modal */}
+            {assignAgentModal && (
+              <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ background: '#fff', borderRadius: 10, padding: '1.5rem', width: 360, boxShadow: '0 8px 30px rgba(0,0,0,0.15)' }}>
+                  <h4 style={{ margin: '0 0 12px' }}>Assign Agent to Project</h4>
+                  <select
+                    value={assigningAgentId}
+                    onChange={(e) => setAssigningAgentId(e.target.value)}
+                    style={{ width: '100%', padding: '8px', borderRadius: 6, border: '1px solid #e2e8f0', marginBottom: 12 }}
+                  >
+                    <option value="">-- Select Agent --</option>
+                    {allAgentsList
+                      .filter((a) => !projectAgents.find((pa) => pa.id === a.id))
+                      .map((a) => (
+                        <option key={a.id} value={a.id}>{a.name} ({a.city || 'No city'})</option>
+                      ))}
+                  </select>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={assignAgent} disabled={!assigningAgentId}>Assign</button>
+                    <button className="muted" onClick={() => { setAssignAgentModal(false); setAssigningAgentId(''); }}>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Financial Overview Cards */}
             <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))' }}>
@@ -1391,55 +1618,81 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
           {/* Subtabs Navigation */}
           {!selectedVendor && !selectedLabor ? (
             <>
-              <div className="subtabs">
-                <button
-                  className={projectTab === 'materials' ? 'active' : ''}
-                  onClick={() => setProjectTab('materials')}
-                >
-                  📦 Materials &amp; Stock
-                </button>
-                <button
-                  className={projectTab === 'expenses' ? 'active' : ''}
-                  onClick={() => setProjectTab('expenses')}
-                >
-                  🧾 Other Expenses
-                </button>
-                <button
-                  className={projectTab === 'vendors' ? 'active' : ''}
-                  onClick={() => setProjectTab('vendors')}
-                >
-                  👷 Vendors ({projectVendors.length})
-                </button>
-                <button
-                  className={projectTab === 'attendance' ? 'active' : ''}
-                  onClick={() => setProjectTab('attendance')}
-                >
-                  📅 Daily Attendance
-                </button>
-                <button
-                  className={projectTab === 'labor' ? 'active' : ''}
-                  onClick={() => {
-                    setProjectTab('labor');
-                    setSelectedLabor(null);
-                  }}
-                >
-                  🦺 Labor ({projectLabors.length})
-                </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+                {/* 1. PEOPLE */}
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
+                    People (Manpower & Payroll)
+                  </div>
+                  <div className="subtabs" style={{ marginBottom: 0 }}>
+                    <button
+                      className={projectTab === 'vendors' ? 'active' : ''}
+                      onClick={() => setProjectTab('vendors')}
+                    >
+                      👷 Vendors ({projectVendors.length})
+                    </button>
+                    <button
+                      className={projectTab === 'labor' ? 'active' : ''}
+                      onClick={() => {
+                        setProjectTab('labor');
+                        setSelectedLabor(null);
+                      }}
+                    >
+                      🦺 Labor ({projectLabors.length})
+                    </button>
+                    <button
+                      className={projectTab === 'attendance' ? 'active' : ''}
+                      onClick={() => setProjectTab('attendance')}
+                    >
+                      📅 Daily Attendance
+                    </button>
+                    {!isSupervisor && (
+                      <button
+                        className={projectTab === 'payments' ? 'active' : ''}
+                        onClick={() => setProjectTab('payments')}
+                      >
+                        💸 Vendor Payments
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* 2. CONSTRUCTION */}
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
+                    Construction (Materials & Site Expenses)
+                  </div>
+                  <div className="subtabs" style={{ marginBottom: 0 }}>
+                    <button
+                      className={projectTab === 'materials' ? 'active' : ''}
+                      onClick={() => setProjectTab('materials')}
+                    >
+                      📦 Materials &amp; Stock
+                    </button>
+                    <button
+                      className={projectTab === 'expenses' ? 'active' : ''}
+                      onClick={() => setProjectTab('expenses')}
+                    >
+                      🧾 Other Expenses
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. CLIENT */}
                 {!isSupervisor && (
-                  <>
-                    <button
-                      className={projectTab === 'payments' ? 'active' : ''}
-                      onClick={() => setProjectTab('payments')}
-                    >
-                      💸 Vendor Payments
-                    </button>
-                    <button
-                      className={projectTab === 'party_payments' ? 'active' : ''}
-                      onClick={() => setProjectTab('party_payments')}
-                    >
-                      🏦 Party Payments ({partyPayments.length})
-                    </button>
-                  </>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
+                      Client (Money In)
+                    </div>
+                    <div className="subtabs" style={{ marginBottom: 0 }}>
+                      <button
+                        className={projectTab === 'party_payments' ? 'active' : ''}
+                        onClick={() => setProjectTab('party_payments')}
+                      >
+                        🏦 Party Payments ({partyPayments.length})
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
 
@@ -1628,6 +1881,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                             {!isSupervisor && <th>Rate</th>}
                             {!isSupervisor && <th>Total Amount</th>}
                             <th>Challan No</th>
+                            <th>Bill</th>
                             <th>Note</th>
                             <th style={{ textAlign: 'right' }}>Actions</th>
                           </tr>
@@ -1649,6 +1903,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                                 {!isSupervisor && <td>{INR(r.rate)}</td>}
                                 {!isSupervisor && <td style={{ fontWeight: 600 }}>{INR(r.amount)}</td>}
                                 <td>{r.challan_no || '—'}</td>
+                                <td>
+                                  {r.bill_url ? (
+                                    <a href={r.bill_url} target="_blank" rel="noreferrer" title={r.bill_filename} style={{ textDecoration: 'none' }}>
+                                      📄
+                                    </a>
+                                  ) : '—'}
+                                </td>
                                 <td>{r.note || '—'}</td>
                                 <td className="actions" style={{ justifyContent: 'flex-end' }}>
                                   <button
@@ -1785,6 +2046,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                           <th>Type</th>
                           <th>Quantity</th>
                           <th>Destination / Details</th>
+                          <th>Bill</th>
                           <th>Note</th>
                           <th>Status</th>
                           <th style={{ textAlign: 'right' }}>Actions</th>
@@ -1802,6 +2064,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                             </td>
                             <td style={{ fontWeight: 600 }}>{Number(r.quantity).toFixed(2)} {r.material_unit}</td>
                             <td>{r.to_project_name ? `Transfer to: ${r.to_project_name}` : '—'}</td>
+                            <td>
+                              {r.bill_url ? (
+                                <a href={r.bill_url} target="_blank" rel="noreferrer" title={r.bill_filename} style={{ textDecoration: 'none' }}>
+                                  📄
+                                </a>
+                              ) : '—'}
+                            </td>
                             <td>{r.note || '—'}</td>
                             <td>{r.over_used && <span className="badge badge-overused">Over-used</span>}</td>
                             <td className="actions" style={{ justifyContent: 'flex-end' }}>
@@ -2179,6 +2448,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                           <option value="upi">UPI</option>
                         </select>
                       </label>
+                      {(vendorPaymentForm.mode === 'upi' || vendorPaymentForm.mode === 'bank') && (
+                        <Input label="Transaction Reference / UPI ID" name="transaction_reference" value={vendorPaymentForm.transaction_reference || ''} set={setVendorPaymentForm} placeholder="e.g. UPI ID, UTR number, or bank transaction ID" />
+                      )}
                       <label>
                         <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Payment Type</small>
                         <select
@@ -2259,7 +2531,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                           </td>
                           <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
                           <td style={{ textTransform: 'uppercase', fontSize: 11 }}>{p.mode}</td>
-                          <td>{p.note || '—'}</td>
+                          <td>
+                            {p.note || '—'}
+                            {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
+                          </td>
                           <td className="actions" style={{ justifyContent: 'flex-end' }}>
                             <button className="danger" onClick={() => del('vendorPayment', p.id)}>
                               Delete
@@ -2299,6 +2574,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                           <option value="upi">UPI</option>
                         </select>
                       </label>
+                      {(partyPaymentForm.mode === 'upi' || partyPaymentForm.mode === 'bank') && (
+                        <Input label="Transaction Reference / UPI ID" name="transaction_reference" value={partyPaymentForm.transaction_reference || ''} set={setPartyPaymentForm} placeholder="e.g. UPI ID, UTR number, or bank transaction ID" />
+                      )}
                       <Input label="Note / Reference" name="note" value={partyPaymentForm.note} set={setPartyPaymentForm} />
                     </div>
                     <p style={{ marginTop: 12, textAlign: 'right' }}>
@@ -2322,7 +2600,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                           <td>{p.payment_date}</td>
                           <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
                           <td style={{ textTransform: 'uppercase', fontSize: 11 }}>{p.mode}</td>
-                          <td>{p.note || '—'}</td>
+                          <td>
+                            {p.note || '—'}
+                            {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
+                          </td>
                           <td className="actions" style={{ justifyContent: 'flex-end' }}>
                             <button className="danger" onClick={() => del('partyPayment', p.id)}>
                               Delete
@@ -3067,7 +3348,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                               {p.mode}
                             </span>
                           </td>
-                          <td>{p.note || '—'}</td>
+                          <td>
+                            {p.note || '—'}
+                            {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
+                          </td>
                           <td className="actions" style={{ justifyContent: 'flex-end' }}>
                             <button
                               className="danger"
@@ -3247,6 +3531,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                       <option value="cheque">Cheque</option>
                     </select>
                   </label>
+                  {(laborPaymentForm.mode === 'upi' || laborPaymentForm.mode === 'bank') && (
+                    <Input label="Transaction Reference / UPI ID" name="transaction_reference" value={laborPaymentForm.transaction_reference || ''} set={setLaborPaymentForm} placeholder="e.g. UPI ID, UTR number, or bank transaction ID" />
+                  )}
 
                   <Input
                     label="Note / Remarks"
@@ -3466,6 +3753,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                   <Input label="Supplier / Vendor Name" name="supplier_name" value={receivedForm.supplier_name} set={setReceivedForm} placeholder="e.g. Ultratech Distributor" />
                   <Input label="Challan / Invoice No." name="challan_no" value={receivedForm.challan_no} set={setReceivedForm} />
                   <Input label="Note" name="note" value={receivedForm.note} set={setReceivedForm} />
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Upload Bill (optional)</small>
+                    <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(e) => setBillFile(e.target.files[0] || null)} />
+                  </label>
                 </div>
                 {!isSupervisor && (
                   <div style={{ marginTop: 12, textAlign: 'right', fontWeight: 700 }}>
@@ -3583,6 +3874,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', isDa
                   )}
 
                   <Input label="Note / Reason" name="note" value={adjustmentForm.note} set={setAdjustmentForm} placeholder="e.g. Rain damage during storm" />
+                  
+                  {adjustmentForm.adjustment_type === 'return_to_supplier' && (
+                    <label>
+                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Upload Bill / Return Note (optional)</small>
+                      <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(e) => setBillFile(e.target.files[0] || null)} />
+                    </label>
+                  )}
                 </div>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
