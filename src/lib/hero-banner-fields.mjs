@@ -13,11 +13,20 @@ export function isCloudinaryBannerImage(value, cloudName) {
 }
 
 export function isWebImageUrl(value) {
-  if (typeof value === 'string' && value.startsWith('/') && !value.startsWith('//')) return true;
+  if (typeof value !== 'string') return false;
+  const trimmed = value.trim();
+  if (!trimmed || /\s/.test(trimmed)) return false;
+
+  if (trimmed.startsWith('/') && !trimmed.startsWith('//')) {
+    return /\.(?:jpe?g|png|webp|avif|svg|gif)(?:\?.*)?$/i.test(trimmed) || /^\/images\//i.test(trimmed);
+  }
+
   try {
-    const url = new URL(value);
-    return (url.protocol === 'https:' || url.protocol === 'http:') && url.hostname.length > 3;
-  } catch { return false; }
+    const url = new URL(trimmed);
+    return (url.protocol === 'https:' || url.protocol === 'http:') && url.hostname.includes('.') && url.hostname.length > 3;
+  } catch {
+    return false;
+  }
 }
 
 
@@ -48,9 +57,12 @@ export function validateBanner(payload, cloudName) {
 }
 
 export function bannerImageUrl(url, width = 1920) {
-  if (!url) return '';
-  if (!isCloudinaryBannerImage(url)) return url;
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+  if (!isCloudinaryBannerImage(trimmed) && !isWebImageUrl(trimmed)) return '';
+  if (!isCloudinaryBannerImage(trimmed)) return trimmed;
   // The original is kept in the database; delivery is optimized for each screen.
-  return url.replace('/image/upload/', `/image/upload/f_auto,q_auto,c_limit,w_${width}/`);
+  return trimmed.replace('/image/upload/', `/image/upload/f_auto,q_auto,c_limit,w_${width}/`);
 }
 

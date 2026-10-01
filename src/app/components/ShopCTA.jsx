@@ -95,7 +95,7 @@ function CategoryCard({ cat, dark, idx, visible }) {
             {cat.name}
           </h3>
           {cat.price_range && (
-            <span className={`text-[8px] font-bold ${dark ? "text-zinc-500" : "text-zinc-400"}`}>{cat.price_range}</span>
+            <span className={`text-[8px] font-bold ${dark ? "text-zinc-400" : "text-black"}`}>{cat.price_range}</span>
           )}
         </div>
 
@@ -104,13 +104,13 @@ function CategoryCard({ cat, dark, idx, visible }) {
           <div className="flex flex-wrap gap-1 mb-3">
             {types.slice(0, 3).map((t) => (
               <span key={t} className={`text-[7px] font-black uppercase tracking-wide px-1.5 py-0.5 border ${
-                dark ? "border-zinc-800 text-zinc-500" : "border-zinc-200 text-zinc-400"
+                dark ? "border-zinc-800 text-zinc-400" : "border-zinc-200 text-black"
               }`}>
                 {t}
               </span>
             ))}
             {types.length > 3 && (
-              <span className={`text-[7px] font-bold px-1.5 py-0.5 ${dark ? "text-zinc-600" : "text-zinc-300"}`}>
+              <span className={`text-[7px] font-bold px-1.5 py-0.5 ${dark ? "text-zinc-500" : "text-black"}`}>
                 +{types.length - 3} more
               </span>
             )}
@@ -119,11 +119,11 @@ function CategoryCard({ cat, dark, idx, visible }) {
 
         {/* CTA */}
         <div className={`flex items-center justify-between mt-auto pt-2.5 border-t ${dark ? "border-zinc-800" : "border-zinc-100"}`}>
-          <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${dark ? "text-zinc-600 group-hover:text-[var(--brand-blue)]" : "text-zinc-300 group-hover:text-[var(--brand-blue-deep)]"}`}>
+          <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${dark ? "text-zinc-400 group-hover:text-[var(--brand-blue)]" : "text-black group-hover:text-[var(--brand-blue-deep)]"}`}>
             Get Quote →
           </span>
           {cat.unit && (
-            <span className={`text-[8px] ${dark ? "text-zinc-600" : "text-zinc-300"}`}>{cat.unit}</span>
+            <span className={`text-[8px] ${dark ? "text-zinc-400" : "text-black"}`}>{cat.unit}</span>
           )}
         </div>
       </div>

@@ -791,7 +791,7 @@ function FranchisePageContent() {
                       </div>
                       <div>
                         <label className={labelClass}>Date of Birth *</label>
-                        <input type="date" name="dob" max={new Date().toISOString().split("T")[0]} value={form.dob || ""} onChange={handleChange} className={inputClass} />
+                        <input type="date" name="dob" max={new Date().toISOString().split("T")[0]} suppressHydrationWarning value={form.dob || ""} onChange={handleChange} className={inputClass} />
                       </div>
                       <div>
                         <label className={labelClass}>Gender *</label>
@@ -1083,7 +1083,7 @@ function FranchisePageContent() {
                       </div>
                       <div>
                         <label className={labelClass}>Expected Start Date</label>
-                        <input type="date" name="startDate" min={new Date().toISOString().split("T")[0]} value={form.startDate || ""} onChange={handleChange} className={inputClass} />
+                        <input type="date" name="startDate" min={new Date().toISOString().split("T")[0]} suppressHydrationWarning value={form.startDate || ""} onChange={handleChange} className={inputClass} />
                       </div>
                       <div>
                         <label className={labelClass}>Preferred Service Category</label>

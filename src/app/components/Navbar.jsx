@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import GlobalSearch from "./GlobalSearch";
+import { ShoppingCart } from "@/app/components/ui/icons";
 
 function DropdownButton({ label, children, text, textHover, dropdownBg }) {
   return (
@@ -35,7 +36,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [propertyOpen, setPropertyOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -103,7 +103,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     const frame = requestAnimationFrame(() => {
       setIsOpen(false);
       setPropertyOpen(false);
-      setServicesOpen(false);
     });
     return () => cancelAnimationFrame(frame);
   }, [pathname]);
@@ -118,7 +117,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   const closeMobileMenu = () => {
     setIsOpen(false);
     setPropertyOpen(false);
-    setServicesOpen(false);
   };
 
   const handleLogout = async () => {
@@ -152,11 +150,6 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     else if (user?.role === 'franchise') router.push('/franchise/dashboard');
     else router.push('/userdashboard');
   };
-
-  const serviceDropdown = [
-    { label: "Quick Services", href: "/quick" },
-    { label: "Professional Services", href: "/Services/professionals" },
-  ];
 
   const propertyDropdown = [
     { label: "🏠 Buy Property", href: "/property/buy", sub: "Browse verified listings" },
@@ -201,20 +194,19 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               Home
             </Link>
 
-            {/* Services */}
-            <DropdownButton label="Services" text={text} textHover={textHover} dropdownBg={dropdownBg}>
-              <div className="w-48">
-                {serviceDropdown.map((item) => (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className={`block px-4 py-2.5 text-sm transition-colors ${dropdownTxt}`}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </DropdownButton>
+            <Link
+              href="/quick"
+              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+            >
+              Services
+            </Link>
+
+            <Link
+              href="/Services/professionals"
+              className={`px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium whitespace-nowrap ${text} ${textHover} transition-colors rounded-md`}
+            >
+              Professionals
+            </Link>
 
             {/* Property */}
             <DropdownButton label="Property" text={text} textHover={textHover} dropdownBg={dropdownBg}>
@@ -278,14 +270,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               href="/ShopNow"
               className="inline-flex items-center gap-1.5 px-4 2xl:px-5 py-2 text-xs 2xl:text-sm font-semibold whitespace-nowrap bg-[var(--brand-blue)] text-black rounded-md hover:bg-[var(--brand-blue-dark)] transition-all duration-200"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 640 640"
-                className="h-3.5 w-3.5 2xl:h-4 2xl:w-4 fill-current"
-                aria-hidden="true"
-              >
-                <path d="M24 48C10.7 48 0 58.7 0 72C0 85.3 10.7 96 24 96L69.3 96C73.2 96 76.5 98.8 77.2 102.6L129.3 388.9C135.5 423.1 165.3 448 200.1 448L456 448C469.3 448 480 437.3 480 424C480 410.7 469.3 400 456 400L200.1 400C188.5 400 178.6 391.7 176.5 380.3L171.4 352L475 352C505.8 352 532.2 330.1 537.9 299.8L568.9 133.9C572.6 114.2 557.5 96 537.4 96L124.7 96L124.3 94C119.5 67.4 96.3 48 69.2 48L24 48zM208 576C234.5 576 256 554.5 256 528C256 501.5 234.5 480 208 480C181.5 480 160 501.5 160 528C160 554.5 181.5 576 208 576zM432 576C458.5 576 480 554.5 480 528C480 501.5 458.5 480 432 480C405.5 480 384 501.5 384 528C384 554.5 405.5 576 432 576z" />
-              </svg>
+              <ShoppingCart size={16} strokeWidth={1.75} aria-hidden="true" />
               Shop Now
             </Link>
           </div>
@@ -401,15 +386,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 <Link
                   href="/login"
                   className={`whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 border rounded transition-all duration-200 ${isDarkMode
-                    ? 'text-[var(--brand-blue)] border-[var(--brand-blue)] hover:bg-[var(--brand-blue)]'
-                    : 'text-[var(--brand-blue-deep)] border border-[var(--brand-blue-deep)]'
+                    ? 'text-sky-400 border-sky-400 hover:bg-sky-950/40'
+                    : 'text-[#0284c7] border-[#0284c7] hover:bg-sky-50'
                     }`}
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/signup"
-                  className="hidden min-[430px]:inline-flex whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 bg-[var(--brand-blue)] text-black rounded hover:bg-[var(--brand-blue-dark)] transition-all duration-200"
+                  className="inline-flex whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-1.5 bg-[#0284c7] text-white rounded hover:bg-[#0369a1] transition-all duration-200"
                 >
                   Sign Up
                 </Link>
@@ -429,7 +414,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               onClick={() => setIsOpen(!isOpen)}
               className={`nav-control p-1.5 sm:p-2 rounded-md ${isDarkMode
                 ? 'text-zinc-300 hover:bg-zinc-800'
-                : 'text-zinc-600 hover:bg-gray-100'
+                : 'text-black hover:bg-gray-100'
                 }`}
             >
               {isOpen ? (
@@ -504,49 +489,27 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </Link>
           ))}
 
-          {/* Mobile Services */}
-          <div>
-            <button
-              onClick={() => setServicesOpen(!servicesOpen)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
-                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
-            >
-              Services
-              <svg
-                className={`w-4 h-4 transition-transform ${servicesOpen ? 'rotate-180' : ''
-                  }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            {servicesOpen && (
-              <div className="ml-4 mt-1 space-y-1">
-                {serviceDropdown.map((s) => (
-                  <Link
-                    key={s.label}
-                    href={s.href}
-                    onClick={closeMobileMenu}
-                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${isDarkMode
-                      ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-                      : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
-                      }`}
-                  >
-                    {s.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+          <Link
+            href="/quick"
+            onClick={closeMobileMenu}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
+          >
+            Services
+          </Link>
+
+          <Link
+            href="/Services/professionals"
+            onClick={closeMobileMenu}
+            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+              }`}
+          >
+            Professionals
+          </Link>
 
           {/* Mobile Property */}
           <div>
@@ -609,14 +572,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 }`}
             >
               {link.icon === 'cart' && (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 640 640"
-                  className="h-4 w-4 fill-current"
-                  aria-hidden="true"
-                >
-                  <path d="M24 48C10.7 48 0 58.7 0 72C0 85.3 10.7 96 24 96L69.3 96C73.2 96 76.5 98.8 77.2 102.6L129.3 388.9C135.5 423.1 165.3 448 200.1 448L456 448C469.3 448 480 437.3 480 424C480 410.7 469.3 400 456 400L200.1 400C188.5 400 178.6 391.7 176.5 380.3L171.4 352L475 352C505.8 352 532.2 330.1 537.9 299.8L568.9 133.9C572.6 114.2 557.5 96 537.4 96L124.7 96L124.3 94C119.5 67.4 96.3 48 69.2 48L24 48zM208 576C234.5 576 256 554.5 256 528C256 501.5 234.5 480 208 480C181.5 480 160 501.5 160 528C160 554.5 181.5 576 208 576zM432 576C458.5 576 480 554.5 480 528C480 501.5 458.5 480 432 480C405.5 480 384 501.5 384 528C384 554.5 405.5 576 432 576z" />
-                </svg>
+                <ShoppingCart size={16} strokeWidth={1.75} aria-hidden="true" />
               )}
               {link.label}
             </Link>

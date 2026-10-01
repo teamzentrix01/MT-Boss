@@ -46,14 +46,14 @@ h1, h2, h3, h4, h5, h6, button, a {
   font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif !important;
 }
 
-button,
-[role="button"],
-a.btn,
-a[class~="btn"],
-a[class*="-btn"],
-a[class*="btn-"],
-a[href][class*="uppercase"][class*="bg-"],
-a[href][class*="uppercase"][class*="border"] {
+button:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn, table button, [class*="no-global-btn"])),
+[role="button"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn)),
+a.btn:not(:where(.shop-page, .shop-page *)),
+a[class~="btn"]:not(:where(.shop-page, .shop-page *)),
+a[class*="-btn"]:not(:where(.shop-page, .shop-page *, .action-icon-btn)),
+a[class*="btn-"]:not(:where(.shop-page, .shop-page *)),
+a[href][class*="uppercase"][class*="bg-"]:not(:where(.shop-page, .shop-page *)),
+a[href][class*="uppercase"][class*="border"]:not(:where(.shop-page, .shop-page *)) {
   background-color: var(--brand-blue) !important;
   background-image: linear-gradient(90deg, #fff 0%, #fff 50%, var(--brand-blue) 50%, var(--brand-blue) 100%) !important;
   background-position: 100% 0 !important;
@@ -70,6 +70,45 @@ a[href][class*="uppercase"][class*="border"] {
   will-change: auto;
 }
 
+/* Table action buttons, customer name buttons, and flat admin buttons */
+.action-icon-btn,
+.orders-customer-name-btn,
+.orders-btn {
+  background-image: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: all 0.15s ease !important;
+}
+
+.action-icon-btn {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.action-icon-btn:hover:not(:disabled) {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #94a3b8 !important;
+  color: #000000 !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.orders-customer-name-btn,
+.orders-customer-name-btn:hover,
+.orders-customer-name-btn:active,
+.orders-customer-name-btn:focus {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  color: inherit !important;
+  text-decoration: underline !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+}
+
 /* Let the browser skip layout and paint work for home sections that are still
    well below the viewport. The intrinsic size keeps scrolling stable. */
 .home-deferred-section {
@@ -77,14 +116,14 @@ a[href][class*="uppercase"][class*="border"] {
   contain-intrinsic-size: auto 600px;
 }
 
-button:hover:not(:disabled),
-[role="button"]:hover,
-a.btn:hover,
-a[class~="btn"]:hover,
-a[class*="-btn"]:hover,
-a[class*="btn-"]:hover,
-a[href][class*="uppercase"][class*="bg-"]:hover,
-a[href][class*="uppercase"][class*="border"]:hover {
+button:hover:not(:disabled):not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn, table button, [class*="no-global-btn"])),
+[role="button"]:hover:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn)),
+a.btn:hover:not(:where(.shop-page, .shop-page *)),
+a[class~="btn"]:hover:not(:where(.shop-page, .shop-page *)),
+a[class*="-btn"]:hover:not(:where(.shop-page, .shop-page *)),
+a[class*="btn-"]:hover:not(:where(.shop-page, .shop-page *)),
+a[href][class*="uppercase"][class*="bg-"]:hover:not(:where(.shop-page, .shop-page *)),
+a[href][class*="uppercase"][class*="border"]:hover:not(:where(.shop-page, .shop-page *)) {
   background-color: var(--brand-blue) !important;
   background-position: 0 0 !important;
   border-color: var(--brand-blue) !important;
@@ -96,14 +135,14 @@ a[href][class*="uppercase"][class*="border"]:hover {
   transform: translateY(-3px) scale(1.015);
 }
 
-button:active:not(:disabled),
-[role="button"]:active,
-a.btn:active,
-a[class~="btn"]:active,
-a[class*="-btn"]:active,
-a[class*="btn-"]:active,
-a[href][class*="uppercase"][class*="bg-"]:active,
-a[href][class*="uppercase"][class*="border"]:active {
+button:active:not(:disabled):not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn, table button, [class*="no-global-btn"])),
+[role="button"]:active:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn)),
+a.btn:active:not(:where(.shop-page, .shop-page *)),
+a[class~="btn"]:active:not(:where(.shop-page, .shop-page *)),
+a[class*="-btn"]:active:not(:where(.shop-page, .shop-page *)),
+a[class*="btn-"]:active:not(:where(.shop-page, .shop-page *)),
+a[href][class*="uppercase"][class*="bg-"]:active:not(:where(.shop-page, .shop-page *)),
+a[href][class*="uppercase"][class*="border"]:active:not(:where(.shop-page, .shop-page *)) {
   box-shadow:
     0 6px 14px color-mix(in srgb, var(--brand-blue) 18%, transparent),
     0 0 0 1px color-mix(in srgb, var(--brand-blue) 28%, transparent) !important;
@@ -225,8 +264,8 @@ button[aria-disabled="true"],
   color: #111 !important;
 }
 
-/* Apply the aria-expanded blue style globally. The shop page overrides this below in shop.css. */
-button[aria-expanded] {
+/* Apply the aria-expanded blue style globally only for expanded elements, never inside shop page or admin */
+button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *)) {
   background: var(--brand-blue) !important;
   background-image: none !important;
   color: #111 !important;
@@ -234,22 +273,26 @@ button[aria-expanded] {
   box-shadow: none !important;
 }
 
-button[aria-expanded]:hover {
+button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *)):hover {
   background: #111 !important;
   color: #fff !important;
   transform: none !important;
 }
 
-button[aria-expanded] *,
-button[aria-expanded]:hover * {
+button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *)) *,
+button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *)):hover * {
   color: inherit !important;
 }
 
-/* Shop page: card image & title buttons must never inherit global button animation */
+/* Shop page: card image, title buttons, and category buttons must never inherit global button animation */
 .shop-page .store-product-image-button,
 .shop-page .store-product-title,
-.shop-page .store-bulk-link {
+.shop-page .store-product-title h3,
+.shop-page .store-bulk-link,
+.shop-page .store-category-all-btn:not(.is-active),
+.shop-page .store-category-parent:not(.has-active) .store-category-parent-btn {
   background-color: transparent !important;
+  background: transparent !important;
   background-image: none !important;
   background-position: initial !important;
   background-size: initial !important;

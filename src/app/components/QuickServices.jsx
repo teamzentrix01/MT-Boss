@@ -2,17 +2,33 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import QuickServiceIcon from './QuickServiceIcon';
+import { fallbackQuickServices } from "@/lib/public-fallbacks";
 
 function useInView(threshold = 0.1) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!window.IntersectionObserver) {
+      setInView(true);
+      return;
+    }
     const observer = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) setInView(true); },
       { threshold }
     );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
+    if (ref.current) {
+      observer.observe(ref.current);
+      const rect = ref.current.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) {
+        setInView(true);
+      }
+    }
+    const fallbackTimer = setTimeout(() => setInView(true), 600);
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallbackTimer);
+    };
   }, [threshold]);
   return [ref, inView];
 }
@@ -29,52 +45,51 @@ async function readQuickServicesResponse(response) {
   const contentType = response.headers.get("content-type") || "";
 
   if (!contentType.toLowerCase().includes("application/json")) {
-    // Next.js can briefly serve an HTML error document while an API route is
-    // compiling in development. Never pass that document to response.json().
-    throw new Error(
-      `Quick services returned a non-JSON response (${response.status}).`
-    );
+    return null;
   }
 
   const data = await response.json();
   if (!response.ok) {
-    throw new Error(data?.error || `Quick services request failed (${response.status}).`);
+    return null;
   }
 
   return data;
 }
 
 async function loadQuickServices(signal) {
-  let lastError;
+  const delays = [400, 800, 1200];
 
-  for (let attempt = 0; attempt < 2; attempt += 1) {
+  for (let attempt = 0; attempt <= delays.length; attempt += 1) {
     try {
       const response = await fetch("/api/quick-services", {
         cache: "no-store",
         headers: { Accept: "application/json" },
         signal,
       });
-      return await readQuickServicesResponse(response);
+
+      const data = await readQuickServicesResponse(response);
+      if (data && data.success && Array.isArray(data.data)) {
+        return data;
+      }
     } catch (error) {
       if (error.name === "AbortError") throw error;
-      lastError = error;
+    }
 
-      // Retry once after a first-load Turbopack compilation response.
-      if (attempt === 0) {
-        await new Promise((resolve) => setTimeout(resolve, 250));
-      }
+    if (attempt < delays.length) {
+      await new Promise((resolve) => setTimeout(resolve, delays[attempt]));
     }
   }
 
-  throw lastError;
+  // Graceful fallback if development route compilation or network is delayed
+  return { success: true, data: fallbackQuickServices, fromFallback: true };
 }
 
-export default function QuickServices() {
+export default function QuickServices({ className = "", initialServices }) {
   const [headerRef, headerVisible] = useInView(0.1);
   const [gridRef, gridVisible] = useInView(0.05);
   const [isDark, setIsDark] = useState(false);
-  const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [services, setServices] = useState(initialServices || fallbackQuickServices);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const checkTheme = () => {
@@ -86,18 +101,46 @@ export default function QuickServices() {
     return () => observer.disconnect();
   }, []);
 
-  // Fetch from API — same as /quick/page.jsx
+  // Fetch from API — update with live services once route is ready
   useEffect(() => {
+    // If we already have real data from the server, no need to fetch again
+    if (initialServices && initialServices.length > 3 && initialServices !== fallbackQuickServices) {
+      return;
+    }
+
     const controller = new AbortController();
     let active = true;
 
     const fetchServices = async () => {
+      setLoading(true);
       try {
         const data = await loadQuickServices(controller.signal);
-        if (active && data.success) setServices(data.data);
+        if (active && data?.success && Array.isArray(data.data)) {
+          setServices(data.data);
+          // If fallback was used during initial compilation, try once more after a delay
+          if (data.fromFallback) {
+            setTimeout(async () => {
+              if (!active) return;
+              try {
+                const retryRes = await fetch("/api/quick-services", {
+                  cache: "no-store",
+                  headers: { Accept: "application/json" },
+                  signal: controller.signal,
+                });
+                const liveData = await readQuickServicesResponse(retryRes);
+                if (active && liveData?.success && Array.isArray(liveData.data)) {
+                  setServices(liveData.data);
+                }
+              } catch {
+                // Keep fallback data quietly
+              }
+            }, 2500);
+          }
+        }
       } catch (error) {
         if (error.name !== "AbortError") {
-          console.error("Error fetching quick services:", error);
+          // Keep fallback services without breaking the UI
+          setServices((prev) => (prev.length ? prev : fallbackQuickServices));
         }
       } finally {
         if (active) setLoading(false);
@@ -109,7 +152,7 @@ export default function QuickServices() {
       active = false;
       controller.abort();
     };
-  }, []);
+  }, [initialServices]);
 
   const themeYellow = "var(--brand-blue)";
   const visibleServices = services.slice(0, 20);
@@ -130,7 +173,7 @@ export default function QuickServices() {
           overflow: hidden;
           cursor: pointer;
           transition: all 0.3s ease;
-          border: 1px solid ${isDark ? '#3f3f46' : '#f3f4f6'};
+          border: 1px solid ${isDark ? '#3f3f46' : '#e5e7eb'};
           background: ${isDark ? '#18181b' : '#ffffff'};
         }
         .qs-card:hover {
@@ -239,7 +282,7 @@ export default function QuickServices() {
         }
       `}</style>
 
-      <section className={`transition-colors duration-500 py-12 px-4 sm:px-6 ${isDark ? 'bg-black' : 'bg-white'}`}>
+      <section className={`transition-colors duration-500 ${className || 'py-12 px-4 sm:px-6'} ${isDark ? 'bg-black' : 'bg-white'}`}>
         <div className="max-w-6xl mx-auto">
 
 
@@ -268,8 +311,8 @@ export default function QuickServices() {
           {/* Services Grid — exact same layout as before */}
           <div
             ref={gridRef}
-            className="grid grid-cols-2 min-[420px]:grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 shadow-sm"
-            style={{ border: isDark ? "1px solid #3f3f46" : "1px solid #f3f4f6" }}
+            className="grid grid-cols-2 min-[480px]:grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 shadow-sm rounded-lg overflow-hidden"
+            style={{ border: isDark ? "1px solid #3f3f46" : "1px solid #e5e7eb" }}
           >
             {loading
               ? /* Skeleton — 20 placeholder cells matching the grid */
@@ -277,7 +320,7 @@ export default function QuickServices() {
                   <div
                     key={i}
                     className="flex flex-col items-center justify-center gap-1.5 py-4 px-2"
-                    style={{ border: `1px solid ${isDark ? '#3f3f46' : '#f3f4f6'}` }}
+                    style={{ border: `1px solid ${isDark ? '#3f3f46' : '#e5e7eb'}` }}
                   >
                     <div className="qs-skeleton rounded" style={{ width: 28, height: 28 }} />
                     <div className="qs-skeleton rounded" style={{ width: 44, height: 10 }} />

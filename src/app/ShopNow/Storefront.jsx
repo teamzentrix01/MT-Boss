@@ -10,6 +10,76 @@ import {
 } from "lucide-react";
 import "./shop.css";
 import ShopCategoryNav from "./ShopCategoryNav";
+import MobileStorefront from "./MobileStorefront";
+import { getCartStep } from "@/lib/cart-step";
+export function normalizeShopImageUrl(value) {
+  const imageUrl = String(value || '').trim();
+  if (!imageUrl) return '';
+  if (/^(?:https?:|data:image\/|blob:|\/)/i.test(imageUrl)) return imageUrl;
+  if (/^(?:www\.)/i.test(imageUrl)) return `https://${imageUrl}`;
+  // Older product records sometimes contain `uploads/file.jpg` without the
+  // leading slash, which would otherwise resolve relative to /ShopNow.
+  return `/${imageUrl}`;
+}
+
+function imageValue(value) {
+  if (typeof value === 'string') return value;
+  if (value && typeof value === 'object') return value.secure_url || value.url || value.image_url || '';
+  return '';
+}
+
+export function getProductImage(product, category = null) {
+  if (!product || typeof product !== 'object') return '';
+  const direct = [product.image, product.image_url, product.imageUrl, product.product_image]
+    .map(imageValue).find(Boolean);
+  if (direct) return normalizeShopImageUrl(direct);
+  const gallery = Array.isArray(product.images) ? product.images : [];
+  const galleryImage = gallery.map(imageValue).find(Boolean);
+  if (galleryImage) return normalizeShopImageUrl(galleryImage);
+
+  if (Array.isArray(category)) {
+    const catName = typeof product.category === 'object' ? product.category?.name : product.category;
+    const found = category.find((c) => c.name?.toLowerCase() === String(catName || '').trim().toLowerCase());
+    if (found?.image) return normalizeShopImageUrl(imageValue(found.image));
+  }
+  const cat = (category && !Array.isArray(category)) ? category : (typeof product.category === 'object' ? product.category : null);
+  if (cat?.image) return normalizeShopImageUrl(imageValue(cat.image));
+  return '';
+}
+
+export function ShopImage({ src, alt = '', ...props }) {
+  const normalizedSrc = normalizeShopImageUrl(src);
+  if (!normalizedSrc) return null;
+
+  const isExternal = /^https?:\/\//i.test(normalizedSrc);
+  let isNextImageSafe = !isExternal;
+  try {
+    const hostname = new URL(normalizedSrc).hostname;
+    isNextImageSafe = hostname === 'res.cloudinary.com'
+      || hostname === 'images.unsplash.com'
+      || hostname.endsWith('pinimg.com');
+  } catch {
+    isNextImageSafe = !isExternal;
+  }
+
+  // Product URLs can point to any supplier's CDN. Use a regular image for
+  // those URLs so Next.js remote-host allowlisting cannot hide valid images.
+  if (isExternal && !isNextImageSafe) {
+    const { fill, sizes, quality, priority, unoptimized, style, ...imgProps } = props;
+    return <img
+      {...imgProps}
+      src={normalizedSrc}
+      alt={alt}
+      loading={priority ? 'eager' : 'lazy'}
+      style={{
+        ...(fill ? { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' } : {}),
+        ...style,
+      }}
+    />;
+  }
+
+  return <Image src={normalizedSrc} alt={alt} {...props} unoptimized={!isNextImageSafe} />;
+}
 
 function OptimizedImage({ src, alt = '', ...props }) {
   let unoptimized = false;
@@ -21,7 +91,7 @@ function OptimizedImage({ src, alt = '', ...props }) {
   } catch {
     unoptimized = true;
   }
-  return <Image src={src} alt={alt} unoptimized={unoptimized} {...props} />;
+  return <ShopImage src={src} alt={alt} unoptimized={unoptimized} {...props} />;
 }
 
 function categoryStyle(name = "") {
@@ -78,7 +148,30 @@ function discountPercent(product) {
     : 0;
 }
 
+function offerMatches(offer, product, category) {
+  const same = (left, right) => !left || String(left).trim().toLowerCase() === String(right || '').trim().toLowerCase();
+  return same(offer.category, category?.name) && same(offer.subcategory, product.subcategory) && same(offer.brand, product.brand);
+}
+
+function applyOffer(product, offer) {
+  if (!offer || !(Number(product.price) > 0)) return product;
+  const basePrice = Number(product.price);
+  const discount = offer.discount_type === 'fixed'
+    ? Number(offer.discount_value)
+    : basePrice * Number(offer.discount_value) / 100;
+  const salePrice = Math.max(0.01, Number((basePrice - discount).toFixed(2)));
+  if (salePrice >= basePrice) return product;
+  const percent = Math.round(((basePrice - salePrice) / basePrice) * 100);
+  return {
+    ...product,
+    price: salePrice,
+    compare_at_price: Math.max(Number(product.compare_at_price) || 0, basePrice),
+    offer: { ...offer, display_badge: offer.badge_text || `${percent}% OFF` },
+  };
+}
+
 function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, onDetails, selectedCity }) {
+  const productImage = getProductImage(product, product.category);
   const price = Number(product.price);
   const hasFixedPrice = Number.isFinite(price) && price > 0;
   const discount = discountPercent(product);
@@ -87,14 +180,17 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   const canOrder = productCanOrder(product, selectedCity);
   return (
     <article className="store-product-card">
-      {discount > 0 && <span className="store-discount-badge">{discount}% OFF</span>}
-      <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={product.image} category={product.category} name={product.name} /></button>
+      {(product.offer?.display_badge || discount > 0) && (
+        <span className="store-discount-badge">{product.offer?.display_badge || `${discount}% OFF`}</span>
+      )}
+      <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={productImage} category={product.category} name={product.name} /></button>
       <div className="store-product-details">
         <span className="store-product-tag">Available for quote</span>
         <button type="button" className="store-product-title" onClick={() => onDetails(product)}><h3>{product.name}</h3></button>
         <p className="store-product-category">{product.category.name}{product.unit ? ` · ${product.unit}` : ""}</p>
         <div className="store-product-price">
           <strong>{hasFixedPrice ? `₹${price.toLocaleString('en-IN')} / ${displayUnit(product.unit)}` : 'Price on request'}</strong>
+          {hasFixedPrice && Number(product.compare_at_price) > price && <del>₹{Number(product.compare_at_price).toLocaleString('en-IN')}</del>}
         </div>
         {cityUnavailable && <span className="store-stock-note">Not delivered in {selectedCity}</span>}
         {product.fromSupplier && Number(product.quantity) === 0 && <span className="store-stock-note">Currently unavailable</span>}
@@ -116,7 +212,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   );
 }
 
-export default function Storefront({ categories, products, content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout, activeCoupon, couponCalculation, couponOffers, onApplyCoupon, onSelectCoupon, onClearCoupon }) {
+export default function Storefront({ categories, products, offers = [], content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout, activeCoupon, couponCalculation, couponOffers, onApplyCoupon, onSelectCoupon, onClearCoupon, shippingSettings, shippingQuote }) {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [cartOpen, setCartOpen] = useState(false);
@@ -219,9 +315,10 @@ export default function Storefront({ categories, products, content, loading, cit
       product_id: product.id,
       name: product.name,
       category,
+      subcategory: product.subcategory,
       unit: product.unit || category.unit || "unit",
       price: product.price,
-      image: product.image_url,
+      image: product.image_url || category?.image || "",
       description: product.description,
       quote_price_range: product.quote_price_range,
       brand: product.brand,
@@ -235,7 +332,14 @@ export default function Storefront({ categories, products, content, loading, cit
       available_cities: product.available_cities,
       created_at: product.created_at,
       fromSupplier: true,
-    }));
+    })).map((product) => {
+      const matchingOffers = offers.filter((offer) => offerMatches(offer, product, category));
+      const offer = matchingOffers.sort((a, b) => {
+        const score = (item) => (item.category ? 4 : 0) + (item.subcategory ? 2 : 0) + (item.brand ? 1 : 0);
+        return score(b) - score(a) || Number(a.sort_order) - Number(b.sort_order);
+      })[0];
+      return applyOffer(product, offer);
+    });
     const names = Array.isArray(category.types) && category.types.length ? category.types : [category.name];
     return names.map((name, index) => ({
       id: `catalog-${category.id}-${index}`,
@@ -243,22 +347,49 @@ export default function Storefront({ categories, products, content, loading, cit
       category,
       unit: category.unit || "unit",
       price: null,
-      image: "",
+      image: category?.image || "",
       fromSupplier: false,
     }));
-  }), [categories, products]);
+  }), [categories, products, offers]);
+
+  const dedupeProducts = (list) => {
+    const seen = new Set();
+    return list.filter((p) => {
+      const k = p?.product_id ? `supplier-${p.product_id}` : p?.id;
+      if (!k || seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  };
 
   const searchTerm = search.trim().toLowerCase();
-  const visible = catalog.filter((product) => (
+  const visible = dedupeProducts(catalog.filter((product) => (
     (activeCategory === "all" || String(product.category.id) === String(activeCategory)) &&
     (brandFilter === 'all' || product.brand === brandFilter) &&
     (!searchTerm || `${product.name} ${product.category.name}`.toLowerCase().includes(searchTerm))
-  )).sort((a, b) => sortBy === 'price-asc' ? (Number(a.price) || Infinity) - (Number(b.price) || Infinity) : sortBy === 'price-desc' ? (Number(b.price) || 0) - (Number(a.price) || 0) : sortBy === 'name' ? a.name.localeCompare(b.name) : 0);
+  )).sort((a, b) => sortBy === 'price-asc' ? (Number(a.price) || Infinity) - (Number(b.price) || Infinity) : sortBy === 'price-desc' ? (Number(b.price) || 0) - (Number(a.price) || 0) : sortBy === 'name' ? a.name.localeCompare(b.name) : 0));
   const brands = [...new Set(catalog.filter((product) => activeCategory === 'all' || String(product.category.id) === String(activeCategory)).map((product) => product.brand).filter(Boolean))].sort();
-  const featured = categories.map((category) => catalog.find((product) => product.category.id === category.id)).filter(Boolean).slice(0, 8);
-  const deals = catalog.filter((product) => product.is_featured_deal === true).sort((a, b) => discountPercent(b) - discountPercent(a)).slice(0, 6);
-  const arrivals = catalog.filter((product) => product.fromSupplier && product.created_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 6);
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const featured = dedupeProducts(categories.map((category) => catalog.find((product) => product.category.id === category.id)).filter(Boolean)).slice(0, 8);
+  const deals = dedupeProducts(catalog.filter((product) => product.is_featured_deal === true).sort((a, b) => discountPercent(b) - discountPercent(a))).slice(0, 6);
+  const arrivals = dedupeProducts(catalog.filter((product) => product.fromSupplier && product.created_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at))).slice(0, 6);
+  const cartCount = useMemo(() => {
+    if (!Array.isArray(cart) || cart.length === 0) return 0;
+    const uniqueCategories = new Set();
+    cart.forEach((item) => {
+      const p = item?.product || {};
+      const cat = p.category;
+      let name = '';
+      if (typeof cat === 'object' && cat !== null) {
+        name = cat.name || cat.title || String(cat.id || '');
+      } else if (typeof cat === 'string') {
+        name = cat;
+      }
+      if (!name) name = p.category_name || p.categoryName || '';
+      const key = (name || p.name || String(p.id || '')).trim().toLowerCase();
+      if (key) uniqueCategories.add(key);
+    });
+    return uniqueCategories.size;
+  }, [cart]);
   const pricedTotal = cart.reduce((sum, item) => sum + unitPrice(item.product, item.quantity) * item.quantity, 0);
   const hasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
   const detailsCanOrder = detailsProduct ? productCanOrder(detailsProduct, selectedCity) : false;
@@ -300,23 +431,53 @@ export default function Storefront({ categories, products, content, loading, cit
 
   return (
     <div className={`shop-page${cartOpen ? ' store-cart-is-open' : ''}`}>
-      <header className="store-header" ref={storeHeaderRef}>
-        <div className="store-header-inner">
-          <Link href="/" className="store-brand" aria-label="MT Boss home"><picture className="store-brand-picture"><Image src="/logo.png" alt="MT Boss" width={46} height={46} sizes="(max-width: 560px) 34px, (max-width: 800px) 39px, 46px" /></picture><small>SHOP</small></Link>
-          <div className="store-location-wrap">
-            <button type="button" className="store-location" onClick={() => setCityOpen(!cityOpen)} aria-expanded={cityOpen}>
-              <MapPin size={20} /><span><strong>Deliver to {selectedCity || "your city"}</strong><small>{selectedCity ? "Change location" : "Select delivery location"}</small></span><ChevronDown size={16} />
-            </button>
-            {cityOpen && <div className="store-city-popover"><label htmlFor="store-city">Choose your city</label><select id="store-city" value={selectedCity} onChange={(e) => { setSelectedCity(e.target.value); setCityOpen(false); }}><option value="">Select city</option>{cities.map((city) => <option key={city} value={city}>{city}</option>)}</select><p>Availability is checked at checkout.</p></div>}
-          </div>
-          <label className="store-search"><Search size={20} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={content.search_placeholder} aria-label="Search materials" /></label>
-          {productManagerHref && <Link href={productManagerHref} className="store-admin-add"><Plus size={17} /> Add Product</Link>}
-          <Link href="/material-orders?role=user" className="store-orders" title="Track orders"><ClipboardList size={20} /><span>Orders</span></Link>
-          <button type="button" className="store-cart-button" onClick={toggleCart} aria-expanded={cartOpen} aria-controls="store-cart-dialog"><ShoppingCart size={20} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
-        </div>
-      </header>
+      {/* Mobile Quick-Commerce View (viewport <= 768px) */}
+      <div className="storefront-mobile">
+        <MobileStorefront
+          categories={categories}
+          products={products}
+          catalog={catalog}
+          content={content}
+          loading={loading}
+          cities={cities}
+          selectedCity={selectedCity}
+          setSelectedCity={setSelectedCity}
+          cart={cart}
+          onAdd={onAdd}
+          onChangeQty={onChangeQty}
+          onQuote={onQuote}
+          onBuy={onBuy}
+          onCheckout={onCheckout}
+          onDetails={setDetailsProduct}
+          shippingSettings={shippingSettings}
+          shippingQuote={shippingQuote}
+          activeCoupon={activeCoupon}
+          couponCalculation={couponCalculation}
+          couponOffers={couponOffers}
+          onApplyCoupon={onApplyCoupon}
+          onSelectCoupon={onSelectCoupon}
+          onClearCoupon={onClearCoupon}
+        />
+      </div>
 
-      {categories.length > 0 && (
+      {/* Desktop Storefront View (viewport > 768px) */}
+      <div className="storefront-desktop">
+        <header className="store-header" ref={storeHeaderRef}>
+          <div className="store-header-inner">
+            <Link href="/" className="store-brand" aria-label="MT Boss home"><picture className="store-brand-picture"><Image src="/logo.png" alt="MT Boss" width={46} height={46} sizes="(max-width: 560px) 34px, (max-width: 800px) 39px, 46px" /></picture><small>SHOP</small></Link>
+            <div className="store-location-wrap">
+              <button type="button" className="store-location" onClick={() => setCityOpen(!cityOpen)} aria-expanded={cityOpen}>
+                <MapPin size={20} /><span><strong>Deliver to {selectedCity || "your city"}</strong><small>{selectedCity ? "Change location" : "Select delivery location"}</small></span><ChevronDown size={16} />
+              </button>
+              {cityOpen && <div className="store-city-popover"><label htmlFor="store-city">Choose your city</label><select id="store-city" value={selectedCity} onChange={(e) => { setSelectedCity(e.target.value); setCityOpen(false); }}><option value="">Select city</option>{[...new Set(cities)].map((city) => <option key={city} value={city}>{city}</option>)}</select><p>Availability is checked at checkout.</p></div>}
+            </div>
+            <label className="store-search"><Search size={20} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={content.search_placeholder} aria-label="Search materials" /></label>
+            {productManagerHref && <Link href={productManagerHref} className="store-admin-add"><Plus size={17} /> Add Product</Link>}
+            <Link href="/material-orders?role=user" className="store-orders" title="Track orders"><ClipboardList size={20} /><span>Orders</span></Link>
+            <button type="button" className="store-cart-button" onClick={toggleCart} aria-expanded={cartOpen} aria-controls="store-cart-dialog"><ShoppingCart size={20} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
+          </div>
+        </header>
+
         <ShopCategoryNav
           categories={categories}
           products={products}
@@ -324,47 +485,49 @@ export default function Storefront({ categories, products, content, loading, cit
           activeSearch={search}
           onSelectCategory={chooseCategory}
         />
-      )}
 
-      <main className="store-main">
-        <div className="store-breadcrumb"><Link href="/">Home</Link><span>/</span><strong>Shop materials</strong></div>
-        <section className="store-hero">
-          <div className="store-hero-copy"><span className="store-eyebrow">{content.hero_kicker}</span><h1>{content.hero_title} <em>{content.hero_highlight}</em></h1><p>{content.hero_description}</p><button type="button" className="store-hero-button" onClick={() => chooseCategory("all")}>{content.hero_button} <ArrowRight size={18} /></button></div>
-          <div className="store-hero-photo" role="img" aria-label="Construction materials"><picture className="store-hero-picture"><OptimizedImage src={content.hero_image} alt="" fill sizes="(max-width: 560px) 100vw, 48vw" quality={75} priority /></picture><span className="store-hero-photo-label"><CheckCircle2 size={17} /> {content.hero_badge}</span></div>
-        </section>
+        <main className="store-main">
+          <div className="store-breadcrumb"><Link href="/">Home</Link><span>/</span><strong>Shop materials</strong></div>
+          <section className="store-hero">
+            <div className="store-hero-copy"><span className="store-eyebrow">{content.hero_kicker}</span><h1>{content.hero_title} <em>{content.hero_highlight}</em></h1><p>{content.hero_description}</p><button type="button" className="store-hero-button" onClick={() => chooseCategory("all")}>{content.hero_button} <ArrowRight size={18} /></button></div>
+            <div className="store-hero-photo" role="img" aria-label="Construction materials" style={{ position: 'relative' }}>
+              <OptimizedImage src={content.hero_image} alt="" fill sizes="(max-width: 560px) 100vw, 48vw" quality={75} priority />
+              <span className="store-hero-photo-label"><CheckCircle2 size={17} /> {content.hero_badge}</span>
+            </div>
+          </section>
 
-        <section className="store-promos" aria-label="Shopping benefits">
-          {[Package, ShieldCheck, Truck].map((Icon, index) => <div key={index} className={`store-promo store-promo-${index}`}><Icon size={32} /><div><strong>{content.promos[index].title}</strong><span>{content.promos[index].subtitle}</span></div><ArrowRight size={18} /></div>)}
-        </section>
+          <section className="store-promos" aria-label="Shopping benefits">
+            {[Package, ShieldCheck, Truck].map((Icon, index) => <div key={index} className={`store-promo store-promo-${index}`}><Icon size={32} /><div><strong>{content.promos[index].title}</strong><span>{content.promos[index].subtitle}</span></div><ArrowRight size={18} /></div>)}
+          </section>
 
-        <section className="store-section" aria-labelledby="store-categories-heading">
-          <div className="store-section-heading"><div><span className="store-section-kicker">START SHOPPING</span><h2 id="store-categories-heading">{content.categories_heading}</h2></div><span className="store-section-note">Pick a category to see materials</span></div>
-          {loading ? <div className="store-loading">Loading categories...</div> : categories.length ? <div className="store-category-grid">{categories.map((category) => {
-            const { tone, Icon } = categoryStyle(category.name);
-            return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}><span className="store-category-art">{category.image ? <OptimizedImage src={category.image} alt="" fill sizes="(max-width: 560px) 33vw, 180px" quality={70} /> : <Icon size={37} strokeWidth={1.5} />}</span><strong>{category.name}</strong><span>Explore <ArrowRight size={13} /></span></button>;
-          })}</div> : <div className="store-empty">Categories are being added. Please check back soon.</div>}
-        </section>
+          <section className="store-section" aria-labelledby="store-categories-heading">
+            <div className="store-section-heading"><div><span className="store-section-kicker">START SHOPPING</span><h2 id="store-categories-heading">{content.categories_heading}</h2></div><span className="store-section-note">Pick a category to see materials</span></div>
+            {loading ? <div className="store-loading">Loading categories...</div> : categories.length ? <div className="store-category-grid">{categories.map((category) => {
+              const { tone, Icon } = categoryStyle(category.name);
+              return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}><span className="store-category-art" style={{ position: 'relative', display: 'block' }}>{category.image ? <OptimizedImage src={category.image} alt="" fill sizes="(max-width: 560px) 33vw, 180px" quality={70} /> : <Icon size={37} strokeWidth={1.5} />}</span><strong>{category.name}</strong><span>Explore <ArrowRight size={13} /></span></button>;
+            })}</div> : <div className="store-empty">Categories are being added. Please check back soon.</div>}
+          </section>
 
-        {!searchTerm && activeCategory === "all" && featured.length > 0 && <section className="store-section" aria-labelledby="store-featured-heading"><div className="store-section-heading"><div><span className="store-section-kicker">POPULAR PICKS</span><h2 id="store-featured-heading">{content.featured_heading}</h2></div><span className="store-section-note">Fixed-price orders and custom quotes</span></div><div className="store-product-grid">{featured.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
+          {!searchTerm && activeCategory === "all" && featured.length > 0 && <section className="store-section" aria-labelledby="store-featured-heading"><div className="store-section-heading"><div><span className="store-section-kicker">POPULAR PICKS</span><h2 id="store-featured-heading">{content.featured_heading}</h2></div><span className="store-section-note">Fixed-price orders and custom quotes</span></div><div className="store-product-grid">{featured.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
 
-        {!searchTerm && activeCategory === 'all' && deals.length > 0 && <section className="store-section" aria-labelledby="store-deals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">CURRENT OFFERS</span><h2 id="store-deals-heading">{content.deals_heading}</h2></div><span className="store-section-note">Request today&apos;s best supplier quote</span></div><div className="store-product-grid">{deals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
+          {!searchTerm && activeCategory === 'all' && deals.length > 0 && <section className="store-section" aria-labelledby="store-deals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">CURRENT OFFERS</span><h2 id="store-deals-heading">{content.deals_heading}</h2></div><span className="store-section-note">Request today&apos;s best supplier quote</span></div><div className="store-product-grid">{deals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
 
-        {!searchTerm && activeCategory === 'all' && arrivals.length > 0 && <section className="store-section" aria-labelledby="store-arrivals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">JUST ADDED</span><h2 id="store-arrivals-heading">{content.arrivals_heading}</h2></div><span className="store-section-note">Recently added products</span></div><div className="store-product-grid">{arrivals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
+          {!searchTerm && activeCategory === 'all' && arrivals.length > 0 && <section className="store-section" aria-labelledby="store-arrivals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">JUST ADDED</span><h2 id="store-arrivals-heading">{content.arrivals_heading}</h2></div><span className="store-section-note">Recently added products</span></div><div className="store-product-grid">{arrivals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
 
-        <section className="store-section store-catalog" id="store-products" aria-labelledby="store-products-heading">
-          <div className="store-section-heading"><div><span className="store-section-kicker">THE CATALOGUE</span><h2 id="store-products-heading">{searchTerm ? `Results for “${search}”` : activeCategory === "all" ? content.catalog_heading : categories.find((category) => String(category.id) === String(activeCategory))?.name || "Materials"}</h2></div><span className="store-section-note">{visible.length} items</span></div>
-          <div className="store-filter-row"><button type="button" className={activeCategory === "all" ? "is-active" : ""} onClick={() => chooseCategory("all")}>All</button>{categories.map((category) => <button key={category.id} type="button" className={String(activeCategory) === String(category.id) ? "is-active" : ""} onClick={() => chooseCategory(category.id)}>{category.name}</button>)}</div>
-          <div className="store-catalog-tools"><label>Brand <select value={brandFilter} onChange={(event) => setBrandFilter(event.target.value)}><option value="all">All brands</option>{brands.map((brand) => <option key={brand} value={brand}>{brand}</option>)}</select></label><label>Sort by <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="featured">Featured</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name: A to Z</option></select></label></div>
-          {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found. Try another search or category.</div>}
-        </section>
-      </main>
-
+          <section className="store-section store-catalog" id="store-products" aria-labelledby="store-products-heading">
+            <div className="store-section-heading"><div><span className="store-section-kicker">THE CATALOGUE</span><h2 id="store-products-heading">{searchTerm ? `Results for “${search}”` : activeCategory === "all" ? content.catalog_heading : categories.find((category) => String(category.id) === String(activeCategory))?.name || "Materials"}</h2></div><span className="store-section-note">{visible.length} items</span></div>
+            <div className="store-filter-row"><button type="button" className={activeCategory === "all" ? "is-active" : ""} onClick={() => chooseCategory("all")}>All</button>{categories.map((category) => <button key={category.id} type="button" className={String(activeCategory) === String(category.id) ? "is-active" : ""} onClick={() => chooseCategory(category.id)}>{category.name}</button>)}</div>
+            <div className="store-catalog-tools"><label>Brand <select value={brandFilter} onChange={(event) => setBrandFilter(event.target.value)}><option value="all">All brands</option>{brands.map((brand) => <option key={brand} value={brand}>{brand}</option>)}</select></label><label>Sort by <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="featured">Featured</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name: A to Z</option></select></label></div>
+            {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found. Try another search or category.</div>}
+          </section>
+        </main>
+      </div>
       {detailsProduct && (
         <div className="store-overlay" onClick={() => setDetailsProduct(null)}>
           <section className="store-detail-dialog" role="dialog" aria-modal="true" aria-label={`${detailsProduct.name} details`} onClick={(event) => event.stopPropagation()}>
             <button type="button" className="store-detail-close" onClick={() => setDetailsProduct(null)} aria-label="Close product details"><X size={22} /></button>
             <div className="store-detail-gallery">
-              <ProductVisual image={detailsProduct.image} category={detailsProduct.category} name={detailsProduct.name} />
+              <ProductVisual image={getProductImage(detailsProduct, detailsProduct.category)} category={detailsProduct.category} name={detailsProduct.name} />
               {detailsProduct.images?.length > 0 && <div className="store-detail-thumbs">{detailsProduct.images.map((url) => <OptimizedImage key={url} src={url} width={70} height={70} sizes="70px" quality={70} alt={`${detailsProduct.name} additional view`} />)}</div>}
             </div>
             <div className="store-detail-info">
@@ -387,15 +550,16 @@ export default function Storefront({ categories, products, content, loading, cit
       {cartOpen && (
         <div className="store-overlay store-cart-overlay" style={{ '--store-cart-top': `${cartOverlayTop}px` }} onClick={() => setCartOpen(false)}>
           <aside id="store-cart-dialog" className="store-cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping cart" onClick={(e) => e.stopPropagation()}>
-            <div className="store-drawer-head"><div><span>YOUR SELECTION</span><h2>My cart <small>({cartCount} items)</small></h2></div><button type="button" aria-label="Close cart" onClick={() => setCartOpen(false)}><X size={23} /></button></div>
+            <div className="store-drawer-head"><div><span>YOUR SELECTION</span><h2>My cart <small>({cartCount} {cartCount === 1 ? 'category' : 'categories'})</small></h2></div><button type="button" aria-label="Close cart" onClick={() => setCartOpen(false)}><X size={23} /></button></div>
             {cart.length ? <>
-              <div className="store-cart-list">{cart.map((item) => {
+              <div className="store-cart-list">{cart.map((item, index) => {
                 const itemUnitPrice = unitPrice(item.product, item.quantity);
-                return <div className="store-cart-item" key={item.product.id}>
-                  <ProductVisual compact image={item.product.image} category={item.product.category} name={item.product.name} />
+                const itemKey = item.product?.id ? `${item.product.id}` : `cart-item-${index}`;
+                return <div className="store-cart-item" key={itemKey}>
+                  <ProductVisual compact image={getProductImage(item.product, item.product.category)} category={item.product.category} name={item.product.name} />
                   <div>
                     <strong>{item.product.name}</strong>
-                    <span>{item.product.category.name} · {itemUnitPrice > 0 ? `₹${itemUnitPrice.toLocaleString('en-IN')} / ${displayUnit(item.product.unit)}` : 'Price on confirmation'}</span>
+                    <span>{item.product.category?.name || 'Material'}{item.product.unit ? ` · ${displayUnit(item.product.unit)}` : ''} · {itemUnitPrice > 0 ? `₹${itemUnitPrice.toLocaleString('en-IN')} / ${displayUnit(item.product.unit)}` : 'Price on confirmation'}</span>
                     <span>{itemUnitPrice > 0 ? `Line total: ₹${(itemUnitPrice * item.quantity).toLocaleString('en-IN')}` : 'Supplier will confirm the price'}</span>
                     <div className="store-cart-quantity"><button type="button" onClick={() => onChangeQty(item.product.id, -1)} aria-label={`Remove one ${item.product.name}`}><Minus size={14} /></button><b>{item.quantity}</b><button type="button" onClick={() => onChangeQty(item.product.id, 1)} aria-label={`Add one ${item.product.name}`}><Plus size={14} /></button></div>
                   </div>

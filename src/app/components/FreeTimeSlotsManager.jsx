@@ -8,6 +8,7 @@
 import { useState, useEffect } from 'react';
 import PaidTimeSlotsManager from './PaidTimeSlotsManager';
 import QuickServiceIcon from './QuickServiceIcon';
+import { Eye, EyeOff, Pencil, Trash2, ActionIconButton } from '@/app/components/ui/icons';
 
 export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', defaultCity = '', compact = false, permissions = null }) {
   const lockedCity = tokenKey === 'franchise-token' && Boolean(defaultCity);
@@ -511,25 +512,29 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
                         })()}
                       </td>
                       <td>
-                        <div className="action-buttons">
-                          {canSlot('slots.free.edit') && <button
-                            onClick={() => handleToggleAvailability(slot.id, slot.is_available)}
-                            className="btn-small btn-toggle"
-                          >
-                            {slot.is_available ? 'Close' : 'Open'}
-                          </button>}
-                          {canSlot('slots.free.edit') && <button
-                            onClick={() => handleEditSlot(slot)}
-                            className="btn-small btn-toggle"
-                          >
-                            Edit
-                          </button>}
-                          {canSlot('slots.free.delete') && <button
-                            onClick={() => handleDeleteSlot(slot.id)}
-                            className="btn-small btn-delete"
-                          >
-                            Delete
-                          </button>}
+                        <div className="action-buttons" style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                          {canSlot('slots.free.edit') && (
+                            <ActionIconButton
+                              icon={slot.is_available ? EyeOff : Eye}
+                              label={slot.is_available ? 'Close slot' : 'Open slot'}
+                              onClick={() => handleToggleAvailability(slot.id, slot.is_available)}
+                            />
+                          )}
+                          {canSlot('slots.free.edit') && (
+                            <ActionIconButton
+                              icon={Pencil}
+                              label="Edit slot"
+                              onClick={() => handleEditSlot(slot)}
+                            />
+                          )}
+                          {canSlot('slots.free.delete') && (
+                            <ActionIconButton
+                              icon={Trash2}
+                              variant="danger"
+                              label="Delete slot"
+                              onClick={() => handleDeleteSlot(slot.id)}
+                            />
+                          )}
                         </div>
                       </td>
                     </tr>

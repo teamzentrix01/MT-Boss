@@ -11,16 +11,33 @@ import { QUALITY_TIER_OPTIONS, qualityTierLabel } from '@/lib/quality-tier';
 import './ShopNowManager.css';
 
 const units = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
-const emptyProduct = { name: '', description: '', category: '', quality_tier: '', quote_price_range: '', price: '', compare_at_price: '', is_featured_deal: false, brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
-const fields = [
+const emptyProduct = { name: '', description: '', category: '', subcategory: '', quality_tier: '', quote_price_range: '', price: '', compare_at_price: '', is_featured_deal: false, brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
+const mobileHeaderFields = [
+  ['delivery_tagline', 'Delivery Tagline (e.g. 60 Mins delivery)'],
+  ['search_placeholder', 'Search Placeholder (e.g. Search for Cement, TMT Bars, Tiles...)'],
+  ['trust_badge_1', 'Trust Badge 1 (e.g. Free Delivery)'],
+  ['trust_badge_2', 'Trust Badge 2 (e.g. 2% Cashback)'],
+  ['trust_badge_3', 'Trust Badge 3 (e.g. Pay on Delivery)'],
+  ['trust_badge_4', 'Trust Badge 4 (e.g. 60 Mins Express)'],
+];
+
+const mobileBannerFields = [
+  ['mobile_banner_pill', 'Top Badge / Pill (e.g. ⚡ Delivered in 60 mins)'],
+  ['mobile_banner_subpill', 'Top Sub-badge (e.g. Direct Factory Rates)'],
+  ['mobile_banner_title', 'Promo Banner Heading'],
+  ['mobile_banner_btn', 'CTA Button Text (e.g. Request Bulk Quote)'],
+];
+
+const desktopBannerFields = [
   ['hero_kicker', 'Banner eyebrow'], ['hero_title', 'Banner title'],
   ['hero_highlight', 'Highlighted title'], ['hero_description', 'Banner description'],
   ['hero_badge', 'Image badge text'],
-  ['hero_button', 'Banner button'], ['search_placeholder', 'Search placeholder'],
+  ['hero_button', 'Banner button'],
   ['categories_heading', 'Categories heading'], ['featured_heading', 'Featured heading'],
   ['deals_heading', 'Deals heading'], ['arrivals_heading', 'New arrivals heading'],
   ['catalog_heading', 'Catalogue heading'], ['footer_tagline', 'Footer tagline'],
 ];
+
 
 const shopHeaders = (ownerRole = 'admin') => ({
   'Content-Type': 'application/json',
@@ -99,7 +116,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
   const edit = (product) => {
     setEditingId(product.id);
     setForm({
-      name: product.name || '', description: product.description || '', category: product.category || '', quality_tier: product.quality_tier || '',
+      name: product.name || '', description: product.description || '', category: product.category || '', subcategory: product.subcategory || '', quality_tier: product.quality_tier || '',
       quote_price_range: product.quote_price_range || '', price: product.price ?? '', compare_at_price: product.compare_at_price ?? '', is_featured_deal: product.is_featured_deal === true, brand: product.brand || '', unit: product.unit || '', quantity: product.quantity ?? 0,
       image_url: product.image_url || '', available_cities: product.available_cities || [], is_available: product.is_available !== false,
     });
@@ -186,7 +203,8 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
       <h3>{editingId ? 'Edit product' : 'Add product'}</h3>
       <div className="shop-admin-fields">
         <label>Product name *<input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
-        <label>Category *<select required value={form.category} onChange={(e) => { const cat = categories.find((item) => item.name === e.target.value); setForm({ ...form, category: e.target.value, unit: cat?.unit || form.unit }); }}><option value="">Select category</option>{categories.map((cat) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}</select></label>
+        <label>Category *<select required value={form.category} onChange={(e) => { const cat = categories.find((item) => item.name === e.target.value); setForm({ ...form, category: e.target.value, subcategory: '', unit: cat?.unit || form.unit }); }}><option value="">Select category</option>{categories.map((cat) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}</select></label>
+        <label>Subcategory<select value={form.subcategory} onChange={(e) => setForm({ ...form, subcategory: e.target.value })}><option value="">Select subcategory</option>{(categories.find((cat) => cat.name === form.category)?.subcategories || []).map((subcategory) => { const name = typeof subcategory === 'object' && subcategory !== null ? subcategory.name : subcategory; return <option key={name} value={name}>{name}</option>; })}</select></label>
         <label>Quality Tier *<select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}><option value="">Select quality tier</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}</select><small>Used by the Budget Calculator to match this product to a Quality Package.</small></label>
         <label>Get Quote price range (₹) *<input required type="text" maxLength={100} value={form.quote_price_range} onChange={(e) => setForm({ ...form, quote_price_range: e.target.value })} placeholder="Example: 40-80" /><small>Enter a minimum and maximum lump-sum range, e.g. 40-80.</small></label>
         <label>Buy Now fixed price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Example: 60" /></label>
@@ -229,7 +247,11 @@ function AppearanceManager() {
       const data = await readApiJson(response);
       if (!response.ok) throw new Error(data.error || 'Could not save storefront');
       setContent(data.data);
-      setNotice('Storefront content saved.');
+      notifyShopProductsUpdated();
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('mtbossShopProductsUpdated'));
+      }
+      setNotice('Storefront content saved successfully.');
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
   };
@@ -248,7 +270,193 @@ function AppearanceManager() {
     finally { setUploading(false); event.target.value = ''; }
   };
 
-  return <div className="shop-admin-panel"><div className="shop-admin-heading"><div><h2>Storefront content</h2><p>Edit the Shop Now banner, promotion cards, headings and search text. Colors follow the MT Boss blue theme.</p></div><Link href="/ShopNow" target="_blank">Preview Shop Now</Link></div>{notice && <p className="shop-admin-notice" role="status">{notice}</p>}{loading ? <p>Loading storefront...</p> : <form className="shop-admin-card" onSubmit={save}><h3>Banner and page text</h3><div className="shop-admin-fields">{fields.map(([key, label]) => <label key={key}>{label}<input value={content[key]} onChange={(e) => setContent({ ...content, [key]: e.target.value })} /></label>)}<label className="shop-admin-wide">Banner image URL<input value={content.hero_image} onChange={(e) => setContent({ ...content, hero_image: e.target.value })} /></label></div><div className="shop-admin-form-footer"><label className="shop-admin-upload">{uploading ? 'Uploading...' : 'Upload banner image'}<input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden /></label></div><h3>Promotion cards</h3><div className="shop-admin-fields">{content.promos.map((promo, index) => <div className="shop-admin-promo" key={index}><strong>Card {index + 1}</strong><label>Title<input value={promo.title} onChange={(e) => updatePromo(index, 'title', e.target.value)} /></label><label>Subtitle<input value={promo.subtitle} onChange={(e) => updatePromo(index, 'subtitle', e.target.value)} /></label></div>)}</div><div className="shop-admin-form-footer"><button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save storefront'}</button></div></form>}</div>;
+  return <div className="shop-admin-panel">
+    <div className="shop-admin-heading">
+      <div>
+        <h2>Storefront Content Manager</h2>
+        <p>Manage Mobile Quick-Commerce Header, Trust Badges, Promo Banners, and Desktop Storefront Text.</p>
+      </div>
+      <Link href="/ShopNow" target="_blank">Preview Shop Now</Link>
+    </div>
+    {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
+    {loading ? <p>Loading storefront...</p> : (
+      <form onSubmit={save}>
+        {/* 1. Mobile Quick-Commerce Header & Trust Strip */}
+        <div className="shop-admin-card">
+          <h3>📱 Mobile Header & Trust Badges</h3>
+          <p style={{ marginBottom: 16 }}>Configure the delivery tagline, search bar placeholder, and the 4 quick trust badges displayed at the top of the mobile storefront.</p>
+          <div className="shop-admin-fields">
+            {mobileHeaderFields.map(([key, label]) => (
+              <label key={key}>
+                {label}
+                <input
+                  value={content[key] ?? ''}
+                  onChange={(e) => setContent({ ...content, [key]: e.target.value })}
+                />
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* 2. Mobile Promo Banner (Special Bulk Order Offer) */}
+        <div className="shop-admin-card">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+            <h3 style={{ margin: 0 }}>⚡ Mobile Promo Banner (Special Bulk Order Offer)</h3>
+            <label className="shop-admin-check" style={{ margin: 0 }}>
+              <input
+                type="checkbox"
+                checked={content.mobile_banner_enabled !== false}
+                onChange={(e) => setContent({ ...content, mobile_banner_enabled: e.target.checked })}
+              /> Show Promo Banner
+            </label>
+          </div>
+          <p style={{ marginBottom: 16 }}>Customize the dark promotional banner shown on the mobile storefront home/discovery feed.</p>
+          <div className="shop-admin-fields">
+            {mobileBannerFields.map(([key, label]) => (
+              <label key={key}>
+                {label}
+                <input
+                  value={content[key] ?? ''}
+                  onChange={(e) => setContent({ ...content, [key]: e.target.value })}
+                />
+              </label>
+            ))}
+            <label className="shop-admin-wide">
+              Banner Description
+              <textarea
+                rows={2}
+                value={content.mobile_banner_desc ?? ''}
+                onChange={(e) => setContent({ ...content, mobile_banner_desc: e.target.value })}
+                placeholder="Verified suppliers for Cement, TMT Bars, Brick & Sand with immediate site dispatch."
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* 3. Desktop Storefront Banner & Headings */}
+        <div className="shop-admin-card">
+          <h3>🖥️ Desktop Banner & Page Text</h3>
+          <div className="shop-admin-fields">
+            {desktopBannerFields.map(([key, label]) => (
+              <label key={key}>
+                {label}
+                <input
+                  value={content[key] ?? ''}
+                  onChange={(e) => setContent({ ...content, [key]: e.target.value })}
+                />
+              </label>
+            ))}
+            <label className="shop-admin-wide">
+              Banner image URL
+              <input
+                value={content.hero_image ?? ''}
+                onChange={(e) => setContent({ ...content, hero_image: e.target.value })}
+              />
+            </label>
+          </div>
+          <div className="shop-admin-form-footer">
+            <label className="shop-admin-upload">
+              {uploading ? 'Uploading...' : 'Upload banner image'}
+              <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden />
+            </label>
+          </div>
+        </div>
+
+        {/* 4. Desktop Promotion Cards */}
+        <div className="shop-admin-card">
+          <h3>🎁 Desktop Promotion Cards</h3>
+          <div className="shop-admin-fields">
+            {content.promos.map((promo, index) => (
+              <div className="shop-admin-promo" key={index}>
+                <strong>Card {index + 1}</strong>
+                <label>
+                  Title
+                  <input
+                    value={promo.title}
+                    onChange={(e) => updatePromo(index, 'title', e.target.value)}
+                  />
+                </label>
+                <label>
+                  Subtitle
+                  <input
+                    value={promo.subtitle}
+                    onChange={(e) => updatePromo(index, 'subtitle', e.target.value)}
+                  />
+                </label>
+              </div>
+            ))}
+          </div>
+          <div className="shop-admin-form-footer" style={{ marginTop: 20 }}>
+            <button type="submit" disabled={saving}>
+              {saving ? 'Saving...' : 'Save Storefront Content'}
+            </button>
+          </div>
+        </div>
+      </form>
+    )}
+  </div>;
+}
+
+function OfferManager() {
+  const empty = { name: '', category: '', subcategory: '', brand: '', discount_type: 'percent', discount_value: '', badge_text: '', sort_order: 0, is_active: true, starts_at: '', ends_at: '' };
+  const [offers, setOffers] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [form, setForm] = useState(empty);
+  const [editingId, setEditingId] = useState(null);
+  const [notice, setNotice] = useState('');
+  const [loading, setLoading] = useState(true);
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [offersRes, categoriesRes] = await Promise.all([
+        fetch('/api/shop-offers?admin=true', { headers: shopHeaders() }),
+        fetch('/api/shop-categories?admin=true', { headers: shopHeaders() }),
+      ]);
+      const offersData = await readApiJson(offersRes);
+      const categoriesData = await readApiJson(categoriesRes);
+      if (!offersRes.ok) throw new Error(offersData.error || 'Could not load offers');
+      setOffers(offersData.data || []); setCategories(categoriesData.data || []);
+    } catch (error) { setNotice(error.message); }
+    finally { setLoading(false); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  const save = async (event) => {
+    event.preventDefault(); setNotice('');
+    try {
+      const response = await fetch('/api/shop-offers', { method: editingId ? 'PUT' : 'POST', headers: shopHeaders(), body: JSON.stringify({ ...form, ...(editingId ? { id: editingId } : {}) }) });
+      const data = await readApiJson(response);
+      if (!response.ok) throw new Error(data.error || 'Could not save offer');
+      setForm(empty); setEditingId(null); setNotice(editingId ? 'Offer updated.' : 'Offer created.'); await load();
+    } catch (error) { setNotice(error.message); }
+  };
+  const edit = (offer) => {
+    setEditingId(offer.id);
+    setForm({ ...empty, ...offer, starts_at: offer.starts_at ? String(offer.starts_at).slice(0, 16) : '', ends_at: offer.ends_at ? String(offer.ends_at).slice(0, 16) : '' });
+  };
+  const remove = async (offer) => {
+    if (!window.confirm(`Delete ${offer.name}?`)) return;
+    const response = await fetch(`/api/shop-offers?id=${offer.id}`, { method: 'DELETE', headers: shopHeaders() });
+    const data = await readApiJson(response); if (!response.ok) setNotice(data.error || 'Could not delete offer'); else { setNotice('Offer deleted.'); load(); }
+  };
+  const selectedCategory = categories.find((category) => category.name === form.category);
+  const subcategories = Array.isArray(selectedCategory?.subcategories) ? selectedCategory.subcategories : [];
+  return <div className="shop-admin-panel">
+    <div className="shop-admin-heading"><div><h2>Offers</h2><p>Show offer badges on Shop Now products by category, subcategory and/or brand. Blank targeting fields apply to everything.</p></div><button type="button" onClick={load}>Refresh</button></div>
+    {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
+    <form className="shop-admin-card" onSubmit={save}><h3>{editingId ? 'Edit offer' : 'Create offer'}</h3><div className="shop-admin-fields">
+      <label>Offer name *<input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Cement sale" /></label>
+      <label>Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value, subcategory: '' })}><option value="">All categories</option>{categories.map((category) => <option key={category.id} value={category.name}>{category.name}</option>)}</select></label>
+      <label>Subcategory<select value={form.subcategory} onChange={(e) => setForm({ ...form, subcategory: e.target.value })} disabled={!form.category}><option value="">All subcategories</option>{subcategories.map((item) => { const name = typeof item === 'object' && item !== null ? item.name : item; return <option key={name} value={name}>{name}</option>; })}</select></label>
+      <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
+      <label>Discount type<select value={form.discount_type} onChange={(e) => setForm({ ...form, discount_type: e.target.value })}><option value="percent">Percentage</option><option value="fixed">Fixed amount</option></select></label>
+      <label>Discount value *<input required type="number" min="0.01" step="0.01" max={form.discount_type === 'percent' ? '100' : undefined} value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: e.target.value })} /></label>
+      <label>Badge text<input maxLength={80} value={form.badge_text} onChange={(e) => setForm({ ...form, badge_text: e.target.value })} placeholder="6% OFF (blank = automatic)" /></label>
+      <label>Priority<input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: e.target.value })} /><small>Lower number wins when multiple offers match.</small></label>
+      <label>Start date/time<input type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} /></label>
+      <label>End date/time<input type="datetime-local" value={form.ends_at} onChange={(e) => setForm({ ...form, ends_at: e.target.value })} /></label>
+    </div><div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} /> Active</label><button type="submit">{editingId ? 'Save changes' : 'Create offer'}</button>{editingId && <button type="button" onClick={() => { setEditingId(null); setForm(empty); }}>Cancel</button>}</div></form>
+    <div className="shop-admin-card"><h3>Configured offers ({offers.length})</h3>{loading ? <p>Loading offers...</p> : !offers.length ? <p>No offers created yet.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Offer</th><th>Applies to</th><th>Discount</th><th>Status</th><th>Actions</th></tr></thead><tbody>{offers.map((offer) => <tr key={offer.id}><td><strong>{offer.name}</strong><small>{offer.badge_text || 'Automatic badge'}</small></td><td>{[offer.category, offer.subcategory, offer.brand].filter(Boolean).join(' · ') || 'All products'}</td><td>{offer.discount_type === 'percent' ? `${offer.discount_value}%` : `₹${offer.discount_value}`}</td><td>{offer.is_active ? 'Active' : 'Hidden'}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => { setEditingId(offer.id); edit(offer); }}>Edit</button><button type="button" onClick={() => remove(offer)}>Delete</button></div></td></tr>)}</tbody></table></div>}</div>
+  </div>;
 }
 
 export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }) {

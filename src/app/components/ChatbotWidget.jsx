@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const QUICK_ACTIONS = [
-  { label: '🏗️ Construction Services', href: '/Services/professionals', prompt: 'Tell me about the construction services offered by MT Boss.' },
-  { label: '🤝 Agents', href: '/Services/agents', prompt: 'How can I connect with MT Boss agents?' },
+  { label: '🏗️ Construction Services', href: '/Services/all', prompt: 'Tell me about the construction services offered by MT Boss.' },
+  { label: '🤝 Agents', href: '/agent', prompt: 'How can I connect with MT Boss agents or become an agent?' },
   { label: '🧮 Cost Calculator', href: '/calculator', prompt: 'What are the current house construction rates and packages?' },
   { label: '📦 Buy Materials', href: '/ShopNow', prompt: 'What are the wholesale prices for Cement and TMT Steel?' },
   { label: '🏡 Plots & Properties', href: '/buy-sale', prompt: 'Show me verified plots and properties in Bareilly and UP' },
@@ -18,8 +19,8 @@ const INITIAL_MESSAGE = {
 
 I am your official AI Project Advisor. You can ask me anything in **English** or **Hinglish** regarding construction, materials, properties, or franchise partnerships:
 
-- 🏗️ **Construction Services** ([Explore](/Services/professionals))
-- 🤝 **Agents** ([Connect with Agents](/Services/agents))
+- 🏗️ **Construction Services** ([Explore](/Services/all))
+- 🤝 **Agents Network** ([Connect with Agents](/agent))
 - 🧮 **House Construction Cost** ([Live Calculator](/calculator))
 - 📦 **Wholesale Building Materials** ([Shop Now](/ShopNow))
 - 🏡 **Plots & Properties** ([Explore Properties](/buy-sale))
@@ -28,6 +29,7 @@ I am your official AI Project Advisor. You can ask me anything in **English** or
 };
 
 export default function ChatbotWidget({ isDarkMode }) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
@@ -186,6 +188,14 @@ export default function ChatbotWidget({ isDarkMode }) {
     }
   };
 
+  const handleLinkClick = (e, href) => {
+    if (!href) return;
+    if (href.startsWith('/') || href.startsWith('#')) {
+      e.preventDefault();
+      router.push(href);
+    }
+  };
+
   const renderFormatted = (content) => {
     if (!content) return '';
     return content.split('\n').map((line, idx) => {
@@ -195,7 +205,12 @@ export default function ChatbotWidget({ isDarkMode }) {
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(
           /\[(.*?)\]\((.*?)\)/g,
-          '<a href="$2" class="underline font-bold text-sky-400 hover:text-sky-300 transition-colors" target="_blank" rel="noopener noreferrer">$1</a>'
+          (match, label, href) => {
+            const isInternal = href.startsWith('/');
+            return `<a href="${href}" class="chat-markdown-link underline font-bold text-sky-400 hover:text-sky-300 transition-colors" ${
+              isInternal ? 'data-internal="true"' : 'target="_blank" rel="noopener noreferrer"'
+            }>${label}</a>`;
+          }
         );
 
       if (line.startsWith('- ') || line.startsWith('* ')) {
@@ -310,8 +325,15 @@ export default function ChatbotWidget({ isDarkMode }) {
                 <button
                   key={i}
                   type="button"
-                  onClick={() => handleSend(qa.prompt)}
-                  className="chatbot-quick-action"
+                  onClick={() => {
+                    if (qa.href) {
+                      router.push(qa.href);
+                    } else {
+                      handleSend(qa.prompt);
+                    }
+                  }}
+                  className="chatbot-quick-action cursor-pointer"
+                  title={`Open ${qa.label}`}
                 >
                   {qa.label}
                 </button>
@@ -319,7 +341,19 @@ export default function ChatbotWidget({ isDarkMode }) {
             </div>
 
             {/* Chat Messages Body */}
-            <div className="flex-1 p-4 overflow-y-auto space-y-3.5">
+            <div 
+              className="flex-1 p-4 overflow-y-auto space-y-3.5"
+              onClick={(e) => {
+                const target = e.target.closest('a');
+                if (target && target.getAttribute('data-internal') === 'true') {
+                  const href = target.getAttribute('href');
+                  if (href) {
+                    e.preventDefault();
+                    router.push(href);
+                  }
+                }
+              }}
+            >
               {messages.map((m, idx) => (
                 <div
                   key={idx}
