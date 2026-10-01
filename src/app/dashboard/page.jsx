@@ -370,40 +370,40 @@ function AdminDashboard() {
   };
   const primaryServiceStatuses = ['Pending', 'Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
   const tabs = [
-    { id: 'overview',                   label: 'Overview',                  icon: LayoutDashboard },
-    { id: 'agents',                     label: 'Agents',                    icon: UserCog },
-    { id: 'calculator',                 label: 'Calculator',                icon: Calculator },
-    { id: 'calculator-quotes',          label: 'Calculator Quotes',         icon: FileText },
-    { id: 'hero-banners',              label: 'Hero Banners',              icon: ImageIcon },
-    { id: 'faqs',                       label: 'FAQs Management',           icon: HelpCircle },
-    { id: 'reviews',                    label: 'Customer Reviews',          icon: Star },
-    { id: 'blogs',                     label: 'SEO Blogs & Articles',      icon: Newspaper },
-    { id: 'career-enquiries',           label: 'Career Enquiry',            icon: Briefcase },
-    { id: 'jobs',                       label: 'New Jobs',                  icon: BriefcaseBusiness },
-    { id: 'lead-management',            label: 'Lead Management',           icon: ClipboardList },
-    { id: 'office-locations',           label: 'Office Locations',          icon: MapPin },
-    { id: 'cities',                     label: 'Cities',                    icon: Building },
-    { id: 'submissions',                label: 'Contact Forms',             icon: Mail },
-    { id: 'franchises',                 label: 'Franchises',                icon: Store },
-    { id: 'free-slots',                 label: 'Free Time Slots',           icon: CalendarClock },
-    { id: 'primary-services',           label: 'Construction Services',     icon: Layers },
-    { id: 'primary-service-enquiries',  label: 'Construction Enquiry',      icon: MessageSquare },
-    { id: 'professional-enquiries',     label: 'Professional Enquiries',    icon: MessageSquare },
-    { id: 'professionals',              label: 'Professional Services',     icon: Users },
-    { id: 'project-management',         label: 'Project Management',       icon: Building2 },
-    { id: 'projects',                   label: 'Portfolio Projects',        icon: FolderKanban },
-    { id: 'properties',                 label: 'Properties',                icon: House },
-    { id: 'quick-enquiries',            label: 'Quick Enquiry',             icon: Zap },
-    { id: 'quick-services',             label: 'Quick Services',            icon: Wrench },
-    { id: 'revenue',                    label: 'Revenue & Earnings',        icon: CircleDollarSign },
-    { id: 'bookings',                   label: 'Service Bookings',          icon: CalendarDays },
-    { id: 'orders-history',             label: 'Orders History',            icon: ClipboardList },
-    { id: 'shop-categories',            label: 'Shop Now Manager',          icon: ShoppingCart },
-    { id: 'shop-products',              label: '+ Add Shop Product',        icon: PlusCircle },
-    { id: 'shipping-settings',          label: 'Shipping Settings',         icon: Truck },
-    { id: 'suppliers',                  label: 'Suppliers',                 icon: Truck },
-    { id: 'vendors',                    label: 'Vendors',                   icon: HardHat },
-    { id: 'packages',                   label: 'Package Approvals',         icon: PackageCheck },
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'agents', label: 'Agents', icon: UserCog },
+    { id: 'calculator', label: 'Calculator', icon: Calculator },
+    { id: 'calculator-quotes', label: 'Calculator Quotes', icon: FileText },
+    { id: 'hero-banners', label: 'Hero Banners', icon: ImageIcon },
+    { id: 'faqs', label: 'FAQs Management', icon: HelpCircle },
+    { id: 'reviews', label: 'Customer Reviews', icon: Star },
+    { id: 'blogs', label: 'SEO Blogs & Articles', icon: Newspaper },
+    { id: 'career-enquiries', label: 'Career Enquiry', icon: Briefcase },
+    { id: 'jobs', label: 'New Jobs', icon: BriefcaseBusiness },
+    { id: 'lead-management', label: 'Lead Management', icon: ClipboardList },
+    { id: 'office-locations', label: 'Office Locations', icon: MapPin },
+    { id: 'cities', label: 'Cities', icon: Building },
+    { id: 'submissions', label: 'Contact Forms', icon: Mail },
+    { id: 'franchises', label: 'Franchises', icon: Store },
+    { id: 'free-slots', label: 'Free Time Slots', icon: CalendarClock },
+    { id: 'primary-services', label: 'Construction Services', icon: Layers },
+    { id: 'primary-service-enquiries', label: 'Construction Enquiry', icon: MessageSquare },
+    { id: 'professional-enquiries', label: 'Professional Enquiries', icon: MessageSquare },
+    { id: 'professionals', label: 'Professional Services', icon: Users },
+    { id: 'project-management', label: 'Project Management', icon: Building2 },
+    { id: 'projects', label: 'Portfolio Projects', icon: FolderKanban },
+    { id: 'properties', label: 'Properties', icon: House },
+    { id: 'quick-enquiries', label: 'Quick Enquiry', icon: Zap },
+    { id: 'quick-services', label: 'Quick Services', icon: Wrench },
+    { id: 'revenue', label: 'Revenue & Earnings', icon: CircleDollarSign },
+    { id: 'bookings', label: 'Service Bookings', icon: CalendarDays },
+    { id: 'orders-history', label: 'Orders History', icon: ClipboardList },
+    { id: 'shop-categories', label: 'Shop Now Manager', icon: ShoppingCart },
+    { id: 'shop-products', label: '+ Add Shop Product', icon: PlusCircle },
+    { id: 'shipping-settings', label: 'Shipping Settings', icon: Truck },
+    { id: 'suppliers', label: 'Suppliers', icon: Truck },
+    { id: 'vendors', label: 'Vendors', icon: HardHat },
+    { id: 'packages', label: 'Package Approvals', icon: PackageCheck },
   ];
 
   const openCareerEnquiry = (application) => {
@@ -854,22 +854,22 @@ function AdminDashboard() {
       <div className={`dash-root${isDarkMode ? ' dark-mode' : ''}`}>
         {/* Header */}
         {activeTab === 'overview' && (
-        <div className="dash-header">
-          <div className="dash-header-inner">
-            <div>
-              <div className="dash-title">Admin Dashboard</div>
-              <div className="dash-subtitle">Manage properties, forms, vendors &amp; services</div>
-            </div>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <button className="dash-export-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                <Download size={14} strokeWidth={1.75} aria-hidden="true" /> Export
-              </button>
-              <button className="dash-logout-btn" onClick={handleLogout} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                <LogOut size={14} strokeWidth={1.75} aria-hidden="true" /> Logout
-              </button>
+          <div className="dash-header">
+            <div className="dash-header-inner">
+              <div>
+                <div className="dash-title">Admin Dashboard</div>
+                <div className="dash-subtitle">Manage properties, forms, vendors &amp; services</div>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <button className="dash-export-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <Download size={14} strokeWidth={1.75} aria-hidden="true" /> Export
+                </button>
+                <button className="dash-logout-btn" onClick={handleLogout} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <LogOut size={14} strokeWidth={1.75} aria-hidden="true" /> Logout
+                </button>
+              </div>
             </div>
           </div>
-        </div>
         )}
 
         {/* Tab Bar */}
@@ -1427,7 +1427,7 @@ function AdminDashboard() {
           {activeTab === 'pm-reports' && <PartyProjectManagement initialScreen="reports" isDarkMode={isDarkMode} />}
           {activeTab === 'pm-benchmarks' && <PmBenchmarks isDarkMode={isDarkMode} />}
           {activeTab === 'pm-dashboard' && <PmDashboard isDarkMode={isDarkMode} />}
-          {activeTab === 'pm-audit'     && <PmAuditLog isDarkMode={isDarkMode} />}
+          {activeTab === 'pm-audit' && <PmAuditLog isDarkMode={isDarkMode} />}
           {(activeTab === 'shop-categories' || activeTab === 'shop-products') && <ShopNowManager key={activeTab} isDarkMode={isDarkMode} initialTab={activeTab === 'shop-products' ? 'products' : 'categories'} />}
           {activeTab === 'shipping-settings' && <ShippingSettingsManager />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
@@ -1560,7 +1560,7 @@ function AdminDashboard() {
                   <div style={{ marginBottom: '1rem' }}>
                     <div className="modal-field-label" style={{ marginBottom: '0.375rem' }}>Site Image</div>
                     <a href={q.site_image_url} target="_blank" rel="noopener noreferrer">
-                      <Image src={q.site_image_url} alt="Site upload" width={720} height={320} unoptimized style={{ width: '100%', height:'auto', maxHeight: 320, objectFit: 'cover', borderRadius: 6, border: '1px solid var(--border)' }} />
+                      <Image src={q.site_image_url} alt="Site upload" width={720} height={320} unoptimized style={{ width: '100%', height: 'auto', maxHeight: 320, objectFit: 'cover', borderRadius: 6, border: '1px solid var(--border)' }} />
                     </a>
                   </div>
                 )}
@@ -1891,23 +1891,23 @@ function AdminDashboard() {
                 <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.625rem' }}>
                   {hasResumeFile(selectedCareerEnquiry.resume_url) ? (
                     <>
-                    <a
-                      href={getResumeViewerUrl(selectedCareerEnquiry.resume_url, selectedCareerEnquiry.resume_name)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="modal-close-btn"
-                      style={{ width: 'auto', textDecoration: 'none', padding: '0.45rem 0.875rem' }}
-                    >
-                      View Resume
-                    </a>
-                    <a
-                      href={getResumeActionUrl(selectedCareerEnquiry.resume_url, 'download')}
-                      download={selectedCareerEnquiry.resume_name || true}
-                      className="modal-close-btn"
-                      style={{ width: 'auto', textDecoration: 'none', padding: '0.45rem 0.875rem', background: 'var(--bg)', color: 'var(--text)', border: '1px solid var(--border)' }}
-                    >
-                      Download
-                    </a>
+                      <a
+                        href={getResumeViewerUrl(selectedCareerEnquiry.resume_url, selectedCareerEnquiry.resume_name)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="modal-close-btn"
+                        style={{ width: 'auto', textDecoration: 'none', padding: '0.45rem 0.875rem' }}
+                      >
+                        View Resume
+                      </a>
+                      <a
+                        href={getResumeActionUrl(selectedCareerEnquiry.resume_url, 'download')}
+                        download={selectedCareerEnquiry.resume_name || true}
+                        className="modal-close-btn"
+                        style={{ width: 'auto', textDecoration: 'none', padding: '0.45rem 0.875rem', background: 'var(--bg)', color: 'var(--text)', border: '1px solid var(--border)' }}
+                      >
+                        Download
+                      </a>
                     </>
                   ) : (
                     <>
@@ -1954,11 +1954,11 @@ function AdminDashboard() {
               <div className="modal-field-label" style={{ marginBottom: '0.375rem' }}>Cover Letter</div>
               <div className="modal-message">{selectedCareerEnquiry.cover_letter || 'No cover letter provided.'}</div>
 
-              <div style={{ marginTop:'1rem', padding:'1rem', border:'1px solid var(--border)', borderRadius:8, background:'var(--surface)' }}>
-                <div className="modal-field-label" style={{ marginBottom:'0.6rem' }}>Edit Application Details</div>
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))', gap:'0.6rem' }}>
+              <div style={{ marginTop: '1rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }}>
+                <div className="modal-field-label" style={{ marginBottom: '0.6rem' }}>Edit Application Details</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.6rem' }}>
                   {CAREER_EDIT_FIELDS.map(field => (
-                    <label key={field.name} style={{ display:'block' }}>
+                    <label key={field.name} style={{ display: 'block' }}>
                       <span className="modal-field-label">{field.label}</span>
                       <input
                         type={field.type || 'text'}
@@ -1966,54 +1966,54 @@ function AdminDashboard() {
                         value={careerEditForm[field.name] || ''}
                         onChange={event => setCareerEditForm(current => ({ ...current, [field.name]: event.target.value }))}
                         className="search-input"
-                        style={{ width:'100%', marginTop:'0.25rem' }}
+                        style={{ width: '100%', marginTop: '0.25rem' }}
                       />
                     </label>
                   ))}
                 </div>
-                <label style={{ display:'block', marginTop:'0.6rem' }}>
+                <label style={{ display: 'block', marginTop: '0.6rem' }}>
                   <span className="modal-field-label">Cover Letter</span>
                   <textarea
                     value={careerEditForm.cover_letter || ''}
                     onChange={event => setCareerEditForm(current => ({ ...current, cover_letter: event.target.value }))}
                     className="search-input"
                     rows={4}
-                    style={{ width:'100%', marginTop:'0.25rem', resize:'vertical' }}
+                    style={{ width: '100%', marginTop: '0.25rem', resize: 'vertical' }}
                   />
                 </label>
-                <label style={{ display:'block', marginTop:'0.6rem' }}>
+                <label style={{ display: 'block', marginTop: '0.6rem' }}>
                   <span className="modal-field-label">Replace Resume</span>
                   <input
                     type="file"
                     accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     onChange={event => setCareerEditResume(event.target.files?.[0] || null)}
                     className="search-input"
-                    style={{ width:'100%', marginTop:'0.25rem' }}
+                    style={{ width: '100%', marginTop: '0.25rem' }}
                   />
                 </label>
                 <button type="button" onClick={updateCareerApplicationDetails} disabled={careerEditSaving}
-                  className="modal-close-btn" style={{ marginTop:'0.75rem', background:'var(--accent)', color:'#fff', opacity:careerEditSaving ? 0.55 : 1 }}>
+                  className="modal-close-btn" style={{ marginTop: '0.75rem', background: 'var(--accent)', color: '#fff', opacity: careerEditSaving ? 0.55 : 1 }}>
                   {careerEditSaving ? 'Saving...' : 'Save Detail Changes'}
                 </button>
               </div>
 
-              <div style={{ marginTop:'1rem', padding:'1rem', border:'1px solid var(--border)', borderRadius:8, background:'var(--bg)' }}>
-                <div className="modal-field-label" style={{ marginBottom:'0.6rem' }}>Update Application Status</div>
-                <div style={{ display:'grid', gridTemplateColumns:'minmax(180px, .8fr) minmax(220px, 1.2fr)', gap:'0.6rem' }}>
-                  <select value={careerStatus} onChange={event => setCareerStatus(event.target.value)} className="search-input" style={{ width:'100%' }}>
-                    {['New','Under Review','Shortlisted','Interview Scheduled','Selected','Rejected','Withdrawn'].map(status => (
+              <div style={{ marginTop: '1rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--bg)' }}>
+                <div className="modal-field-label" style={{ marginBottom: '0.6rem' }}>Update Application Status</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(180px, .8fr) minmax(220px, 1.2fr)', gap: '0.6rem' }}>
+                  <select value={careerStatus} onChange={event => setCareerStatus(event.target.value)} className="search-input" style={{ width: '100%' }}>
+                    {['New', 'Under Review', 'Shortlisted', 'Interview Scheduled', 'Selected', 'Rejected', 'Withdrawn'].map(status => (
                       <option key={status} value={status}>{status}</option>
                     ))}
                   </select>
                   <input value={careerNote} onChange={event => setCareerNote(event.target.value)}
-                    placeholder="Update visible to applicant" className="search-input" style={{ width:'100%' }} />
+                    placeholder="Update visible to applicant" className="search-input" style={{ width: '100%' }} />
                 </div>
                 {careerStatus === 'Interview Scheduled' && (
                   <input type="datetime-local" value={careerInterviewAt} onChange={event => setCareerInterviewAt(event.target.value)}
-                    className="search-input" style={{ width:'100%', marginTop:'0.6rem' }} />
+                    className="search-input" style={{ width: '100%', marginTop: '0.6rem' }} />
                 )}
                 <button type="button" onClick={updateCareerApplication} disabled={careerSaving}
-                  className="modal-close-btn" style={{ marginTop:'0.75rem', background:'var(--accent)', color:'#fff', opacity:careerSaving ? 0.55 : 1 }}>
+                  className="modal-close-btn" style={{ marginTop: '0.75rem', background: 'var(--accent)', color: '#fff', opacity: careerSaving ? 0.55 : 1 }}>
                   {careerSaving ? 'Saving…' : 'Post Status Update'}
                 </button>
               </div>
@@ -2029,7 +2029,7 @@ function AdminDashboard() {
 
 export default function AdminDashboardPage() {
   return (
-    <Suspense fallback={<div style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh' }}>Loading…</div>}>
+    <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>Loading…</div>}>
       <AdminDashboard />
     </Suspense>
   );

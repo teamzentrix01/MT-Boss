@@ -822,7 +822,6 @@ export default function ShopPage() {
                       <p className={`mt-1 text-xs ${subText}`}>Shipping charges: ₹{Number(shippingQuote.totalShipping).toLocaleString('en-IN')}</p>
                     )}
                     <div className={`mt-2 flex items-center justify-between border-t pt-2 ${isDarkMode ? "border-zinc-700" : "border-gray-200"}`}>
-<div className={`mt-2 flex items-center justify-between border-t pt-2 ${isDarkMode ? "border-zinc-700" : "border-gray-200"}`}>
   <span className={`text-xs font-bold ${headText}`}>Product total</span>
   <strong className={`text-sm ${headText}`}>{cartProductTotal > 0 ? `₹${cartProductTotal.toLocaleString("en-IN")}` : 'On confirmation'}{cartProductTotal > 0 && cartHasUnpricedItems ? ' + quote items' : ''}</strong>
 </div>

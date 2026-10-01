@@ -470,25 +470,14 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                   </td>
                   <td style={{ padding: '0.6rem', color: muted, whiteSpace: 'nowrap' }}>{lead.follow_up_date ? new Date(lead.follow_up_date).toLocaleDateString('en-IN') : '-'}</td>
                   <td style={{ padding: '0.6rem' }}>
-<div className={`mt-2 flex items-center justify-between border-t pt-2 ${isDarkMode ? "border-zinc-700" : "border-gray-200"}`}>
-                      <span className={`text-xs font-bold ${headText}`}>Product total</span>
-                      <strong className={`text-sm ${headText}`}>{cartProductTotal > 0 ? `₹${cartProductTotal.toLocaleString("en-IN")}` : 'On confirmation'}{cartProductTotal > 0 && cartHasUnpricedItems ? ' + quote items' : ''}</strong>
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      <button onClick={() => setSelected(lead)} style={{ border: 0, background: 'none', color: 'var(--accent)', fontWeight: 900, cursor: 'pointer' }}>View</button>
+                      {lead.status === 'Converted' && (
+                        <button onClick={() => openConvertModal(lead)} style={{ border: 0, background: lead.converted_project_id ? surface : 'var(--accent)', color: lead.converted_project_id ? text : '#111', borderRadius: 4, padding: '0.3rem 0.5rem', fontWeight: 800, cursor: 'pointer', fontSize: '0.65rem' }}>
+                          {lead.converted_project_id ? 'Already converted → View Project' : 'Convert to Project'}
+                        </button>
+                      )}
                     </div>
-                    {couponCalculation.discount > 0 && (
-                      <div className="mt-1 flex items-center justify-between text-xs font-bold text-green-600">
-                        <span>Coupon discount</span>
-                        <span>-₹{couponCalculation.discount.toLocaleString('en-IN')}</span>
-                      </div>
-                    )}
-                    <div className={`mt-1 flex items-center justify-between text-xs ${subText}`}>
-                      <span>Shipping</span>
-                      <span>{hasShippingTotal ? `₹${shippingTotal.toLocaleString('en-IN')}` : 'Calculate shipping first'}</span>
-                    </div>
-                    <div className={`mt-3 flex items-center justify-between border-t-2 pt-3 ${isDarkMode ? "border-zinc-600" : "border-blue-300"}`}>
-                      <span className={`text-base font-black ${headText}`}>Grand Total</span>
-                      <strong className={`text-xl font-black ${headText}`}>{orderGrandTotal !== null ? `₹${orderGrandTotal.toLocaleString('en-IN')}` : 'On confirmation'}</strong>
-                    </div>
-                  </div>
                   </td>
                 </tr>
               ))}
