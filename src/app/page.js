@@ -3,23 +3,24 @@ import Hero from './components/Hero';
 // import AboutSection from './components/About';
 import Services from './components/Services';
 import QuickServices from './components/QuickServices';
-// import TestimonialsSection from './components/Testimonal';
+// import TestimonialsSection from './components/Testimonal';\r
 import DeferredHomeSections from './components/DeferredHomeSections';
+import { defaultHeroBanners, CONSTRUCTION_HERO_IMAGE_URL } from '@/lib/hero-banner-defaults.mjs';
 
 // ---------- METADATA ----------
 export const metadata = {
-  title: 'MTBOSS | Best Construction, Property & Materials Company in Moradabad',
+  title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBOSS',
   description:
-    'MTBOSS offers construction, doorstep home services (electrician, plumber, AC repair, pest control & more), verified property buy/sell/rent, and building materials - trusted by homeowners near you. Book instantly, get quotes fast.',
+    'MTBOSS - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
   keywords:
     'construction company near me, home services near me, electrician plumber near me, AC repair near me, pest control near me, building renovation near me, water tank cleaning near me, buy sell rent property near me, building materials online, construction cost calculator, contractor near me',
   alternates: {
     canonical: 'https://www.mtboss.in/',
   },
   openGraph: {
-    title: 'MTBOSS | Best Construction, Property & Materials Company in Moradabad',
+    title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBOSS',
     description:
-      'Construction quotes, doorstep home services, verified properties, and wholesale materials — trusted by homeowners near you.',
+      'MTBOSS - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
     url: 'https://www.mtboss.in/',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
@@ -35,9 +36,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MTBOSS | Best Construction, Property & Materials Company in Moradabad',
+    title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBOSS',
     description:
-      'Construction quotes, doorstep home services, verified properties, and wholesale materials — trusted by homeowners near you.',
+      'MTBOSS - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
     images: ['https://www.mtboss.in/icon.png'],
   },
 };
@@ -114,8 +115,58 @@ const homeServicesSchema = {
   },
 };
 
+// ---------- SERVER-SIDE BANNER FETCH ----------
+// Directly queries the DB at render time so ALL slides (including 5th) are
+// embedded in the HTML — zero client-side delay, zero layout shift.
+async function getHeroBanners() {
+  try {
+    // Dynamic import keeps the DB pool out of the client bundle
+    const { default: pool } = await import('@/lib/db');
+    const result = await pool.query(
+      'SELECT * FROM hero_banners WHERE is_active = true ORDER BY sort_order ASC, id ASC'
+    );
+    if (result.rows.length > 0) {
+      return result.rows.map(banner =>
+        banner.service_name?.trim().toLowerCase() === 'construction'
+          ? { ...banner, image_url: CONSTRUCTION_HERO_IMAGE_URL, cloudinary_public_id: '' }
+          : banner
+      );
+    }
+    return defaultHeroBanners;
+  } catch {
+    return defaultHeroBanners;
+  }
+}
+
+// ---------- SERVER-SIDE QUICK SERVICES FETCH ----------
+async function getQuickServices() {
+  try {
+    const { default: pool } = await import('@/lib/db');
+    let result;
+    try {
+      result = await pool.query(
+        'SELECT * FROM quick_services ORDER BY COALESCE(sort_order, 0) ASC, id ASC'
+      );
+    } catch {
+      result = await pool.query('SELECT * FROM quick_services ORDER BY id ASC');
+    }
+    if (result.rows.length > 0) {
+      return result.rows;
+    }
+    const { fallbackQuickServices } = await import('@/lib/public-fallbacks');
+    return fallbackQuickServices;
+  } catch {
+    const { fallbackQuickServices } = await import('@/lib/public-fallbacks');
+    return fallbackQuickServices;
+  }
+}
+
 // ---------- PAGE ----------
-const Page = () => {
+const Page = async () => {
+  // Pre-fetch banners on the server so the Hero renders all slides instantly.
+  const heroBanners = await getHeroBanners();
+  const quickServices = await getQuickServices();
+
   return (
     <div className="transition-colors duration-500">
       {/* JSON-LD structured data */}
@@ -128,9 +179,9 @@ const Page = () => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeServicesSchema) }}
       />
 
-      <Hero />
+      <Hero initialBanners={heroBanners} />
       {/* <AboutSection /> */}
-      <QuickServices />
+      <QuickServices initialServices={quickServices} />
       <Services />
       <DeferredHomeSections />
       {/* <TestimonialsSection /> */}
@@ -139,3 +190,4 @@ const Page = () => {
 };
 
 export default Page;
+

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { requireRole, unauthorized } from '@/lib/auth';
 
 // POST - Submit rating and review
 export async function POST(req) {
@@ -165,6 +166,9 @@ export async function GET(req) {
 
 // PATCH - Vendor respond to review
 export async function PATCH(req) {
+  const vendor = requireRole(req, 'vendor');
+  if (!vendor) return unauthorized();
+
   try {
     const {
       rating_id,
@@ -181,9 +185,9 @@ export async function PATCH(req) {
     const result = await pool.query(
       `UPDATE vendor_ratings 
        SET response_from_vendor = $1, updated_at = NOW()
-       WHERE id = $2
+       WHERE id = $2 AND vendor_id = $3
        RETURNING *`,
-      [vendor_response, rating_id]
+      [vendor_response, rating_id, vendor.id]
     );
 
     if (result.rows.length === 0) {

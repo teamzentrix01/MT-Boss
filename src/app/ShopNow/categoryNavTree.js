@@ -1,5 +1,3 @@
-/** Static HomeRun-style parent → child nav for the shop category bar. */
-
 export const CATEGORY_NAV_TREE = [
   {
     id: 'building-materials',
@@ -194,7 +192,7 @@ export function resolveCategoryNav(tree = CATEGORY_NAV_TREE, categories = [], pr
 
         // Parent category exists and lists this label in its subcategories JSON
         const listedInParent = Array.isArray(parentCategory?.subcategories)
-          && parentCategory.subcategories.some((entry) => namesMatch(entry, label));
+          && parentCategory.subcategories.some((entry) => namesMatch(typeof entry === 'object' && entry !== null ? entry.name : entry, label));
         if (parentCategory && listedInParent) {
           return {
             label,

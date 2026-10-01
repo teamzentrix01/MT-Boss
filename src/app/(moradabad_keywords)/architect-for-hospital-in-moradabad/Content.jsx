@@ -1,6 +1,7 @@
 import React from "react";
 import LandingEnquiry from "../../components/LandingEnquiry";
 
+
 const Content = () => {
   return (
     <div className="min-h-screen bg-white pt-0">
@@ -8,313 +9,588 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Hospital Construction in Moradabad — Complete Guide
+            Architect for Hospital in Moradabad: MT Boss
           </h2>
+
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Building a hospital or healthcare facility in Moradabad is one of the most technically demanding types of construction, requiring careful attention to infection control, medical equipment infrastructure, patient flow, and strict regulatory compliance. Unlike most commercial buildings, a hospital&apos;s design directly affects patient safety and treatment outcomes, which is why healthcare projects typically require close collaboration between specialized healthcare planners, structural engineers, and construction teams. This guide explains what hospital design and construction involves, key compliance requirements, cost factors, and how MTBOSS Construction Private Limited supports the civil construction and execution side of such projects in Moradabad.
+                A hospital is one of the most demanding buildings anyone can plan. It must protect patients, support doctors and nurses, control infection, handle emergencies and stay in service around the clock. Every corridor, door and staircase affects care, and a poor layout can slow down treatment when minutes matter.
+              </p>
+              <p className="mt-3">
+                That is why choosing the right architect for a hospital in Moradabad is a serious decision for any doctor, trust or investor.
+              </p>
+              <p className="mt-3">
+                MT Boss is a Moradabad-based construction, property and home services company. Our team plans, designs and builds commercial and institutional buildings, and we coordinate closely with the medical, structural and services consultants a healthcare project needs. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to the day the doors open.
+              </p>
+              <p className="mt-3">
+                This page covers our healthcare design services, the planning process, cost factors and practical advice for anyone building a hospital, nursing home, clinic or diagnostic centre in Moradabad.
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Hospital Design Requires Specialized Planning
-              </h3>
-              <p className="mb-3">
-                Healthcare facilities have functional requirements that go well beyond standard commercial design:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Patient flow planning to separate outpatient, inpatient, and emergency movement</li>
-                <li>Infection control measures, including isolation wards and controlled airflow zones</li>
-                <li>Medical gas pipeline systems (oxygen, vacuum, nitrous oxide) integrated into the structure</li>
-                <li>Operation theatre design with specific HVAC, flooring, and sterility requirements</li>
-                <li>Radiology and diagnostic areas requiring radiation shielding where applicable</li>
-                <li>Barrier-free accessibility for patients with mobility limitations</li>
-                <li>Emergency and ambulance access planning</li>
-                <li>Backup power and water supply systems for uninterrupted critical care</li>
-              </ul>
-            </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Important Note on Hospital Design Expertise
+                Why Hospital Architecture Needs Specialist Planning
               </h3>
               <p className="mb-3">
-                Hospital and healthcare facility design typically involves specialized healthcare planning consultants — architects and engineers with specific experience in medical facility standards (such as NABH or state health department norms) — working alongside the structural and civil construction team. For critical elements like operation theatre specifications, medical gas systems, and infection-control airflow design, it&apos;s important to engage consultants with direct healthcare facility design experience, in addition to your civil construction partner.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Key Regulatory and Compliance Considerations for Hospital Buildings
-              </h3>
-              <p className="mb-3">
-                Hospital construction involves compliance requirements beyond standard commercial buildings:
+                A hospital is not a large office or a hotel. It has strict requirements that shape the design from the first drawing:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>State health department clearances for hospital or nursing home establishment</li>
-                <li>Fire safety clearance specific to healthcare occupancy (including bed-ridden patient evacuation planning)</li>
-                <li>Structural safety certification, especially for multi-storey hospital buildings</li>
-                <li>Biomedical waste management infrastructure and disposal planning</li>
-                <li>Accessibility compliance for patients with disabilities</li>
-                <li>Municipal building plan approval for healthcare-use structures</li>
-                <li>Water, sewage, and biomedical waste treatment infrastructure adequacy</li>
-                <li>NABH (National Accreditation Board for Hospitals) standards, where accreditation is planned</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What a Hospital Construction Team Should Handle
-              </h3>
-              <p className="mb-3">
-                A capable civil construction partner for hospital projects typically manages:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Site assessment and feasibility study for healthcare use</li>
-                <li>Structural design coordination for multi-storey hospital buildings</li>
-                <li>Civil execution of patient wards, OPD areas, and administrative blocks</li>
-                <li>Coordination with specialized healthcare consultants for OT and diagnostic areas</li>
-                <li>MEP infrastructure including backup power and water supply systems</li>
-                <li>Fire safety and accessibility compliance planning</li>
-                <li>Biomedical waste management infrastructure setup</li>
-                <li>Working drawings for municipal and regulatory approval submissions</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Components of a Typical Hospital Construction Project
-              </h3>
-              <p className="mb-3">
-                A hospital construction project typically includes the following components:
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">1. Patient Care Areas</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Outpatient department (OPD) consultation rooms</li>
-                <li>Inpatient wards and private rooms</li>
-                <li>Emergency and casualty department</li>
-                <li>Intensive care units (ICU) with specialized infrastructure</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">2. Clinical Support Areas</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Operation theatres with controlled environment specifications</li>
-                <li>Diagnostic areas (radiology, pathology labs)</li>
-                <li>Pharmacy and medical store spaces</li>
-                <li>Central sterile supply department (CSSD)</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">3. Administrative &amp; Support Infrastructure</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Reception, billing, and administrative offices</li>
-                <li>Staff rooms and duty areas</li>
-                <li>Kitchen and dietary services (for larger hospitals)</li>
-                <li>Biomedical waste storage and disposal areas</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">4. Safety &amp; Compliance Features</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Fire exits designed for bed-ridden patient evacuation</li>
-                <li>Backup power systems for uninterrupted critical care</li>
-                <li>Accessible ramps and elevators for patient movement</li>
-                <li>Infection control zones and isolation wards</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">5. Supporting Construction Services</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Electrical and plumbing infrastructure across the facility</li>
-                <li>Material supply for construction (cement, steel, tiles, finishes)</li>
-                <li>Interior finishing work meeting hygiene and durability standards</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBOSS Supports the Civil Construction Side of Hospital Projects in Moradabad
-              </h3>
-              <p className="mb-3">
-                MTBOSS Construction Private Limited is a construction and civil engineering company that handles commercial and institutional construction, including the civil execution component of healthcare facility projects. Based on their published company profile:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
-                <li>450+ completed projects across residential, commercial, and industrial categories</li>
-                <li>12 million+ square feet built, reflecting experience with large, multi-floor structures</li>
-                <li>150+ trained professionals, including engineers, supervisors, and technicians</li>
-                <li>Technology-integrated process, using AI and BIM (Building Information Modeling) since 2018 for complex, multi-floor planning</li>
-                <li>Free Construction Budget Calculator for instant, project-based cost estimates</li>
-                <li>Four quality packages — Basic, Standard, Premium, and Luxury — adaptable to different facility scales</li>
-                <li>Direct wholesale material supply for cement, steel, bricks, tiles, and finishing materials</li>
-                <li>Coordinated design-to-construction execution for the structural and civil components of the build</li>
-                <li>Industry recognition — &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024</li>
-                <li>Instant WhatsApp support for quick queries and quotes</li>
+                <li>
+                  <strong>Patient safety.</strong> Layouts must prevent falls, confusion and delays in reaching care.
+                </li>
+                <li>
+                  <strong>Infection control.</strong> Clean and dirty flows, ventilation, surfaces and waste handling must be planned carefully.
+                </li>
+                <li>
+                  <strong>Speed in emergencies.</strong> Casualty, operation theatre, ICU and diagnostics must connect logically and quickly.
+                </li>
+                <li>
+                  <strong>Staff efficiency.</strong> Well-placed nursing stations, stores and service routes reduce walking time and fatigue.
+                </li>
+                <li>
+                  <strong>Patient dignity and comfort.</strong> Privacy, light, quiet and clear signage reduce stress for patients and families.
+                </li>
+                <li>
+                  <strong>Technical services.</strong> Electrical load, backup power, medical gas, HVAC, water and drainage are much more complex than in ordinary buildings.
+                </li>
+                <li>
+                  <strong>Future growth.</strong> Medicine changes quickly, and a good plan leaves room for new departments, machines and beds.
+                </li>
+                <li>
+                  <strong>Regulatory readiness.</strong> The drawings must support the registrations and clearances a hospital needs.
+                </li>
               </ul>
               <p className="mt-3">
-                For the structural, civil, and general MEP execution of a hospital project, a company with large-scale, multi-floor construction experience can be a strong execution partner — while specialized healthcare planning consultants should be engaged separately for OT design, medical gas systems, and infection-control specifications.
+                Getting these points right on paper is far cheaper than correcting them after construction.
               </p>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How to Choose the Right Partners for Hospital Construction
+                MT Boss Approach to Hospital Design and Construction
               </h3>
               <p className="mb-3">
-                Since hospital projects typically require both a civil construction partner and specialized healthcare consultants, check the following for each:
+                Many owners hire an architect first and a builder later, and then find that the design costs more than expected or is hard to build. MT Boss avoids this by keeping both roles together.
               </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">For the Civil Construction Partner:</h4>
+              <p className="mb-3">
+                What you get when you work with us:
+              </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Ask for examples of previously completed multi-storey commercial or institutional projects</li>
-                <li>Confirm their capacity to coordinate with external healthcare design consultants</li>
-                <li>Check if MEP planning accounts for backup power and water supply needs</li>
-                <li>Request a detailed, written cost estimate broken down by building block</li>
-                <li>Verify structural safety certification processes</li>
-                <li>Read genuine client reviews and request references</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">For Healthcare Design Consultants:</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Confirm specific experience with hospital or clinic design projects</li>
-                <li>Ask about familiarity with NABH or relevant state health department norms</li>
-                <li>Verify experience designing OT, ICU, and diagnostic area specifications</li>
+                <li>
+                  <strong>Buildable designs.</strong> We plan what can actually be constructed within your budget and timeline.
+                </li>
+                <li>
+                  <strong>Cost awareness from day one.</strong> Our estimates reflect real construction rates in Moradabad.
+                </li>
+                <li>
+                  <strong>One point of contact.</strong> Architecture, civil work, electrical, plumbing, finishing and supervision are coordinated by one team.
+                </li>
+                <li>
+                  <strong>Specialist coordination.</strong> We work with structural engineers, MEP consultants and medical planning specialists where the project needs them.
+                </li>
+                <li>
+                  <strong>Local understanding.</strong> We know Moradabad&apos;s climate, plot patterns, material markets and patient catchment.
+                </li>
+                <li>
+                  <strong>Material access.</strong> Through the MT Boss{" "}
+                  <a
+                    href="https://www.mtboss.in/ShopNow"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    materials store
+                  </a>
+                  , we source cement, TMT steel bars, bricks, tiles and paints at competitive rates.
+                </li>
+                <li>
+                  <strong>Support after handover.</strong> Our{" "}
+                  <a
+                    href="https://www.mtboss.in/quick"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    home services team
+                  </a>{" "}
+                  can help with electrical, plumbing, painting and AC maintenance.
+                </li>
               </ul>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Cost Factors for Hospital Construction in Moradabad
+                Hospital and Healthcare Design Services in Moradabad
+              </h3>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Multi-Speciality Hospital Design
+              </h4>
+              <p className="mb-3">
+                We plan hospitals of different sizes, from compact facilities to larger multi-storey buildings, based on your bed count, departments, plot and budget.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Nursing Home and Maternity Centre Design
+              </h4>
+              <p className="mb-3">
+                Smaller facilities need efficient layouts, close staff supervision and comfortable patient rooms. We plan nursing homes and maternity centres that work well within limited space and budget.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Clinic and Polyclinic Design
+              </h4>
+              <p className="mb-3">
+                We design doctor clinics, dental clinics, polyclinics and consultation centres with welcoming waiting areas, smooth patient flow and practical storage.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Diagnostic Centre and Pathology Lab Design
+              </h4>
+              <p className="mb-3">
+                Diagnostic centres need specific room sizes, services and safe layouts for imaging and sample handling. We plan them with the support of relevant specialists.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Outpatient Department (OPD) Planning
+              </h4>
+              <p className="mb-3">
+                OPD planning covers registration, waiting, consultation rooms, billing, pharmacy and diagnostics, arranged so patients move easily without crowding.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Inpatient Wards and Private Rooms
+              </h4>
+              <p className="mb-3">
+                We design general wards, semi-private and private rooms with proper nursing access, light, ventilation, bathrooms and visitor comfort.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Emergency, ICU and Operation Theatre Planning
+              </h4>
+              <p className="mb-3">
+                These critical areas need clean and controlled layouts, quick access and reliable services. We plan their location and connections carefully and coordinate technical requirements with specialists.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Pharmacy, Stores and Support Services
+              </h4>
+              <p className="mb-3">
+                Pharmacy, laundry, kitchen, central stores, biomedical waste area and staff facilities are planned so services run smoothly without disturbing patients.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Parking, Ambulance Access and Landscaping
+              </h4>
+              <p className="mb-3">
+                Hospitals need clear ambulance routes, patient drop-off, staff and visitor parking, and calming green spaces where possible.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Facade, Signage and Wayfinding
+              </h4>
+              <p className="mb-3">
+                A clear, welcoming facade and simple signage help patients find the right entrance and department quickly, especially in stressful moments.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Renovation, Extension and Additional Floors
+              </h4>
+              <p className="mb-3">
+                If your existing hospital needs more beds, a new block or better flow, we assess the structure and plan upgrades in phases, aiming to keep services running.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Safety, Hygiene and Compliance Planning
               </h3>
               <p className="mb-3">
-                Hospital construction costs depend on several project-specific factors:
+                Safety must be designed in, not added later. MT Boss considers the following in every healthcare project:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Total built-up area and number of beds planned</li>
-                <li>Facility type — clinic, nursing home, or multi-specialty hospital</li>
-                <li>Quality package selected — Basic, Standard, Premium, or Luxury</li>
-                <li>Inclusion of specialized areas like OT, ICU, or diagnostic labs</li>
-                <li>MEP complexity, including backup power and medical gas systems</li>
-                <li>Structural complexity for multi-storey buildings</li>
-                <li>Fire safety, biomedical waste, and accessibility compliance requirements</li>
-                <li>Current market rates for cement, steel, and skilled labour</li>
+                <li>
+                  <strong>Structural safety:</strong> sound foundation, load planning and quality materials, coordinated with structural engineers.
+                </li>
+                <li>
+                  <strong>Fire safety:</strong> suitable staircases, corridor widths, escape routes and fire-safety provisions, keeping in mind that patients may be immobile.
+                </li>
+                <li>
+                  <strong>Infection control:</strong> smooth, easy-to-clean surfaces, proper ventilation, hand-wash points and separate routes for clean and waste materials.
+                </li>
+                <li>
+                  <strong>Electrical reliability:</strong> proper load planning, earthing, backup power and safe wiring in critical areas.
+                </li>
+                <li>
+                  <strong>Water and drainage:</strong> reliable supply, hot water and safe drainage and waste disposal.
+                </li>
+                <li>
+                  <strong>Accessibility:</strong> ramps, wide doors, lifts and stretcher-friendly corridors.
+                </li>
+                <li>
+                  <strong>Security and visibility:</strong> controlled entry, reception visibility and well-lit corridors and parking.
+                </li>
+                <li>
+                  <strong>Radiation safety:</strong> where imaging equipment is planned, appropriate shielding and layout coordinated with specialists.
+                </li>
               </ul>
               <p className="mt-3">
-                Because hospital projects vary enormously in scale and specialization — from a small clinic to a multi-specialty hospital — a detailed, itemized cost estimate involving both your construction partner and healthcare consultants is the most reliable way to understand exact project costs.
+                Hospitals usually need several registrations and clearances before they can operate. MT Boss prepares drawings and guides you on typical requirements, but final approvals depend on the relevant authorities and vary by hospital type and size, so please confirm current rules with them.
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Step-by-Step Process for Hospital Construction Projects
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Consultation &amp; Needs Assessment</strong> — Determining bed capacity, specialties, and services offered</li>
-                <li><strong>Site Visit &amp; Feasibility Study</strong> — Assessing plot size and suitability for healthcare use</li>
-                <li><strong>Master Planning</strong> — Designing overall layout with healthcare consultant input</li>
-                <li><strong>Detailed Design</strong> — Finalizing ward, OT, and administrative area layouts</li>
-                <li><strong>Approvals</strong> — Securing municipal, fire safety, and health department clearances</li>
-                <li><strong>Foundation &amp; Structural Work</strong> — Building the structural framework across all floors</li>
-                <li><strong>MEP Installation</strong> — Electrical, plumbing, backup power, and medical gas infrastructure</li>
-                <li><strong>Finishing Work</strong> — Flooring, painting, and fixtures meeting hygiene standards</li>
-                <li><strong>Compliance Verification</strong> — Fire safety, biomedical waste, and accessibility inspections</li>
-                <li><strong>Final Handover</strong> — Documentation and facility readiness for operation</li>
-              </ul>
-            </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Benefits of Hiring a Locally Established Contractor for Hospital Projects
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Better understanding of Moradabad&apos;s soil type and structural requirements for larger buildings</li>
-                <li>Familiarity with Moradabad Municipal Corporation&apos;s approval process for healthcare structures</li>
-                <li>Established local supplier relationships, useful for large-volume material needs</li>
-                <li>Easier coordination between civil construction and external healthcare consultants</li>
-                <li>Faster on-site supervision across multiple floors and departments</li>
-                <li>Quicker response for post-construction maintenance once the facility is operational</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Mistakes to Avoid in Hospital Construction Projects
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Relying solely on a general contractor without engaging specialized healthcare design consultants</li>
-                <li>Skipping fire safety planning specific to bed-ridden patient evacuation</li>
-                <li>Not confirming state health department and NABH-related compliance requirements early</li>
-                <li>Underestimating backup power and water supply needs for critical care areas</li>
-                <li>Failing to plan biomedical waste management infrastructure adequately</li>
-                <li>Not getting a detailed, department-wise cost breakdown before starting</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact for Hospital Construction Support in Moradabad
+                What to Include in a Hospital Building Plan
               </h3>
               <p className="mb-3">
-                If you&apos;re planning a new clinic, nursing home, or hospital facility, reach out directly to discuss the civil construction and execution side of your project:
+                A complete plan covers far more than beds. Before construction begins, make sure your architect addresses each of these:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
-                <li><strong>Phone / Call:</strong> +91 94584 10866</li>
-                <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
-                <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
+                <li>
+                  <strong>Type and size of hospital:</strong> speciality, number of beds and expected growth over the next several years.
+                </li>
+                <li>
+                  <strong>Departments:</strong> OPD, emergency, wards, ICU, operation theatres, diagnostics, pharmacy and administration.
+                </li>
+                <li>
+                  <strong>Patient, staff and service flow:</strong> separate, logical routes so that clean, dirty, emergency and visitor movements do not clash.
+                </li>
+                <li>
+                  <strong>Lifts, ramps and staircases:</strong> stretcher-friendly lifts and enough exits for the number of floors.
+                </li>
+                <li>
+                  <strong>Technical services:</strong> electrical load, backup generator, medical gas, HVAC, water, drainage and waste handling.
+                </li>
+                <li>
+                  <strong>Ambulance and parking:</strong> a clear emergency entry, patient drop-off and space for staff and visitor vehicles.
+                </li>
+                <li>
+                  <strong>Comfort and dignity:</strong> natural light, privacy, waiting areas, prayer or quiet spaces and clear signage.
+                </li>
+                <li>
+                  <strong>Infection control features:</strong> finishes, ventilation and hand-hygiene points.
+                </li>
+                <li>
+                  <strong>Expansion plan:</strong> structure and services that allow more floors, beds or equipment later.
+                </li>
+                <li>
+                  <strong>Phasing:</strong> a construction plan that lets you open key departments first if needed.
+                </li>
+                <li>
+                  <strong>Budget for equipment:</strong> medical equipment often costs as much as the building, so plan it early.
+                </li>
               </ul>
               <p className="mt-3">
-                Try the free online Construction Budget Calculator for an initial estimate, then follow up by phone or WhatsApp to discuss your facility&apos;s specific construction requirements.
+                Sorting these points early prevents costly changes after construction starts.
               </p>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Frequently Asked Questions (FAQs)
+                Hospital Design Process at MT Boss, Step by Step
+              </h3>
+              <p className="mb-3">
+                We keep the process clear so you always know what comes next.
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Step 1: Requirement discussion and site visit.</strong> We learn about your vision, specialities, bed count, budget and timeline, and visit the plot.
+                </li>
+                <li>
+                  <strong>Step 2: Feasibility and concept.</strong> We study the plot, departments, parking and access, then prepare concept layouts for your review.
+                </li>
+                <li>
+                  <strong>Step 3: Detailed architectural drawings.</strong> We develop floor plans, elevations, sections and working drawings, coordinated with structural, electrical, plumbing, HVAC and medical planning inputs.
+                </li>
+                <li>
+                  <strong>Step 4: 3D visualisation.</strong> You see the hospital in 3D, including the facade, entrance and key areas, so you can approve the look before work begins.
+                </li>
+                <li>
+                  <strong>Step 5: Approvals guidance.</strong> We help you understand the documents and drawings typically needed for local approvals and registrations.
+                </li>
+                <li>
+                  <strong>Step 6: Budget and quotation.</strong> You receive an itemised written estimate. For a quick early figure, try the MT Boss{" "}
+                  <a
+                    href="https://www.mtboss.in/calculator"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Construction Budget Calculator
+                  </a>
+                  .
+                </li>
+                <li>
+                  <strong>Step 7: Construction and supervision.</strong> Our team builds exactly to the approved design with regular quality checks and progress updates.
+                </li>
+                <li>
+                  <strong>Step 8: Finishing and handover.</strong> We complete finishing, services checks, inspection and cleaning, so the building is ready for equipment installation and commissioning.
+                </li>
+              </ul>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Hospital Construction Cost Factors in Moradabad
+              </h3>
+              <p className="mb-3">
+                Costs vary widely because every hospital is different. The main factors include:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Built-up area and number of floors:</strong> more beds and levels mean more structure and material.
+                </li>
+                <li>
+                  <strong>Hospital category:</strong> a basic nursing home costs far less than a multi-speciality hospital with ICU and operation theatres.
+                </li>
+                <li>
+                  <strong>Technical services:</strong> HVAC, medical gas, backup power, fire systems and lifts add significant cost.
+                </li>
+                <li>
+                  <strong>Material and finish quality:</strong> flooring, wall finishes, doors, windows and fittings range from basic to premium.
+                </li>
+                <li>
+                  <strong>Special areas:</strong> operation theatres, ICUs and imaging rooms need specialised construction.
+                </li>
+                <li>
+                  <strong>Site conditions:</strong> soil, access and land levels affect foundation and labour costs.
+                </li>
+                <li>
+                  <strong>Equipment:</strong> medical equipment is a large, separate budget that should be planned from the start.
+                </li>
+              </ul>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Smart Spending Advice
+              </h4>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Spend more on:</strong> structure, waterproofing, electrical and plumbing quality, fire safety, infection-control finishes and critical service areas. These affect safety and are hard to fix later.
+                </li>
+                <li>
+                  <strong>Save on:</strong> decorative extras and items that can be upgraded as the hospital grows.
+                </li>
+              </ul>
+              <p className="mt-3">
+                MT Boss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
+                <a
+                  href="https://www.mtboss.in/CTASection/get-quote"
+                  className="text-blue-600 underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  free quote
+                </a>
+                .
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Climate-Smart and Energy-Efficient Hospital Design
+              </h3>
+              <p className="mb-3">
+                Hospitals run day and night, so energy and comfort matter. For projects in Moradabad, MT Boss focuses on:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Heat management:</strong> shading, insulation and efficient cooling to keep patient areas comfortable in summer.
+                </li>
+                <li>
+                  <strong>Monsoon protection:</strong> proper slopes, waterproofing and drainage to prevent dampness, which is a real risk in clinical spaces.
+                </li>
+                <li>
+                  <strong>Winter comfort:</strong> well-sealed rooms and comfortable waiting areas.
+                </li>
+                <li>
+                  <strong>Natural light and views:</strong> daylight in wards and waiting areas supports recovery and reduces electricity use.
+                </li>
+                <li>
+                  <strong>Reliable backup power:</strong> planned generator capacity and safe fuel storage.
+                </li>
+                <li>
+                  <strong>Energy saving:</strong> efficient lighting and provision for solar panels to lower running costs.
+                </li>
+              </ul>
+              <p className="mt-3">
+                A well-planned hospital stays comfortable and keeps monthly bills under control.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Design Ideas That Improve Patient and Staff Experience
+              </h3>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>A calm, welcoming entrance.</strong> Clear signage, seating and a bright lobby reduce anxiety for patients and families.
+                </li>
+                <li>
+                  <strong>Simple wayfinding.</strong> Colour coding and clear signs help visitors find departments without asking repeatedly.
+                </li>
+                <li>
+                  <strong>Natural light in wards and waiting areas.</strong> Daylight improves mood and comfort.
+                </li>
+                <li>
+                  <strong>Privacy where it matters.</strong> Curtains, partitions and thoughtful room layouts protect patient dignity.
+                </li>
+                <li>
+                  <strong>Quiet corridors.</strong> Sound control keeps wards restful.
+                </li>
+                <li>
+                  <strong>Efficient nursing stations.</strong> Placing stations for clear views of patient rooms improves care and response times.
+                </li>
+                <li>
+                  <strong>Comfortable family areas.</strong> Seating and refreshment spaces for relatives make long waits easier.
+                </li>
+                <li>
+                  <strong>Durable, easy-to-clean finishes.</strong> Hospitals see heavy use, so materials should be tough and simple to sanitise.
+                </li>
+              </ul>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Common Mistakes When Planning a Hospital
+              </h3>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Starting construction without a proper feasibility study and plan.</li>
+                <li>Building too many beds for the market, or too few for growth.</li>
+                <li>Mixing patient, visitor and waste routes.</li>
+                <li>Ignoring ambulance access and parking.</li>
+                <li>Underplanning electrical load and backup power.</li>
+                <li>Forgetting future expansion.</li>
+                <li>Choosing low-quality waterproofing, plumbing or finishes to save money.</li>
+                <li>Skipping fire-safety and emergency planning.</li>
+                <li>Leaving equipment planning until the end.</li>
+                <li>Hiring an architect and builder who do not coordinate.</li>
+                <li>Beginning work without a written quotation and schedule.</li>
+              </ul>
+              <p className="mt-3">
+                Careful planning with a coordinated team helps you avoid each of these.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                How to Choose an Architect for Your Hospital
+              </h3>
+              <p className="mb-3">
+                Whoever you hire, use this checklist:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>They can show completed healthcare or institutional projects, not only homes.</li>
+                <li>The quotation is itemised and in writing.</li>
+                <li>A named person supervises the site regularly.</li>
+                <li>The timeline is clear, along with the plan for delays and phasing.</li>
+                <li>Their address and contact details match their official website and Google listing.</li>
+                <li>They offer after-service support once the building is complete.</li>
+              </ul>
+              <p className="mt-3">
+                MT Boss welcomes every one of these checks and answers them openly during your free consultation.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Areas Served by MT Boss in Moradabad
+              </h3>
+              <p className="mb-3">
+                We work with doctors, trusts and healthcare investors across Moradabad and nearby areas, including Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with highway-side and commercial locations.
+              </p>
+              <p>
+                Our office on Harthala Kanth Road keeps site visits quick and convenient.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                MT Boss Hospital Architect FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Who handles hospital construction in Moradabad?</strong>
+                  <strong>Q1. Does MT Boss design hospitals in Moradabad?</strong>
                   <br />
-                  MTBOSS Construction Private Limited manages the civil construction and execution side of healthcare facility projects.
+                  Yes. We plan hospitals, nursing homes, clinics and diagnostic centres.
                 </li>
                 <li>
-                  <strong>Q2. Is MTBOSS a specialized hospital design firm?</strong>
+                  <strong>Q2. Can MT Boss also construct the hospital?</strong>
                   <br />
-                  No, they are a construction company; specialized healthcare planning consultants should be engaged separately for OT and medical gas system design.
+                  Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
                 <li>
-                  <strong>Q3. What are the key compliance requirements for hospital construction?</strong>
+                  <strong>Q3. Is the first consultation free?</strong>
                   <br />
-                  Fire safety clearance, structural safety certification, biomedical waste management, and state health department approvals.
+                  Yes. MT Boss offers a free consultation and site visit.
                 </li>
                 <li>
-                  <strong>Q4. Does MTBOSS provide a free cost estimate for hospital projects?</strong>
+                  <strong>Q4. Do you design small clinics and nursing homes?</strong>
                   <br />
-                  Yes, their online Budget Calculator gives an initial, free cost estimate.
+                  Yes. We plan clinics, polyclinics, maternity centres and nursing homes.
                 </li>
                 <li>
-                  <strong>Q5. Can MTBOSS coordinate with external healthcare design consultants?</strong>
+                  <strong>Q5. Can I see the design before construction starts?</strong>
                   <br />
-                  Yes, they can coordinate civil and structural execution alongside specialized healthcare planning input.
+                  Yes. You receive 3D views so you can approve the look in advance.
                 </li>
                 <li>
-                  <strong>Q6. Does MTBOSS use modern technology for large healthcare projects?</strong>
+                  <strong>Q6. Do you help with approval documents?</strong>
                   <br />
-                  Yes, they have used AI and BIM (Building Information Modeling) since 2018 for complex, multi-floor planning.
+                  We prepare drawings and guide you on typical requirements. Final approvals depend on the relevant authorities.
                 </li>
                 <li>
-                  <strong>Q7. Can I buy construction materials directly from MTBOSS for a hospital project?</strong>
+                  <strong>Q7. Do you coordinate with medical and technical specialists?</strong>
                   <br />
-                  Yes, they supply cement, TMT steel, bricks, tiles, and finishing materials at wholesale rates.
+                  Yes. We work with structural, MEP and medical planning specialists as the project needs.
+                </li>
+                <li>
+                  <strong>Q8. Can the hospital be built in phases?</strong>
+                  <br />
+                  Yes. We plan phased construction so you can open key departments early and expand later.
+                </li>
+                <li>
+                  <strong>Q9. Can you renovate or extend my existing hospital?</strong>
+                  <br />
+                  Yes. We assess the structure and plan upgrades with minimal disruption.
+                </li>
+                <li>
+                  <strong>Q10. How do I contact MT Boss?</strong>
+                  <br />
+                  Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>
               </ul>
             </section>
           </div>
         </div>
+
 
         {/* Form Section */}
         <div className="w-full lg:w-[450px] p-8 order-2 lg:order-2">
@@ -326,5 +602,6 @@ const Content = () => {
     </div>
   );
 };
+
 
 export default Content;

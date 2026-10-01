@@ -4,28 +4,29 @@ import { ArrowUpRight } from 'lucide-react';
 import { bannerImageUrl, isInternalBannerLink } from '@/lib/hero-banner-fields.mjs';
 import styles from './Hero.module.css';
 
-export default function HeroBannerSlide({ banner, active = true, preview = false, headingId }) {
+export default function HeroBannerSlide({ banner = {}, active = true, preview = false, headingId }) {
   const Heading = preview ? 'h3' : 'h1';
-  const imageUrl = bannerImageUrl(banner.image_url, 1920);
+  const imageUrl = bannerImageUrl(banner?.image_url, 1920);
 
   return (
     <div className={`${styles.slide} ${!active ? styles.hidden : ''}`} aria-hidden={!active} inert={!active ? true : undefined}>
-      {imageUrl && (
+      {imageUrl ? (
         <Image
           className={styles.photo}
           src={imageUrl}
-          alt={banner.image_alt || banner.service_name || 'MTBOSS Service Banner'}
+          alt={banner?.image_alt || banner?.service_name || 'MTBOSS Service Banner'}
           fill
           sizes="100vw"
           quality={75}
-          style={{ objectPosition: banner.image_position || 'center' }}
+          style={{ objectPosition: banner?.image_position || 'center' }}
           fetchPriority={active ? 'high' : 'low'}
           loading={active ? 'eager' : 'lazy'}
           decoding="async"
+          unoptimized={preview}
         />
-      )}
+      ) : null}
       <div className={styles.shade} />
-
+                                      
       <div className={styles.content}>
         <div className={styles.copy} key={`${banner.id}-${active}`}>
           {banner.label && <p className={styles.eyebrow}>{banner.label}</p>}

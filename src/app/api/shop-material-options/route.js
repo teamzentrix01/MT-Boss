@@ -19,6 +19,7 @@ const ensureTable = createInitializationGuard(async() => {
       quantity INTEGER DEFAULT 0,
       image_url TEXT,
       category VARCHAR(255),
+      subcategory VARCHAR(255),
       brand VARCHAR(120),
       compare_at_price NUMERIC(10,2),
       is_featured_deal BOOLEAN DEFAULT FALSE,
@@ -34,6 +35,7 @@ const ensureTable = createInitializationGuard(async() => {
     await pool.query(`ALTER TABLE supplier_materials
     ADD COLUMN IF NOT EXISTS vendor_id INTEGER,
     ADD COLUMN IF NOT EXISTS brand VARCHAR(120),
+    ADD COLUMN IF NOT EXISTS subcategory VARCHAR(255),
     ADD COLUMN IF NOT EXISTS quote_price_range VARCHAR(100),
     ADD COLUMN IF NOT EXISTS compare_at_price NUMERIC(10,2),
     ADD COLUMN IF NOT EXISTS is_featured_deal BOOLEAN DEFAULT FALSE,
@@ -62,7 +64,7 @@ export async function GET(req) {
         }
 
         const result = await pool.query(
-            `SELECT m.id, m.supplier_id, m.vendor_id, m.name, m.description, m.quote_price_range, m.price, m.unit, m.quantity, m.image_url, m.category,
+            `SELECT m.id, m.supplier_id, m.vendor_id, m.name, m.description, m.quote_price_range, m.price, m.unit, m.quantity, m.image_url, m.category, m.subcategory,
               m.brand, m.compare_at_price, m.is_featured_deal, m.images, m.specifications, m.bulk_pricing,
               CASE
                 WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
@@ -95,6 +97,7 @@ export async function GET(req) {
             quantity: row.quantity,
             image_url: row.image_url || '',
             category: row.category || '',
+            subcategory: row.subcategory || '',
             brand: row.brand || '',
             compare_at_price: row.compare_at_price,
             is_featured_deal: row.is_featured_deal === true,

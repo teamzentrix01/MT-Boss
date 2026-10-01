@@ -20,7 +20,8 @@ export const ensureProjectOpsSchema = createInitializationGuard(async () => {
       ADD COLUMN IF NOT EXISTS assigned_by_id INTEGER,
       ADD COLUMN IF NOT EXISTS assigned_at TIMESTAMPTZ,
       ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ,
-      ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ
+      ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ,
+      ADD COLUMN IF NOT EXISTS additional_images JSONB DEFAULT '[]'::jsonb
   `);
 
   await pool.query(`

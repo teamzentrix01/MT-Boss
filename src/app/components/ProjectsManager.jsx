@@ -32,6 +32,7 @@ export default function ProjectsManager() {
   const emptyForm = {
     title: '', category: '', location: '', description: '',
     image_url: '', cloudinary_public_id: '', size: 'small', status: 'published',
+    additional_images: [],
   };
   const [form, setForm] = useState(emptyForm);
 
@@ -66,6 +67,7 @@ export default function ProjectsManager() {
       cloudinary_public_id: project.cloudinary_public_id || '',
       size:                 project.size || 'small',
       status:               project.status || 'published',
+      additional_images:    project.additional_images || [],
     });
     setPreview(project.image_url);
     setEditProject(project);
@@ -97,6 +99,46 @@ export default function ProjectsManager() {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleAdditionalImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const newImages = [];
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+        formData.append('folder', 'mtboss/projects');
+
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+          { method: 'POST', body: formData }
+        );
+        const data = await res.json();
+        if (data.secure_url) {
+          newImages.push({
+            image_url: data.secure_url,
+            cloudinary_public_id: data.public_id,
+          });
+        }
+      }
+      setForm(f => ({ ...f, additional_images: [...(f.additional_images || []), ...newImages] }));
+    } catch (err) {
+      console.error('Additional upload failed:', err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeAdditionalImage = (index) => {
+    setForm(f => {
+      const updated = [...(f.additional_images || [])];
+      updated.splice(index, 1);
+      return { ...f, additional_images: updated };
+    });
   };
 
   const handleSave = async () => {
@@ -438,6 +480,42 @@ export default function ProjectsManager() {
           gap: 0.35rem;
         }
 
+        .pm-additional-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+          gap: 0.5rem;
+          margin-top: 0.75rem;
+        }
+        .pm-additional-img-wrap {
+          position: relative;
+          width: 100%;
+          height: 100px;
+          border-radius: 6px;
+          overflow: hidden;
+          border: 1px solid var(--border);
+        }
+        .pm-additional-img-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .pm-additional-rm-btn {
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          background: rgba(0,0,0,0.6);
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 10px;
+          cursor: pointer;
+        }
+
         .pm-size-opts { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .pm-size-opt {
           padding: 0.35rem 0.75rem;
@@ -613,6 +691,34 @@ export default function ProjectsManager() {
                     }}
                   />
                 </div>
+              </div>
+
+              {/* Additional Images Upload */}
+              <div>
+                <label className="pm-field-label">Additional Gallery Images</label>
+                <div className="pm-upload-area" onClick={() => document.getElementById('additional-images-input')?.click()} style={{ padding: '1rem', minHeight: 'auto' }}>
+                  <p className="pm-upload-label" style={{ marginBottom: 0 }}>
+                    {uploading ? '⏳ Uploading…' : '+ Click to add multiple images'}
+                  </p>
+                </div>
+                <input
+                  id="additional-images-input"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  style={{ display: 'none' }}
+                  onChange={handleAdditionalImageUpload}
+                />
+                {(form.additional_images && form.additional_images.length > 0) && (
+                  <div className="pm-additional-grid">
+                    {form.additional_images.map((img, idx) => (
+                      <div key={idx} className="pm-additional-img-wrap">
+                        <img src={img.image_url} alt={`Gallery ${idx}`} />
+                        <button type="button" className="pm-additional-rm-btn" onClick={() => removeAdditionalImage(idx)}>✕</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Title */}

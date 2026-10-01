@@ -135,10 +135,18 @@ export async function POST(req) {
     if (!canonicalCity) {
       return NextResponse.json({ success: false, error: 'Select an active delivery city' }, { status: 400 });
     }
-    const lat = Number(latitude);
-    const lng = Number(longitude);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-      return NextResponse.json({ success: false, error: 'Live location is required for material enquiries' }, { status: 400 });
+    const hasLat = latitude !== undefined && latitude !== null && latitude !== '';
+    const hasLng = longitude !== undefined && longitude !== null && longitude !== '';
+    let lat = null;
+    let lng = null;
+    if (hasLat || hasLng) {
+      const parsedLat = Number(latitude);
+      const parsedLng = Number(longitude);
+      if (!Number.isFinite(parsedLat) || !Number.isFinite(parsedLng) || parsedLat < -90 || parsedLat > 90 || parsedLng < -180 || parsedLng > 180) {
+        return NextResponse.json({ success: false, error: 'Please provide valid coordinates or leave them blank' }, { status: 400 });
+      }
+      lat = parsedLat;
+      lng = parsedLng;
     }
     if (isCart && orderItems.some((item) => {
       const quantity = Number(item.quantity);

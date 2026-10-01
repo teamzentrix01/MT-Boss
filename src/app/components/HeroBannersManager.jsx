@@ -169,9 +169,16 @@ export default function HeroBannersManager({ isDarkMode }) {
     {notice && <p role="status" className={styles.message}>{notice}</p>}
     {loading ? <p>Loading banners...</p> : <div className={styles.list}>
       {!sorted.length && !error && <p>No banners yet. Add a banner to feature a service on the homepage.</p>}
-      {sorted.map(banner => <article key={banner.id} className={styles.card}>
-        <img src={bannerImageUrl(banner.image_url, 400)} alt={banner.image_alt || banner.title} className={styles.thumbnail} />
-        <div className={styles.cardCopy}>
+      {sorted.map(banner => {
+        const thumbUrl = bannerImageUrl(banner.image_url, 400);
+        return (
+          <article key={banner.id} className={styles.card}>
+            {thumbUrl ? (
+              <img src={thumbUrl} alt={banner.image_alt || banner.title} className={styles.thumbnail} />
+            ) : (
+              <div className={styles.thumbnail} style={{ display: 'grid', placeItems: 'center', background: '#0d2235', color: '#688297', fontSize: '11px', textAlign: 'center', padding: '4px' }}>No image</div>
+            )}
+            <div className={styles.cardCopy}>
           <span className={styles.status}>{banner.service_name || 'Service banner'} / Order {banner.sort_order} / {banner.is_active ? 'Active' : 'Hidden'}</span>
           <h3>{banner.title}</h3><p className={styles.muted}>{banner.subtitle}</p>
           {banner.cta_text && <p className={styles.muted}>{banner.cta_text} &rarr; {banner.cta_href}</p>}
@@ -181,8 +188,10 @@ export default function HeroBannersManager({ isDarkMode }) {
           <button type="button" disabled={busy} onClick={() => toggle(banner)}>{banner.is_active ? 'Hide' : 'Show'}</button>
           <button type="button" disabled={busy} onClick={() => setDeleting(banner)}>Delete</button>
         </div>
-      </article>)}
-    </div>}
+      </article>
+    );
+  })}
+</div>}
     {form && <dialog ref={dialog} className={styles.dialog} style={theme} aria-labelledby="banner-editor-title"
       onCancel={event => { event.preventDefault(); closeEditor(); }}>
       <form onSubmit={save} noValidate data-no-auto-validate>

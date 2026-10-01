@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Eye, X, ActionIconButton } from '@/app/components/ui/icons';
 import {
   EMPTY_FRANCHISE_PERMISSIONS,
   FRANCHISE_PERMISSION_DEFINITIONS,
@@ -511,12 +512,11 @@ export default function FranchisesPage() {
                         </td>
                         <td className="fr-muted">{new Date(fr.created_at).toLocaleDateString()}</td>
                         <td>
-                          <button
-                            className="fr-view-btn"
+                          <ActionIconButton
+                            icon={Eye}
+                            label="View franchise application"
                             onClick={e => { e.stopPropagation(); setSelected(fr); setSection('personal'); }}
-                          >
-                            View
-                          </button>
+                          />
                         </td>
                       </tr>
                     );
@@ -541,7 +541,9 @@ export default function FranchisesPage() {
                   {selected.model} · {selected.city}, {selected.state}
                 </div>
               </div>
-              <button className="fr-modal-close" onClick={() => setSelected(null)}>✕</button>
+              <button className="fr-modal-close" onClick={() => setSelected(null)} aria-label="Close modal">
+                <X size={16} strokeWidth={1.75} aria-hidden="true" />
+              </button>
             </div>
 
             {/* Section Tabs */}

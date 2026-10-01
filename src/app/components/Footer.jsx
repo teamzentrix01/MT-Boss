@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { COMPANY_CONTACT } from "../lib/company";
+import { Star } from "@/app/components/ui/icons";
 
 const ReviewModal = dynamic(() => import("./ReviewModal"), { ssr: false });
 
@@ -33,7 +34,7 @@ export default function Footer() {
     { label: "Careers", href: "/careers" },
     { label: "FAQs", href: "/faqs" },
     { label: "Contact", href: "/contact" },
-    { label: "Review Us ⭐", isReviewAction: true },
+    { label: "Review Us", isReviewAction: true },
     { label: "Privacy Policy", href: "/privacy-policy" },
     { label: "Terms and Conditions", href: "/terms-and-conditions" },
   ];
@@ -135,7 +136,7 @@ export default function Footer() {
                           : "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100"
                         }`}
                     >
-                      <span>⭐ Review Us</span>
+                      <span className="inline-flex items-center gap-1.5"><Star size={14} className="fill-amber-400 text-amber-400" aria-hidden="true" /> Review Us</span>
                       <span className="text-[10px] bg-amber-400 text-black px-1.5 py-0.5 rounded font-black">RATE</span>
                     </button>
                   ) : (
@@ -210,9 +211,9 @@ export default function Footer() {
             <button
               type="button"
               onClick={() => setIsReviewOpen(true)}
-              className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] hover:underline flex items-center gap-1"
+              className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)] hover:underline flex items-center gap-1.5"
             >
-              ⭐ Review Us
+              <Star size={12} className="fill-current" aria-hidden="true" /> Review Us
             </button>
             <a href="/privacy-policy" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[var(--brand-blue)]">
               Privacy

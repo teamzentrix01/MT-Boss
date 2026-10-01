@@ -2,6 +2,7 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
 import { useCities } from '@/hooks/useCities';
+import { Pencil, Trash2, ShieldCheck, Ban, ActionIconButton, Plus, Save } from '@/app/components/ui/icons';
 
 // ─── Cloudinary uploader ──────────────────────────────────────────────────────
 async function uploadToCloudinary(file) {
@@ -334,7 +335,8 @@ export default function ProfessionalServicesManager({ isDarkMode }) {
             </div>
             <div style={{ display:'flex', gap:'12px', marginTop:'22px' }}>
               <button type="submit" disabled={saving}
-                style={{ flex:1, background:th.accent, color:th.accentFg, border:'none', borderRadius:'4px', padding:'11px', cursor:saving?'wait':'pointer', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.09em', opacity:saving?0.7:1 }}>
+                style={{ flex:1, display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'6px', background:th.accent, color:th.accentFg, border:'none', borderRadius:'4px', padding:'11px', cursor:saving?'wait':'pointer', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.09em', opacity:saving?0.7:1 }}>
+                <Save size={16} strokeWidth={1.75} aria-hidden="true" />
                 {saving ? 'Saving…' : (editPro?.id ? 'Update Professional' : 'Add & Approve')}
               </button>
               <button type="button" onClick={resetForm}
@@ -366,8 +368,9 @@ export default function ProfessionalServicesManager({ isDarkMode }) {
           <p style={{ color:th.sub, margin:0, fontSize:'12px' }}>Manage professionals, approve/reject applications, drag to reorder approved listings.</p>
         </div>
         <button onClick={() => { setEditPro({}); setForm(EMPTY); setProfilePic(''); setPortfolioImgs([]); }}
-          style={{ background:th.accent, color:th.accentFg, border:'none', borderRadius:'4px', padding:'10px 20px', cursor:'pointer', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.09em', whiteSpace:'nowrap' }}>
-          + Add Professional
+          style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:th.accent, color:th.accentFg, border:'none', borderRadius:'4px', padding:'10px 20px', cursor:'pointer', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.09em', whiteSpace:'nowrap' }}>
+          <Plus size={16} strokeWidth={1.75} aria-hidden="true" />
+          Add Professional
         </button>
       </div>
 
@@ -477,39 +480,60 @@ export default function ProfessionalServicesManager({ isDarkMode }) {
 
                     {/* Actions */}
                     <td style={{ padding:'10px 14px' }}>
-                      <div style={{ display:'flex', gap:'5px', flexWrap:'wrap' }}>
+                      <div style={{ display:'flex', gap:'5px', flexWrap:'wrap', alignItems:'center' }}>
                         {pro.status === 'pending' && (
                           <>
-                            <button onClick={()=>updateStatus(pro.id,'approved')}
-                              style={{ background:'none',color:'#22c55e',border:'1px solid #22c55e',borderRadius:'3px',padding:'4px 9px',cursor:'pointer',fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.06em' }}>
-                              ✓ Approve
-                            </button>
-                            <button onClick={()=>updateStatus(pro.id,'rejected')}
-                              style={{ background:'none',color:'#ef4444',border:'1px solid #ef4444',borderRadius:'3px',padding:'4px 9px',cursor:'pointer',fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.06em' }}>
-                              ✕ Reject
-                            </button>
+                            <ActionIconButton
+                              icon={ShieldCheck}
+                              variant="success"
+                              label="Approve professional"
+                              onClick={() => updateStatus(pro.id, 'approved')}
+                            />
+                            <ActionIconButton
+                              icon={Ban}
+                              variant="danger"
+                              label="Reject professional"
+                              onClick={() => updateStatus(pro.id, 'rejected')}
+                            />
                           </>
                         )}
                         {pro.status === 'rejected' && (
-                          <button onClick={()=>updateStatus(pro.id,'approved')}
-                            style={{ background:'none',color:'#22c55e',border:'1px solid #22c55e',borderRadius:'3px',padding:'4px 9px',cursor:'pointer',fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.06em' }}>
-                            ✓ Approve
-                          </button>
+                          <ActionIconButton
+                            icon={ShieldCheck}
+                            variant="success"
+                            label="Approve professional"
+                            onClick={() => updateStatus(pro.id, 'approved')}
+                          />
                         )}
                         {pro.status === 'approved' && (
-                          <button onClick={()=>updateStatus(pro.id,'rejected')}
-                            style={{ background:'none',color:'#ef4444',border:'1px solid #ef4444',borderRadius:'3px',padding:'4px 9px',cursor:'pointer',fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.06em' }}>
-                            Revoke
-                          </button>
+                          <ActionIconButton
+                            icon={Ban}
+                            variant="danger"
+                            label="Revoke professional"
+                            onClick={() => updateStatus(pro.id, 'rejected')}
+                          />
                         )}
-                        <button onClick={e=>{ e.stopPropagation(); const s=toFormState(pro); setEditPro(pro); setForm(s.fields); setProfilePic(s.profilePic); setPortfolioImgs(s.portfolioImgs); }}
-                          style={{ background:'none',color:th.sub,border:`1px solid ${th.border}`,borderRadius:'3px',padding:'4px 9px',cursor:'pointer',fontSize:'10px',fontWeight:700 }}>
-                          ✏ Edit
-                        </button>
-                        <button onClick={e=>{ e.stopPropagation(); deletePro(pro.id); }}
-                          style={{ background:'none',color:'#ef4444',border:'1px solid #ef4444',borderRadius:'3px',padding:'4px 9px',cursor:'pointer',fontSize:'10px',fontWeight:700 }}>
-                          🗑
-                        </button>
+                        <ActionIconButton
+                          icon={Pencil}
+                          label="Edit professional"
+                          onClick={e => {
+                            e.stopPropagation();
+                            const s = toFormState(pro);
+                            setEditPro(pro);
+                            setForm(s.fields);
+                            setProfilePic(s.profilePic);
+                            setPortfolioImgs(s.portfolioImgs);
+                          }}
+                        />
+                        <ActionIconButton
+                          icon={Trash2}
+                          variant="danger"
+                          label="Delete professional"
+                          onClick={e => {
+                            e.stopPropagation();
+                            deletePro(pro.id);
+                          }}
+                        />
                       </div>
                     </td>
                   </tr>
