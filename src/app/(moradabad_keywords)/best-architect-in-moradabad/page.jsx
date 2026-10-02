@@ -1,32 +1,31 @@
-// app/(moradabad_keywords)/best-architect-in-moradabad/page.jsx
+// app/(moradabad_keywords)/architect-near-me-in-moradabad/page.jsx
 import Banner from './Banner';
 import Content from './Content';
 import QuickServices from '../../components/QuickServices';
 import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
-
 export const metadata = {
-  title: 'Best Architect in Moradabad | MT Boss',
+  title: 'Best Architect in Moradabad (2026) – Design & Build – MTBOSS',
   description:
-    'Looking for the best architect in Moradabad? MT Boss offers house plans, 3D elevation, commercial design and construction under one roof. Free site visit.',
+    'Looking for the best architect in Moradabad? MTBOSS combines design, map approval & construction under one roof. 100+ projects. Free consultation.',
   keywords:
-    'best architect in Moradabad, architect near me Moradabad, architect in Moradabad, house architect Moradabad, residential architect Moradabad, commercial architect Moradabad, 3D elevation designer Moradabad, house plan designer Moradabad, architect and builder Moradabad, MT Boss architect Moradabad',
+    'best architect in Moradabad, architect Moradabad, top architect Moradabad, architect near me Moradabad, house architect Moradabad, residential architect Moradabad, map approval Moradabad, building design Moradabad, design and build Moradabad, MTBOSS Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/best-architect-in-moradabad',
+    canonical: 'https://www.mtboss.in/architect-near-me-in-moradabad',
   },
   openGraph: {
-    title: 'Best Architect in Moradabad | MT Boss',
+    title: 'Best Architect in Moradabad (2026) – Design & Build – MTBOSS',
     description:
-      'Looking for the best architect in Moradabad? MT Boss offers house plans, 3D elevation, commercial design and construction under one roof. Free site visit.',
-    url: 'https://www.mtboss.in/best-architect-in-moradabad',
+      'Looking for the best architect in Moradabad? MTBOSS combines design, map approval & construction under one roof. 100+ projects. Free consultation.',
+    url: 'https://www.mtboss.in/architect-near-me-in-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-best-architect-moradabad.jpg',
+        url: 'https://www.mtboss.in/og-architect-near-me-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Best Architect in Moradabad - MT Boss',
+        alt: 'Best Architect in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -34,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Best Architect in Moradabad | MT Boss',
+    title: 'Best Architect in Moradabad (2026) – Design & Build – MTBOSS',
     description:
-      'Looking for the best architect in Moradabad? MT Boss offers house plans, 3D elevation, commercial design and construction under one roof. Free site visit.',
-    images: ['https://www.mtboss.in/og-best-architect-moradabad.jpg'],
+      'Looking for the best architect in Moradabad? MTBOSS combines design, map approval & construction under one roof. 100+ projects. Free consultation.',
+    images: ['https://www.mtboss.in/og-architect-near-me-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -45,12 +44,11 @@ export const metadata = {
   },
 };
 
-
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/best-architect-in-moradabad',
+  url: 'https://www.mtboss.in/architect-near-me-in-moradabad',
   telephone: '+91-9458410866',
   email: 'mtboss2016@gmail.com',
   address: {
@@ -66,7 +64,6 @@ const localBusinessSchema = {
   },
   priceRange: '₹₹',
 };
-
 
 export default function Page() {
   return (
