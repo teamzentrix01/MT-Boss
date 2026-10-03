@@ -554,8 +554,8 @@ function History({ title, type, rows, render, onDelete }) {
 }
 
 const pageStyles = `
-  .ap-page{min-height:100%;background:var(--bg,#f5f5f7);color:var(--text,#111);font-family:'DM Sans',system-ui,sans-serif}
-  .ap-wrap{max-width:1280px;margin:0 auto;padding:1.25rem}
+  .ap-page{min-height:100%;display:flex;flex-direction:column;background:var(--bg,#f5f5f7);color:var(--text,#111);font-family:'DM Sans',system-ui,sans-serif}
+  .ap-wrap{max-width:1280px;width:100%;margin:0 auto;padding:1.25rem;flex:1;display:flex;flex-direction:column;box-sizing:border-box}
   .ap-head{display:flex;flex-direction:column;gap:1rem;margin-bottom:1rem}
   .ap-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
   .ap-kicker{margin:0 0 .25rem;color:var(--accent,#2563eb);font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}

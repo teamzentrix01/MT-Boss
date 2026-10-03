@@ -16,7 +16,8 @@ export async function POST(req) {
 
     const result = await pool.query(
       `SELECT id, name, email, phone, city, state, occupation, agent_type,
-              status, login_enabled, password_hash, must_change_password, auth_version
+              status, login_enabled, password_hash, must_change_password, auth_version,
+              has_project_management_access
          FROM agents
         WHERE LOWER(TRIM(email)) = $1
           AND status = 'Approved'

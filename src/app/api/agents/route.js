@@ -11,7 +11,7 @@ const AGENT_STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 const AGENT_SAFE_COLUMNS = `
   id, name, email, phone, city, state, occupation, agent_type, experience,
   network, message, status, login_enabled, must_change_password, approved_at,
-  approved_by, auth_version, last_login_at, created_at, updated_at
+  approved_by, auth_version, last_login_at, created_at, updated_at, has_project_management_access
 `;
 
 function makeTemporaryPassword() {

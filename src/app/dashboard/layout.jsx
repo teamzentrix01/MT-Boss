@@ -66,6 +66,11 @@ const menuItems = [
   { label: 'Professional Enquiries', icon: MessageSquare, tab: 'professional-enquiries' },
   { label: 'Professional Services', icon: Users, tab: 'professionals' },
   { label: 'Project Management', icon: Building2, tab: 'project-management' },
+{ label: 'Project Management · Parties', icon: Building2, tab: 'party-project-management' },
+{ label: 'PM Dashboard', icon: LayoutDashboard, tab: 'pm-dashboard' },
+{ label: 'PM Reports', icon: FileText, tab: 'pm-reports' },
+{ label: 'PM Activity Log', icon: FolderKanban, tab: 'pm-audit' },
+{ label: 'PM Benchmarks · Rates', icon: CircleDollarSign, tab: 'pm-benchmarks' },
   { label: 'Portfolio Projects', icon: FolderKanban, tab: 'projects' },
   { label: 'Properties', icon: House, tab: 'properties' },
   { label: 'Property Enquiries', icon: MessageSquareText, tab: 'property-enquiries' },
@@ -83,13 +88,25 @@ const menuItems = [
   { label: 'Package Approvals', icon: PackageCheck, tab: 'packages' },
 ];
 
-function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode }) {
+function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
   const searchParams = useSearchParams();
   const currentTab = searchParams ? (searchParams.get('tab') || '') : '';
 
+  const visibleItems = menuItems.filter((item) => {
+    if (user?.role === 'agent') {
+      const tab = item.tab || '';
+      if (tab.includes('project-management') || tab.startsWith('pm-') || tab === 'projects') {
+        return !!user.has_project_management_access;
+      }
+      if (tab === 'lead-management') return true;
+      return false;
+    }
+    return true;
+  });
+
   return (
     <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-1">
-      {menuItems.map((item) => {
+      {visibleItems.map((item) => {
         const IconComponent = item.icon;
         const isActive = (item.tab || '') === currentTab;
 
@@ -150,7 +167,15 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       try {
-        setUser(JSON.parse(localStorage.getItem('user') || '{}'));
+        let u = JSON.parse(localStorage.getItem('user'));
+        if (!u) {
+          const agentStr = localStorage.getItem('agent');
+          if (agentStr) {
+            u = JSON.parse(agentStr);
+            u.role = 'agent';
+          }
+        }
+        setUser(u || {});
       } catch {
         setUser({});
       }
@@ -165,6 +190,22 @@ export default function DashboardLayout({ children }) {
     return () => window.removeEventListener('resize', syncSidebar);
   }, []);
 
+  useEffect(() => {
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const res = await originalFetch(...args);
+      if (res.status === 403 && typeof args[0] === 'string' && args[0].includes('/api/admin/project-management')) {
+        let u = null;
+        try { u = JSON.parse(localStorage.getItem('agent')); } catch {}
+        if (u) {
+          alert('Your access to Project Management has been revoked. Contact admin.');
+          window.location.href = '/agent/dashboard';
+        }
+      }
+      return res;
+    };
+    return () => { window.fetch = originalFetch; };
+  }, []);
   const handleLogout = async () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -176,13 +217,15 @@ export default function DashboardLayout({ children }) {
     if (window.innerWidth < 1024) setSidebarOpen(false);
   };
 
-  const bgClass = isDarkMode ? 'bg-[#0f172a]' : 'bg-white';
-  const textPrimary = isDarkMode ? 'text-white' : 'text-[#0f172a]';
-  const borderColor = isDarkMode ? 'border-slate-800' : 'border-slate-200';
-  const hoverBg = isDarkMode ? 'hover:bg-slate-800/60' : 'hover:bg-slate-50';
+  const bgClass = isDarkMode ? 'bg-black' : 'bg-white';
+  const pageBgClass = isDarkMode ? 'bg-[#0f0f11]' : 'bg-[#f5f5f7]';
+  const textPrimary = isDarkMode ? 'text-white' : 'text-black';
+  const textSecondary = isDarkMode ? 'text-gray-400' : 'text-gray-600';
+  const borderColor = isDarkMode ? 'border-[var(--brand-blue-light)]' : 'border-[var(--brand-blue)]';
+  const hoverBg = isDarkMode ? 'hover:bg-[var(--brand-blue-dark)]/10' : 'hover:bg-sky-50';
 
   return (
-    <div className="admin-dashboard-root flex h-[calc(100dvh-4rem)] overflow-hidden bg-slate-900">
+    <div className={`admin-dashboard-root flex h-[calc(100dvh-4rem)] overflow-hidden ${pageBgClass}`}>
       {sidebarOpen && (
         <div
           aria-label="Close dashboard menu"
@@ -217,6 +260,7 @@ export default function DashboardLayout({ children }) {
             sidebarOpen={sidebarOpen}
             closeSidebarOnMobile={closeSidebarOnMobile}
             isDarkMode={isDarkMode}
+            user={user}
           />
         </Suspense>
 
@@ -256,7 +300,7 @@ export default function DashboardLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className="h-full flex-1 min-w-0 overflow-y-auto overscroll-contain">
+      <main className={`h-full flex-1 min-w-0 overflow-y-auto overscroll-contain ${pageBgClass}`}>
         <div className={`lg:hidden sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 ${bgClass} ${borderColor}`}>
           <button
             type="button"

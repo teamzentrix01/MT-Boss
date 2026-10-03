@@ -44,6 +44,8 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   const [city, setCity] = useState('');
   const [form, setForm] = useState(emptyForm);
   const [selected, setSelected] = useState(null);
+  const [convertingLead, setConvertingLead] = useState(null);
+  const [conversionData, setConversionData] = useState(null);
   const searchInputRef = useRef(null);
   const searchHostRef = useRef(null);
 
@@ -162,6 +164,60 @@ export default function LeadManagementAdmin({ isDarkMode }) {
       setSelected((current) => current?.id === id ? { ...current, ...data.data } : current);
     } else {
       setMessage(data.error || 'Update failed.');
+    }
+  }
+
+  async function openConvertModal(lead) {
+    if (lead.converted_project_id) {
+      window.location.href = `/dashboard?tab=party-project-management&projectId=${lead.converted_project_id}`;
+      return;
+    }
+    setConvertingLead(lead);
+    setConversionData({
+      loading: true,
+      partyId: null,
+      partyName: '',
+      newParty: { name: lead.client_name, phone: lead.client_phone, email: lead.client_email || '', address: lead.city || '' },
+      project: { name: lead.service_type || lead.client_requirement || 'New Project', contract_value: lead.final_amount || 0, site_address: lead.city || '', status: 'running', agent_id: lead.agent_id || '', start_date: new Date().toISOString().slice(0, 10) },
+    });
+
+    try {
+      const res = await fetch('/api/admin/project-management/parties', { headers: { Authorization: `Bearer ${token()}` } });
+      const data = await res.json();
+      if (data.success) {
+        const found = data.data.find(p => p.phone === lead.client_phone || (lead.client_email && p.email === lead.client_email));
+        if (found) {
+          setConversionData(prev => ({ ...prev, loading: false, partyId: found.id, partyName: found.name }));
+        } else {
+          setConversionData(prev => ({ ...prev, loading: false }));
+        }
+      }
+    } catch {
+      setConversionData(prev => ({ ...prev, loading: false }));
+    }
+  }
+
+  async function submitConversion(e) {
+    e.preventDefault();
+    const payload = {
+      lead_id: convertingLead.id,
+      party_id: conversionData.partyId,
+      new_party: conversionData.partyId ? null : conversionData.newParty,
+      project: conversionData.project,
+    };
+    
+    const res = await fetch('/api/admin/lead-management/convert', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setConvertingLead(null);
+      await loadLeads();
+      window.location.href = `/dashboard?tab=party-project-management&projectId=${data.project_id}`;
+    } else {
+      alert(data.error || 'Conversion failed');
     }
   }
 
@@ -414,11 +470,14 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                   </td>
                   <td style={{ padding: '0.6rem', color: muted, whiteSpace: 'nowrap' }}>{lead.follow_up_date ? new Date(lead.follow_up_date).toLocaleDateString('en-IN') : '-'}</td>
                   <td style={{ padding: '0.6rem' }}>
-                    <ActionIconButton
-                      icon={Eye}
-                      label="View lead details"
-                      onClick={() => setSelected(lead)}
-                    />
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      <button onClick={() => setSelected(lead)} style={{ border: 0, background: 'none', color: 'var(--accent)', fontWeight: 900, cursor: 'pointer' }}>View</button>
+                      {lead.status === 'Converted' && (
+                        <button onClick={() => openConvertModal(lead)} style={{ border: 0, background: lead.converted_project_id ? surface : 'var(--accent)', color: lead.converted_project_id ? text : '#111', borderRadius: 4, padding: '0.3rem 0.5rem', fontWeight: 800, cursor: 'pointer', fontSize: '0.65rem' }}>
+                          {lead.converted_project_id ? 'Already converted → View Project' : 'Convert to Project'}
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -464,6 +523,79 @@ export default function LeadManagementAdmin({ isDarkMode }) {
             {selected.client_requirement && <div style={{ marginTop: 12, color: text, border: `1px solid ${border}`, background: surface, borderRadius: 6, padding: '0.75rem' }}><strong>Requirement:</strong><br />{selected.client_requirement}</div>}
             {selected.notes && <div style={{ marginTop: 12, color: text, border: `1px solid ${border}`, background: surface, borderRadius: 6, padding: '0.75rem' }}><strong>Notes:</strong><br />{selected.notes}</div>}
           </div>
+        </div>
+      )}
+
+      {convertingLead && conversionData && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <form onSubmit={submitConversion} style={{ width: 'min(500px,100%)', background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: '1.5rem', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: text }}>Convert to Project</div>
+              <button type="button" onClick={() => setConvertingLead(null)} style={{ background: 'transparent', border: 0, color: text, fontSize: '1.2rem', cursor: 'pointer' }}>×</button>
+            </div>
+            
+            {conversionData.loading ? (
+              <div style={{ padding: '2rem', textAlign: 'center', color: muted }}>Checking for existing party...</div>
+            ) : (
+              <div style={{ display: 'grid', gap: '1rem' }}>
+                {conversionData.partyId ? (
+                  <div style={{ padding: '0.75rem', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: 6, fontSize: '0.85rem' }}>
+                    <strong>Existing party found:</strong> {conversionData.partyName}<br/>
+                    This project will be added under them.
+                  </div>
+                ) : (
+                  <div style={{ border: `1px solid ${border}`, padding: '1rem', borderRadius: 6, background: surface }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 900, color: text, marginBottom: 8 }}>New Party Details</div>
+                    <div style={{ display: 'grid', gap: 8 }}>
+                      <div>
+                        <label style={labelStyle}>Client Name *</label>
+                        <input style={inputStyle} value={conversionData.newParty.name} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, name: e.target.value } }))} required />
+                      </div>
+                      <div>
+                        <label style={labelStyle}>Phone *</label>
+                        <input style={inputStyle} value={conversionData.newParty.phone} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, phone: e.target.value } }))} required />
+                      </div>
+                      <div>
+                        <label style={labelStyle}>Email</label>
+                        <input style={inputStyle} type="email" value={conversionData.newParty.email} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, email: e.target.value } }))} />
+                      </div>
+                      <div>
+                        <label style={labelStyle}>City</label>
+                        <input style={inputStyle} value={conversionData.newParty.address} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, address: e.target.value } }))} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <div style={{ border: `1px solid ${border}`, padding: '1rem', borderRadius: 6, background: surface }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 900, color: text, marginBottom: 8 }}>Project Details</div>
+                  <div style={{ display: 'grid', gap: 8 }}>
+                    <div>
+                      <label style={labelStyle}>Project Name *</label>
+                      <input style={inputStyle} value={conversionData.project.name} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, name: e.target.value } }))} required />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Start Date *</label>
+                      <input type="date" style={inputStyle} value={conversionData.project.start_date} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, start_date: e.target.value } }))} required />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Contract Value (Rs) *</label>
+                      <input type="number" style={inputStyle} value={conversionData.project.contract_value} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, contract_value: e.target.value } }))} required />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Site / City *</label>
+                      <input style={inputStyle} value={conversionData.project.site_address} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, site_address: e.target.value } }))} required />
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
+                  <button type="submit" style={{ flex: 1, background: 'var(--accent)', color: '#111', border: 0, padding: '0.65rem', borderRadius: 6, fontWeight: 900, cursor: 'pointer' }}>Convert to Project</button>
+                  <button type="button" onClick={() => setConvertingLead(null)} style={{ flex: 1, background: surface, color: text, border: `1px solid ${border}`, padding: '0.65rem', borderRadius: 6, fontWeight: 900, cursor: 'pointer' }}>Cancel</button>
+                </div>
+              </div>
+            )}
+          </form>
         </div>
       )}
     </div>

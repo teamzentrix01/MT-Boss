@@ -1,5 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useCallback } from 'react';
 import QuickServiceIcon from './QuickServiceIcon';
 import { Eye, ShieldCheck, Ban, X, CircleUser, ActionIconButton } from '@/app/components/ui/icons';
 
@@ -23,12 +25,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
   const isPendingVendor = (vendor) => ['pending', 'payment_pending'].includes(vendor?.verification_status);
   const formatStatus = (status) => String(status || '').replace(/_/g, ' ');
 
-  // Fetch vendors
-  useEffect(() => {
-    fetchVendors();
-  }, []);
-
-  const getAdminHeaders = (contentType) => {
+  const getAdminHeaders = useCallback((contentType) => {
     let user = {};
     try {
       user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -40,14 +37,13 @@ export default function VendorManagementAdmin({ isDarkMode }) {
       ...(contentType ? { 'Content-Type': contentType } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
-  };
+  }, []);
 
-  const fetchVendors = async () => {
+  const fetchVendors = useCallback(async () => {
     setLoading(true);
     setError(null);
     const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
     try {
-      
       // ← NEW: Logging
       console.log('🔍 Fetching vendors with token:', token ? 'Present' : 'MISSING');
       
@@ -82,7 +78,19 @@ export default function VendorManagementAdmin({ isDarkMode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAdminHeaders]);
+
+  // Fetch vendors
+  useEffect(() => {
+    let ignore = false;
+    (async () => {
+      await Promise.resolve();
+      if (!ignore) {
+        fetchVendors();
+      }
+    })();
+    return () => { ignore = true; };
+  }, [fetchVendors]);
 
   const openVendor = async (vendor) => {
     setSelectedVendor(vendor);
@@ -256,7 +264,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
     console.log('📋 Filter changed:', filter);
     console.log('🔎 Search term:', searchTerm);
     console.log('📊 Filtered results:', filteredVendors.length, '/', vendors.length);
-  }, [filter, searchTerm, filteredVendors]);
+  }, [filter, searchTerm, filteredVendors.length, vendors.length]);
 
   const stats = [
     { label: 'Total Vendors', value: vendors.length, color: 'stat-a' },

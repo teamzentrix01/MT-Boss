@@ -220,7 +220,9 @@ export default function MaterialOrdersPanel({ role = 'user', embedded = false })
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Purchased On</span>{formatDate(order.created_at, true)}</div>
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Requested Delivery</span>{formatDate(order.delivery_date)}</div>
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Brand / Company</span>{order.brand_company || '—'}</div>
-                      <div><span className="block text-[9px] font-black uppercase text-zinc-400">Order Amount</span>{order.amount_received ? `₹${Number(order.amount_received).toLocaleString('en-IN')}` : 'Final amount pending'}</div>
+                      <div><span className="block text-[9px] font-black uppercase text-zinc-400">Product Total</span>{Number(order.product_total) > 0 ? `₹${Number(order.product_total).toLocaleString('en-IN')}` : '—'}</div>
+                      <div><span className="block text-[9px] font-black uppercase text-zinc-400">Shipping</span>{Number.isFinite(Number(order.shipping_cost)) ? `₹${Number(order.shipping_cost).toLocaleString('en-IN')}` : '—'}</div>
+                      <div><span className="block text-[9px] font-black uppercase text-zinc-400">Grand Total</span>{Number(order.grand_total) > 0 ? `₹${Number(order.grand_total).toLocaleString('en-IN')}` : (order.amount_received ? `₹${Number(order.amount_received).toLocaleString('en-IN')}` : 'Final amount pending')}</div>
                       <div className="sm:col-span-2"><span className="block text-[9px] font-black uppercase text-zinc-400">Delivery Address</span>{order.delivery_address || '—'}</div>
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Contact</span>{order.user_phone || '—'}</div>
                       {order.message && <div className="sm:col-span-2 lg:col-span-3"><span className="block text-[9px] font-black uppercase text-zinc-400">Order Requirements</span>{order.message}</div>}

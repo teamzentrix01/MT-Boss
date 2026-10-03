@@ -1,0 +1,104 @@
+import { NextResponse } from 'next/server';
+import pool from '@/lib/db';
+import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
+
+const okDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
+
+export async function PATCH(req, { params }) {
+  const admin = await requirePmAccess(req);
+  if (!admin) return unauthorized();
+  try {
+    await ensureProjectManagementSchema();
+    const id = Number((await params).id);
+    if (!Number.isInteger(id) || id <= 0) {
+      return NextResponse.json({ success: false, error: 'Invalid payment id' }, { status: 400 });
+    }
+
+    const b = await req.json();
+    const amount = Number(b.amount);
+    const paymentDate = String(b.payment_date || '');
+    const mode = b.mode !== undefined ? (b.mode ? String(b.mode).trim() : null) : undefined;
+    const note = b.note !== undefined ? (b.note ? String(b.note).trim() : null) : undefined;
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return NextResponse.json({ success: false, error: 'Valid amount (> 0) is required' }, { status: 400 });
+    }
+    if (!okDate(paymentDate)) {
+      return NextResponse.json({ success: false, error: 'Valid payment_date is required' }, { status: 400 });
+    }
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const old = (await client.query(`SELECT * FROM pm_labor_payments WHERE id = $1 FOR UPDATE`, [id])).rows[0];
+      if (!old || old.is_deleted) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Payment not found' }, { status: 404 });
+      }
+
+      const r = await client.query(
+        `UPDATE pm_labor_payments
+         SET amount = $1,
+             payment_date = $2,
+             mode = COALESCE($3, mode),
+             note = CASE WHEN $4 = true THEN $5 ELSE note END,
+             updated_at = NOW()
+         WHERE id = $6
+         RETURNING *`,
+        [amount, paymentDate, mode ?? null, note !== undefined, note ?? null, id]
+      );
+
+      const actor = actorFromAdmin(admin);
+      await writePmPhase2Audit(client, 'pm_labor_payments', id, 'updated', actor, old, r.rows[0]);
+      await client.query('COMMIT');
+      return NextResponse.json({ success: true, data: r.rows[0] });
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
+  } catch (e) {
+    return NextResponse.json({ success: false, error: e.message || 'Could not update payment' }, { status: 500 });
+  }
+}
+
+export async function DELETE(req, { params }) {
+  const admin = await requirePmAccess(req);
+  if (!admin) return unauthorized();
+  try {
+    await ensureProjectManagementSchema();
+    const id = Number((await params).id);
+    if (!Number.isInteger(id) || id <= 0) {
+      return NextResponse.json({ success: false, error: 'Invalid payment id' }, { status: 400 });
+    }
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const old = (await client.query(`SELECT * FROM pm_labor_payments WHERE id = $1 FOR UPDATE`, [id])).rows[0];
+      if (!old || old.is_deleted) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Payment not found' }, { status: 404 });
+      }
+
+      const r = await client.query(
+        `UPDATE pm_labor_payments SET is_deleted = TRUE, updated_at = NOW() WHERE id = $1 RETURNING *`,
+        [id]
+      );
+      const actor = actorFromAdmin(admin);
+      await writePmPhase2Audit(client, 'pm_labor_payments', id, 'soft_deleted', actor, old, r.rows[0]);
+      await client.query('COMMIT');
+      return NextResponse.json({ success: true });
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
+  } catch (e) {
+    return NextResponse.json({ success: false, error: e.message || 'Could not delete payment' }, { status: 500 });
+  }
+}

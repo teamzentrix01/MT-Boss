@@ -79,7 +79,8 @@ export async function PUT(req) {
 
     const updated = await pool.query(
       `SELECT id, name, email, phone, city, state, occupation, agent_type,
-              status, login_enabled, must_change_password, auth_version, last_login_at, created_at
+              status, login_enabled, must_change_password, auth_version, last_login_at, created_at,
+              has_project_management_access
          FROM agents
         WHERE id = $1`,
       [agent.id]
