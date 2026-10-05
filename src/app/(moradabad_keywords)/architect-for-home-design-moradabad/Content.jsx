@@ -1,6 +1,7 @@
 import React from "react";
 import LandingEnquiry from "../../components/LandingEnquiry";
 
+
 const Content = () => {
   return (
     <div className="min-h-screen bg-white pt-0">
@@ -8,302 +9,566 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Home Design in Moradabad — Complete Guide
+            Architect for Home Design in Moradabad: MT Boss
           </h2>
+
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Getting the home design right before construction begins is one of the most important steps in building a house you&apos;ll actually enjoy living in. An architect for home design in Moradabad helps translate your family&apos;s needs — room count, storage, natural light, privacy, and even vastu preferences — into a workable floor plan that also meets municipal approval requirements. This guide focuses specifically on the home design process itself: what it involves, how layout decisions affect daily living, typical costs, and how MTBOSS Construction Private Limited supports home design as part of an integrated design-and-build service.
+                Your home will hold your family&apos;s mornings, festivals, exam seasons and quiet evenings for decades. Yet many houses are still planned in an afternoon, on a rough sketch, by someone who will not live in them. The result is familiar: a dark middle room, a staircase that eats the living area, a kitchen with no ventilation and a terrace that leaks every monsoon.
+              </p>
+              <p className="mt-3">
+                An architect for home design in Moradabad prevents these problems on paper, where fixing them costs nothing.
+              </p>
+              <p className="mt-3">
+                MT Boss is a Moradabad-based construction, property and home services company. Our team designs independent houses, duplexes, villas and builder floors, and then builds them. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to the day you move in.
+              </p>
+              <p className="mt-3">
+                This page covers our home design services, plot-size ideas, room planning, elevation styles, costs and practical advice for choosing the right architect.
               </p>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Does Home Design Actually Involve?
+                MT Boss Home Design Services in Moradabad
               </h3>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Complete House Design
+              </h4>
               <p className="mb-3">
-                Home design goes far beyond drawing room boundaries on paper. It typically covers:
+                We plan the whole house around your family: floors, rooms, staircase, parking, terrace and outdoor space. Each design balances light, privacy, storage and budget.
               </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Understanding family size, lifestyle, and future needs (guest rooms, home office, etc.)</li>
-                <li>Planning room sizes and placement for optimal flow between spaces</li>
-                <li>Positioning windows and openings for natural light and cross-ventilation</li>
-                <li>Balancing privacy between bedrooms and common living areas</li>
-                <li>Kitchen and bathroom layout planning for functionality and plumbing efficiency</li>
-                <li>Staircase placement and design for multi-storey homes</li>
-                <li>Exterior elevation and facade design reflecting your preferred style</li>
-                <li>Vastu-compliant layout planning, where requested by the homeowner</li>
-              </ul>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Floor Plans and Space Planning
+              </h4>
+              <p className="mb-3">
+                Our 2D plans cover room sizes, kitchen and bathroom placement, doors and windows, staircase position and furniture layout, so every square foot earns its place.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                3D Elevation Design
+              </h4>
+              <p className="mb-3">
+                You see colours, textures, balconies, railings and lighting before construction begins, and you can change the look while changes still cost nothing.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Working Drawings
+              </h4>
+              <p className="mb-3">
+                Once you approve the design, we prepare detailed drawings with dimensions and sections that masons, carpenters and electricians can follow accurately.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Vastu-Friendly Layouts
+              </h4>
+              <p className="mb-3">
+                We place the entrance, kitchen, pooja room, bedrooms and staircase according to Vastu guidelines when you want them, without giving up modern comfort.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Interior Coordination
+              </h4>
+              <p className="mb-3">
+                Because MT Boss also offers interior design, your architectural and interior plans can be developed together, from kitchen layout to lighting points.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Budget Planning and Estimates
+              </h4>
+              <p className="mb-3">
+                We give a clear written estimate and help you decide where to spend and where to save. You can also try the MT Boss{" "}
+                <a
+                  href="https://www.mtboss.in/calculator"
+                  className="text-blue-600 underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Construction Budget Calculator
+                </a>{" "}
+                for a quick early figure.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Construction and Turnkey Execution
+              </h4>
+              <p className="mb-3">
+                If you want one team for everything, we build your home exactly to the approved design, with regular quality checks and progress updates.
+              </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Home Design Deserves Dedicated Attention
-              </h3>
-              <p className="mb-3">
-                Treating home design as a quick, informal step often leads to regrets after construction:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Poor room placement can make even a large home feel cramped or awkward to use</li>
-                <li>Wrong window positioning affects natural lighting and ventilation year-round</li>
-                <li>Inefficient kitchen or bathroom layouts create daily inconvenience that&apos;s expensive to fix later</li>
-                <li>Overlooking storage planning leads to clutter and later renovation needs</li>
-                <li>A design that ignores vastu preferences (when important to the family) can cause dissatisfaction after move-in</li>
-                <li>Well-thought-out design also improves resale value and long-term livability</li>
-              </ul>
-            </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Key Elements of a Well-Planned Home Design
+                Why Home Design Needs an Architect
               </h3>
               <p className="mb-3">
-                A well-planned home design typically addresses the following elements:
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">1. Layout &amp; Space Planning</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Logical flow between living, dining, and private areas</li>
-                <li>Appropriately sized bedrooms, bathrooms, and storage spaces</li>
-                <li>Efficient use of plot area without wasted or awkward corners</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">2. Light &amp; Ventilation</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Window placement for maximum natural daylight</li>
-                <li>Cross-ventilation planning to reduce dependence on artificial cooling</li>
-                <li>Balcony and open space integration where the plot allows</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">3. Vastu Considerations (Where Requested)</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Entrance direction and placement preferences</li>
-                <li>Kitchen, bedroom, and pooja room positioning per vastu guidelines</li>
-                <li>Balancing vastu preferences with practical layout efficiency</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">4. Visualization &amp; Approval</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>3D visualizations to help homeowners picture the finished home</li>
-                <li>Working drawings prepared for municipal building plan approval</li>
-                <li>Structural coordination to confirm design feasibility</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Home Design Services You Might Need
-              </h3>
-              <p className="mb-3">
-                Home design services typically include the following categories:
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">1. New Home Design</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Complete floor plan design from scratch</li>
-                <li>Elevation and exterior facade design</li>
-                <li>Multi-storey layout planning (G+1, G+2, etc.)</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">2. Interior &amp; Room-Level Design</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Kitchen and bathroom layout optimization</li>
-                <li>Bedroom and living area space planning</li>
-                <li>Storage and utility space integration</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">3. Renovation Design</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Redesigning layouts within an existing structure</li>
-                <li>Additional floor design for vertical expansion</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">4. Supporting Construction Services</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Material and finish selection guidance</li>
-                <li>Coordination with civil contractors for design execution</li>
-                <li>Full construction execution once the design is finalized</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBOSS Supports Home Design as Part of Design-and-Build Service
-              </h3>
-              <p className="mb-3">
-                MTBOSS Construction Private Limited is primarily a construction and civil engineering company rather than a standalone architecture firm, but based on their published company profile, they offer home design coordination as part of their overall residential construction service:
+                A professionally designed home gives clear advantages over a sketch drawn on site:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
-                <li>450+ completed projects, a large share of which are residential homes</li>
-                <li>12 million+ square feet built, reflecting experience across varied home sizes and layouts</li>
-                <li>150+ trained professionals, including engineers, supervisors, and technicians</li>
-                <li>Technology-integrated process, using AI and BIM (Building Information Modeling) since 2018 for design and structural planning</li>
-                <li>Free Construction Budget Calculator for instant, design-linked cost estimates based on plot size and floors</li>
-                <li>Four quality packages — Basic, Standard, Premium, and Luxury — matching different design and finish levels</li>
-                <li>Coordinated design-to-construction execution, avoiding the handoff gap between design and building teams</li>
-                <li>Direct wholesale material supply for cement, steel, bricks, tiles, and paints</li>
-                <li>Industry recognition — &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024</li>
-                <li>Instant WhatsApp support for quick queries and quotes</li>
+                <li>
+                  <strong>Better use of the plot.</strong> Every square foot is planned, with no dead corners or oversized corridors.
+                </li>
+                <li>
+                  <strong>Comfort in every season.</strong> Cross ventilation, shading and daylight keep the house cooler in summer and pleasant in winter.
+                </li>
+                <li>
+                  <strong>Structural safety.</strong> Columns, beams and foundations are coordinated with a structural engineer instead of guessed on site.
+                </li>
+                <li>
+                  <strong>Budget control.</strong> Clear drawings and an itemised estimate prevent surprise costs in the middle of construction.
+                </li>
+                <li>
+                  <strong>Lower running costs.</strong> Good daylight and airflow reduce electricity bills for as long as you live there.
+                </li>
+                <li>
+                  <strong>Room for the future.</strong> A smart plan allows an extra floor, a new room or a rented portion later.
+                </li>
+                <li>
+                  <strong>Higher resale and rental value.</strong> Well-planned homes sell and rent faster.
+                </li>
+                <li>
+                  <strong>Fewer disputes.</strong> Detailed drawings tell workers exactly what to build, which reduces arguments and rework.
+                </li>
               </ul>
               <p className="mt-3">
-                For homeowners who want home design coordinated closely with the actual construction team — reducing the risk of design elements being lost or altered during execution — this combined approach can be a practical option.
+                An architect costs a small share of the project, and good planning often saves far more than the fee.
               </p>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How to Evaluate a Home Design Partner
+                Home Design Ideas by Plot Size in Moradabad
               </h3>
               <p className="mb-3">
-                Use this checklist when choosing who will design your home:
+                Plot sizes in Moradabad vary from compact plots in older localities to larger plots in newer colonies. The right layout always depends on facing, road width, setbacks and local rules, but these general ideas help you start thinking.
               </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Small Plots (around 50 to 100 square yards)
+              </h4>
+              <p className="mb-3">
+                Small plots need discipline. Building upward with a compact staircase, using every wall for storage and letting light in through a well-placed window or courtyard makes a narrow house feel open. Avoid wide passages and separate rooms that are used only rarely.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Medium Plots (around 100 to 200 square yards)
+              </h4>
+              <p className="mb-3">
+                This size supports a comfortable independent house or duplex. You can plan a parking bay, a living and dining area, a kitchen, two or three bedrooms per floor and a terrace. A duplex often suits a joint family or one floor for rent.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Larger Plots (200 square yards and above)
+              </h4>
+              <p className="mb-3">
+                Larger plots allow a front garden, side setbacks, a separate drawing room, a pooja room, a study and extra bedrooms. Some owners plan a ground-floor shop or office along with the family home.
+              </p>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Irregular and Corner Plots
+              </h4>
+              <p className="mb-3">
+                Odd shapes and corner plots can become the most interesting homes when planned well. We use angled walls, wraparound balconies and clever courtyards to turn awkward corners into features.
+              </p>
+              <p className="mb-3">
+                MT Boss studies your actual plot papers and site before recommending a layout.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Room-by-Room Home Planning by MT Boss
+              </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Ask for a portfolio of previously designed and built homes</li>
-                <li>Confirm whether 3D visualizations are included before finalizing plans</li>
-                <li>Check if vastu consultation is offered, if that matters to your family</li>
-                <li>Ask how many design revisions are included before extra charges apply</li>
-                <li>Confirm familiarity with Moradabad&apos;s local building bylaws and approval process</li>
-                <li>Ask if structural engineering coordination is included in their service</li>
-                <li>Read genuine client reviews and request references</li>
-                <li>Test their responsiveness via call, email, or WhatsApp</li>
-                <li>Get a written agreement covering design scope, fees, and timelines</li>
+                <li>
+                  <strong>Entrance and living room.</strong> A welcoming entry, comfortable seating and a natural flow to the rest of the house, with a clear view of the front door only where you want it.
+                </li>
+                <li>
+                  <strong>Kitchen.</strong> Proper ventilation, an efficient work triangle, storage and a sensible link to the dining area. We also plan a chimney duct and utility space early.
+                </li>
+                <li>
+                  <strong>Dining area.</strong> Close to the kitchen, but not in the path of daily traffic.
+                </li>
+                <li>
+                  <strong>Bedrooms.</strong> Cross ventilation, privacy, wardrobe space and attached bathrooms placed to avoid damp walls and noise.
+                </li>
+                <li>
+                  <strong>Bathrooms.</strong> Good drainage, ventilation, waterproofing and easy maintenance.
+                </li>
+                <li>
+                  <strong>Staircase.</strong> Comfortable width and rise, positioned to save floor area and to allow a future floor.
+                </li>
+                <li>
+                  <strong>Pooja and study rooms.</strong> Quiet corners that suit your daily routine.
+                </li>
+                <li>
+                  <strong>Parking and gate.</strong> Enough space for vehicles without blocking the road.
+                </li>
+                <li>
+                  <strong>Terrace and balconies.</strong> Usable outdoor space with safe railings and proper waterproofing.
+                </li>
+                <li>
+                  <strong>Storage and utility.</strong> Built-in wardrobes, lofts, a store room and a wash area that keep the home uncluttered.
+                </li>
               </ul>
             </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Elevation and Exterior Design Options
+              </h3>
+              <p className="mb-3">
+                The front of your home is its first impression. MT Boss designs elevations in several popular styles:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Modern contemporary:</strong> clean lines, large windows, mixed textures and neat balconies.
+                </li>
+                <li>
+                  <strong>Minimalist:</strong> simple shapes, calm colours and few decorative details.
+                </li>
+                <li>
+                  <strong>North Indian traditional:</strong> arches, jharokhas, courtyards and warm colours.
+                </li>
+                <li>
+                  <strong>Classic and luxury:</strong> columns, cornices, stone cladding and grand entrances.
+                </li>
+                <li>
+                  <strong>Duplex-style elevations:</strong> staggered balconies, distinct floors and terrace gardens.
+                </li>
+                <li>
+                  <strong>Brass-inspired details:</strong> Moradabad is known as the Brass City, and subtle brass accents in gates, nameplates and lighting add local identity.
+                </li>
+              </ul>
+              <p className="mt-3">
+                Our 3D views let you compare options side by side before you decide.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Vastu-Friendly Home Design
+              </h3>
+              <p className="mb-3">
+                Many families in Moradabad want a home that follows Vastu principles. MT Boss plans the main entrance, kitchen, pooja room, bedrooms, staircase and toilets according to the guidance you follow, while keeping the layout practical.
+              </p>
+              <p className="mt-3">
+                If your family follows a particular Vastu consultant, we can work with their recommendations. If Vastu is not a priority, we design for light, ventilation and comfort instead. In either case, we explain trade-offs honestly, so you can decide with full information.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Climate-Smart Home Design for Moradabad
+              </h3>
+              <p className="mb-3">
+                Good home design responds to the place you live in. For homes in Moradabad, MT Boss focuses on:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Heat management:</strong> shaded windows, cross ventilation and suitable wall and roof details for cooler summers.
+                </li>
+                <li>
+                  <strong>Monsoon protection:</strong> proper slopes, waterproofing and drainage to prevent dampness and seepage.
+                </li>
+                <li>
+                  <strong>Winter comfort:</strong> sunlight in living areas and well-sealed bedrooms.
+                </li>
+                <li>
+                  <strong>Natural light:</strong> well-placed openings that reduce daytime electricity use.
+                </li>
+                <li>
+                  <strong>Energy saving:</strong> provision for solar panels and efficient lighting.
+                </li>
+                <li>
+                  <strong>Dust control:</strong> sensible window design and easy-to-clean surfaces.
+                </li>
+              </ul>
+              <p className="mt-3">
+                A climate-smart home lowers monthly bills and stays comfortable for decades.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                What to Include in Your Home Design Brief
+              </h3>
+              <p className="mb-3">
+                A clear brief helps any architect give better advice. Before your first meeting, collect the following:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Plot details:</strong> size, shape, facing direction and a copy of the plot papers or map.
+                </li>
+                <li>
+                  <strong>Location:</strong> the locality in Moradabad and the width of the approach road.
+                </li>
+                <li>
+                  <strong>Family details:</strong> number of members, elderly people, children and any special needs.
+                </li>
+                <li>
+                  <strong>Rooms required:</strong> bedrooms, bathrooms, kitchen, pooja room, study, guest room and store.
+                </li>
+                <li>
+                  <strong>Floors and future plans:</strong> how many floors now, and whether you may add more later.
+                </li>
+                <li>
+                  <strong>Parking and shops:</strong> number of vehicles and any commercial or rental space.
+                </li>
+                <li>
+                  <strong>Budget range:</strong> even a rough figure helps the architect suggest suitable design and materials.
+                </li>
+                <li>
+                  <strong>Timeline:</strong> when you want to start and when you need to move in.
+                </li>
+                <li>
+                  <strong>Style preferences:</strong> saved photos of homes you like, along with colours and materials.
+                </li>
+                <li>
+                  <strong>Vastu and other wishes:</strong> any rules or preferences you want the design to follow.
+                </li>
+              </ul>
+              <p className="mt-3">
+                You do not need every answer. Our team will help you fill in the gaps during the free consultation.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                MT Boss Home Design Process, Step by Step
+              </h3>
+              <p className="mb-3">
+                We keep the process clear so you always know what comes next.
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Step 1: Free consultation and site visit.</strong> We listen to your needs, visit the plot and understand your budget and timeline.
+                </li>
+                <li>
+                  <strong>Step 2: Concept layouts.</strong> We prepare floor plan options. You review them and tell us what to change.
+                </li>
+                <li>
+                  <strong>Step 3: 3D elevation and working drawings.</strong> Once the concept is approved, we prepare 3D views and detailed drawings, coordinated with structural, electrical and plumbing design.
+                </li>
+                <li>
+                  <strong>Step 4: Approvals guidance.</strong> We guide you on the drawings and documents typically needed for local approvals. Requirements vary by area, so please confirm final rules with the relevant authorities.
+                </li>
+                <li>
+                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate with materials, labour and finishes itemised.
+                </li>
+                <li>
+                  <strong>Step 6: Construction and supervision.</strong> If you choose MT Boss to build, our team builds exactly to the approved design with regular site checks.
+                </li>
+                <li>
+                  <strong>Step 7: Finishing and handover.</strong> We complete finishing, inspection and cleaning, and hand over a home that is ready to live in.
+                </li>
+              </ul>
+            </section>
+
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Home Design and Construction Cost Factors in Moradabad
               </h3>
               <p className="mb-3">
-                Several factors influence what you&apos;ll pay for home design and subsequent construction:
+                Costs vary from home to home. The main factors include:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Plot size and complexity of the design required</li>
-                <li>Number of floors and rooms planned</li>
-                <li>Whether 3D visualization and detailed working drawings are included</li>
-                <li>Vastu consultation requirements, if applicable</li>
-                <li>Structural complexity requiring detailed engineering coordination</li>
-                <li>Quality package selected for eventual construction — Basic, Standard, Premium, or Luxury</li>
+                <li>
+                  <strong>Plot and built-up area:</strong> more area means more material and labour.
+                </li>
+                <li>
+                  <strong>Design complexity:</strong> simple shapes cost less than curves, large cantilevers and elaborate elevations.
+                </li>
+                <li>
+                  <strong>Number of floors:</strong> additional floors need stronger structure and more material.
+                </li>
+                <li>
+                  <strong>Material quality:</strong> basic, standard and premium finishes differ greatly in price.
+                </li>
+                <li>
+                  <strong>Site conditions:</strong> soil, access and existing structures can affect foundation and labour costs.
+                </li>
+                <li>
+                  <strong>Finishing level:</strong> flooring, doors, windows, kitchen, bathrooms, paint and lighting all change the final figure.
+                </li>
+                <li>
+                  <strong>Scope of service:</strong> design only, or design with construction and interiors.
+                </li>
+              </ul>
+
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Smart Spending Advice from MT Boss
+              </h4>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Spend more on:</strong> structure, waterproofing, electrical and plumbing quality, doors and windows, and bathroom fittings. These are hard and costly to fix later.
+                </li>
+                <li>
+                  <strong>Save on:</strong> decor, fancy fittings and items you can upgrade over time.
+                </li>
               </ul>
               <p className="mt-3">
-                For reference, overall construction costs (including structural and finishing work) for a 1,000 sq. ft. G+1 standard-quality home in Moradabad typically fall around ₹700–₹800 per sq. ft., with design costs either bundled in or quoted separately depending on the service provider.
+                MT Boss provides an itemised quote, so there are no hidden charges. For a personal estimate, request a{" "}
+                <a
+                  href="https://www.mtboss.in/CTASection/get-quote"
+                  className="text-blue-600 underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  free quote
+                </a>
+                .
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Step-by-Step Home Design Process
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Initial Consultation</strong> — Discussing family needs, lifestyle, and budget</li>
-                <li><strong>Site Visit</strong> — Studying plot orientation, size, and surrounding context</li>
-                <li><strong>Concept Design</strong> — Preparing initial floor plans and layout options</li>
-                <li><strong>Vastu Review (If Requested)</strong> — Adjusting layout to align with vastu preferences</li>
-                <li><strong>Design Finalization</strong> — Refining plans based on feedback, including 3D visuals if offered</li>
-                <li><strong>Municipal Approval</strong> — Submitting drawings for building plan sanction</li>
-                <li><strong>Structural Coordination</strong> — Finalizing load-bearing and foundation details</li>
-                <li><strong>Construction Execution</strong> — Building the home per the approved design</li>
-              </ul>
-            </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Benefits of Choosing a Locally Based Home Design Partner
+                Common Home Design Mistakes to Avoid
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Faster, more frequent in-person design discussions</li>
-                <li>Better understanding of Moradabad&apos;s plot sizes, soil types, and local preferences</li>
-                <li>Easier coordination with local contractors and material suppliers</li>
-                <li>Familiarity with Moradabad Municipal Corporation&apos;s approval requirements</li>
-                <li>Quicker response for design revisions or on-site clarifications</li>
+                <li>Building from a rough sketch instead of proper drawings.</li>
+                <li>Ignoring plot orientation, light and ventilation.</li>
+                <li>Placing the staircase where it wastes the best space.</li>
+                <li>Forgetting parking, storage and future expansion.</li>
+                <li>Skipping structural design and soil checks.</li>
+                <li>Underplanning electrical points, plumbing and drainage.</li>
+                <li>Neglecting waterproofing on terraces, bathrooms and external walls.</li>
+                <li>Choosing an elevation before checking that the layout supports it.</li>
+                <li>Hiring a designer and a builder who do not coordinate.</li>
+                <li>Starting work without a written quotation and schedule.</li>
               </ul>
+              <p className="mt-3">
+                Careful planning at the start helps you avoid each of these.
+              </p>
             </section>
+
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Mistakes When Planning Home Design
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Finalizing a layout without considering natural light and ventilation</li>
-                <li>Skipping vastu consultation and regretting it after move-in, if it mattered to the family</li>
-                <li>Not clarifying how many design revisions are included before extra charges apply</li>
-                <li>Assuming a design will automatically pass municipal approval without verification</li>
-                <li>Choosing the cheapest design service without reviewing past project quality</li>
-                <li>Not asking whether structural coordination is included or needs separate arrangement</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact a Home Design and Construction Partner in Moradabad
+                How to Choose an Architect for Home Design
               </h3>
               <p className="mb-3">
-                If you&apos;re planning your home and want design coordination bundled with construction execution, reach out directly:
+                Whoever you hire, use this checklist:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
-                <li><strong>Phone / Call:</strong> +91 94584 10866</li>
-                <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
-                <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
+                <li>They can show completed homes, not only computer images.</li>
+                <li>They ask about your family and budget before drawing.</li>
+                <li>They understand local building rules and approval requirements.</li>
+                <li>They provide 3D elevation views before construction begins.</li>
+                <li>The quotation is itemised and in writing.</li>
+                <li>They coordinate with structural, electrical and plumbing work.</li>
+                <li>A named person supervises the site regularly.</li>
+                <li>The timeline is clear, along with the plan for delays.</li>
+                <li>Their address and contact details match their official website and Google listing.</li>
+                <li>They offer after-service support once the home is complete.</li>
+                <li>Professional details are shown where they apply.</li>
               </ul>
               <p className="mt-3">
-                Try the free online Construction Budget Calculator for an initial estimate, then follow up by phone or WhatsApp to discuss your home design requirements in detail.
+                MT Boss welcomes every one of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
+
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Frequently Asked Questions (FAQs)
+                Areas Served by MT Boss in Moradabad
+              </h3>
+              <p className="mb-3">
+                We work with families across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies.
+              </p>
+              <p>
+                Our office on Harthala Kanth Road keeps site visits quick and convenient.
+              </p>
+            </section>
+
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                MT Boss Home Design FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. How do I find a good architect for home design in Moradabad?</strong>
+                  <strong>Q1. Does MT Boss design houses in Moradabad?</strong>
                   <br />
-                  Check portfolios, ask for 3D visualizations, confirm vastu and bylaw familiarity, and compare a few options.
+                  Yes. We design independent houses, duplexes, villas and builder floors.
                 </li>
                 <li>
-                  <strong>Q2. Is MTBOSS an architecture firm?</strong>
+                  <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  No, MTBOSS is a construction company that coordinates home design as part of its residential build service.
+                  Yes. MT Boss offers a free consultation and site visit.
                 </li>
                 <li>
-                  <strong>Q3. Does MTBOSS offer vastu-compliant home design?</strong>
+                  <strong>Q3. Can MT Boss also build my home?</strong>
                   <br />
-                  Home design can be planned around vastu preferences when requested by the homeowner.
+                  Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
                 <li>
-                  <strong>Q4. What is the average home construction cost per square foot in Moradabad?</strong>
+                  <strong>Q4. Do you make 3D elevation designs?</strong>
                   <br />
-                  Around ₹700–₹800 per sq. ft. for standard-quality construction, including structural work.
+                  Yes. You see your home in 3D before construction begins.
                 </li>
                 <li>
-                  <strong>Q5. Does MTBOSS provide a free cost estimate?</strong>
+                  <strong>Q5. Can you design for a small plot?</strong>
                   <br />
-                  Yes, their online Budget Calculator gives an instant, free BOQ-based estimate.
+                  Yes. We plan small and irregular plots to make every square foot useful.
                 </li>
                 <li>
-                  <strong>Q6. Does MTBOSS provide 3D visualizations before finalizing a design?</strong>
+                  <strong>Q6. Can the plan follow Vastu?</strong>
                   <br />
-                  Their technology-integrated process, using BIM since 2018, supports detailed design planning.
+                  Yes. We prepare Vastu-friendly layouts whenever you ask for them.
                 </li>
                 <li>
-                  <strong>Q7. Does MTBOSS use modern design technology?</strong>
+                  <strong>Q7. Can you design a duplex or extra floors for rent?</strong>
                   <br />
-                  Yes, they have used AI and BIM (Building Information Modeling) since 2018.
+                  Yes. We plan separate entrances and services for rental floors.
                 </li>
                 <li>
-                  <strong>Q8. Can I buy construction materials directly through MTBOSS after design approval?</strong>
+                  <strong>Q8. Can you redesign or extend my old house?</strong>
                   <br />
-                  Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates.
+                  Yes. We assess the structure and redesign it to add space and light.
+                </li>
+                <li>
+                  <strong>Q9. Is the quotation itemised?</strong>
+                  <br />
+                  Yes. You get a written breakup of materials, labour and finishes.
+                </li>
+                <li>
+                  <strong>Q10. How do I contact MT Boss?</strong>
+                  <br />
+                  Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>
               </ul>
             </section>
           </div>
         </div>
+
 
         {/* Form Section */}
         <div className="w-full lg:w-[450px] p-8 order-2 lg:order-2">
@@ -315,5 +580,6 @@ const Content = () => {
     </div>
   );
 };
+
 
 export default Content;

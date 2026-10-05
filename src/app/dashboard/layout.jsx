@@ -44,52 +44,69 @@ import {
 } from '@/app/components/ui/icons';
 
 const menuItems = [
-  { label: 'Overview',                  icon: LayoutDashboard,      tab: '' },
-  { label: 'Agents',                    icon: UserCog,              tab: 'agents' },
-  { label: 'Calculator',               icon: Calculator,           tab: 'calculator' },
-  { label: 'Calculator Quotes',        icon: FileText,             tab: 'calculator-quotes' },
-  { label: 'Career Enquiry',           icon: Briefcase,            tab: 'career-enquiries' },
-  { label: 'New Jobs',                 icon: BriefcaseBusiness,    tab: 'jobs' },
-  { label: 'Lead Management',          icon: ClipboardList,        tab: 'lead-management' },
-  { label: 'Office Locations',         icon: MapPin,               tab: 'office-locations' },
-  { label: 'Cities',                    icon: Building,             tab: 'cities' },
-  { label: 'Contact Forms',            icon: Mail,                 tab: 'submissions' },
-  { label: 'Franchises',               icon: Store,                tab: 'franchises' },
-  { label: 'Free Time Slots',          icon: CalendarClock,        tab: 'free-slots' },
-  { label: 'FAQs Management',          icon: HelpCircle,           tab: 'faqs' },
-  { label: 'Customer Reviews',         icon: Star,                 tab: 'reviews' },
-  { label: 'Hero Banners',             icon: ImageIcon,            tab: 'hero-banners' },
-  { label: 'SEO Blogs & Guides',       icon: Newspaper,            tab: 'blogs' },
+  { label: 'Overview', icon: LayoutDashboard, tab: '' },
+  { label: 'Agents', icon: UserCog, tab: 'agents' },
+  { label: 'Calculator', icon: Calculator, tab: 'calculator' },
+  { label: 'Calculator Quotes', icon: FileText, tab: 'calculator-quotes' },
+  { label: 'Career Enquiry', icon: Briefcase, tab: 'career-enquiries' },
+  { label: 'New Jobs', icon: BriefcaseBusiness, tab: 'jobs' },
+  { label: 'Customer Enquiries', icon: ClipboardList, tab: 'lead-management' },
+  { label: 'Office Locations', icon: MapPin, tab: 'office-locations' },
+  { label: 'Cities', icon: Building, tab: 'cities' },
+  { label: 'Contact Forms', icon: Mail, tab: 'submissions' },
+  { label: 'Franchises', icon: Store, tab: 'franchises' },
+  { label: 'Free Time Slots', icon: CalendarClock, tab: 'free-slots' },
+  { label: 'FAQs Management', icon: HelpCircle, tab: 'faqs' },
+  { label: 'Customer Reviews', icon: Star, tab: 'reviews' },
+  { label: 'Hero Banners', icon: ImageIcon, tab: 'hero-banners' },
+  { label: 'SEO Blogs & Guides', icon: Newspaper, tab: 'blogs' },
 
-  { label: 'Construction Services',    icon: Layers,               tab: 'primary-services' },
-  { label: 'Construction Enquiry',     icon: MessageSquare,        tab: 'primary-service-enquiries' },
-  { label: 'Professional Enquiries',   icon: MessageSquare,        tab: 'professional-enquiries' },
-  { label: 'Professional Services',    icon: Users,                tab: 'professionals' },
-  { label: 'Project Management',       icon: Building2,            tab: 'project-management' },
-  { label: 'Portfolio Projects',       icon: FolderKanban,         tab: 'projects' },
-  { label: 'Properties',               icon: House,                tab: 'properties' },
-  { label: 'Property Enquiries',       icon: MessageSquareText,    tab: 'property-enquiries' },
-  { label: 'Quick Enquiry',            icon: Zap,                  tab: 'quick-enquiries' },
-  { label: 'Quick Services',           icon: Wrench,               tab: 'quick-services' },
-  { label: 'Revenue & Earnings',       icon: CircleDollarSign,     tab: 'revenue' },
-  { label: 'Service Bookings',         icon: CalendarDays,         tab: 'bookings' },
-  { label: 'Orders History',           icon: ClipboardList,        tab: 'orders-history' },
-  { label: 'Service Pricing',          icon: Tags,                 tab: 'quick-services-pricing' },
-  { label: 'Shop Now Manager',         icon: ShoppingCart,         tab: 'shop-categories' },
-  { label: '+ Add Shop Product',       icon: PlusCircle,           tab: 'shop-products' },
-  { label: 'Shipping Settings',        icon: Truck,                tab: 'shipping-settings' },
-  { label: 'Suppliers',                icon: Truck,                tab: 'suppliers' },
-  { label: 'Vendors',                  icon: HardHat,              tab: 'vendors' },
-  { label: 'Package Approvals',        icon: PackageCheck,         tab: 'packages' },
+  { label: 'Construction Services', icon: Layers, tab: 'primary-services' },
+  { label: 'Construction Enquiry', icon: MessageSquare, tab: 'primary-service-enquiries' },
+  { label: 'Professional Enquiries', icon: MessageSquare, tab: 'professional-enquiries' },
+  { label: 'Professional Services', icon: Users, tab: 'professionals' },
+  { label: 'Project Management', icon: Building2, tab: 'project-management' },
+{ label: 'Project Management · Parties', icon: Building2, tab: 'party-project-management' },
+{ label: 'PM Dashboard', icon: LayoutDashboard, tab: 'pm-dashboard' },
+{ label: 'PM Reports', icon: FileText, tab: 'pm-reports' },
+{ label: 'PM Activity Log', icon: FolderKanban, tab: 'pm-audit' },
+{ label: 'PM Benchmarks · Rates', icon: CircleDollarSign, tab: 'pm-benchmarks' },
+  { label: 'Portfolio Projects', icon: FolderKanban, tab: 'projects' },
+  { label: 'Properties', icon: House, tab: 'properties' },
+  { label: 'Property Enquiries', icon: MessageSquareText, tab: 'property-enquiries' },
+  { label: 'Quick Enquiry', icon: Zap, tab: 'quick-enquiries' },
+  { label: 'Quick Services', icon: Wrench, tab: 'quick-services' },
+  { label: 'Revenue & Earnings', icon: CircleDollarSign, tab: 'revenue' },
+  { label: 'Service Bookings', icon: CalendarDays, tab: 'bookings' },
+  { label: 'Orders History', icon: ClipboardList, tab: 'orders-history' },
+  { label: 'Service Pricing', icon: Tags, tab: 'quick-services-pricing' },
+  { label: 'Shop Now Manager', icon: ShoppingCart, tab: 'shop-categories' },
+  { label: '+ Add Shop Product', icon: PlusCircle, tab: 'shop-products' },
+  { label: 'Shipping Settings', icon: Truck, tab: 'shipping-settings' },
+  { label: 'Suppliers', icon: Truck, tab: 'suppliers' },
+  { label: 'Vendors', icon: HardHat, tab: 'vendors' },
+  { label: 'Package Approvals', icon: PackageCheck, tab: 'packages' },
 ];
 
-function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode }) {
+function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
   const searchParams = useSearchParams();
   const currentTab = searchParams ? (searchParams.get('tab') || '') : '';
 
+  const visibleItems = menuItems.filter((item) => {
+    if (user?.role === 'agent') {
+      const tab = item.tab || '';
+      if (tab.includes('project-management') || tab.startsWith('pm-') || tab === 'projects') {
+        return !!user.has_project_management_access;
+      }
+      if (tab === 'lead-management') return true;
+      return false;
+    }
+    return true;
+  });
+
   return (
     <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-1">
-      {menuItems.map((item) => {
+      {visibleItems.map((item) => {
         const IconComponent = item.icon;
         const isActive = (item.tab || '') === currentTab;
 
@@ -99,20 +116,18 @@ function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode }) {
             href={item.tab ? `/dashboard?tab=${item.tab}` : '/dashboard'}
             onClick={closeSidebarOnMobile}
             title={item.label}
-            className={`flex items-center gap-3 px-2.5 py-2 rounded-lg transition-all ${
-              isActive
+            className={`flex items-center gap-3 px-2.5 py-2 rounded-lg transition-all ${isActive
                 ? 'bg-[rgba(33,150,243,0.12)] text-[#0284c7] font-semibold'
                 : isDarkMode
-                ? 'text-gray-300 hover:text-white hover:bg-white/5 font-medium'
-                : 'text-[#0f172a] hover:text-[#0284c7] hover:bg-slate-100/80 font-medium'
-            }`}
+                  ? 'text-gray-300 hover:text-white hover:bg-white/5 font-medium'
+                  : 'text-[#0f172a] hover:text-[#0284c7] hover:bg-slate-100/80 font-medium'
+              }`}
           >
             <span
-              className={`flex items-center justify-center shrink-0 w-8 h-8 rounded-md transition-colors ${
-                isActive
+              className={`flex items-center justify-center shrink-0 w-8 h-8 rounded-md transition-colors ${isActive
                   ? 'bg-[rgba(33,150,243,0.18)] text-[#0284c7]'
                   : 'text-current'
-              }`}
+                }`}
             >
               {IconComponent ? (
                 <IconComponent
@@ -152,7 +167,15 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       try {
-        setUser(JSON.parse(localStorage.getItem('user') || '{}'));
+        let u = JSON.parse(localStorage.getItem('user'));
+        if (!u) {
+          const agentStr = localStorage.getItem('agent');
+          if (agentStr) {
+            u = JSON.parse(agentStr);
+            u.role = 'agent';
+          }
+        }
+        setUser(u || {});
       } catch {
         setUser({});
       }
@@ -167,6 +190,22 @@ export default function DashboardLayout({ children }) {
     return () => window.removeEventListener('resize', syncSidebar);
   }, []);
 
+  useEffect(() => {
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const res = await originalFetch(...args);
+      if (res.status === 403 && typeof args[0] === 'string' && args[0].includes('/api/admin/project-management')) {
+        let u = null;
+        try { u = JSON.parse(localStorage.getItem('agent')); } catch {}
+        if (u) {
+          alert('Your access to Project Management has been revoked. Contact admin.');
+          window.location.href = '/agent/dashboard';
+        }
+      }
+      return res;
+    };
+    return () => { window.fetch = originalFetch; };
+  }, []);
   const handleLogout = async () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -178,13 +217,15 @@ export default function DashboardLayout({ children }) {
     if (window.innerWidth < 1024) setSidebarOpen(false);
   };
 
-  const bgClass = isDarkMode ? 'bg-[#0f172a]' : 'bg-white';
-  const textPrimary = isDarkMode ? 'text-white' : 'text-[#0f172a]';
-  const borderColor = isDarkMode ? 'border-slate-800' : 'border-slate-200';
-  const hoverBg = isDarkMode ? 'hover:bg-slate-800/60' : 'hover:bg-slate-50';
+  const bgClass = isDarkMode ? 'bg-black' : 'bg-white';
+  const pageBgClass = isDarkMode ? 'bg-[#0f0f11]' : 'bg-[#f5f5f7]';
+  const textPrimary = isDarkMode ? 'text-white' : 'text-black';
+  const textSecondary = isDarkMode ? 'text-gray-400' : 'text-gray-600';
+  const borderColor = isDarkMode ? 'border-[var(--brand-blue-light)]' : 'border-[var(--brand-blue)]';
+  const hoverBg = isDarkMode ? 'hover:bg-[var(--brand-blue-dark)]/10' : 'hover:bg-sky-50';
 
   return (
-    <div className="flex h-[calc(100dvh-4rem)] overflow-hidden bg-slate-900">
+    <div className={`admin-dashboard-root flex h-[calc(100dvh-4rem)] overflow-hidden ${pageBgClass}`}>
       {sidebarOpen && (
         <div
           aria-label="Close dashboard menu"
@@ -219,6 +260,7 @@ export default function DashboardLayout({ children }) {
             sidebarOpen={sidebarOpen}
             closeSidebarOnMobile={closeSidebarOnMobile}
             isDarkMode={isDarkMode}
+            user={user}
           />
         </Suspense>
 
@@ -258,7 +300,7 @@ export default function DashboardLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className="h-full flex-1 min-w-0 overflow-y-auto overscroll-contain">
+      <main className={`h-full flex-1 min-w-0 overflow-y-auto overscroll-contain ${pageBgClass}`}>
         <div className={`lg:hidden sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 ${bgClass} ${borderColor}`}>
           <button
             type="button"

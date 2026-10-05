@@ -85,7 +85,7 @@ export default function ShopCategoryNav({
 
   useEffect(() => () => clearCloseTimer(), [clearCloseTimer]);
 
-  if (!categories.length || !parents.length) return null;
+  if (!parents.length) return null;
 
   const leafIsActive = (child) => {
     if (child.categoryId == null || String(child.categoryId) !== String(activeCategory)) return false;

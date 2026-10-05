@@ -7,6 +7,7 @@ import { useCities } from "@/hooks/useCities";
 import Storefront, { displayUnit } from "./Storefront";
 import { defaultShopStorefront } from "@/lib/shop-storefront-defaults";
 import { calculateCoupon } from "@/lib/coupon-calculations";
+import { getCartStep } from "@/lib/cart-step";
 // Dark-mode watcher
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -37,6 +38,7 @@ function SectionLabel({ children, isDark }) {
     </div>
   );
 }
+
 
 function getUnitPrice(product, quantity = 1) {
   const basePrice = Number(product?.price);
@@ -316,7 +318,7 @@ export default function ShopPage() {
   const dynamicTypes = productOptions.types || [];
   const dynamicUnits = productOptions.units || [];
   const catTypes    = (dynamicTypes.length > 0 ? dynamicTypes : (selectedCategory?.types || [])).filter(Boolean);
-  const catSubs     = (selectedCategory?.subcategories || []).filter(Boolean);
+  const catSubs     = (selectedCategory?.subcategories || []).map(s => typeof s === 'object' && s !== null ? s.name : s).filter(Boolean);
   const hasTypes    = catTypes.length > 0;
   const hasSubs     = catSubs.length  > 0;
   const categoryUnits = [
@@ -362,16 +364,27 @@ export default function ShopPage() {
   const addToCart = (product) => {
     setCart((previous) => {
       const existing = previous.find((item) => item.product.id === product.id);
+      const step = getCartStep(product);
       const limit = product.fromSupplier ? Math.max(0, Number(product.quantity) || 0) : 10000;
       if (limit === 0) return previous;
-      if (existing) return previous.map((item) => item.product.id === product.id ? { ...item, quantity: Math.min(item.quantity + 1, limit, 10000) } : item);
+      if (existing) return previous.map((item) =>
+        item.product.id === product.id
+          ? { ...item, quantity: Math.min(item.quantity + step, limit, 10000) }
+          : item
+      );
       if (previous.length >= 20) return previous;
-      return [...previous, { product, quantity: 1 }];
+      return [...previous, { product, quantity: step }];
     });
   };
 
   const changeCartQuantity = (id, delta) => setCart((previous) => previous
-    .map((item) => item.product.id === id ? { ...item, quantity: Math.max(0, Math.min(item.product.fromSupplier ? Math.max(0, Number(item.product.quantity) || 0) : 10000, 10000, item.quantity + delta)) } : item)
+    .map((item) => {
+      if (item.product.id !== id) return item;
+      const step = getCartStep(item.product);
+      const limit = item.product.fromSupplier ? Math.max(0, Number(item.product.quantity) || 0) : 10000;
+      const newQty = Math.max(0, Math.min(limit, 10000, item.quantity + delta * step));
+      return { ...item, quantity: newQty };
+    })
     .filter((item) => item.quantity > 0));
 
   const autoCoupon = useMemo(() => coupons.filter((coupon) => !coupon.code)
@@ -535,6 +548,12 @@ export default function ShopPage() {
       return;
     }
 
+    if (modalMode !== 'quote' && (!shippingQuote || shippingQuote.totalShipping === null || shippingQuote.totalShipping === undefined)) {
+      setSubmitError('Shipping must be calculated before you can place this order. Please verify your delivery city.');
+      setSubmitting(false);
+      return;
+    }
+
     if (deliveryDate) {
       const year = new Date(deliveryDate).getFullYear();
       const currentYear = new Date().getFullYear();
@@ -633,14 +652,20 @@ export default function ShopPage() {
   const selectedProductTotal = selectedUnitPrice * selectedQuantity;
   const cartProductTotal = cart.reduce((sum, item) => sum + getUnitPrice(item.product, item.quantity) * item.quantity, 0);
   const cartFinalTotal = Math.max(0, cartProductTotal - couponCalculation.discount);
+  const cartTotalWithShipping = cartFinalTotal + (shippingQuote?.totalShipping || 0);
   const cartHasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
+  const shippingTotal = Number(shippingQuote?.totalShipping);
+  const hasShippingTotal = Number.isFinite(shippingTotal) && shippingTotal >= 0;
+  const orderProductTotal = modalMode === 'cart' ? cartFinalTotal : selectedProductTotal;
+  const hasFixedOrderPrice = modalMode !== 'quote' && orderProductTotal > 0 && (modalMode !== 'cart' || !cartHasUnpricedItems);
+  const orderGrandTotal = hasFixedOrderPrice && hasShippingTotal ? orderProductTotal + shippingTotal : null;
   const quotePrice = getQuotePrice(selectedCategory, selectedCity, selectedProduct);
 
   // ── render ──────────────────────────────────────────────────────────────────
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} />
+      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} shippingQuote={shippingQuote} />
 
       {isModalOpen && mounted && createPortal(
         <div className="shop-checkout-modal fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>
@@ -688,6 +713,13 @@ export default function ShopPage() {
                 {submittedOrder?.orders?.length > 0 && (
                   <div className={`mt-3 text-xs ${headText}`}>
                     {submittedOrder.orders.map((order) => <p key={order.id} className="mt-1"><strong>{order.material_type}</strong> — {order.order_reference}</p>)}
+                  </div>
+                )}
+                {modalMode !== 'quote' && submittedOrder?.totals?.grandTotal !== undefined && (
+                  <div className={`mx-auto mt-4 max-w-xs rounded-xl border-2 px-4 py-3 ${isDarkMode ? "border-[var(--brand-blue-light)] bg-zinc-800" : "border-[var(--brand-blue)] bg-blue-50"}`}>
+                    <div className={`flex justify-between text-xs ${subText}`}><span>Product total</span><span>₹{Number(submittedOrder.totals.productTotal || 0).toLocaleString('en-IN')}</span></div>
+                    <div className={`mt-1 flex justify-between text-xs ${subText}`}><span>Shipping</span><span>₹{Number(submittedOrder.totals.shippingCost || 0).toLocaleString('en-IN')}</span></div>
+                    <div className={`mt-2 flex justify-between border-t pt-2 text-base font-black ${isDarkMode ? "border-zinc-700" : "border-blue-200"}`}><span>Grand Total</span><span>₹{Number(submittedOrder.totals.grandTotal).toLocaleString('en-IN')}</span></div>
                   </div>
                 )}
                 <div className="mt-5 flex flex-col justify-center gap-2 sm:flex-row">
@@ -786,11 +818,27 @@ export default function ShopPage() {
                     {couponCalculation.regularAmount > 0 && <p className={`mt-1 text-xs ${subText}`}>Other items: ₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</p>}
                     {activeCoupon && couponCalculation.eligible && <p className="mt-1 text-xs font-bold text-green-600">Coupon {activeCoupon.code ? `“${activeCoupon.code}”` : 'offer'} applied: -₹{couponCalculation.discount.toLocaleString('en-IN')}</p>}
                     {activeCoupon && !couponCalculation.eligible && <p className="mt-1 text-xs font-semibold text-amber-600">Add ₹{couponCalculation.gap.toLocaleString('en-IN')} more of regular-price items to unlock this coupon.</p>}
+                    {shippingQuote?.totalShipping !== null && shippingQuote?.totalShipping !== undefined && (
+                      <p className={`mt-1 text-xs ${subText}`}>Shipping charges: ₹{Number(shippingQuote.totalShipping).toLocaleString('en-IN')}</p>
+                    )}
                     <div className={`mt-2 flex items-center justify-between border-t pt-2 ${isDarkMode ? "border-zinc-700" : "border-gray-200"}`}>
-                      <span className={`text-xs font-bold ${headText}`}>Total</span>
-                      <strong className={`text-sm ${headText}`}>{cartFinalTotal > 0 ? `₹${cartFinalTotal.toLocaleString("en-IN")}` : 'On confirmation'}{cartFinalTotal > 0 && cartHasUnpricedItems ? ' + quote items' : ''}</strong>
-                    </div>
-                    <p className={`text-[10px] mt-2 ${subText}`}>Delivery charges, if applicable, are confirmed separately.</p>
+  <span className={`text-xs font-bold ${headText}`}>Product total</span>
+  <strong className={`text-sm ${headText}`}>{cartProductTotal > 0 ? `₹${cartProductTotal.toLocaleString("en-IN")}` : 'On confirmation'}{cartProductTotal > 0 && cartHasUnpricedItems ? ' + quote items' : ''}</strong>
+</div>
+{couponCalculation.discount > 0 && (
+  <div className="mt-1 flex items-center justify-between text-xs font-bold text-green-600">
+    <span>Coupon discount</span>
+    <span>-₹{couponCalculation.discount.toLocaleString('en-IN')}</span>
+  </div>
+)}
+<div className={`mt-1 flex items-center justify-between text-xs ${subText}`}>
+  <span>Shipping</span>
+  <span>{hasShippingTotal ? `₹${shippingTotal.toLocaleString('en-IN')}` : 'Calculate shipping first'}</span>
+</div>
+<div className={`mt-3 flex items-center justify-between border-t-2 pt-3 ${isDarkMode ? "border-zinc-600" : "border-blue-300"}`}>
+  <span className={`text-base font-black ${headText}`}>Grand Total</span>
+  <strong className={`text-xl font-black ${headText}`}>{orderGrandTotal !== null ? `₹${orderGrandTotal.toLocaleString('en-IN')}` : 'On confirmation'}</strong>
+</div>
                   </div>
                 ) : <>
                 {modalMode === "buy" ? (
@@ -799,9 +847,9 @@ export default function ShopPage() {
                     {selectedUnitPrice > 0 ? <>
                       <div className="mt-1 flex items-center justify-between gap-3">
                         <p className={`text-sm font-bold ${headText}`}>₹{selectedUnitPrice.toLocaleString("en-IN")} / {displayUnit(selectedProduct?.unit)}</p>
-                        <p className={`text-sm font-black ${headText}`}>Total: ₹{selectedProductTotal.toLocaleString("en-IN")}</p>
+                        <p className={`text-sm font-black ${headText}`}>Product total: ₹{selectedProductTotal.toLocaleString("en-IN")}</p>
                       </div>
-                      <p className={`text-[10px] mt-1 ${subText}`}>Product price is fixed for the selected quantity. Delivery charges, if applicable, are confirmed separately.</p>
+                      <p className={`text-[10px] mt-1 ${subText}`}>Shipping is calculated from the verified delivery city.</p>
                     </> : <>
                       <p className={`mt-1 text-base font-black ${headText}`}>Price on confirmation</p>
                       <p className={`text-[10px] mt-1 ${subText}`}>The supplier will confirm one final price before processing the order.</p>
@@ -829,6 +877,23 @@ export default function ShopPage() {
                 )}
 
                 {/* ── SECTION 1 — Material Details ───────────────────── */}
+                {modalMode !== 'quote' && modalMode !== 'cart' && (
+                  <div className={`rounded-xl border-2 px-4 py-3 mb-4 ${isDarkMode ? "border-[var(--brand-blue-light)] bg-zinc-800" : "border-[var(--brand-blue)] bg-blue-50"}`}>
+                    <div className={`flex items-center justify-between text-xs ${subText}`}>
+                      <span>Product total{modalMode === 'cart' && couponCalculation.discount > 0 ? ' (after coupon)' : ''}</span>
+                      <span>{hasFixedOrderPrice ? `₹${orderProductTotal.toLocaleString('en-IN')}` : 'On confirmation'}</span>
+                    </div>
+                    <div className={`mt-1 flex items-center justify-between text-xs ${subText}`}>
+                      <span>Shipping</span>
+                      <span>{hasShippingTotal ? `₹${shippingTotal.toLocaleString('en-IN')}` : 'Calculate shipping first'}</span>
+                    </div>
+                    <div className={`mt-3 flex items-center justify-between border-t pt-3 ${isDarkMode ? "border-zinc-700" : "border-blue-200"}`}>
+                      <span className={`text-base font-black ${headText}`}>Grand Total</span>
+                      <strong className={`text-xl font-black ${headText}`}>{orderGrandTotal !== null ? `₹${orderGrandTotal.toLocaleString('en-IN')}` : 'On confirmation'}</strong>
+                    </div>
+                  </div>
+                )}
+
                 <SectionLabel isDark={isDarkMode}>📦 Material Details</SectionLabel>
 
                 {loadingProductOptions && (
@@ -976,6 +1041,7 @@ export default function ShopPage() {
                       onChange={(e) => setDeliveryDate(e.target.value)}
                       min={new Date().toISOString().split("T")[0]}
                       max="9999-12-31"
+                      suppressHydrationWarning
                       className={inp}
                     />
                   </div>

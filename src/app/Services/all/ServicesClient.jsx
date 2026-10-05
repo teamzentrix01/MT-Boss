@@ -43,7 +43,7 @@ export default function AllServicesPage() {
   if (loading) {
     return (
       <main className={`min-h-screen font-serif ${bg}`}>
-        <section className={`pt-28 pb-12 px-6 text-center`}>
+        <section className={`pt-8 md:pt-16 pb-8 px-6 text-center`}>
           <p className="text-[var(--brand-blue)]">Loading Services...</p>
         </section>
       </main>
@@ -54,13 +54,13 @@ export default function AllServicesPage() {
     <main className={`min-h-screen font-serif transition-colors duration-500 ${bg}`}>
 
       {/* Hero */}
-      <section className={`pt-28 pb-12 px-6 text-center border-b ${border}`}>
+      <section className={`pt-8 md:pt-16 pb-8 md:pb-12 px-4 sm:px-6 text-center border-b ${border}`}>
         <div className="max-w-3xl mx-auto">
-          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-3">What We Do</p>
-          <h1 className={`text-4xl md:text-6xl font-black uppercase tracking-tighter mb-4 ${isDark ? "text-white" : "text-zinc-900"}`}>
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-2 sm:mb-3">What We Do</p>
+          <h1 className={`text-3xl sm:text-4xl md:text-6xl font-black uppercase tracking-tighter mb-3 sm:mb-4 ${isDark ? "text-white" : "text-zinc-900"}`}>
             Construction <span className="text-[var(--brand-blue)]">Services</span>
           </h1>
-          <p className={`text-sm max-w-xl mx-auto leading-relaxed ${muted}`}>
+          <p className={`text-xs sm:text-sm max-w-xl mx-auto leading-relaxed ${muted}`}>
             MTBOSS provides end-to-end engineering and infrastructure services — from conceptual design to final construction.
           </p>
         </div>
@@ -72,15 +72,16 @@ export default function AllServicesPage() {
           {services.length > 0 ? (
             services.map((s) => (
               <div key={s.id} className={`group relative h-[340px] overflow-hidden border transition-all duration-500 ${isDark ? "border-zinc-800" : "border-zinc-100"}`}>
+                <Link href={`/Services/all/${s.slug}`} className="absolute inset-0 z-10" aria-label={`View details for ${s.title}`} />
                 {s.image && <Image src={s.image} alt={s.title} fill sizes="(max-width: 768px) 100vw, 33vw" quality={75} className="object-cover opacity-100 transition-transform duration-700 group-hover:scale-105" />}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/35" />
-                <div className="absolute inset-0 p-7 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-400">
-                  <div className="w-8 h-0.5 bg-[var(--brand-blue)] mb-4 -translate-x-3 group-hover:translate-x-0 transition-transform duration-400" />
+                <div className="absolute inset-0 p-7 flex flex-col justify-end translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-transform duration-400">
+                  <div className="w-8 h-0.5 bg-[var(--brand-blue)] mb-4 md:-translate-x-3 md:group-hover:translate-x-0 transition-transform duration-400" />
                   <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2 [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]">{s.title}</h3>
-                  <p className="text-white text-xs font-medium leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-400 mb-5 [text-shadow:0_1px_6px_rgba(0,0,0,0.95)]">{s.description}</p>
-                  <Link href={`/Services/all/${s.slug}`} className="w-fit px-6 py-2 bg-[var(--brand-blue)] text-black font-black uppercase text-[9px] tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-400 hover:bg-white">
+                  <p className="text-white text-xs font-medium leading-relaxed opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-400 mb-5 [text-shadow:0_1px_6px_rgba(0,0,0,0.95)] line-clamp-2 md:line-clamp-none">{s.description}</p>
+                  <span className="w-fit px-6 py-2 bg-[var(--brand-blue)] text-black font-black uppercase text-[9px] tracking-widest opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-400 md:hover:bg-white">
                     Book a visit
-                  </Link>
+                  </span>
                 </div>
               </div>
             ))

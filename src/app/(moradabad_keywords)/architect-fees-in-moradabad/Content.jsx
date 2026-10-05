@@ -8,223 +8,466 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Fees in Moradabad — Complete Guide to Understanding Design Costs
+            Architect Fees in Moradabad: Complete Pricing Guide by MT Boss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Understanding architect fees in Moradabad before starting a project helps you budget realistically and avoid surprises partway through the design process. Architect and design fees can be structured in several different ways — as a percentage of construction cost, a flat fee, or a per-square-foot charge — and the right structure often depends on your project type and how it&apos;s being delivered. This guide breaks down common architect fee structures used in India, what factors influence design costs, and how design-and-build companies like MTBOSS Construction Private Limited approach pricing transparency for combined design-and-construction projects.
+                Before you hire a professional for your dream home, one question comes up almost immediately: how much will it cost? Understanding architect fees in Moradabad helps you plan your budget, compare quotes fairly and avoid hidden charges.
+              </p>
+              <p className="mt-3">
+                Many homeowners assume architect fees are a luxury. In reality, a good architect often saves you more money than they charge, through better space planning, fewer construction errors and smarter material choices. The key is knowing how fees work, what they include and what to watch out for.
+              </p>
+              <p className="mt-3">
+                At MT Boss, we design and build homes, villas and commercial spaces across Moradabad and Bareilly. This guide explains the fee structures used in the industry, the factors that change the price, and how to get the best value from your architect.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Architect Fee Structures in India
+                Understanding Architect Fees in Moradabad
+              </h3>
+              <p>
+                Architect fees are the charges you pay for professional design services. These usually cover site study, planning, drawings, 3D views and design coordination. Depending on the agreement, the fee may also include interior design, project supervision or full construction management.
+              </p>
+              <p className="mt-3">
+                There is no single fixed rate across the city. Fees differ from one firm to another depending on experience, scope, project size and the level of service. That is why comparing only the headline number can be misleading. Two quotes that look different may actually cover very different work.
+              </p>
+              <p className="mt-3">
+                The important step is to ask exactly what is included, what is optional and what will cost extra later.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Common Ways Architects Charge
               </h3>
               <p className="mb-3">
-                Architects and design firms typically charge using one of these common models:
+                Architects in India generally use one of four pricing models. Knowing them helps you understand any quote you receive.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                1. Percentage of Construction Cost
+              </h4>
+              <p>
+                The architect charges a percentage of the total project cost. This is the traditional method, and the percentage commonly falls somewhere in the range of a few percent up to around ten percent. Smaller projects and detailed services usually sit toward the higher end, while large projects sit toward the lower end.
+              </p>
+              <p className="mt-2">
+                <strong>Best for:</strong> Full-service projects where the architect is involved from design through supervision.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                2. Per Square Foot Rate
+              </h4>
+              <p>
+                The fee is calculated on the built-up area, for example a rate per square foot multiplied by the total area. This is very common for residential projects in cities like Moradabad because it is easy to understand.
+              </p>
+              <p className="mt-2">
+                <strong>Best for:</strong> Homeowners who want a simple, predictable figure based on the size of the house.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                3. Lump Sum or Fixed Fee
+              </h4>
+              <p>
+                The architect quotes one fixed amount for a clearly defined scope, such as a floor plan and 3D elevation. The price stays the same regardless of how the final construction cost changes.
+              </p>
+              <p className="mt-2">
+                <strong>Best for:</strong> Small or well-defined jobs like a renovation plan or a single design deliverable.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                4. Hourly or Consultation Fee
+              </h4>
+              <p>
+                You pay for the architect&apos;s time. This model is used for advice, site visits, design reviews or second opinions.
+              </p>
+              <p className="mt-2">
+                <strong>Best for:</strong> Short consultations rather than complete projects.
+              </p>
+
+              <p className="mt-4">
+                <strong>A note on numbers:</strong> Actual figures depend on the firm, the project and current market conditions, so we recommend always requesting a written quote based on your specific plot and requirements instead of relying on general averages you may find online.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Factors That Affect Architect Fees in Moradabad
+              </h3>
+              <p className="mb-3">
+                Why does one project cost more to design than another? These are the main reasons.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Percentage of construction cost:</strong> A common model where design fees are calculated as a percentage (often ranging roughly from 3% to 10%, depending on project complexity and the firm) of the total estimated construction cost</li>
-                <li><strong>Flat fee:</strong> A fixed amount agreed upon upfront, regardless of how construction costs may later change</li>
-                <li><strong>Per-square-foot fee:</strong> A charge based on the built-up area of the project, common for straightforward residential designs</li>
-                <li><strong>Hourly or consultation-based fee:</strong> Used for smaller engagements like plan reviews or specific design advice rather than full project design</li>
-                <li><strong>Bundled design-and-build pricing:</strong> Where design costs are included within the overall construction package rather than charged separately</li>
+                <li>
+                  <strong>Project size.</strong> A larger built-up area requires more drawings, more coordination and more time.
+                </li>
+                <li>
+                  <strong>Type of building.</strong> A simple residence needs less detailing than a multi-storey villa, a commercial building or a hotel.
+                </li>
+                <li>
+                  <strong>Design complexity.</strong> Curved walls, double-height spaces, custom façades and unusual plot shapes demand more design effort.
+                </li>
+                <li>
+                  <strong>Scope of services.</strong> A fee for floor plans alone is very different from a fee that includes 3D elevation, structural drawings, interior design and supervision.
+                </li>
+                <li>
+                  <strong>Experience of the architect.</strong> Established professionals with a strong portfolio typically charge more than beginners, but they also reduce the risk of costly mistakes.
+                </li>
+                <li>
+                  <strong>Number of revisions.</strong> Most agreements include a set number of design revisions. Extra revisions may carry additional charges.
+                </li>
+                <li>
+                  <strong>Site location and travel.</strong> Projects located far from the office may involve extra visits and time.
+                </li>
+                <li>
+                  <strong>Approvals and documentation.</strong> Preparing drawings for sanction and handling paperwork adds to the workload.
+                </li>
+                <li>
+                  <strong>Timeline.</strong> Urgent projects that need quick delivery may cost more than those with flexible schedules.
+                </li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Influences Architect Fee Amounts?
+                What Is Included in an Architect&apos;s Fee?
               </h3>
               <p className="mb-3">
-                Several factors affect how much you might pay for architectural design services:
+                The services covered depend on the agreement, but a complete residential package typically includes the following stages.
               </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Project size and complexity (a simple single-storey home vs. a multi-storey villa or commercial building)</li>
-                <li>Level of detail required (basic floor plans vs. detailed working drawings and 3D visualizations)</li>
-                <li>Whether structural and MEP engineering coordination is included</li>
-                <li>Number of design revisions included before additional charges apply</li>
-                <li>The firm&apos;s experience level and reputation</li>
-                <li>Whether design is being purchased separately or bundled with construction execution</li>
-                <li>Additional services like interior design, landscape design, or vastu consultation</li>
-              </ul>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Stage 1: Consultation and Site Study
+              </h4>
+              <p>
+                The architect meets you, understands your needs and lifestyle, and studies your plot&apos;s size, orientation, surroundings and constraints.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Stage 2: Concept Design and Floor Plans
+              </h4>
+              <p>
+                Initial layout options are prepared showing room placement, circulation, parking and open areas. You review them and choose a direction.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Stage 3: 3D Elevation and Visualisation
+              </h4>
+              <p>
+                Realistic 3D views let you see the exterior design, materials and colours before construction begins.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Stage 4: Working Drawings
+              </h4>
+              <p>
+                Detailed technical drawings guide the builder. These include plans, sections, elevations and details for doors, windows, staircases, flooring and finishing.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Stage 5: Structural, Electrical and Plumbing Coordination
+              </h4>
+              <p>
+                The architect coordinates with engineers and consultants so all systems work together without conflicts.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Stage 6: Estimates and Tender Support
+              </h4>
+              <p>
+                Cost estimates, quantities and contractor comparisons help you control spending.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Stage 7: Site Supervision
+              </h4>
+              <p>
+                Regular site visits check that construction follows the drawings and meets quality standards. This stage is sometimes charged separately.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Stage 8: Interior Design
+              </h4>
+              <p>
+                Furniture layouts, lighting, modular kitchens, wardrobes, false ceilings and finishes can be added to complete the home.
+              </p>
+
+              <p className="mt-3">
+                Always confirm which stages are part of your quote and which are extra.
+              </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Percentage-Based Fees vs. Bundled Design-and-Build Pricing
+                Architect Fees vs Construction Cost: Understanding the Difference
               </h3>
               <p className="mb-3">
-                Understanding this distinction helps you compare costs more accurately:
+                Many people confuse the architect&apos;s fee with the cost of building. They are two separate items.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>With percentage-based fees, design costs scale with your project&apos;s construction budget — a higher construction cost generally means a higher design fee</li>
-                <li>With bundled design-and-build pricing, the design coordination cost is factored into the overall construction quote rather than billed as a separate line item</li>
-                <li>Bundled pricing can offer more cost predictability since you&apos;re working with one overall project estimate</li>
-                <li>Separate architect fees may offer more transparency into exactly what you&apos;re paying for design specifically</li>
-                <li>For straightforward residential projects, many homeowners find bundled pricing simpler to plan around</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Should Be Included in an Architect&apos;s Fee Quote?
-              </h3>
-              <p className="mb-3">
-                Before agreeing to any fee, clarify exactly what&apos;s covered:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Initial consultation and concept design development</li>
-                <li>Number of design revisions included</li>
-                <li>Detailed working drawings suitable for municipal approval</li>
-                <li>3D visualizations, if offered</li>
-                <li>Structural engineering coordination (in-house or outsourced)</li>
-                <li>Site visits during the design phase</li>
-                <li>Support during municipal approval submission</li>
-                <li>Any additional charges for changes requested after design finalization</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Typical Cost Ranges to Be Aware Of
-              </h3>
-              <p className="mb-3">
-                While exact architect fees vary significantly by firm and project scope, here are general reference points relevant to Moradabad:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Overall construction costs (including design, structural, and finishing work) for a standard-quality 1,000 sq. ft. G+1 home in Moradabad typically fall around ₹700–₹800 per sq. ft.</li>
-                <li>Standalone design-only fees (when purchased separately from construction) generally represent a percentage of the eventual construction cost, commonly in the single-digit percentage range for residential projects</li>
-                <li>Consultation-only engagements (plan review, specific advice) are typically priced lower than full design services</li>
-                <li>Commercial and institutional projects often involve higher design fees due to greater complexity and compliance requirements</li>
+                <li>
+                  <strong>Architect fee:</strong> The payment for design, planning and professional services.
+                </li>
+                <li>
+                  <strong>Construction cost:</strong> The money spent on materials, labour, equipment and finishing.
+                </li>
               </ul>
               <p className="mt-3">
-                A direct, written quote from your chosen architect or design-and-build company remains the most reliable way to understand exact costs for your specific project.
+                At MT Boss, we also provide construction, which means design and building can be managed by one team. This often reduces coordination gaps, prevents blame-shifting between designer and builder, and can improve overall cost efficiency.
+              </p>
+              <p className="mt-3">
+                You can also use the{" "}
+                <a href="/calculator" className="text-blue-600 underline">
+                  MT Boss online construction calculator
+                </a>{" "}
+                to estimate your building budget before you decide on your design scope.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBOSS Approaches Pricing for Design-and-Build Projects
+                Is Hiring an Architect Worth the Cost?
               </h3>
               <p className="mb-3">
-                MTBOSS Construction Private Limited is primarily a construction and civil engineering company, and based on their published company profile, they aim to offer pricing transparency through a bundled design-and-construction approach rather than charging separate, standalone architect fees:
+                Some homeowners try to save money by skipping the architect. This often turns out to be a false economy. Here is why professional design pays for itself.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
-                <li>450+ completed projects across residential, commercial, and industrial categories</li>
-                <li>Free Construction Budget Calculator offering an instant, no-cost estimate based on plot size, city, floors, and finish level — giving you a starting reference point before any formal quote</li>
-                <li>Four quality packages — Basic, Standard, Premium, and Luxury — each with clearly differentiated pricing tiers</li>
-                <li>Coordinated design-to-construction execution, meaning design coordination costs are factored into the overall project estimate rather than billed as a completely separate architect fee</li>
-                <li>Technology-integrated process, using AI and BIM (Building Information Modeling) since 2018</li>
-                <li>Direct wholesale material supply for cement, steel, bricks, tiles, and paints, which can also affect overall project economics</li>
-                <li>Industry recognition — &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024</li>
-                <li>Instant WhatsApp support for quick pricing queries</li>
+                <li>
+                  <strong>Better use of space.</strong> A well-planned house uses every square foot efficiently, so you get more usable area from the same plot.
+                </li>
+                <li>
+                  <strong>Fewer construction errors.</strong> Clear drawings prevent confusion on site, which reduces rework and wasted materials.
+                </li>
+                <li>
+                  <strong>Cost control.</strong> Accurate estimates and material planning help avoid budget overruns.
+                </li>
+                <li>
+                  <strong>Structural safety.</strong> Proper design reduces the risk of cracks, dampness and long-term maintenance issues.
+                </li>
+                <li>
+                  <strong>Energy efficiency.</strong> Good ventilation, orientation and natural lighting reduce electricity bills for years.
+                </li>
+                <li>
+                  <strong>Higher resale value.</strong> A thoughtfully designed home with a strong elevation attracts better prices and tenants.
+                </li>
+                <li>
+                  <strong>Peace of mind.</strong> You have a professional guiding decisions instead of guessing at every step.
+                </li>
               </ul>
               <p className="mt-3">
-                For homeowners or businesses who prefer a single, bundled project cost rather than separately negotiating architect fees and construction costs, this combined approach can simplify budgeting.
+                When you compare the fee against these benefits, it becomes clear that professional design is an investment rather than an expense.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How to Evaluate and Compare Fee Quotes
+                How Much Should You Budget for an Architect?
               </h3>
               <p className="mb-3">
-                Before committing to any architect or design-and-build company, use this checklist:
+                The right budget depends on your project, but these practical guidelines will help you plan.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Ask for a clear, written breakdown of what the fee includes</li>
-                <li>Confirm whether the fee is a percentage, flat rate, or bundled with construction</li>
-                <li>Ask how many design revisions are included before additional charges apply</li>
-                <li>Clarify whether structural engineering coordination is part of the quoted fee</li>
-                <li>Ask about charges for scope changes requested after design finalization</li>
-                <li>Compare at least 2–3 quotes to understand the reasonable range for your project type</li>
-                <li>Confirm payment stages and when each portion of the fee is due</li>
-                <li>Ask whether the design fee (if separate) would be adjusted or credited if you proceed to construction with the same company</li>
+                <li>
+                  <strong>Decide your scope first.</strong> Do you need only plans and elevation, or complete design plus supervision plus interiors?
+                </li>
+                <li>
+                  <strong>Set aside a realistic portion of your total budget.</strong> Design and professional services are usually a small share of the overall project cost, but they influence how the entire budget is spent.
+                </li>
+                <li>
+                  <strong>Request itemised quotes.</strong> A breakdown by stage shows exactly where your money goes.
+                </li>
+                <li>
+                  <strong>Keep a contingency.</strong> Plan for a small buffer for extra revisions or design changes.
+                </li>
+                <li>
+                  <strong>Avoid choosing purely on price.</strong> The cheapest quote may leave out essential services or reflect limited experience.
+                </li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Cost Factors Beyond the Architect Fee Itself
+                How to Compare Architect Quotes in Moradabad
               </h3>
               <p className="mb-3">
-                Remember that the architect or design fee is only one part of your overall project budget:
+                When you receive proposals from different firms, compare them carefully using this checklist.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Construction cost per square foot, which varies by quality package (Basic, Standard, Premium, Luxury)</li>
-                <li>Material costs, which fluctuate based on current market rates for cement, steel, and finishes</li>
-                <li>Structural complexity, which can affect both design and construction costs</li>
-                <li>Municipal approval and documentation charges</li>
-                <li>Interior finishing and fixture costs, which vary widely based on preferences</li>
+                <li>
+                  <strong>Scope of work:</strong> Are 3D views, working drawings and supervision included?
+                </li>
+                <li>
+                  <strong>Number of revisions:</strong> How many design changes are allowed?
+                </li>
+                <li>
+                  <strong>Deliverables:</strong> What exactly will you receive, and in what format?
+                </li>
+                <li>
+                  <strong>Timeline:</strong> How long will each stage take?
+                </li>
+                <li>
+                  <strong>Payment schedule:</strong> Are payments linked to milestones?
+                </li>
+                <li>
+                  <strong>Extra charges:</strong> What could cost more later?
+                </li>
+                <li>
+                  <strong>Portfolio:</strong> Have they completed similar projects?
+                </li>
+                <li>
+                  <strong>Client reviews:</strong> What do past customers say?
+                </li>
               </ul>
               <p className="mt-3">
-                For reference, standard-quality construction in Moradabad (covering design coordination, structural work, and finishing) typically falls around ₹700–₹800 per sq. ft. for a 1,000 sq. ft. G+1 home.
+                A transparent architect will answer all of these questions clearly and put the answers in writing.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Step-by-Step Process for Understanding and Agreeing on Fees
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Initial Inquiry</strong> — Sharing your project type, size, and rough budget</li>
-                <li><strong>Fee Structure Discussion</strong> — Understanding whether fees are percentage-based, flat, or bundled</li>
-                <li><strong>Detailed Quote Request</strong> — Getting a written breakdown of what&apos;s included</li>
-                <li><strong>Comparison</strong> — Reviewing quotes from 2–3 architects or design-and-build companies</li>
-                <li><strong>Clarification</strong> — Confirming revision limits, payment stages, and scope boundaries</li>
-                <li><strong>Agreement</strong> — Signing a written contract before design work begins</li>
-                <li><strong>Ongoing Tracking</strong> — Monitoring costs against the agreed scope throughout the project</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Benefits of Getting a Transparent, Written Fee Quote
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Avoids budget surprises partway through the design or construction process</li>
-                <li>Makes it easier to compare different architects or design-and-build companies fairly</li>
-                <li>Provides a clear reference point if scope changes are requested later</li>
-                <li>Builds trust and accountability between you and your design/construction partner</li>
-                <li>Helps you plan overall project financing more accurately from the start</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Mistakes When Evaluating Architect Fees
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Choosing the lowest quoted fee without checking what&apos;s actually included</li>
-                <li>Not clarifying how many design revisions are covered before extra charges apply</li>
-                <li>Assuming a percentage-based fee will stay fixed even if construction costs increase later</li>
-                <li>Skipping a written agreement and relying only on verbal fee discussions</li>
-                <li>Not asking whether structural coordination is included or billed separately</li>
-                <li>Overlooking bundled design-and-build pricing as a simpler alternative to separate fee negotiations</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact for Transparent Design and Construction Pricing in Moradabad
+                Why Choose a Local Architect in Moradabad?
               </h3>
               <p className="mb-3">
-                If you want a clear, upfront estimate that bundles design coordination with construction costs, reach out directly:
+                Working with a firm that knows the city brings real advantages.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
-                <li><strong>Phone / Call:</strong> +91 94584 10866</li>
-                <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
-                <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
+                <li>
+                  <strong>Understanding of local climate.</strong> Moradabad&apos;s hot summers and monsoon humidity call for specific design choices in ventilation, roofing and drainage.
+                </li>
+                <li>
+                  <strong>Familiarity with building norms.</strong> Local architects understand regional approval processes and bylaws.
+                </li>
+                <li>
+                  <strong>Access to suppliers and labour.</strong> Established local relationships make material sourcing and workforce management easier.
+                </li>
+                <li>
+                  <strong>Easy site visits.</strong> A nearby team can inspect the site frequently, which improves quality.
+                </li>
+                <li>
+                  <strong>Faster communication.</strong> Meetings and changes are easier to arrange when your architect is close by.
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                How MT Boss Keeps Architect Fees Transparent
+              </h3>
+              <p className="mb-3">
+                Pricing should never feel confusing. At MT Boss, we follow a clear approach to fees so you always know where you stand.
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Free initial consultation.</strong> Share your requirements and plot details, and we explain your options without pressure.
+                </li>
+                <li>
+                  <strong>Scope-based quotes.</strong> You receive a written proposal that lists exactly what is included at each stage.
+                </li>
+                <li>
+                  <strong>No hidden charges.</strong> Any additional work is discussed and agreed with you before it begins.
+                </li>
+                <li>
+                  <strong>Flexible packages.</strong> Choose design only, design with interiors, or complete design-and-build depending on your needs.
+                </li>
+                <li>
+                  <strong>One team for everything.</strong> Architecture, interiors, construction, modular kitchens and waterproofing are handled by a single company, which simplifies management and improves accountability.
+                </li>
+                <li>
+                  <strong>Service across Moradabad and Bareilly.</strong> Our team supports residential, commercial and villa projects in both cities.
+                </li>
               </ul>
               <p className="mt-3">
-                Try the free online Construction Budget Calculator for an instant, no-cost estimate, then follow up by phone or WhatsApp for a formal, detailed quote covering both design and construction.
+                If you are comparing architect fees in Moradabad and want a clear, honest quote, MT Boss is ready to help.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Tips to Get the Best Value from Your Architect
+              </h3>
+              <p className="mb-3">
+                Getting more from your architect does not always mean paying more. These tips help you maximise value.
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Share a clear brief.</strong> List your must-haves, preferences, budget and family needs at the start.
+                </li>
+                <li>
+                  <strong>Collect reference images.</strong> Photos of designs you love help the architect understand your taste quickly.
+                </li>
+                <li>
+                  <strong>Finalise decisions early.</strong> Late changes are the most common reason for extra charges and delays.
+                </li>
+                <li>
+                  <strong>Ask for 3D views.</strong> Seeing the design before construction prevents expensive changes later.
+                </li>
+                <li>
+                  <strong>Involve your architect in material selection.</strong> Guidance on quality and cost can save money and improve durability.
+                </li>
+                <li>
+                  <strong>Keep communication open.</strong> Regular updates and prompt feedback keep the project on schedule.
+                </li>
+                <li>
+                  <strong>Get everything in writing.</strong> Fees, scope, timelines and payment terms should all be documented.
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Get Your Architect Fee Quote Today
+              </h3>
+              <p>
+                Every plot, family and budget is different, so the fairest way to know your cost is to get a quote based on your actual project. Contact our team, share your plot size and requirements, and we will prepare a clear, itemised proposal.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Contact MT Boss
+              </h4>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Phone / WhatsApp:</strong>{" "}
+                  <a
+                    href="https://wa.me/9458410866"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    +91 94584 10866
+                  </a>
+                </li>
+                <li>
+                  <strong>Email:</strong>{" "}
+                  <a
+                    href="mailto:mtboss2016@gmail.com"
+                    className="text-blue-600 underline"
+                  >
+                    mtboss2016@gmail.com
+                  </a>
+                </li>
+                <li>
+                  <strong>Website:</strong>{" "}
+                  <a
+                    href="https://www.mtboss.in/"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    https://www.mtboss.in/
+                  </a>
+                </li>
+                <li>
+                  <strong>Office:</strong> Harthala Kanth Road, behind KR Collection, near Domino&apos;s, Moradabad, Uttar Pradesh
+                </li>
+              </ul>
+              <p className="mt-3">
+                Request a free consultation or a construction quote today and take the first step toward a home designed the right way. You can also{" "}
+                <a href="/CTASection/get-quote" className="text-blue-600 underline">
+                  request a quote online
+                </a>
+                .
               </p>
             </section>
 
@@ -234,44 +477,79 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. What is a typical architect fee structure in India?</strong>
+                  <strong>Q1. What are architect fees in Moradabad?</strong>
                   <br />
-                  Common models include percentage-of-construction-cost, flat fees, per-square-foot charges, or bundled design-and-build pricing.
+                  Architect fees are charges for design services, usually calculated per square foot, as a percentage of project cost, or as a fixed sum.
                 </li>
                 <li>
-                  <strong>Q2. Does MTBOSS charge separate architect fees?</strong>
+                  <strong>Q2. How do architects charge for house design?</strong>
                   <br />
-                  No, they primarily offer bundled design-and-construction pricing rather than a standalone architect fee.
+                  Most charge a per square foot rate, a percentage of construction cost, or a lump sum for a defined scope.
                 </li>
                 <li>
-                  <strong>Q3. Does MTBOSS provide a free cost estimate?</strong>
+                  <strong>Q3. What affects the architect&apos;s fee?</strong>
                   <br />
-                  Yes, their online Budget Calculator gives an instant, free BOQ-based estimate as a starting reference.
+                  Project size, design complexity, services included, architect experience and number of revisions all affect the price.
                 </li>
                 <li>
-                  <strong>Q4. What is the average construction cost per square foot in Moradabad?</strong>
+                  <strong>Q4. Are 3D elevations included in the fee?</strong>
                   <br />
-                  Around ₹700–₹800 per sq. ft. for standard-quality construction, including design coordination.
+                  It depends on the package. At MT Boss, 3D elevation is part of the design scope, which we confirm in writing.
                 </li>
                 <li>
-                  <strong>Q5. Does a higher architect fee always mean better design quality?</strong>
+                  <strong>Q5. Is site supervision included?</strong>
                   <br />
-                  Not necessarily — it&apos;s important to compare what&apos;s included in the fee, not just the amount.
+                  Not always. Supervision may be part of the package or charged separately, so check the quote.
                 </li>
                 <li>
-                  <strong>Q6. Should I get multiple fee quotes before deciding?</strong>
+                  <strong>Q6. Can I hire an architect only for floor plans?</strong>
                   <br />
-                  Yes, comparing at least 2–3 quotes helps you understand a reasonable range for your project type.
+                  Yes. You can choose limited services such as plans only, or opt for the complete design package.
                 </li>
                 <li>
-                  <strong>Q7. What quality packages does MTBOSS offer at different price points?</strong>
+                  <strong>Q7. Is the architect fee separate from construction cost?</strong>
                   <br />
-                  Basic, Standard, Premium, and Luxury packages, each with different pricing and finish levels.
+                  Yes. The fee covers design services, while construction cost covers materials, labour and finishing.
                 </li>
                 <li>
-                  <strong>Q8. Are design revisions typically included in the fee?</strong>
+                  <strong>Q8. Does MT Boss offer both design and construction?</strong>
                   <br />
-                  This varies by provider — always clarify how many revisions are included before extra charges apply.
+                  Yes. MT Boss handles architecture, interiors, construction, modular kitchens and waterproofing.
+                </li>
+                <li>
+                  <strong>Q9. Is hiring an architect worth the money?</strong>
+                  <br />
+                  Yes. Good design saves space, reduces errors, controls costs and increases property value.
+                </li>
+                <li>
+                  <strong>Q10. How can I get an exact fee quote from MT Boss?</strong>
+                  <br />
+                  Call or WhatsApp{" "}
+                  <a
+                    href="https://wa.me/9458410866"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    +91 94584 10866
+                  </a>
+                  , email{" "}
+                  <a
+                    href="mailto:mtboss2016@gmail.com"
+                    className="text-blue-600 underline"
+                  >
+                    mtboss2016@gmail.com
+                  </a>
+                  , or request a quote at{" "}
+                  <a
+                    href="https://www.mtboss.in/"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    mtboss.in
+                  </a>
+                  .
                 </li>
               </ul>
             </section>

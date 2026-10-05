@@ -12,6 +12,7 @@ import { getQuickServiceTax, getQuickServiceTotal } from '@/lib/quick-service-pr
 import { resolveManagedCity } from '@/lib/cities';
 import { ensureServiceBookingSubcategorySchema } from '@/lib/booking-schema';
 import { notifyAdminSubmission } from '@/lib/customer-communications';
+import { BLOCKED_ACCOUNT_MESSAGE, requireActiveUser } from '@/lib/user-moderation';
 
 function normalizeTimeSlot(slot) {
   return String(slot || '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
@@ -64,7 +65,8 @@ export async function POST(req) {
     let userId;
     let authenticatedEmail = null;
     try {
-      const decoded = requireRole(req, 'user');
+      const { user: decoded, blocked } = await requireActiveUser(req);
+      if (blocked) return NextResponse.json({ error: BLOCKED_ACCOUNT_MESSAGE }, { status: 403 });
       if (!decoded) throw new Error('Invalid role');
       const rawId = decoded.id;
       authenticatedEmail = decoded.email || null;
@@ -252,6 +254,8 @@ export async function POST(req) {
       : 'PAYMENT_PENDING';
     const initialPaymentStatus = isFreeSlot ? 'FREE' : 'PENDING';
     const initialPaymentGateway = isFreeSlot ? null : 'PAYU';
+
+    await pool.query('UPDATE users SET delivery_city = $1 WHERE id = $2', [selectedCity, userId]);
 
     // Create a reserved booking. Paid bookings notify vendors only after PayU verifies payment.
     const bookingResult = await pool.query(

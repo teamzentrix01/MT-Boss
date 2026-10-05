@@ -673,9 +673,20 @@ export default function UserDashboard() {
     const raw = localStorage.getItem('user');
     if (raw) { try { setUser(JSON.parse(raw)); } catch {} }
 
-    fetchBookings(token);
-    const interval = setInterval(() => fetchBookings(token), 10000);
-    return () => clearInterval(interval);
+    let active = true;
+    const validateSession = async () => {
+      const response = await fetch('/api/auth/session', { headers: { Authorization: `Bearer ${token}` } });
+      if (!response.ok) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        if (active) router.replace('/login?error=account_suspended');
+        return false;
+      }
+      return true;
+    };
+    validateSession().then((valid) => { if (valid && active) fetchBookings(token); });
+    const interval = setInterval(async () => { if (await validateSession()) fetchBookings(token); }, 10000);
+    return () => { active = false; clearInterval(interval); };
   }, [router, fetchBookings]);
 
   const activeBookings  = bookings.filter((b) => b.payment_status === 'PAID' && !['COMPLETED', 'CANCELLED'].includes(b.status));

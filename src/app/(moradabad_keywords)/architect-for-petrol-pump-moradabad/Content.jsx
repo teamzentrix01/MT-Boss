@@ -1,3 +1,4 @@
+
 import React from "react";
 import LandingEnquiry from "../../components/LandingEnquiry";
 
@@ -8,183 +9,560 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Petrol Pump in Moradabad: Complete Design & Construction Guide by MTBOSS
+            Architect for Petrol Pump in Moradabad: Design and Construction by MT Boss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Setting up a petrol pump is not like constructing a regular commercial building. It involves precise layout planning, strict safety norms, underground tank engineering, and approvals from multiple government and oil company authorities. If you are searching for a reliable architect for petrol pump in Moradabad, this guide walks you through everything you need to know — from design standards to construction costs — and explains how MTBOSS Construction Private Limited, a Moradabad-based construction, property and materials company, can help you build a safe, compliant and profitable fuel station.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why a Petrol Pump Needs a Specialized Architect, Not a Regular Contractor
-              </h3>
-              <p className="mb-3">
-                A petrol pump is a high-risk commercial structure that must follow strict fire safety, storage and drainage regulations. A general residential architect or contractor is usually not equipped to handle this kind of project:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Petrol pumps store highly flammable fuel underground, so the layout must follow PESO (Petroleum and Explosives Safety Organisation) guidelines strictly.</li>
-                <li>The canopy, dispensing units and underground tanks must be positioned at specific safe distances from each other, from the road, and from neighbouring properties.</li>
-                <li>Oil marketing companies (such as IOCL, BPCL, HPCL) have their own design specifications that a petrol pump architect must be familiar with before submitting drawings for dealership approval.</li>
-                <li>Drainage and effluent management need specialized design to prevent fuel spillage from contaminating soil or nearby water sources.</li>
-                <li>Fire safety systems, including firefighting equipment placement and emergency access routes, must be built into the design from day one, not added later.</li>
-              </ul>
-              <p className="mt-3">
-                A specialized architect ensures your project clears every statutory inspection on the first attempt, saving significant time and rework costs.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Does a Petrol Pump Architect Actually Do?
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Site survey and feasibility study:</strong> Assessing plot size, road access, soil condition and surrounding structures to confirm the site is suitable for a fuel station.</li>
-                <li><strong>Layout and zoning plan:</strong> Deciding the exact placement of the canopy, dispensing units, underground tanks, office cabin, convenience store, air-water facility, and parking/traffic flow.</li>
-                <li><strong>Structural and civil drawings:</strong> Preparing detailed drawings for the canopy structure, boundary walls, underground tank chambers, and any ancillary buildings.</li>
-                <li><strong>Compliance documentation:</strong> Preparing drawings and reports in the format required by PESO, the local municipal authority, fire department, and the concerned oil marketing company.</li>
-                <li><strong>Coordination with MEP (mechanical, electrical, plumbing) teams:</strong> Ensuring electrical wiring, lighting, water supply and drainage are planned around fuel-safety requirements.</li>
-                <li><strong>Construction supervision:</strong> Overseeing the actual construction to ensure it matches the approved drawings and safety specifications exactly.</li>
-                <li><strong>Final inspection support:</strong> Assisting with documentation and site readiness for the final PESO license inspection before the pump becomes operational.</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Petrol Pump Design Standards and Norms You Must Follow in India
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>PESO Guidelines:</strong> Cover safe distances between dispensing units, underground tanks, canopy structures, electrical fittings and public roads or buildings.</li>
-                <li><strong>Oil Marketing Company (OMC) Specifications:</strong> Each OMC (IOCL, BPCL, HPCL, etc.) has its own branding, canopy design and layout guidelines that dealers must follow once allotted a dealership.</li>
-                <li><strong>Fire Safety Norms:</strong> Mandate specific firefighting equipment, fire extinguisher placement, and emergency shut-off systems as part of the approved design.</li>
-                <li><strong>Municipal Building Bylaws:</strong> Local Moradabad development authority regulations on setbacks, plot coverage, height restrictions and parking requirements must also be satisfied.</li>
-                <li><strong>Pollution Control Board Clearances:</strong> Required for underground storage tanks and effluent/drainage systems to prevent environmental contamination.</li>
-                <li><strong>Weights and Measures Department Approval:</strong> Needed for the calibration and certification of fuel dispensing units before operations begin.</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Key Elements of Petrol Pump Architecture and Design
-              </h3>
-              <p className="mb-3">
-                A well-designed petrol pump balances safety, functionality and customer convenience. Here are the core elements every design must address:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Canopy Design:</strong> The overhead structure that shelters dispensing units and customers from weather; must be structurally sound, properly lit, and branded per OMC specifications.</li>
-                <li><strong>Forecourt Layout:</strong> The open area where vehicles queue and refuel; needs enough space for smooth vehicle movement without congestion or safety risk.</li>
-                <li><strong>Underground Storage Tanks:</strong> Designed with proper depth, spacing and leak-detection provisions, positioned well away from dispensing areas and boundary walls as per PESO norms.</li>
-                <li><strong>Dispensing Units:</strong> Positioned for easy vehicle access from multiple directions while maintaining safe distances from tanks, canopy columns and site boundaries.</li>
-                <li><strong>Office Cabin and Cash Counter:</strong> A functional, secure space for staff and transactions, usually placed for a clear view of the entire forecourt.</li>
-                <li><strong>Convenience Store or Ancillary Facilities:</strong> Many modern petrol pumps include a small retail shop, ATM, air-water facility, or washroom, designed as part of the overall layout.</li>
-                <li><strong>Drainage and Effluent System:</strong> A dedicated system to safely channel any fuel spillage or runoff away from the main structure and into an approved treatment or collection point.</li>
-                <li><strong>Fire Safety Infrastructure:</strong> Includes fire extinguishers, sand buckets, emergency shut-off valves and clear emergency exit routes built into the design.</li>
-                <li><strong>Signage and Branding:</strong> Positioned according to the specific oil company&apos;s branding guidelines, while remaining visible from the main road.</li>
-                <li><strong>Parking and Traffic Flow:</strong> Entry and exit points planned to avoid traffic congestion on the main road and to allow safe vehicle circulation within the site.</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Challenges in Petrol Pump Construction (And How the Right Architect Solves Them)
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Delayed approvals due to incomplete documentation:</strong> An experienced architect prepares complete, correctly formatted drawings the first time, reducing back-and-forth with authorities.</li>
-                <li><strong>Poor traffic flow causing congestion:</strong> Careful forecourt and entry/exit planning prevents vehicles from blocking the main road during peak hours.</li>
-                <li><strong>Underground tank placement errors:</strong> Incorrect spacing can lead to failed PESO inspections; a specialized architect ensures every measurement is compliant from the design stage itself.</li>
-                <li><strong>Drainage and spillage issues:</strong> Poorly planned drainage can lead to environmental violations; proper slope and containment design prevents this from the outset.</li>
-                <li><strong>Budget overruns from design changes mid-construction:</strong> A detailed, approved design finalized before construction begins avoids costly changes once civil work has started.</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBOSS as Your Architect for Petrol Pump Construction in Moradabad
-              </h3>
-              <p className="mb-3">
-                MTBOSS Construction Private Limited is a Moradabad-based company offering end-to-end construction, doorstep home services, verified property transactions, and wholesale building materials — giving petrol pump project owners a genuine single-point solution:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Engineering-led construction approach:</strong> MTBOSS positions itself around &quot;engineering excellence and timely delivery&quot; for residential, commercial and industrial projects, which extends naturally to specialized structures like fuel stations.</li>
-                <li><strong>In-house material supply:</strong> As a direct wholesale supplier of cement, TMT steel bars, bricks, tiles and paints, MTBOSS can help control material costs and quality throughout the project — a major advantage for large-scale commercial builds like petrol pumps.</li>
-                <li><strong>Commercial construction expertise:</strong> MTBOSS&apos;s core service categories include commercial buildings, industrial and warehousing projects, and infrastructure work — all of which involve the same kind of large-span structural and compliance-driven planning that petrol pump construction requires.</li>
-                <li><strong>Construction budget calculator:</strong> MTBOSS offers an online budget estimation tool, helping petrol pump owners get an early, practical sense of likely project costs before finalizing designs.</li>
-                <li><strong>Local Moradabad presence:</strong> Being based in Moradabad (Harthala, Kanth Road) means the MTBOSS team understands local municipal processes, soil conditions and supplier networks specific to the region.</li>
-                <li><strong>End-to-end project support:</strong> From initial design and material supply to on-ground construction supervision, MTBOSS can manage the project without you having to coordinate multiple separate vendors.</li>
-                <li><strong>Portfolio and transparency:</strong> MTBOSS maintains a project gallery and blog section showcasing completed work, giving prospective clients visibility into their construction quality and experience.</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBOSS Petrol Pump Construction Process
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Step 1 — Initial Consultation:</strong> Discuss your plot location, budget, and which oil company dealership (if already allotted) you are working with.</li>
-                <li><strong>Step 2 — Site Survey:</strong> MTBOSS engineers visit the site to assess soil condition, road access, plot dimensions and surrounding structures.</li>
-                <li><strong>Step 3 — Design and Layout Planning:</strong> Preparation of the canopy, forecourt, tank placement and ancillary facility layout, aligned with PESO norms and OMC branding requirements.</li>
-                <li><strong>Step 4 — Approval Documentation:</strong> Assistance in preparing drawings and reports required for PESO, fire department, municipal authority and pollution control clearances.</li>
-                <li><strong>Step 5 — Material Procurement:</strong> Direct wholesale supply of cement, steel, bricks and other core materials needed for the build.</li>
-                <li><strong>Step 6 — Construction Execution:</strong> On-site civil construction of the canopy, tank chambers, office cabin and ancillary structures, supervised for quality and safety compliance.</li>
-                <li><strong>Step 7 — Final Inspection Support:</strong> Preparing the site for final PESO and weights-and-measures inspections before the pump becomes operational.</li>
-                <li><strong>Step 8 — Handover:</strong> Final walkthrough and handover of the completed, compliant petrol pump structure.</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Cost Factors for Petrol Pump Construction in Moradabad
-              </h3>
-              <p className="mb-3">
-                Petrol pump construction costs vary widely depending on several factors:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Plot size and land preparation needs, including levelling, boundary walls and access road construction.</li>
-                <li>Number of dispensing units and underground tanks planned for the site.</li>
-                <li>Canopy size and structural material chosen (steel span, roofing material, lighting).</li>
-                <li>Ancillary facilities included, such as a convenience store, ATM kiosk, or additional washroom blocks.</li>
-                <li>Local material and labour rates in the Moradabad region at the time of construction.</li>
-                <li>Compliance and approval-related costs, including PESO documentation, fire safety equipment, and pollution control clearances.</li>
-              </ul>
-              <p className="mt-3">
-                Using a tool like the MTBOSS Budget Calculator early in your planning can help you get a realistic estimate before finalizing your design.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served for Petrol Pump Architecture and Construction
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Moradabad city and surrounding NH/state highway locations</li>
-                <li>Kanth Road and nearby industrial belts</li>
-                <li>Rural and semi-urban plots across Moradabad district suitable for fuel station development</li>
-                <li>Nearby districts in Uttar Pradesh where clients are coordinating construction remotely with a Moradabad-based team</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Get in Touch with MTBOSS for Your Petrol Pump Project
-              </h3>
-              <p className="mb-3">
-                If you are planning a petrol pump in Moradabad and need an experienced architecture and construction partner who understands both design compliance and on-ground execution, MTBOSS is ready to help:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">www.mtboss.in</a></li>
-                <li><strong>Phone:</strong> <a href="tel:+919458410866" className="text-blue-600 underline">+91 94584 10866</a></li>
-                <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat with MTBOSS on WhatsApp</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
-                <li><strong>Office Address:</strong> Harthala, Kanth Road, Behind KR Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
-              </ul>
-              <p className="mt-3">
-                <strong>Get a Free Construction Quote:</strong> Visit the MTBOSS website and use the &quot;Get a Construction Quote&quot; option, or contact the team directly via phone or WhatsApp.
+                A petrol pump is one of the most profitable and most regulated commercial
+                businesses you can build. It runs on footfall, vehicle movement, safety
+                and speed. Every decision about layout, canopy height, tank position and
+                traffic flow affects daily sales and long-term risk. That is why choosing
+                the right architect for petrol pump Moradabad is as important as choosing
+                the location itself.
               </p>
               <p className="mt-3">
-                Building a petrol pump in Moradabad requires far more than standard commercial construction knowledge — it demands strict adherence to PESO safety norms, oil company specifications, and local municipal regulations, all while keeping the project on budget and on schedule. Partnering with a construction company that understands both the architectural planning and the on-ground execution — like MTBOSS — helps ensure your project clears approvals smoothly and opens on time. With in-house material supply, commercial construction expertise, and a local Moradabad presence, MTBOSS is positioned to support petrol pump owners from initial design through to final handover.
+                Moradabad sits on a busy trade and transport corridor. Highways, city
+                roads and heavy commercial traffic create strong demand for fuel stations.
+                But a good site alone does not guarantee a good outlet. Poor entry and
+                exit design, weak drainage, cramped dispensing areas or missed safety
+                norms can lead to delays, rejected approvals and costly rework.
+              </p>
+              <p className="mt-3">
+                MT Boss is a construction company serving Moradabad and Bareilly with
+                commercial, industrial, hospitality, residential and infrastructure
+                projects. We combine architecture, engineering and construction under one
+                team, so your fuel station moves from a plot to a working outlet with
+                clear planning, transparent costs and controlled timelines.
+              </p>
+              <p className="mt-3">
+                This guide explains what a petrol pump architect does, what a fuel station
+                design includes, how approvals work, what affects cost and how to choose
+                the right partner.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Why a Specialist Architect Matters for a Petrol Pump
+              </h3>
+              <p className="mb-3">
+                A fuel station is not an ordinary commercial building. It handles
+                flammable products, heavy vehicle movement and public safety at the same
+                time. A general drawing from a local contractor is rarely enough. A
+                professional architect adds value in these ways.
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Efficient traffic flow.</strong> Vehicles must enter, fuel and
+                  exit without blocking each other or the main road. Good planning reduces
+                  queues and increases the number of vehicles served per hour.
+                </li>
+                <li>
+                  <strong>Safety by design.</strong> Safe distances, ventilation,
+                  drainage, fire protection and clear circulation are planned from the
+                  start, not added later.
+                </li>
+                <li>
+                  <strong>Regulatory readiness.</strong> Drawings need to align with oil
+                  marketing company standards and statutory safety requirements. A
+                  well-prepared design supports smoother approvals.
+                </li>
+                <li>
+                  <strong>Strong visibility.</strong> The canopy, colour scheme, signage
+                  and frontage attract drivers from a distance and help your outlet stand
+                  out.
+                </li>
+                <li>
+                  <strong>Space optimisation.</strong> Plots have limits. An architect
+                  balances dispensing units, tank areas, parking, office, washrooms, air
+                  and water points and retail space to earn maximum revenue from every
+                  square foot.
+                </li>
+                <li>
+                  <strong>Cost control.</strong> Accurate drawings and estimates prevent
+                  overspending and reduce mid-construction changes.
+                </li>
+                <li>
+                  <strong>Long-term durability.</strong> Petrol pumps face heavy loads,
+                  chemical exposure and constant use. Proper structural planning and
+                  material selection reduce maintenance costs.
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                What a Petrol Pump Design Includes
+              </h3>
+              <p className="mb-3">
+                A complete fuel station design covers much more than a canopy and a few
+                dispensers. Here are the main components our architects plan.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Site Layout and Circulation
+              </h4>
+              <p>
+                We study the plot shape, road frontage, turning radius, gradient and
+                surrounding traffic. Then we plan entry and exit points, vehicle lanes,
+                dispensing positions and waiting space, so that cars, bikes, trucks and
+                buses move safely.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Canopy Design
+              </h4>
+              <p>
+                The canopy protects customers and staff from sun and rain and forms the
+                outlet&apos;s identity. We design its height, span, columns, roofing,
+                lighting and branding elements to meet both aesthetic and structural
+                needs.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Dispensing Island Planning
+              </h4>
+              <p>
+                Islands must be placed with proper spacing, protective barriers and clear
+                approach lanes. We plan them for smooth, safe fuelling and easy future
+                expansion.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Underground Tank Area
+              </h4>
+              <p>
+                Fuel storage tanks are located underground with appropriate clearances,
+                access chambers, vent lines and drainage. Our drawings coordinate these
+                details with the engineering requirements.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Service Building
+              </h4>
+              <p>
+                This includes the manager&apos;s office, cash counter, staff room, storage,
+                washrooms and utility areas. We keep it compact, functional and visible
+                from the dispensing area.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Convenience Store and Retail Space
+              </h4>
+              <p>
+                Modern outlets earn extra revenue from convenience stores, snack counters,
+                ATMs and service kiosks. We plan these spaces so that they attract
+                customers without disturbing fuelling operations.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Air, Water and Service Points
+              </h4>
+              <p>
+                Free services such as air filling and water points build customer loyalty.
+                We place them where they add convenience without causing congestion.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Drainage and Oil Separation
+              </h4>
+              <p>
+                Surface drainage, oil interceptors and rainwater management prevent
+                contamination and flooding. Good drainage design protects both the
+                environment and your compliance record.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Fire Safety and Electrical Planning
+              </h4>
+              <p>
+                Fire extinguishers, sand buckets, emergency exits, safe electrical
+                layouts and lighting are integrated into the design according to safety
+                norms.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Boundary, Paving and Landscaping
+              </h4>
+              <p>
+                Heavy-duty concrete paving, clear road markings, boundary walls, gates and
+                green areas complete the outlet and give it a clean, professional look.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Approvals and Compliance for Fuel Stations
+              </h3>
+              <p>
+                Approvals are among the most demanding parts of a petrol pump project.
+                Requirements can involve the oil marketing company, the explosives and
+                safety authority, the local development authority, the fire department,
+                the pollution control board and road-owning agencies for access
+                permissions. Exact requirements depend on your dealership, location and
+                current regulations, so always confirm them with the relevant authorities
+                and your oil company.
+              </p>
+              <p className="mt-3">
+                A competent architect helps by:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Preparing drawings in the format authorities expect</li>
+                <li>Ensuring layouts respect required distances and clearances</li>
+                <li>Coordinating with engineers and consultants</li>
+                <li>
+                  Reducing back-and-forth caused by incorrect or incomplete drawings
+                </li>
+                <li>Keeping your project on schedule</li>
+              </ul>
+              <p className="mt-3">
+                Approval processes can take time, so it is wise to involve an architect
+                before you finalise or purchase your land.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Emerging Trends in Fuel Station Design
+              </h3>
+              <p className="mb-3">
+                The fuel retail sector is changing fast, and a smart design should prepare
+                for the future.
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>CNG and alternative fuels.</strong> Many outlets now add CNG
+                  dispensing alongside petrol and diesel.
+                </li>
+                <li>
+                  <strong>EV charging.</strong> Electric vehicle charging points are
+                  becoming a valuable extra service, and space and power capacity should be
+                  planned from day one.
+                </li>
+                <li>
+                  <strong>Convenience retail.</strong> Food counters, mini-marts and rest
+                  areas increase revenue beyond fuel margins.
+                </li>
+                <li>
+                  <strong>Solar power.</strong> Canopy roofs can carry solar panels that
+                  reduce electricity costs.
+                </li>
+                <li>
+                  <strong>Digital payments and automation.</strong> Modern layouts support
+                  cashless payments, automated systems and better monitoring.
+                </li>
+                <li>
+                  <strong>Sustainable materials and water management.</strong> Rainwater
+                  harvesting and efficient lighting lower operating costs.
+                </li>
+              </ul>
+              <p className="mt-3">
+                By planning for these features early, you avoid expensive alterations
+                later.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Why Choose MT Boss as Your Petrol Pump Architect?
+              </h3>
+              <p className="mb-3">
+                Fuel station projects need clear planning, dependable execution and honest
+                communication. These are the commitments that guide our work.
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Design and construction under one roof.</strong> You deal with
+                  one team from drawing to handover, which reduces delays and prevents
+                  blame-shifting between designer and builder.
+                </li>
+                <li>
+                  <strong>Transparent pricing.</strong> You receive a clear, itemised
+                  estimate so you know exactly where your money goes.
+                </li>
+                <li>
+                  <strong>On-time delivery.</strong> We plan realistic schedules and track
+                  progress carefully so your outlet can start earning as early as possible.
+                </li>
+                <li>
+                  <strong>Quality you can see.</strong> From foundation and paving to
+                  canopy and finishing, we follow strict quality checks.
+                </li>
+                <li>
+                  <strong>Local knowledge.</strong> We understand Moradabad&apos;s roads,
+                  climate, soil conditions, suppliers and working environment.
+                </li>
+                <li>
+                  <strong>Broad construction capability.</strong> Our services cover
+                  commercial buildings, industrial and warehousing work, infrastructure
+                  and roads, and hospitality projects, which are useful skills for a
+                  complex fuel station build.
+                </li>
+                <li>
+                  <strong>Waterproofing and finishing expertise.</strong> We protect your
+                  buildings against seepage and long-term damage.
+                </li>
+                <li>
+                  <strong>Complete support.</strong> Our team remains available for
+                  repairs, upgrades and future expansion.
+                </li>
+              </ul>
+              <p className="mt-3">
+                If you are searching for an architect for petrol pump Moradabad who can
+                plan, design and build with care, MT Boss is ready to help.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Our Process: From Plot to Petrol Pump
+              </h3>
+              <p className="mb-3">
+                A clear process saves time and money. Here is how we handle a fuel station
+                project.
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Step 1: Consultation and site visit.</strong> We discuss your
+                  dealership plan, budget and goals, and inspect the plot, road frontage
+                  and surroundings.
+                </li>
+                <li>
+                  <strong>Step 2: Feasibility and layout study.</strong> We check the
+                  plot&apos;s suitability, traffic movement, clearances and potential for
+                  expansion.
+                </li>
+                <li>
+                  <strong>Step 3: Concept design.</strong> We prepare layout and canopy
+                  options showing dispensing islands, tank area, buildings, parking and
+                  circulation.
+                </li>
+                <li>
+                  <strong>Step 4: 3D visualisation.</strong> Realistic 3D views help you
+                  approve the look, branding and colours before construction.
+                </li>
+                <li>
+                  <strong>Step 5: Detailed drawings.</strong> We prepare architectural,
+                  structural, electrical, plumbing and drainage drawings for approvals and
+                  construction.
+                </li>
+                <li>
+                  <strong>Step 6: Budget estimation.</strong> We share a transparent
+                  estimate covering materials, labour and finishing. You can also use the{" "}
+                  <a href="/calculator" className="text-blue-600 underline">
+                    MT Boss construction cost calculator
+                  </a>{" "}
+                  for an early idea.
+                </li>
+                <li>
+                  <strong>Step 7: Construction.</strong> Our engineers and supervisors
+                  build according to the approved design, with quality checks at every
+                  stage.
+                </li>
+                <li>
+                  <strong>Step 8: Finishing and handover.</strong> Paving, painting,
+                  lighting, signage, landscaping and final inspection are completed before
+                  handover.
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                How Much Does It Cost to Design and Build a Petrol Pump?
+              </h3>
+              <p className="mb-3">
+                Costs vary widely, and no honest firm can quote an exact number without
+                seeing your plot and requirements. The main factors are:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Plot size and shape.</strong> Larger, regular plots offer more
+                  design flexibility.
+                </li>
+                <li>
+                  <strong>Number of dispensing units and fuel types.</strong> More units
+                  and additional fuels increase the scope of work.
+                </li>
+                <li>
+                  <strong>Canopy size and specification.</strong> Span, height and finish
+                  affect structure and cost.
+                </li>
+                <li>
+                  <strong>Service building and retail area.</strong> A convenience store
+                  or restaurant adds to the budget.
+                </li>
+                <li>
+                  <strong>Site conditions.</strong> Soil, levelling, drainage and access
+                  affect foundation and civil work.
+                </li>
+                <li>
+                  <strong>Quality of materials and finishing.</strong> Paving, cladding,
+                  lighting and fittings vary in price.
+                </li>
+                <li>
+                  <strong>Additional features.</strong> EV charging, solar panels and CNG
+                  facilities add to the project cost.
+                </li>
+                <li>
+                  <strong>Oil company standards.</strong> Different companies may have
+                  specific design and branding requirements.
+                </li>
+              </ul>
+
+              <p className="mt-4 mb-3 font-semibold text-gray-900">
+                Practical budgeting tips:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  Finalise the design before construction begins, since late changes cause
+                  the biggest overruns.
+                </li>
+                <li>Keep a contingency of around 10 percent for unexpected needs.</li>
+                <li>Ask for an itemised quote instead of a single lump sum.</li>
+                <li>
+                  Budget separately for equipment supplied by your oil company.
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                How to Choose the Right Architect for Your Fuel Station
+              </h3>
+              <p className="mb-3">
+                Use this checklist when comparing professionals.
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Ask about relevant experience.</strong> Look for commercial,
+                  industrial or infrastructure projects that show comparable technical
+                  capability.
+                </li>
+                <li>
+                  <strong>Check the scope of services.</strong> Find out whether they
+                  handle design only or also construction, interiors and finishing.
+                </li>
+                <li>
+                  <strong>Confirm understanding of standards.</strong> They should be
+                  familiar with safety, layout and approval requirements for fuel
+                  stations.
+                </li>
+                <li>
+                  <strong>Review their portfolio and references.</strong> Real completed
+                  projects and honest client feedback say more than advertisements.
+                </li>
+                <li>
+                  <strong>Insist on clear pricing.</strong> Deliverables, timelines and
+                  payment terms should be in writing.
+                </li>
+                <li>
+                  <strong>Look at communication.</strong> Regular updates and prompt
+                  answers at the design stage usually indicate good management on site.
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Common Mistakes to Avoid When Building a Petrol Pump
+              </h3>
+              <p className="mb-3">
+                Learning from other owners&apos; mistakes can save lakhs of rupees.
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Buying land before checking feasibility.</strong> Some plots
+                  fail approval because of distance rules, road width or access issues.
+                  Consult an architect before buying.
+                </li>
+                <li>
+                  <strong>Ignoring traffic flow.</strong> Poor entry and exit design
+                  causes queues, accidents and lost customers.
+                </li>
+                <li>
+                  <strong>Underestimating drainage.</strong> Weak drainage leads to
+                  flooding, contamination and compliance trouble.
+                </li>
+                <li>
+                  <strong>Cutting corners on paving and structure.</strong> Cheap
+                  materials fail quickly under heavy vehicles and chemicals.
+                </li>
+                <li>
+                  <strong>Skipping future planning.</strong> Without space for CNG, EV
+                  charging or extra pumps, upgrades become expensive.
+                </li>
+                <li>
+                  <strong>Hiring separate unconnected teams.</strong> When designer,
+                  engineer and contractor do not coordinate, errors and delays multiply.
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                Get Started with a Free Consultation
+              </h3>
+              <p>
+                Every petrol pump project is different, and the best way to understand
+                your cost and timeline is to discuss your actual plot. Share your
+                location, plot size and dealership details with our team, and we will help
+                you understand what is possible within your budget.
+              </p>
+
+              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
+                Contact MT Boss
+              </h4>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>
+                  <strong>Phone / WhatsApp:</strong>{" "}
+                  <a
+                    href="https://wa.me/9458410866"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    +91 94584 10866
+                  </a>
+                </li>
+                <li>
+                  <strong>Email:</strong>{" "}
+                  <a
+                    href="mailto:mtboss2016@gmail.com"
+                    className="text-blue-600 underline"
+                  >
+                    mtboss2016@gmail.com
+                  </a>
+                </li>
+                <li>
+                  <strong>Website:</strong>{" "}
+                  <a
+                    href="https://www.mtboss.in/"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    https://www.mtboss.in/
+                  </a>
+                </li>
+                <li>
+                  <strong>Office:</strong> Harthala Kanth Road, behind KR Collection,
+                  near Domino&apos;s, Moradabad, Uttar Pradesh
+                </li>
+              </ul>
+              <p className="mt-3">
+                Request a free consultation or a construction quote today and take the
+                first step toward a safe, efficient and profitable fuel station. You can
+                also{" "}
+                <a
+                  href="/CTASection/get-quote"
+                  className="text-blue-600 underline"
+                >
+                  request a quote online
+                </a>
+                .
               </p>
             </section>
 
@@ -194,44 +572,95 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>1. Does MTBOSS design and construct petrol pumps in Moradabad?</strong>
+                  <strong>Q1. What does an architect do for a petrol pump?</strong>
                   <br />
-                  MTBOSS specializes in commercial, industrial and infrastructure construction in Moradabad, and can support petrol pump projects with layout planning, construction and material supply.
+                  An architect plans the layout, canopy, buildings, traffic flow and
+                  drainage, and prepares drawings for approvals and construction.
                 </li>
                 <li>
-                  <strong>2. What services does MTBOSS offer besides construction?</strong>
+                  <strong>
+                    Q2. Do I need an architect before buying land for a petrol pump?
+                  </strong>
                   <br />
-                  MTBOSS also offers doorstep home services (electrician, plumber, AC repair, pest control), verified property buying/selling/renting, and wholesale building materials.
+                  Yes. An early feasibility check helps you avoid plots that may not meet
+                  layout or approval requirements.
                 </li>
                 <li>
-                  <strong>3. Can I get a free construction quote from MTBOSS?</strong>
+                  <strong>Q3. Does MT Boss handle both design and construction?</strong>
                   <br />
-                  Yes, MTBOSS offers a &quot;Get a Construction Quote&quot; option directly on their website, <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">www.mtboss.in</a>.
+                  Yes. MT Boss manages architecture, construction, finishing and
+                  waterproofing under one team.
                 </li>
                 <li>
-                  <strong>4. Does MTBOSS supply construction materials directly?</strong>
+                  <strong>
+                    Q4. Can I see a 3D design before construction starts?
+                  </strong>
                   <br />
-                  Yes, MTBOSS provides direct wholesale supply of cement, TMT steel bars, bricks, tiles and paints.
+                  Yes. We prepare realistic 3D views so you can approve the look before
+                  work begins.
                 </li>
                 <li>
-                  <strong>5. Is there a way to estimate my petrol pump construction budget in advance?</strong>
+                  <strong>Q5. Do you help with approvals and documentation?</strong>
                   <br />
-                  Yes, MTBOSS provides an online Budget Calculator tool to help estimate project costs early in the planning process.
+                  We prepare drawings that support the approval process, and you should
+                  confirm final requirements with authorities and your oil company.
                 </li>
                 <li>
-                  <strong>6. Where is the MTBOSS office located?</strong>
+                  <strong>Q6. How long does a petrol pump project take?</strong>
                   <br />
-                  MTBOSS is located at Harthala, Kanth Road, Behind KR Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.
+                  Design and approvals take several weeks, and construction depends on
+                  scale and site conditions.
                 </li>
                 <li>
-                  <strong>7. Does MTBOSS handle approvals like PESO or fire department clearances?</strong>
+                  <strong>
+                    Q7. How much does it cost to build a petrol pump in Moradabad?
+                  </strong>
                   <br />
-                  MTBOSS can assist with preparing the design documentation needed for such approvals as part of an end-to-end petrol pump construction project; specific licensing remains the responsibility of the concerned government authorities.
+                  Cost depends on plot size, units, canopy and finishing. Contact us for
+                  a detailed estimate.
                 </li>
                 <li>
-                  <strong>8. Does MTBOSS only work on petrol pumps, or other commercial projects too?</strong>
+                  <strong>Q8. Can you plan for EV charging or CNG?</strong>
                   <br />
-                  MTBOSS&apos;s core expertise spans commercial buildings, hotel and hospitality projects, residential projects, and industrial and infrastructure construction across India.
+                  Yes. We can design space and infrastructure for future fuels and
+                  charging points.
+                </li>
+                <li>
+                  <strong>Q9. Do you work outside Moradabad?</strong>
+                  <br />
+                  Yes. We also serve Bareilly and nearby areas.
+                </li>
+                <li>
+                  <strong>
+                    Q10. How can I contact MT Boss for a petrol pump project?
+                  </strong>
+                  <br />
+                  Call or WhatsApp{" "}
+                  <a
+                    href="https://wa.me/9458410866"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    +91 94584 10866
+                  </a>
+                  , email{" "}
+                  <a
+                    href="mailto:mtboss2016@gmail.com"
+                    className="text-blue-600 underline"
+                  >
+                    mtboss2016@gmail.com
+                  </a>
+                  , or request a quote at{" "}
+                  <a
+                    href="https://www.mtboss.in/"
+                    className="text-blue-600 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    mtboss.in
+                  </a>
+                  .
                 </li>
               </ul>
             </section>

@@ -8,6 +8,7 @@ export default function ProjectDetailPage() {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     const checkTheme = () => setIsDark(document.documentElement.classList.contains("dark-mode"));
@@ -27,6 +28,22 @@ export default function ProjectDetailPage() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => {
+    if (!project) return;
+    const images = [project.image_url, ...(project.additional_images?.map(img => img.image_url) || [])];
+    if (images.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [project]);
+
+  const images = project ? [project.image_url, ...(project.additional_images?.map(img => img.image_url) || [])] : [];
+  
+  const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
 
   if (loading) {
     return (
@@ -56,15 +73,49 @@ export default function ProjectDetailPage() {
   return (
     <main className={`min-h-screen transition-colors duration-500 ${isDark ? "bg-black" : "bg-white"}`}>
 
-      {/* Hero Image */}
-      <div className="relative h-[60vh] md:h-[75vh] overflow-hidden">
-        <img
-          src={project.image_url}
-          alt={project.title}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+      {/* Hero Image Slider */}
+      <div className="relative h-[60vh] md:h-[75vh] overflow-hidden group">
+        {images.map((img, idx) => (
+          <img
+            key={idx}
+            src={img}
+            alt={`${project.title} - ${idx}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              idx === currentImageIndex ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
         {/* Dark gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
+
+        {/* Slider Controls */}
+        {images.length > 1 && (
+          <>
+            <button 
+              onClick={prevImage}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/30 hover:bg-[var(--brand-blue)] text-white hover:text-black rounded-full border border-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all z-10"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <button 
+              onClick={nextImage}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/30 hover:bg-[var(--brand-blue)] text-white hover:text-black rounded-full border border-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all z-10"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            </button>
+            
+            {/* Dots */}
+            <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+              {images.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentImageIndex(idx)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${idx === currentImageIndex ? "bg-[var(--brand-blue)] w-8" : "bg-white/50 hover:bg-white"}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
 
         {/* Back button */}
         <Link
@@ -79,7 +130,7 @@ export default function ProjectDetailPage() {
           <span className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-[0.4em] block mb-3">
             {project.category}{project.location ? ` — ${project.location}` : ""}
           </span>
-          <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter text-white leading-none">
+          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white leading-none">
             {project.title}
           </h1>
         </div>

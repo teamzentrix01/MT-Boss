@@ -34,8 +34,11 @@ import {
   Zap,
 } from "lucide-react";
 import { displayUnit, getProductImage, ShopImage } from "./Storefront";
+import { getCartStep } from "@/lib/cart-step";
 import { CATEGORY_NAV_TREE } from "./categoryNavTree";
 import GlobalSearch from "../components/GlobalSearch";
+import QuickServices from "../components/QuickServices";
+import MaterialOrdersPanel from "../components/MaterialOrdersPanel";
 
 function getCategoryIcon(name = "") {
   const val = name.toLowerCase();
@@ -55,7 +58,10 @@ function getSubcategoriesForCategory(category) {
   if (!category) return ["All"];
   const list = [];
   if (Array.isArray(category.subcategories) && category.subcategories.length > 0) {
-    list.push(...category.subcategories);
+    category.subcategories.forEach((s) => {
+      const name = typeof s === 'object' && s !== null ? s.name : s;
+      if (name && !list.includes(name)) list.push(name);
+    });
   }
   if (Array.isArray(category.types) && category.types.length > 0) {
     category.types.forEach((t) => {
@@ -167,7 +173,7 @@ function MobileTopNavBar({ user, isDark, onToggleTheme, onOpenNavDrawer }) {
           className="mobile-hamburger-btn"
           aria-label="Open navigation menu"
         >
-          <svg className="w-5 h-5 text-gray-800 dark:text-gray-100" fill="none" stroke="currentColor" strokeWidth={2.4} viewBox="0 0 24 24">
+          <svg className="w-6 h-6" fill="none" stroke={isDark ? "#f1f5f9" : "#000000"} strokeWidth={2.4} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
@@ -193,8 +199,15 @@ export default function MobileStorefront({
   onCheckout,
   onDetails,
   shippingSettings = null,
+  activeCoupon = null,
+  couponCalculation = null,
+  couponOffers = [],
+  onApplyCoupon = () => ({ error: 'Coupon service unavailable' }),
+  onSelectCoupon = () => ({ error: 'Coupon service unavailable' }),
+  onClearCoupon = () => { },
+  shippingQuote = null,
 }) {
-  const [mobileView, setMobileView] = useState("home"); // "home" | "listing"
+  const [mobileView, setMobileView] = useState("home"); // "home" | "listing" | "orders" | "account"
   const [activeCategoryId, setActiveCategoryId] = useState(null);
   const [activeSubcategory, setActiveSubcategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -209,9 +222,18 @@ export default function MobileStorefront({
   const [isDark, setIsDark] = useState(false);
   const [propertyOpen, setPropertyOpen] = useState(false);
   const [localShippingSettings, setLocalShippingSettings] = useState(shippingSettings);
+  const [couponCode, setCouponCode] = useState(activeCoupon?.code || '');
+  const [couponNotice, setCouponNotice] = useState('');
+  const [offersOpen, setOffersOpen] = useState(false);
   const searchInputRef = useRef(null);
   const rightFeedRef = useRef(null);
   const activeCatBtnRef = useRef(null);
+
+  useEffect(() => {
+    if (activeCoupon?.code) {
+      setCouponCode(activeCoupon.code);
+    }
+  }, [activeCoupon]);
 
   useEffect(() => {
     if (shippingSettings) setLocalShippingSettings(shippingSettings);
@@ -245,7 +267,7 @@ export default function MobileStorefront({
       const token = localStorage.getItem('token') || localStorage.getItem('vendor-token') || localStorage.getItem('admin-token') || localStorage.getItem('supplier-token') || localStorage.getItem('franchise-token');
       const userData = localStorage.getItem('user') || localStorage.getItem('vendor') || localStorage.getItem('admin') || localStorage.getItem('supplier') || localStorage.getItem('franchise');
       if (token && userData) {
-        try { setUser(JSON.parse(userData)); } catch (e) {}
+        try { setUser(JSON.parse(userData)); } catch (e) { }
       } else {
         setUser(null);
       }
@@ -296,7 +318,7 @@ export default function MobileStorefront({
       'token', 'user', 'admin-token', 'admin', 'vendor-token', 'vendor',
       'supplier-token', 'supplier', 'franchise-token', 'franchise'
     ].forEach((key) => localStorage.removeItem(key));
-    await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+    await fetch('/api/auth/logout', { method: 'POST' }).catch(() => { });
     setUser(null);
     window.dispatchEvent(new Event('userLoggedIn'));
     window.location.href = '/login';
@@ -332,7 +354,7 @@ export default function MobileStorefront({
         p.category?.name?.toLowerCase() === activeCategory.name?.toLowerCase()
     );
     const subcats = Array.isArray(activeCategory.subcategories) && activeCategory.subcategories.length > 0
-      ? activeCategory.subcategories
+      ? activeCategory.subcategories.map(s => typeof s === 'object' && s !== null ? s.name : s).filter(Boolean)
       : getSubcategoriesForCategory(activeCategory).filter((s) => s !== "All");
     const brands = [...new Set(catProducts.map((p) => p.brand).filter(Boolean))];
     const options = ["All", ...subcats, ...brands].filter(Boolean);
@@ -386,10 +408,44 @@ export default function MobileStorefront({
   }, [catalog, searchQuery]);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Number of unique categories in cart (used for mobile cart badge & cart display)
+  const cartCategoryCount = useMemo(() => {
+    if (!Array.isArray(cart) || cart.length === 0) return 0;
+    const uniqueCategories = new Set();
+    cart.forEach((item) => {
+      const p = item?.product || {};
+      const cat = p.category || item?.category;
+      let name = "";
+      if (typeof cat === "object" && cat !== null) {
+        name = cat.name || cat.title || String(cat.id || "");
+      } else if (typeof cat === "string") {
+        name = cat;
+      }
+      if (!name) {
+        name = p.category_name || p.categoryName || "";
+      }
+      if (!name && Array.isArray(categories)) {
+        const found = categories.find((c) =>
+          (p.category_id && (String(c.id) === String(p.category_id) || String(c._id) === String(p.category_id))) ||
+          c.name?.toLowerCase() === p.name?.toLowerCase()
+        );
+        if (found) name = found.name;
+      }
+      const finalKey = (name || p.name || p.id || "").trim().toLowerCase();
+      if (finalKey) uniqueCategories.add(finalKey);
+    });
+    return uniqueCategories.size;
+  }, [cart, categories]);
+
   const cartSubtotal = cart.reduce((sum, item) => {
     const price = Number(item.product.price) || 0;
     return sum + price * item.quantity;
   }, 0);
+  const hasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
+  const couponDiscount = (activeCoupon && couponCalculation?.eligible) ? (Number(couponCalculation.discount) || 0) : 0;
+  const cartFinalTotal = Math.max(0, cartSubtotal - couponDiscount);
+  const cartTotalWithShipping = cartFinalTotal + (shippingQuote?.totalShipping || 0);
 
   const navigateToCategory = (cat) => {
     setActiveCategoryId(cat.id);
@@ -458,7 +514,7 @@ export default function MobileStorefront({
                 aria-label="Shopping Cart"
               >
                 <ShoppingCart size={21} />
-                {cartCount > 0 && <span className="mobile-cart-badge">{cartCount}</span>}
+                {cartCategoryCount > 0 && <span className="mobile-cart-badge">{cartCategoryCount}</span>}
               </button>
             </div>
           </div>
@@ -569,7 +625,7 @@ export default function MobileStorefront({
                 aria-label="Shopping Cart"
               >
                 <ShoppingCart size={20} />
-                {cartCount > 0 && <span className="mobile-cart-badge">{cartCount}</span>}
+                {cartCategoryCount > 0 && <span className="mobile-cart-badge">{cartCategoryCount}</span>}
               </button>
             </div>
           </div>
@@ -594,6 +650,56 @@ export default function MobileStorefront({
               </div>
             </div>
           )}
+        </header>
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────
+          3. STICKY MOBILE HEADER (When on Orders or Account View)
+         ───────────────────────────────────────────────────────────── */}
+      {(mobileView === "orders" || mobileView === "account") && (
+        <header className="mobile-listing-header">
+          <MobileTopNavBar
+            user={user}
+            isDark={isDark}
+            onToggleTheme={handleToggleDarkMode}
+            onOpenNavDrawer={() => setNavDrawerOpen(true)}
+          />
+
+          <div className="mobile-listing-header-inner">
+            <button
+              type="button"
+              className="mobile-back-btn"
+              onClick={navigateToHome}
+              aria-label="Back to home"
+            >
+              <ArrowLeft size={20} />
+            </button>
+
+            <div className="mobile-listing-title-box">
+              <h1 className="mobile-listing-title">
+                {mobileView === "orders" ? "Material Orders" : "My Account"}
+              </h1>
+              <span className="mobile-listing-city">
+                {mobileView === "orders"
+                  ? "Track status & delivery"
+                  : user?.name
+                    ? `Logged in as ${user.name}`
+                    : "MT-Boss Customer Profile"}
+              </span>
+            </div>
+
+            <div className="mobile-listing-header-actions">
+              <button
+                type="button"
+                className="mobile-listing-action-btn mobile-cart-btn"
+                onClick={() => setMobileCartOpen(true)}
+                aria-label="Shopping Cart"
+              >
+                <ShoppingCart size={20} />
+                {cartCategoryCount > 0 && <span className="mobile-cart-badge">{cartCategoryCount}</span>}
+              </button>
+            </div>
+          </div>
         </header>
       )}
 
@@ -800,6 +906,9 @@ export default function MobileStorefront({
                     })}
                   </div>
                 </section>
+
+                {/* Quick Home Services (At Your Doorstep) */}
+                <QuickServices className="pt-2 pb-8 px-3" />
               </>
             )}
           </div>
@@ -862,7 +971,17 @@ export default function MobileStorefront({
                         key={chip}
                         type="button"
                         className={`mobile-chip ${isSelected ? "is-selected" : ""}`}
+                        style={
+                          isSelected
+                            ? {
+                              backgroundColor: isDark ? "#38bdf8" : "#12283f",
+                              color: isDark ? "#0f172a" : "#ffffff",
+                              borderColor: isDark ? "#38bdf8" : "#12283f",
+                            }
+                            : undefined
+                        }
                         onClick={() => setActiveFilterChip(chip)}
+                        aria-pressed={isSelected}
                       >
                         {chip}
                       </button>
@@ -916,21 +1035,225 @@ export default function MobileStorefront({
             </section>
           </div>
         )}
+
+        {/* VIEW 3: ORDERS VIEW */}
+        {mobileView === "orders" && (
+          <div className="mobile-orders-view p-3 sm:p-4 pb-28">
+            <div className="mb-3.5 flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-extrabold text-[#12283F] dark:text-white">Material Orders</h2>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Live order status, tracking & invoices</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (categories.length > 0) navigateToCategory(activeCategory || categories[0]);
+                }}
+                className="text-xs font-bold text-[#E4572E] hover:underline"
+              >
+                + Shop Materials
+              </button>
+            </div>
+
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-2 sm:p-4 shadow-sm">
+              <MaterialOrdersPanel role="user" embedded={true} />
+            </div>
+
+            <div className="mt-4 p-3.5 bg-sky-50 dark:bg-sky-950/40 rounded-xl border border-sky-100 dark:border-sky-900/40 flex items-center justify-between text-xs">
+              <div>
+                <p className="font-bold text-[#12283F] dark:text-sky-200">Need order or dispatch help?</p>
+                <p className="text-gray-500 dark:text-gray-400">MT-Boss Dispatch Desk is available 24x7</p>
+              </div>
+              <a
+                href="tel:+919458410866"
+                className="px-3.5 py-1.5 bg-[#12283F] text-white font-bold rounded-lg text-xs hover:bg-[#1b3a5c]"
+              >
+                Call Desk
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 4: ACCOUNT VIEW */}
+        {mobileView === "account" && (
+          <div className="mobile-account-view p-3.5 pb-28 space-y-3.5">
+            {/* Profile Card */}
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-4 shadow-sm">
+              {user ? (
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#12283F] to-[#204770] text-white font-black text-lg flex items-center justify-center shadow-md">
+                    {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-extrabold text-sm text-[#12283F] dark:text-white truncate">
+                        {user.name || 'MT-Boss Customer'}
+                      </h3>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                        {user.role || 'Customer'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
+                      {user.email || user.phone || 'Verified Account'}
+                    </p>
+                    {user.phone && (
+                      <p className="text-[11px] text-gray-400 mt-0.5">📞 +91 {user.phone}</p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-2">
+                  <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-zinc-800 text-gray-500 mx-auto flex items-center justify-center mb-2">
+                    <User size={22} />
+                  </div>
+                  <h3 className="font-extrabold text-sm text-[#12283F] dark:text-white">Welcome to MT-Boss</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xs mx-auto">
+                    Sign in to track orders, manage site deliveries and unlock exclusive wholesale cashback.
+                  </p>
+                  <div className="flex items-center justify-center gap-2.5 mt-3.5">
+                    <Link
+                      href="/login"
+                      className="px-5 py-2 bg-[#12283F] text-white text-xs font-bold rounded-xl shadow-sm hover:bg-[#1c3a5b]"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="px-5 py-2 bg-gray-100 dark:bg-zinc-800 text-[#12283F] dark:text-white text-xs font-bold rounded-xl border border-gray-200 dark:border-zinc-700"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Wallet Card */}
+            <div className="bg-gradient-to-r from-[#12283F] to-[#1c3b5d] text-white rounded-2xl p-4 shadow-md flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-amber-300">
+                  <Wallet size={20} />
+                </div>
+                <div>
+                  <span className="text-[11px] text-white/70 block uppercase tracking-wider font-semibold">MT-Boss Wallet</span>
+                  <strong className="text-base font-black">₹0.00 <span className="text-xs font-normal text-white/80">Cashback</span></strong>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setWalletModalOpen(true)}
+                className="px-3 py-1.5 bg-amber-400 text-zinc-900 rounded-lg text-xs font-black shadow-sm active:scale-95"
+              >
+                Passbook
+              </button>
+            </div>
+
+            {/* Account Navigation Grid */}
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-2 shadow-sm divide-y divide-gray-100 dark:divide-zinc-800">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileView("orders");
+                  window.scrollTo({ top: 0, behavior: "instant" });
+                }}
+                className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-zinc-800/50 rounded-xl transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-orange-50 text-[#E4572E] flex items-center justify-center">
+                    <ClipboardList size={17} />
+                  </div>
+                  <div>
+                    <span className="font-bold text-xs text-[#12283F] dark:text-white block">My Material Orders</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">Track shipments & past purchases</span>
+                  </div>
+                </div>
+                <ChevronRight size={16} className="text-gray-400" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCitySheetOpen(true)}
+                className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-zinc-800/50 rounded-xl transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-[var(--brand-blue)] flex items-center justify-center">
+                    <MapPin size={17} />
+                  </div>
+                  <div>
+                    <span className="font-bold text-xs text-[#12283F] dark:text-white block">Delivery City</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                      Currently: {selectedCity || "Select City"}
+                    </span>
+                  </div>
+                </div>
+                <span className="text-xs font-bold text-[#E4572E]">Change</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onQuote(activeCategory || null)}
+                className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-zinc-800/50 rounded-xl transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                    <Zap size={17} />
+                  </div>
+                  <div>
+                    <span className="font-bold text-xs text-[#12283F] dark:text-white block">Request Bulk Quote</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">Best price for large site projects</span>
+                  </div>
+                </div>
+                <ChevronRight size={16} className="text-gray-400" />
+              </button>
+            </div>
+
+
+
+            {/* Logout or Full Dashboard */}
+            {user && (
+              <div className="pt-1 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (user.role === 'vendor') window.location.href = '/vendor/dashboard';
+                    else if (user.role === 'admin') window.location.href = '/dashboard';
+                    else if (user.role === 'supplier') window.location.href = '/supplier/dashboard';
+                    else if (user.role === 'franchise') window.location.href = '/franchise/dashboard';
+                    else window.location.href = '/userdashboard';
+                  }}
+                  className="w-full py-2.5 bg-[#12283F] text-white text-xs font-bold rounded-xl"
+                >
+                  Open Full Dashboard
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full py-2.5 text-xs font-bold text-red-600 bg-red-50 dark:bg-red-950/30 rounded-xl border border-red-200 dark:border-red-900"
+                >
+                  Sign Out of Account
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       {/* ─────────────────────────────────────────────────────────────
           5. FIXED BOTTOM NAVIGATION (MOBILE ONLY)
          ───────────────────────────────────────────────────────────── */}
       {/* Floating "Get Quote" Pill Button above Nav */}
-      <button
-        type="button"
-        className="mobile-floating-quote-fab"
-        onClick={() => onQuote(activeCategory || null)}
-        aria-label="Get Instant Quote"
-      >
-        <Zap size={16} className="text-amber-300" />
-        <span>Get Quote</span>
-      </button>
+      {(mobileView === "home" || mobileView === "listing") && (
+        <button
+          type="button"
+          className="mobile-floating-quote-fab"
+          onClick={() => onQuote(activeCategory || null)}
+          aria-label="Get Instant Quote"
+        >
+          <Zap size={16} className="text-amber-300" />
+          <span>Get Quote</span>
+        </button>
+      )}
 
       <nav className="mobile-bottom-navbar" aria-label="Mobile Navigation">
         <button
@@ -947,23 +1270,39 @@ export default function MobileStorefront({
           className={`mobile-nav-item ${mobileView === "listing" ? "is-active" : ""}`}
           onClick={() => {
             if (categories.length > 0) {
-              navigateToCategory(categories[0]);
+              navigateToCategory(activeCategory || categories[0]);
+            } else {
+              setMobileView("listing");
             }
           }}
         >
           <Grid3X3 size={20} />
-          <span>Categories</span>
+          <span>Category</span>
         </button>
 
-        <Link href="/material-orders?role=user" className="mobile-nav-item">
+        <button
+          type="button"
+          className={`mobile-nav-item ${mobileView === "orders" ? "is-active" : ""}`}
+          onClick={() => {
+            setMobileView("orders");
+            window.scrollTo({ top: 0, behavior: "instant" });
+          }}
+        >
           <ClipboardList size={20} />
-          <span>Orders</span>
-        </Link>
+          <span>Order</span>
+        </button>
 
-        <Link href="/userdashboard" className="mobile-nav-item">
+        <button
+          type="button"
+          className={`mobile-nav-item ${mobileView === "account" ? "is-active" : ""}`}
+          onClick={() => {
+            setMobileView("account");
+            window.scrollTo({ top: 0, behavior: "instant" });
+          }}
+        >
           <User size={20} />
           <span>Account</span>
-        </Link>
+        </button>
       </nav>
 
       {/* ─────────────────────────────────────────────────────────────
@@ -1056,7 +1395,7 @@ export default function MobileStorefront({
             <div className="mobile-cart-drawer-head">
               <div>
                 <h3 className="font-extrabold text-base text-[#12283F]">
-                  My Cart ({cartCount} {cartCount === 1 ? "item" : "items"})
+                  My Cart ({cartCategoryCount} {cartCategoryCount === 1 ? "category" : "categories"})
                 </h3>
                 <span className="text-xs text-gray-500">Delivering to {selectedCity || "Site"}</span>
               </div>
@@ -1155,13 +1494,199 @@ export default function MobileStorefront({
                   })}
                 </div>
 
+                {/* ── COUPON BOX & AVAILABLE OFFERS (Full feature parity with desktop) ── */}
+                <div className="mobile-cart-coupon-wrap pt-2.5 pb-1 border-t border-gray-100 dark:border-zinc-800">
+                  <div className="store-coupon-box">
+                    {activeCoupon?.code ? (
+                      <div className="store-coupon-applied">
+                        <span>
+                          Coupon <b>{activeCoupon.code}</b>
+                          {couponCalculation?.eligible
+                            ? ` applied: -₹${Number(couponCalculation.discount).toLocaleString('en-IN')}`
+                            : ' selected'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onClearCoupon();
+                            setCouponCode('');
+                            setCouponNotice('');
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <form
+                        onSubmit={(event) => {
+                          event.preventDefault();
+                          const result = onApplyCoupon(couponCode);
+                          setCouponNotice(result?.error || `Coupon ${result?.coupon?.code || couponCode} applied.`);
+                        }}
+                      >
+                        <label htmlFor="mobile-store-coupon-code">Have a coupon?</label>
+                        <div>
+                          <input
+                            id="mobile-store-coupon-code"
+                            value={couponCode}
+                            onChange={(event) => setCouponCode(event.target.value.toUpperCase())}
+                            placeholder="Enter coupon code"
+                            autoCapitalize="characters"
+                          />
+                          <button type="submit" disabled={!couponCode.trim()}>
+                            Apply
+                          </button>
+                        </div>
+                      </form>
+                    )}
+                    {couponNotice && (
+                      <p className={couponNotice.startsWith('Coupon') ? 'is-success' : ''}>
+                        {couponNotice}
+                      </p>
+                    )}
+                    {activeCoupon && !couponCalculation?.eligible && (
+                      <p>
+                        Add ₹{couponCalculation?.gap ? Number(couponCalculation.gap).toLocaleString('en-IN') : 0} more of regular-price items to unlock this coupon. Offer-priced items do not count.
+                      </p>
+                    )}
+                  </div>
+
+                  {!activeCoupon?.code && (
+                    <button
+                      type="button"
+                      className="store-view-offers"
+                      onClick={() => setOffersOpen((open) => !open)}
+                    >
+                      {offersOpen
+                        ? 'Hide available offers'
+                        : `View available offers${couponOffers?.length ? ` (${couponOffers.length})` : ''}`}
+                    </button>
+                  )}
+
+                  {offersOpen && !activeCoupon?.code && (
+                    <div className="store-available-offers">
+                      {couponOffers?.length ? (
+                        couponOffers.map(({ coupon, calculation }) => (
+                          <div
+                            className={`store-available-offer${calculation?.eligible ? ' is-eligible' : ''}`}
+                            key={coupon.id}
+                          >
+                            <div>
+                              <strong>{coupon.code || 'Automatic offer'}</strong>
+                              <span>
+                                {coupon.discount_type === 'percentage'
+                                  ? `${coupon.discount_value}% OFF${Number(coupon.max_discount_cap) > 0 ? ` up to ₹${coupon.max_discount_cap}` : ''}`
+                                  : `₹${coupon.discount_value} OFF`}
+                              </span>
+                              <small>
+                                On regular-price items of ₹{Number(coupon.min_cart_value || 0).toLocaleString('en-IN')} or more
+                                {coupon.applicable_categories?.length
+                                  ? ` · Valid on: ${coupon.applicable_categories.join(', ')}`
+                                  : ' · Valid on all products'}
+                              </small>
+                              {!calculation?.eligible && calculation?.gap > 0 && (
+                                <em>Add ₹{Number(calculation.gap).toLocaleString('en-IN')} more to unlock</em>
+                              )}
+                            </div>
+                            {!coupon.code ? (
+                              <b>{calculation?.eligible ? 'Automatically applied' : 'Auto offer'}</b>
+                            ) : (
+                              <button
+                                type="button"
+                                disabled={!calculation?.eligible}
+                                onClick={() => {
+                                  const result = onSelectCoupon(coupon);
+                                  setCouponNotice(result?.error || `Coupon ${coupon.code} applied.`);
+                                  setCouponCode(coupon.code);
+                                  setOffersOpen(false);
+                                }}
+                              >
+                                {calculation?.eligible ? 'Apply' : 'Locked'}
+                              </button>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-xs text-gray-500 py-1">No active offers right now.</p>
+                      )}
+                    </div>
+                  )}
+
+                  {couponCalculation?.offerAmount > 0 && (
+                    <div className="store-cart-breakdown">
+                      <span>Items with existing offers</span>
+                      <strong>₹{Number(couponCalculation.offerAmount).toLocaleString('en-IN')}</strong>
+                      <small>Offer already applied</small>
+                    </div>
+                  )}
+                  {couponCalculation?.regularAmount > 0 && (
+                    <div className="store-cart-breakdown">
+                      <span>Other items</span>
+                      <strong>₹{Number(couponCalculation.regularAmount).toLocaleString('en-IN')}</strong>
+                    </div>
+                  )}
+                  {activeCoupon && couponCalculation?.eligible && (
+                    <div className="store-cart-breakdown store-cart-coupon-discount">
+                      <span>{activeCoupon.code ? `Coupon “${activeCoupon.code}” applied` : 'Automatic coupon applied'}</span>
+                      <strong>-₹{Number(couponCalculation.discount).toLocaleString('en-IN')}</strong>
+                    </div>
+                  )}
+                </div>
+
                 <div className="mobile-cart-drawer-foot">
-                  <div className="flex items-center justify-between text-sm mb-3">
-                    <span className="text-gray-500 font-medium">Estimated Total</span>
-                    <span className="font-black text-base text-[#12283F]">
+                  <div className="flex items-center justify-between text-sm mb-1.5">
+                    <span className="text-gray-500 font-medium">
+                      {hasUnpricedItems ? 'Current Total' : 'Product Total'}
+                    </span>
+                    <span className={`font-black text-sm text-[#12283F] ${activeCoupon && couponCalculation?.eligible ? 'line-through text-gray-400' : ''}`}>
                       {cartSubtotal > 0 ? `₹${cartSubtotal.toLocaleString("en-IN")}` : "On Confirmation"}
+                      {cartSubtotal > 0 && hasUnpricedItems ? ' + quote items' : ''}
                     </span>
                   </div>
+
+                  {activeCoupon && couponCalculation?.eligible && (
+                    <div className="flex items-center justify-between text-sm mb-2">
+                      <span className="text-emerald-700 dark:text-emerald-400 font-bold">
+                        Discounted Total
+                      </span>
+                      <span className="font-black text-base text-emerald-700 dark:text-emerald-400">
+                        ₹{cartFinalTotal.toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                  )}
+
+                  {shippingQuote?.totalShipping !== null && shippingQuote?.totalShipping !== undefined && (
+                    <div className="flex items-center justify-between text-sm mb-2">
+                      <span className="text-gray-500 font-medium">
+                        Shipping
+                      </span>
+                      <span className="font-black text-sm text-[#12283F]">
+                        ₹{Number(shippingQuote.totalShipping).toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                  )}
+
+                  {(activeCoupon || shippingQuote?.totalShipping) && (
+                    <div className="flex items-center justify-between text-sm mb-2 border-t pt-2 border-gray-200">
+                      <span className="text-gray-900 font-bold">
+                        Final Total
+                      </span>
+                      <span className="font-black text-base text-[#12283F]">
+                        ₹{cartTotalWithShipping.toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                  )}
+
+                  {shippingQuote?.totalShipping ? (
+                    <p className="text-[10.5px] text-gray-500 mb-3">
+                      Total includes applicable shipping charges.
+                    </p>
+                  ) : (
+                    <p className="text-[10.5px] text-gray-500 mb-3">
+                      Delivery charges, if applicable, are confirmed separately.
+                    </p>
+                  )}
+
                   <button
                     type="button"
                     className="mobile-cart-checkout-btn"
@@ -1270,11 +1795,10 @@ export default function MobileStorefront({
               <Link
                 href="/"
                 onClick={() => setNavDrawerOpen(false)}
-                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isDark
-                    ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
+                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${isDark
+                  ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                  : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                  }`}
               >
                 Home
               </Link>
@@ -1282,11 +1806,10 @@ export default function MobileStorefront({
               <Link
                 href="/quick"
                 onClick={() => setNavDrawerOpen(false)}
-                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isDark
-                    ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
+                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${isDark
+                  ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                  : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                  }`}
               >
                 Services
               </Link>
@@ -1294,11 +1817,10 @@ export default function MobileStorefront({
               <Link
                 href="/Services/professionals"
                 onClick={() => setNavDrawerOpen(false)}
-                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isDark
-                    ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
+                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${isDark
+                  ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                  : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                  }`}
               >
                 Professionals
               </Link>
@@ -1308,13 +1830,12 @@ export default function MobileStorefront({
                 <button
                   type="button"
                   onClick={() => setPropertyOpen(!propertyOpen)}
-                  className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    propertyOpen
-                      ? 'bg-[#0284c7] text-white shadow-sm'
-                      : isDark
-                        ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                        : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                  }`}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md transition-colors ${propertyOpen
+                    ? 'bg-[#0284c7] text-white shadow-sm'
+                    : isDark
+                      ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                      : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                    }`}
                 >
                   <span>Property</span>
                   <svg
@@ -1337,11 +1858,10 @@ export default function MobileStorefront({
                         key={s.label}
                         href={s.href}
                         onClick={() => setNavDrawerOpen(false)}
-                        className={`block px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                          isDark
-                            ? 'text-zinc-400 hover:text-sky-400 hover:bg-zinc-800'
-                            : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-                        }`}
+                        className={`block px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${isDark
+                          ? 'text-zinc-400 hover:text-sky-400 hover:bg-zinc-800'
+                          : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+                          }`}
                       >
                         {s.label}
                       </Link>
@@ -1353,11 +1873,10 @@ export default function MobileStorefront({
               <Link
                 href="/Services/all"
                 onClick={() => setNavDrawerOpen(false)}
-                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isDark
-                    ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
+                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${isDark
+                  ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                  : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                  }`}
               >
                 Construction
               </Link>
@@ -1365,11 +1884,10 @@ export default function MobileStorefront({
               <Link
                 href="/calculator"
                 onClick={() => setNavDrawerOpen(false)}
-                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isDark
-                    ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
+                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${isDark
+                  ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                  : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                  }`}
               >
                 Budget Calculator
               </Link>
@@ -1380,11 +1898,10 @@ export default function MobileStorefront({
                   setNavDrawerOpen(false);
                   navigateToHome();
                 }}
-                className={`w-full flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors text-left ${
-                  isDark
-                    ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
+                className={`w-full flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors text-left ${isDark
+                  ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                  : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                  }`}
               >
                 <ShoppingCart size={15} className="text-zinc-600 dark:text-zinc-400 flex-shrink-0" />
                 <span>Shop Now</span>
@@ -1393,11 +1910,10 @@ export default function MobileStorefront({
               <Link
                 href="/careers"
                 onClick={() => setNavDrawerOpen(false)}
-                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isDark
-                    ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
+                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${isDark
+                  ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                  : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                  }`}
               >
                 Careers
               </Link>
@@ -1405,11 +1921,10 @@ export default function MobileStorefront({
               <Link
                 href="/contact"
                 onClick={() => setNavDrawerOpen(false)}
-                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isDark
-                    ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
+                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${isDark
+                  ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                  : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                  }`}
               >
                 Contact
               </Link>
@@ -1417,11 +1932,10 @@ export default function MobileStorefront({
               <Link
                 href="/agent"
                 onClick={() => setNavDrawerOpen(false)}
-                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isDark
-                    ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
+                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${isDark
+                  ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                  : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                  }`}
               >
                 Become an Agent
               </Link>
@@ -1429,11 +1943,10 @@ export default function MobileStorefront({
               <Link
                 href="/agent/login"
                 onClick={() => setNavDrawerOpen(false)}
-                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isDark
-                    ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
+                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${isDark
+                  ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                  : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                  }`}
               >
                 Agent Login
               </Link>
@@ -1441,11 +1954,10 @@ export default function MobileStorefront({
               <Link
                 href="/franchise"
                 onClick={() => setNavDrawerOpen(false)}
-                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isDark
-                    ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
-                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
-                }`}
+                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${isDark
+                  ? 'text-zinc-300 hover:text-sky-400 hover:bg-zinc-800'
+                  : 'text-zinc-700 hover:text-zinc-900 hover:bg-gray-50'
+                  }`}
               >
                 Franchise
               </Link>

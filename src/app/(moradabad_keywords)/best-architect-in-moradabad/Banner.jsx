@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Banner() {
-  const pageTitle = "best architect in Moradabad";
+  const pageTitle = "Best Architect In Moradabad";
   return (
     <>
       <section className="relative w-full h-[300px] sm:h-[400px] md:h-[450px] overflow-hidden">

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 const normalizeCity = (value) => String(value || '').trim().toLowerCase();
 const prettyStatus = (value) => String(value || 'lead').replaceAll('_', ' ');
 
-export default function OperationalProjectsManager() {
+export default function OperationalProjectsManager({ isDarkMode }) {
   const router = useRouter();
   const [projects, setProjects] = useState([]);
   const [agents, setAgents] = useState([]);
@@ -77,9 +77,9 @@ export default function OperationalProjectsManager() {
   };
 
   return (
-    <section className="op-wrap">
+    <section className={`op-wrap${isDarkMode ? ' dark-mode' : ''}`}>
       <style>{`
-        .op-wrap{padding:1.25rem 0;color:var(--text)}
+        .op-wrap{padding:1.25rem 0;color:var(--text);min-height:100%;flex:1;display:flex;flex-direction:column;box-sizing:border-box}
         .op-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:1rem}
         .op-head h2{font-size:1rem;margin:0 0 .3rem}.op-head p{margin:0;color:var(--muted);font-size:.78rem}
         .op-refresh,.op-manage,.op-assign{border:0;border-radius:7px;padding:.55rem .8rem;font-weight:700;cursor:pointer}

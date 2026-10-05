@@ -12,21 +12,26 @@ const withCanonicalConstructionImage = banners => banners.map(banner => (
     : banner
 ));
 
-export default function Hero() {
-  const [slides, setSlides] = useState(defaultHeroBanners);
+export default function Hero({ initialBanners }) {
+  const [slides, setSlides] = useState(
+    () => initialBanners && initialBanners.length > 0
+      ? withCanonicalConstructionImage(initialBanners)
+      : defaultHeroBanners
+  );
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [visible, setVisible] = useState(true);
 
+  // Background refresh – keeps slides up-to-date if admin changes banners,
+  // but does NOT reset `current` so the slider never jumps on the user.
   useEffect(() => {
     const controller = new AbortController();
     fetch('/api/hero-banners', { cache: 'no-store', signal: controller.signal })
       .then(response => response.ok ? response.json() : null)
       .then(data => {
-        if (data?.success && Array.isArray(data.data)) {
+        if (data?.success && Array.isArray(data.data) && data.data.length > 0) {
           setSlides(withCanonicalConstructionImage(data.data));
-          setCurrent(0);
         }
       }).catch(() => {});
     return () => controller.abort();

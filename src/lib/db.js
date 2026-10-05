@@ -38,11 +38,13 @@ const poolConfig = databaseUrl
       ssl: {
         rejectUnauthorized: false,
       },
-      max: 20,
+      max: 10,
       idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 5000,
-      query_timeout: 10000,
-      statement_timeout: 10000,
+      // A Neon compute can need time to resume after scaling to zero. Keep
+      // this above the normal cold-start window rather than failing at 15s.
+      connectionTimeoutMillis: 30000,
+      query_timeout: 30000,
+      statement_timeout: 30000,
     }
   : {
       host: process.env.DB_HOST,
@@ -50,14 +52,42 @@ const poolConfig = databaseUrl
       user: process.env.DB_USER,
       password: databasePassword,
       database: process.env.DB_NAME,
-      max: 20,
+      max: 10,
       idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 5000,
-      query_timeout: 10000,
-      statement_timeout: 10000,
+      connectionTimeoutMillis: 30000,
+      query_timeout: 30000,
+      statement_timeout: 30000,
     };
 
 const pool = new Pool(poolConfig);
+
+const transientConnectionError = (error) => {
+  const message = String(error?.message || '');
+  return (
+    /connection terminated due to connection timeout/i.test(message)
+    || /connection.*timed?\s*out/i.test(message)
+    || ['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED'].includes(error?.code)
+  );
+};
+
+const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+// A just-resumed Neon compute can reject the first TCP connection while it is
+// becoming available. Retry that request once; do not retry SQL failures.
+export async function queryWithConnectionRetry(query, values) {
+  try {
+    return await pool.query(query, values);
+  } catch (error) {
+    if (!transientConnectionError(error)) throw error;
+
+    console.warn('Transient database connection failure; retrying once.', {
+      code: error.code,
+      message: error.message,
+    });
+    await wait(500);
+    return pool.query(query, values);
+  }
+}
 
 pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);

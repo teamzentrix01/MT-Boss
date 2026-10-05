@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { requirePmAccess } from '@/lib/project-management';
 import { ensureProjectOpsSchema, getProjectOps, getProjectSummaries } from '@/lib/project-ops';
 import { ensureAgentSchema } from '@/lib/agent-auth';
 import { ensureAgentNotificationsSchema } from '@/lib/agent-notifications';
@@ -36,7 +37,8 @@ export async function GET(req, { params }) {
     const manage = searchParams.get('manage') === '1';
 
     if (manage) {
-      if (!requireRole(req, 'admin')) return unauthorized();
+      const pmAccess = await requirePmAccess(req);
+      if (!pmAccess) return unauthorized();
       await ensureAgentSchema();
 
       const rows = await getProjectSummaries("WHERE p.id = $1 AND p.project_kind = 'operational'", [id]);
@@ -64,7 +66,7 @@ export async function GET(req, { params }) {
     await ensureProjectOpsSchema();
     const result = await pool.query(
       `SELECT id, title, category, location, description, image_url,
-              cloudinary_public_id, size, status, created_at
+              cloudinary_public_id, size, status, created_at, additional_images
          FROM projects
         WHERE id = $1 AND project_kind = 'portfolio' AND status = 'published'`,
       [id]
@@ -92,8 +94,8 @@ export async function GET(req, { params }) {
 
 export async function PATCH(req, { params }) {
   try {
-    const admin = requireRole(req, 'admin');
-    if (!admin) return unauthorized();
+    const pmAccess = await requirePmAccess(req);
+    if (!pmAccess) return unauthorized();
     await ensureProjectOpsSchema();
     await ensureAgentNotificationsSchema();
 
@@ -185,7 +187,8 @@ export async function PATCH(req, { params }) {
 
 export async function POST(req, { params }) {
   try {
-    if (!requireRole(req, 'admin')) return unauthorized();
+    const pmAccess = await requirePmAccess(req);
+    if (!pmAccess) return unauthorized();
     await ensureProjectOpsSchema();
 
     const { id } = await params;
@@ -357,7 +360,8 @@ export async function POST(req, { params }) {
 
 export async function DELETE(req, { params }) {
   try {
-    if (!requireRole(req, 'admin')) return unauthorized();
+    const pmAccess = await requirePmAccess(req);
+    if (!pmAccess) return unauthorized();
     await ensureProjectOpsSchema();
 
     const { id: projectId } = await params;
