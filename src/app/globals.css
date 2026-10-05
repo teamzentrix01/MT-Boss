@@ -14,10 +14,14 @@
   --brand-blue-faint: color-mix(in srgb, var(--brand-blue) 5%, white);
 }
 
-html,
-body {
+html {
   max-width: 100%;
   overflow-x: hidden;
+}
+
+body {
+  max-width: 100%;
+  /* no overflow on body */
 }
 
 *,
