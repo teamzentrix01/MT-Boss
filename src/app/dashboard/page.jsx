@@ -39,6 +39,7 @@ const FaqsManager = dynamicManager(() => import('../components/FaqsManager'));
 const ReviewsManager = dynamicManager(() => import('../components/ReviewsManager'));
 const BlogsManager = dynamicManager(() => import('../components/BlogsManager'));
 const ShippingSettingsManager = dynamicManager(() => import('../components/ShippingSettingsManager'));
+const ShopCommissionSettingsManager = dynamicManager(() => import('../components/ShopCommissionSettingsManager'));
 const PmDashboard = dynamicManager(() => import('../components/PmDashboard'));
 const PmAuditLog = dynamicManager(() => import('../components/PmAuditLog'));
 const PmBenchmarks = dynamicManager(() => import('../components/PmBenchmarks'));
@@ -153,6 +154,17 @@ function AdminDashboard() {
   const [todayCommission, setTodayCommission] = useState(0);
   const [totalGST, setTotalGST] = useState(0);
   const [supplierCommission, setSupplierCommission] = useState({ total: 0, today: 0, fulfilled: 0, open: 0 });
+  const [shopVendorCommission, setShopVendorCommission] = useState({
+    today: 0,
+    total: 0,
+    pending: 0,
+    paid: 0,
+    pendingVendors: [],
+  });
+  const [settlingVendor, setSettlingVendor] = useState(null);
+  const [settleNote, setSettleNote] = useState('Settled offline by admin');
+  const [isSettling, setIsSettling] = useState(false);
+  const [settleSuccessMsg, setSettleSuccessMsg] = useState('');
   const [pkgVendors, setPkgVendors] = useState([]);
   const [pkgSuppliers, setPkgSuppliers] = useState([]);
   const [pkgMsg, setPkgMsg] = useState('');
@@ -241,6 +253,48 @@ function AdminDashboard() {
     }
   }, []);
 
+  const handleMarkVendorCommissionPaid = async (vendor) => {
+    if (!vendor) return;
+    try {
+      setIsSettling(true);
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch('/api/admin/shop-commissions', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          vendor_id: vendor.vendor_id,
+          note: settleNote || 'Settled offline by admin',
+        }),
+      });
+      const data = await res.json();
+      if (data?.success) {
+        if (data.data) {
+          setShopVendorCommission({
+            today: parseFloat(data.data.today || 0),
+            total: parseFloat(data.data.total || 0),
+            pending: parseFloat(data.data.pending || 0),
+            paid: parseFloat(data.data.paid || 0),
+            pendingVendors: data.data.pendingVendors || [],
+          });
+        }
+        setSettlingVendor(null);
+        setSettleNote('Settled offline by admin');
+        setSettleSuccessMsg(`✓ Recorded ₹${Number(vendor.pending_due_amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })} as paid for ${vendor.vendor_name}`);
+        setTimeout(() => setSettleSuccessMsg(''), 5000);
+      } else {
+        alert(data?.error || 'Failed to update commission status');
+      }
+    } catch (err) {
+      console.error('Error marking commission as paid:', err);
+      alert('Error marking commission as paid');
+    } finally {
+      setIsSettling(false);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const dataKey = ['overview', 'submissions', 'calculator-quotes', 'primary-service-enquiries', 'career-enquiries'].includes(activeTab)
@@ -313,6 +367,17 @@ function AdminDashboard() {
                 today: parseFloat(data.data.today_commission || 0),
                 fulfilled: parseInt(data.data.total_fulfilled || 0),
                 open: parseInt(data.data.open_enquiries || 0),
+              });
+            }
+          }),
+          requestJson('/api/admin/shop-commissions').then((data) => {
+            if (data?.success && data?.data) {
+              setShopVendorCommission({
+                today: parseFloat(data.data.today || 0),
+                total: parseFloat(data.data.total || 0),
+                pending: parseFloat(data.data.pending || 0),
+                paid: parseFloat(data.data.paid || 0),
+                pendingVendors: data.data.pendingVendors || [],
               });
             }
           }),
@@ -401,6 +466,7 @@ function AdminDashboard() {
     { id: 'shop-categories', label: 'Shop Now Manager', icon: ShoppingCart },
     { id: 'shop-products', label: '+ Add Shop Product', icon: PlusCircle },
     { id: 'shipping-settings', label: 'Shipping Settings', icon: Truck },
+    { id: 'shop-commission-settings', label: 'Shop Vendor Commission', icon: CircleDollarSign },
     { id: 'suppliers', label: 'Suppliers', icon: Truck },
     { id: 'vendors', label: 'Vendors', icon: HardHat },
     { id: 'packages', label: 'Package Approvals', icon: PackageCheck },
@@ -956,6 +1022,121 @@ function AdminDashboard() {
                 </div>
               </div>
 
+              {/* 🛒 Shop Vendor Commission */}
+              <div className="panel" style={{ marginBottom: '1rem' }}>
+                <div className="panel-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span className="panel-title">🛒 Shop Vendor Commission</span>
+                  <button
+                    onClick={() => setActiveTab('shop-commission-settings')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--brand-blue, #2563eb)',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    Commission Settings →
+                  </button>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem', padding: '1rem' }}>
+                  {[
+                    { label: "Today's Commission", value: `₹${(shopVendorCommission.today || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, color: 'var(--brand-blue)' },
+                    { label: 'Total Commission', value: `₹${(shopVendorCommission.total || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, color: '#4ade80' },
+                    { label: 'Pending Payout', value: `₹${(shopVendorCommission.pending || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, color: '#f97316' },
+                    { label: 'Collected', value: `₹${(shopVendorCommission.paid || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, color: '#10b981' },
+                  ].map(({ label, value, color }) => (
+                    <div key={label} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '1rem' }}>
+                      <p style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)', marginBottom: '0.5rem' }}>{label}</p>
+                      <p style={{ fontSize: '1.5rem', fontWeight: 900, color }}>{value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pending dues list & Mark as Paid action */}
+                <div style={{ borderTop: '1px solid var(--border)', padding: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                    <div>
+                      <span style={{ fontSize: '0.8125rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em' }}>
+                        Pending Settlements (Money vendors owe platform)
+                      </span>
+                    </div>
+                    {settleSuccessMsg && (
+                      <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 600 }}>{settleSuccessMsg}</span>
+                    )}
+                  </div>
+
+                  {(!shopVendorCommission.pendingVendors || shopVendorCommission.pendingVendors.length === 0) ? (
+                    <div style={{ padding: '0.875rem 1rem', background: 'var(--bg)', borderRadius: '8px', fontSize: '0.8125rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', border: '1px solid var(--border)' }}>
+                      <CheckCircle2 size={16} color="#10b981" />
+                      <span>All vendor commissions are settled. No pending payouts.</span>
+                    </div>
+                  ) : (
+                    <div style={{ overflowX: 'auto', border: '1px solid var(--border)', borderRadius: '8px' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+                        <thead>
+                          <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)', textAlign: 'left', color: 'var(--muted)', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+                            <th style={{ padding: '0.6rem 0.75rem' }}>Vendor / Shop</th>
+                            <th style={{ padding: '0.6rem 0.75rem' }}>Contact</th>
+                            <th style={{ padding: '0.6rem 0.75rem', textAlign: 'center' }}>Pending Orders</th>
+                            <th style={{ padding: '0.6rem 0.75rem', textAlign: 'right' }}>Pending Due</th>
+                            <th style={{ padding: '0.6rem 0.75rem', textAlign: 'right' }}>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {shopVendorCommission.pendingVendors.map((v) => (
+                            <tr key={v.vendor_id} style={{ borderBottom: '1px solid var(--border)' }}>
+                              <td style={{ padding: '0.65rem 0.75rem', fontWeight: 600 }}>
+                                {v.vendor_name}
+                              </td>
+                              <td style={{ padding: '0.65rem 0.75rem', color: 'var(--muted)', fontSize: '0.75rem' }}>
+                                {v.phone || v.email || '—'}
+                              </td>
+                              <td style={{ padding: '0.65rem 0.75rem', textAlign: 'center' }}>
+                                <span style={{ background: 'var(--bg)', border: '1px solid var(--border)', padding: '0.2rem 0.55rem', borderRadius: '999px', fontSize: '0.6875rem', fontWeight: 600 }}>
+                                  {v.pending_orders_count} {v.pending_orders_count === 1 ? 'order' : 'orders'}
+                                </span>
+                              </td>
+                              <td style={{ padding: '0.65rem 0.75rem', textAlign: 'right', fontWeight: 800, color: '#f97316' }}>
+                                ₹{Number(v.pending_due_amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </td>
+                              <td style={{ padding: '0.65rem 0.75rem', textAlign: 'right' }}>
+                                <button
+                                  onClick={() => {
+                                    setSettlingVendor(v);
+                                    setSettleNote('Settled offline by admin');
+                                  }}
+                                  style={{
+                                    background: '#10b981',
+                                    color: '#fff',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    padding: '0.35rem 0.75rem',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.3rem',
+                                    transition: 'opacity .15s',
+                                  }}
+                                >
+                                  <CheckCircle2 size={13} />
+                                  Mark as Paid
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div className="panel">
                 <div className="panel-header">
                   <span className="panel-title">Recent Contact Submissions</span>
@@ -1430,6 +1611,7 @@ function AdminDashboard() {
           {activeTab === 'pm-audit' && <PmAuditLog isDarkMode={isDarkMode} />}
           {(activeTab === 'shop-categories' || activeTab === 'shop-products') && <ShopNowManager key={activeTab} isDarkMode={isDarkMode} initialTab={activeTab === 'shop-products' ? 'products' : 'categories'} />}
           {activeTab === 'shipping-settings' && <ShippingSettingsManager />}
+          {activeTab === 'shop-commission-settings' && <ShopCommissionSettingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'orders-history' && <OrdersHistoryManager isDarkMode={isDarkMode} />}
           {activeTab === 'revenue' && <RevenueManager isDarkMode={isDarkMode} />}
@@ -2019,6 +2201,80 @@ function AdminDashboard() {
               </div>
 
               <button className="modal-close-btn" onClick={() => setSelectedCareerEnquiry(null)}>Close</button>
+            </div>
+          </div>
+        )}
+
+        {settlingVendor && (
+          <div className="modal-backdrop" onClick={() => !isSettling && setSettlingVendor(null)}>
+            <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '440px' }}>
+              <div className="modal-head">
+                <div className="modal-title">Record Vendor Offline Settlement</div>
+                <button className="modal-close" onClick={() => !isSettling && setSettlingVendor(null)}>×</button>
+              </div>
+              <div style={{ marginBottom: '1rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.8125rem' }}>
+                  <span style={{ color: 'var(--muted)' }}>Vendor:</span>
+                  <span style={{ fontWeight: 700 }}>{settlingVendor.vendor_name}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.8125rem' }}>
+                  <span style={{ color: 'var(--muted)' }}>Pending Orders:</span>
+                  <span style={{ fontWeight: 600 }}>{settlingVendor.pending_orders_count} orders</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', paddingTop: '0.5rem', borderTop: '1px dashed var(--border)' }}>
+                  <span style={{ color: 'var(--muted)' }}>Due Amount:</span>
+                  <span style={{ fontWeight: 900, color: '#10b981', fontSize: '1.125rem' }}>
+                    ₹{Number(settlingVendor.pending_due_amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--muted)', marginBottom: '0.375rem' }}>
+                  Settlement Note / Offline Payment Reference:
+                </label>
+                <input
+                  type="text"
+                  className="search-input"
+                  style={{ width: '100%', boxSizing: 'border-box' }}
+                  value={settleNote}
+                  onChange={(e) => setSettleNote(e.target.value)}
+                  placeholder="e.g. Settled offline via Cash / UPI / Bank Transfer"
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  className="modal-close-btn"
+                  disabled={isSettling}
+                  onClick={() => setSettlingVendor(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  style={{
+                    padding: '0.45rem 1rem',
+                    background: '#10b981',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontSize: '0.8125rem',
+                    fontWeight: 600,
+                    cursor: isSettling ? 'not-allowed' : 'pointer',
+                    opacity: isSettling ? 0.7 : 1,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                  disabled={isSettling}
+                  onClick={() => handleMarkVendorCommissionPaid(settlingVendor)}
+                >
+                  <CheckCircle2 size={15} />
+                  {isSettling ? 'Saving...' : 'Confirm as Paid'}
+                </button>
+              </div>
             </div>
           </div>
         )}

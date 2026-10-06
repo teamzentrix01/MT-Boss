@@ -9,6 +9,7 @@ import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material
 import { notifyAdminSubmission, deliverMaterialOrderReceipt } from '@/lib/customer-communications';
 import { calculateShipping, getShippingSettings } from '@/lib/shipping';
 import { calculateCoupon, couponIsCurrentlyActive, productHasOffer } from '@/lib/coupon-calculations';
+import { getShopVendorCommissionPercent, recordShopVendorCommission, resolveCommissionRate } from '@/lib/shop-commissions';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
@@ -212,10 +213,12 @@ export async function POST(req) {
       const chargedShippingGroups = new Set();
       let remainingCouponDiscount = couponDiscount;
       const orders = [];
+      const shopVendorCommissionPercent = await getShopVendorCommissionPercent();
       for (const item of orderItems) {
         let indicativeUnitPrice = null;
         let productTotal = 0;
         let sourceCity = '';
+        let product = null;
         const coverage = await client.query(`SELECT 1 WHERE EXISTS (
           SELECT 1 FROM suppliers s WHERE LOWER(TRIM(s.city))=LOWER(TRIM($1))
             AND s.status='approved' AND s.is_active=TRUE
@@ -251,7 +254,7 @@ export async function POST(req) {
              FOR UPDATE OF m`,
             [item.product_id]
           );
-          const product = productResult.rows[0];
+          product = productResult.rows[0];
           if (!product || !product.is_available || !product.supplier_available
             || product.name.trim().toLowerCase() !== cleanText(item.material_type)?.trim().toLowerCase()
             || (product.category && product.category.trim().toLowerCase() !== cleanText(item.category_name)?.trim().toLowerCase())) {
@@ -324,6 +327,34 @@ export async function POST(req) {
           actorId: user.id,
           actorName: cleanName,
         });
+
+        // Step 3: Check product source - apply fee calculation ONLY on vendor-sourced products (skip Admin)
+        const vendorId = product?.vendor_id ? Number(product.vendor_id) : null;
+        if (vendorId && vendorId > 0) {
+          const vendorExists = await client.query('SELECT 1 FROM vendors WHERE id = $1', [vendorId]);
+          if (vendorExists.rows.length > 0) {
+            const lineOrderAmount = Number(productTotal) > 0 ? Number(productTotal) : (Number(grandTotal) || 0);
+            const { rate: resolvedRate, rateSource: resolvedSource } = await resolveCommissionRate(
+              {
+                id: item.product_id ? Number(item.product_id) : (product?.id ? Number(product.id) : null),
+                category: item.category_name || product?.category || null,
+              },
+              { client }
+            );
+            await recordShopVendorCommission({
+              orderId: result.rows[0].id,
+              vendorId: vendorId,
+              productId: item.product_id ? Number(item.product_id) : (product?.id ? Number(product.id) : null),
+              productCategory: item.category_name || product?.category || null,
+              orderAmount: lineOrderAmount,
+              commissionPercent: resolvedRate,
+              rateSource: resolvedSource,
+              status: 'pending',
+              client,
+            });
+          }
+        }
+
         orders.push({ ...result.rows[0], product_id: item.product_id || null, indicative_unit_price: indicativeUnitPrice, product_total: productTotal, shipping_cost: Number(shippingCost) || 0, coupon_discount: appliedCouponDiscount, grand_total: grandTotal, category_name: item.category_name, material_type: item.material_type, quantity_text: itemQuantity, order_unit: item.order_unit });
       }
       await client.query('COMMIT');

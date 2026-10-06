@@ -631,7 +631,7 @@ function VendorDashboardContent() {
         </div>
  
         {activeTab === "products" ? (
-          <VendorShopProductsManager />
+          <VendorShopProductsManager isDarkMode={isDark} />
         ) : activeTab === "shipping" ? (
           <ShippingSettingsManager vendor city={vendorProfile?.city} />
         ) : activeTab === "materials" ? (
