@@ -1802,6 +1802,77 @@ ALTER SEQUENCE public.shop_categories_id_seq OWNED BY public.shop_categories.id;
 
 
 --
+-- TOC entry 270b (class 1259 OID 44325b)
+-- Name: shop_vendor_commissions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.shop_vendor_commissions (
+    id bigint NOT NULL,
+    order_id integer NOT NULL,
+    vendor_id integer NOT NULL,
+    product_id integer,
+    order_amount numeric(12,2) DEFAULT 0 NOT NULL,
+    commission_percent_applied numeric(5,2) DEFAULT 0 NOT NULL,
+    commission_amount numeric(12,2) DEFAULT 0 NOT NULL,
+    status character varying(20) DEFAULT 'pending'::character varying NOT NULL,
+    rate_source character varying(20) DEFAULT 'default'::character varying,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    paid_at timestamp with time zone,
+    paid_note text,
+    CONSTRAINT shop_vendor_commissions_status_check CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'paid'::character varying])::text[]))),
+    CONSTRAINT shop_vendor_commissions_rate_source_check CHECK (((rate_source)::text = ANY ((ARRAY['product'::character varying, 'category'::character varying, 'default'::character varying])::text[])))
+);
+
+ALTER TABLE public.shop_vendor_commissions OWNER TO postgres;
+
+CREATE SEQUENCE public.shop_vendor_commissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.shop_vendor_commissions_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.shop_vendor_commissions_id_seq OWNED BY public.shop_vendor_commissions.id;
+ALTER TABLE ONLY public.shop_vendor_commissions ALTER COLUMN id SET DEFAULT nextval('public.shop_vendor_commissions_id_seq'::regclass);
+
+--
+-- TOC entry 270c
+-- Name: shop_commission_rules; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.shop_commission_rules (
+    id bigint NOT NULL,
+    scope_type character varying(20) NOT NULL,
+    scope_id integer NOT NULL,
+    commission_percent numeric(5,2) NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT shop_commission_rules_scope_type_check CHECK (((scope_type)::text = ANY ((ARRAY['category'::character varying, 'product'::character varying])::text[]))),
+    CONSTRAINT shop_commission_rules_commission_percent_check CHECK (((commission_percent >= (0)::numeric) AND (commission_percent <= (100)::numeric))),
+    CONSTRAINT shop_commission_rules_scope_type_scope_id_key UNIQUE (scope_type, scope_id)
+);
+
+ALTER TABLE public.shop_commission_rules OWNER TO postgres;
+
+CREATE SEQUENCE public.shop_commission_rules_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.shop_commission_rules_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.shop_commission_rules_id_seq OWNED BY public.shop_commission_rules.id;
+ALTER TABLE ONLY public.shop_commission_rules ALTER COLUMN id SET DEFAULT nextval('public.shop_commission_rules_id_seq'::regclass);
+
+ALTER TABLE ONLY public.shop_vendor_commissions ADD CONSTRAINT shop_vendor_commissions_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.shop_vendor_commissions ADD CONSTRAINT shop_vendor_commissions_order_id_fkey FOREIGN KEY (order_id) REFERENCES public.material_enquiries(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public.shop_vendor_commissions ADD CONSTRAINT shop_vendor_commissions_vendor_id_fkey FOREIGN KEY (vendor_id) REFERENCES public.vendors(id) ON DELETE CASCADE;
+
+
+--
 -- TOC entry 271 (class 1259 OID 44326)
 -- Name: supplier_categories; Type: TABLE; Schema: public; Owner: postgres
 --
