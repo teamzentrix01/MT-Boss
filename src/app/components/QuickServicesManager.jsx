@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import QuickServiceIcon from './QuickServiceIcon';
+import ServiceIcon from './ServiceIcon';
+import IconPicker from './IconPicker';
 import { getQuickServiceTotal } from '@/lib/quick-service-pricing';
 import { Pencil, Trash2, ActionIconButton } from '@/app/components/ui/icons';
 
@@ -44,8 +46,18 @@ export default function QuickServicesManager({ isDarkMode }) {
   const [orderSaving, setOrderSaving] = useState(false);
 
   const [formData, setFormData] = useState({
-    icon: '', label: '', desc: '', basePrice: '150', duration: QUICK_SERVICE_DURATION, visiting_price: '150',
-    main_category: '', sub_category: '', cities: [],
+    icon: 'Wrench',
+    iconType: 'lucide',
+    iconName: 'Wrench',
+    iconUrl: '',
+    label: '',
+    desc: '',
+    basePrice: '150',
+    duration: QUICK_SERVICE_DURATION,
+    visiting_price: '150',
+    main_category: '',
+    sub_category: '',
+    cities: [],
   });
 
   useEffect(() => { fetchServices(); }, []);
@@ -117,7 +129,6 @@ export default function QuickServicesManager({ isDarkMode }) {
   const onDragStart = (e, index) => {
     setDragIndex(index);
     e.dataTransfer.effectAllowed = 'move';
-    // dim the ghost image a bit via a timeout trick
     setTimeout(() => {
       const el = e.currentTarget;
       if (el) el.style.opacity = '0.4';
@@ -151,13 +162,28 @@ export default function QuickServicesManager({ isDarkMode }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); setSuccess('');
-    if (!formData.icon || !formData.label || !formData.desc || !formData.duration || formData.cities.length === 0) {
+
+    // Icon validation
+    if (formData.iconType === 'lucide' && !formData.iconName) {
+      setError('Please select an icon or upload an image');
+      return;
+    }
+    if (formData.iconType === 'image' && !formData.iconUrl) {
+      setError('Please select an icon or upload an image');
+      return;
+    }
+
+    if (!formData.label || !formData.desc || !formData.duration || formData.cities.length === 0) {
       setError('All fields are required'); return;
     }
     try {
       const token = localStorage.getItem('token');
       const method = editingId ? 'PUT' : 'POST';
-      const body = editingId ? { id: editingId, ...formData } : formData;
+      const payload = {
+        ...formData,
+        icon: formData.iconType === 'lucide' ? formData.iconName : formData.iconUrl,
+      };
+      const body = editingId ? { id: editingId, ...payload } : payload;
       const res = await fetch('/api/quick-services', {
         method,
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -166,8 +192,7 @@ export default function QuickServicesManager({ isDarkMode }) {
       const data = await res.json();
       if (data.success) {
         setSuccess(editingId ? 'Service updated!' : 'Service added!');
-        setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: QUICK_SERVICE_DURATION, visiting_price: '150', main_category: '', sub_category: '', cities: [] });
-        setEditingId(null); setShowForm(false);
+        resetForm();
         fetchServices();
       } else setError(data.error || 'Something went wrong');
     } catch { setError('Error saving service'); }
@@ -181,8 +206,14 @@ export default function QuickServicesManager({ isDarkMode }) {
     setIconUploading(true);
     setError('');
     try {
-      const icon = await uploadQuickServiceIcon(file);
-      setFormData(current => ({ ...current, icon }));
+      const uploadedUrl = await uploadQuickServiceIcon(file);
+      setFormData(current => ({
+        ...current,
+        iconType: 'image',
+        iconUrl: uploadedUrl,
+        iconName: '',
+        icon: uploadedUrl,
+      }));
       setSuccess('Icon uploaded from gallery.');
     } catch (uploadError) {
       setError(uploadError.message || 'Icon upload failed');
@@ -192,14 +223,26 @@ export default function QuickServicesManager({ isDarkMode }) {
   };
 
   const handleEdit = (service) => {
+    const resolvedType = service.icon_type || service.iconType || (service.icon_name || service.iconName ? 'lucide' : 'image');
+    const resolvedName = service.icon_name || service.iconName || (resolvedType === 'lucide' ? service.icon : '');
+    const resolvedUrl = service.icon_url || service.iconUrl || (resolvedType === 'image' ? service.icon : '');
+
     setFormData({
-      icon: service.icon, label: service.label,
-      desc: service.description, basePrice: String(service.base_price ?? 150), duration: QUICK_SERVICE_DURATION,
+      icon: service.icon || '',
+      iconType: resolvedType === 'lucide' ? 'lucide' : 'image',
+      iconName: resolvedType === 'lucide' ? resolvedName : '',
+      iconUrl: resolvedType === 'image' ? resolvedUrl : '',
+      label: service.label,
+      desc: service.description,
+      basePrice: String(service.base_price ?? 150),
+      duration: QUICK_SERVICE_DURATION,
       visiting_price: String(service.visiting_price ?? 150),
-      main_category: service.main_category || '', sub_category: service.sub_category || '',
+      main_category: service.main_category || '',
+      sub_category: service.sub_category || '',
       cities: Array.isArray(service.cities) ? service.cities : [],
     });
-    setEditingId(service.id); setShowForm(true);
+    setEditingId(service.id);
+    setShowForm(true);
   };
 
   const handleDelete = async (id) => {
@@ -216,8 +259,22 @@ export default function QuickServicesManager({ isDarkMode }) {
   };
 
   const resetForm = () => {
-    setFormData({ icon: '', label: '', desc: '', basePrice: '150', duration: QUICK_SERVICE_DURATION, visiting_price: '150', main_category: '', sub_category: '', cities: [] });
-    setEditingId(null); setShowForm(false);
+    setFormData({
+      icon: 'Wrench',
+      iconType: 'lucide',
+      iconName: 'Wrench',
+      iconUrl: '',
+      label: '',
+      desc: '',
+      basePrice: '150',
+      duration: QUICK_SERVICE_DURATION,
+      visiting_price: '150',
+      main_category: '',
+      sub_category: '',
+      cities: [],
+    });
+    setEditingId(null);
+    setShowForm(false);
   };
 
   if (loading) return <div style={{ color: 'var(--qs-muted)', fontSize: '0.8125rem' }}>Loading…</div>;
@@ -471,25 +528,17 @@ export default function QuickServicesManager({ isDarkMode }) {
             {error && <div className="qs-alert qs-alert-err">{error}</div>}
             <form onSubmit={handleSubmit}>
               <div className="qs-form-grid">
-                <div>
-                  <label className="qs-label">Icon *</label>
-                  <div className="qs-icon-input-row">
-                    <input className="qs-input" type="text" placeholder="Emoji or uploaded icon URL"
-                      value={formData.icon}
-                      onChange={e => setFormData({ ...formData, icon: e.target.value })} />
-                    <label className={`qs-upload-btn${iconUploading ? ' disabled' : ''}`}>
-                      {iconUploading ? 'Uploading...' : 'Upload from gallery'}
-                      <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
-                        disabled={iconUploading} onChange={handleIconUpload} />
-                    </label>
-                  </div>
-                  {formData.icon && (
-                    <div className="qs-icon-preview">
-                      <QuickServiceIcon value={formData.icon} label={formData.label}
-                        className="qs-icon-preview-box" />
-                      <span>Selected icon preview</span>
-                    </div>
-                  )}
+                <div className="qs-form-full">
+                  <label className="qs-label">Service Icon *</label>
+                  <IconPicker
+                    iconType={formData.iconType}
+                    iconName={formData.iconName}
+                    iconUrl={formData.iconUrl}
+                    onChange={(updated) => setFormData(prev => ({ ...prev, ...updated }))}
+                    onUploadImage={handleIconUpload}
+                    uploading={iconUploading}
+                    isDarkMode={isDarkMode}
+                  />
                 </div>
                 <div>
                   <label className="qs-label">Service Name *</label>
@@ -603,8 +652,9 @@ export default function QuickServicesManager({ isDarkMode }) {
                     <td style={{ padding: '0 0.25rem 0 0.5rem', width: '2rem' }}>
                       <span className="qs-drag-handle" title="Drag to reorder">⠿</span>
                     </td>
-                    <td><QuickServiceIcon value={service.icon} label={service.label}
-                      className="qs-icon-cell" imageClassName="w-8 h-8 object-contain" /></td>
+                    <td>
+                      <ServiceIcon service={service} size={28} className="qs-icon-cell" imageClassName="w-8 h-8 object-contain" />
+                    </td>
                     <td><span className="qs-name-cell">{service.label}</span></td>
                     <td><span className="qs-muted-cell">{service.description}</span></td>
                     <td><span className="qs-muted-cell">{service.cities?.length ? service.cities.join(', ') : 'Vendor-based'}</span></td>

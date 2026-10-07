@@ -39,7 +39,6 @@ import { CATEGORY_NAV_TREE } from "./categoryNavTree";
 import GlobalSearch from "../components/GlobalSearch";
 import QuickServices from "../components/QuickServices";
 import MaterialOrdersPanel from "../components/MaterialOrdersPanel";
-
 function getCategoryIcon(name = "") {
   const val = name.toLowerCase();
   if (/cement|concrete/.test(val)) return Package;

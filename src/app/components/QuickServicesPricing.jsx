@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import QuickServiceIcon from './QuickServiceIcon';
+import ServiceIcon from './ServiceIcon';
 import { getQuickServiceTotal } from '@/lib/quick-service-pricing';
 
 export default function QuickServicesPricing({ isDarkMode }) {
@@ -274,7 +275,7 @@ export default function QuickServicesPricing({ isDarkMode }) {
                   <tr key={service.id}>
                     <td>
                       <div className="service-name">
-                        <QuickServiceIcon value={service.icon} label={service.label}
+                        <ServiceIcon service={service} size={28}
                           className="service-icon" imageClassName="w-7 h-7 object-contain" />
                         <span>{service.label}</span>
                       </div>
