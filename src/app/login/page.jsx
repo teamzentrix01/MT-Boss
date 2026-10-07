@@ -22,8 +22,13 @@ export default function LoginPage() {
     // Read redirect param from URL
     const params = new URLSearchParams(window.location.search);
     setRedirectParam(params.get('redirect') || '');
-    if (params.get('error') === 'account_suspended') {
-      setError('Your account has been suspended. Contact support for assistance.');
+    const errorParam = params.get('error');
+    if (errorParam) {
+      setError(
+        errorParam === 'account_suspended'
+          ? 'Your account has been suspended. Contact support for assistance.'
+          : decodeURIComponent(errorParam)
+      );
     }
     return () => observer.disconnect();
   }, []);

@@ -46,6 +46,7 @@ import {
 const menuItems = [
   { label: 'Overview', icon: LayoutDashboard, tab: '' },
   { label: 'Agents', icon: UserCog, tab: 'agents' },
+  { label: 'Users', icon: Users, tab: 'users' },
   { label: 'Calculator', icon: Calculator, tab: 'calculator' },
   { label: 'Calculator Quotes', icon: FileText, tab: 'calculator-quotes' },
   { label: 'Career Enquiry', icon: Briefcase, tab: 'career-enquiries' },
