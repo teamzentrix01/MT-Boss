@@ -436,6 +436,7 @@ function AdminDashboard() {
   const primaryServiceStatuses = ['Pending', 'Site Visit', 'Estimate', 'Planning', 'Work Start', 'Complete'];
   const tabs = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'users', label: 'Users', icon: Users },
     { id: 'agents', label: 'Agents', icon: UserCog },
     { id: 'calculator', label: 'Calculator', icon: Calculator },
     { id: 'calculator-quotes', label: 'Calculator Quotes', icon: FileText },
