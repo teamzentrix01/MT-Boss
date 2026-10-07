@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import QuickServiceIcon, { isQuickServiceIconImage } from '../components/QuickServiceIcon';
+import ServiceIcon from '../components/ServiceIcon';
 import { redirectToPayU } from '@/lib/payu-client';
 import { getQuickServiceTax, getQuickServiceTotal } from '@/lib/quick-service-pricing';
 
@@ -343,8 +344,8 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
         {/* ── Header ── */}
         <div className={`flex-shrink-0 flex items-center justify-between px-6 py-4 border-b ${divider}`}>
           <div className="flex items-center gap-3">
-            <QuickServiceIcon value={service.icon} label={service.label}
-              className="flex h-8 w-8 items-center justify-center text-2xl"
+            <ServiceIcon service={service} size={32}
+              className="flex h-8 w-8 items-center justify-center text-2xl text-[var(--brand-blue)]"
               imageClassName="h-8 w-8 object-contain" />
             <div>
               <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[var(--brand-blue)]">Book Service</p>
@@ -898,8 +899,8 @@ function LocationCheckModal({ service, isDark, onClose, onProceed }) {
       >
         <div className={`flex items-center justify-between px-6 py-4 border-b ${divider}`}>
           <div className="flex items-center gap-3">
-            <QuickServiceIcon value={service.icon} label={service.label}
-              className="flex h-8 w-8 items-center justify-center text-2xl"
+            <ServiceIcon service={service} size={32}
+              className="flex h-8 w-8 items-center justify-center text-2xl text-[var(--brand-blue)]"
               imageClassName="h-8 w-8 object-contain" />
             <div>
               <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[var(--brand-blue)]">Availability Check</p>
@@ -1094,8 +1095,8 @@ export default function AllQuickServicesPage() {
             services.map((s) => (
               <div key={s.id} className={`group min-w-0 max-w-full p-5 border transition-all duration-300 relative overflow-hidden ${card}`}>
                 <div className="text-3xl mb-3 transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300 origin-left">
-                  <QuickServiceIcon value={s.icon} label={s.label}
-                    className="flex h-10 w-10 items-center justify-center"
+                  <ServiceIcon service={s} size={40}
+                    className="flex h-10 w-10 items-center justify-center text-[var(--brand-blue)]"
                     imageClassName="h-10 w-10 object-contain" />
                 </div>
                 <Link href={`/quick/${s.slug || s.label.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')}`}>

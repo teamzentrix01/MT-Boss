@@ -25,6 +25,7 @@ const ROLE_RESULTS = {
   ],
   admin: [
     { title: "Admin Overview", subtitle: "Main admin dashboard", href: "/dashboard", keywords: "admin overview dashboard" },
+    { title: "Users", subtitle: "Manage registered customers & moderation", href: "/dashboard?tab=users", keywords: "admin users customers accounts moderation blocked" },
     { title: "Service Bookings", subtitle: "Track quick service bookings", href: "/dashboard?tab=bookings", keywords: "admin bookings quick service vendor accepted" },
     { title: "Vendors", subtitle: "Approve and manage vendors", href: "/dashboard?tab=vendors", keywords: "admin vendor approval shops" },
     { title: "Suppliers", subtitle: "Approve and manage suppliers", href: "/dashboard?tab=suppliers", keywords: "admin supplier material" },

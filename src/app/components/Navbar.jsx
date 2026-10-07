@@ -79,6 +79,17 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             const parsed = JSON.parse(userData);
             // Use the role stored in the user object (e.g. 'admin'), not a hardcoded 'user'
             setUser({ ...parsed, role: parsed.role || 'user' });
+            if (parsed.role !== 'admin') {
+              fetch('/api/auth/session', { headers: { Authorization: `Bearer ${token}` } })
+                .then((res) => {
+                  if (res.status === 403) {
+                    ['token', 'user'].forEach((key) => localStorage.removeItem(key));
+                    setUser(null);
+                    window.location.href = '/login?error=account_suspended';
+                  }
+                })
+                .catch(() => {});
+            }
           }
           catch (e) { console.error('Error parsing user data:', e); }
         }

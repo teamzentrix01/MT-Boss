@@ -485,8 +485,8 @@ function SupplierDashboardContent() {
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>Customer Enquiries 📋</div>
-                  <div style={{ fontSize: '0.85rem', color: muted }}>Accept open enquiries and manage your active orders</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>Lead Management 📋</div>
+                  <div style={{ fontSize: '0.85rem', color: muted }}>Accept open leads and manage your active orders</div>
                 </div>
                 <button onClick={() => fetchOrders()} style={{ padding: '0.5rem 1rem', background: 'transparent', border: `1px solid ${border}`, borderRadius: 8, color: muted, cursor: 'pointer', fontSize: '0.78rem' }}>↺ Refresh</button>
               </div>

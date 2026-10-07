@@ -29,9 +29,15 @@ if (
   );
 }
 
-const poolConfig = databaseUrl
+// Suppress node pg/pg-connection-string v3 security warning:
+// explicitly normalize sslmode=require|prefer|verify-ca to sslmode=verify-full
+const cleanDatabaseUrl = databaseUrl
+  ? databaseUrl.replace(/sslmode=(?:require|prefer|verify-ca)(?=&|$)/gi, 'sslmode=verify-full')
+  : databaseUrl;
+
+const poolConfig = cleanDatabaseUrl
   ? {
-      connectionString: databaseUrl,
+      connectionString: cleanDatabaseUrl,
       // Permit deployment systems to keep the password in a separate secret
       // even when the host/database details are supplied through DATABASE_URL.
       ...(databasePassword?.trim() ? { password: databasePassword } : {}),

@@ -25,6 +25,9 @@ const ensureQuickServiceSeoColumns = createInitializationGuard(async () => {
         ALTER COLUMN label TYPE TEXT,
         ALTER COLUMN description TYPE TEXT,
         ALTER COLUMN duration TYPE TEXT,
+        ADD COLUMN IF NOT EXISTS icon_type VARCHAR(20) DEFAULT 'image',
+        ADD COLUMN IF NOT EXISTS icon_name TEXT DEFAULT '',
+        ADD COLUMN IF NOT EXISTS icon_url TEXT DEFAULT '',
         ADD COLUMN IF NOT EXISTS slug TEXT,
         ADD COLUMN IF NOT EXISTS video_url TEXT,
         ADD COLUMN IF NOT EXISTS seo_title TEXT,
@@ -35,6 +38,14 @@ const ensureQuickServiceSeoColumns = createInitializationGuard(async () => {
         ADD COLUMN IF NOT EXISTS main_category VARCHAR(200),
         ADD COLUMN IF NOT EXISTS sub_category VARCHAR(200),
         ADD COLUMN IF NOT EXISTS visiting_price DECIMAL(10,2)
+    `);
+
+    // Backfill icon_url and icon_type for legacy rows
+    await pool.query(`
+      UPDATE quick_services
+         SET icon_type = CASE WHEN icon_type IS NULL OR icon_type = '' THEN 'image' ELSE icon_type END,
+             icon_url = CASE WHEN (icon_url IS NULL OR icon_url = '') AND icon ~* '^(https?://|data:image/|blob:)' THEN icon ELSE COALESCE(icon_url, '') END,
+             icon_name = COALESCE(icon_name, '')
     `);
 
     await pool.query(`
@@ -124,6 +135,9 @@ export async function POST(req) {
     await ensureQuickServiceSeoColumns();
     const {
       icon,
+      iconType: rawIconType,
+      iconName: rawIconName,
+      iconUrl: rawIconUrl,
       label,
       desc,
       basePrice,
@@ -139,7 +153,37 @@ export async function POST(req) {
       cities,
     } = await req.json();
 
-    if (!icon || !label || !desc || !basePrice || !Array.isArray(cities) || cities.length === 0) {
+    // Determine iconType, iconName, iconUrl
+    let iconType = rawIconType;
+    let iconName = rawIconName ? String(rawIconName).trim() : '';
+    let iconUrl = rawIconUrl ? String(rawIconUrl).trim() : '';
+
+    if (!iconType) {
+      if (iconName) {
+        iconType = 'lucide';
+      } else {
+        iconType = 'image';
+        iconUrl = iconUrl || (icon ? String(icon).trim() : '');
+      }
+    }
+
+    if (iconType === 'lucide') {
+      if (!iconName) {
+        return NextResponse.json({ error: 'Please select an icon or upload an image' }, { status: 400 });
+      }
+      iconUrl = ''; // Clear unused mode
+    } else {
+      iconType = 'image';
+      iconUrl = iconUrl || (icon ? String(icon).trim() : '');
+      if (!iconUrl) {
+        return NextResponse.json({ error: 'Please select an icon or upload an image' }, { status: 400 });
+      }
+      iconName = ''; // Clear unused mode
+    }
+
+    const legacyIconValue = iconType === 'lucide' ? iconName : iconUrl;
+
+    if (!label || !desc || !basePrice || !Array.isArray(cities) || cities.length === 0) {
       return NextResponse.json(
         { error: 'All fields and at least one city are required' },
         { status: 400 }
@@ -153,14 +197,18 @@ export async function POST(req) {
 
     const result = await pool.query(
       `INSERT INTO quick_services (
-        icon, label, description, base_price, duration, visiting_price,
+        icon, icon_type, icon_name, icon_url,
+        label, description, base_price, duration, visiting_price,
         main_category, sub_category,
         slug, video_url, seo_title, seo_description, coverage_details, how_to_use, cities
       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
        RETURNING *`,
       [
-        icon,
+        legacyIconValue,
+        iconType,
+        iconName,
+        iconUrl,
         label,
         desc,
         parseFloat(basePrice),
@@ -197,6 +245,9 @@ export async function PUT(req) {
     const {
       id,
       icon,
+      iconType: rawIconType,
+      iconName: rawIconName,
+      iconUrl: rawIconUrl,
       label,
       desc,
       basePrice,
@@ -212,7 +263,37 @@ export async function PUT(req) {
       cities,
     } = await req.json();
 
-    if (!id || !icon || !label || !desc || !basePrice || !Array.isArray(cities) || cities.length === 0) {
+    // Determine iconType, iconName, iconUrl
+    let iconType = rawIconType;
+    let iconName = rawIconName ? String(rawIconName).trim() : '';
+    let iconUrl = rawIconUrl ? String(rawIconUrl).trim() : '';
+
+    if (!iconType) {
+      if (iconName) {
+        iconType = 'lucide';
+      } else {
+        iconType = 'image';
+        iconUrl = iconUrl || (icon ? String(icon).trim() : '');
+      }
+    }
+
+    if (iconType === 'lucide') {
+      if (!iconName) {
+        return NextResponse.json({ error: 'Please select an icon or upload an image' }, { status: 400 });
+      }
+      iconUrl = ''; // Clear unused mode
+    } else {
+      iconType = 'image';
+      iconUrl = iconUrl || (icon ? String(icon).trim() : '');
+      if (!iconUrl) {
+        return NextResponse.json({ error: 'Please select an icon or upload an image' }, { status: 400 });
+      }
+      iconName = ''; // Clear unused mode
+    }
+
+    const legacyIconValue = iconType === 'lucide' ? iconName : iconUrl;
+
+    if (!id || !label || !desc || !basePrice || !Array.isArray(cities) || cities.length === 0) {
       return NextResponse.json(
         { error: 'All fields and at least one city are required' },
         { status: 400 }
@@ -226,14 +307,18 @@ export async function PUT(req) {
 
     const result = await pool.query(
       `UPDATE quick_services
-       SET icon=$1, label=$2, description=$3, base_price=$4, duration=$5, visiting_price=$6,
-           main_category=$7, sub_category=$8,
-           slug=$9, video_url=$10, seo_title=$11, seo_description=$12,
-           coverage_details=$13, how_to_use=$14, cities=$15
-       WHERE id=$16
+       SET icon=$1, icon_type=$2, icon_name=$3, icon_url=$4,
+           label=$5, description=$6, base_price=$7, duration=$8, visiting_price=$9,
+           main_category=$10, sub_category=$11,
+           slug=$12, video_url=$13, seo_title=$14, seo_description=$15,
+           coverage_details=$16, how_to_use=$17, cities=$18
+       WHERE id=$19
        RETURNING *`,
       [
-        icon,
+        legacyIconValue,
+        iconType,
+        iconName,
+        iconUrl,
         label,
         desc,
         parseFloat(basePrice),

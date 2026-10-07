@@ -303,137 +303,135 @@ export default function ServiceDetailPage() {
     <main className={`min-h-screen font-serif transition-colors duration-500 flex flex-col ${bg}`}>
 
       {/* ── Hero ── */}
-      <section className="relative order-1 h-[58vh] min-h-[420px] flex items-end overflow-hidden">
+      <section className="relative h-[44vh] min-h-[330px] flex items-end overflow-hidden">
         {service.image && <Image src={service.image} alt={service.title} fill sizes="100vw" quality={80} priority className="object-cover" />}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-        <div className="relative z-10 max-w-4xl mx-auto px-6 pb-14 w-full">
-          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-3">MTBOSS Construction</p>
-          <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-white leading-none mb-4">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 pb-8 w-full">
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-2">MTBOSS Construction</p>
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-tighter text-white leading-[1.05] mb-2.5">
             {titleMain}<br /><span className="text-[var(--brand-blue)]">{titleLast}</span>
           </h1>
-          <p className="text-zinc-300 text-sm max-w-md leading-relaxed">{heroSubtitle}</p>
+          <p className="text-zinc-300 text-xs md:text-sm max-w-md leading-relaxed">{heroSubtitle}</p>
         </div>
       </section>
 
-      {/* ── About ── */}
-      <section className={`order-2 py-14 px-6 border-b ${isDark ? "border-zinc-900" : "border-zinc-100"}`}>
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">About This Service</p>
-            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">
-              {aboutHeading.includes(" ") ? (
-                <>{aboutHeading.split(" ").slice(0,-1).join(" ")}<br />
-                  <span className="text-[var(--brand-blue)]">{aboutHeading.split(" ").slice(-1)}</span></>
-              ) : <span className="text-[var(--brand-blue)]">{aboutHeading}</span>}
-            </h2>
-            <p className={`text-sm leading-relaxed mb-4 ${muted}`}>{aboutBody}</p>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {finalStats.map(([val, label]) => (
-              <div key={label} className={`border p-5 ${card}`}>
-                <p className="text-2xl font-black text-[var(--brand-blue)]">{val}</p>
-                <p className={`text-[10px] uppercase tracking-widest mt-1 font-bold ${muted}`}>{label}</p>
+      {/* ── Two-Column Layout under Banner (Boundary starts right after Hero and ends before Footer) ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full flex-1">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-10 items-start">
+          
+          {/* Left Side: Service Details (Scrolls normally) */}
+          <div className="flex flex-col space-y-12 min-w-0">
+
+            {/* ── About ── */}
+            <section className={`py-6 border-b ${isDark ? "border-zinc-900" : "border-zinc-200"}`}>
+              <div>
+                <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">About This Service</p>
+                <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4">
+                  {aboutHeading.includes(" ") ? (
+                    <>{aboutHeading.split(" ").slice(0,-1).join(" ")}<br />
+                      <span className="text-[var(--brand-blue)]">{aboutHeading.split(" ").slice(-1)}</span></>
+                  ) : <span className="text-[var(--brand-blue)]">{aboutHeading}</span>}
+                </h2>
+                <p className={`text-sm leading-relaxed mb-6 ${muted}`}>{aboutBody}</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Process ── */}
-      <section className="order-4 py-14 px-6">
-        <div className="max-w-5xl mx-auto">
-          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">How We Work</p>
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">Our Process</h2>
-          <div className="grid md:grid-cols-3 gap-0">
-            {processList.map((p, i) => (
-              <div key={i} className={`border p-6 ${card} ${i > 0 && i % 3 !== 0 ? "border-l-0" : ""} ${i >= 3 ? "border-t-0" : ""}`}>
-                <p className="text-3xl font-black text-[var(--brand-blue)]/30 mb-3">{p.step}</p>
-                <h3 className="text-sm font-black uppercase tracking-tight mb-2">{p.title}</h3>
-                <p className={`text-xs leading-relaxed ${muted}`}>{p.desc}</p>
+              <div className="grid grid-cols-2 gap-3">
+                {finalStats.map(([val, label]) => (
+                  <div key={label} className={`border p-4 ${card}`}>
+                    <p className="text-2xl font-black text-[var(--brand-blue)]">{val}</p>
+                    <p className={`text-[10px] uppercase tracking-widest mt-1 font-bold ${muted}`}>{label}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </section>
 
-      {/* ── Benefits ── */}
-      <section className={`order-5 py-14 px-6 ${isDark ? "bg-zinc-950" : "bg-zinc-50"}`}>
-        <div className="max-w-5xl mx-auto">
-          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Why Choose Us</p>
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-10">The MTBOSS<br />Advantage</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            {benefitsList.map((b, i) => (
-              <div key={i} className={`border p-5 hover:border-[var(--brand-blue)] transition-all ${card}`}>
-                <p className="text-2xl mb-3">{b.icon}</p>
-                <h3 className="text-xs font-black uppercase tracking-tight mb-1">{b.title}</h3>
-                <p className={`text-xs leading-relaxed ${muted}`}>{b.desc}</p>
+            {/* ── Process ── */}
+            <section className={`py-6 border-b ${isDark ? "border-zinc-900" : "border-zinc-200"}`}>
+              <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-2">How We Work</p>
+              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-6">Our Process</h2>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {processList.map((p, i) => (
+                  <div key={i} className={`border p-4 ${card}`}>
+                    <p className="text-2xl font-black text-[var(--brand-blue)]/40 mb-2">{p.step}</p>
+                    <h3 className="text-xs font-black uppercase tracking-tight mb-1">{p.title}</h3>
+                    <p className={`text-xs leading-relaxed ${muted}`}>{p.desc}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </section>
 
-      {/* ── Projects ── */}
-      <section className="order-6 py-14 px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-            <div>
-              <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Project References</p>
-              <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter">Signature<br />Projects</h2>
-            </div>
-            <Link
-              href="/FeaturedProjects/ProjectGallery"
-              className={`group self-start sm:self-end flex items-center gap-2 px-5 py-2.5 border font-black uppercase text-[9px] tracking-widest transition-all ${
-                isDark
-                  ? "border-zinc-700 text-white hover:bg-[var(--brand-blue)] hover:text-black hover:border-[var(--brand-blue)]"
-                  : "border-zinc-300 text-zinc-800 hover:bg-zinc-900 hover:text-white hover:border-zinc-900"
-              }`}
-            >
-              View All Portfolio
-              <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {projectsList.map((p, i) => (
-              <PortfolioProjectCard
-                key={p.id || i}
-                project={p}
-                index={i}
-                isDark={isDark}
-                isVisible={true}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+            {/* ── Benefits ── */}
+            <section className={`py-6 border-b ${isDark ? "border-zinc-900" : "border-zinc-200"}`}>
+              <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Why Choose Us</p>
+              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-6">The MTBOSS Advantage</h2>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {benefitsList.map((b, i) => (
+                  <div key={i} className={`border p-4 hover:border-[var(--brand-blue)] transition-all ${card}`}>
+                    <p className="text-xl mb-2">{b.icon}</p>
+                    <h3 className="text-xs font-black uppercase tracking-tight mb-1">{b.title}</h3>
+                    <p className={`text-xs leading-relaxed ${muted}`}>{b.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
 
-      {/* ── CTA Form ── */}
-      <section className={`order-3 py-10 px-6 ${isDark ? "bg-zinc-950" : "bg-zinc-100"}`}>
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-start">
-          <div>
-            <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-3">Get Started</p>
-            <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4">
-              {ctaHeading.split(" ").length > 2
-                ? <>{ctaHeading.split(" ").slice(0,2).join(" ")}<br /><span className="text-[var(--brand-blue)]">{ctaHeading.split(" ").slice(2,4).join(" ")}</span><br />{ctaHeading.split(" ").slice(4).join(" ")}</>
-                : ctaHeading}
-            </h2>
-            <p className={`text-sm leading-relaxed ${muted}`}>
-              Our specialist will reach out within 24 hours with a customised proposal.
-            </p>
-            <div className={`mt-6 border-l-4 border-[var(--brand-blue)] pl-4 ${muted}`}>
-              <p className="text-xs font-bold mb-1">📞 {phone}</p>
-              <p className="text-xs font-bold">✉️ {email}</p>
-            </div>
+            {/* ── Projects ── */}
+            <section className="py-6">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+                <div>
+                  <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Project References</p>
+                  <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter">Signature Projects</h2>
+                </div>
+                <Link
+                  href="/FeaturedProjects/ProjectGallery"
+                  className={`group self-start sm:self-end flex items-center gap-2 px-4 py-2 border font-black uppercase text-[9px] tracking-widest transition-all ${
+                    isDark
+                      ? "border-zinc-700 text-white hover:bg-[var(--brand-blue)] hover:text-black hover:border-[var(--brand-blue)]"
+                      : "border-zinc-300 text-zinc-800 hover:bg-zinc-900 hover:text-white hover:border-zinc-900"
+                  }`}
+                >
+                  View All Portfolio
+                  <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {projectsList.map((p, i) => (
+                  <PortfolioProjectCard
+                    key={p.id || i}
+                    project={p}
+                    index={i}
+                    isDark={isDark}
+                    isVisible={true}
+                  />
+                ))}
+              </div>
+            </section>
+
           </div>
 
-          {submitted ? (
-            <div className={`border p-10 flex flex-col items-center justify-center text-center ${card}`}>
-              <p className="text-4xl mb-3">✅</p>
-              <h3 className="text-lg font-black uppercase">Enquiry Received!</h3>
-              <p className={`mt-2 text-xs ${muted}`}>Our team will contact you within 24 hours.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className={`border p-6 space-y-4 ${card}`}>
+          {/* Right Side: Sticky Form (Sticky between end of Hero and start of Footer) */}
+          <aside className="w-full lg:sticky lg:top-[90px] lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto lg:overscroll-contain pr-1 pb-4 z-20 [scrollbar-width:thin] [scrollbar-color:#38bdf8_transparent]">
+            {submitted ? (
+              <div className={`border p-10 flex flex-col items-center justify-center text-center ${card}`}>
+                <p className="text-4xl mb-3">✅</p>
+                <h3 className="text-lg font-black uppercase">Enquiry Received!</h3>
+                <p className={`mt-2 text-xs ${muted}`}>Our team will contact you within 24 hours.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className={`border p-5 space-y-3.5 shadow-2xl rounded-sm ${card}`}>
+                {/* Form Header */}
+                <div className="border-b pb-3 mb-2 border-inherit">
+                  <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-1">Get Started</p>
+                  <h2 className="text-lg md:text-xl font-black uppercase tracking-tight">
+                    {ctaHeading}
+                  </h2>
+                  <p className={`text-[11px] leading-snug mt-1 ${muted}`}>
+                    Our specialist will reach out within 24 hours.
+                  </p>
+                  <div className={`mt-2 flex flex-wrap gap-3 text-[11px] font-bold ${muted}`}>
+                    <span>📞 {phone}</span>
+                    <span>✉️ {email}</span>
+                  </div>
+                </div>
 
               {/* Name & Phone */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -560,8 +558,9 @@ export default function ServiceDetailPage() {
               </button>
             </form>
           )}
+          </aside>
         </div>
-      </section>
+      </div>
     </main>
   );
 }
