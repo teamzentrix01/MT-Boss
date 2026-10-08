@@ -50,6 +50,7 @@ const ensureTable = createInitializationGuard(async () => {
     await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS city_prices   JSONB DEFAULT '{}'`);
     await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS emoji_image   TEXT`);
     await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS shipping_charge NUMERIC(10,2) DEFAULT 0`);
+    await pool.query(`ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS images        JSONB DEFAULT '[]'`);
   } catch (error) {
     console.error('ensureTable error:', error.message);
     throw error;
@@ -98,26 +99,32 @@ export async function POST(req) {
     await ensureTable();
     if (!requireRole(req, 'admin')) return unauthorized();
 
-    const { name, image, emoji, emoji_image, label, label_color, price_range, unit, types, subcategories, city_prices, shipping_charge } = await req.json();
+    const { name, image, images, emoji, emoji_image, label, label_color, price_range, unit, types, subcategories, city_prices, shipping_charge } = await req.json();
     if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     const normalizedCityPrices = await canonicalCityPrices(city_prices);
     if (!normalizedCityPrices) return NextResponse.json({ error: 'City prices must use active managed cities' }, { status: 400 });
+
+    const allImages = Array.isArray(images)
+      ? Array.from(new Set(images.map((s) => (typeof s === 'string' ? s.trim() : '')).filter(Boolean)))
+      : (image ? [String(image).trim()] : []);
+    const coverImage = allImages[0] || (image ? String(image).trim() : null);
 
     const { rows: [{ max }] } = await pool.query(`SELECT COALESCE(MAX(sort_order),0) AS max FROM shop_categories`);
 
     const result = await pool.query(
       `INSERT INTO shop_categories
          (name, image, emoji, emoji_image, label, label_color, price_range, unit, sort_order,
-          is_active, types, subcategories, city_prices, shipping_charge, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,TRUE,$10::jsonb,$11::jsonb,$12::jsonb,$13,NOW(),NOW())
+          is_active, types, subcategories, city_prices, shipping_charge, images, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,TRUE,$10::jsonb,$11::jsonb,$12::jsonb,$13,$14::jsonb,NOW(),NOW())
        RETURNING *`,
       [
-        name, image || null, emoji || '🛒', emoji_image || null, label || '', label_color || 'yellow',
+        name, coverImage, emoji || '🛒', emoji_image || null, label || '', label_color || 'yellow',
         price_range || '', unit || '', parseInt(max) + 1,
         JSON.stringify(Array.isArray(types) ? types : []),
         JSON.stringify(Array.isArray(subcategories) ? subcategories : []),
         JSON.stringify(normalizedCityPrices),
         shipping_charge || 0,
+        JSON.stringify(allImages),
       ]
     );
     invalidatePublicCategoriesCache();
@@ -135,27 +142,33 @@ export async function PUT(req) {
     if (!requireRole(req, 'admin')) return unauthorized();
 
     const {
-      id, name, image, emoji, emoji_image, label, label_color,
+      id, name, image, images, emoji, emoji_image, label, label_color,
       price_range, unit, is_active, types, subcategories, city_prices, shipping_charge,
     } = await req.json();
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
     const normalizedCityPrices = await canonicalCityPrices(city_prices);
     if (!normalizedCityPrices) return NextResponse.json({ error: 'City prices must use active managed cities' }, { status: 400 });
 
+    const allImages = Array.isArray(images)
+      ? Array.from(new Set(images.map((s) => (typeof s === 'string' ? s.trim() : '')).filter(Boolean)))
+      : (image ? [String(image).trim()] : []);
+    const coverImage = allImages[0] || (image ? String(image).trim() : null);
+
     const result = await pool.query(
       `UPDATE shop_categories
        SET name=$1, image=$2, emoji=$3, emoji_image=$4, label=$5, label_color=$6,
            price_range=$7, unit=$8, is_active=$9,
            types=$10::jsonb, subcategories=$11::jsonb,
-           city_prices=$12::jsonb, shipping_charge=$13, updated_at=NOW()
-       WHERE id=$14 RETURNING *`,
+           city_prices=$12::jsonb, shipping_charge=$13, images=$14::jsonb, updated_at=NOW()
+       WHERE id=$15 RETURNING *`,
       [
-        name, image || null, emoji || '🛒', emoji_image || null, label || '', label_color || 'yellow',
+        name, coverImage, emoji || '🛒', emoji_image || null, label || '', label_color || 'yellow',
         price_range || '', unit || '', is_active ?? true,
         JSON.stringify(Array.isArray(types) ? types : []),
         JSON.stringify(Array.isArray(subcategories) ? subcategories : []),
         JSON.stringify(normalizedCityPrices),
         shipping_charge || 0,
+        JSON.stringify(allImages),
         id,
       ]
     );

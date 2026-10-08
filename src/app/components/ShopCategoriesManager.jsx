@@ -36,7 +36,261 @@ async function uploadToCloudinary(file) {
   throw new Error(data.error?.message || 'Upload failed');
 }
 
-/* ── Image upload field ──────────────────────────────────────────────────── */
+/* ── Multi-Image Gallery component for Categories and Subcategories ────── */
+function CategoryGalleryUpload({ images = [], onChange, t, title = "Category Images", isSubcategory = false }) {
+  const [uploading, setUploading] = useState(false);
+  const [urlInput, setUrlInput] = useState('');
+  const [err, setErr] = useState('');
+
+  const list = Array.isArray(images)
+    ? Array.from(new Set(images.map((s) => (typeof s === 'string' ? s.trim() : '')).filter(Boolean)))
+    : [];
+
+  async function handleBatchFiles(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setUploading(true);
+    setErr('');
+    try {
+      const uploaded = [];
+      for (const file of files) {
+        const u = await uploadToCloudinary(file);
+        if (u) uploaded.push(u);
+      }
+      if (uploaded.length > 0) {
+        const merged = Array.from(new Set([...list, ...uploaded]));
+        onChange(merged);
+      }
+    } catch (e) {
+      setErr(e.message || 'Image upload failed');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  }
+
+  function handleAddUrl() {
+    const val = urlInput.trim();
+    if (!val) return;
+    const merged = Array.from(new Set([...list, val]));
+    onChange(merged);
+    setUrlInput('');
+  }
+
+  function handleRemove(idx) {
+    const updated = list.filter((_, i) => i !== idx);
+    onChange(updated);
+  }
+
+  function handleSetCover(idx) {
+    const target = list[idx];
+    if (!target) return;
+    const reordered = [target, ...list.filter((_, i) => i !== idx)];
+    onChange(reordered);
+  }
+
+  return (
+    <div style={{
+      border: `1px solid ${t.border}`,
+      borderRadius: '6px',
+      padding: '14px',
+      background: t.card,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+        <div>
+          <label style={{ fontSize: '11px', fontWeight: 800, color: t.text, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', margin: 0 }}>
+            📸 {title} ({list.length})
+          </label>
+          <div style={{ marginTop: '3px' }}>
+            {list.length > 1 ? (
+              <span style={{ fontSize: '10px', fontWeight: 700, color: '#059669', background: '#ecfdf5', padding: '2px 7px', borderRadius: '4px', border: '1px solid #a7f3d0' }}>
+                ✨ Embla Auto-Swiper Active ({list.length} images will auto-rotate on storefront)
+              </span>
+            ) : list.length === 1 ? (
+              <span style={{ fontSize: '10px', fontWeight: 600, color: t.muted, background: t.inputBg, padding: '2px 7px', borderRadius: '4px', border: `1px solid ${t.border}` }}>
+                Static view (1 image — swiper disabled until 2+ images)
+              </span>
+            ) : (
+              <span style={{ fontSize: '10px', color: t.muted, fontStyle: 'italic' }}>
+                No images added yet. Upload files or paste URLs below.
+              </span>
+            )}
+          </div>
+        </div>
+
+        <label style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '7px 12px',
+          background: t.accent,
+          color: t.accentFg,
+          borderRadius: '5px',
+          fontSize: '11px',
+          fontWeight: 700,
+          cursor: uploading ? 'not-allowed' : 'pointer',
+          opacity: uploading ? 0.7 : 1,
+        }}>
+          <span>{uploading ? '⏳ Uploading...' : '📁 + Upload Images (Multiple)'}</span>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleBatchFiles}
+            disabled={uploading}
+            style={{ display: 'none' }}
+          />
+        </label>
+      </div>
+
+      {/* URL input */}
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <input
+          type="url"
+          value={urlInput}
+          onChange={(e) => setUrlInput(e.target.value)}
+          placeholder="Or paste image URL (https://...)"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleAddUrl();
+            }
+          }}
+          style={{
+            flex: 1,
+            border: `1px solid ${t.border}`,
+            borderRadius: '4px',
+            padding: '7px 10px',
+            background: t.inputBg,
+            color: t.text,
+            fontSize: '12px',
+            outline: 'none',
+          }}
+        />
+        <button
+          type="button"
+          onClick={handleAddUrl}
+          style={{
+            padding: '7px 14px',
+            background: t.inputBg,
+            border: `1px solid ${t.border}`,
+            borderRadius: '4px',
+            color: t.text,
+            fontSize: '12px',
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          + Add URL
+        </button>
+      </div>
+
+      {err && <p style={{ color: '#ef4444', fontSize: '11px', margin: '2px 0 0' }}>{err}</p>}
+
+      {/* Grid of images */}
+      {list.length > 0 && (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(95px, 1fr))',
+          gap: '10px',
+          marginTop: '4px',
+        }}>
+          {list.map((img, idx) => {
+            const isCover = idx === 0;
+            return (
+              <div
+                key={`${img}-${idx}`}
+                style={{
+                  position: 'relative',
+                  border: isCover ? `2px solid ${t.accent}` : `1px solid ${t.border}`,
+                  borderRadius: '6px',
+                  overflow: 'hidden',
+                  background: t.inputBg,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {isCover && (
+                  <span style={{
+                    position: 'absolute',
+                    top: '4px',
+                    left: '4px',
+                    background: t.accent,
+                    color: t.accentFg,
+                    fontSize: '9px',
+                    fontWeight: 800,
+                    padding: '2px 5px',
+                    borderRadius: '3px',
+                    textTransform: 'uppercase',
+                    zIndex: 2,
+                  }}>
+                    Cover
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleRemove(idx)}
+                  title="Remove image"
+                  style={{
+                    position: 'absolute',
+                    top: '4px',
+                    right: '4px',
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    background: 'rgba(0,0,0,0.65)',
+                    color: '#fff',
+                    border: 'none',
+                    fontSize: '11px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 2,
+                  }}
+                >
+                  ✕
+                </button>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img}
+                  alt={`Preview ${idx + 1}`}
+                  style={{ width: '100%', height: '76px', objectFit: 'cover', display: 'block' }}
+                  onError={(e) => { e.currentTarget.style.opacity = '0.3'; }}
+                />
+                {!isCover && (
+                  <button
+                    type="button"
+                    onClick={() => handleSetCover(idx)}
+                    style={{
+                      width: '100%',
+                      padding: '4px 2px',
+                      background: t.card,
+                      border: 'none',
+                      borderTop: `1px solid ${t.border}`,
+                      color: t.sub,
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Set as Cover
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Image upload field (legacy fallback) ──────────────────────────────────── */
 function ImageUpload({ value, onChange, t }) {
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState('');
@@ -215,16 +469,18 @@ function TagListEditor({ label, helpText, items, onChange, placeholder, t }) {
 function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingIdx, setEditingIdx] = useState(null);
-  const [subForm, setSubForm] = useState({ name: '', image: '', price: '' });
-  const [uploading, setUploading] = useState(false);
+  const [subForm, setSubForm] = useState({ name: '', image: '', price: '', images: [] });
   const [formErr, setFormErr] = useState('');
 
   const normalizeSub = (s) => {
-    if (typeof s === 'string') return { name: s, image: '', price: '' };
+    if (typeof s === 'string') return { name: s, image: '', price: '', images: [] };
+    const rawImgs = Array.isArray(s?.images) ? s.images.filter(Boolean) : (s?.image ? [s.image] : []);
+    const unique = Array.from(new Set(rawImgs.map((x) => String(x).trim()).filter(Boolean)));
     return {
       name: String(s?.name || '').trim(),
-      image: String(s?.image || '').trim(),
+      image: String(unique[0] || s?.image || '').trim(),
       price: String(s?.price || '').trim(),
+      images: unique,
     };
   };
 
@@ -232,7 +488,7 @@ function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
 
   const openAdd = () => {
     setEditingIdx(null);
-    setSubForm({ name: '', image: '', price: '' });
+    setSubForm({ name: '', image: '', price: '', images: [] });
     setFormErr('');
     setModalOpen(true);
   };
@@ -248,33 +504,22 @@ function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
     onChange(items.filter((_, i) => i !== idx));
   };
 
-  async function handleSubFile(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    setUploading(true);
-    setFormErr('');
-    try {
-      const url = await uploadToCloudinary(file);
-      setSubForm((prev) => ({ ...prev, image: url }));
-    } catch (err) {
-      setFormErr(err.message || 'Image upload failed');
-    } finally {
-      setUploading(false);
-    }
-  }
-
   const handleSave = (e) => {
     e.preventDefault();
     const name = subForm.name.trim();
-    const image = subForm.image.trim();
     const price = subForm.price.trim();
+    const finalImgs = Array.from(new Set([
+      ...(Array.isArray(subForm.images) ? subForm.images : []),
+      subForm.image
+    ].map((x) => String(x || '').trim()).filter(Boolean)));
+    const image = finalImgs[0] || '';
 
     if (!name) {
       setFormErr('Product / Sub-category name is required.');
       return;
     }
     if (!image) {
-      setFormErr('Product image is required. Please upload an image or provide an image URL.');
+      setFormErr('Product image is required. Please upload at least one image or provide an image URL.');
       return;
     }
     if (!price) {
@@ -286,6 +531,7 @@ function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
       name,
       image,
       price,
+      images: finalImgs,
     };
 
     if (editingIdx !== null) {
@@ -330,12 +576,23 @@ function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
             >
               {/* Thumbnail */}
               {item.image ? (
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px', border: `1px solid ${t.border}`, flexShrink: 0 }}
-                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                />
+                <div style={{ position: 'relative', width: '42px', height: '42px', flexShrink: 0 }}>
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px', border: `1px solid ${t.border}`, display: 'block' }}
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  />
+                  {item.images?.length > 1 && (
+                    <span style={{
+                      position: 'absolute', bottom: 1, right: 1,
+                      background: 'rgba(0,0,0,0.7)', color: '#fff', fontSize: '8px',
+                      fontWeight: 800, padding: '1px 3px', borderRadius: '2px', lineHeight: 1
+                    }}>
+                      {item.images.length}
+                    </span>
+                  )}
+                </div>
               ) : (
                 <div style={{ width: '42px', height: '42px', borderRadius: '4px', background: t.inputBg, border: `1px solid ${t.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>
                   🏷️
@@ -347,13 +604,20 @@ function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
                 <p style={{ margin: 0, fontWeight: 700, fontSize: '12px', color: t.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.name}>
                   {item.name}
                 </p>
-                {item.price ? (
-                  <span style={{ display: 'inline-block', marginTop: '3px', fontSize: '11px', fontWeight: 700, color: '#10b981', background: '#10b98115', border: '1px solid #10b98135', borderRadius: '3px', padding: '1px 6px' }}>
-                    {item.price.startsWith('₹') ? item.price : `₹${item.price}`}
-                  </span>
-                ) : (
-                  <span style={{ fontSize: '10px', color: t.muted, fontStyle: 'italic' }}>No price set</span>
-                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '2px' }}>
+                  {item.price ? (
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#10b981', background: '#10b98115', border: '1px solid #10b98135', borderRadius: '3px', padding: '1px 6px' }}>
+                      {item.price.startsWith('₹') ? item.price : `₹${item.price}`}
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: '10px', color: t.muted, fontStyle: 'italic' }}>No price set</span>
+                  )}
+                  {item.images?.length > 1 && (
+                    <span style={{ fontSize: '9px', fontWeight: 700, color: '#0284c7', background: '#e0f2fe', borderRadius: '3px', padding: '1px 5px' }}>
+                      ✨ Auto-Swiper
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Edit and Delete buttons */}
@@ -441,17 +705,18 @@ function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
             zIndex: 9999,
             padding: '16px',
           }}
-          onClick={() => { if (!uploading) setModalOpen(false); }}
+          onClick={() => setModalOpen(false)}
         >
           <div
             style={{
               background: t.card,
               border: `1px solid ${t.border}`,
               borderRadius: '8px',
-              maxWidth: '460px',
+              maxWidth: '520px',
               width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
               boxShadow: '0 24px 48px rgba(0,0,0,0.5)',
-              overflow: 'hidden',
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -469,7 +734,7 @@ function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
                   {editingIdx !== null ? '✏️ Edit Sub-category / Product' : '➕ Add Sub-category / Product'}
                 </h3>
                 <span style={{ fontSize: '10px', color: t.muted, fontWeight: 600, display: 'block', marginTop: '2px' }}>
-                  * All fields (Name, Image &amp; Price) are required
+                  * Name, Images (1 or more) &amp; Price
                 </span>
               </div>
               <button
@@ -500,47 +765,20 @@ function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
                 />
               </div>
 
-              {/* Product Image */}
-              <div>
-                <label style={{ fontSize: '10px', fontWeight: 700, color: t.sub, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>
-                  Product Image *
-                </label>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '8px' }}>
-                  {subForm.image && (
-                    <div style={{ position: 'relative', flexShrink: 0 }}>
-                      <img
-                        src={subForm.image}
-                        alt="preview"
-                        style={{ width: '56px', height: '56px', objectFit: 'cover', border: `1px solid ${t.border}`, borderRadius: '4px' }}
-                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setSubForm((prev) => ({ ...prev, image: '' }))}
-                        style={{ position: 'absolute', top: '-6px', right: '-6px', width: '18px', height: '18px', borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  )}
-                  <label style={{ flex: 1, border: `1px dashed ${t.border}`, borderRadius: '4px', padding: '10px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', background: t.inputBg }}>
-                    <span style={{ fontSize: '16px' }}>{uploading ? '⏳' : '📁'}</span>
-                    <span style={{ fontSize: '11px', color: t.sub, fontWeight: 600 }}>
-                      {uploading ? 'Uploading…' : subForm.image ? 'Replace image' : 'Upload product image *'}
-                    </span>
-                    <input type="file" accept="image/*" onChange={handleSubFile} style={{ display: 'none' }} disabled={uploading} />
-                  </label>
-                </div>
-                <input
-                  className="sc-inp"
-                  style={{ width: '100%', boxSizing: 'border-box', border: `1px solid ${t.border}`, borderRadius: '4px', padding: '8px 10px', background: t.inputBg, color: t.text, fontSize: '12px', outline: 'none' }}
-                  value={subForm.image}
-                  onChange={(e) => setSubForm((prev) => ({ ...prev, image: e.target.value }))}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSave(e); } }}
-                  placeholder="Or paste product image URL *"
-                  required
-                />
-              </div>
+              {/* Multi-Image Gallery for Subcategory */}
+              <CategoryGalleryUpload
+                images={subForm.images}
+                onChange={(newImgs) => {
+                  setSubForm((prev) => ({
+                    ...prev,
+                    images: newImgs,
+                    image: newImgs[0] || '',
+                  }));
+                }}
+                t={t}
+                title="Sub-category Images"
+                isSubcategory={true}
+              />
 
               {/* Price */}
               <div>
@@ -579,7 +817,6 @@ function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
                 <button
                   type="button"
                   onClick={handleSave}
-                  disabled={uploading}
                   style={{ padding: '8px 18px', background: t.accent, color: t.accentFg, border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
                 >
                   {editingIdx !== null ? 'Save Changes' : '+ Add Sub-category'}
@@ -624,6 +861,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
   const [editCat, setEditCat]       = useState(null);
   const [form, setForm]             = useState(EMPTY);
   const [image, setImage]           = useState('');
+  const [categoryImages, setCategoryImages] = useState([]);
   const [emojiImage, setEmojiImage] = useState('');
   const [types, setTypes]           = useState([]);           // array of strings
   const [subcategories, setSubs]    = useState([]);           // array of strings
@@ -663,6 +901,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
     setEditCat(null);
     setForm(EMPTY);
     setImage('');
+    setCategoryImages([]);
     setEmojiImage('');
     setTypes([]);
     setSubs([]);
@@ -680,7 +919,12 @@ export default function ShopCategoriesManager({ isDarkMode }) {
       price_range: cat.price_range || '', unit: cat.unit || '',
       shipping_charge: cat.shipping_charge || 0,
     });
-    setImage(cat.image || '');
+    const existingImgs = Array.from(new Set([
+      cat.image,
+      ...(Array.isArray(cat.images) ? cat.images : [])
+    ].map((x) => String(x || '').trim()).filter(Boolean)));
+    setCategoryImages(existingImgs);
+    setImage(existingImgs[0] || cat.image || '');
     setEmojiImage(cat.emoji_image || '');
     setTypes(Array.isArray(cat.types) ? cat.types : []);
     setSubs(Array.isArray(cat.subcategories) ? cat.subcategories : []);
@@ -701,7 +945,19 @@ export default function ShopCategoriesManager({ isDarkMode }) {
       const derivedTypes = (subcategories && subcategories.length > 0)
         ? subcategories.map(s => (typeof s === 'string' ? s : s?.name)).filter(Boolean)
         : (types || []);
-      const payload = { ...form, image: image || null, emoji_image: emojiImage || null, types: derivedTypes, subcategories, city_prices: cityPrices };
+      const allCatImgs = Array.from(new Set([
+        ...categoryImages,
+        image
+      ].map((x) => String(x || '').trim()).filter(Boolean)));
+      const payload = {
+        ...form,
+        image: allCatImgs[0] || null,
+        images: allCatImgs,
+        emoji_image: emojiImage || null,
+        types: derivedTypes,
+        subcategories,
+        city_prices: cityPrices
+      };
       let res;
       if (editCat) {
         res = await fetch('/api/shop-categories', {
@@ -934,9 +1190,17 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                   </div>
                 )}
 
-                {/* Image */}
+                {/* Category Gallery Images */}
                 <div style={{ gridColumn: 'span 2' }}>
-                  <ImageUpload value={image} onChange={setImage} t={t} />
+                  <CategoryGalleryUpload
+                    images={categoryImages}
+                    onChange={(newImgs) => {
+                      setCategoryImages(newImgs);
+                      setImage(newImgs[0] || '');
+                    }}
+                    t={t}
+                    title="Category Images"
+                  />
                 </div>
 
                 {/* ── Subcategories ──────────────────────────────────── */}
