@@ -1,11 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
+import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 export async function GET(req) {
-  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementSchema();
     const s = new URL(req.url).searchParams;
@@ -18,6 +15,9 @@ export async function GET(req) {
     if (!Number.isInteger(projectId) || projectId <= 0) {
       return NextResponse.json({ success: false, error: 'projectId is required' }, { status: 400 });
     }
+
+    const auth = await assertAgentAccess(req, projectId, 'labor');
+    if (!auth.allowed) return auth.response;
 
     const r = await pool.query(
       `WITH earnings AS (
@@ -71,8 +71,6 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
   try {
     await ensureProjectManagementSchema();
     const b = await req.json();
@@ -93,10 +91,13 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Valid daily_rate (>= 0) is required' }, { status: 400 });
     }
 
+    const auth = await assertAgentAccess(req, projectId, 'labor');
+    if (!auth.allowed) return auth.response;
+
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const actor = actorFromAdmin(admin);
+      const actor = actorFromAdmin(auth.user);
       const r = await client.query(
         `INSERT INTO pm_labor(project_id, vendor_id, name, phone, trade, daily_rate, is_active)
          VALUES($1, $2, $3, $4, $5, $6, TRUE)

@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementPhase5Schema, pageParams } from '@/lib/project-management';
+import { ensureProjectManagementPhase5Schema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 export async function GET(req) {
-  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
+    const auth = await assertAgentAccess(req, null, 'construction');
+    if (!auth.allowed) return auth.response;
+
     const s = new URL(req.url).searchParams;
     const { page, pageSize, offset } = pageParams(s);
     const q = s.get('search') || '';
@@ -31,9 +31,11 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
+    const auth = await assertAgentAccess(req, null, 'construction');
+    if (!auth.allowed) return auth.response;
+
     const b = await req.json();
     const name = String(b.name || '').trim();
     const min = Number(b.min_stock_level || 0);
@@ -41,13 +43,26 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Invalid material' }, { status: 400 });
     }
     const benchmarkKey = b.benchmark_key || null;
-    const r = await pool.query(
-      `INSERT INTO pm_materials(name, unit, category, min_stock_level, is_active, benchmark_key)
-       VALUES($1, $2, $3, $4, $5, $6)
-       RETURNING *`,
-      [name, b.unit || null, b.category || null, min, b.is_active !== false, benchmarkKey]
-    );
-    return NextResponse.json({ success: true, data: r.rows[0] }, { status: 201 });
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const actor = actorFromAdmin(auth.user);
+      const r = await client.query(
+        `INSERT INTO pm_materials(name, unit, category, min_stock_level, is_active, benchmark_key)
+         VALUES($1, $2, $3, $4, $5, $6)
+         RETURNING *`,
+        [name, b.unit || null, b.category || null, min, b.is_active !== false, benchmarkKey]
+      );
+      await writePmPhase2Audit(client, 'pm_materials', r.rows[0].id, 'created', actor, null, r.rows[0]);
+      await client.query('COMMIT');
+      return NextResponse.json({ success: true, data: r.rows[0] }, { status: 201 });
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
   } catch (e) {
     return NextResponse.json(
       { success: false, error: e.code === '23505' ? 'Material already exists' : e.message },
