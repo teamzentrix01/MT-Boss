@@ -4,6 +4,13 @@ import { Eye, X, ActionIconButton } from '@/app/components/ui/icons';
 
 const STATUS_OPTIONS = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
 
+const SPECIALIZATION_OPTIONS = [
+  { key: 'payments', label: 'Payments', desc: 'Party & Vendor Payments', bg: '#e0f2fe', tx: '#0369a1' },
+  { key: 'labor', label: 'Labor', desc: 'Attendance & Labor Payments', bg: '#fef3c7', tx: '#b45309' },
+  { key: 'vendor', label: 'Vendor', desc: 'Vendors & Project Assignments', bg: '#f3e8ff', tx: '#7e22ce' },
+  { key: 'construction', label: 'Construction', desc: 'Materials, Stock & Expenses', bg: '#dcfce7', tx: '#15803d' },
+];
+
 const statusStyle = {
   Pending:   { bg: '#fff7ed', tx: '#9a3412' },
   Reviewing: { bg: '#eff4ff', tx: '#1e3a8a' },
@@ -15,6 +22,7 @@ export default function AgentsPage() {
   const [agents, setAgents]       = useState([]);
   const [loading, setLoading]     = useState(true);
   const [selected, setSelected]   = useState(null);
+  const [selectedSpecs, setSelectedSpecs] = useState([]);
   const [search, setSearch]       = useState('');
   const [filter, setFilter]       = useState('All');
   const [updating, setUpdating]   = useState(false);
@@ -26,6 +34,20 @@ export default function AgentsPage() {
   const [selectedLead, setSelectedLead] = useState(null);
   const [error, setError] = useState('');
   const [pendingStatus, setPendingStatus] = useState('');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createSaving, setCreateSaving] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    city: '',
+    state: '',
+    occupation: '',
+    agentType: 'contractor',
+    experience: '',
+    specializations: [],
+    has_project_management_access: false,
+  });
 
   useEffect(() => {
     fetchAgents();
@@ -121,8 +143,73 @@ export default function AgentsPage() {
     }
   };
 
+  const saveSpecializations = async (id, specs) => {
+    setUpdating(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/admin/agents/${id}/pm-access`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ specializations: specs }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Could not update specializations.');
+        return;
+      }
+      setAgents(prev => prev.map(a => a.id === id ? { ...a, specializations: specs } : a));
+      if (selected?.id === id) setSelected(prev => ({ ...prev, specializations: specs }));
+    } catch (err) {
+      setError(err.message || 'Could not update specializations.');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleCreateAgent = async (e) => {
+    e.preventDefault();
+    setCreateSaving(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/agents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(createForm),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Could not create agent.');
+        return;
+      }
+      setShowCreateModal(false);
+      setCreateForm({
+        name: '',
+        email: '',
+        phone: '',
+        city: '',
+        state: '',
+        occupation: '',
+        agentType: 'contractor',
+        experience: '',
+        specializations: [],
+        has_project_management_access: false,
+      });
+      await fetchAgents();
+    } catch (err) {
+      setError(err.message || 'Could not create agent.');
+    } finally {
+      setCreateSaving(false);
+    }
+  };
+
   const openAgent = async (agent) => {
     setSelected(agent);
+    const specs = Array.isArray(agent.specializations)
+      ? agent.specializations
+      : (typeof agent.specializations === 'string' ? JSON.parse(agent.specializations || '[]') : []);
+    setSelectedSpecs(specs);
     setWorkspace(null);
     setWorkspaceLoading(true);
     setShowLeads(false);
@@ -440,7 +527,17 @@ export default function AgentsPage() {
 
         {/* Toolbar */}
         <div className="ag-toolbar">
-          <span className="ag-title">Agent Applications</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span className="ag-title">Agent Applications</span>
+            <button
+              type="button"
+              className="ag-ok-btn"
+              onClick={() => setShowCreateModal(true)}
+              style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }}
+            >
+              + Create Agent
+            </button>
+          </div>
           <input
             className="ag-search"
             placeholder="Search name, email, city…"
@@ -489,7 +586,7 @@ export default function AgentsPage() {
               <table className="ag-table">
                 <thead>
                   <tr>
-                    {['Name', 'Contact', 'Location', 'Type', 'Experience', 'Status', 'PM Access', 'Date', 'Action'].map(h => (
+                    {['Name', 'Contact', 'Location', 'Type', 'Experience', 'Status', 'PM Access', 'Specializations', 'Date', 'Action'].map(h => (
                       <th key={h}>{h}</th>
                     ))}
                   </tr>
@@ -497,6 +594,9 @@ export default function AgentsPage() {
                 <tbody>
                   {filtered.map(agent => {
                     const st = statusStyle[agent.status] || statusStyle.Pending;
+                    const agentSpecs = Array.isArray(agent.specializations)
+                      ? agent.specializations
+                      : (typeof agent.specializations === 'string' ? JSON.parse(agent.specializations || '[]') : []);
                     return (
                       <tr key={agent.id} onClick={() => openAgent(agent)}>
                         <td>
@@ -524,6 +624,26 @@ export default function AgentsPage() {
                           ) : (
                             <span className="ag-badge" style={{ background: '#f1f5f9', color: '#64748b' }}>Not Granted</span>
                           )}
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                            {agentSpecs.length > 0 ? (
+                              agentSpecs.map(specKey => {
+                                const spec = SPECIALIZATION_OPTIONS.find(s => s.key === specKey);
+                                return spec ? (
+                                  <span
+                                    key={specKey}
+                                    className="ag-badge"
+                                    style={{ background: spec.bg, color: spec.tx, fontSize: '0.6875rem', padding: '2px 6px' }}
+                                  >
+                                    {spec.label}
+                                  </span>
+                                ) : null;
+                              })
+                            ) : (
+                              <span className="ag-muted" style={{ fontSize: '0.75rem' }}>None</span>
+                            )}
+                          </div>
                         </td>
                         <td className="ag-muted">
                           {new Date(agent.created_at).toLocaleDateString()}
@@ -662,6 +782,64 @@ export default function AgentsPage() {
                 </button>
               </div>
             )}
+
+            {/* Specializations multi-select checkboxes for Edit Agent */}
+            <div style={{ marginTop: '0.75rem', marginBottom: '1rem', padding: '0.875rem', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--bg)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: 6 }}>
+                <div>
+                  <div className="ag-field-label" style={{ marginBottom: 2 }}>Project Management Specializations</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Select modules this agent can access in assigned projects</div>
+                </div>
+                <button
+                  type="button"
+                  className="ag-ok-btn"
+                  disabled={updating}
+                  onClick={() => saveSpecializations(selected.id, selectedSpecs)}
+                  style={{ padding: '0.3rem 0.75rem', fontSize: '0.75rem' }}
+                >
+                  {updating ? 'Saving...' : 'Save Specializations'}
+                </button>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem' }}>
+                {SPECIALIZATION_OPTIONS.map(spec => {
+                  const isChecked = selectedSpecs.includes(spec.key);
+                  return (
+                    <label
+                      key={spec.key}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 8,
+                        cursor: 'pointer',
+                        padding: '6px 10px',
+                        borderRadius: 6,
+                        background: isChecked ? 'color-mix(in srgb, var(--accent) 8%, transparent)' : 'var(--surface)',
+                        border: `1px solid ${isChecked ? 'var(--accent)' : 'var(--border)'}`,
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={e => {
+                          const updated = e.target.checked
+                            ? [...selectedSpecs, spec.key]
+                            : selectedSpecs.filter(k => k !== spec.key);
+                          setSelectedSpecs(updated);
+                        }}
+                        style={{ marginTop: 3 }}
+                      />
+                      <div>
+                        <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text)' }}>
+                          <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: spec.tx, marginRight: 6 }}></span>
+                          {spec.label}
+                        </div>
+                        <div style={{ fontSize: '0.6875rem', color: 'var(--muted)' }}>{spec.desc}</div>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
 
             {pendingStatus && pendingStatus !== selected.status && (
               <div className="ag-confirm">
@@ -888,6 +1066,198 @@ export default function AgentsPage() {
             <div className="ag-modal-footer" style={{ marginTop: '1rem' }}>
               <button className="ag-close-btn" onClick={() => setSelectedLead(null)}>Close</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Agent Modal */}
+      {showCreateModal && (
+        <div className="ag-backdrop" onClick={() => setShowCreateModal(false)}>
+          <div className="ag-modal" onClick={e => e.stopPropagation()}>
+            <div className="ag-modal-head">
+              <span className="ag-modal-title">Create New Agent</span>
+              <button
+                className="ag-modal-close"
+                onClick={() => setShowCreateModal(false)}
+                aria-label="Close modal"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <X size={16} strokeWidth={1.75} aria-hidden="true" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateAgent}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Full Name *</label>
+                  <input
+                    required
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.name}
+                    onChange={e => setCreateForm(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="e.g. Rahul Sharma"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Email *</label>
+                  <input
+                    type="email"
+                    required
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.email}
+                    onChange={e => setCreateForm(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="e.g. rahul@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Phone *</label>
+                  <input
+                    required
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.phone}
+                    onChange={e => setCreateForm(prev => ({ ...prev, phone: e.target.value }))}
+                    placeholder="e.g. 9876543210"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>City *</label>
+                  <input
+                    required
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.city}
+                    onChange={e => setCreateForm(prev => ({ ...prev, city: e.target.value }))}
+                    placeholder="e.g. Moradabad"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>State *</label>
+                  <input
+                    required
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.state}
+                    onChange={e => setCreateForm(prev => ({ ...prev, state: e.target.value }))}
+                    placeholder="e.g. Uttar Pradesh"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Occupation</label>
+                  <input
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.occupation}
+                    onChange={e => setCreateForm(prev => ({ ...prev, occupation: e.target.value }))}
+                    placeholder="e.g. Contractor"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Agent Type *</label>
+                  <select
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.agentType}
+                    onChange={e => setCreateForm(prev => ({ ...prev, agentType: e.target.value }))}
+                  >
+                    <option value="contractor">Contractor</option>
+                    <option value="broker">Broker / Real Estate</option>
+                    <option value="engineer">Engineer</option>
+                    <option value="architect">Architect</option>
+                    <option value="interior_designer">Interior Designer</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Experience</label>
+                  <input
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.experience}
+                    onChange={e => setCreateForm(prev => ({ ...prev, experience: e.target.value }))}
+                    placeholder="e.g. 5+ years"
+                  />
+                </div>
+              </div>
+
+              {/* Specializations multi-select checkboxes */}
+              <div style={{ marginBottom: '1rem', padding: '0.875rem', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--bg)' }}>
+                <div className="ag-field-label" style={{ marginBottom: 4 }}>Specializations (Project Management)</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: 8 }}>Select the allowed capabilities for this agent:</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem' }}>
+                  {SPECIALIZATION_OPTIONS.map(spec => {
+                    const isChecked = createForm.specializations.includes(spec.key);
+                    return (
+                      <label
+                        key={spec.key}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: 8,
+                          cursor: 'pointer',
+                          padding: '6px 8px',
+                          borderRadius: 6,
+                          background: isChecked ? 'color-mix(in srgb, var(--accent) 8%, transparent)' : 'var(--surface)',
+                          border: `1px solid ${isChecked ? 'var(--accent)' : 'var(--border)'}`,
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={e => {
+                            const updated = e.target.checked
+                              ? [...createForm.specializations, spec.key]
+                              : createForm.specializations.filter(k => k !== spec.key);
+                            setCreateForm(prev => ({
+                              ...prev,
+                              specializations: updated,
+                              has_project_management_access: updated.length > 0 ? true : prev.has_project_management_access
+                            }));
+                          }}
+                          style={{ marginTop: 2 }}
+                        />
+                        <div>
+                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text)' }}>{spec.label}</div>
+                          <div style={{ fontSize: '0.6875rem', color: 'var(--muted)' }}>{spec.desc}</div>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1.25rem' }}>
+                <input
+                  type="checkbox"
+                  id="create_pm_access"
+                  checked={createForm.has_project_management_access}
+                  onChange={e => setCreateForm(prev => ({ ...prev, has_project_management_access: e.target.checked }))}
+                />
+                <label htmlFor="create_pm_access" style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text)', cursor: 'pointer' }}>
+                  Grant Project Management Access
+                </label>
+              </div>
+
+              <div className="ag-modal-footer">
+                <button
+                  type="button"
+                  className="ag-cancel-btn"
+                  onClick={() => setShowCreateModal(false)}
+                  disabled={createSaving}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="ag-ok-btn"
+                  disabled={createSaving}
+                >
+                  {createSaving ? 'Creating...' : 'Create Agent'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

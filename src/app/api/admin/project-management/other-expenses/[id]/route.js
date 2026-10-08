@@ -1,15 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
+import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 const VALID_CATEGORIES = ['transport', 'machine_rent', 'electricity_water', 'permit', 'misc'];
 
 export async function PATCH(req, { params }) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
-
   try {
     await ensureProjectManagementSchema();
     const id = Number((await params).id);
@@ -17,24 +13,34 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ success: false, error: 'Invalid ID' }, { status: 400 });
     }
 
-    const b = await req.json();
-    const amt = Number(b.amount);
-    const cat = String(b.category || '').trim();
-
-    if (
-      !Number.isFinite(amt) ||
-      amt <= 0 ||
-      !VALID_CATEGORIES.includes(cat) ||
-      !/^\d{4}-\d{2}-\d{2}$/.test(b.expense_date || '')
-    ) {
-      return NextResponse.json({ success: false, error: 'Invalid expense parameters' }, { status: 400 });
-    }
-
     const c = await pool.connect();
     try {
       await c.query('BEGIN');
       const old = (await c.query(`SELECT * FROM pm_other_expenses WHERE id = $1 FOR UPDATE`, [id])).rows[0];
-      if (!old || old.is_deleted) throw new Error('Expense not found');
+      if (!old || old.is_deleted) {
+        await c.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Expense not found' }, { status: 404 });
+      }
+
+      const auth = await assertAgentAccess(req, old.project_id, 'construction');
+      if (!auth.allowed) {
+        await c.query('ROLLBACK');
+        return auth.response;
+      }
+
+      const b = await req.json();
+      const amt = Number(b.amount);
+      const cat = String(b.category || '').trim();
+
+      if (
+        !Number.isFinite(amt) ||
+        amt <= 0 ||
+        !VALID_CATEGORIES.includes(cat) ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(b.expense_date || '')
+      ) {
+        await c.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Invalid expense parameters' }, { status: 400 });
+      }
 
       const r = await c.query(
         `UPDATE pm_other_expenses
@@ -44,7 +50,8 @@ export async function PATCH(req, { params }) {
         [amt, cat, b.expense_date, b.note || null, id]
       );
 
-      await writePmPhase2Audit(c, 'pm_other_expenses', id, 'updated', actorFromAdmin(admin), old, r.rows[0]);
+      const actor = actorFromAdmin(auth.user);
+      await writePmPhase2Audit(c, 'pm_other_expenses', id, 'updated', actor, old, r.rows[0]);
       await c.query('COMMIT');
 
       return NextResponse.json({ success: true, data: r.rows[0] });
@@ -60,8 +67,14 @@ export async function PATCH(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
+  const admin = requireRole(req, 'admin');
+  if (!admin) {
+    const auth = await assertAgentAccess(req, null, null);
+    if (auth.role === 'agent') {
+      return NextResponse.json({ success: false, error: 'Unauthorized: Agents cannot delete records (admin only)' }, { status: 403 });
+    }
+    return unauthorized();
+  }
 
   try {
     await ensureProjectManagementSchema();
@@ -74,7 +87,10 @@ export async function DELETE(req, { params }) {
     try {
       await c.query('BEGIN');
       const old = (await c.query(`SELECT * FROM pm_other_expenses WHERE id = $1 FOR UPDATE`, [id])).rows[0];
-      if (!old || old.is_deleted) throw new Error('Expense not found');
+      if (!old || old.is_deleted) {
+        await c.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Expense not found' }, { status: 404 });
+      }
 
       const r = await c.query(
         `UPDATE pm_other_expenses
@@ -84,7 +100,8 @@ export async function DELETE(req, { params }) {
         [id]
       );
 
-      await writePmPhase2Audit(c, 'pm_other_expenses', id, 'soft_deleted', actorFromAdmin(admin), old, r.rows[0]);
+      const actor = actorFromAdmin(admin);
+      await writePmPhase2Audit(c, 'pm_other_expenses', id, 'soft_deleted', actor, old, r.rows[0]);
       await c.query('COMMIT');
       return NextResponse.json({ success: true });
     } catch (e) {

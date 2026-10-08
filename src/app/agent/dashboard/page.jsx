@@ -1176,7 +1176,7 @@ function AgentDashboardContent() {
         
         {activeTab === 'project-management' && agent?.has_project_management_access && (
           <section className="animate-fade-in">
-            <PartyProjectManagement initialScreen="projects" isDarkMode={dark} isAgent={true} />
+            <PartyProjectManagement initialScreen="projects" isDarkMode={dark} isAgent={true} agent={agent} />
           </section>
         )}
       </div>

@@ -37,6 +37,7 @@ export async function GET(req) {
                  pa.name AS party_name
           FROM pm_projects p
           JOIN pm_parties pa ON pa.id = p.party_id
+          ${admin.role === 'agent' ? `JOIN pm_project_agents pa_agent ON pa_agent.project_id = p.id AND pa_agent.agent_id = ${admin.id}` : ''}
           WHERE ($1 = ''  OR p.party_id = $1::bigint)
             AND ($2 = 'all' OR p.status  = $2)
             AND ($3::date IS NULL OR p.start_date >= $3::date)
@@ -136,22 +137,63 @@ export async function GET(req) {
       `),
     ]);
 
-    const rows = main.rows;
+    const hasPayments = admin.role === 'admin' || admin.role === 'site_supervisor' || (admin.specializations || []).includes('payments');
+    const hasLabor = admin.role === 'admin' || admin.role === 'site_supervisor' || (admin.specializations || []).includes('labor');
+    const hasConstruction = admin.role === 'admin' || admin.role === 'site_supervisor' || (admin.specializations || []).includes('construction');
+
+    const rows = main.rows.map(r => {
+      const copy = { ...r };
+      if (!hasPayments) {
+        copy.contract_value = null;
+        copy.received = null;
+        copy.pending = null;
+        copy.total_expense = null;
+        copy.profit = null;
+      }
+      if (!hasLabor) {
+        copy.labour_cost = null;
+        copy.vendor_labour_cost = null;
+        copy.individual_labour_cost = null;
+      }
+      if (!hasConstruction) {
+        copy.material_cost = null;
+        copy.other_cost = null;
+      }
+      return copy;
+    });
+
     const totals = rows.reduce((acc, r) => {
       if (r.status === 'running') acc.running++;
-      acc.contract  += Number(r.contract_value  || 0);
-      acc.received  += Number(r.received        || 0);
-      acc.pending   += Number(r.pending         || 0);
-      acc.labour    += Number(r.labour_cost     || 0);
-      acc.material  += Number(r.material_cost   || 0);
-      acc.other     += Number(r.other_cost      || 0);
-      acc.expense   += Number(r.total_expense   || 0);
-      acc.profit    += Number(r.profit          || 0);
+      if (hasPayments) {
+        acc.contract  += Number(r.contract_value  || 0);
+        acc.received  += Number(r.received        || 0);
+        acc.pending   += Number(r.pending         || 0);
+        acc.expense   += Number(r.total_expense   || 0);
+        acc.profit    += Number(r.profit          || 0);
+      }
+      if (hasLabor) {
+        acc.labour    += Number(r.labour_cost     || 0);
+      }
+      if (hasConstruction) {
+        acc.material  += Number(r.material_cost   || 0);
+        acc.other     += Number(r.other_cost      || 0);
+      }
       acc.total++;
       return acc;
-    }, { total: 0, running: 0, contract: 0, received: 0, pending: 0, labour: 0, material: 0, other: 0, expense: 0, profit: 0 });
+    }, {
+      total: 0,
+      running: 0,
+      contract: hasPayments ? 0 : null,
+      received: hasPayments ? 0 : null,
+      pending: hasPayments ? 0 : null,
+      labour: hasLabor ? 0 : null,
+      material: hasConstruction ? 0 : null,
+      other: hasConstruction ? 0 : null,
+      expense: hasPayments ? 0 : null,
+      profit: hasPayments ? 0 : null
+    });
 
-    const data = { success: true, totals, projects: rows, monthly: monthly.rows, generatedAt: new Date().toISOString() };
+    const data = { success: true, totals, projects: rows, monthly: hasPayments ? monthly.rows : [], generatedAt: new Date().toISOString() };
     cache.set(cacheKey, { data, at: now });
     return NextResponse.json(data);
   } catch (error) {

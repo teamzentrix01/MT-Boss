@@ -1,13 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
+import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 const validDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
 export async function GET(req) {
-  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementSchema();
     const s = new URL(req.url).searchParams;
@@ -15,6 +13,13 @@ export async function GET(req) {
 
     // Mode 1: Vendor-specific attendance history (for calendar & detail view)
     if (Number.isInteger(projectVendorId) && projectVendorId > 0) {
+      const pvRes = await pool.query('SELECT project_id FROM pm_project_vendors WHERE id = $1', [projectVendorId]);
+      if (!pvRes.rows[0]) {
+        return NextResponse.json({ success: false, error: 'Project vendor not found' }, { status: 404 });
+      }
+      const auth = await assertAgentAccess(req, pvRes.rows[0].project_id, 'labor');
+      if (!auth.allowed) return auth.response;
+
       const month = s.get('month') || ''; // 'YYYY-MM'
       const r = await pool.query(
         `SELECT a.*, pv.daily_rate, v.name AS vendor_name, v.trade
@@ -36,6 +41,9 @@ export async function GET(req) {
     if (!Number.isInteger(project) || !validDate(date)) {
       return NextResponse.json({ success: false, error: 'projectId and valid date (or projectVendorId) are required' }, { status: 400 });
     }
+
+    const auth = await assertAgentAccess(req, project, 'labor');
+    if (!auth.allowed) return auth.response;
 
     const r = await pool.query(
       `WITH paged AS (
@@ -74,8 +82,6 @@ export async function GET(req) {
 }
 
 export async function PUT(req) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
   try {
     await ensureProjectManagementSchema();
     const b = await req.json();
@@ -84,8 +90,16 @@ export async function PUT(req) {
       return NextResponse.json({ success: false, error: 'Attendance entries are required' }, { status: 400 });
     }
 
+    // Verify access for first entry (and ensure authorization)
+    const firstPv = await pool.query('SELECT project_id FROM pm_project_vendors WHERE id = $1', [Number(entries[0].project_vendor_id)]);
+    if (!firstPv.rows[0]) {
+      return NextResponse.json({ success: false, error: 'Assignment not found' }, { status: 404 });
+    }
+    const auth = await assertAgentAccess(req, firstPv.rows[0].project_id, 'labor');
+    if (!auth.allowed) return auth.response;
+
     const client = await pool.connect();
-    const actor = actorFromAdmin(admin);
+    const actor = actorFromAdmin(auth.user);
     try {
       await client.query('BEGIN');
       for (const e of entries) {

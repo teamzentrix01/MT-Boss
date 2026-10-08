@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
+import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 const okDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
 export async function PATCH(req, { params }) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
   try {
     await ensureProjectManagementSchema();
     const id = Number((await params).id);
@@ -32,10 +29,23 @@ export async function PATCH(req, { params }) {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const old = (await client.query(`SELECT * FROM pm_labor_payments WHERE id = $1 FOR UPDATE`, [id])).rows[0];
+      const oldRes = await client.query(
+        `SELECT lp.*, l.project_id
+         FROM pm_labor_payments lp
+         JOIN pm_labor l ON l.id = lp.labor_id
+         WHERE lp.id = $1 FOR UPDATE`,
+        [id]
+      );
+      const old = oldRes.rows[0];
       if (!old || old.is_deleted) {
         await client.query('ROLLBACK');
         return NextResponse.json({ success: false, error: 'Payment not found' }, { status: 404 });
+      }
+
+      const auth = await assertAgentAccess(req, old.project_id, 'labor');
+      if (!auth.allowed) {
+        await client.query('ROLLBACK');
+        return auth.response;
       }
 
       const r = await client.query(
@@ -50,7 +60,7 @@ export async function PATCH(req, { params }) {
         [amount, paymentDate, mode ?? null, note !== undefined, note ?? null, id]
       );
 
-      const actor = actorFromAdmin(admin);
+      const actor = actorFromAdmin(auth.user);
       await writePmPhase2Audit(client, 'pm_labor_payments', id, 'updated', actor, old, r.rows[0]);
       await client.query('COMMIT');
       return NextResponse.json({ success: true, data: r.rows[0] });
@@ -66,8 +76,15 @@ export async function PATCH(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
+  const admin = requireRole(req, 'admin');
+  if (!admin) {
+    const auth = await assertAgentAccess(req, null, null);
+    if (auth.role === 'agent') {
+      return NextResponse.json({ success: false, error: 'Unauthorized: Agents cannot delete records (admin only)' }, { status: 403 });
+    }
+    return unauthorized();
+  }
+
   try {
     await ensureProjectManagementSchema();
     const id = Number((await params).id);

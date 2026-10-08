@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementPhase5Schema } from '@/lib/project-management';
+import { ensureProjectManagementPhase5Schema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 export async function PATCH(req, { params }) {
-  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementPhase5Schema();
+    const auth = await assertAgentAccess(req, null, 'construction');
+    if (!auth.allowed) return auth.response;
+
     const id = Number((await params).id);
     if (!Number.isInteger(id) || id <= 0) {
       return NextResponse.json({ success: false, error: 'Invalid material ID' }, { status: 400 });
@@ -46,15 +46,30 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ success: false, error: 'No fields provided' }, { status: 400 });
     }
 
-    values.push(id);
-    const r = await pool.query(
-      `UPDATE pm_materials SET ${updates.join(', ')} WHERE id = $${i} RETURNING *`,
-      values
-    );
-    if (!r.rows[0]) {
-      return NextResponse.json({ success: false, error: 'Material not found' }, { status: 404 });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const old = (await client.query('SELECT * FROM pm_materials WHERE id = $1 FOR UPDATE', [id])).rows[0];
+      if (!old) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ success: false, error: 'Material not found' }, { status: 404 });
+      }
+
+      values.push(id);
+      const r = await client.query(
+        `UPDATE pm_materials SET ${updates.join(', ')} WHERE id = $${i} RETURNING *`,
+        values
+      );
+      const actor = actorFromAdmin(auth.user);
+      await writePmPhase2Audit(client, 'pm_materials', id, 'updated', actor, old, r.rows[0]);
+      await client.query('COMMIT');
+      return NextResponse.json({ success: true, data: r.rows[0] });
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
     }
-    return NextResponse.json({ success: true, data: r.rows[0] });
   } catch (e) {
     return NextResponse.json({ success: false, error: e.message }, { status: 500 });
   }

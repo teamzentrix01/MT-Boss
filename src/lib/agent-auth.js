@@ -42,7 +42,7 @@ export async function requireAgent(req) {
   const result = await pool.query(
     `SELECT id, name, email, phone, city, state, occupation, agent_type,
             status, login_enabled, must_change_password, auth_version, last_login_at, created_at,
-            has_project_management_access
+            has_project_management_access, specializations
        FROM agents
       WHERE id = $1 AND login_enabled = TRUE AND status = 'Approved'`,
     [payload.id]
@@ -86,6 +86,7 @@ export const ensureAgentSchema = createInitializationGuard(async () => {
     `ALTER TABLE agents ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW()`,
     `ALTER TABLE agents ADD COLUMN IF NOT EXISTS auth_version INTEGER NOT NULL DEFAULT 0`,
     `ALTER TABLE agents ADD COLUMN IF NOT EXISTS has_project_management_access BOOLEAN DEFAULT FALSE`,
+    `ALTER TABLE agents ADD COLUMN IF NOT EXISTS specializations JSONB NOT NULL DEFAULT '[]'::jsonb`,
   ];
 
   for (const sql of alters) {
