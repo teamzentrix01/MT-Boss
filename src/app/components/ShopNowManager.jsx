@@ -7,6 +7,7 @@ import ShopCategoriesManager from './ShopCategoriesManager';
 import ShippingSettingsManager from './ShippingSettingsManager';
 import ShopCouponsManager from './ShopCouponsManager';
 import ShopCommissionSettingsManager from './ShopCommissionSettingsManager';
+import CashbackManager from './CashbackManager';
 import VendorCommissionSummary from './VendorCommissionSummary';
 import { defaultShopStorefront } from '@/lib/shop-storefront-defaults';
 import { QUALITY_TIER_OPTIONS, qualityTierLabel } from '@/lib/quality-tier';
@@ -469,8 +470,22 @@ export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }
   };
   return <div className="shop-admin-root">
     <div className="shop-admin-toolbar"><div><h2>Shop Now Manager</h2><p>Add products and manage what customers see on Shop Now.</p></div><button type="button" onClick={openAddProduct}>+ Add Product</button></div>
-    <div className="shop-admin-tabs" role="tablist" aria-label="Shop Now management"><button type="button" role="tab" aria-selected={tab === 'categories'} className={tab === 'categories' ? 'active' : ''} onClick={() => setTab('categories')}>Categories</button><button type="button" role="tab" aria-selected={tab === 'products'} className={tab === 'products' ? 'active' : ''} onClick={() => setTab('products')}>Products</button><button type="button" role="tab" aria-selected={tab === 'content'} className={tab === 'content' ? 'active' : ''} onClick={() => setTab('content')}>Storefront Content</button><button type="button" role="tab" aria-selected={tab === 'shipping'} className={tab === 'shipping' ? 'active' : ''} onClick={() => setTab('shipping')}>Shipping Settings</button><button type="button" role="tab" aria-selected={tab === 'commission'} className={tab === 'commission' ? 'active' : ''} onClick={() => setTab('commission')}>Vendor Commission</button><button type="button" role="tab" aria-selected={tab === 'coupons'} className={tab === 'coupons' ? 'active' : ''} onClick={() => setTab('coupons')}>Promotions & Coupons</button></div>
-    {tab === 'categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}{tab === 'products' && <ProductManager />}{tab === 'content' && <AppearanceManager />}{tab === 'shipping' && <ShippingSettingsManager />}{tab === 'commission' && <ShopCommissionSettingsManager isDarkMode={isDarkMode} />}{tab === 'coupons' && <ShopCouponsManager />}
+    <div className="shop-admin-tabs" role="tablist" aria-label="Shop Now management">
+      <button type="button" role="tab" aria-selected={tab === 'categories'} className={tab === 'categories' ? 'active' : ''} onClick={() => setTab('categories')}>Categories</button>
+      <button type="button" role="tab" aria-selected={tab === 'products'} className={tab === 'products' ? 'active' : ''} onClick={() => setTab('products')}>Products</button>
+      <button type="button" role="tab" aria-selected={tab === 'content'} className={tab === 'content' ? 'active' : ''} onClick={() => setTab('content')}>Storefront Content</button>
+      <button type="button" role="tab" aria-selected={tab === 'shipping'} className={tab === 'shipping' ? 'active' : ''} onClick={() => setTab('shipping')}>Shipping Settings</button>
+      <button type="button" role="tab" aria-selected={tab === 'commission'} className={tab === 'commission' ? 'active' : ''} onClick={() => setTab('commission')}>Vendor Commission</button>
+      <button type="button" role="tab" aria-selected={tab === 'coupons'} className={tab === 'coupons' ? 'active' : ''} onClick={() => setTab('coupons')}>Promotions & Coupons</button>
+      <button type="button" role="tab" aria-selected={tab === 'cashback'} className={tab === 'cashback' ? 'active' : ''} onClick={() => setTab('cashback')}>Cashback & Wallet</button>
+    </div>
+    {tab === 'categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}
+    {tab === 'products' && <ProductManager />}
+    {tab === 'content' && <AppearanceManager />}
+    {tab === 'shipping' && <ShippingSettingsManager />}
+    {tab === 'commission' && <ShopCommissionSettingsManager isDarkMode={isDarkMode} />}
+    {tab === 'coupons' && <ShopCouponsManager />}
+    {tab === 'cashback' && <CashbackManager isDarkMode={isDarkMode} />}
   </div>;
 }
 

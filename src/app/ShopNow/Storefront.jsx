@@ -6,7 +6,7 @@ import Link from "next/link";
 import {
   ArrowRight, CheckCircle2, ChevronDown, ClipboardList, Grid3X3,
   Hammer, MapPin, Minus, Mountain, Package, PaintBucket, Plus,
-  Search, ShieldCheck, ShoppingCart, Truck, Wrench, X,
+  Search, ShieldCheck, ShoppingCart, Truck, Wallet, Wrench, X,
 } from "lucide-react";
 import "./shop.css";
 import ShopCategoryNav from "./ShopCategoryNav";
@@ -225,9 +225,71 @@ export default function Storefront({ categories, products, offers = [], content,
   const [couponCode, setCouponCode] = useState('');
   const [couponNotice, setCouponNotice] = useState('');
   const [offersOpen, setOffersOpen] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [cashbackPreview, setCashbackPreview] = useState(null);
   const searchScrolled = useRef(false);
   const catalogScrollFrame = useRef(null);
   const storeHeaderRef = useRef(null);
+
+  useEffect(() => {
+    if (!Array.isArray(cart) || cart.length === 0) {
+      setCashbackPreview(null);
+      return;
+    }
+    const token = localStorage.getItem('token');
+    const items = cart.map((item) => ({
+      product_id: item.product?.product_id || item.product?.id,
+      category_id: item.product?.category?.id,
+      category_name: item.product?.category?.name || item.product?.category,
+      price: Number(item.product?.price) || 0,
+      quantity: Number(item.quantity) || 1,
+      total: (Number(item.product?.price) || 0) * (Number(item.quantity) || 1),
+    }));
+
+    const subtotal = cart.reduce((sum, it) => sum + (Number(it.product?.price) || 0) * (Number(it.quantity) || 1), 0);
+    const discount = (activeCoupon && couponCalculation?.eligible) ? (Number(couponCalculation.discount) || 0) : 0;
+
+    fetch('/api/cashback/preview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        items,
+        subtotal,
+        coupon_discount: discount,
+        coupon_code: activeCoupon?.code || '',
+      }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && d.data) setCashbackPreview(d.data);
+      })
+      .catch(() => {});
+  }, [cart, activeCoupon, couponCalculation]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('/api/wallet', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((r) => {
+          if (r.status === 401) {
+            // Stale or invalid token
+            return null;
+          }
+          return r.ok ? r.json() : null;
+        })
+        .then((d) => {
+          if (d?.success && d?.data) {
+            setWalletBalance(Number(d.data.balance) || 0);
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   // When user types a search term, scroll the catalog into view automatically
   useEffect(() => {
@@ -474,6 +536,16 @@ export default function Storefront({ categories, products, offers = [], content,
             <label className="store-search"><Search size={20} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={content.search_placeholder} aria-label="Search materials" /></label>
             {productManagerHref && <Link href={productManagerHref} className="store-admin-add"><Plus size={17} /> Add Product</Link>}
             <Link href="/material-orders?role=user" className="store-orders" title="Track orders"><ClipboardList size={20} /><span>Orders</span></Link>
+            <Link
+              href="/wallet"
+              className="store-wallet-btn"
+              aria-label="MT-Boss Cashback Wallet"
+              title="My Cashback Wallet"
+            >
+              <Wallet size={19} />
+              <span className="store-wallet-text">Wallet</span>
+              <span className="store-wallet-pill">₹{walletBalance.toLocaleString('en-IN')}</span>
+            </Link>
             <button type="button" className="store-cart-button" onClick={toggleCart} aria-expanded={cartOpen} aria-controls="store-cart-dialog"><ShoppingCart size={20} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
           </div>
         </header>
@@ -578,6 +650,24 @@ export default function Storefront({ categories, products, offers = [], content,
                 {couponCalculation?.regularAmount > 0 && <div className="store-cart-breakdown"><span>Other items</span><strong>₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</strong></div>}
                 {activeCoupon && couponCalculation?.eligible && <div className="store-cart-breakdown store-cart-coupon-discount"><span>{activeCoupon.code ? `Coupon “${activeCoupon.code}” applied` : 'Automatic coupon applied'}</span><strong>-₹{couponCalculation.discount.toLocaleString('en-IN')}</strong></div>}
                 {activeCoupon && couponCalculation?.eligible && <div className="store-cart-estimate"><span>Discounted total</span><strong>₹{Math.max(0, pricedTotal - couponCalculation.discount).toLocaleString('en-IN')}</strong></div>}
+                {cashbackPreview?.totalCashback > 0 && (
+                  <div style={{
+                    margin: '12px 0',
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    backgroundColor: '#e3f3f3',
+                    border: '1px solid #b2dfdb',
+                    color: '#004d40',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}>
+                    <span>🎉</span>
+                    <span>You will earn <strong>₹{cashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
+                  </div>
+                )}
                 <p>Delivery charges, if applicable, are confirmed separately.</p>
                 <button type="button" className="store-checkout-button" onClick={() => { setCartOpen(false); onCheckout(); }}>Continue to checkout <ArrowRight size={18} /></button>
               </div>

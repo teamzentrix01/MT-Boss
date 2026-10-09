@@ -88,6 +88,7 @@ export {
   Layers,
   Settings,
   Menu,
+  Wallet,
 } from 'lucide-react';
 
 /**

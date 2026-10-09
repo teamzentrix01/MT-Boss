@@ -224,9 +224,66 @@ export default function MobileStorefront({
   const [couponCode, setCouponCode] = useState(activeCoupon?.code || '');
   const [couponNotice, setCouponNotice] = useState('');
   const [offersOpen, setOffersOpen] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [cashbackPreview, setCashbackPreview] = useState(null);
   const searchInputRef = useRef(null);
   const rightFeedRef = useRef(null);
   const activeCatBtnRef = useRef(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('/api/wallet', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((r) => {
+          if (r.status === 401) return null;
+          return r.ok ? r.json() : null;
+        })
+        .then((d) => {
+          if (d?.success && d?.data) setWalletBalance(Number(d.data.balance) || 0);
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!Array.isArray(cart) || cart.length === 0) {
+      setCashbackPreview(null);
+      return;
+    }
+    const token = localStorage.getItem('token');
+    const items = cart.map((item) => ({
+      product_id: item.product?.product_id || item.product?.id,
+      category_id: item.product?.category?.id,
+      category_name: item.product?.category?.name || item.product?.category,
+      price: Number(item.product?.price) || 0,
+      quantity: Number(item.quantity) || 1,
+      total: (Number(item.product?.price) || 0) * (Number(item.quantity) || 1),
+    }));
+
+    const subtotal = cart.reduce((sum, it) => sum + (Number(it.product?.price) || 0) * (Number(it.quantity) || 1), 0);
+    const discount = (activeCoupon && couponCalculation?.eligible) ? (Number(couponCalculation.discount) || 0) : 0;
+
+    fetch('/api/cashback/preview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        items,
+        subtotal,
+        coupon_discount: discount,
+        coupon_code: activeCoupon?.code || '',
+      }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && d.data) setCashbackPreview(d.data);
+      })
+      .catch(() => {});
+  }, [cart, activeCoupon, couponCalculation]);
 
   useEffect(() => {
     if (activeCoupon?.code) {
@@ -330,7 +387,7 @@ export default function MobileStorefront({
   }, [categories, activeCategoryId]);
 
   const displayedHomeCategories = useMemo(() => {
-    return showAllCategories ? categories : categories.slice(0, 6);
+    return showAllCategories ? categories : categories.slice(0, 8);
   }, [categories, showAllCategories]);
 
   useEffect(() => {
@@ -496,15 +553,15 @@ export default function MobileStorefront({
             </div>
 
             <div className="mobile-header-actions">
-              <button
-                type="button"
+              <Link
+                href="/wallet"
                 className="mobile-header-icon-btn"
-                onClick={() => setWalletModalOpen(true)}
-                aria-label="Wallet"
+                aria-label="My Cashback Wallet"
+                title="My Cashback Wallet"
               >
                 <Wallet size={20} />
-                <span className="mobile-wallet-pill">₹0</span>
-              </button>
+                <span className="mobile-wallet-pill">₹{walletBalance.toLocaleString('en-IN')}</span>
+              </Link>
 
               <button
                 type="button"
@@ -793,16 +850,16 @@ export default function MobileStorefront({
                       <span className="mobile-section-kicker">EXPLORE MATERIALS</span>
                       <h2 className="mobile-section-heading">Shop by Category</h2>
                     </div>
-                    {categories.length > 6 ? (
+                    {categories.length > 8 ? (
                       <button
                         type="button"
                         className="mobile-category-header-view-all"
                         onClick={() => setShowAllCategories(!showAllCategories)}
                       >
                         {showAllCategories ? (
-                          <>Show Less <ChevronUp size={14} /></>
+                          <>View less <ChevronUp size={14} /></>
                         ) : (
-                          <>View All ({categories.length}) <ChevronRight size={14} /></>
+                          <>View all ({categories.length}) <ChevronRight size={14} /></>
                         )}
                       </button>
                     ) : (
@@ -812,7 +869,7 @@ export default function MobileStorefront({
 
                   {loading ? (
                     <div className="mobile-loading-grid">
-                      {[1, 2, 3, 4, 5, 6].map((i) => (
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                         <div key={i} className="mobile-cat-skeleton" />
                       ))}
                     </div>
@@ -829,14 +886,14 @@ export default function MobileStorefront({
                               onClick={() => navigateToCategory(cat)}
                               aria-label={`Browse ${cat.name}`}
                             >
-                              <div className="mobile-category-circle">
+                              <div className="mobile-category-square">
                                 {cat.image ? (
                                   <ShopImage
                                     src={cat.image}
                                     alt={cat.name}
                                     fill
-                                    sizes="64px"
-                                    className="mobile-category-circle-img"
+                                    sizes="80px"
+                                    className="mobile-category-square-img"
                                     unoptimized
                                   />
                                 ) : (
@@ -849,7 +906,7 @@ export default function MobileStorefront({
                         })}
                       </div>
 
-                      {categories.length > 6 && (
+                      {categories.length > 8 && (
                         <div className="mobile-category-view-all-wrap">
                           <button
                             type="button"
@@ -858,11 +915,11 @@ export default function MobileStorefront({
                           >
                             {showAllCategories ? (
                               <>
-                                Show Less Categories <ChevronUp size={15} />
+                                View less <ChevronUp size={15} />
                               </>
                             ) : (
                               <>
-                                View All Categories (+{categories.length - 6}) <ChevronDown size={15} />
+                                View more <ChevronDown size={15} />
                               </>
                             )}
                           </button>
@@ -1673,6 +1730,25 @@ export default function MobileStorefront({
                       <span className="font-black text-base text-[#12283F]">
                         ₹{cartTotalWithShipping.toLocaleString("en-IN")}
                       </span>
+                    </div>
+                  )}
+
+                  {cashbackPreview?.totalCashback > 0 && (
+                    <div style={{
+                      margin: '10px 0',
+                      padding: '10px 12px',
+                      borderRadius: '8px',
+                      backgroundColor: '#e3f3f3',
+                      border: '1px solid #b2dfdb',
+                      color: '#004d40',
+                      fontSize: '11.5px',
+                      fontWeight: '700',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}>
+                      <span>🎉</span>
+                      <span>You will earn <strong>₹{cashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
                     </div>
                   )}
 

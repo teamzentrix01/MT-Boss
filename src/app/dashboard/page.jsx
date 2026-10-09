@@ -1610,7 +1610,13 @@ function AdminDashboard() {
           {activeTab === 'pm-benchmarks' && <PmBenchmarks isDarkMode={isDarkMode} />}
           {activeTab === 'pm-dashboard' && <PmDashboard isDarkMode={isDarkMode} />}
           {activeTab === 'pm-audit' && <PmAuditLog isDarkMode={isDarkMode} />}
-          {(activeTab === 'shop-categories' || activeTab === 'shop-products') && <ShopNowManager key={activeTab} isDarkMode={isDarkMode} initialTab={activeTab === 'shop-products' ? 'products' : 'categories'} />}
+          {(activeTab === 'shop-categories' || activeTab === 'shop-products' || activeTab === 'cashback') && (
+            <ShopNowManager
+              key={activeTab}
+              isDarkMode={isDarkMode}
+              initialTab={activeTab === 'shop-products' ? 'products' : activeTab === 'cashback' ? 'cashback' : 'categories'}
+            />
+          )}
           {activeTab === 'shipping-settings' && <ShippingSettingsManager />}
           {activeTab === 'shop-commission-settings' && <ShopCommissionSettingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}
