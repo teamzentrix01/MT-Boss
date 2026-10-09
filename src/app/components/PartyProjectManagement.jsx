@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useId } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useId } from 'react';
 
 function today() {
   return new Date().toISOString().slice(0, 10);
@@ -95,10 +95,62 @@ const usedBlank = { material_id: '', quantity: '', used_date: today(), used_for:
 const adjustmentBlank = { material_id: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', note: '', bill_url: '', bill_filename: '' };
 const expenseBlank = { category: 'transport', amount: '', expense_date: today(), note: '' };
 
-export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent }) {
+export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
   // Navigation: 'parties' | 'party' | 'partyForm' | 'project' | 'projectForm' | 'reports'
   const [screen, setScreen] = useState(initialProjectId ? 'project' : initialScreen);
   const [role, setRole] = useState('admin');
+
+  // Agent Specialization state
+  const [currentAgent, setCurrentAgent] = useState(passedAgent || null);
+
+  useEffect(() => {
+    if (passedAgent) {
+      setCurrentAgent(passedAgent);
+    } else if (isAgent) {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('agent-token') : null;
+      if (token) {
+        fetch('/api/agent/profile', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data?.agent) setCurrentAgent(data.agent);
+          })
+          .catch(() => {});
+      }
+    }
+  }, [passedAgent, isAgent]);
+
+  const rawSpecs = currentAgent?.specializations || [];
+  const agentSpecs = useMemo(() => {
+    if (!isAgent) return ['payments', 'labor', 'vendor', 'construction'];
+    return Array.isArray(rawSpecs) ? rawSpecs : (typeof rawSpecs === 'string' ? JSON.parse(rawSpecs || '[]') : []);
+  }, [isAgent, rawSpecs]);
+
+  const hasAgentPayment = !isAgent || agentSpecs.includes('payments');
+  const hasAgentLabor = !isAgent || agentSpecs.includes('labor');
+  const hasAgentVendor = !isAgent || agentSpecs.includes('vendor');
+  const hasAgentConstruction = !isAgent || agentSpecs.includes('construction');
+
+  const allowedTabs = useMemo(() => {
+    if (!isAgent) {
+      return ['materials', 'vendors', 'labor', 'attendance', 'payments', 'expenses', 'party_payments'];
+    }
+    const tabs = [];
+    if (agentSpecs.includes('construction')) {
+      tabs.push('materials', 'expenses');
+    }
+    if (agentSpecs.includes('vendor')) {
+      tabs.push('vendors');
+    }
+    if (agentSpecs.includes('labor')) {
+      tabs.push('labor', 'attendance');
+    }
+    if (agentSpecs.includes('payments')) {
+      tabs.push('payments', 'party_payments');
+    }
+    return tabs;
+  }, [isAgent, agentSpecs]);
 
   // Parties state
   const [parties, setParties] = useState([]);
@@ -112,7 +164,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [project, setProject] = useState(null);
   const [projectForm, setProjectForm] = useState(projectBlank);
   // 'vendors' | 'attendance' | 'materials' | 'expenses' | 'payments' | 'party_payments'
-  const [projectTab, setProjectTab] = useState('materials');
+  const [projectTab, setProjectTab] = useState(() => (allowedTabs.length > 0 ? allowedTabs[0] : 'materials'));
+
+  useEffect(() => {
+    if (isAgent && allowedTabs.length > 0 && !allowedTabs.includes(projectTab)) {
+      setProjectTab(allowedTabs[0]);
+    }
+  }, [isAgent, allowedTabs, projectTab]);
 
   // Phase 1: Party payments
   const [partyPayments, setPartyPayments] = useState([]);
@@ -1191,9 +1249,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     >
                       Edit
                     </button>
-                    <button className="danger" onClick={() => del('party', p.id)}>
-                      Delete
-                    </button>
+                    {!isAgent && (
+                      <button className="danger" onClick={() => del('party', p.id)}>
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -1233,78 +1293,94 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
       {screen === 'projects' && (
         <>
-          <div className="bar" style={{ marginBottom: 12 }}>
-            <input
-              placeholder="Search projects..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{ maxWidth: 300 }}
-            />
-          </div>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Project</th>
-                <th>Contract Value</th>
-                <th>Received</th>
-                <th>Pending</th>
-                <th>Status</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {allProjectsList.map((p) => (
-                <tr key={p.id}>
-                  <td>
-                    <b>{p.name}</b>
-                    <br />
-                    <span style={{ fontSize: 11, color: '#64748b' }}>{p.site_address || 'No site address'}</span>
-                  </td>
-                  <td>{INR(p.contract_value)}</td>
-                  <td style={{ color: '#16a34a' }}>{INR(p.received)}</td>
-                  <td style={{ color: '#dc2626' }}>{INR(p.pending)}</td>
-                  <td>
-                    <span className={`badge ${p.status === 'completed' ? 'badge-completed' : 'badge-active'}`}>
-                      {p.status}
-                    </span>
-                  </td>
-                  <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                    <button onClick={() => showProject(p.id)}>Overview</button>
-                  </td>
-                </tr>
-              ))}
-              {allProjectsList.length === 0 && (
-                <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                    No assigned projects found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-
-          <div className="bar" style={{ marginTop: 14, justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 12, color: '#64748b' }}>
-              Page {pagination.page} / {pagination.totalPages || 1}
-            </span>
-            <div style={{ display: 'flex', gap: 6 }}>
-              <button
-                className="muted"
-                disabled={pagination.page <= 1}
-                onClick={() => setPagination((p) => ({ ...p, page: p.page - 1 }))}
-              >
-                Previous
-              </button>
-              <button
-                className="muted"
-                disabled={pagination.page >= pagination.totalPages}
-                onClick={() => setPagination((p) => ({ ...p, page: p.page + 1 }))}
-              >
-                Next
-              </button>
+          {isAgent && agentSpecs.length === 0 ? (
+            <div className="card" style={{ textAlign: 'center', padding: '3.5rem 1.5rem', color: '#64748b' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🔒</div>
+              <h3 style={{ margin: '0 0 8px', color: '#0f172a', fontSize: '18px' }}>No access assigned. Contact admin.</h3>
+              <p style={{ margin: 0, fontSize: '13px' }}>Your account does not have any active project specializations. Please contact your administrator to grant access.</p>
             </div>
-          </div>
+          ) : isAgent && allProjectsList.length === 0 ? (
+            <div className="card" style={{ textAlign: 'center', padding: '3.5rem 1.5rem', color: '#64748b' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>📋</div>
+              <h3 style={{ margin: '0 0 8px', color: '#0f172a', fontSize: '18px' }}>No access assigned. Contact admin.</h3>
+              <p style={{ margin: 0, fontSize: '13px' }}>You have not been assigned to any projects yet. Please contact your administrator.</p>
+            </div>
+          ) : (
+            <>
+              <div className="bar" style={{ marginBottom: 12 }}>
+                <input
+                  placeholder="Search projects..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  style={{ maxWidth: 300 }}
+                />
+              </div>
+
+              <table>
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    {hasAgentPayment && <th>Contract Value</th>}
+                    {hasAgentPayment && <th>Received</th>}
+                    {hasAgentPayment && <th>Pending</th>}
+                    <th>Status</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allProjectsList.map((p) => (
+                    <tr key={p.id}>
+                      <td>
+                        <b>{p.name}</b>
+                        <br />
+                        <span style={{ fontSize: 11, color: '#64748b' }}>{p.site_address || 'No site address'}</span>
+                      </td>
+                      {hasAgentPayment && <td>{INR(p.contract_value)}</td>}
+                      {hasAgentPayment && <td style={{ color: '#16a34a' }}>{INR(p.received)}</td>}
+                      {hasAgentPayment && <td style={{ color: '#dc2626' }}>{INR(p.pending)}</td>}
+                      <td>
+                        <span className={`badge ${p.status === 'completed' ? 'badge-completed' : 'badge-active'}`}>
+                          {p.status}
+                        </span>
+                      </td>
+                      <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                        <button onClick={() => showProject(p.id)}>Overview</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {allProjectsList.length === 0 && (
+                    <tr>
+                      <td colSpan={hasAgentPayment ? 6 : 3} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                        No assigned projects found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+
+              <div className="bar" style={{ marginTop: 14, justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 12, color: '#64748b' }}>
+                  Page {pagination.page} / {pagination.totalPages || 1}
+                </span>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button
+                    className="muted"
+                    disabled={pagination.page <= 1}
+                    onClick={() => setPagination((p) => ({ ...p, page: p.page - 1 }))}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    className="muted"
+                    disabled={pagination.page >= pagination.totalPages}
+                    onClick={() => setPagination((p) => ({ ...p, page: p.page + 1 }))}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </>
       )}
 
@@ -1497,204 +1573,238 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       {/* ── 5. PROJECT OVERVIEW & ALL PHASE 1, 2, 3 TABS ────────────────────── */}
       {screen === 'project' && project && (
         <>
-          {/* Project Summary Cards */}
-          <div className="card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: 20 }}>{project.name}</h3>
-                <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 13 }}>
-                  Party: <b>{project.party_name}</b> &bull; Site: {project.site_address || 'No address'} &bull; Status: <b>{project.status}</b> &bull; Running: <b>{project.days_running || 0} days</b>
-                </p>
-              </div>
-              <div style={{ display: 'flex', gap: 6 }}>
-                {!isSupervisor && (
-                  <button onClick={() => setAssignAgentModal(true)}>+ Assign Agent</button>
-                )}
-                <button
-                  className="muted"
-                  onClick={() => {
-                    setProjectForm(project);
-                    setScreen('projectForm');
-                  }}
-                >
-                  Edit Project
-                </button>
-              </div>
+          {isAgent && agentSpecs.length === 0 ? (
+            <div className="card" style={{ textAlign: 'center', padding: '3.5rem 1.5rem', color: '#64748b' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🔒</div>
+              <h3 style={{ margin: '0 0 8px', color: '#0f172a', fontSize: '18px' }}>No access assigned. Contact admin.</h3>
+              <p style={{ margin: 0, fontSize: '13px' }}>Your account does not have any active project specializations. Please contact your administrator to grant access.</p>
             </div>
-
-            {/* Assigned Agents */}
-            {projectAgents.length > 0 && (
-              <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600, alignSelf: 'center' }}>Agents:</span>
-                {projectAgents.map((a) => (
-                  <span key={a.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 20, padding: '2px 10px', fontSize: 12, fontWeight: 600, color: '#1d4ed8' }}>
-                    {a.name}
-                    {!isSupervisor && (
-                      <button onClick={() => removeAgent(a.id)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: 13, lineHeight: 1, padding: '0 2px' }}>&times;</button>
-                    )}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Assign Agent Modal */}
-            {assignAgentModal && (
-              <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ background: '#fff', borderRadius: 10, padding: '1.5rem', width: 360, boxShadow: '0 8px 30px rgba(0,0,0,0.15)' }}>
-                  <h4 style={{ margin: '0 0 12px' }}>Assign Agent to Project</h4>
-                  <select
-                    value={assigningAgentId}
-                    onChange={(e) => setAssigningAgentId(e.target.value)}
-                    style={{ width: '100%', padding: '8px', borderRadius: 6, border: '1px solid #e2e8f0', marginBottom: 12 }}
-                  >
-                    <option value="">-- Select Agent --</option>
-                    {allAgentsList
-                      .filter((a) => !projectAgents.find((pa) => pa.id === a.id))
-                      .map((a) => (
-                        <option key={a.id} value={a.id}>{a.name} ({a.city || 'No city'})</option>
-                      ))}
-                  </select>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button onClick={assignAgent} disabled={!assigningAgentId}>Assign</button>
-                    <button className="muted" onClick={() => { setAssignAgentModal(false); setAssigningAgentId(''); }}>Cancel</button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Financial Overview Cards */}
-            <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))' }}>
-              <div className="stat">
-                <small>Contract Value</small>
-                <b>{INR(project.contract_value)}</b>
-              </div>
-              <div className="stat">
-                <small>Received from Party</small>
-                <b style={{ color: '#16a34a' }}>{INR(project.received)}</b>
-              </div>
-              <div className="stat">
-                <small>Pending from Party</small>
-                <b style={{ color: '#dc2626' }}>{INR(project.pending)}</b>
-              </div>
-              {!isSupervisor && (
-                <>
-                  <div className="stat">
-                    <small>Total Labour Cost</small>
-                    <b>{INR(project.total_labour_cost)}</b>
-                    <span style={{ fontSize: 10, color: '#64748b', display: 'block', marginTop: 2 }}>
-                      Vendor: {INR(project.vendor_labour_cost ?? (Number(project.daily_labour_cost || 0) + Number(project.contract_labour_cost || 0)))} | Labor: {INR(project.individual_labour_cost || 0)}
-                    </span>
-                  </div>
-                  <div className="stat">
-                    <small>Total Material Cost</small>
-                    <b style={{ color: '#0369a1' }}>{INR(project.total_material_cost)}</b>
-                    <span style={{ fontSize: 10, color: '#64748b', display: 'block', marginTop: 2 }}>
-                      Dir: {INR(project.direct_material_cost)} | Ven: {INR(project.total_vendor_material_cost)}
-                    </span>
-                  </div>
-                  <div className="stat">
-                    <small>Other Expenses</small>
-                    <b>{INR(project.total_other_expenses)}</b>
-                  </div>
-                  <div className="stat">
-                    <small>Total Project Expense</small>
-                    <b style={{ color: '#b45309' }}>{INR(project.total_expense)}</b>
-                  </div>
-                  <div className="stat">
-                    <small>Paid to Vendors</small>
-                    <b style={{ color: '#ea580c' }}>{INR(project.total_paid_to_vendors)}</b>
-                  </div>
-                  <div className="stat" style={{ background: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#f0fdf4' : '#fef2f2', border: `1px solid ${Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#bbf7d0' : '#fecaca'}` }}>
-                    <small style={{ color: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#166534' : '#991b1b' }}>Profit So Far</small>
-                    <b style={{ color: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#16a34a' : '#dc2626' }}>
-                      {INR(project.profit_or_loss ?? project.profit_so_far)}
-                    </b>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Subtabs Navigation */}
-          {!selectedVendor && !selectedLabor ? (
+          ) : (
             <>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
-                {/* 1. PEOPLE */}
-                <div>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
-                    People (Manpower & Payroll)
-                  </div>
-                  <div className="subtabs" style={{ marginBottom: 0 }}>
-                    <button
-                      className={projectTab === 'vendors' ? 'active' : ''}
-                      onClick={() => setProjectTab('vendors')}
-                    >
-                      👷 Vendors ({projectVendors.length})
-                    </button>
-                    <button
-                      className={projectTab === 'labor' ? 'active' : ''}
-                      onClick={() => {
-                        setProjectTab('labor');
-                        setSelectedLabor(null);
-                      }}
-                    >
-                      🦺 Labor ({projectLabors.length})
-                    </button>
-                    <button
-                      className={projectTab === 'attendance' ? 'active' : ''}
-                      onClick={() => setProjectTab('attendance')}
-                    >
-                      📅 Daily Attendance
-                    </button>
-                    {!isSupervisor && (
-                      <button
-                        className={projectTab === 'payments' ? 'active' : ''}
-                        onClick={() => setProjectTab('payments')}
-                      >
-                        💸 Vendor Payments
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* 2. CONSTRUCTION */}
-                <div>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
-                    Construction (Materials & Site Expenses)
-                  </div>
-                  <div className="subtabs" style={{ marginBottom: 0 }}>
-                    <button
-                      className={projectTab === 'materials' ? 'active' : ''}
-                      onClick={() => setProjectTab('materials')}
-                    >
-                      📦 Materials &amp; Stock
-                    </button>
-                    <button
-                      className={projectTab === 'expenses' ? 'active' : ''}
-                      onClick={() => setProjectTab('expenses')}
-                    >
-                      🧾 Other Expenses
-                    </button>
-                  </div>
-                </div>
-
-                {/* 3. CLIENT */}
-                {!isSupervisor && (
+              {/* Project Summary Cards */}
+              <div className="card">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
                   <div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
-                      Client (Money In)
-                    </div>
-                    <div className="subtabs" style={{ marginBottom: 0 }}>
+                    <h3 style={{ margin: 0, fontSize: 20 }}>{project.name}</h3>
+                    <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 13 }}>
+                      Party: <b>{project.party_name}</b> &bull; Site: {project.site_address || 'No address'} &bull; Status: <b>{project.status}</b> &bull; Running: <b>{project.days_running || 0} days</b>
+                    </p>
+                  </div>
+                  {!isAgent && (
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      {!isSupervisor && (
+                        <button onClick={() => setAssignAgentModal(true)}>+ Assign Agent</button>
+                      )}
                       <button
-                        className={projectTab === 'party_payments' ? 'active' : ''}
-                        onClick={() => setProjectTab('party_payments')}
+                        className="muted"
+                        onClick={() => {
+                          setProjectForm(project);
+                          setScreen('projectForm');
+                        }}
                       >
-                        🏦 Party Payments ({partyPayments.length})
+                        Edit Project
                       </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Assigned Agents */}
+                {projectAgents.length > 0 && (
+                  <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600, alignSelf: 'center' }}>Agents:</span>
+                    {projectAgents.map((a) => (
+                      <span key={a.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 20, padding: '2px 10px', fontSize: 12, fontWeight: 600, color: '#1d4ed8' }}>
+                        {a.name}
+                        {!isSupervisor && !isAgent && (
+                          <button onClick={() => removeAgent(a.id)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: 13, lineHeight: 1, padding: '0 2px' }}>&times;</button>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Assign Agent Modal */}
+                {assignAgentModal && (
+                  <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ background: '#fff', borderRadius: 10, padding: '1.5rem', width: 360, boxShadow: '0 8px 30px rgba(0,0,0,0.15)' }}>
+                      <h4 style={{ margin: '0 0 12px' }}>Assign Agent to Project</h4>
+                      <select
+                        value={assigningAgentId}
+                        onChange={(e) => setAssigningAgentId(e.target.value)}
+                        style={{ width: '100%', padding: '8px', borderRadius: 6, border: '1px solid #e2e8f0', marginBottom: 12 }}
+                      >
+                        <option value="">-- Select Agent --</option>
+                        {allAgentsList
+                          .filter((a) => !projectAgents.find((pa) => pa.id === a.id))
+                          .map((a) => (
+                            <option key={a.id} value={a.id}>{a.name} ({a.city || 'No city'})</option>
+                          ))}
+                      </select>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button onClick={assignAgent} disabled={!assigningAgentId}>Assign</button>
+                        <button className="muted" onClick={() => { setAssignAgentModal(false); setAssigningAgentId(''); }}>Cancel</button>
+                      </div>
                     </div>
                   </div>
                 )}
+
+                {/* Financial Overview Cards */}
+                <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))' }}>
+                  {hasAgentPayment && (
+                    <>
+                      <div className="stat">
+                        <small>Contract Value</small>
+                        <b>{INR(project.contract_value)}</b>
+                      </div>
+                      <div className="stat">
+                        <small>Received from Party</small>
+                        <b style={{ color: '#16a34a' }}>{INR(project.received)}</b>
+                      </div>
+                      <div className="stat">
+                        <small>Pending from Party</small>
+                        <b style={{ color: '#dc2626' }}>{INR(project.pending)}</b>
+                      </div>
+                    </>
+                  )}
+                  {!isSupervisor && (
+                    <>
+                      {hasAgentLabor && (
+                        <div className="stat">
+                          <small>Total Labour Cost</small>
+                          <b>{INR(project.total_labour_cost)}</b>
+                          <span style={{ fontSize: 10, color: '#64748b', display: 'block', marginTop: 2 }}>
+                            Vendor: {INR(project.vendor_labour_cost ?? (Number(project.daily_labour_cost || 0) + Number(project.contract_labour_cost || 0)))} | Labor: {INR(project.individual_labour_cost || 0)}
+                          </span>
+                        </div>
+                      )}
+                      {hasAgentConstruction && (
+                        <>
+                          <div className="stat">
+                            <small>Total Material Cost</small>
+                            <b style={{ color: '#0369a1' }}>{INR(project.total_material_cost)}</b>
+                            <span style={{ fontSize: 10, color: '#64748b', display: 'block', marginTop: 2 }}>
+                              Dir: {INR(project.direct_material_cost)} | Ven: {INR(project.total_vendor_material_cost)}
+                            </span>
+                          </div>
+                          <div className="stat">
+                            <small>Other Expenses</small>
+                            <b>{INR(project.total_other_expenses)}</b>
+                          </div>
+                        </>
+                      )}
+                      {hasAgentPayment && (
+                        <>
+                          <div className="stat">
+                            <small>Total Project Expense</small>
+                            <b style={{ color: '#b45309' }}>{INR(project.total_expense)}</b>
+                          </div>
+                          <div className="stat">
+                            <small>Paid to Vendors</small>
+                            <b style={{ color: '#ea580c' }}>{INR(project.total_paid_to_vendors)}</b>
+                          </div>
+                          <div className="stat" style={{ background: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#f0fdf4' : '#fef2f2', border: `1px solid ${Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#bbf7d0' : '#fecaca'}` }}>
+                            <small style={{ color: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#166534' : '#991b1b' }}>Profit So Far</small>
+                            <b style={{ color: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#16a34a' : '#dc2626' }}>
+                              {INR(project.profit_or_loss ?? project.profit_so_far)}
+                            </b>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
+
+              {/* Subtabs Navigation */}
+              {!selectedVendor && !selectedLabor ? (
+                <>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+                    {/* 1. PEOPLE */}
+                    {(hasAgentVendor || hasAgentLabor || (hasAgentPayment && !isSupervisor)) && (
+                      <div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
+                          People (Manpower & Payroll)
+                        </div>
+                        <div className="subtabs" style={{ marginBottom: 0 }}>
+                          {hasAgentVendor && (
+                            <button
+                              className={projectTab === 'vendors' ? 'active' : ''}
+                              onClick={() => setProjectTab('vendors')}
+                            >
+                              👷 Vendors ({projectVendors.length})
+                            </button>
+                          )}
+                          {hasAgentLabor && (
+                            <button
+                              className={projectTab === 'labor' ? 'active' : ''}
+                              onClick={() => {
+                                setProjectTab('labor');
+                                setSelectedLabor(null);
+                              }}
+                            >
+                              🦺 Labor ({projectLabors.length})
+                            </button>
+                          )}
+                          {hasAgentLabor && (
+                            <button
+                              className={projectTab === 'attendance' ? 'active' : ''}
+                              onClick={() => setProjectTab('attendance')}
+                            >
+                              📅 Daily Attendance
+                            </button>
+                          )}
+                          {!isSupervisor && hasAgentPayment && (
+                            <button
+                              className={projectTab === 'payments' ? 'active' : ''}
+                              onClick={() => setProjectTab('payments')}
+                            >
+                              💸 Vendor Payments
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 2. CONSTRUCTION */}
+                    {hasAgentConstruction && (
+                      <div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
+                          Construction (Materials & Site Expenses)
+                        </div>
+                        <div className="subtabs" style={{ marginBottom: 0 }}>
+                          <button
+                            className={projectTab === 'materials' ? 'active' : ''}
+                            onClick={() => setProjectTab('materials')}
+                          >
+                            📦 Materials &amp; Stock
+                          </button>
+                          <button
+                            className={projectTab === 'expenses' ? 'active' : ''}
+                            onClick={() => setProjectTab('expenses')}
+                          >
+                            🧾 Other Expenses
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 3. CLIENT */}
+                    {!isSupervisor && hasAgentPayment && (
+                      <div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
+                          Client (Money In)
+                        </div>
+                        <div className="subtabs" style={{ marginBottom: 0 }}>
+                          <button
+                            className={projectTab === 'party_payments' ? 'active' : ''}
+                            onClick={() => setProjectTab('party_payments')}
+                          >
+                            🏦 Party Payments ({partyPayments.length})
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
               {/* ── TAB: MATERIALS & STOCK (PHASE 3) ────────────────────────── */}
               {projectTab === 'materials' && (
@@ -1930,9 +2040,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     Edit
                                   </button>
-                                  <button className="danger" onClick={() => del('received', r.id)}>
-                                    Delete
-                                  </button>
+                                  {!isAgent && (
+                                    <button className="danger" onClick={() => del('received', r.id)}>
+                                      Delete
+                                    </button>
+                                  )}
                                 </td>
                               </tr>
                             ))}
@@ -2018,9 +2130,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     Edit
                                   </button>
-                                  <button className="danger" onClick={() => del('used', r.id)}>
-                                    Delete
-                                  </button>
+                                  {!isAgent && (
+                                    <button className="danger" onClick={() => del('used', r.id)}>
+                                      Delete
+                                    </button>
+                                  )}
                                 </td>
                               </tr>
                             ))}
@@ -2091,9 +2205,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               >
                                 Edit
                               </button>
-                              <button className="danger" onClick={() => del('adjustment', r.id)}>
-                                Delete
-                              </button>
+                              {!isAgent && (
+                                <button className="danger" onClick={() => del('adjustment', r.id)}>
+                                  Delete
+                                </button>
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -2184,9 +2300,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               >
                                 Edit
                               </button>
-                              <button className="danger" onClick={() => del('expense', r.id)}>
-                                Delete
-                              </button>
+                              {!isAgent && (
+                                <button className="danger" onClick={() => del('expense', r.id)}>
+                                  Delete
+                                </button>
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -2217,10 +2335,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         <th>Trade</th>
                         <th>Work Description</th>
                         <th>Pay Type</th>
-                        <th>Rate / Contract</th>
-                        <th>Total Earned</th>
-                        {!isSupervisor && <th>Total Paid</th>}
-                        {!isSupervisor && <th>Balance Due</th>}
+                        {(!isAgent || hasAgentPayment) && <th>Rate / Contract</th>}
+                        {(!isAgent || hasAgentPayment) && <th>Total Earned</th>}
+                        {!isSupervisor && (!isAgent || hasAgentPayment) && <th>Total Paid</th>}
+                        {!isSupervisor && (!isAgent || hasAgentPayment) && <th>Balance Due</th>}
                         <th>Status</th>
                         <th style={{ textAlign: 'right' }}>Actions</th>
                       </tr>
@@ -2242,12 +2360,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 {pv.pay_type === 'daily_wage' ? 'Daily Wage' : 'Contract'}
                               </span>
                             </td>
-                            <td>
-                              {pv.pay_type === 'daily_wage' ? `${INR(pv.daily_rate)}/day` : INR(pv.contract_amount)}
-                            </td>
-                            <td style={{ fontWeight: 600 }}>{INR(pv.total_earned)}</td>
-                            {!isSupervisor && <td style={{ color: '#16a34a' }}>{INR(pv.total_paid)}</td>}
-                            {!isSupervisor && (
+                            {(!isAgent || hasAgentPayment) && (
+                              <td>
+                                {pv.pay_type === 'daily_wage' ? `${INR(pv.daily_rate)}/day` : INR(pv.contract_amount)}
+                              </td>
+                            )}
+                            {(!isAgent || hasAgentPayment) && (
+                              <td style={{ fontWeight: 600 }}>{INR(pv.total_earned)}</td>
+                            )}
+                            {!isSupervisor && (!isAgent || hasAgentPayment) && <td style={{ color: '#16a34a' }}>{INR(pv.total_paid)}</td>}
+                            {!isSupervisor && (!isAgent || hasAgentPayment) && (
                               <td>
                                 <b style={{ color: isOverpaid ? '#dc2626' : '#0f172a' }}>
                                   {INR(pv.balance_due)}
@@ -2272,7 +2394,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       })}
                       {projectVendors.length === 0 && (
                         <tr>
-                          <td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                          <td colSpan={(!isAgent || hasAgentPayment) ? (isSupervisor ? 8 : 10) : 6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
                             No vendors assigned to this project yet. Click &ldquo;+ Add Vendor to Project&rdquo; above.
                           </td>
                         </tr>
@@ -2536,9 +2658,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
                           </td>
                           <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                            <button className="danger" onClick={() => del('vendorPayment', p.id)}>
-                              Delete
-                            </button>
+                            {!isAgent && (
+                              <button className="danger" onClick={() => del('vendorPayment', p.id)}>
+                                Delete
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -2605,9 +2729,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
                           </td>
                           <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                            <button className="danger" onClick={() => del('partyPayment', p.id)}>
-                              Delete
-                            </button>
+                            {!isAgent && (
+                              <button className="danger" onClick={() => del('partyPayment', p.id)}>
+                                Delete
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -2780,9 +2906,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 >
                                   Edit
                                 </button>
-                                <button className="danger" onClick={() => del('labor', lab.id)}>
-                                  Delete
-                                </button>
+                                {!isAgent && (
+                                  <button className="danger" onClick={() => del('labor', lab.id)}>
+                                    Delete
+                                  </button>
+                                )}
                               </td>
                             </tr>
                           );
@@ -2985,9 +3113,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 >
                                   Edit
                                 </button>
-                                <button className="danger" onClick={() => del('laborPayment', p.id)}>
-                                  Delete
-                                </button>
+                                {!isAgent && (
+                                  <button className="danger" onClick={() => del('laborPayment', p.id)}>
+                                    Delete
+                                  </button>
+                                )}
                               </td>
                             </tr>
                           ))}
@@ -3024,26 +3154,28 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 13 }}>
                   Trade: <b>{selectedVendor.trade}</b> &bull; Work: {selectedVendor.work_description} &bull; Type: <b>{selectedVendor.pay_type}</b>
                 </p>
-                <div className="stats" style={{ marginTop: 12 }}>
-                  <div className="stat">
-                    <small>Total Earned</small>
-                    <b>{INR(selectedVendor.total_earned)}</b>
+                {(!isAgent || hasAgentPayment) && (
+                  <div className="stats" style={{ marginTop: 12 }}>
+                    <div className="stat">
+                      <small>Total Earned</small>
+                      <b>{INR(selectedVendor.total_earned)}</b>
+                    </div>
+                    {!isSupervisor && (
+                      <>
+                        <div className="stat">
+                          <small>Total Paid</small>
+                          <b style={{ color: '#16a34a' }}>{INR(selectedVendor.total_paid)}</b>
+                        </div>
+                        <div className="stat">
+                          <small>Balance Due</small>
+                          <b style={{ color: selectedVendor.balance_due < 0 ? '#dc2626' : '#0f172a' }}>
+                            {INR(selectedVendor.balance_due)}
+                          </b>
+                        </div>
+                      </>
+                    )}
                   </div>
-                  {!isSupervisor && (
-                    <>
-                      <div className="stat">
-                        <small>Total Paid</small>
-                        <b style={{ color: '#16a34a' }}>{INR(selectedVendor.total_paid)}</b>
-                      </div>
-                      <div className="stat">
-                        <small>Balance Due</small>
-                        <b style={{ color: selectedVendor.balance_due < 0 ? '#dc2626' : '#0f172a' }}>
-                          {INR(selectedVendor.balance_due)}
-                        </b>
-                      </div>
-                    </>
-                  )}
-                </div>
+                )}
               </div>
 
               {/* Monthly Attendance Calendar */}
@@ -3152,7 +3284,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               </div>
 
               {/* Vendor Payment History */}
-              {!isSupervisor && (
+              {!isSupervisor && (!isAgent || hasAgentPayment) && (
                 <div className="card">
                   <h4 style={{ margin: '0 0 12px', fontSize: 15 }}>Payment History</h4>
                   <table>
@@ -3353,12 +3485,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
                           </td>
                           <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                            <button
-                              className="danger"
-                              onClick={() => del('laborPayment', p.id)}
-                            >
-                              Delete
-                            </button>
+                            {!isAgent && (
+                              <button
+                                className="danger"
+                                onClick={() => del('laborPayment', p.id)}
+                              >
+                                Delete
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -4011,6 +4145,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </table>
               </div>
             </div>
+          )}
+            </>
           )}
         </>
       )}

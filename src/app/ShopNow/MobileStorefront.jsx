@@ -34,6 +34,7 @@ import {
   Zap,
 } from "lucide-react";
 import { displayUnit, getProductImage, ShopImage } from "./Storefront";
+import AutoSwipeGallery from "./AutoSwipeGallery";
 import { getCartStep } from "@/lib/cart-step";
 import { CATEGORY_NAV_TREE } from "./categoryNavTree";
 import GlobalSearch from "../components/GlobalSearch";
@@ -886,19 +887,25 @@ export default function MobileStorefront({
                               onClick={() => navigateToCategory(cat)}
                               aria-label={`Browse ${cat.name}`}
                             >
-                              <div className="mobile-category-square">
-                                {cat.image ? (
-                                  <ShopImage
-                                    src={cat.image}
-                                    alt={cat.name}
-                                    fill
-                                    sizes="80px"
-                                    className="mobile-category-square-img"
-                                    unoptimized
-                                  />
-                                ) : (
-                                  <Icon size={26} className="text-[#12283F]" />
-                                )}
+                              <div className="mobile-category-circle">
+                                {(() => {
+                                  const catImgs = Array.from(new Set([
+                                    cat.image,
+                                    ...(Array.isArray(cat.images) ? cat.images : [])
+                                  ].filter(Boolean)));
+                                  if (catImgs.length > 0) {
+                                    return (
+                                      <AutoSwipeGallery
+                                        images={catImgs}
+                                        alt={cat.name}
+                                        delay={3000}
+                                        showDots={false}
+                                        style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden' }}
+                                      />
+                                    );
+                                  }
+                                  return <Icon size={26} className="text-[#12283F]" />;
+                                })()}
                               </div>
                               <span className="mobile-category-label">{cat.name}</span>
                             </button>
@@ -1045,6 +1052,42 @@ export default function MobileStorefront({
                   })}
                 </div>
               )}
+
+              {/* Subcategories visual showcase in mobile listing */}
+              {(() => {
+                const subcats = Array.isArray(activeCategory?.subcategories) ? activeCategory.subcategories : [];
+                if (!subcats.length) return null;
+                return (
+                  <div className="mobile-subcategories-showcase">
+                    {subcats.map((sub, idx) => {
+                      const sName = typeof sub === 'object' && sub !== null ? sub.name : sub;
+                      const sPrice = typeof sub === 'object' && sub !== null ? sub.price : '';
+                      const sImgs = typeof sub === 'object' && sub !== null
+                        ? Array.from(new Set([sub.image, ...(Array.isArray(sub.images) ? sub.images : [])].filter(Boolean)))
+                        : [];
+                      return (
+                        <div
+                          key={`${sName}-${idx}`}
+                          className="mobile-subcat-card"
+                          onClick={() => setActiveFilterChip(sName)}
+                        >
+                          <div className="mobile-subcat-card-img-wrap">
+                            {sImgs.length > 0 ? (
+                              <AutoSwipeGallery images={sImgs} alt={sName} delay={3200} showDots={false} />
+                            ) : (
+                              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Package size={20} className="text-gray-400" />
+                              </div>
+                            )}
+                          </div>
+                          <span className="mobile-subcat-card-name">{sName}</span>
+                          {sPrice && <span className="mobile-subcat-card-price">{sPrice.startsWith('₹') ? sPrice : `₹${sPrice}`}</span>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
 
               {/* Product cards list */}
               {categoryProducts.length === 0 ? (
@@ -1298,19 +1341,6 @@ export default function MobileStorefront({
       {/* ─────────────────────────────────────────────────────────────
           5. FIXED BOTTOM NAVIGATION (MOBILE ONLY)
          ───────────────────────────────────────────────────────────── */}
-      {/* Floating "Get Quote" Pill Button above Nav */}
-      {(mobileView === "home" || mobileView === "listing") && (
-        <button
-          type="button"
-          className="mobile-floating-quote-fab"
-          onClick={() => onQuote(activeCategory || null)}
-          aria-label="Get Instant Quote"
-        >
-          <Zap size={16} className="text-amber-300" />
-          <span>Get Quote</span>
-        </button>
-      )}
-
       <nav className="mobile-bottom-navbar" aria-label="Mobile Navigation">
         <button
           type="button"
@@ -2227,14 +2257,6 @@ function MobileProductCard({
                 <Plus size={14} /> ADD
               </button>
             )}
-
-            <button
-              type="button"
-              className="mobile-quote-pill-btn"
-              onClick={() => onQuote(product)}
-            >
-              Get Quote
-            </button>
           </div>
         </div>
       </div>

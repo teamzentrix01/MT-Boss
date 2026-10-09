@@ -1,17 +1,29 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
+import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 export async function PATCH(req, { params }) {
-  const a = await requirePmAccess(req);
-  if (!a) return unauthorized();
-
   try {
     await ensureProjectManagementSchema();
-    const b = await req.json();
     const id = Number((await params).id);
+
+    const oldSupplyRes = await pool.query(
+      `SELECT ms.*, pv.project_id
+       FROM pm_vendor_material_supply ms
+       JOIN pm_project_vendors pv ON pv.id = ms.project_vendor_id
+       WHERE ms.id = $1`,
+      [id]
+    );
+    const old = oldSupplyRes.rows[0];
+    if (!old || old.is_deleted) {
+      return NextResponse.json({ success: false, error: 'Supply not found' }, { status: 404 });
+    }
+
+    const auth = await assertAgentAccess(req, old.project_id, ['construction', 'vendor']);
+    if (!auth.allowed) return auth.response;
+
+    const b = await req.json();
     const q = Number(b.quantity);
     const rate = Number(b.rate);
     const matId = b.material_id ? Number(b.material_id) : null;
@@ -30,9 +42,6 @@ export async function PATCH(req, { params }) {
     const c = await pool.connect();
     try {
       await c.query('BEGIN');
-      const old = (await c.query(`SELECT * FROM pm_vendor_material_supply WHERE id = $1 FOR UPDATE`, [id])).rows[0];
-      if (!old || old.is_deleted) throw new Error('Supply not found');
-
       const amount = q * rate;
       const r = await c.query(
         `UPDATE pm_vendor_material_supply
@@ -56,14 +65,12 @@ export async function PATCH(req, { params }) {
             [matId, q, rate, amount, b.supply_date, b.note || null, id]
           );
         } else {
-          // Unlinked material_id -> soft-delete received row
           await c.query(
             `UPDATE pm_material_received SET is_deleted = TRUE, updated_at = NOW() WHERE vendor_supply_id = $1`,
             [id]
           );
         }
       } else if (matId) {
-        // Create new linked row if previously unlinked
         const pvInfo = await c.query(
           `SELECT pv.project_id, pv.vendor_id, v.name AS vendor_name
            FROM pm_project_vendors pv
@@ -81,13 +88,13 @@ export async function PATCH(req, { params }) {
             [
               project_id, matId, vendor_name, vendor_id,
               id, q, rate, amount, b.supply_date,
-              b.note || 'Vendor supplied material', actorFromAdmin(a)
+              b.note || 'Vendor supplied material', actorFromAdmin(auth.user)
             ]
           );
         }
       }
 
-      await writePmPhase2Audit(c, 'pm_vendor_material_supply', id, 'updated', actorFromAdmin(a), old, updatedRow);
+      await writePmPhase2Audit(c, 'pm_vendor_material_supply', id, 'updated', actorFromAdmin(auth.user), old, updatedRow);
       await c.query('COMMIT');
       return NextResponse.json({ success: true, data: updatedRow });
     } catch (e) {
@@ -102,8 +109,14 @@ export async function PATCH(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  const a = await requirePmAccess(req);
-  if (!a) return unauthorized();
+  const admin = requireRole(req, 'admin');
+  if (!admin) {
+    const auth = await assertAgentAccess(req, null, null);
+    if (auth.role === 'agent') {
+      return NextResponse.json({ success: false, error: 'Unauthorized: Agents cannot delete records (admin only)' }, { status: 403 });
+    }
+    return unauthorized();
+  }
 
   try {
     await ensureProjectManagementSchema();
@@ -125,7 +138,7 @@ export async function DELETE(req, { params }) {
         [id]
       );
 
-      await writePmPhase2Audit(c, 'pm_vendor_material_supply', id, 'soft_deleted', actorFromAdmin(a), old, r.rows[0]);
+      await writePmPhase2Audit(c, 'pm_vendor_material_supply', id, 'soft_deleted', actorFromAdmin(admin), old, r.rows[0]);
       await c.query('COMMIT');
       return NextResponse.json({ success: true });
     } catch (e) {

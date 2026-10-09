@@ -1,11 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
+import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 export async function GET(req) {
-  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementSchema();
     const s = new URL(req.url).searchParams;
@@ -15,6 +12,14 @@ export async function GET(req) {
     if (!Number.isInteger(pv)) {
       return NextResponse.json({ success: false, error: 'projectVendorId is required' }, { status: 400 });
     }
+
+    const pvInfo = await pool.query('SELECT project_id FROM pm_project_vendors WHERE id = $1', [pv]);
+    if (!pvInfo.rows[0]) {
+      return NextResponse.json({ success: false, error: 'Project vendor not found' }, { status: 404 });
+    }
+
+    const auth = await assertAgentAccess(req, pvInfo.rows[0].project_id, ['construction', 'vendor']);
+    if (!auth.allowed) return auth.response;
 
     const r = await pool.query(
       `SELECT ms.*, m.name AS linked_material_name, COUNT(*) OVER()::int AS total_count
@@ -38,9 +43,6 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const a = await requirePmAccess(req);
-  if (!a) return unauthorized();
-
   try {
     await ensureProjectManagementSchema();
     const b = await req.json();
@@ -61,10 +63,25 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Invalid supply parameters' }, { status: 400 });
     }
 
+    const pvInfo = await pool.query(
+      `SELECT pv.project_id, pv.vendor_id, v.name AS vendor_name
+       FROM pm_project_vendors pv
+       JOIN pm_vendors v ON v.id = pv.vendor_id
+       WHERE pv.id = $1`,
+      [pv]
+    );
+    if (!pvInfo.rows[0]) {
+      return NextResponse.json({ success: false, error: 'Project vendor not found' }, { status: 404 });
+    }
+
+    const { project_id, vendor_id, vendor_name } = pvInfo.rows[0];
+    const auth = await assertAgentAccess(req, project_id, ['construction', 'vendor']);
+    if (!auth.allowed) return auth.response;
+
     const c = await pool.connect();
     try {
       await c.query('BEGIN');
-      const actor = actorFromAdmin(a);
+      const actor = actorFromAdmin(auth.user);
       const amount = q * rate;
 
       // 1. Insert pm_vendor_material_supply
@@ -80,28 +97,17 @@ export async function POST(req) {
 
       // 2. If material_id is linked, automatically create linked pm_material_received in same transaction
       if (matId) {
-        const pvInfo = await c.query(
-          `SELECT pv.project_id, pv.vendor_id, v.name AS vendor_name
-           FROM pm_project_vendors pv
-           JOIN pm_vendors v ON v.id = pv.vendor_id
-           WHERE pv.id = $1`,
-          [pv]
+        await c.query(
+          `INSERT INTO pm_material_received(
+             project_id, material_id, supplier_name, supplier_vendor_id,
+             vendor_supply_id, quantity, rate, amount, received_date, note, created_by
+           ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+          [
+            project_id, matId, vendor_name, vendor_id,
+            supplyRow.id, q, rate, amount, b.supply_date,
+            b.note ? `Vendor supply: ${b.note}` : 'Vendor supplied material', actor
+          ]
         );
-
-        if (pvInfo.rows[0]) {
-          const { project_id, vendor_id, vendor_name } = pvInfo.rows[0];
-          await c.query(
-            `INSERT INTO pm_material_received(
-               project_id, material_id, supplier_name, supplier_vendor_id,
-               vendor_supply_id, quantity, rate, amount, received_date, note, created_by
-             ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
-            [
-              project_id, matId, vendor_name, vendor_id,
-              supplyRow.id, q, rate, amount, b.supply_date,
-              b.note ? `Vendor supply: ${b.note}` : 'Vendor supplied material', actor
-            ]
-          );
-        }
       }
 
       await writePmPhase2Audit(c, 'pm_vendor_material_supply', supplyRow.id, 'created', actor, null, supplyRow);

@@ -144,7 +144,40 @@ export async function GET(req, { params }) {
     );
 
     if (!result.rows[0]) return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
-    return NextResponse.json({ success: true, data: result.rows[0] });
+    const row = { ...result.rows[0] };
+    if (admin.role === 'agent') {
+      const specs = admin.specializations || [];
+      const hasPayments = specs.includes('payments');
+      const hasLabor = specs.includes('labor');
+      const hasConstruction = specs.includes('construction');
+
+      if (!hasPayments) {
+        row.contract_value = null;
+        row.received = null;
+        row.pending = null;
+        row.total_expense = null;
+        row.profit_or_loss = null;
+        row.profit_so_far = null;
+        row.total_paid_to_vendors = null;
+        row.total_vendor_balance_pending = null;
+
+        if (!hasLabor) {
+          row.total_labour_cost = null;
+          row.vendor_labour_cost = null;
+          row.individual_labour_cost = null;
+          row.daily_labour_cost = null;
+          row.contract_labour_cost = null;
+        }
+
+        if (!hasConstruction) {
+          row.total_material_cost = null;
+          row.direct_material_cost = null;
+          row.total_vendor_material_cost = null;
+          row.total_other_expenses = null;
+        }
+      }
+    }
+    return NextResponse.json({ success: true, data: row });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message || 'Could not load project' }, { status: 500 });
   }
@@ -209,6 +242,9 @@ export async function DELETE(req, { params }) {
   const paramId = (await params).id;
   const admin = await requirePmAccess(req, paramId);
   if (!admin) return unauthorized();
+  if (admin.role === 'agent') {
+    return NextResponse.json({ success: false, error: 'Unauthorized: Agents cannot delete records (admin only)' }, { status: 403 });
+  }
   try {
     await ensureProjectManagementPhase5Schema();
     const id = Number(paramId);

@@ -222,6 +222,9 @@ export async function PATCH(req, { params }) {
 export async function DELETE(req, { params }) {
   const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
+  if (admin.role === 'agent') {
+    return NextResponse.json({ success: false, error: 'Unauthorized: Agents cannot delete records (admin only)' }, { status: 403 });
+  }
   try {
     await ensureProjectManagementSchema();
     const id = idOf(await params);

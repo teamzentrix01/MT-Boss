@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { UploadCloud, Plus, X, Star, Sparkles, Image as ImageIcon } from 'lucide-react';
 import ShopCategoriesManager from './ShopCategoriesManager';
 import ShippingSettingsManager from './ShippingSettingsManager';
 import ShopCouponsManager from './ShopCouponsManager';
@@ -83,6 +84,8 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
   const [categories, setCategories] = useState([]);
   const [cities, setCities] = useState([]);
   const [form, setForm] = useState(emptyProduct);
+  const [imagesList, setImagesList] = useState([]);
+  const [newImageUrl, setNewImageUrl] = useState('');
   const [galleryText, setGalleryText] = useState('');
   const [specsText, setSpecsText] = useState('');
   const [bulkText, setBulkText] = useState('');
@@ -118,19 +121,33 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
 
   const edit = (product) => {
     setEditingId(product.id);
+    const existingImgs = Array.from(new Set([
+      product.image_url,
+      ...(Array.isArray(product.images) ? product.images : [])
+    ].filter(Boolean)));
+    setImagesList(existingImgs);
     setForm({
       name: product.name || '', description: product.description || '', category: product.category || '', subcategory: product.subcategory || '', quality_tier: product.quality_tier || '',
       quote_price_range: product.quote_price_range || '', price: product.price ?? '', compare_at_price: product.compare_at_price ?? '', is_featured_deal: product.is_featured_deal === true, brand: product.brand || '', unit: product.unit || '', quantity: product.quantity ?? 0,
-      image_url: product.image_url || '', available_cities: product.available_cities || [], is_available: product.is_available !== false,
+      image_url: existingImgs[0] || product.image_url || '', available_cities: product.available_cities || [], is_available: product.is_available !== false,
     });
-    setGalleryText((product.images || []).join('\n'));
+    setGalleryText(existingImgs.join('\n'));
     setSpecsText(Object.entries(product.specifications || {}).map(([key, value]) => `${key}: ${value}`).join('\n'));
     setBulkText((product.bulk_pricing || []).map((tier) => `${tier.min_quantity}: ${tier.price}`).join('\n'));
     setNotice('');
     document.getElementById(formId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const reset = () => { setEditingId(null); setForm(emptyProduct); setGalleryText(''); setSpecsText(''); setBulkText(''); setNotice(''); };
+  const reset = () => {
+    setEditingId(null);
+    setForm(emptyProduct);
+    setImagesList([]);
+    setNewImageUrl('');
+    setGalleryText('');
+    setSpecsText('');
+    setBulkText('');
+    setNotice('');
+  };
 
   const save = async (event) => {
     event.preventDefault();
@@ -148,9 +165,23 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
         if (!minimum || !price || !Number.isInteger(Number(minimum)) || Number(minimum) < 2 || Number(price) <= 0) throw new Error('Bulk prices: use Quantity: Price, for example 10: 415');
         return { min_quantity: Number(minimum), price: Number(price) };
       });
+
+      const allImgs = Array.from(new Set([
+        ...imagesList,
+        ...parseLines(galleryText)
+      ].filter(Boolean)));
+      const mainCover = allImgs[0] || form.image_url || '';
+
       const response = await fetch(productEndpoint, {
         method: editingId ? 'PUT' : 'POST', headers: shopHeaders(ownerRole),
-        body: JSON.stringify({ ...form, images: parseLines(galleryText), specifications, bulk_pricing, ...(editingId ? { id: editingId } : {}) }),
+        body: JSON.stringify({
+          ...form,
+          image_url: mainCover,
+          images: allImgs,
+          specifications,
+          bulk_pricing,
+          ...(editingId ? { id: editingId } : {})
+        }),
       });
       const data = await readApiJson(response);
       if (!response.ok) throw new Error(data.error || 'Could not save product');
@@ -194,9 +225,74 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
     try {
       const imageUrl = await uploadImage(file);
       setForm((current) => ({ ...current, image_url: imageUrl }));
+      const nextList = Array.from(new Set([imageUrl, ...imagesList]));
+      setImagesList(nextList);
+      setGalleryText(nextList.join('\n'));
     }
     catch (error) { setNotice(error.message); }
     finally { setUploading(false); event.target.value = ''; }
+  };
+
+  const handleMultipleUpload = async (event) => {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+    setUploading(true);
+    setNotice('');
+    try {
+      const uploadedUrls = [];
+      for (const file of files) {
+        const url = await uploadImage(file);
+        if (url) uploadedUrls.push(url);
+      }
+      if (uploadedUrls.length > 0) {
+        const nextList = Array.from(new Set([...imagesList, ...uploadedUrls]));
+        setImagesList(nextList);
+        setGalleryText(nextList.join('\n'));
+        if (!form.image_url) {
+          setForm((current) => ({ ...current, image_url: nextList[0] }));
+        }
+        setNotice(`Uploaded ${uploadedUrls.length} image(s) successfully.`);
+      }
+    } catch (error) {
+      setNotice(error.message);
+    } finally {
+      setUploading(false);
+      event.target.value = '';
+    }
+  };
+
+  const addImageUrl = () => {
+    const url = newImageUrl.trim();
+    if (!url) return;
+    const nextList = Array.from(new Set([...imagesList, url]));
+    setImagesList(nextList);
+    setGalleryText(nextList.join('\n'));
+    if (!form.image_url) {
+      setForm((current) => ({ ...current, image_url: url }));
+    }
+    setNewImageUrl('');
+  };
+
+  const removeImage = (index) => {
+    const nextList = imagesList.filter((_, i) => i !== index);
+    setImagesList(nextList);
+    setGalleryText(nextList.join('\n'));
+    setForm((current) => ({
+      ...current,
+      image_url: nextList[0] || ''
+    }));
+  };
+
+  const setAsCover = (index) => {
+    const target = imagesList[index];
+    if (!target) return;
+    const nextList = [target, ...imagesList.filter((_, i) => i !== index)];
+    setImagesList(nextList);
+    setGalleryText(nextList.join('\n'));
+    setForm((current) => ({
+      ...current,
+      image_url: target
+    }));
   };
 
   return <div className="shop-admin-panel">
@@ -215,14 +311,120 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
         <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
         <label>Unit *<select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">Select unit</option>{units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select></label>
         <label>Quantity available<input type="number" min="0" step="1" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} /></label>
-        <label>Product image URL<input type="text" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://... or /uploads/..." /></label>
         <label className="shop-admin-wide">Description<textarea rows="3" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></label>
-        <label className="shop-admin-wide">More product images (one URL per line)<textarea rows="3" value={galleryText} onChange={(e) => setGalleryText(e.target.value)} /></label>
+
+        {/* Multi-Image Gallery Box */}
+        <div className="shop-admin-wide shop-admin-gallery-box">
+          <div className="shop-admin-gallery-head">
+            <div>
+              <strong>📸 Product Images ({imagesList.length})</strong>
+              <div style={{ marginTop: 4 }}>
+                {imagesList.length > 1 ? (
+                  <span className="shop-admin-carousel-status multi">
+                    ✨ Embla Auto-Swiper Active ({imagesList.length} images will auto-rotate on product view)
+                  </span>
+                ) : imagesList.length === 1 ? (
+                  <span className="shop-admin-carousel-status single">
+                    Static view (1 image uploaded — swiper disabled until 2+ images)
+                  </span>
+                ) : (
+                  <span className="shop-admin-carousel-status single">
+                    No images added yet. Upload files or paste URLs below.
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="shop-admin-gallery-actions">
+              <label className="shop-admin-upload-multi">
+                {uploading ? 'Uploading...' : '📁 + Upload Images (Multiple)'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleMultipleUpload}
+                  disabled={uploading}
+                  hidden
+                />
+              </label>
+            </div>
+          </div>
+
+          <div className="shop-admin-url-add">
+            <input
+              type="text"
+              value={newImageUrl}
+              onChange={(e) => setNewImageUrl(e.target.value)}
+              placeholder="Or paste image URL (https://...)"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addImageUrl();
+                }
+              }}
+            />
+            <button type="button" onClick={addImageUrl}>+ Add URL</button>
+          </div>
+
+          {imagesList.length > 0 && (
+            <div className="shop-admin-gallery-grid">
+              {imagesList.map((img, idx) => {
+                const isCover = idx === 0;
+                return (
+                  <div key={`${img}-${idx}`} className={`shop-admin-gallery-item ${isCover ? 'is-cover' : ''}`}>
+                    {isCover && <span className="shop-admin-gallery-cover-badge">Cover</span>}
+                    <button
+                      type="button"
+                      className="shop-admin-gallery-del"
+                      title="Remove image"
+                      onClick={() => removeImage(idx)}
+                    >
+                      ✕
+                    </button>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img} alt={`Product ${idx + 1}`} className="shop-admin-gallery-img" />
+                    {!isCover && (
+                      <button
+                        type="button"
+                        className="shop-admin-gallery-set-cover"
+                        onClick={() => setAsCover(idx)}
+                      >
+                        Set as Cover
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          <details style={{ marginTop: 8, fontSize: '12px', color: 'var(--shop-admin-subtext)' }}>
+            <summary style={{ cursor: 'pointer', fontWeight: 600 }}>Bulk edit URLs / Manual raw list</summary>
+            <div style={{ marginTop: 6 }}>
+              <textarea
+                rows="3"
+                value={galleryText}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setGalleryText(val);
+                  const parsed = val.split('\n').map((l) => l.trim()).filter(Boolean);
+                  setImagesList(parsed);
+                  if (parsed.length > 0) {
+                    setForm((curr) => ({ ...curr, image_url: parsed[0] }));
+                  }
+                }}
+                placeholder="One URL per line..."
+                style={{ width: '100%', fontSize: '12px', fontFamily: 'monospace' }}
+              />
+            </div>
+          </details>
+        </div>
+
         <label className="shop-admin-wide">Specifications (one Name: Value per line)<textarea rows="3" value={specsText} onChange={(e) => setSpecsText(e.target.value)} placeholder="Grade: PPC&#10;Pack size: 50 kg" /></label>
         <label className="shop-admin-wide">Bulk prices (one Quantity: Price per line)<textarea rows="3" value={bulkText} onChange={(e) => setBulkText(e.target.value)} placeholder="10: 415&#10;30: 405" /></label>
         <fieldset className="shop-admin-wide shop-admin-city-field"><legend>Delivery cities for this product</legend><div>{cities.map((city) => <label key={city}><input type="checkbox" checked={form.available_cities.includes(city)} onChange={(event) => setForm({ ...form, available_cities: event.target.checked ? [...form.available_cities, city] : form.available_cities.filter((item) => item !== city) })} /> {city}</label>)}</div><small>Select the cities where this product can actually be delivered.</small></fieldset>
       </div>
-      <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-check"><input type="checkbox" checked={form.is_featured_deal} onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })} /> Feature in Deals of the Week</label><label className="shop-admin-upload">{uploading ? 'Uploading...' : 'Upload image'}<input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden /></label>{form.image_url && <Image className="shop-admin-thumb" src={form.image_url} alt="Product preview" width={43} height={43} unoptimized />}<button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
+      <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-check"><input type="checkbox" checked={form.is_featured_deal} onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })} /> Feature in Deals of the Week</label><button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
     </form>
     <div className="shop-admin-card"><div className="shop-admin-list-head"><h3>{isVendor ? 'My products' : 'All products'} ({tierFilter === 'any' ? products.length : `${visibleProducts.length} of ${products.length}`})</h3><label className="shop-admin-tier-filter">Quality Tier<select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}><option value="any">All products</option><option value="none">No Quality Tier set ({untieredCount})</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.value === 'all' ? 'All tiers' : tier.label}</option>)}</select></label></div>{loading ? <p>Loading products...</p> : !products.length ? <p>No products yet. Add the first product above.</p> : !visibleProducts.length ? <p>No products match this Quality Tier filter.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Quality</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isVendor && <th>Discount</th>}{!isVendor && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{visibleProducts.map((product) => { const price = Number(product.price); const originalPrice = Number(product.compare_at_price); const discountPercent = originalPrice > price && price > 0 ? Math.round(((originalPrice - price) / originalPrice) * 100) : null; return <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{qualityTierLabel(product.quality_tier) || <span className="shop-admin-tier-missing">Not set</span>}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{price > 0 ? `₹${price.toLocaleString('en-IN')} / ${product.unit || 'unit'}` : '—'}</td>{!isVendor && <td>{discountPercent === null ? '—' : `${discountPercent}% OFF`}</td>}{!isVendor && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{product.is_available ? 'Visible' : 'Hidden'}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button><button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button><button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>; })}</tbody></table></div>}</div>
   </div>;
