@@ -11,6 +11,12 @@ dotenv.config({ path: path.join(projectRoot, "src", ".env") });
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /* config options here */
+  experimental: {
+    // Compile in the main process and use threads for type checking. This avoids
+    // child-process spawn failures on restricted Windows environments.
+    webpackBuildWorker: false,
+    workerThreads: true,
+  },
   // Keep development/HMR artifacts separate from production builds. Running
   // `next build` while `next dev` is open must not replace the live router
   // runtime, otherwise Next can dispatch Link prefetches against an old queue.
