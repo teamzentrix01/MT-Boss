@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
-import { hashOtp, verifyOtp, PASSWORD_RESET_OTP_MAX_ATTEMPTS } from '@/lib/otp';
+import { verifyOtp, PASSWORD_RESET_OTP_MAX_ATTEMPTS } from '@/lib/otp';
+
+export const runtime = 'nodejs';
 
 // POST — verify OTP + reset password in one step
 export async function POST(req) {
@@ -41,7 +43,9 @@ export async function POST(req) {
 
     const submittedOtp = otp.trim();
     const matchesHashedOtp = otpRow.otp_hash ? verifyOtp(submittedOtp, otpRow.otp_hash) : false;
-    const matchesLegacyOtp = otpRow.otp ? hashOtp(submittedOtp) === hashOtp(otpRow.otp) : false;
+    const matchesLegacyOtp = otpRow.otp
+      ? submittedOtp === String(otpRow.otp).trim()
+      : false;
 
     if (!matchesHashedOtp && !matchesLegacyOtp) {
       const attempts = Number(otpRow.attempts) + 1;
