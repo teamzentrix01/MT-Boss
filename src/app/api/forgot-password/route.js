@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { sendMail } from '@/lib/email';
+import { isSmtpConfigured, sendMail } from '@/lib/email';
+
+export const runtime = 'nodejs';
 import { generateSixDigitOtp, hashOtp, PASSWORD_RESET_OTP_EXPIRY_MINUTES } from '@/lib/otp';
 import { createInitializationGuard } from '@/lib/api-utils';
 
@@ -60,7 +62,12 @@ export async function POST(req) {
     if (userRes.rows.length === 0) {
       console.info(`[PASSWORD RESET skipped] No registered ${user_type} account matched the submitted email.`);
       // Generic message — don't reveal if email exists
-      return NextResponse.json({ success: true, message: 'If that email is registered, an OTP has been sent.' });
+      return NextResponse.json({
+        success: true,
+        message: 'If that email is registered, an OTP has been sent.',
+        email_sent: false,
+        otp_issued: false,
+      });
     }
 
     const recentCount = await pool.query(
@@ -90,12 +97,7 @@ export async function POST(req) {
       [normalizedEmail, user_type, hashOtp(otp), expiresAt]
     );
 
-    // Check if SMTP is actually configured
-    const smtpConfigured = !!(
-      (process.env.SMTP_HOST || process.env.EMAIL_HOST)
-      && (process.env.SMTP_USER || process.env.EMAIL_USER)
-      && (process.env.SMTP_PASS || process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD)
-    );
+    const smtpConfigured = isSmtpConfigured();
     const isProduction = process.env.NODE_ENV === 'production';
 
     if (!smtpConfigured && isProduction) {
@@ -112,7 +114,7 @@ export async function POST(req) {
     if (smtpConfigured) {
       try {
         await sendMail({
-          to: userRes.rows[0].email,
+          to: normalizedEmail,
           subject: 'Your MTBoss password reset code',
           text: [
             'MTBoss password reset',
@@ -170,6 +172,7 @@ export async function POST(req) {
       success: true,
       message: smtpConfigured ? 'OTP sent to your email address.' : 'OTP generated (email not configured).',
       email_sent: smtpConfigured,
+      otp_issued: true,
       // Show OTP on screen when SMTP is not configured (dev/testing mode)
       ...(!smtpConfigured && !isProduction && { dev_otp: otp }),
     });

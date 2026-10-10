@@ -1,17 +1,24 @@
 // Email utility — configure SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM in .env
 // Falls back to console.log if not configured.
 
+export function isSmtpConfigured() {
+  const host = process.env.SMTP_HOST || process.env.EMAIL_HOST;
+  const user = process.env.SMTP_USER || process.env.EMAIL_USER;
+  const pass = process.env.SMTP_PASS || process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD;
+  return Boolean(host && user && pass);
+}
+
 export async function sendMail({ to, subject, html, text, replyTo }) {
   const host = process.env.SMTP_HOST || process.env.EMAIL_HOST;
-  const port = parseInt(process.env.SMTP_PORT || '587');
+  const port = parseInt(process.env.SMTP_PORT || '587', 10);
   const user = process.env.SMTP_USER || process.env.EMAIL_USER;
   const pass = process.env.SMTP_PASS || process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD;
   const from = process.env.SMTP_FROM || process.env.EMAIL_FROM || user || 'noreply@mtboss.in';
   const configuredReplyTo = replyTo || process.env.SMTP_REPLY_TO || user;
 
-  if (!host || !user || !pass) {
+  if (!isSmtpConfigured()) {
     console.log(`[EMAIL — not configured] To: ${to} | Subject: ${subject}`);
-    return;
+    return null;
   }
 
   const nodemailer = (await import('nodemailer')).default;

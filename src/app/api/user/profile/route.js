@@ -7,9 +7,10 @@ import { isValidIndianMobile, isValidPersonName, normalizePhone } from '@/lib/va
 const ensureUserProfileColumns = createInitializationGuard(async () => {
   await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)');
   await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW()');
+  await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT');
 });
 
-const PROFILE_COLUMNS = 'id, email, name, phone, created_at';
+const PROFILE_COLUMNS = 'id, email, name, phone, avatar_url, created_at';
 
 export async function GET(req) {
   const decoded = requireRole(req, 'user');

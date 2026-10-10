@@ -246,6 +246,17 @@ export default function MaterialOrdersPanel({ role = 'user', embedded = false })
                       ))}
                     </div>
 
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      <a
+                        href={`/api/orders/${order.id}/invoice/pdf?type=shop_order`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center rounded-lg bg-zinc-900 px-3 py-2 text-xs font-bold uppercase tracking-wide text-white"
+                      >
+                        Download invoice PDF
+                      </a>
+                    </div>
+
                     {role !== 'user' && !['delivered', 'fulfilled', 'cancelled'].includes(order.status) && (
                       <div className="mt-6 rounded-lg border border-zinc-200 bg-white p-4">
                         <p className="mb-3 text-xs font-black uppercase tracking-wider text-zinc-700">Post order update</p>
