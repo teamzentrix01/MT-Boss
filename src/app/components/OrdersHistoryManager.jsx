@@ -1456,7 +1456,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                 </button>
 
                 <a
-                  href={`/api/admin/orders/${selectedOrder.id}/pdf`}
+                  href={`/api/admin/orders/${selectedOrder.id}/pdf?type=${encodeURIComponent(selectedOrder.type || 'shop_order')}`}
                   download={`invoice-${selectedOrder.order_id}.pdf`}
                   target="_blank"
                   rel="noreferrer"

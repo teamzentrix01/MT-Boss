@@ -8,7 +8,10 @@ export async function GET(req, { params }) {
     if (!admin) return unauthorized();
 
     const { id } = await params;
-    const order = await getAdminOrderById(id);
+    const { searchParams } = new URL(req.url);
+    const type = searchParams.get('type');
+    const orderType = type === 'shop_order' || type === 'service_booking' ? type : undefined;
+    const order = await getAdminOrderById(id, orderType ? { type: orderType } : {});
 
     if (!order) {
       return NextResponse.json(
