@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import QuickServiceIcon from './QuickServiceIcon';
+import ServiceIcon from './ServiceIcon';
 import { fallbackQuickServices } from "@/lib/public-fallbacks";
 
 function useInView(threshold = 0.1) {
@@ -198,10 +199,12 @@ export default function QuickServices({ className = "", initialServices }) {
         .qs-icon {
           font-size: 1.5rem;
           display: block;
-          transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+          transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), color 0.2s ease, filter 0.2s ease;
         }
         .qs-card:hover .qs-icon {
           transform: scale(1.25) rotate(-6deg);
+          color: #ffffff !important;
+          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
         .qs-label {
           font-size: 0.7rem;
@@ -337,8 +340,8 @@ export default function QuickServices({ className = "", initialServices }) {
                       textDecoration: 'none',
                     }}
                   >
-                    <QuickServiceIcon value={service.icon} label={service.label}
-                      className="qs-icon" imageClassName="w-8 h-8 object-contain" />
+                    <ServiceIcon service={service} size={32}
+                      className="qs-icon text-[var(--brand-blue)]" imageClassName="w-8 h-8 object-contain" />
                     <span className="qs-label">{service.label}</span>
                   </Link>
                 ))

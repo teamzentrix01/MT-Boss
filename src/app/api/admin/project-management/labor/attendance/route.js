@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
+import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 const validDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
 export async function GET(req) {
-  if (!await requirePmAccess(req)) return unauthorized();
   try {
     await ensureProjectManagementSchema();
     const s = new URL(req.url).searchParams;
@@ -15,6 +12,13 @@ export async function GET(req) {
 
     // Mode 1: Labor-specific attendance history (for calendar & detail view)
     if (Number.isInteger(laborId) && laborId > 0) {
+      const laborRes = await pool.query('SELECT project_id FROM pm_labor WHERE id = $1', [laborId]);
+      if (!laborRes.rows[0]) {
+        return NextResponse.json({ success: false, error: 'Laborer not found' }, { status: 404 });
+      }
+      const auth = await assertAgentAccess(req, laborRes.rows[0].project_id, 'labor');
+      if (!auth.allowed) return auth.response;
+
       const month = s.get('month') || ''; // 'YYYY-MM'
       const r = await pool.query(
         `SELECT la.*, l.name AS labor_name, l.trade, l.daily_rate, v.name AS vendor_name
@@ -35,6 +39,9 @@ export async function GET(req) {
     if (!Number.isInteger(projectId) || !validDate(date)) {
       return NextResponse.json({ success: false, error: 'projectId and valid date (or laborId) are required' }, { status: 400 });
     }
+
+    const auth = await assertAgentAccess(req, projectId, 'labor');
+    if (!auth.allowed) return auth.response;
 
     const r = await pool.query(
       `SELECT l.id AS labor_id, l.name, l.name AS labor_name, l.phone, l.trade, l.daily_rate,
@@ -58,8 +65,6 @@ export async function GET(req) {
 }
 
 export async function PUT(req) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
   try {
     await ensureProjectManagementSchema();
     const b = await req.json();
@@ -75,8 +80,15 @@ export async function PUT(req) {
       return NextResponse.json({ success: false, error: 'Attendance entries are required' }, { status: 400 });
     }
 
+    const firstLabor = await pool.query('SELECT project_id FROM pm_labor WHERE id = $1', [Number(entries[0].labor_id)]);
+    if (!firstLabor.rows[0]) {
+      return NextResponse.json({ success: false, error: 'Laborer not found' }, { status: 404 });
+    }
+    const auth = await assertAgentAccess(req, firstLabor.rows[0].project_id, 'labor');
+    if (!auth.allowed) return auth.response;
+
     const client = await pool.connect();
-    const actor = actorFromAdmin(admin);
+    const actor = actorFromAdmin(auth.user);
     try {
       await client.query('BEGIN');
 

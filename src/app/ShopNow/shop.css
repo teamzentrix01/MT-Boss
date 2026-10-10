@@ -3918,54 +3918,76 @@
 
 .mobile-category-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px 8px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 8px;
 }
 
 .mobile-category-chip-btn {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
+  justify-content: flex-start !important;
   text-align: center !important;
   background: transparent !important;
   border: 0 !important;
-  padding: 4px 2px !important;
+  padding: 0 !important;
   cursor: pointer;
-  min-height: 44px;
+  width: 100%;
 }
 
+.mobile-category-square,
 .mobile-category-circle {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: #f1f5f9;
-  border: 1.5px solid #e2e8f0;
-  display: grid;
-  place-items: center;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  background: #e3f3f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   overflow: hidden;
   margin-bottom: 6px;
-  box-shadow: 0 2px 5px rgba(18, 40, 63, 0.04);
+  box-shadow: 0 1px 3px rgba(18, 40, 63, 0.03);
 }
 
+.mobile-category-square-img,
 .mobile-category-circle-img {
-  border-radius: 50%;
-  object-fit: cover;
+  width: 78% !important;
+  height: 78% !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  object-fit: contain !important;
 }
 
 .mobile-category-label {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   color: #12283f;
   line-height: 1.25;
   text-align: center;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 26px;
   max-width: 100%;
   word-break: break-word;
+}
+
+.mobile-loading-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 8px;
+}
+
+.mobile-cat-skeleton {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  background: #e3f3f3;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 .mobile-category-header-view-all {
@@ -4276,6 +4298,7 @@
 }
 
 .mobile-card-title-btn {
+  width: 100%;
   text-align: left !important;
   background: transparent !important;
   border: 0 !important;
@@ -4291,8 +4314,10 @@
   margin: 0 0 4px 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  word-break: break-word;
 }
 
 .mobile-card-price-row {
@@ -4344,6 +4369,7 @@
 }
 
 .mobile-add-btn {
+  width: 100%;
   min-height: 36px;
   min-width: 78px;
   padding: 4px 10px !important;
@@ -4358,9 +4384,21 @@
   justify-content: center;
   gap: 4px;
   cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mobile-add-btn:hover {
+  background: #e4572e !important;
+  color: #ffffff !important;
+}
+
+.mobile-add-btn:active {
+  background: #c94620 !important;
+  color: #ffffff !important;
 }
 
 .mobile-stepper {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -4721,4 +4759,461 @@
   border: 0 !important;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(228, 87, 46, 0.35);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Product Detail Embla Carousel Styles
+   ───────────────────────────────────────────────────────────── */
+.product-carousel-root {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.product-carousel-container {
+  position: relative;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .product-carousel-container {
+  background: #111a28;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.product-carousel-viewport {
+  overflow: hidden;
+  width: 100%;
+  border-radius: 14px;
+}
+
+.product-carousel-single-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 350px;
+  background: #f1f6fd;
+  border-radius: 14px;
+}
+
+.dark-mode .product-carousel-single-box {
+  background: #152234;
+}
+
+.product-carousel-track {
+  display: flex;
+  touch-action: pan-y pinch-zoom;
+  margin-left: 0;
+}
+
+.product-carousel-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fbff;
+  position: relative;
+  overflow: hidden;
+}
+
+.dark-mode .product-carousel-slide {
+  background: #131e2e;
+}
+
+.product-carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  transition: transform 0.3s ease;
+}
+
+.product-carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94) !important;
+  color: #12283f !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  transition: all 0.2s ease;
+  padding: 0 !important;
+}
+
+.dark-mode .product-carousel-nav-btn {
+  background: rgba(20, 32, 48, 0.92) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.product-carousel-nav-btn:hover {
+  background: #ffffff !important;
+  color: var(--brand-blue) !important;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.product-carousel-prev {
+  left: 10px;
+}
+
+.product-carousel-next {
+  right: 10px;
+}
+
+.product-carousel-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(18, 40, 63, 0.85);
+  color: #ffffff;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(4px);
+  z-index: 8;
+  pointer-events: none;
+}
+
+.product-carousel-live-indicator {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.product-carousel-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  animation: carouselPulse 2s infinite;
+}
+
+@keyframes carouselPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 7px rgba(34, 197, 94, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.product-carousel-thumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scrollbar-width: thin;
+}
+
+.product-carousel-thumb-btn {
+  flex: 0 0 68px;
+  width: 68px;
+  height: 68px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent !important;
+  background: #ffffff !important;
+  padding: 0 !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.65;
+}
+
+.dark-mode .product-carousel-thumb-btn {
+  background: #17263b !important;
+}
+
+.product-carousel-thumb-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.product-carousel-thumb-btn.is-active {
+  border-color: var(--brand-blue) !important;
+  opacity: 1;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.25);
+}
+
+.product-carousel-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Subcategories Showcase in Storefront & Mobile ────────────── */
+.store-subcategories-strip {
+  margin: 18px 0 24px 0;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.dark-mode .store-subcategories-strip {
+  background: #111e30;
+  border-color: #1e3352;
+}
+
+.store-subcategories-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.store-subcategories-title span {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dark-mode .store-subcategories-title span {
+  color: #f1f5f9;
+}
+
+.store-subcategories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.store-subcategory-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dark-mode .store-subcategory-card {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.store-subcategory-card:hover {
+  border-color: var(--brand-blue);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+  transform: translateY(-2px);
+}
+
+.store-subcategory-img-box {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark-mode .store-subcategory-img-box {
+  background: #1e293b;
+}
+
+.store-subcategory-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.store-subcategory-name {
+  font-size: 12px;
+  font-weight: 800;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dark-mode .store-subcategory-name {
+  color: #f8fafc;
+}
+
+.store-subcategory-price {
+  font-size: 11px;
+  font-weight: 700;
+  color: #059669;
+}
+
+.store-subcategory-explore {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--brand-blue);
+}
+
+/* Mobile subcategories showcase */
+.mobile-subcategories-showcase {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px 2px 10px 2px;
+  margin-bottom: 8px;
+  scrollbar-width: none;
+}
+.mobile-subcategories-showcase::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-subcat-card {
+  flex: 0 0 130px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.dark-mode .mobile-subcat-card {
+  background: #17263b;
+  border-color: #273e5f;
+}
+
+.mobile-subcat-card-img-wrap {
+  width: 100%;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  background: #f8fafc;
+}
+
+.dark-mode .mobile-subcat-card-img-wrap {
+  background: #0f172a;
+}
+
+.mobile-subcat-card-name {
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  color: #12283f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.dark-mode .mobile-subcat-card-name {
+  color: #ffffff;
+}
+
+.mobile-subcat-card-price {
+  font-size: 10px;
+  font-weight: 700;
+  color: #10b981;
+}
+
+/* ── Desktop Header Wallet Button & Dark Mode Styles ── */
+.store-wallet-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #12283f !important;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.store-wallet-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.store-wallet-btn:active {
+  transform: translateY(0);
+}
+
+.store-wallet-text {
+  display: inline;
+}
+
+@media (max-width: 900px) {
+  .store-wallet-text {
+    display: none;
+  }
+}
+
+.store-wallet-pill {
+  background: #12283f;
+  color: #ffffff !important;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 12px;
+  line-height: 1.2;
+}
+
+.dark-mode .store-wallet-btn {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9 !important;
+}
+
+.dark-mode .store-wallet-btn:hover {
+  background: #334155;
+  border-color: #475569;
+}
+
+.dark-mode .store-wallet-pill {
+  background: #e4572e;
+  color: #ffffff !important;
+}
+
+.dark-mode .mobile-modal-card {
+  background: #1e293b !important;
+  color: #f1f5f9;
+}
+
+.dark-mode .mobile-modal-card h3 {
+  color: #f1f5f9 !important;
+}
+
+.dark-mode .mobile-modal-card .bg-\[\#F8FAFC\] {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #94a3b8 !important;
 }

@@ -1,13 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
+import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 export async function GET(req) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
-
   try {
     await ensureProjectManagementSchema();
     const s = new URL(req.url).searchParams;
@@ -17,6 +12,9 @@ export async function GET(req) {
     if (!Number.isInteger(projectId)) {
       return NextResponse.json({ success: false, error: 'projectId is required' }, { status: 400 });
     }
+
+    const auth = await assertAgentAccess(req, projectId, 'construction');
+    if (!auth.allowed) return auth.response;
 
     const materialId = s.get('materialId') ? Number(s.get('materialId')) : null;
     const startDate = s.get('startDate') || null;
@@ -62,9 +60,6 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
-
   try {
     await ensureProjectManagementSchema();
     const b = await req.json();
@@ -82,10 +77,13 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Invalid used entry' }, { status: 400 });
     }
 
+    const auth = await assertAgentAccess(req, p, 'construction');
+    if (!auth.allowed) return auth.response;
+
     const c = await pool.connect();
     try {
       await c.query('BEGIN');
-      const actor = actorFromAdmin(admin);
+      const actor = actorFromAdmin(auth.user);
 
       // Check current stock
       const stockRes = await c.query(

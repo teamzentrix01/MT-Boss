@@ -1,6 +1,8 @@
 import pool from './db.js';
 import PDFDocument from 'pdfkit';
 import { formatIndianPhone, toIndianPhoneTel, normalizePhoneSearch } from './phone-utils.js';
+import { creditDeliveredCashback, reverseOrderCashback } from './cashback/service.js';
+import { releaseWalletRedeem } from './wallet/redeem.js';
 
 export { formatIndianPhone, toIndianPhoneTel, normalizePhoneSearch };
 
@@ -176,6 +178,8 @@ export async function getAdminOrders({
       me.coupon_code,
       me.coupon_discount,
       CAST(COALESCE(me.grand_total, me.product_total, 0) AS NUMERIC) AS grand_total,
+      CAST(COALESCE(me.wallet_used, 0) AS NUMERIC) AS wallet_used,
+      COALESCE(me.wallet_redeem_status, 'NONE') AS wallet_redeem_status,
       me.delivery_address,
       COALESCE(me.selected_city, 'N/A') AS delivery_city,
       me.delivery_date,
@@ -620,6 +624,14 @@ export async function updateAdminOrderStatus({
           JSON.stringify({ status: updatedRow.status, status_note: updatedRow.status_note }),
         ]
       );
+
+      // Cashback & wallet redemption hook on delivery or cancellation/return
+      if (['delivered', 'fulfilled'].includes(normalizedStatus)) {
+        await creditDeliveredCashback({ orderId: recordId, client });
+      } else if (['cancelled', 'returned'].includes(normalizedStatus)) {
+        await reverseOrderCashback({ orderId: recordId, reason: `Order marked as ${normalizedStatus}`, client });
+        await releaseWalletRedeem(recordId, client);
+      }
     }
 
     await client.query('COMMIT');

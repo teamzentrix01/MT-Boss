@@ -76,7 +76,7 @@ export default function AgentLoginPage() {
         </section>
 
         <section style={{ flex: 1, padding: '2.25rem 2rem' }}>
-          <Link href="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: muted, fontSize: 12, fontWeight: 700, textDecoration: 'none', marginBottom: '1.5rem' }}>
+          <Link href="/login" prefetch={false} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: muted, fontSize: 12, fontWeight: 700, textDecoration: 'none', marginBottom: '1.5rem' }}>
             Back to user login
           </Link>
 
@@ -114,7 +114,7 @@ export default function AgentLoginPage() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '-0.35rem 0 1rem' }}>
-              <Link href="/agent/forgot-password" style={{ color: 'var(--brand-blue)', fontSize: 12, fontWeight: 800, textDecoration: 'none' }}>
+              <Link href="/agent/forgot-password" prefetch={false} style={{ color: 'var(--brand-blue)', fontSize: 12, fontWeight: 800, textDecoration: 'none' }}>
                 Forgot password?
               </Link>
             </div>

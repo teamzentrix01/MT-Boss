@@ -1,2 +1,70 @@
-import{NextResponse}from'next/server';import pool from'@/lib/db';import{requireRole,unauthorized}from'@/lib/auth';import{ensureProjectManagementSchema,pageParams}from'@/lib/project-management';
-export async function GET(req){if(!requireRole(req,'admin'))return unauthorized();try{await ensureProjectManagementSchema();const s=new URL(req.url).searchParams,{page,pageSize,offset}=pageParams(s),project=Number(s.get('projectId'));if(!Number.isInteger(project))return NextResponse.json({success:false,error:'projectId is required'},{status:400});const r=await pool.query(`WITH received AS(SELECT material_id,SUM(quantity) qty,SUM(amount) amount FROM pm_material_received WHERE project_id=$1 AND NOT is_deleted GROUP BY material_id),used AS(SELECT material_id,SUM(quantity) qty FROM pm_material_used WHERE project_id=$1 AND NOT is_deleted GROUP BY material_id),adjusted AS(SELECT material_id,SUM(quantity) qty FROM pm_material_adjustments WHERE project_id=$1 AND NOT is_deleted GROUP BY material_id),rows AS(SELECT m.*,COALESCE(r.qty,0) received,COALESCE(u.qty,0) used,COALESCE(a.qty,0) adjusted,COALESCE(r.qty,0)-COALESCE(u.qty,0)-COALESCE(a.qty,0) stock,CASE WHEN COALESCE(r.qty,0)>0 THEN r.amount/r.qty ELSE 0 END average_rate FROM pm_materials m LEFT JOIN received r ON r.material_id=m.id LEFT JOIN used u ON u.material_id=m.id LEFT JOIN adjusted a ON a.material_id=m.id) SELECT *,COUNT(*) OVER()::int total_count,stock*average_rate stock_value,(stock<=min_stock_level) low_stock,(stock<0) over_used FROM rows WHERE received<>0 OR used<>0 OR adjusted<>0 ORDER BY name LIMIT $2 OFFSET $3`,[project,pageSize,offset]);const total=Number(r.rows[0]?.total_count||0);return NextResponse.json({success:true,data:r.rows,pagination:{page,pageSize,total,totalPages:Math.ceil(total/pageSize)}})}catch(e){return NextResponse.json({success:false,error:e.message},{status:500})}}
+import { NextResponse } from 'next/server';
+import pool from '@/lib/db';
+import { ensureProjectManagementSchema, pageParams, assertAgentAccess } from '@/lib/project-management';
+
+export async function GET(req) {
+  try {
+    await ensureProjectManagementSchema();
+    const s = new URL(req.url).searchParams;
+    const { page, pageSize, offset } = pageParams(s);
+    const project = Number(s.get('projectId'));
+
+    if (!Number.isInteger(project)) {
+      return NextResponse.json({ success: false, error: 'projectId is required' }, { status: 400 });
+    }
+
+    const auth = await assertAgentAccess(req, project, 'construction');
+    if (!auth.allowed) return auth.response;
+
+    const r = await pool.query(
+      `WITH received AS (
+         SELECT material_id, SUM(quantity) qty, SUM(amount) amount
+         FROM pm_material_received
+         WHERE project_id = $1 AND NOT is_deleted
+         GROUP BY material_id
+       ),
+       used AS (
+         SELECT material_id, SUM(quantity) qty
+         FROM pm_material_used
+         WHERE project_id = $1 AND NOT is_deleted
+         GROUP BY material_id
+       ),
+       adjusted AS (
+         SELECT material_id, SUM(quantity) qty
+         FROM pm_material_adjustments
+         WHERE project_id = $1 AND NOT is_deleted
+         GROUP BY material_id
+       ),
+       rows AS (
+         SELECT m.*,
+                COALESCE(r.qty, 0) received,
+                COALESCE(u.qty, 0) used,
+                COALESCE(a.qty, 0) adjusted,
+                COALESCE(r.qty, 0) - COALESCE(u.qty, 0) - COALESCE(a.qty, 0) stock,
+                CASE WHEN COALESCE(r.qty, 0) > 0 THEN r.amount / r.qty ELSE 0 END average_rate
+         FROM pm_materials m
+         LEFT JOIN received r ON r.material_id = m.id
+         LEFT JOIN used u ON u.material_id = m.id
+         LEFT JOIN adjusted a ON a.material_id = m.id
+       )
+       SELECT *, COUNT(*) OVER()::int total_count,
+              stock * average_rate stock_value,
+              (stock <= min_stock_level) low_stock,
+              (stock < 0) over_used
+       FROM rows
+       WHERE received <> 0 OR used <> 0 OR adjusted <> 0
+       ORDER BY name
+       LIMIT $2 OFFSET $3`,
+      [project, pageSize, offset]
+    );
+
+    const total = Number(r.rows[0]?.total_count || 0);
+    return NextResponse.json({
+      success: true,
+      data: r.rows,
+      pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) }
+    });
+  } catch (e) {
+    return NextResponse.json({ success: false, error: e.message }, { status: 500 });
+  }
+}

@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementSchema } from '@/lib/project-management';
+import { requirePmAccess, ensureProjectManagementSchema, assertAgentAccess } from '@/lib/project-management';
 
 function toCsvString(headers, rows) {
   const escapeCell = (val) => {
@@ -29,6 +28,20 @@ export async function GET(req) {
     const type = s.get('type') || 'cost_summary';
     const projectId = s.get('projectId') ? Number(s.get('projectId')) : null;
     const format = s.get('format') || 'json';
+
+    if (admin.role === 'agent') {
+      const reportCatMap = {
+        material_consumption: 'construction',
+        stock_running: 'construction',
+        labor_summary: 'labor',
+        vendor_balance: 'vendor',
+        cost_summary: 'payments',
+        party_summary: 'payments'
+      };
+      const neededCat = reportCatMap[type] || 'payments';
+      const auth = await assertAgentAccess(req, projectId, neededCat);
+      if (!auth.allowed) return auth.response;
+    }
 
     let data = [];
     let headers = [];

@@ -7,18 +7,38 @@ export async function PATCH(req, { params }) {
   
   try {
     const id = Number((await params).id);
-    const { has_project_management_access } = await req.json();
+    const body = await req.json();
+    const has_project_management_access = body.has_project_management_access;
+    const rawSpecs = body.specializations;
+    const allowed = ['payments', 'labor', 'vendor', 'construction'];
+    const validSpecs = Array.isArray(rawSpecs) ? rawSpecs.filter(s => allowed.includes(s)) : null;
 
     if (!Number.isInteger(id)) {
       return NextResponse.json({ success: false, error: 'Invalid agent ID' }, { status: 400 });
     }
 
+    const updateFields = [];
+    const paramsList = [];
+    if (typeof has_project_management_access === 'boolean') {
+      paramsList.push(has_project_management_access);
+      updateFields.push(`has_project_management_access = $${paramsList.length}`);
+    }
+    if (validSpecs !== null) {
+      paramsList.push(JSON.stringify(validSpecs));
+      updateFields.push(`specializations = $${paramsList.length}::jsonb`);
+    }
+
+    if (updateFields.length === 0) {
+      return NextResponse.json({ success: false, error: 'No fields to update' }, { status: 400 });
+    }
+
+    paramsList.push(id);
     const result = await pool.query(
       `UPDATE agents 
-       SET has_project_management_access = $1 
-       WHERE id = $2 
-       RETURNING id, name, has_project_management_access`,
-      [Boolean(has_project_management_access), id]
+       SET ${updateFields.join(', ')} 
+       WHERE id = $${paramsList.length} 
+       RETURNING id, name, has_project_management_access, specializations`,
+      paramsList
     );
 
     if (result.rows.length === 0) {

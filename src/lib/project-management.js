@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { createInitializationGuard } from '@/lib/api-utils';
 import { verifyBearer } from '@/lib/auth';
@@ -12,8 +13,15 @@ export async function requirePmAccess(req, projectId = null) {
   // Check if they have an agent token
   const agent = verifyBearer(req, 'agent');
   if (agent && agent.role === 'agent') {
-    const res = await pool.query('SELECT has_project_management_access FROM agents WHERE id = $1', [agent.id]);
-    if (res.rows[0]?.has_project_management_access) {
+    const res = await pool.query(
+      `SELECT id, name, email, phone, city, status, login_enabled,
+              has_project_management_access, specializations
+         FROM agents
+        WHERE id = $1 AND login_enabled = TRUE AND status = 'Approved'`,
+      [agent.id]
+    );
+    const dbAgent = res.rows[0];
+    if (dbAgent?.has_project_management_access) {
       if (projectId) {
         const assignmentRes = await pool.query(
           'SELECT 1 FROM pm_project_agents WHERE project_id = $1 AND agent_id = $2',
@@ -21,11 +29,119 @@ export async function requirePmAccess(req, projectId = null) {
         );
         if (assignmentRes.rows.length === 0) return null; // Not assigned to this project
       }
-      return agent;
+      const rawSpecs = dbAgent.specializations;
+      const specializations = Array.isArray(rawSpecs)
+        ? rawSpecs
+        : (typeof rawSpecs === 'string' ? JSON.parse(rawSpecs || '[]') : []);
+      return { ...agent, ...dbAgent, specializations, role: 'agent' };
     }
   }
   
   return null;
+}
+
+export async function assertAgentAccess(userOrReq, projectId = null, category = null) {
+  let user = userOrReq;
+  if (user && typeof user.headers?.get === 'function') {
+    user = (await requirePmAccess(user, null)) || verifyBearer(user, 'admin') || verifyBearer(user, 'agent');
+  }
+
+  if (!user) {
+    return {
+      allowed: false,
+      status: 401,
+      error: 'Unauthorized',
+      response: NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 }),
+    };
+  }
+
+  // Admin and site supervisor always allowed
+  if (user.role === 'admin' || user.role === 'site_supervisor') {
+    return {
+      allowed: true,
+      user,
+      role: user.role,
+      status: 200,
+      error: null,
+      response: null,
+    };
+  }
+
+  if (user.role === 'agent') {
+    // Fetch agent fresh from DB on each request
+    const freshRes = await pool.query(
+      `SELECT id, name, email, phone, city, status, login_enabled,
+              has_project_management_access, specializations
+         FROM agents
+        WHERE id = $1`,
+      [user.id]
+    );
+    const agent = freshRes.rows[0];
+
+    if (!agent || agent.status !== 'Approved' || !agent.login_enabled || !agent.has_project_management_access) {
+      return {
+        allowed: false,
+        status: 403,
+        error: 'Forbidden: Project Management access required',
+        response: NextResponse.json({ success: false, error: 'Forbidden: Project Management access required' }, { status: 403 }),
+      };
+    }
+
+    if (projectId) {
+      const projIdNum = Number(projectId);
+      if (Number.isInteger(projIdNum) && projIdNum > 0) {
+        const assignmentRes = await pool.query(
+          'SELECT 1 FROM pm_project_agents WHERE project_id = $1 AND agent_id = $2',
+          [projIdNum, agent.id]
+        );
+        if (assignmentRes.rows.length === 0) {
+          return {
+            allowed: false,
+            status: 403,
+            error: 'Forbidden: Agent is not assigned to this project',
+            response: NextResponse.json({ success: false, error: 'Forbidden: Agent is not assigned to this project' }, { status: 403 }),
+          };
+        }
+      }
+    }
+
+    const rawSpecs = agent.specializations;
+    const specializations = Array.isArray(rawSpecs)
+      ? rawSpecs
+      : (typeof rawSpecs === 'string' ? JSON.parse(rawSpecs || '[]') : []);
+
+    if (category) {
+      const categoriesToCheck = Array.isArray(category) ? category : [category];
+      const hasMatch = categoriesToCheck.some((c) => specializations.includes(c));
+      if (!hasMatch) {
+        const needed = Array.isArray(category) ? category.join(' or ') : category;
+        return {
+          allowed: false,
+          status: 403,
+          error: `Forbidden: '${needed}' specialization required`,
+          response: NextResponse.json({ success: false, error: `Forbidden: '${needed}' specialization required` }, { status: 403 }),
+        };
+      }
+    }
+
+    const merged = { ...user, ...agent, specializations, role: 'agent' };
+    return {
+      allowed: true,
+      user: merged,
+      agent: merged,
+      role: 'agent',
+      status: 200,
+      error: null,
+      response: null,
+    };
+  }
+
+  return {
+    allowed: false,
+    status: 403,
+    error: 'Forbidden: Access denied',
+    response: NextResponse.json({ success: false, error: 'Forbidden: Access denied' }, { status: 403 }),
+  };
 }
 
 // Migrations are the source of truth. This guarded bootstrap makes fresh Neon
@@ -51,6 +167,8 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_material_used(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,material_id BIGINT NOT NULL REFERENCES pm_materials(id) ON DELETE RESTRICT,quantity NUMERIC(14,3) NOT NULL CHECK(quantity>0),used_date DATE NOT NULL,used_for TEXT,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ,over_used BOOLEAN NOT NULL DEFAULT FALSE)`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_material_adjustments(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,material_id BIGINT NOT NULL REFERENCES pm_materials(id) ON DELETE RESTRICT,adjustment_type VARCHAR(30) NOT NULL CHECK(adjustment_type IN ('wastage','damage','return_to_supplier','transfer_out')),quantity NUMERIC(14,3) NOT NULL CHECK(quantity>0),adjustment_date DATE NOT NULL,to_project_id BIGINT REFERENCES pm_projects(id) ON DELETE RESTRICT,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),over_used BOOLEAN NOT NULL DEFAULT FALSE)`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_other_expenses(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,category VARCHAR(30) NOT NULL CHECK(category IN ('transport','machine_rent','electricity_water','permit','misc')),amount NUMERIC(14,2) NOT NULL CHECK(amount>0),expense_date DATE NOT NULL,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
+  // Agent Specializations Column
+  await pool.query(`ALTER TABLE agents ADD COLUMN IF NOT EXISTS specializations JSONB NOT NULL DEFAULT '[]'::jsonb`);
   
   // Phase 4: Multiple Agents per Project
   await pool.query(`
@@ -168,13 +286,26 @@ export function pageParams(searchParams) {
 }
 
 export function actorFromAdmin(admin) {
+  if (admin?.role === 'agent') {
+    const name = admin?.name ? `${admin.name} ` : '';
+    return `Agent ${name}(ID: ${admin.id})`;
+  }
   return `${admin?.email || 'admin'}${admin?.id !== undefined ? ` (#${admin.id})` : ''}`;
 }
 
 export async function writePmAudit(client, entityType, entityId, action, actor, beforeData = null, afterData = null) {
   await client.query(`INSERT INTO pm_audit_logs (entity_type, entity_id, action, changed_by, before_data, after_data) VALUES ($1,$2,$3,$4,$5,$6)`, [entityType, entityId, action, actor, beforeData, afterData]);
+  try {
+    await client.query(`INSERT INTO pm_audit_log (table_name, record_id, action, changed_by, old_data, new_data) VALUES ($1,$2,$3,$4,$5,$6)`, [entityType, entityId, action, actor, beforeData, afterData]);
+  } catch {}
 }
-export async function writePmPhase2Audit(client, tableName, recordId, action, actor, oldData = null, newData = null) { await client.query(`INSERT INTO pm_audit_log(table_name,record_id,action,changed_by,old_data,new_data) VALUES($1,$2,$3,$4,$5,$6)`,[tableName,recordId,action,actor,oldData,newData]); }
+
+export async function writePmPhase2Audit(client, tableName, recordId, action, actor, oldData = null, newData = null) {
+  await client.query(`INSERT INTO pm_audit_log(table_name,record_id,action,changed_by,old_data,new_data) VALUES($1,$2,$3,$4,$5,$6)`,[tableName,recordId,action,actor,oldData,newData]);
+  try {
+    await client.query(`INSERT INTO pm_audit_logs(entity_type,entity_id,action,changed_by,before_data,after_data) VALUES($1,$2,$3,$4,$5,$6)`,[tableName,recordId,action,actor,oldData,newData]);
+  } catch {}
+}
 
 export function money(value) {
   const number = Number(value);

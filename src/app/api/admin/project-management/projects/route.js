@@ -83,10 +83,20 @@ export async function GET(req) {
         : [partyId, search, status, pageSize, offset]
     );
 
+    const hasPayments = admin.role === 'admin' || admin.role === 'site_supervisor' || (admin.specializations || []).includes('payments');
+    const rows = hasPayments
+      ? result.rows
+      : result.rows.map((p) => ({
+          ...p,
+          contract_value: null,
+          received: null,
+          pending: null,
+        }));
+
     const total = Number(result.rows[0]?.total_count || 0);
     return NextResponse.json({
       success: true,
-      data: result.rows,
+      data: rows,
       pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
     });
   } catch (error) {
@@ -97,6 +107,9 @@ export async function GET(req) {
 export async function POST(req) {
   const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
+  if (admin.role === 'agent') {
+    return NextResponse.json({ success: false, error: 'Unauthorized: Agents cannot create projects (admin only)' }, { status: 403 });
+  }
   try {
     await ensureProjectManagementPhase5Schema();
     const values = projectValues(await req.json());
