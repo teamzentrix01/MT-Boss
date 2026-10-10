@@ -1,13 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementSchema } from '@/lib/project-management';
+import { ensureProjectManagementSchema, assertAgentAccess } from '@/lib/project-management';
 
 export async function GET(req) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
-
   try {
     await ensureProjectManagementSchema();
     const s = new URL(req.url).searchParams;
@@ -17,6 +12,9 @@ export async function GET(req) {
     if (!Number.isInteger(projectId) || !Number.isInteger(materialId)) {
       return NextResponse.json({ success: false, error: 'projectId and materialId are required' }, { status: 400 });
     }
+
+    const auth = await assertAgentAccess(req, projectId, 'construction');
+    if (!auth.allowed) return auth.response;
 
     const matRes = await pool.query(`SELECT * FROM pm_materials WHERE id = $1`, [materialId]);
     if (!matRes.rows[0]) {
@@ -87,7 +85,7 @@ export async function GET(req) {
       [projectId, materialId]
     );
 
-    const isSupervisor = admin.role === 'site_supervisor';
+    const isSupervisor = auth.role === 'site_supervisor';
     let runningBalance = 0;
     const timeline = txRes.rows.map(tx => {
       runningBalance += Number(tx.quantity);

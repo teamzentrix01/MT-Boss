@@ -542,7 +542,6 @@ ALTER SEQUENCE public.calculator_quote_otps_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE public.calculator_quote_otps_id_seq OWNED BY public.calculator_quote_otps.id;
 
-
 --
 -- TOC entry 234 (class 1259 OID 44031)
 -- Name: calculator_settings; Type: TABLE; Schema: public; Owner: postgres
@@ -555,7 +554,6 @@ CREATE TABLE public.calculator_settings (
     updated_at timestamp without time zone DEFAULT now(),
     CONSTRAINT calculator_settings_single_row CHECK ((id = 1))
 );
-
 
 ALTER TABLE public.calculator_settings OWNER TO postgres;
 
@@ -712,9 +710,7 @@ CREATE TABLE public.franchises (
     created_at timestamp without time zone DEFAULT now()
 );
 
-
 ALTER TABLE public.franchises OWNER TO postgres;
-
 --
 -- TOC entry 240 (class 1259 OID 44084)
 -- Name: franchises_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -1022,7 +1018,6 @@ CREATE TABLE public.primary_service_enquiries (
     reviewed_at timestamp without time zone
 );
 
-
 ALTER TABLE public.primary_service_enquiries OWNER TO postgres;
 
 --
@@ -1048,7 +1043,6 @@ ALTER SEQUENCE public.primary_service_enquiries_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE public.primary_service_enquiries_id_seq OWNED BY public.primary_service_enquiries.id;
-
 
 --
 -- TOC entry 253 (class 1259 OID 44171)

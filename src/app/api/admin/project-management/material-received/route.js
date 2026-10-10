@@ -1,13 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole, unauthorized } from '@/lib/auth';
-import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit } from '@/lib/project-management';
+import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 export async function GET(req) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
-
   try {
     await ensureProjectManagementSchema();
     const s = new URL(req.url).searchParams;
@@ -17,6 +12,9 @@ export async function GET(req) {
     if (!Number.isInteger(projectId)) {
       return NextResponse.json({ success: false, error: 'projectId is required' }, { status: 400 });
     }
+
+    const auth = await assertAgentAccess(req, projectId, 'construction');
+    if (!auth.allowed) return auth.response;
 
     const materialId = s.get('materialId') ? Number(s.get('materialId')) : null;
     const startDate = s.get('startDate') || null;
@@ -50,7 +48,7 @@ export async function GET(req) {
       params
     );
 
-    const isSupervisor = admin.role === 'site_supervisor';
+    const isSupervisor = auth.role === 'site_supervisor';
     const rows = r.rows.map(row => {
       if (isSupervisor) {
         return { ...row, rate: null, amount: null };
@@ -70,16 +68,17 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const admin = await requirePmAccess(req);
-  if (!admin) return unauthorized();
-
   try {
     await ensureProjectManagementSchema();
     const b = await req.json();
     const p = Number(b.project_id);
     const m = Number(b.material_id);
     const q = Number(b.quantity);
-    const isSupervisor = admin.role === 'site_supervisor';
+
+    const auth = await assertAgentAccess(req, p, 'construction');
+    if (!auth.allowed) return auth.response;
+
+    const isSupervisor = auth.role === 'site_supervisor';
     const rate = isSupervisor ? 0 : Number(b.rate || 0);
 
     if (
@@ -96,7 +95,7 @@ export async function POST(req) {
     const c = await pool.connect();
     try {
       await c.query('BEGIN');
-      const actor = actorFromAdmin(admin);
+      const actor = actorFromAdmin(auth.user);
       const amount = q * rate;
       const r = await c.query(
         `INSERT INTO pm_material_received(

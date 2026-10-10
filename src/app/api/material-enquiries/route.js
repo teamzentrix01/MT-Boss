@@ -10,6 +10,8 @@ import { notifyAdminSubmission, deliverMaterialOrderReceipt } from '@/lib/custom
 import { calculateShipping, getShippingSettings } from '@/lib/shipping';
 import { calculateCoupon, couponIsCurrentlyActive, productHasOffer } from '@/lib/coupon-calculations';
 import { getShopVendorCommissionPercent, recordShopVendorCommission, resolveCommissionRate } from '@/lib/shop-commissions';
+import { snapshotOrderCashback } from '@/lib/cashback/service';
+import { computeRedeemLimit, reserveWalletRedeem } from '@/lib/wallet/redeem';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
@@ -101,9 +103,14 @@ export async function POST(req) {
       quantity_text, order_unit, delivery_date,
       delivery_address, latitude, longitude,
       message, selected_city,
+      use_wallet, wallet_amount,
     } = body;
     const isCart = Array.isArray(body.items);
     const couponId = Number(body.coupon_id);
+    const useWallet = Boolean(use_wallet);
+    const requestedWalletAmount = wallet_amount !== undefined && wallet_amount !== null && wallet_amount !== ''
+      ? Math.max(0, Number(wallet_amount))
+      : null;
     const orderIntent = cleanText(body.order_intent)?.toLowerCase() || (isCart ? 'cart' : 'quote');
     if (!['quote', 'buy', 'cart'].includes(orderIntent) || (isCart && orderIntent !== 'cart') || (!isCart && orderIntent === 'cart')) {
       return NextResponse.json({ success: false, error: 'Invalid shop order type' }, { status: 400 });
@@ -298,16 +305,35 @@ export async function POST(req) {
         const couponCode = appliedCouponDiscount > 0
           ? (validatedCoupon?.code || 'AUTO')
           : null;
-        const grandTotal = Math.max(0, productTotal - appliedCouponDiscount) + (Number(shippingCost) || 0);
+        const itemBaseGrandTotal = Math.max(0, productTotal - appliedCouponDiscount) + (Number(shippingCost) || 0);
+
+        // Wallet redemption calculation
+        let itemWalletUsed = 0;
+        let itemWalletStatus = 'NONE';
+        if (useWallet && orderIntent !== 'quote' && itemBaseGrandTotal > 0) {
+          const limitRes = await computeRedeemLimit(user.id, itemBaseGrandTotal, appliedCouponDiscount > 0);
+          let targetRedeem = limitRes.maxAllowed;
+          if (requestedWalletAmount !== null && requestedWalletAmount !== undefined) {
+            targetRedeem = Math.min(requestedWalletAmount, limitRes.maxAllowed);
+          }
+          if (targetRedeem > 0) {
+            itemWalletUsed = Math.min(targetRedeem, itemBaseGrandTotal);
+            itemWalletUsed = Math.round(itemWalletUsed * 100) / 100;
+          }
+        }
+
+        const grandTotal = Math.max(0, itemBaseGrandTotal - itemWalletUsed);
+
         const result = await client.query(
         `INSERT INTO material_enquiries
            (user_id, order_reference, order_intent, user_name, user_phone, user_email,
             category_name, category_emoji, product_id, indicative_unit_price,
             material_type, subcategory_name, brand_company,
             quantity_text, order_unit, delivery_date,
-            delivery_address, latitude, longitude, message, selected_city, product_total, shipping_cost, grand_total, shipping_breakdown, coupon_code, coupon_discount)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25::jsonb,$26,$27)
-         RETURNING id, order_reference, order_intent, status, created_at`,
+            delivery_address, latitude, longitude, message, selected_city, product_total, shipping_cost, grand_total, shipping_breakdown, coupon_code, coupon_discount,
+            wallet_used, wallet_redeem_status)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25::jsonb,$26,$27,$28,$29)
+         RETURNING id, order_reference, order_intent, status, created_at, wallet_used, wallet_redeem_status`,
         [
           user.id, orderReference, orderIntent, cleanName, cleanPhone, cleanEmail || user.email || null,
           cleanText(item.category_name), item.category_emoji || '', item.product_id || null, indicativeUnitPrice,
@@ -316,13 +342,39 @@ export async function POST(req) {
           delivery_address || null, lat, lng,
           message || null, canonicalCity, productTotal, shippingCost ?? 0, grandTotal, JSON.stringify(shippingRow ? [shippingRow] : []),
           couponCode, appliedCouponDiscount,
+          itemWalletUsed, itemWalletStatus,
         ]
       );
+        const orderId = result.rows[0].id;
+
+        // Perform transactional wallet debit & FIFO lot reservation
+        if (itemWalletUsed > 0) {
+          const reserveResult = await reserveWalletRedeem({
+            client,
+            orderId,
+            userId: user.id,
+            amount: itemWalletUsed,
+            payableAmount: itemBaseGrandTotal,
+            hasCoupon: appliedCouponDiscount > 0,
+          });
+          if (reserveResult.success) {
+            itemWalletStatus = reserveResult.status; // 'RESERVED'
+            await client.query(
+              `UPDATE material_enquiries SET wallet_redeem_status = $1 WHERE id = $2`,
+              [itemWalletStatus, orderId]
+            );
+          }
+        }
+
         await addMaterialOrderEvent(client, {
           orderId: result.rows[0].id,
           status: 'open',
           title: orderIntent === 'quote' ? 'Quote requested' : 'Order placed',
-          note: orderIntent === 'quote' ? 'Your Get Quote request has been received.' : 'Your material order has been received.',
+          note: orderIntent === 'quote'
+            ? 'Your Get Quote request has been received.'
+            : (itemWalletUsed > 0
+                ? `Order placed. Paid ₹${itemWalletUsed.toLocaleString('en-IN')} from wallet balance.`
+                : 'Your material order has been received.'),
           actorRole: 'user',
           actorId: user.id,
           actorName: cleanName,
@@ -355,15 +407,55 @@ export async function POST(req) {
           }
         }
 
-        orders.push({ ...result.rows[0], product_id: item.product_id || null, indicative_unit_price: indicativeUnitPrice, product_total: productTotal, shipping_cost: Number(shippingCost) || 0, coupon_discount: appliedCouponDiscount, grand_total: grandTotal, category_name: item.category_name, material_type: item.material_type, quantity_text: itemQuantity, order_unit: item.order_unit });
+        // Cashback snapshot at placement time (accounting for wallet_used)
+        const catRes = await client.query('SELECT id FROM shop_categories WHERE LOWER(TRIM(name)) = LOWER(TRIM($1))', [cleanText(item.category_name)]);
+        const categoryId = catRes.rows[0]?.id || null;
+        const lineItem = [{
+          product_id: item.product_id || null,
+          category_id: categoryId,
+          category_name: item.category_name,
+          price: indicativeUnitPrice || 0,
+          quantity: isCart ? Number(item.quantity) : (Number.parseFloat(String(quantity_text || '')) || 1),
+          total: productTotal,
+        }];
+
+        const cashbackSnap = await snapshotOrderCashback({
+          orderId: result.rows[0].id,
+          userId: user.id,
+          items: lineItem,
+          subtotal: productTotal,
+          couponDiscount: appliedCouponDiscount,
+          hasCoupon: appliedCouponDiscount > 0,
+          walletUsed: itemWalletUsed,
+          client,
+        });
+
+        orders.push({
+          ...result.rows[0],
+          product_id: item.product_id || null,
+          indicative_unit_price: indicativeUnitPrice,
+          product_total: productTotal,
+          shipping_cost: Number(shippingCost) || 0,
+          coupon_discount: appliedCouponDiscount,
+          grand_total: grandTotal,
+          wallet_used: itemWalletUsed,
+          wallet_redeem_status: itemWalletStatus,
+          category_name: item.category_name,
+          material_type: item.material_type,
+          quantity_text: itemQuantity,
+          order_unit: item.order_unit,
+          cashback_amount: cashbackSnap.cashbackAmount,
+          cashback_status: cashbackSnap.cashbackStatus,
+        });
       }
       await client.query('COMMIT');
       const totals = orders.reduce((summary, order) => ({
         productTotal: summary.productTotal + Number(order.product_total || 0),
         couponDiscount: summary.couponDiscount + Number(order.coupon_discount || 0),
         shippingCost: summary.shippingCost + Number(order.shipping_cost || 0),
+        walletUsed: summary.walletUsed + Number(order.wallet_used || 0),
         grandTotal: summary.grandTotal + Number(order.grand_total || 0),
-      }), { productTotal: 0, couponDiscount: 0, shippingCost: 0, grandTotal: 0 });
+      }), { productTotal: 0, couponDiscount: 0, shippingCost: 0, walletUsed: 0, grandTotal: 0 });
       const targetEmail = cleanEmail || user.email;
       await Promise.allSettled(orders.flatMap((order) => [
         notifyAdminSubmission({ type: 'material order', name: cleanName, phone: cleanPhone, email: targetEmail, reference: order.order_reference, details: { Category: order.category_name, Material: order.material_type, Quantity: order.quantity_text, Unit: order.order_unit, City: canonicalCity } }),

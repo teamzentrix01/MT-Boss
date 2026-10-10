@@ -6,11 +6,13 @@ import Link from "next/link";
 import {
   ArrowRight, CheckCircle2, ChevronDown, ClipboardList, Grid3X3,
   Hammer, MapPin, Minus, Mountain, Package, PaintBucket, Plus,
-  Search, ShieldCheck, ShoppingCart, Truck, Wrench, X,
+  Search, ShieldCheck, ShoppingCart, Truck, Wallet, Wrench, X,
 } from "lucide-react";
 import "./shop.css";
 import ShopCategoryNav from "./ShopCategoryNav";
 import MobileStorefront from "./MobileStorefront";
+import ProductGalleryCarousel from "./ProductGalleryCarousel";
+import AutoSwipeGallery from "./AutoSwipeGallery";
 import { getCartStep } from "@/lib/cart-step";
 export function normalizeShopImageUrl(value) {
   const imageUrl = String(value || '').trim();
@@ -185,7 +187,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
       )}
       <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={productImage} category={product.category} name={product.name} /></button>
       <div className="store-product-details">
-        <span className="store-product-tag">Available for quote</span>
+        <span className="store-product-tag">Available</span>
         <button type="button" className="store-product-title" onClick={() => onDetails(product)}><h3>{product.name}</h3></button>
         <p className="store-product-category">{product.category.name}{product.unit ? ` · ${product.unit}` : ""}</p>
         <div className="store-product-price">
@@ -194,8 +196,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
         </div>
         {cityUnavailable && <span className="store-stock-note">Not delivered in {selectedCity}</span>}
         {product.fromSupplier && Number(product.quantity) === 0 && <span className="store-stock-note">Currently unavailable</span>}
-        <div className="store-product-actions">
-          <button type="button" className="store-quote-btn" disabled={!canOrder} onClick={() => onQuote(product)}>{canOrder ? 'Get Quote' : 'Unavailable'}</button>
+        <div className="store-product-actions store-product-actions-single">
           <button type="button" className="store-buy-btn" disabled={!canOrder} onClick={() => onBuy(product)}>{canOrder ? 'Buy Now' : 'Unavailable'}</button>
         </div>
         {quantity ? (
@@ -225,9 +226,71 @@ export default function Storefront({ categories, products, offers = [], content,
   const [couponCode, setCouponCode] = useState('');
   const [couponNotice, setCouponNotice] = useState('');
   const [offersOpen, setOffersOpen] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [cashbackPreview, setCashbackPreview] = useState(null);
   const searchScrolled = useRef(false);
   const catalogScrollFrame = useRef(null);
   const storeHeaderRef = useRef(null);
+
+  useEffect(() => {
+    if (!Array.isArray(cart) || cart.length === 0) {
+      setCashbackPreview(null);
+      return;
+    }
+    const token = localStorage.getItem('token');
+    const items = cart.map((item) => ({
+      product_id: item.product?.product_id || item.product?.id,
+      category_id: item.product?.category?.id,
+      category_name: item.product?.category?.name || item.product?.category,
+      price: Number(item.product?.price) || 0,
+      quantity: Number(item.quantity) || 1,
+      total: (Number(item.product?.price) || 0) * (Number(item.quantity) || 1),
+    }));
+
+    const subtotal = cart.reduce((sum, it) => sum + (Number(it.product?.price) || 0) * (Number(it.quantity) || 1), 0);
+    const discount = (activeCoupon && couponCalculation?.eligible) ? (Number(couponCalculation.discount) || 0) : 0;
+
+    fetch('/api/cashback/preview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        items,
+        subtotal,
+        coupon_discount: discount,
+        coupon_code: activeCoupon?.code || '',
+      }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && d.data) setCashbackPreview(d.data);
+      })
+      .catch(() => {});
+  }, [cart, activeCoupon, couponCalculation]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('/api/wallet', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((r) => {
+          if (r.status === 401) {
+            // Stale or invalid token
+            return null;
+          }
+          return r.ok ? r.json() : null;
+        })
+        .then((d) => {
+          if (d?.success && d?.data) {
+            setWalletBalance(Number(d.data.balance) || 0);
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   // When user types a search term, scroll the catalog into view automatically
   useEffect(() => {
@@ -474,6 +537,16 @@ export default function Storefront({ categories, products, offers = [], content,
             <label className="store-search"><Search size={20} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={content.search_placeholder} aria-label="Search materials" /></label>
             {productManagerHref && <Link href={productManagerHref} className="store-admin-add"><Plus size={17} /> Add Product</Link>}
             <Link href="/material-orders?role=user" className="store-orders" title="Track orders"><ClipboardList size={20} /><span>Orders</span></Link>
+            <Link
+              href="/wallet"
+              className="store-wallet-btn"
+              aria-label="MT-Boss Cashback Wallet"
+              title="My Cashback Wallet"
+            >
+              <Wallet size={19} />
+              <span className="store-wallet-text">Wallet</span>
+              <span className="store-wallet-pill">₹{walletBalance.toLocaleString('en-IN')}</span>
+            </Link>
             <button type="button" className="store-cart-button" onClick={toggleCart} aria-expanded={cartOpen} aria-controls="store-cart-dialog"><ShoppingCart size={20} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
           </div>
         </header>
@@ -504,7 +577,21 @@ export default function Storefront({ categories, products, offers = [], content,
             <div className="store-section-heading"><div><span className="store-section-kicker">START SHOPPING</span><h2 id="store-categories-heading">{content.categories_heading}</h2></div><span className="store-section-note">Pick a category to see materials</span></div>
             {loading ? <div className="store-loading">Loading categories...</div> : categories.length ? <div className="store-category-grid">{categories.map((category) => {
               const { tone, Icon } = categoryStyle(category.name);
-              return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}><span className="store-category-art" style={{ position: 'relative', display: 'block' }}>{category.image ? <OptimizedImage src={category.image} alt="" fill sizes="(max-width: 560px) 33vw, 180px" quality={70} /> : <Icon size={37} strokeWidth={1.5} />}</span><strong>{category.name}</strong><span>Explore <ArrowRight size={13} /></span></button>;
+              const catImgs = Array.from(new Set([
+                category.image,
+                ...(Array.isArray(category.images) ? category.images : [])
+              ].filter(Boolean)));
+              return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}>
+                <span className="store-category-art" style={{ position: 'relative', display: 'block', overflow: 'hidden' }}>
+                  {catImgs.length > 0 ? (
+                    <AutoSwipeGallery images={catImgs} alt={category.name} delay={3000} />
+                  ) : (
+                    <Icon size={37} strokeWidth={1.5} />
+                  )}
+                </span>
+                <strong>{category.name}</strong>
+                <span>Explore <ArrowRight size={13} /></span>
+              </button>;
             })}</div> : <div className="store-empty">Categories are being added. Please check back soon.</div>}
           </section>
 
@@ -517,6 +604,55 @@ export default function Storefront({ categories, products, offers = [], content,
           <section className="store-section store-catalog" id="store-products" aria-labelledby="store-products-heading">
             <div className="store-section-heading"><div><span className="store-section-kicker">THE CATALOGUE</span><h2 id="store-products-heading">{searchTerm ? `Results for “${search}”` : activeCategory === "all" ? content.catalog_heading : categories.find((category) => String(category.id) === String(activeCategory))?.name || "Materials"}</h2></div><span className="store-section-note">{visible.length} items</span></div>
             <div className="store-filter-row"><button type="button" className={activeCategory === "all" ? "is-active" : ""} onClick={() => chooseCategory("all")}>All</button>{categories.map((category) => <button key={category.id} type="button" className={String(activeCategory) === String(category.id) ? "is-active" : ""} onClick={() => chooseCategory(category.id)}>{category.name}</button>)}</div>
+
+            {/* Sub-categories showcase strip when a category is selected */}
+            {(() => {
+              if (activeCategory === "all") return null;
+              const activeCatObj = categories.find((c) => String(c.id) === String(activeCategory));
+              const subcats = Array.isArray(activeCatObj?.subcategories) ? activeCatObj.subcategories : [];
+              if (!subcats.length) return null;
+              return (
+                <div className="store-subcategories-strip">
+                  <div className="store-subcategories-title">
+                    <span>Sub-categories &amp; Varieties in {activeCatObj.name}</span>
+                  </div>
+                  <div className="store-subcategories-grid">
+                    {subcats.map((sub, sIdx) => {
+                      const subName = typeof sub === 'object' && sub !== null ? sub.name : sub;
+                      const subPrice = typeof sub === 'object' && sub !== null ? sub.price : '';
+                      const subImgs = typeof sub === 'object' && sub !== null
+                        ? Array.from(new Set([sub.image, ...(Array.isArray(sub.images) ? sub.images : [])].filter(Boolean)))
+                        : [];
+                      return (
+                        <div
+                          key={`${subName}-${sIdx}`}
+                          className="store-subcategory-card"
+                          onClick={() => setSearch(subName)}
+                          title={`Browse ${subName}`}
+                        >
+                          <div className="store-subcategory-img-box">
+                            {subImgs.length > 0 ? (
+                              <AutoSwipeGallery images={subImgs} alt={subName} delay={3200} />
+                            ) : (
+                              <Package size={26} className="text-gray-400" />
+                            )}
+                          </div>
+                          <div className="store-subcategory-info">
+                            <strong className="store-subcategory-name">{subName}</strong>
+                            {subPrice ? (
+                              <span className="store-subcategory-price">{subPrice.startsWith('₹') ? subPrice : `₹${subPrice}`}</span>
+                            ) : (
+                              <span className="store-subcategory-explore">Explore</span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
+
             <div className="store-catalog-tools"><label>Brand <select value={brandFilter} onChange={(event) => setBrandFilter(event.target.value)}><option value="all">All brands</option>{brands.map((brand) => <option key={brand} value={brand}>{brand}</option>)}</select></label><label>Sort by <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="featured">Featured</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name: A to Z</option></select></label></div>
             {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found. Try another search or category.</div>}
           </section>
@@ -527,8 +663,7 @@ export default function Storefront({ categories, products, offers = [], content,
           <section className="store-detail-dialog" role="dialog" aria-modal="true" aria-label={`${detailsProduct.name} details`} onClick={(event) => event.stopPropagation()}>
             <button type="button" className="store-detail-close" onClick={() => setDetailsProduct(null)} aria-label="Close product details"><X size={22} /></button>
             <div className="store-detail-gallery">
-              <ProductVisual image={getProductImage(detailsProduct, detailsProduct.category)} category={detailsProduct.category} name={detailsProduct.name} />
-              {detailsProduct.images?.length > 0 && <div className="store-detail-thumbs">{detailsProduct.images.map((url) => <OptimizedImage key={url} src={url} width={70} height={70} sizes="70px" quality={70} alt={`${detailsProduct.name} additional view`} />)}</div>}
+              <ProductGalleryCarousel product={detailsProduct} category={detailsProduct.category} />
             </div>
             <div className="store-detail-info">
               <span className="store-product-tag">{detailsProduct.brand || detailsProduct.category.name}</span>
@@ -538,7 +673,6 @@ export default function Storefront({ categories, products, offers = [], content,
               {detailsProduct.description && <p className="store-detail-description">{detailsProduct.description}</p>}
               {Object.keys(detailsProduct.specifications || {}).length > 0 && <><h3>Specifications</h3><dl className="store-specs">{Object.entries(detailsProduct.specifications).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{value}</dd></div>)}</dl></>}
               <div className="store-detail-actions store-detail-actions-priced">
-                <button type="button" className="store-detail-quote" disabled={!detailsCanOrder} onClick={() => { onQuote(detailsProduct); setDetailsProduct(null); }}>{detailsCanOrder ? 'Get Quote' : 'Unavailable'}</button>
                 <button type="button" className="store-detail-buy" disabled={!detailsCanOrder} onClick={() => { onBuy(detailsProduct); setDetailsProduct(null); }}>{detailsCanOrder ? 'Buy Now' : 'Unavailable'}</button>
                 <button type="button" className="store-detail-add" disabled={!detailsCanOrder || cart.length >= 20} onClick={() => onAdd(detailsProduct)}>Add to cart</button>
               </div>
@@ -578,6 +712,24 @@ export default function Storefront({ categories, products, offers = [], content,
                 {couponCalculation?.regularAmount > 0 && <div className="store-cart-breakdown"><span>Other items</span><strong>₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</strong></div>}
                 {activeCoupon && couponCalculation?.eligible && <div className="store-cart-breakdown store-cart-coupon-discount"><span>{activeCoupon.code ? `Coupon “${activeCoupon.code}” applied` : 'Automatic coupon applied'}</span><strong>-₹{couponCalculation.discount.toLocaleString('en-IN')}</strong></div>}
                 {activeCoupon && couponCalculation?.eligible && <div className="store-cart-estimate"><span>Discounted total</span><strong>₹{Math.max(0, pricedTotal - couponCalculation.discount).toLocaleString('en-IN')}</strong></div>}
+                {cashbackPreview?.totalCashback > 0 && (
+                  <div style={{
+                    margin: '12px 0',
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    backgroundColor: '#e3f3f3',
+                    border: '1px solid #b2dfdb',
+                    color: '#004d40',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}>
+                    <span>🎉</span>
+                    <span>You will earn <strong>₹{cashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
+                  </div>
+                )}
                 <p>Delivery charges, if applicable, are confirmed separately.</p>
                 <button type="button" className="store-checkout-button" onClick={() => { setCartOpen(false); onCheckout(); }}>Continue to checkout <ArrowRight size={18} /></button>
               </div>

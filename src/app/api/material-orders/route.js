@@ -7,6 +7,8 @@ import {
   ensureMaterialOrderSchema,
   materialOrderStatusLabel,
 } from '@/lib/material-orders';
+import { creditDeliveredCashback, reverseOrderCashback } from '@/lib/cashback/service';
+import { releaseWalletRedeem } from '@/lib/wallet/redeem';
 
 function resolveActor(req) {
   for (const role of ['admin', 'user', 'supplier', 'vendor', 'franchise']) {
@@ -254,6 +256,14 @@ export async function PATCH(req) {
         actorId: actor.id,
         actorName: actorName(actor),
       });
+
+      // Hook cashback & wallet redemption transition
+      if (['delivered', 'fulfilled'].includes(finalStatus)) {
+        await creditDeliveredCashback({ orderId, client });
+      } else if (['cancelled', 'returned'].includes(finalStatus)) {
+        await reverseOrderCashback({ orderId, reason: `Order marked as ${finalStatus}`, client });
+        await releaseWalletRedeem(orderId, client);
+      }
     }
 
     await client.query('COMMIT');

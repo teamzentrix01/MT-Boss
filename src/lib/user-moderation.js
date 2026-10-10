@@ -26,15 +26,29 @@ export const ensureUserModerationSchema = createInitializationGuard(async () => 
 // Re-checks the database on protected customer actions, so a block invalidates an
 // already-issued JWT at the next request without changing normal user sessions.
 export async function requireActiveUser(req) {
-  const tokenUser = requireRole(req, 'user');
-  if (!tokenUser?.id) return { user: null, blocked: false };
+  const tokenUser = requireRole(req, 'user') || requireRole(req, 'admin');
+  if (!tokenUser || tokenUser.id === undefined || tokenUser.id === null) {
+    return { user: null, blocked: false };
+  }
   await ensureUserModerationSchema();
+
+  // If token is from admin (e.g. root admin id: 0)
+  if (tokenUser.role === 'admin' && Number(tokenUser.id) === 0) {
+    return { user: { ...tokenUser, name: tokenUser.name || 'Admin' }, blocked: false };
+  }
+
   const result = await pool.query(
     'SELECT id, email, name, is_blocked FROM users WHERE id = $1',
     [tokenUser.id]
   );
   const user = result.rows[0];
-  if (!user) return { user: null, blocked: false };
+  if (!user) {
+    // If user is admin with non-zero id not yet in users table
+    if (tokenUser.role === 'admin') {
+      return { user: { ...tokenUser, name: tokenUser.name || 'Admin' }, blocked: false };
+    }
+    return { user: null, blocked: false };
+  }
   if (user.is_blocked) return { user: null, blocked: true };
   return { user: { ...tokenUser, name: user.name }, blocked: false };
 }

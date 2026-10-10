@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material-orders';
+import { creditDeliveredCashback } from '@/lib/cashback/service';
 const ADMIN_COMMISSION_RATE = 0.15;
 
 function getSupplier(req) {
@@ -56,6 +57,7 @@ export async function PUT(req, { params }) {
         actorId: decoded.id,
         actorName: decoded.shop_name || decoded.email || 'Supplier',
       });
+      await creditDeliveredCashback({ orderId: id, client });
       await client.query('COMMIT');
     } catch (error) {
       try { await client.query('ROLLBACK'); } catch {}

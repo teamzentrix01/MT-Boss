@@ -314,6 +314,12 @@ export default function ShopPage() {
   const [locationCoords, setLocationCoords] = useState(null);
   const [locationError, setLocationError] = useState("");
 
+  // Wallet Redemption State
+  const [useWallet, setUseWallet] = useState(false);
+  const [walletAmount, setWalletAmount] = useState("");
+  const [walletPreview, setWalletPreview] = useState(null);
+  const [walletLoading, setWalletLoading] = useState(false);
+
   // ── helpers ────────────────────────────────────────────────────────────────
   const dynamicTypes = productOptions.types || [];
   const dynamicUnits = productOptions.units || [];
@@ -358,6 +364,10 @@ export default function ShopPage() {
     setLocationStatus("idle");
     setLocationCoords(null);
     setLocationError("");
+    setUseWallet(false);
+    setWalletAmount("");
+    setWalletPreview(null);
+    setWalletLoading(false);
     setIsModalOpen(true);
   };
 
@@ -435,6 +445,55 @@ export default function ShopPage() {
       .catch(console.error)
       .finally(() => setLoadingProductOptions(false));
   }, [selectedCategory?.name, isModalOpen]);
+
+  // Wallet Redemption Preview fetcher
+  useEffect(() => {
+    if (!isModalOpen || modalMode === 'quote') {
+      return;
+    }
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const items = modalMode === 'cart'
+      ? cart.map((item) => ({ id: item.product?.product_id || item.product?.id, quantity: item.quantity }))
+      : selectedProduct?.product_id ? [{ id: selectedProduct.product_id, quantity: Math.max(1, Number(formData.quantity) || 1) }] : [];
+
+    if (!items.length) return;
+
+    let active = true;
+    setWalletLoading(true);
+    fetch('/api/wallet/redeem-preview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        items,
+        couponId: activeCoupon?.id || null,
+        selectedCity,
+        requestedAmount: walletAmount !== '' ? Number(walletAmount) : null,
+      }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (!active) return;
+        if (data.success && data.data) {
+          setWalletPreview(data.data);
+          if (useWallet && (walletAmount === '' || Number(walletAmount) > data.data.maxAllowed)) {
+            setWalletAmount(String(data.data.maxAllowed));
+          }
+        }
+      })
+      .catch((err) => {
+        if (active) console.error('Wallet preview error:', err);
+      })
+      .finally(() => {
+        if (active) setWalletLoading(false);
+      });
+
+    return () => { active = false; };
+  }, [isModalOpen, modalMode, cart, selectedProduct, formData.quantity, activeCoupon, selectedCity, useWallet]);
 
   const fillAddressFromCoords = async (latitude, longitude) => {
     try {
@@ -587,6 +646,8 @@ export default function ShopPage() {
           message:         formData.message || null,
           selected_city:   selectedCity,
           coupon_id: activeCoupon?.id || null,
+          use_wallet: useWallet,
+          wallet_amount: useWallet ? (walletAmount !== '' ? Number(walletAmount) : (walletPreview?.applied || 0)) : 0,
       };
       if (modalMode === "cart") {
         payload.items = cart.map((item) => ({
@@ -658,7 +719,16 @@ export default function ShopPage() {
   const hasShippingTotal = Number.isFinite(shippingTotal) && shippingTotal >= 0;
   const orderProductTotal = modalMode === 'cart' ? cartFinalTotal : selectedProductTotal;
   const hasFixedOrderPrice = modalMode !== 'quote' && orderProductTotal > 0 && (modalMode !== 'cart' || !cartHasUnpricedItems);
-  const orderGrandTotal = hasFixedOrderPrice && hasShippingTotal ? orderProductTotal + shippingTotal : null;
+  const rawGrandTotal = hasFixedOrderPrice && hasShippingTotal ? orderProductTotal + shippingTotal : null;
+  const appliedWalletAmount = useWallet && walletPreview && rawGrandTotal !== null
+    ? Math.min(
+        walletAmount !== '' ? Math.max(0, Number(walletAmount)) : (walletPreview.applied || 0),
+        walletPreview.maxAllowed || 0,
+        rawGrandTotal
+      )
+    : 0;
+  const payableGrandTotal = rawGrandTotal !== null ? Math.max(0, rawGrandTotal - appliedWalletAmount) : null;
+  const orderGrandTotal = payableGrandTotal;
   const quotePrice = getQuotePrice(selectedCategory, selectedCity, selectedProduct);
 
   // ── render ──────────────────────────────────────────────────────────────────
@@ -718,7 +788,16 @@ export default function ShopPage() {
                 {modalMode !== 'quote' && submittedOrder?.totals?.grandTotal !== undefined && (
                   <div className={`mx-auto mt-4 max-w-xs rounded-xl border-2 px-4 py-3 ${isDarkMode ? "border-[var(--brand-blue-light)] bg-zinc-800" : "border-[var(--brand-blue)] bg-blue-50"}`}>
                     <div className={`flex justify-between text-xs ${subText}`}><span>Product total</span><span>₹{Number(submittedOrder.totals.productTotal || 0).toLocaleString('en-IN')}</span></div>
+                    {Number(submittedOrder.totals.couponDiscount || 0) > 0 && (
+                      <div className="mt-1 flex justify-between text-xs text-green-600 font-semibold"><span>Coupon discount</span><span>-₹{Number(submittedOrder.totals.couponDiscount).toLocaleString('en-IN')}</span></div>
+                    )}
                     <div className={`mt-1 flex justify-between text-xs ${subText}`}><span>Shipping</span><span>₹{Number(submittedOrder.totals.shippingCost || 0).toLocaleString('en-IN')}</span></div>
+                    {Number(submittedOrder.totals.walletUsed || 0) > 0 && (
+                      <div className="mt-1 flex justify-between text-xs text-emerald-600 font-bold">
+                        <span>Paid from wallet</span>
+                        <span>-₹{Number(submittedOrder.totals.walletUsed).toLocaleString('en-IN')}</span>
+                      </div>
+                    )}
                     <div className={`mt-2 flex justify-between border-t pt-2 text-base font-black ${isDarkMode ? "border-zinc-700" : "border-blue-200"}`}><span>Grand Total</span><span>₹{Number(submittedOrder.totals.grandTotal).toLocaleString('en-IN')}</span></div>
                   </div>
                 )}
@@ -835,8 +914,14 @@ export default function ShopPage() {
   <span>Shipping</span>
   <span>{hasShippingTotal ? `₹${shippingTotal.toLocaleString('en-IN')}` : 'Calculate shipping first'}</span>
 </div>
+{appliedWalletAmount > 0 && (
+  <div className="mt-1 flex items-center justify-between text-xs font-bold text-emerald-600">
+    <span>Paid from wallet</span>
+    <span>-₹{appliedWalletAmount.toLocaleString('en-IN')}</span>
+  </div>
+)}
 <div className={`mt-3 flex items-center justify-between border-t-2 pt-3 ${isDarkMode ? "border-zinc-600" : "border-blue-300"}`}>
-  <span className={`text-base font-black ${headText}`}>Grand Total</span>
+  <span className={`text-base font-black ${headText}`}>Payable Grand Total</span>
   <strong className={`text-xl font-black ${headText}`}>{orderGrandTotal !== null ? `₹${orderGrandTotal.toLocaleString('en-IN')}` : 'On confirmation'}</strong>
 </div>
                   </div>
@@ -887,8 +972,14 @@ export default function ShopPage() {
                       <span>Shipping</span>
                       <span>{hasShippingTotal ? `₹${shippingTotal.toLocaleString('en-IN')}` : 'Calculate shipping first'}</span>
                     </div>
+                    {appliedWalletAmount > 0 && (
+                      <div className="mt-1 flex items-center justify-between text-xs font-bold text-emerald-600">
+                        <span>Paid from wallet</span>
+                        <span>-₹{appliedWalletAmount.toLocaleString('en-IN')}</span>
+                      </div>
+                    )}
                     <div className={`mt-3 flex items-center justify-between border-t pt-3 ${isDarkMode ? "border-zinc-700" : "border-blue-200"}`}>
-                      <span className={`text-base font-black ${headText}`}>Grand Total</span>
+                      <span className={`text-base font-black ${headText}`}>Payable Grand Total</span>
                       <strong className={`text-xl font-black ${headText}`}>{orderGrandTotal !== null ? `₹${orderGrandTotal.toLocaleString('en-IN')}` : 'On confirmation'}</strong>
                     </div>
                   </div>
@@ -1136,7 +1227,96 @@ export default function ShopPage() {
                   )}
                 </div>
 
-                {/* ── SECTION 5 — Additional Requirements ────────────── */}
+                {/* ── SECTION 5 — Pay using Cashback Wallet ───────────── */}
+                {modalMode !== 'quote' && rawGrandTotal > 0 && (
+                  <div className={`mb-5 p-4 rounded-xl border-2 transition-all ${
+                    isDarkMode ? "bg-zinc-800/80 border-zinc-700" : "bg-emerald-50/50 border-emerald-200"
+                  }`}>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">👛</span>
+                        <div>
+                          <label htmlFor="use-wallet-toggle" className={`text-xs font-bold cursor-pointer ${headText}`}>
+                            Use wallet balance
+                          </label>
+                          <p className={`text-[11px] ${subText}`}>
+                            Available Balance: <strong className="text-emerald-600">₹{Number(walletPreview?.balance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
+                          </p>
+                        </div>
+                      </div>
+                      <input
+                        id="use-wallet-toggle"
+                        type="checkbox"
+                        checked={useWallet}
+                        disabled={walletLoading || !walletPreview || walletPreview.maxAllowed <= 0}
+                        onChange={(e) => {
+                          const nextVal = e.target.checked;
+                          setUseWallet(nextVal);
+                          if (nextVal && walletPreview) {
+                            setWalletAmount(String(walletPreview.maxAllowed));
+                          }
+                        }}
+                        className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
+                      />
+                    </div>
+
+                    {walletLoading && (
+                      <p className="text-[10px] text-slate-500 mt-2">Checking wallet redemption limit...</p>
+                    )}
+
+                    {useWallet && walletPreview && (
+                      <div className="mt-3 pt-3 border-t border-emerald-200/50 space-y-2">
+                        <div>
+                          <label htmlFor="wallet-redeem-input" className="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+                            Redeem Amount (₹)
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              id="wallet-redeem-input"
+                              type="number"
+                              min="0"
+                              max={walletPreview.maxAllowed}
+                              step="0.01"
+                              value={walletAmount}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setWalletAmount(val);
+                              }}
+                              className={`${inp} font-bold text-sm text-emerald-700`}
+                              placeholder={`Max ₹${walletPreview.maxAllowed}`}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setWalletAmount(String(walletPreview.maxAllowed))}
+                              className="px-3 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors whitespace-nowrap"
+                            >
+                              Max ₹{walletPreview.maxAllowed}
+                            </button>
+                          </div>
+                        </div>
+
+                        {walletPreview.reason && (
+                          <p className="text-[11px] text-slate-600 font-medium">
+                            ℹ️ {walletPreview.reason}
+                          </p>
+                        )}
+                        {appliedWalletAmount >= rawGrandTotal && rawGrandTotal > 0 && (
+                          <div className="p-2 rounded-lg bg-emerald-100/70 border border-emerald-300 text-emerald-800 text-[11px] font-bold">
+                            🎉 Your wallet covers 100% of this order! No payment gateway required.
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {!useWallet && walletPreview && walletPreview.maxAllowed === 0 && walletPreview.reason && (
+                      <p className="text-[10px] text-slate-400 mt-1">
+                        {walletPreview.reason}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* ── SECTION 6 — Additional Requirements ────────────── */}
                 <SectionLabel isDark={isDarkMode}>📝 Additional Requirements</SectionLabel>
 
                 <div className="mb-4">
@@ -1164,7 +1344,13 @@ export default function ShopPage() {
                   disabled={submitting}
                   className="w-full bg-[var(--brand-blue)] hover:bg-sky-500 disabled:opacity-60 text-gray-900 font-extrabold py-3 px-4 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 text-sm tracking-wide"
                 >
-                  {submitting ? "Submitting…" : modalMode === "quote" ? "Get Quote →" : "Place Order →"}
+                  {submitting
+                    ? "Submitting…"
+                    : modalMode === "quote"
+                    ? "Get Quote →"
+                    : orderGrandTotal === 0 && rawGrandTotal > 0
+                    ? "Place Order (Paid via Wallet) →"
+                    : "Place Order →"}
                 </button>
                 <button
                   type="button"
