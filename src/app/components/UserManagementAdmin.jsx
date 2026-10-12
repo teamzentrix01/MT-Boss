@@ -764,7 +764,7 @@ export default function UserManagementAdmin({ isDarkMode = false }) {
                 </tr>
               ) : (
                 users.map((u) => {
-                  const initials = (u.name || u.email || 'U')
+                  const initials = (u.name || u.email || u.phone || 'U')
                     .split(' ')
                     .map((n) => n[0])
                     .join('')
