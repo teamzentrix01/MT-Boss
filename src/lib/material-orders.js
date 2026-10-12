@@ -76,8 +76,8 @@ export const ensureMaterialOrderSchema = createInitializationGuard(async() => {
       ,ADD COLUMN IF NOT EXISTS shipping_breakdown JSONB DEFAULT '[]'::jsonb
       ,ADD COLUMN IF NOT EXISTS product_total NUMERIC(12,2) DEFAULT 0
       ,ADD COLUMN IF NOT EXISTS grand_total NUMERIC(12,2) DEFAULT 0
-        ,ADD COLUMN IF NOT EXISTS wallet_used NUMERIC(12,2) NOT NULL DEFAULT 0
-        ,ADD COLUMN IF NOT EXISTS wallet_redeem_status VARCHAR(30) NOT NULL DEFAULT 'NONE'
+      ,ADD COLUMN IF NOT EXISTS wallet_used NUMERIC(12,2) NOT NULL DEFAULT 0
+      ,ADD COLUMN IF NOT EXISTS wallet_redeem_status VARCHAR(30) NOT NULL DEFAULT 'NONE'
   `);
     await pool.query(`
     UPDATE material_enquiries
@@ -160,7 +160,7 @@ export async function addMaterialOrderEvent(client, {
             status,
             title,
             note,
-            eventId: inserted.rows[0] && inserted.rows[0].id,
+            eventId: inserted.rows[0] ? inserted.rows[0].id : null,
         });
     } catch (notifyError) {
         console.error('User notification for order event failed:', notifyError);
