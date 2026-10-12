@@ -181,8 +181,12 @@ export async function getAdminOrders({
       me.coupon_code,
       me.coupon_discount,
       CAST(COALESCE(me.grand_total, me.product_total, 0) AS NUMERIC) AS grand_total,
-      CAST(COALESCE(me.wallet_used, 0) AS NUMERIC) AS wallet_used,
-      COALESCE(me.wallet_redeem_status, 'NONE') AS wallet_redeem_status,
+      -- Read wallet fields through the row JSON so this order-history query
+      -- remains available while an older production database is awaiting the
+      -- wallet-redemption migration. to_jsonb returns NULL for an absent
+      -- key, while it returns the real column value after migration.
+      COALESCE(NULLIF(to_jsonb(me) ->> 'wallet_used', '')::NUMERIC, 0::NUMERIC) AS wallet_used,
+      COALESCE(NULLIF(to_jsonb(me) ->> 'wallet_redeem_status', ''), 'NONE') AS wallet_redeem_status,
       me.delivery_address,
       COALESCE(me.selected_city, 'N/A') AS delivery_city,
       me.delivery_date,
@@ -363,8 +367,10 @@ export async function getAdminOrderById(orderId, { type } = {}) {
       me.coupon_code,
       me.coupon_discount,
       CAST(COALESCE(me.grand_total, me.product_total, 0) AS NUMERIC) AS grand_total,
-      CAST(COALESCE(me.wallet_used, 0) AS NUMERIC) AS wallet_used,
-      COALESCE(me.wallet_redeem_status, 'NONE') AS wallet_redeem_status,
+      -- See the list query above: this keeps invoice/detail lookup compatible
+      -- with a database that has not yet received the wallet migration.
+      COALESCE(NULLIF(to_jsonb(me) ->> 'wallet_used', '')::NUMERIC, 0::NUMERIC) AS wallet_used,
+      COALESCE(NULLIF(to_jsonb(me) ->> 'wallet_redeem_status', ''), 'NONE') AS wallet_redeem_status,
       me.delivery_address,
       COALESCE(me.selected_city, 'N/A') AS delivery_city,
       me.delivery_date,
