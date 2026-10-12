@@ -123,3 +123,46 @@ export async function GET(req) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PATCH(req) {
+  try {
+    const vendor = requireRole(req, 'vendor');
+    if (!vendor) return unauthorized();
+
+    const body = await req.json();
+    if (body.mark_all_read === true) {
+      await pool.query(
+        `UPDATE service_notifications
+            SET is_read = TRUE, updated_at = NOW()
+          WHERE vendor_id = $1 AND COALESCE(is_read, FALSE) = FALSE`,
+        [vendor.id]
+      );
+    } else {
+      const id = Number(body.id);
+      if (!Number.isInteger(id) || id <= 0) {
+        return NextResponse.json({ success: false, error: 'Valid notification id is required' }, { status: 400 });
+      }
+      const updated = await pool.query(
+        `UPDATE service_notifications
+            SET is_read = TRUE, updated_at = NOW()
+          WHERE id = $1 AND vendor_id = $2
+          RETURNING id`,
+        [id, vendor.id]
+      );
+      if (!updated.rows[0]) {
+        return NextResponse.json({ success: false, error: 'Notification not found' }, { status: 404 });
+      }
+    }
+
+    const unread = await pool.query(
+      `SELECT COUNT(*)::INT AS count
+         FROM service_notifications
+        WHERE vendor_id = $1 AND COALESCE(is_read, FALSE) = FALSE`,
+      [vendor.id]
+    );
+    return NextResponse.json({ success: true, unread_count: unread.rows[0].count });
+  } catch (error) {
+    console.error('Vendor notifications PATCH error:', error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}

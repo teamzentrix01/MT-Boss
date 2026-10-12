@@ -5,13 +5,14 @@ import { Eye, Download, RefreshCw, Plus, X, ActionIconButton } from '@/app/compo
 const statuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
 const stages = ['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost'];
 const priorities = ['Low', 'Normal', 'High', 'Urgent'];
-const sourceOrder = ['primary-service', 'quick-service', 'calculator', 'contact', 'manual'];
+const sourceOrder = ['primary-service', 'quick-service', 'calculator', 'contact', 'manual', 'offline'];
 const sourceLabels = {
   'primary-service': 'Primary Services',
   'quick-service': 'Quick Services',
   calculator: 'Calculator',
   contact: 'Contact Forms',
   manual: 'Manual',
+  offline: 'offline',
 };
 
 const emptyForm = {
@@ -42,6 +43,8 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   const [status, setStatus] = useState('');
   const [source, setSource] = useState('');
   const [city, setCity] = useState('');
+  const [byAgentTab, setByAgentTab] = useState(false);
+  const [selectedAgentId, setSelectedAgentId] = useState('');
   const [form, setForm] = useState(emptyForm);
   const [selected, setSelected] = useState(null);
   const [convertingLead, setConvertingLead] = useState(null);
@@ -103,6 +106,23 @@ export default function LeadManagementAdmin({ isDarkMode }) {
       .sort((a, b) => a.localeCompare(b));
   }, [leads]);
 
+  const byAgentCount = useMemo(() => {
+    return leads.filter((lead) => Boolean(lead.agent_id)).length;
+  }, [leads]);
+
+  const agentOptions = useMemo(() => {
+    const map = new Map();
+    agents.forEach((a) => {
+      if (a?.id) map.set(String(a.id), { id: String(a.id), name: a.name || `Agent #${a.id}` });
+    });
+    leads.forEach((l) => {
+      if (l.agent_id && !map.has(String(l.agent_id))) {
+        map.set(String(l.agent_id), { id: String(l.agent_id), name: l.agent_name || `Agent #${l.agent_id}` });
+      }
+    });
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }, [agents, leads]);
+
   const filteredLeads = useMemo(() => {
     const query = search.trim().toLocaleLowerCase();
 
@@ -120,12 +140,17 @@ export default function LeadManagementAdmin({ isDarkMode }) {
         lead.client_requirement,
       ].some((value) => String(value ?? '').toLocaleLowerCase().includes(query));
 
+      const matchesAgent = !byAgentTab || (
+        Boolean(lead.agent_id) && (!selectedAgentId || String(lead.agent_id) === String(selectedAgentId))
+      );
+
       return matchesSearch
+        && matchesAgent
         && (!status || lead.status === status)
         && (!source || lead.lead_source === source)
         && (!city || lead.city === city);
     });
-  }, [leads, search, status, source, city]);
+  }, [leads, search, status, source, city, byAgentTab, selectedAgentId]);
 
   const stats = useMemo(() => ({
     total: filteredLeads.length,
@@ -235,6 +260,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
     setStatus('');
     setSource('');
     setCity('');
+    setSelectedAgentId('');
     if (searchInputRef.current) searchInputRef.current.value = '';
   }
 
@@ -368,11 +394,11 @@ export default function LeadManagementAdmin({ isDarkMode }) {
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
           <button
             type="button"
-            onClick={() => setSource('')}
+            onClick={() => { setByAgentTab(false); setSource(''); setSelectedAgentId(''); }}
             style={{
-              border: `1px solid ${source ? border : 'var(--accent)'}`,
-              background: source ? surface : 'var(--accent)',
-              color: source ? text : '#111',
+              border: `1px solid ${!byAgentTab && !source ? 'var(--accent)' : border}`,
+              background: !byAgentTab && !source ? 'var(--accent)' : surface,
+              color: !byAgentTab && !source ? '#111' : text,
               borderRadius: 6,
               padding: '0.5rem 0.75rem',
               fontWeight: 900,
@@ -382,25 +408,67 @@ export default function LeadManagementAdmin({ isDarkMode }) {
             All Leads ({leads.length})
           </button>
           {sources.map((item) => (
+            <span key={item} style={{ display: 'contents' }}>
+              <button
+                type="button"
+                onClick={() => { setByAgentTab(false); setSource(item); setSelectedAgentId(''); }}
+                style={{
+                  border: `1px solid ${!byAgentTab && source === item ? 'var(--accent)' : border}`,
+                  background: !byAgentTab && source === item ? 'var(--accent)' : surface,
+                  color: !byAgentTab && source === item ? '#111' : text,
+                  borderRadius: 6,
+                  padding: '0.5rem 0.75rem',
+                  fontWeight: 900,
+                  cursor: 'pointer',
+                }}
+              >
+                {sourceLabels[item] || item} ({sourceStats[item] || 0})
+              </button>
+              {item === 'offline' && (
+                <button
+                  type="button"
+                  onClick={() => { setByAgentTab(true); setSource(''); setSelectedAgentId(''); }}
+                  style={{
+                    border: `1px solid ${byAgentTab ? 'var(--accent)' : border}`,
+                    background: byAgentTab ? 'var(--accent)' : surface,
+                    color: byAgentTab ? '#111' : text,
+                    borderRadius: 6,
+                    padding: '0.5rem 0.75rem',
+                    fontWeight: 900,
+                    cursor: 'pointer',
+                  }}
+                >
+                  By Agent ({byAgentCount})
+                </button>
+              )}
+            </span>
+          ))}
+          {!sources.includes('offline') && (
             <button
-              key={item}
               type="button"
-              onClick={() => setSource(item)}
+              onClick={() => { setByAgentTab(true); setSource(''); setSelectedAgentId(''); }}
               style={{
-                border: `1px solid ${source === item ? 'var(--accent)' : border}`,
-                background: source === item ? 'var(--accent)' : surface,
-                color: source === item ? '#111' : text,
+                border: `1px solid ${byAgentTab ? 'var(--accent)' : border}`,
+                background: byAgentTab ? 'var(--accent)' : surface,
+                color: byAgentTab ? '#111' : text,
                 borderRadius: 6,
                 padding: '0.5rem 0.75rem',
                 fontWeight: 900,
                 cursor: 'pointer',
               }}
             >
-              {sourceLabels[item] || item} ({sourceStats[item] || 0})
+              By Agent ({byAgentCount})
             </button>
-          ))}
+          )}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px,2fr) repeat(3,minmax(130px,1fr)) auto', gap: 10, marginBottom: 12 }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: byAgentTab
+            ? 'minmax(200px,2fr) repeat(4,minmax(120px,1fr)) auto'
+            : 'minmax(220px,2fr) repeat(3,minmax(130px,1fr)) auto',
+          gap: 10,
+          marginBottom: 12,
+        }}>
           <div ref={searchHostRef} />
           <select aria-label="Filter leads by city" style={inputStyle} value={city} onChange={(e) => setCity(e.target.value)}>
             <option value="">All cities</option>
@@ -414,7 +482,36 @@ export default function LeadManagementAdmin({ isDarkMode }) {
             <option value="">All source</option>
             {sources.map((item) => <option key={item} value={item}>{sourceLabels[item] || item}</option>)}
           </select>
-          <button type="button" onClick={clearFilters} disabled={!search && !city && !status && !source} style={{ border: 0, background: surface, color: text, borderRadius: 6, padding: '0.55rem 1rem', fontWeight: 900, cursor: 'pointer' }}>Clear</button>
+          {byAgentTab && (
+            <select
+              aria-label="Filter leads by agent"
+              style={inputStyle}
+              value={selectedAgentId}
+              onChange={(e) => setSelectedAgentId(e.target.value)}
+            >
+              <option value="">All agents</option>
+              {agentOptions.map((ag) => (
+                <option key={ag.id} value={ag.id}>{ag.name}</option>
+              ))}
+            </select>
+          )}
+          <button
+            type="button"
+            onClick={clearFilters}
+            disabled={!search && !city && !status && !source && (!byAgentTab || !selectedAgentId)}
+            style={{
+              border: 0,
+              background: surface,
+              color: text,
+              borderRadius: 6,
+              padding: '0.55rem 1rem',
+              fontWeight: 900,
+              cursor: (!search && !city && !status && !source && (!byAgentTab || !selectedAgentId)) ? 'not-allowed' : 'pointer',
+              opacity: (!search && !city && !status && !source && (!byAgentTab || !selectedAgentId)) ? 0.6 : 1,
+            }}
+          >
+            Clear
+          </button>
         </div>
 
         <div style={{ overflowX: 'auto' }}>

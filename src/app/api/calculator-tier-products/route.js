@@ -24,6 +24,7 @@ export async function GET() {
          LEFT JOIN suppliers s ON s.id = m.supplier_id
          LEFT JOIN vendors v ON v.id = m.vendor_id
         WHERE m.is_available = TRUE
+          AND (m.vendor_id IS NULL OR COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'approved')
           AND m.price > 0
           AND m.quality_tier IS NOT NULL
           AND (

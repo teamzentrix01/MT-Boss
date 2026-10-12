@@ -109,12 +109,22 @@ export async function snapshotOrderCashback({ orderId, userId, items, subtotal, 
  * Ensures a wallet record exists for a user (atomic upsert).
  */
 export async function ensureWallet(userId, client = pool) {
-  await client.query(
-    `INSERT INTO wallets (user_id, balance, pending_balance)
-     VALUES ($1, 0.00, 0.00)
-     ON CONFLICT (user_id) DO NOTHING`,
-    [userId]
-  );
+  const numericId = Number.parseInt(userId, 10);
+  if (!numericId || numericId <= 0 || Number.isNaN(numericId)) return;
+
+  try {
+    await client.query(
+      `INSERT INTO wallets (user_id, balance, pending_balance)
+       VALUES ($1, 0.00, 0.00)
+       ON CONFLICT (user_id) DO NOTHING`,
+      [numericId]
+    );
+  } catch (error) {
+    // If the user does not exist in the users table (e.g. admin or non-existent user),
+    // foreign key constraint 23503 is caught gracefully.
+    if (error?.code === '23503') return;
+    throw error;
+  }
 }
 
 /**

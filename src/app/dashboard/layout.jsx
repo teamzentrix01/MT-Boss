@@ -52,7 +52,7 @@ const menuItems = [
   { label: 'Calculator Quotes', icon: FileText, tab: 'calculator-quotes' },
   { label: 'Career Enquiry', icon: Briefcase, tab: 'career-enquiries' },
   { label: 'New Jobs', icon: BriefcaseBusiness, tab: 'jobs' },
-  { label: 'Customer Enquiries', icon: ClipboardList, tab: 'lead-management' },
+  { label: 'Lead Management', icon: ClipboardList, tab: 'lead-management' },
   { label: 'Office Locations', icon: MapPin, tab: 'office-locations' },
   { label: 'Cities', icon: Building, tab: 'cities' },
   { label: 'Contact Forms', icon: Mail, tab: 'submissions' },
@@ -88,16 +88,45 @@ const menuItems = [
   { label: 'Shipping Settings', icon: Truck, tab: 'shipping-settings' },
   { label: 'Suppliers', icon: Truck, tab: 'suppliers' },
   { label: 'Vendors', icon: HardHat, tab: 'vendors' },
+  { label: 'Product Approvals', icon: PackageCheck, tab: 'product-approvals' },
   { label: 'Package Approvals', icon: PackageCheck, tab: 'packages' },
 ];
 
 function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
   const searchParams = useSearchParams();
   const currentTab = searchParams ? (searchParams.get('tab') || '') : '';
+  const [pendingApprovalsCount, setPendingApprovalsCount] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    const fetchPending = async () => {
+      try {
+        let u = {};
+        try { u = JSON.parse(localStorage.getItem('user') || '{}'); } catch {}
+        const token = localStorage.getItem('admin-token') || (u.role === 'admin' ? localStorage.getItem('token') : '');
+        if (!token) return;
+        const res = await fetch('/api/admin/product-approvals?count_only=true', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (active && data.success) {
+          setPendingApprovalsCount(data.pendingCount || 0);
+        }
+      } catch {}
+    };
+    fetchPending();
+    const handleUpdate = () => fetchPending();
+    window.addEventListener('mtbossShopProductsUpdated', handleUpdate);
+    return () => {
+      active = false;
+      window.removeEventListener('mtbossShopProductsUpdated', handleUpdate);
+    };
+  }, []);
 
   const visibleItems = menuItems.filter((item) => {
     if (user?.role === 'agent') {
       const tab = item.tab || '';
+      if (tab === 'product-approvals') return false;
       if (tab.includes('project-management') || tab.startsWith('pm-') || tab === 'projects') {
         return !!user.has_project_management_access;
       }
@@ -119,7 +148,7 @@ function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
             href={item.tab ? `/dashboard?tab=${item.tab}` : '/dashboard'}
             onClick={closeSidebarOnMobile}
             title={item.label}
-            className={`flex items-center gap-3 px-2.5 py-2 rounded-lg transition-all ${isActive
+            className={`relative flex items-center gap-3 px-2.5 py-2 rounded-lg transition-all ${isActive
                 ? 'bg-[rgba(33,150,243,0.12)] text-[#0284c7] font-semibold'
                 : isDarkMode
                   ? 'text-gray-300 hover:text-white hover:bg-white/5 font-medium'
@@ -141,7 +170,20 @@ function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
                 />
               ) : null}
             </span>
-            {sidebarOpen && <span className="text-sm truncate select-none">{item.label}</span>}
+            {sidebarOpen ? (
+              <span className="flex-1 flex items-center justify-between text-sm truncate select-none">
+                <span>{item.label}</span>
+                {item.tab === 'product-approvals' && pendingApprovalsCount > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-amber-500 rounded-full shadow-sm">
+                    {pendingApprovalsCount}
+                  </span>
+                )}
+              </span>
+            ) : (
+              item.tab === 'product-approvals' && pendingApprovalsCount > 0 && (
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-amber-500 rounded-full ring-2 ring-white dark:ring-zinc-900" />
+              )
+            )}
           </Link>
         );
       })}

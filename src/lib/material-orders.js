@@ -145,12 +145,24 @@ export async function addMaterialOrderEvent(client, {
   actorId = null,
   actorName = null,
 }) {
-  await client.query(
+  const inserted = await client.query(
     `INSERT INTO material_order_events
       (order_id, status, title, note, actor_role, actor_id, actor_name)
-     VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+     VALUES ($1,$2,$3,$4,$5,$6,$7)
+     RETURNING id`,
     [orderId, status, title, note, actorRole, actorId, actorName]
   );
+  try {
+    const { notifyUserForMaterialOrderEvent } = await import('@/lib/user-notifications');
+    await notifyUserForMaterialOrderEvent(client, orderId, {
+      status,
+      title,
+      note,
+      eventId: inserted.rows[0]?.id,
+    });
+  } catch (notifyError) {
+    console.error('User notification for order event failed:', notifyError);
+  }
 }
 
 export function materialOrderStatusLabel(status) {

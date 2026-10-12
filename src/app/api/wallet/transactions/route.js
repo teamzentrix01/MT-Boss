@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireActiveUser } from '@/lib/user-moderation';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function GET(req) {
   try {
@@ -10,6 +11,14 @@ export async function GET(req) {
     }
     if (!user) {
       return NextResponse.json({ success: false, error: 'Authentication required' }, { status: 401 });
+    }
+
+    const userId = Number.parseInt(user.id, 10);
+    if (!userId || userId <= 0 || Number.isNaN(userId)) {
+      return NextResponse.json({
+        success: true,
+        data: [],
+      });
     }
 
     const { searchParams } = new URL(req.url);
@@ -22,7 +31,7 @@ export async function GET(req) {
        WHERE t.user_id = $1
        ORDER BY t.created_at DESC, t.id DESC
        LIMIT $2`,
-      [user.id, limit]
+      [userId, limit]
     );
 
     return NextResponse.json({
@@ -34,6 +43,6 @@ export async function GET(req) {
     });
   } catch (error) {
     console.error('GET /api/wallet/transactions error:', error);
-    return NextResponse.json({ success: false, error: 'Could not fetch transactions' }, { status: 500 });
+    return handleApiError(error);
   }
 }

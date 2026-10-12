@@ -324,11 +324,15 @@ export async function getAdminOrders({
 
 /**
  * Fetch a single order by ID or reference with all details for Bill / Invoice
+ * @param {string|number} orderId - Numeric id or order/booking reference
+ * @param {{ type?: 'shop_order'|'service_booking' }} [options] - Limit lookup to one order kind
  */
-export async function getAdminOrderById(orderId) {
+export async function getAdminOrderById(orderId, { type } = {}) {
   if (!orderId) return null;
   const isNumber = /^\d+$/.test(String(orderId).trim());
   const ref = String(orderId).trim();
+  const tryShop = !type || type === 'shop_order';
+  const tryService = !type || type === 'service_booking';
 
   // Try shop orders first (material_enquiries)
   const shopSql = `
@@ -354,6 +358,8 @@ export async function getAdminOrderById(orderId) {
       me.coupon_code,
       me.coupon_discount,
       CAST(COALESCE(me.grand_total, me.product_total, 0) AS NUMERIC) AS grand_total,
+      CAST(COALESCE(me.wallet_used, 0) AS NUMERIC) AS wallet_used,
+      COALESCE(me.wallet_redeem_status, 'NONE') AS wallet_redeem_status,
       me.delivery_address,
       COALESCE(me.selected_city, 'N/A') AS delivery_city,
       me.delivery_date,
@@ -394,11 +400,13 @@ export async function getAdminOrderById(orderId) {
     LIMIT 1
   `;
 
-  const shopParams = isNumber ? [parseInt(ref, 10), ref] : [ref];
-  const shopRes = await pool.query(shopSql, shopParams);
-  if (shopRes.rows.length > 0) {
-    const row = shopRes.rows[0];
-    return normalizeOrderBillData(row);
+  if (tryShop) {
+    const shopParams = isNumber ? [parseInt(ref, 10), ref] : [ref];
+    const shopRes = await pool.query(shopSql, shopParams);
+    if (shopRes.rows.length > 0) {
+      return normalizeOrderBillData(shopRes.rows[0]);
+    }
+    if (type === 'shop_order') return null;
   }
 
   // Try service bookings
@@ -424,6 +432,10 @@ export async function getAdminOrderById(orderId) {
       NULL::TEXT AS coupon_code,
       0::NUMERIC AS coupon_discount,
       CAST(COALESCE(sb.total_amount, sb.final_amount, sb.base_amount, 0) AS NUMERIC) AS grand_total,
+      sb.payment_status,
+      sb.payment_gateway,
+      sb.payment_txnid,
+      sb.payment_completed_at,
       sb.service_address AS delivery_address,
       COALESCE(sb.service_city, 'N/A') AS delivery_city,
       sb.booking_date AS delivery_date,
@@ -458,14 +470,48 @@ export async function getAdminOrderById(orderId) {
     LIMIT 1
   `;
 
-  const serviceParams = isNumber ? [parseInt(ref, 10), ref] : [ref];
-  const serviceRes = await pool.query(serviceSql, serviceParams);
-  if (serviceRes.rows.length > 0) {
-    const row = serviceRes.rows[0];
-    return normalizeOrderBillData(row);
+  if (tryService) {
+    const serviceParams = isNumber ? [parseInt(ref, 10), ref] : [ref];
+    const serviceRes = await pool.query(serviceSql, serviceParams);
+    if (serviceRes.rows.length > 0) {
+      return normalizeOrderBillData(serviceRes.rows[0]);
+    }
   }
 
   return null;
+}
+
+const INVOICE_ORDER_TYPES = new Set(['shop_order', 'service_booking']);
+
+export function canActorAccessOrderInvoice(order, actor) {
+  if (!order || !actor) return false;
+  if (actor.role === 'admin') return true;
+  if (actor.role !== 'user') return false;
+
+  const actorId = Number(actor.id);
+  if (order.customer_id != null && Number(order.customer_id) === actorId) return true;
+
+  const actorEmail = String(actor.email || '').trim().toLowerCase();
+  const orderEmail = String(order.customer_email || '').trim().toLowerCase();
+  if (actorEmail && orderEmail && orderEmail !== 'n/a' && actorEmail === orderEmail) return true;
+
+  return false;
+}
+
+/**
+ * Load invoice payload when the actor is allowed to view it.
+ * @returns {Promise<{ order }|{ forbidden: true }|null>}
+ */
+export async function getOrderForInvoiceRequest(orderId, type, actor) {
+  const normalizedType = String(type || '').trim();
+  if (!INVOICE_ORDER_TYPES.has(normalizedType)) {
+    throw new Error('Invalid order type. Use shop_order or service_booking.');
+  }
+
+  const order = await getAdminOrderById(orderId, { type: normalizedType });
+  if (!order) return null;
+  if (!canActorAccessOrderInvoice(order, actor)) return { forbidden: true };
+  return { order };
 }
 
 /**
@@ -478,6 +524,17 @@ function normalizeOrderBillData(row) {
   const grandTotal = row.grand_total !== null && row.grand_total !== undefined ? parseFloat(row.grand_total) : (lineTotal !== null ? lineTotal : null);
   const shippingCost = row.shipping_cost !== null && row.shipping_cost !== undefined ? parseFloat(row.shipping_cost) : 0;
   const couponDiscount = row.coupon_discount !== null && row.coupon_discount !== undefined ? parseFloat(row.coupon_discount) : 0;
+  const walletUsed = row.wallet_used !== null && row.wallet_used !== undefined ? parseFloat(row.wallet_used) : 0;
+
+  let paymentMode = 'Pay on Delivery / Standard';
+  if (row.payment_status === 'PAID') {
+    const gateway = row.payment_gateway || 'Online';
+    paymentMode = row.payment_txnid ? `Paid via ${gateway} · Ref ${row.payment_txnid}` : `Paid via ${gateway}`;
+  } else if (row.payment_status === 'FREE') {
+    paymentMode = 'Free slot / No charge';
+  } else if (row.notes?.includes('Payment preference:')) {
+    paymentMode = row.notes.split('Payment preference:')[1]?.trim() || paymentMode;
+  }
 
   const items = [
     {
@@ -498,11 +555,10 @@ function normalizeOrderBillData(row) {
     product_total: lineTotal,
     shipping_cost: shippingCost,
     coupon_discount: couponDiscount,
+    wallet_used: walletUsed,
     grand_total: grandTotal,
     items,
-    payment_mode: row.notes?.includes('Payment preference:')
-      ? row.notes.split('Payment preference:')[1]?.trim()
-      : 'Pay on Delivery / Standard',
+    payment_mode: paymentMode,
   };
 }
 
@@ -962,10 +1018,21 @@ export async function generateOrderInvoicePdf(order) {
         printTotalLine(couponLabel, `-Rs. ${Number(order.coupon_discount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, false, false, true);
       }
 
+      const feeLabel = order.type === 'service_booking' ? 'Visit / Service Fee:' : 'Shipping Cost:';
       const shippingStr = Number(order.shipping_cost || 0) > 0
         ? `Rs. ${Number(order.shipping_cost).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
         : 'Free / N/A';
-      printTotalLine('Shipping Cost:', shippingStr);
+      printTotalLine(feeLabel, shippingStr);
+
+      if (Number(order.wallet_used || 0) > 0) {
+        printTotalLine(
+          'Wallet redeemed:',
+          `-Rs. ${Number(order.wallet_used).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+          false,
+          false,
+          true
+        );
+      }
 
       doc.moveTo(totalBoxX + 10, lineY - 5).lineTo(totalBoxX + totalBoxW - 10, lineY - 5).strokeColor(borderColor).stroke();
 

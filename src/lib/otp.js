@@ -56,8 +56,12 @@ export function verifyOtp(otp, otpHash) {
     return false;
   }
 
-  return crypto.timingSafeEqual(
-    Buffer.from(storedHash, 'utf8'),
-    Buffer.from(suppliedHash, 'utf8')
-  );
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(storedHash, 'hex'),
+      Buffer.from(suppliedHash, 'hex'),
+    );
+  } catch {
+    return false;
+  }
 }
