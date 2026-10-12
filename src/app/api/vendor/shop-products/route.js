@@ -74,17 +74,21 @@ async function validProduct(body) {
   if (!qualityTier) return { error: 'Choose a Quality Tier: All, Basic, Standard, Premium or Luxury' };
 
   const quotePriceRange = String(body.quote_price_range || '').trim();
-  const rangeMatch = quotePriceRange.match(/^(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)\s*[-–]\s*(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)$/i);
-  if (!rangeMatch) return { error: 'Enter the required Get Quote price range like 40-80' };
-  const quoteMinimum = Number(rangeMatch[1]);
-  const quoteMaximum = Number(rangeMatch[2]);
-  if (!(quoteMinimum > 0) || quoteMaximum <= quoteMinimum || quoteMaximum > 99999999.99) {
-    return { error: 'Get Quote maximum price must be greater than its minimum, e.g. 40-80' };
+  let normalizedQuoteRange = null;
+  if (quotePriceRange) {
+    const rangeMatch = quotePriceRange.match(/^(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)\s*[-–]\s*(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)$/i);
+    if (!rangeMatch) return { error: 'Enter the Get Quote price range like 40-80 or leave empty' };
+    const quoteMinimum = Number(rangeMatch[1]);
+    const quoteMaximum = Number(rangeMatch[2]);
+    if (!(quoteMinimum > 0) || quoteMaximum <= quoteMinimum || quoteMaximum > 99999999.99) {
+      return { error: 'Get Quote maximum price must be greater than its minimum, e.g. 40-80' };
+    }
+    normalizedQuoteRange = `${quoteMinimum}-${quoteMaximum}`;
   }
 
-  const price = Number(body.price);
-  if (!Number.isFinite(price) || price <= 0 || price > 99999999.99) {
-    return { error: 'Enter the required positive Buy Now fixed price' };
+  const price = body.price === '' || body.price == null ? null : Number(body.price);
+  if (price !== null && (!Number.isFinite(price) || price <= 0 || price > 99999999.99)) {
+    return { error: 'Enter a valid positive Buy Now fixed price or leave empty for Price on request' };
   }
   const quantity = Number(body.quantity ?? 0);
   if (!Number.isInteger(quantity) || quantity < 0 || quantity > 100000000) {
@@ -109,7 +113,7 @@ async function validProduct(body) {
     category: categoryResult.rows[0].name,
     subcategory: String(body.subcategory || '').trim().slice(0, 255),
     description: String(body.description || '').trim().slice(0, 2000),
-    quote_price_range: `${quoteMinimum}-${quoteMaximum}`,
+    quote_price_range: normalizedQuoteRange,
     price,
     unit: String(body.unit || categoryResult.rows[0].unit || 'pcs').trim().slice(0, 100),
     quantity,

@@ -522,15 +522,11 @@ function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
       setFormErr('Product image is required. Please upload at least one image or provide an image URL.');
       return;
     }
-    if (!price) {
-      setFormErr('Product price is required.');
-      return;
-    }
 
     const itemData = {
       name,
       image,
-      price,
+      price: price || '',
       images: finalImgs,
     };
 
@@ -610,7 +606,7 @@ function SubcategoryListEditor({ label, helpText, items = [], onChange, t }) {
                       {item.price.startsWith('₹') ? item.price : `₹${item.price}`}
                     </span>
                   ) : (
-                    <span style={{ fontSize: '10px', color: t.muted, fontStyle: 'italic' }}>No price set</span>
+                    <span style={{ fontSize: '10px', fontWeight: 600, color: '#d97706', background: '#fef3c7', border: '1px solid #fde68a', borderRadius: '3px', padding: '1px 5px' }}>Price on request</span>
                   )}
                   {item.images?.length > 1 && (
                     <span style={{ fontSize: '9px', fontWeight: 700, color: '#0284c7', background: '#e0f2fe', borderRadius: '3px', padding: '1px 5px' }}>
@@ -1465,7 +1461,9 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                       </td>
 
                       {/* price */}
-                      <td style={{ padding: '10px 14px', color: t.sub, whiteSpace: 'nowrap' }}>{cat.price_range || '—'}</td>
+                      <td style={{ padding: '10px 14px', color: t.sub, whiteSpace: 'nowrap' }}>
+                        {cat.price_range ? (cat.price_range.startsWith('₹') || cat.price_range.toLowerCase().startsWith('rs') ? cat.price_range : `₹${cat.price_range}`) : <span style={{ color: '#d97706', fontWeight: 600 }}>Price on request</span>}
+                      </td>
 
                       {/* shipping charge */}
                       <td style={{ padding: '10px 14px', color: t.sub, whiteSpace: 'nowrap' }}>{cat.shipping_charge ? `₹${cat.shipping_charge}` : '—'}</td>
