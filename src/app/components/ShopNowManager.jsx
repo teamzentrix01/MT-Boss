@@ -187,7 +187,15 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
       if (!response.ok) throw new Error(data.error || 'Could not save product');
       notifyShopProductsUpdated();
       reset();
-      setNotice(editingId ? 'Product updated.' : 'Product added.');
+      if (isVendor) {
+        setNotice(
+          editingId
+            ? (data?.resubmitted_for_approval ? 'Submitted for admin approval.' : 'Product updated.')
+            : 'Submitted for admin approval.'
+        );
+      } else {
+        setNotice(editingId ? 'Product updated.' : 'Product added.');
+      }
       await load();
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
@@ -426,7 +434,26 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
       </div>
       <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-check"><input type="checkbox" checked={form.is_featured_deal} onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })} /> Feature in Deals of the Week</label><button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
     </form>
-    <div className="shop-admin-card"><div className="shop-admin-list-head"><h3>{isVendor ? 'My products' : 'All products'} ({tierFilter === 'any' ? products.length : `${visibleProducts.length} of ${products.length}`})</h3><label className="shop-admin-tier-filter">Quality Tier<select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}><option value="any">All products</option><option value="none">No Quality Tier set ({untieredCount})</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.value === 'all' ? 'All tiers' : tier.label}</option>)}</select></label></div>{loading ? <p>Loading products...</p> : !products.length ? <p>No products yet. Add the first product above.</p> : !visibleProducts.length ? <p>No products match this Quality Tier filter.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Quality</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isVendor && <th>Discount</th>}{!isVendor && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{visibleProducts.map((product) => { const price = Number(product.price); const originalPrice = Number(product.compare_at_price); const discountPercent = originalPrice > price && price > 0 ? Math.round(((originalPrice - price) / originalPrice) * 100) : null; return <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{qualityTierLabel(product.quality_tier) || <span className="shop-admin-tier-missing">Not set</span>}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{price > 0 ? `₹${price.toLocaleString('en-IN')} / ${product.unit || 'unit'}` : '—'}</td>{!isVendor && <td>{discountPercent === null ? '—' : `${discountPercent}% OFF`}</td>}{!isVendor && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{product.is_available ? 'Visible' : 'Hidden'}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button><button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button><button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>; })}</tbody></table></div>}</div>
+    <div className="shop-admin-card"><div className="shop-admin-list-head"><h3>{isVendor ? 'My products' : 'All products'} ({tierFilter === 'any' ? products.length : `${visibleProducts.length} of ${products.length}`})</h3><label className="shop-admin-tier-filter">Quality Tier<select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}><option value="any">All products</option><option value="none">No Quality Tier set ({untieredCount})</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.value === 'all' ? 'All tiers' : tier.label}</option>)}</select></label></div>{loading ? <p>Loading products...</p> : !products.length ? <p>No products yet. Add the first product above.</p> : !visibleProducts.length ? <p>No products match this Quality Tier filter.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Quality</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isVendor && <th>Discount</th>}{!isVendor && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{visibleProducts.map((product) => { const price = Number(product.price); const originalPrice = Number(product.compare_at_price); const discountPercent = originalPrice > price && price > 0 ? Math.round(((originalPrice - price) / originalPrice) * 100) : null; return <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{qualityTierLabel(product.quality_tier) || <span className="shop-admin-tier-missing">Not set</span>}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{price > 0 ? `₹${price.toLocaleString('en-IN')} / ${product.unit || 'unit'}` : '—'}</td>{!isVendor && <td>{discountPercent === null ? '—' : `${discountPercent}% OFF`}</td>}{!isVendor && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{isVendor ? (() => {
+  const approval = product.specifications?.__approval__;
+  const status = approval?.status || 'approved';
+  if (status === 'pending') {
+    return <span className="shop-approval-badge badge-pending" title="Awaiting admin approval">⏳ Pending approval</span>;
+  }
+  if (status === 'rejected') {
+    return (
+      <div className="shop-approval-rejected-wrap">
+        <span className="shop-approval-badge badge-rejected" title={approval?.rejection_reason || 'Rejected by admin'}>✕ Rejected</span>
+        {approval?.rejection_reason && (
+          <small className="shop-approval-reason" title={approval.rejection_reason}>
+            Reason: {approval.rejection_reason}
+          </small>
+        )}
+      </div>
+    );
+  }
+  return <span className="shop-approval-badge badge-approved" title="Approved by admin">✓ Approved {product.is_available ? '' : '(Hidden)'}</span>;
+})() : (product.is_available ? 'Visible' : 'Hidden')}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button>{(!isVendor || !product.specifications?.__approval__?.status || product.specifications.__approval__.status === 'approved') && <button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button>}<button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>; })}</tbody></table></div>}</div>
   </div>;
 }
 

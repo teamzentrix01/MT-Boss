@@ -13,7 +13,8 @@ export async function POST(req) {
     const result = await pool.query(`SELECT m.id, m.category, c.shipping_charge
       FROM supplier_materials m
       LEFT JOIN shop_categories c ON LOWER(TRIM(c.name)) = LOWER(TRIM(m.category))
-      WHERE m.id = ANY($1::int[]) AND m.is_available=TRUE`, [ids]);
+      WHERE m.id = ANY($1::int[]) AND m.is_available = TRUE
+        AND (m.vendor_id IS NULL OR COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'approved')`, [ids]);
     if (result.rows.length !== ids.length) return NextResponse.json({ success: false, error: 'One or more products are unavailable. Refresh your cart.' }, { status: 409 });
     
     // Group by category to apply shipping charge once per category
