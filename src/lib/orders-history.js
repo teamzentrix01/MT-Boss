@@ -232,6 +232,8 @@ export async function getAdminOrders({
       NULL::TEXT AS coupon_code,
       0::NUMERIC AS coupon_discount,
       CAST(COALESCE(sb.total_amount, sb.final_amount, sb.base_amount, 0) AS NUMERIC) AS grand_total,
+      0::NUMERIC AS wallet_used,
+      'NONE'::TEXT AS wallet_redeem_status,
       sb.service_address AS delivery_address,
       COALESCE(sb.service_city, 'N/A') AS delivery_city,
       sb.booking_date AS delivery_date,
