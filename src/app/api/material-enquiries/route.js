@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createInitializationGuard } from '@/lib/api-utils';
@@ -457,10 +457,22 @@ export async function POST(req) {
         grandTotal: summary.grandTotal + Number(order.grand_total || 0),
       }), { productTotal: 0, couponDiscount: 0, shippingCost: 0, walletUsed: 0, grandTotal: 0 });
       const targetEmail = cleanEmail || user.email;
-      await Promise.allSettled(orders.flatMap((order) => [
+      const orderRefs = orders.map((order) => order.order_reference).filter(Boolean);
+      console.info('[material-enquiries] POST committed', { cart: Boolean(isCart), lineCount: orders.length, refs: orderRefs });
+
+      // Respond immediately so mobile clients are not blocked by SMTP/admin notifications.
+      const notificationJobs = orders.flatMap((order) => [
         notifyAdminSubmission({ type: 'material order', name: cleanName, phone: cleanPhone, email: targetEmail, reference: order.order_reference, details: { Category: order.category_name, Material: order.material_type, Quantity: order.quantity_text, Unit: order.order_unit, City: canonicalCity } }),
         deliverMaterialOrderReceipt({ email: targetEmail, customerName: cleanName, phone: cleanPhone, category: order.category_name, material: order.material_type, quantity: order.quantity_text, unit: order.order_unit, city: canonicalCity, orderReference: order.order_reference, deliveryAddress: delivery_address }),
-      ]));
+      ]);
+      after(async () => {
+        const results = await Promise.allSettled(notificationJobs);
+        const rejected = results.filter((item) => item.status === 'rejected').length;
+        if (rejected > 0) {
+          console.warn('[material-enquiries] post-commit notifications partial failure', { rejected, total: results.length, refs: orderRefs });
+        }
+      });
+
       return NextResponse.json({ success: true, data: isCart ? { orders, totals } : { ...orders[0], totals } }, { status: 201 });
 
     } catch (error) {
