@@ -448,7 +448,7 @@ export default function UserManagementAdmin({ isDarkMode = false }) {
           <div style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text, #111)' }}>
             {stats.total_users}
           </div>
-          <small style={{ color: 'var(--muted, #64748b)', fontSize: '11px' }}>All registered signups</small>
+          <small style={{ color: 'var(--muted, #64748b)', fontSize: '11px' }}>All registered signup</small>
         </div>
 
         <div
@@ -649,7 +649,7 @@ export default function UserManagementAdmin({ isDarkMode = false }) {
                 color: 'var(--text, #111)',
               }}
             >
-              <option value="all">All Signups</option>
+              <option value="all">All Signup</option>
               <option value="has_orders">With Orders (1+)</option>
               <option value="zero">Inactive (0 Orders)</option>
             </select>

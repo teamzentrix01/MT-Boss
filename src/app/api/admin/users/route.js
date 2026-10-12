@@ -1,26 +1,39 @@
 import { NextResponse } from 'next/server';
 import { queryWithConnectionRetry } from '@/lib/db';
 import { requireAdmin } from '@/lib/agent-auth';
+import { createInitializationGuard } from '@/lib/api-utils';
+import { ensureMaterialOrderSchema } from '@/lib/material-orders';
+import { ensureUserModerationSchema } from '@/lib/user-moderation';
+
+const ensureUserListSchema = createInitializationGuard(async() => {
+    await queryWithConnectionRetry('ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)');
+});
 
 export async function GET(req) {
-  try {
-    if (!await requireAdmin(req)) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    }
+    try {
+        if (!await requireAdmin(req)) {
+            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+        }
 
-    const { searchParams } = new URL(req.url);
-    const search = String(searchParams.get('search') || '').trim();
-    const status = String(searchParams.get('status') || 'all');
-    const city = String(searchParams.get('city') || '').trim();
-    const from = searchParams.get('from') || null;
-    const to = searchParams.get('to') || null;
-    const orderFilter = String(searchParams.get('orders') || 'all'); // 'all' | 'zero' | 'has_orders'
-    const page = Math.max(1, Number.parseInt(searchParams.get('page') || '1', 10) || 1);
-    const pageSize = Math.min(100, Math.max(5, Number.parseInt(searchParams.get('pageSize') || '25', 10) || 25));
-    const offset = (page - 1) * pageSize;
+        await Promise.all([
+            ensureUserListSchema(),
+            ensureUserModerationSchema(),
+            ensureMaterialOrderSchema(),
+        ]);
 
-    // Pre-calculate user order counts and spends with accurate material enquiries totals
-    const result = await queryWithConnectionRetry(`
+        const { searchParams } = new URL(req.url);
+        const search = String(searchParams.get('search') || '').trim();
+        const status = String(searchParams.get('status') || 'all');
+        const city = String(searchParams.get('city') || '').trim();
+        const from = searchParams.get('from') || null;
+        const to = searchParams.get('to') || null;
+        const orderFilter = String(searchParams.get('orders') || 'all'); // 'all' | 'zero' | 'has_orders'
+        const page = Math.max(1, Number.parseInt(searchParams.get('page') || '1', 10) || 1);
+        const pageSize = Math.min(100, Math.max(5, Number.parseInt(searchParams.get('pageSize') || '25', 10) || 25));
+        const offset = (page - 1) * pageSize;
+
+        // Pre-calculate user order counts and spends with accurate material enquiries totals
+        const result = await queryWithConnectionRetry(`
       WITH user_order_stats AS (
         SELECT
           u.id AS user_id,
@@ -72,17 +85,17 @@ export async function GET(req) {
       SELECT * FROM paged_users;
     `, [search, status, city, from, to, orderFilter, pageSize, offset]);
 
-    // Fetch distinct delivery cities across all users for the dropdown filter
-    const citiesRes = await queryWithConnectionRetry(`
+        // Fetch distinct delivery cities across all users for the dropdown filter
+        const citiesRes = await queryWithConnectionRetry(`
       SELECT DISTINCT delivery_city
       FROM users
       WHERE delivery_city IS NOT NULL AND TRIM(delivery_city) != ''
       ORDER BY delivery_city ASC
     `);
-    const cities = citiesRes.rows.map((r) => r.delivery_city).filter(Boolean);
+        const cities = citiesRes.rows.map((r) => r.delivery_city).filter(Boolean);
 
-    // Fetch overall KPI stats
-    const kpiRes = await queryWithConnectionRetry(`
+        // Fetch overall KPI stats
+        const kpiRes = await queryWithConnectionRetry(`
       WITH user_order_stats AS (
         SELECT
           u.id AS user_id,
@@ -117,38 +130,38 @@ export async function GET(req) {
       LEFT JOIN user_order_stats os ON os.user_id = u.id;
     `);
 
-    const stats = kpiRes.rows[0] || {
-      total_users: 0,
-      active_users: 0,
-      blocked_users: 0,
-      with_orders_count: 0,
-      zero_orders_count: 0,
-      total_lifetime_spent: 0,
-    };
+        const stats = kpiRes.rows[0] || {
+            total_users: 0,
+            active_users: 0,
+            blocked_users: 0,
+            with_orders_count: 0,
+            zero_orders_count: 0,
+            total_lifetime_spent: 0,
+        };
 
-    const total = Number(result.rows[0]?.total_count || 0);
+        const total = Number(result.rows[0] ? result.rows[0].total_count || 0 : 0);
 
-    return NextResponse.json({
-      success: true,
-      data: result.rows,
-      cities,
-      stats: {
-        total_users: Number(stats.total_users || 0),
-        active_users: Number(stats.active_users || 0),
-        blocked_users: Number(stats.blocked_users || 0),
-        with_orders_count: Number(stats.with_orders_count || 0),
-        zero_orders_count: Number(stats.zero_orders_count || 0),
-        total_lifetime_spent: Number(stats.total_lifetime_spent || 0),
-      },
-      pagination: {
-        page,
-        pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize) || 1,
-      },
-    });
-  } catch (error) {
-    console.error('Admin users list error:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Could not load users' }, { status: 500 });
-  }
+        return NextResponse.json({
+            success: true,
+            data: result.rows,
+            cities,
+            stats: {
+                total_users: Number(stats.total_users || 0),
+                active_users: Number(stats.active_users || 0),
+                blocked_users: Number(stats.blocked_users || 0),
+                with_orders_count: Number(stats.with_orders_count || 0),
+                zero_orders_count: Number(stats.zero_orders_count || 0),
+                total_lifetime_spent: Number(stats.total_lifetime_spent || 0),
+            },
+            pagination: {
+                page,
+                pageSize,
+                total,
+                totalPages: Math.ceil(total / pageSize) || 1,
+            },
+        });
+    } catch (error) {
+        console.error('Admin users list error:', error);
+        return NextResponse.json({ success: false, error: error.message || 'Could not load users' }, { status: 500 });
+    }
 }
