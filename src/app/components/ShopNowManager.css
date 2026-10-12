@@ -221,3 +221,44 @@
   color: #94a3b8;
   border-color: #334155;
 }
+
+/* Vendor product approval badges */
+.shop-approval-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.shop-approval-badge.badge-pending {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.shop-approval-badge.badge-approved {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+.shop-approval-badge.badge-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+.shop-approval-rejected-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.shop-approval-reason {
+  display: block;
+  font-size: 10px;
+  color: #dc2626;
+  max-width: 200px;
+  word-break: break-word;
+  white-space: normal !important;
+}

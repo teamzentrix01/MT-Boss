@@ -185,7 +185,7 @@ export async function POST(req) {
           const failure = new Error('The selected coupon is no longer active.'); failure.status = 409; throw failure;
         }
         const couponProductIds = orderItems.map((item) => Number(item.product_id)).filter((id) => Number.isInteger(id) && id > 0);
-        const couponProducts = couponProductIds.length ? await client.query('SELECT id, price, compare_at_price, category, bulk_pricing FROM supplier_materials WHERE id=ANY($1::int[])', [couponProductIds]) : { rows: [] };
+        const couponProducts = couponProductIds.length ? await client.query(`SELECT id, price, compare_at_price, category, bulk_pricing FROM supplier_materials WHERE id=ANY($1::int[]) AND is_available=TRUE AND (vendor_id IS NULL OR COALESCE(specifications->'__approval__'->>'status', 'approved') = 'approved')`, [couponProductIds]) : { rows: [] };
         const productsById = new Map(couponProducts.rows.map((product) => [product.id, product]));
         const serverCart = orderItems.map((item) => ({ product: productsById.get(Number(item.product_id)), quantity: Number(item.quantity) })).filter((item) => item.product);
         const calculation = calculateCoupon(serverCart, coupon);
@@ -203,7 +203,8 @@ export async function POST(req) {
         const shippingProducts = await client.query(`SELECT m.id, m.price, m.bulk_pricing,
           COALESCE(NULLIF(TRIM(v.city), ''), NULLIF(TRIM(s.city), ''), CASE WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb))=1 THEN m.available_cities->>0 END) AS source_city
           FROM supplier_materials m LEFT JOIN vendors v ON v.id=m.vendor_id LEFT JOIN suppliers s ON s.id=m.supplier_id
-          WHERE m.id=ANY($1::int[])`, [productIds]);
+          WHERE m.id=ANY($1::int[]) AND m.is_available=TRUE
+            AND (m.vendor_id IS NULL OR COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'approved')`, [productIds]);
         const quantities = new Map(orderItems.map((item) => [Number(item.product_id), isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10)]));
         const groups = new Map();
         for (const product of shippingProducts.rows) {
@@ -232,6 +233,7 @@ export async function POST(req) {
             AND EXISTS (SELECT 1 FROM unnest(s.product_categories) cat WHERE LOWER(cat)=LOWER($2))
         ) OR EXISTS (
           SELECT 1 FROM supplier_materials m WHERE m.supplier_id=0 AND m.is_available=TRUE AND m.quantity>0
+            AND (m.vendor_id IS NULL OR COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'approved')
             AND LOWER(TRIM(m.category))=LOWER(TRIM($2))
             AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(COALESCE(m.available_cities, '[]'::jsonb)) city WHERE LOWER(TRIM(city))=LOWER(TRIM($1)))
         )`, [canonicalCity, cleanText(item.category_name)]);
@@ -244,7 +246,7 @@ export async function POST(req) {
           const requestedQuantity = isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10);
           const productResult = await client.query(
             `SELECT m.name, m.category, m.unit, m.quantity, m.price, m.compare_at_price, m.bulk_pricing, m.is_available,
-                    m.supplier_id, m.vendor_id,
+                    m.supplier_id, m.vendor_id, m.specifications,
                     COALESCE(NULLIF(TRIM(v.city), ''), NULLIF(TRIM(s.city), ''), CASE WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb))=1 THEN m.available_cities->>0 END) AS source_city,
                     CASE
                       WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
@@ -262,6 +264,14 @@ export async function POST(req) {
             [item.product_id]
           );
           product = productResult.rows[0];
+          const approvalStatus = (product?.vendor_id != null && product.specifications?.__approval__?.status)
+            ? product.specifications.__approval__.status
+            : 'approved';
+          if (product?.vendor_id != null && approvalStatus !== 'approved') {
+            const failure = new Error(`This product (${product.name}) is pending admin approval and cannot be ordered.`);
+            failure.status = 409;
+            throw failure;
+          }
           if (!product || !product.is_available || !product.supplier_available
             || product.name.trim().toLowerCase() !== cleanText(item.material_type)?.trim().toLowerCase()
             || (product.category && product.category.trim().toLowerCase() !== cleanText(item.category_name)?.trim().toLowerCase())) {

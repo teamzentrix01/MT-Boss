@@ -20,6 +20,7 @@ const ProjectsManager = dynamicManager(() => import('../components/ProjectsManag
 const OperationalProjectsManager = dynamicManager(() => import('../components/OperationalProjectsManager'));
 const PartyProjectManagement = dynamicManager(() => import('../components/PartyProjectManagement'));
 const VendorManagementAdmin = dynamicManager(() => import('../components/VendorManagementAdmin'));
+const ProductApprovalsAdmin = dynamicManager(() => import('../components/ProductApprovalsAdmin'));
 const UserManagementAdmin = dynamicManager(() => import('../components/UserManagementAdmin'));
 const SupplierHubAdmin = dynamicManager(() => import('../components/SupplierHubAdmin'));
 const FranchisesManager = dynamicManager(() => import('./franchises/page'));
@@ -1470,6 +1471,7 @@ function AdminDashboard() {
           )}
 
           {activeTab === 'vendors' && <VendorManagementAdmin isDarkMode={isDarkMode} />}
+          {activeTab === 'product-approvals' && <ProductApprovalsAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'users' && <UserManagementAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'suppliers' && <SupplierHubAdmin isDarkMode={isDarkMode} />}
 
