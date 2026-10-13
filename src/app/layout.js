@@ -19,6 +19,8 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
   const isShopPage = pathname?.toLowerCase() === "/shopnow";
   const isHomePage = pathname === "/";
+  const isAdminDashboard = pathname?.startsWith("/dashboard");
+
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [homePopupDismissed, setHomePopupDismissed] = useState(false);
   const [deferredWidgetsReady, setDeferredWidgetsReady] = useState(false);
@@ -138,7 +140,9 @@ export default function RootLayout({ children }) {
         <FreeWhatsAppNotifier />
         <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
         {children}
-        <Footer />
+        {/* Aise kar dein: */}
+        {!isAdminDashboard && <Footer />}
+
 
         {/* Floating Chatbot Assistant Widget */}
         {deferredWidgetsReady && <ChatbotWidget isDarkMode={isDarkMode} />}
