@@ -77,7 +77,7 @@ export async function POST(req) {
           || intent.purpose === 'supplier_registration'
         ) {
           await ensurePackageSchema();
-          const pkg = getPackageById(intent.package_id);
+          const pkg = await getPackageById(intent.package_id);
           if (!pkg) throw new Error('Paid package no longer exists');
           const table = intent.purpose.startsWith('vendor_') ? 'vendors' : 'suppliers';
           await client.query(
@@ -130,11 +130,12 @@ export async function POST(req) {
             ? 'vendors' : intent.purpose.startsWith('supplier_') ? 'suppliers' : 'franchises';
           const nameColumn = table === 'vendors' ? 'vendor_name' : table === 'suppliers' ? 'shop_name' : 'name';
           const recipient = await client.query(`SELECT ${nameColumn} AS name, email, phone FROM ${table} WHERE id = $1`, [intent.entity_id]);
+          const packageName = intent.purpose === 'franchise_registration'
+            ? 'Franchise registration'
+            : ((await getPackageById(intent.package_id))?.name || intent.purpose.replaceAll('_', ' '));
           paymentNotice = {
             ...recipient.rows[0], amount: intent.amount, reference: fields.txnid,
-            service: intent.purpose === 'franchise_registration'
-              ? 'Franchise registration'
-              : (getPackageById(intent.package_id)?.name || intent.purpose.replaceAll('_', ' ')),
+            service: packageName,
           };
         }
       } else if (!succeeded && intent.status === 'PENDING') {

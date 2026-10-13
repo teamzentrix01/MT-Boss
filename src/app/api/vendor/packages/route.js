@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { PACKAGES, ensurePackageSchema, getPackageById, getPackageInfo } from '@/lib/packages';
+import { ensurePackageSchema, getPackages, getPackageById, getPackageInfo } from '@/lib/packages';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { createPayURequest } from '@/lib/payu';
 import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
@@ -30,7 +30,8 @@ export async function GET(req) {
       return NextResponse.json({ success: true, package: getPackageInfo(result.rows[0]) });
     }
 
-    return NextResponse.json({ success: true, packages: PACKAGES });
+    const packages = await getPackages({ role: 'vendor' });
+    return NextResponse.json({ success: true, packages });
   } catch (error) {
     console.error('Package fetch error:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
@@ -45,7 +46,7 @@ export async function POST(req) {
     if (!vendor) return unauthorized();
 
     const { package_id } = await req.json();
-    const pkg = getPackageById(package_id);
+    const pkg = await getPackageById(package_id);
     if (!pkg) {
       return NextResponse.json({ error: 'Invalid package selected' }, { status: 400 });
     }

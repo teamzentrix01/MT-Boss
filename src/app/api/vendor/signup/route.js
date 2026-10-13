@@ -169,7 +169,7 @@ export async function POST(req) {
     services = serviceIds;
     const selectedPackageId = String(package_id || 'free');
     const isFreeRegistration = selectedPackageId === 'free';
-    const pkg = isFreeRegistration ? null : getPackageById(selectedPackageId);
+    const pkg = isFreeRegistration ? null : await getPackageById(selectedPackageId);
 
     if (!isFreeRegistration && !pkg) {
       return NextResponse.json({ error: 'Select a valid subscription plan' }, { status: 400 });

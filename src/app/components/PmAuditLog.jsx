@@ -1,5 +1,6 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 
 const tok = () => (typeof localStorage !== 'undefined' ? localStorage.getItem('admin-token') || localStorage.getItem('token') || '' : '');
 async function apiFetch(url) {
@@ -10,51 +11,131 @@ async function apiFetch(url) {
 const RECORD_TYPE_OPTIONS = ['', 'party', 'project', 'payment', 'vendor', 'attendance', 'vendor_payment', 'material', 'pm_party_payments', 'pm_vendor_payments', 'pm_attendance', 'pm_material_received', 'pm_material_used'];
 const ACTION_OPTIONS = ['', 'created', 'updated', 'deleted', 'soft_deleted', 'restored'];
 
+function formatDiffValue(val) {
+  if (val === undefined || val === null) return 'null';
+  if (typeof val === 'string') return val === '' ? '""' : val;
+  if (typeof val === 'object') {
+    try {
+      return JSON.stringify(val, null, 2);
+    } catch {
+      return JSON.stringify(val);
+    }
+  }
+  return String(val);
+}
+
 function JsonDiff({ oldData, newData }) {
   if (!oldData && !newData) return <p style={{ color: 'var(--pal-muted)', fontSize: '.8rem' }}>No change data stored.</p>;
   const keys = Array.from(new Set([...Object.keys(oldData || {}), ...Object.keys(newData || {})]));
   const changed = keys.filter(k => JSON.stringify((oldData || {})[k]) !== JSON.stringify((newData || {})[k]));
   if (!changed.length) return <p style={{ color: 'var(--pal-muted)', fontSize: '.8rem' }}>Record unchanged (metadata only).</p>;
   return (
-    <table style={{ width: '100%', fontSize: '.78rem', borderCollapse: 'collapse' }}>
-      <thead><tr>
-        <th style={{ textAlign: 'left', padding: '4px 8px', background: 'var(--pal-bg)', color: 'var(--pal-muted)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.05em' }}>Field</th>
-        <th style={{ textAlign: 'left', padding: '4px 8px', background: '#fee2e2', color: '#991b1b', fontSize: '.68rem', fontWeight: 800 }}>Before</th>
-        <th style={{ textAlign: 'left', padding: '4px 8px', background: '#dcfce7', color: '#166534', fontSize: '.68rem', fontWeight: 800 }}>After</th>
-      </tr></thead>
-      <tbody>
-        {changed.map(k => (
-          <tr key={k} style={{ borderBottom: '1px solid var(--pal-border)' }}>
-            <td style={{ padding: '4px 8px', fontWeight: 700, color: 'var(--pal-text)' }}>{k}</td>
-            <td style={{ padding: '4px 8px', color: '#991b1b', wordBreak: 'break-all' }}>{JSON.stringify((oldData || {})[k] ?? null)}</td>
-            <td style={{ padding: '4px 8px', color: '#166534', wordBreak: 'break-all' }}>{JSON.stringify((newData || {})[k] ?? null)}</td>
+    <div className="pal-diff-wrapper">
+      <table className="pal-diff-table">
+        <colgroup>
+          <col style={{ width: '26%' }} />
+          <col style={{ width: '37%' }} />
+          <col style={{ width: '37%' }} />
+        </colgroup>
+        <thead>
+          <tr>
+            <th className="pal-diff-th pal-diff-th-field">Field</th>
+            <th className="pal-diff-th pal-diff-th-before">Before</th>
+            <th className="pal-diff-th pal-diff-th-after">After</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {changed.map(k => (
+            <tr key={k}>
+              <td className="pal-diff-td pal-diff-field">
+                <code>{k}</code>
+              </td>
+              <td className="pal-diff-td pal-diff-cell pal-diff-before">
+                <div className="pal-diff-val">
+                  {formatDiffValue((oldData || {})[k])}
+                </div>
+              </td>
+              <td className="pal-diff-td pal-diff-cell pal-diff-after">
+                <div className="pal-diff-val">
+                  {formatDiffValue((newData || {})[k])}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
-function Drawer({ row, onClose }) {
-  if (!row) return null;
+const emptySubscribe = () => () => {};
+
+function Drawer({ row, onClose, isDarkMode }) {
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+
+  useEffect(() => {
+    if (!row) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [row, onClose]);
+
+  if (!mounted || !row || typeof document === 'undefined') return null;
+
   const old_data = row.old_data || null;
   const new_data = row.new_data || null;
-  return (
-    <div className="pal-drawer-backdrop" onClick={onClose}>
+
+  const drawerContent = (
+    <div
+      className={`pal-drawer-backdrop${isDarkMode ? ' dark-mode' : ''}`}
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Change Detail — ${row.record_type} #${row.record_id}`}
+    >
       <div className="pal-drawer" onClick={e => e.stopPropagation()}>
         <div className="pal-drawer-head">
           <strong>Change Detail — {row.record_type} #{row.record_id}</strong>
-          <button className="pal-close" onClick={onClose}>✕</button>
+          <button
+            type="button"
+            className="pal-close"
+            onClick={onClose}
+            aria-label="Close"
+            title="Close (Esc)"
+          >
+            ✕
+          </button>
         </div>
-        <div className="pal-drawer-meta">
-          <span><b>Action:</b> {row.action}</span>
-          <span><b>By:</b> {row.changed_by}</span>
-          <span><b>At:</b> {new Date(row.created_at).toLocaleString('en-IN')}</span>
+        <div className="pal-drawer-body">
+          <div className="pal-drawer-meta">
+            <span><b>Action:</b> <span className={`pal-action pal-action-${row.action}`}>{row.action}</span></span>
+            <span><b>By:</b> {row.changed_by || '—'}</span>
+            <span><b>At:</b> {new Date(row.created_at).toLocaleString('en-IN')}</span>
+          </div>
+          <JsonDiff oldData={old_data} newData={new_data} />
         </div>
-        <JsonDiff oldData={old_data} newData={new_data} />
       </div>
     </div>
   );
+
+  return createPortal(drawerContent, document.body);
 }
 
 export default function PmAuditLog({ isDarkMode }) {
@@ -93,7 +174,7 @@ export default function PmAuditLog({ isDarkMode }) {
   return (
     <>
       <style>{CSS}</style>
-      <Drawer row={drawer} onClose={() => setDrawer(null)} />
+      <Drawer row={drawer} onClose={() => setDrawer(null)} isDarkMode={isDarkMode} />
       <div className={`pal-root${isDarkMode ? ' dark-mode' : ''}`}>
         <div className="pal-header">
           <h1 className="pal-title">🗂 Activity Log</h1>
@@ -185,12 +266,149 @@ const CSS = `
   .pal-view-btn:hover{background:var(--pal-bg)}
   .pal-pagination{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1rem;border-top:1px solid var(--pal-border)}
   .pal-empty{text-align:center;padding:2rem;color:var(--pal-muted);font-size:.83rem}
-  .pal-drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;justify-content:flex-end}
-  .pal-drawer{background:var(--pal-surface);width:min(560px,100vw);height:100%;overflow-y:auto;padding:1.5rem;box-shadow:-4px 0 30px rgba(0,0,0,.2)}
-  .pal-drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:.5rem}
-  .pal-drawer-head strong{font-size:.95rem;font-weight:800}
-  .pal-close{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--pal-muted);padding:.2rem}
-  .pal-drawer-meta{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;margin-bottom:1rem;font-size:.78rem;color:var(--pal-muted);border-bottom:1px solid var(--pal-border);padding-bottom:.75rem}
-  .pal-drawer-meta b{color:var(--pal-text)}
-  @media(max-width:640px){.pal-filters{flex-direction:column}.pal-drawer{width:100vw}}
+
+  /* Drawer portal backdrop and layout */
+  .pal-drawer-backdrop{
+    --pal-bg:var(--bg,#f5f5f7);
+    --pal-surface:var(--surface,#ffffff);
+    --pal-border:var(--border,#e2e2e7);
+    --pal-text:var(--text,#111113);
+    --pal-muted:var(--muted,#6b6b76);
+    --pal-accent:var(--accent,#2563eb);
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    z-index:99999;
+    display:flex;
+    justify-content:flex-end;
+    backdrop-filter:blur(2px);
+    -webkit-backdrop-filter:blur(2px);
+    box-sizing:border-box;
+    font-family:'DM Sans',system-ui,sans-serif;
+  }
+  .pal-drawer-backdrop.dark-mode,
+  :root.dark-mode .pal-drawer-backdrop,
+  .dark-mode .pal-drawer-backdrop{
+    --pal-bg:var(--bg,#0f0f11);
+    --pal-surface:var(--surface,#18181c);
+    --pal-border:var(--border,#2a2a30);
+    --pal-text:var(--text,#f0f0f5);
+    --pal-muted:var(--muted,#7c7c8a);
+    --pal-accent:var(--accent,#60a5fa);
+    background:rgba(0,0,0,.7);
+  }
+  .pal-drawer{
+    position:fixed;
+    top:0;
+    right:0;
+    height:100dvh;
+    width:min(640px,100vw);
+    background:var(--pal-surface);
+    color:var(--pal-text);
+    border-left:1px solid var(--pal-border);
+    box-shadow:-4px 0 32px rgba(0,0,0,.28);
+    overflow-y:auto;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    z-index:100000;
+  }
+  .pal-drawer-head{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:var(--pal-surface);
+    border-bottom:1px solid var(--pal-border);
+    padding:max(1.25rem, env(safe-area-inset-top, 1.25rem)) 1.5rem 1rem 1.5rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:1rem;
+    flex-shrink:0;
+  }
+  .pal-drawer-head strong{
+    font-size:1rem;
+    font-weight:800;
+    color:var(--pal-text);
+    word-break:break-word;
+  }
+  .pal-close{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:2rem;
+    height:2rem;
+    background:var(--pal-bg);
+    border:1px solid var(--pal-border);
+    border-radius:6px;
+    font-size:1.1rem;
+    line-height:1;
+    color:var(--pal-muted);
+    cursor:pointer;
+    transition:all .15s ease;
+    flex-shrink:0;
+    padding:0;
+  }
+  .pal-close:hover{
+    background:#fee2e2;
+    color:#dc2626;
+    border-color:#fca5a5;
+  }
+  .dark-mode .pal-close:hover,
+  :root.dark-mode .pal-close:hover,
+  .pal-drawer-backdrop.dark-mode .pal-close:hover{
+    background:#451a1a;
+    color:#fca5a5;
+    border-color:#7f1d1d;
+  }
+  .pal-drawer-body{
+    padding:1.25rem 1.5rem 2.5rem 1.5rem;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    box-sizing:border-box;
+  }
+  .pal-drawer-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem 1.25rem;
+    font-size:.78rem;
+    color:var(--pal-muted);
+    border-bottom:1px solid var(--pal-border);
+    padding-bottom:.75rem;
+  }
+  .pal-drawer-meta b{
+    color:var(--pal-text);
+  }
+
+  /* Diff table */
+  .pal-diff-wrapper{width:100%;overflow-x:hidden}
+  .pal-diff-table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.78rem;border:1px solid var(--pal-border);border-radius:6px;overflow:hidden;background:var(--pal-surface)}
+  .pal-diff-th{padding:6px 10px;text-align:left;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--pal-border);white-space:nowrap}
+  .pal-diff-th-field{background:var(--pal-bg);color:var(--pal-muted)}
+  .pal-diff-th-before{background:#fee2e2;color:#991b1b}
+  .pal-diff-th-after{background:#dcfce7;color:#166534}
+  .pal-diff-td{padding:6px 10px;border-bottom:1px solid var(--pal-border);vertical-align:top;box-sizing:border-box}
+  .pal-diff-table tr:last-child .pal-diff-td{border-bottom:none}
+  .pal-diff-field{background:var(--pal-bg);color:var(--pal-text);font-weight:700;word-break:break-word;overflow-wrap:anywhere}
+  .pal-diff-field code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.74rem}
+  .pal-diff-cell{word-break:break-word;overflow-wrap:anywhere}
+  .pal-diff-before{color:#991b1b;background:#fef2f2}
+  .pal-diff-after{color:#166534;background:#f0fdf4}
+  .pal-diff-val{word-break:break-word;overflow-wrap:anywhere;white-space:pre-wrap;max-height:240px;overflow-y:auto;font-size:.76rem;line-height:1.45}
+  .pal-diff-val::-webkit-scrollbar{width:4px}
+  .pal-diff-val::-webkit-scrollbar-thumb{background:var(--pal-border);border-radius:2px}
+
+  .dark-mode .pal-diff-th-before, :root.dark-mode .pal-diff-th-before, .pal-drawer-backdrop.dark-mode .pal-diff-th-before{background:#451a1a;color:#fca5a5}
+  .dark-mode .pal-diff-th-after, :root.dark-mode .pal-diff-th-after, .pal-drawer-backdrop.dark-mode .pal-diff-th-after{background:#143d22;color:#86efac}
+  .dark-mode .pal-diff-before, :root.dark-mode .pal-diff-before, .pal-drawer-backdrop.dark-mode .pal-diff-before{color:#fca5a5;background:rgba(239,68,68,.12)}
+  .dark-mode .pal-diff-after, :root.dark-mode .pal-diff-after, .pal-drawer-backdrop.dark-mode .pal-diff-after{color:#86efac;background:rgba(34,197,94,.12)}
+
+  @media(max-width:640px){
+    .pal-filters{flex-direction:column}
+    .pal-drawer{width:100vw;width:100dvw;border-left:none}
+    .pal-drawer-head{padding:max(1rem, env(safe-area-inset-top, 1rem)) 1rem .85rem 1rem}
+    .pal-drawer-body{padding:1rem 1rem 2rem 1rem}
+  }
 `;

@@ -4194,6 +4194,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 { id: 'party_summary', label: '6. Party-wise Contract & Payment' },
               ].map((tab) => (
                 <button
+                  type="button"
                   key={tab.id}
                   className={reportType === tab.id ? 'active' : ''}
                   onClick={() => setReportType(tab.id)}
@@ -4335,6 +4336,29 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         .pm-container.dark-mode button.muted:hover {
           background: #3f3f46;
         }
+        :global(.dark-mode) .pm-container .subtabs,
+        .pm-container.dark-mode .subtabs {
+          border-bottom-color: #2a2a30;
+        }
+        :global(.dark-mode) .pm-container .subtabs button,
+        .pm-container.dark-mode .subtabs button {
+          background: #27272a;
+          color: #e4e4e7;
+          border-color: #3f3f46;
+        }
+        :global(.dark-mode) .pm-container .subtabs button:hover,
+        .pm-container.dark-mode .subtabs button:hover {
+          background: #3f3f46;
+          color: #60a5fa;
+          border-color: #52525b;
+        }
+        :global(.dark-mode) .pm-container .subtabs button.active,
+        .pm-container.dark-mode .subtabs button.active {
+          background: #2563eb;
+          color: #ffffff;
+          border-color: #2563eb;
+          box-shadow: 0 1px 3px rgba(37, 99, 235, 0.35);
+        }
         .bar {
           display: flex;
           align-items: center;
@@ -4373,31 +4397,38 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         }
         .subtabs {
           display: flex;
-          gap: 4px;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 8px;
           border-bottom: 2px solid #e2e8f0;
           margin-bottom: 16px;
-          overflow-x: auto;
+          padding-bottom: 10px;
         }
         .subtabs button {
-          background: transparent;
-          color: #64748b;
-          border: none;
-          border-bottom: 2px solid transparent;
-          margin-bottom: -2px;
+          background: #f8fafc;
+          color: #475569;
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
           padding: 8px 14px;
           font-weight: 600;
           font-size: 13px;
           cursor: pointer;
           white-space: nowrap;
-          border-radius: 0;
+          flex-shrink: 0 !important;
+          min-width: max-content !important;
+          transition: all 0.15s ease;
         }
         .subtabs button:hover {
           color: #1e40af;
+          background: #f1f5f9;
+          border-color: #93c5fd;
         }
         .subtabs button.active {
-          color: #1e40af;
-          border-bottom-color: #1e40af;
-          background: transparent;
+          color: #ffffff;
+          background: #1e40af;
+          border-color: #1e40af;
+          font-weight: 700;
+          box-shadow: 0 1px 3px rgba(30, 64, 175, 0.25);
         }
         table {
           width: 100%;
