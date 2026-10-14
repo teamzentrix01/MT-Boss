@@ -1793,6 +1793,11 @@
   color: var(--brand-blue-deep)
 }
 
+.store-product-tag.store-product-tag-unavailable {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
 .shop-page .store-quote-btn {
   border-color: var(--brand-blue) !important;
   color: var(--brand-blue-deep) !important;
@@ -2780,6 +2785,11 @@
   color: #b9ddff
 }
 
+.dark-mode .store-product-tag.store-product-tag-unavailable {
+  background: #450a0a;
+  color: #fca5a5;
+}
+
 .dark-mode .shop-page .store-quote-btn,
 .dark-mode .shop-page .store-filter-row button {
   background: #17263b !important;
@@ -3411,8 +3421,8 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
 }
 
 .mobile-nav-drawer-panel {

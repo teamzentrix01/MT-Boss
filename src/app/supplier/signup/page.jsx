@@ -307,6 +307,7 @@ export default function SupplierSignupPage() {
                       return (
                         <div key={cat.id} className={`cat-chip ${on ? 'selected' : ''}`} onClick={() => toggleCategory(cat.name)}>
                           {cat.image
+                            // eslint-disable-next-line @next/next/no-img-element
                             ? <img src={cat.image} alt={cat.name} className="cat-emoji" style={{ width: '1.4rem', height: '1.4rem', objectFit: 'cover', borderRadius: '3px' }} />
                             : <span className="cat-emoji">{cat.emoji || '🛒'}</span>
                           }

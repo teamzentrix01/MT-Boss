@@ -121,11 +121,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     }
   }, [passedAgent, isAgent]);
 
-  const rawSpecs = currentAgent?.specializations || [];
   const agentSpecs = useMemo(() => {
     if (!isAgent) return ['payments', 'labor', 'vendor', 'construction'];
+    const rawSpecs = currentAgent?.specializations;
     return Array.isArray(rawSpecs) ? rawSpecs : (typeof rawSpecs === 'string' ? JSON.parse(rawSpecs || '[]') : []);
-  }, [isAgent, rawSpecs]);
+  }, [isAgent, currentAgent?.specializations]);
 
   const hasAgentPayment = !isAgent || agentSpecs.includes('payments');
   const hasAgentLabor = !isAgent || agentSpecs.includes('labor');

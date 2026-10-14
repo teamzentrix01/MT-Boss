@@ -68,6 +68,7 @@ export function ShopImage({ src, alt = '', ...props }) {
   // those URLs so Next.js remote-host allowlisting cannot hide valid images.
   if (isExternal && !isNextImageSafe) {
     const { fill, sizes, quality, priority, unoptimized, style, ...imgProps } = props;
+    // eslint-disable-next-line @next/next/no-img-element
     return <img
       {...imgProps}
       src={normalizedSrc}
@@ -187,7 +188,9 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
       )}
       <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={productImage} category={product.category} name={product.name} /></button>
       <div className="store-product-details">
-        <span className="store-product-tag">Available</span>
+        <span className={`store-product-tag ${!canOrder ? 'store-product-tag-unavailable' : ''}`}>
+          {canOrder ? 'Available' : 'Unavailable'}
+        </span>
         <button type="button" className="store-product-title" onClick={() => onDetails(product)}><h3>{product.name}</h3></button>
         <p className="store-product-category">{(typeof product.category === 'object' ? product.category?.name : product.category) || ''}{product.unit ? ` · ${product.unit}` : ""}</p>
         <div className="store-product-price-slot">
@@ -238,9 +241,10 @@ export default function Storefront({ categories, products, offers = [], content,
   const catalogScrollFrame = useRef(null);
   const storeHeaderRef = useRef(null);
 
+  const effectiveCashbackPreview = (Array.isArray(cart) && cart.length > 0) ? cashbackPreview : null;
+
   useEffect(() => {
     if (!Array.isArray(cart) || cart.length === 0) {
-      setCashbackPreview(null);
       return;
     }
     const token = localStorage.getItem('token');
@@ -720,7 +724,7 @@ export default function Storefront({ categories, products, offers = [], content,
                 {couponCalculation?.regularAmount > 0 && <div className="store-cart-breakdown"><span>Other items</span><strong>₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</strong></div>}
                 {activeCoupon && couponCalculation?.eligible && <div className="store-cart-breakdown store-cart-coupon-discount"><span>{activeCoupon.code ? `Coupon “${activeCoupon.code}” applied` : 'Automatic coupon applied'}</span><strong>-₹{couponCalculation.discount.toLocaleString('en-IN')}</strong></div>}
                 {activeCoupon && couponCalculation?.eligible && <div className="store-cart-estimate"><span>Discounted total</span><strong>₹{Math.max(0, pricedTotal - couponCalculation.discount).toLocaleString('en-IN')}</strong></div>}
-                {cashbackPreview?.totalCashback > 0 && (
+                {effectiveCashbackPreview?.totalCashback > 0 && (
                   <div style={{
                     margin: '12px 0',
                     padding: '10px 14px',
@@ -735,7 +739,7 @@ export default function Storefront({ categories, products, offers = [], content,
                     gap: '8px',
                   }}>
                     <span>🎉</span>
-                    <span>You will earn <strong>₹{cashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
+                    <span>You will earn <strong>₹{effectiveCashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
                   </div>
                 )}
                 <p>Delivery charges, if applicable, are confirmed separately.</p>

@@ -222,11 +222,26 @@ export default function MobileStorefront({
   const [isDark, setIsDark] = useState(false);
   const [propertyOpen, setPropertyOpen] = useState(false);
   const [localShippingSettings, setLocalShippingSettings] = useState(shippingSettings);
+  const [prevShippingSettings, setPrevShippingSettings] = useState(shippingSettings);
+  if (shippingSettings !== prevShippingSettings) {
+    setPrevShippingSettings(shippingSettings);
+    if (shippingSettings) {
+      setLocalShippingSettings(shippingSettings);
+    }
+  }
+
   const [couponCode, setCouponCode] = useState(activeCoupon?.code || '');
+  const [prevActiveCouponCode, setPrevActiveCouponCode] = useState(activeCoupon?.code);
+  if (activeCoupon?.code && activeCoupon.code !== prevActiveCouponCode) {
+    setPrevActiveCouponCode(activeCoupon.code);
+    setCouponCode(activeCoupon.code);
+  }
+
   const [couponNotice, setCouponNotice] = useState('');
   const [offersOpen, setOffersOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
   const [cashbackPreview, setCashbackPreview] = useState(null);
+  const effectiveCashbackPreview = (Array.isArray(cart) && cart.length > 0) ? cashbackPreview : null;
   const searchInputRef = useRef(null);
   const rightFeedRef = useRef(null);
   const activeCatBtnRef = useRef(null);
@@ -250,7 +265,6 @@ export default function MobileStorefront({
 
   useEffect(() => {
     if (!Array.isArray(cart) || cart.length === 0) {
-      setCashbackPreview(null);
       return;
     }
     const token = localStorage.getItem('token');
@@ -286,15 +300,6 @@ export default function MobileStorefront({
       .catch(() => {});
   }, [cart, activeCoupon, couponCalculation]);
 
-  useEffect(() => {
-    if (activeCoupon?.code) {
-      setCouponCode(activeCoupon.code);
-    }
-  }, [activeCoupon]);
-
-  useEffect(() => {
-    if (shippingSettings) setLocalShippingSettings(shippingSettings);
-  }, [shippingSettings]);
 
   useEffect(() => {
     const loadShipping = () => {
@@ -1765,7 +1770,7 @@ export default function MobileStorefront({
                     </div>
                   )}
 
-                  {cashbackPreview?.totalCashback > 0 && (
+                  {effectiveCashbackPreview?.totalCashback > 0 && (
                     <div style={{
                       margin: '10px 0',
                       padding: '10px 12px',
@@ -1780,7 +1785,7 @@ export default function MobileStorefront({
                       gap: '8px',
                     }}>
                       <span>🎉</span>
-                      <span>You will earn <strong>₹{cashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
+                      <span>You will earn <strong>₹{effectiveCashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
                     </div>
                   )}
 
