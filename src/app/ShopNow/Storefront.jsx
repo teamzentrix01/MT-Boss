@@ -545,19 +545,19 @@ export default function Storefront({ categories, products, offers = [], content,
               {cityOpen && <div className="store-city-popover"><label htmlFor="store-city">Choose your city</label><select id="store-city" value={selectedCity} onChange={(e) => { setSelectedCity(e.target.value); setCityOpen(false); }}><option value="">Select city</option>{[...new Set(cities)].map((city) => <option key={city} value={city}>{city}</option>)}</select><p>Availability is checked at checkout.</p></div>}
             </div>
             <label className="store-search"><Search size={20} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={content.search_placeholder} aria-label="Search materials" /></label>
-            {productManagerHref && <Link href={productManagerHref} className="store-admin-add"><Plus size={17} /> Add Product</Link>}
-            <Link href="/material-orders?role=user" className="store-orders" title="Track orders"><ClipboardList size={20} /><span>Orders</span></Link>
+            {productManagerHref && <Link href={productManagerHref} className="store-admin-add"><Plus size={18} /> Add Product</Link>}
+            <Link href="/material-orders?role=user" className="store-orders" title="Track orders"><ClipboardList size={18} /><span>Orders</span></Link>
             <Link
               href="/wallet"
               className="store-wallet-btn"
               aria-label="MT-Boss Cashback Wallet"
               title="My Cashback Wallet"
             >
-              <Wallet size={19} />
+              <Wallet size={18} />
               <span className="store-wallet-text">Wallet</span>
               <span className="store-wallet-pill">₹{walletBalance.toLocaleString('en-IN')}</span>
             </Link>
-            <button type="button" className="store-cart-button" onClick={toggleCart} aria-expanded={cartOpen} aria-controls="store-cart-dialog"><ShoppingCart size={20} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
+            <button type="button" className="store-cart-button" onClick={toggleCart} aria-expanded={cartOpen} aria-controls="store-cart-dialog"><ShoppingCart size={18} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
           </div>
         </header>
 

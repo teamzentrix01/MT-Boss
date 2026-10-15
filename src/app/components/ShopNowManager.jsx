@@ -5,9 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { UploadCloud, Plus, X, Star, Sparkles, Image as ImageIcon } from 'lucide-react';
 import ShopCategoriesManager from './ShopCategoriesManager';
-import ShippingSettingsManager from './ShippingSettingsManager';
 import ShopCouponsManager from './ShopCouponsManager';
-import ShopCommissionSettingsManager from './ShopCommissionSettingsManager';
 import CashbackManager from './CashbackManager';
 import VendorCommissionSummary from './VendorCommissionSummary';
 import { defaultShopStorefront } from '@/lib/shop-storefront-defaults';
@@ -703,18 +701,73 @@ export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }
       <button type="button" role="tab" aria-selected={tab === 'categories'} className={tab === 'categories' ? 'active' : ''} onClick={() => setTab('categories')}>Categories</button>
       <button type="button" role="tab" aria-selected={tab === 'products'} className={tab === 'products' ? 'active' : ''} onClick={() => setTab('products')}>Products</button>
       <button type="button" role="tab" aria-selected={tab === 'content'} className={tab === 'content' ? 'active' : ''} onClick={() => setTab('content')}>Storefront Content</button>
-      <button type="button" role="tab" aria-selected={tab === 'shipping'} className={tab === 'shipping' ? 'active' : ''} onClick={() => setTab('shipping')}>Shipping Settings</button>
-      <button type="button" role="tab" aria-selected={tab === 'commission'} className={tab === 'commission' ? 'active' : ''} onClick={() => setTab('commission')}>Vendor Commission</button>
       <button type="button" role="tab" aria-selected={tab === 'coupons'} className={tab === 'coupons' ? 'active' : ''} onClick={() => setTab('coupons')}>Promotions & Coupons</button>
       <button type="button" role="tab" aria-selected={tab === 'cashback'} className={tab === 'cashback' ? 'active' : ''} onClick={() => setTab('cashback')}>Cashback & Wallet</button>
     </div>
     {tab === 'categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}
     {tab === 'products' && <ProductManager />}
     {tab === 'content' && <AppearanceManager />}
-    {tab === 'shipping' && <ShippingSettingsManager />}
-    {tab === 'commission' && <ShopCommissionSettingsManager isDarkMode={isDarkMode} />}
     {tab === 'coupons' && <ShopCouponsManager />}
     {tab === 'cashback' && <CashbackManager isDarkMode={isDarkMode} />}
+
+    <style jsx>{`
+      .shop-admin-root {
+        font-family: Arial, Helvetica, sans-serif !important;
+      }
+      .shop-admin-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+      .shop-admin-toolbar h2 {
+        font: 800 24px Arial, sans-serif !important;
+        color: var(--shop-admin-text, #1d2939);
+        margin: 0 0 5px;
+      }
+      .shop-admin-toolbar p {
+        font: 13px Arial, sans-serif !important;
+        color: var(--shop-admin-muted, #667085);
+        margin: 0;
+      }
+      .shop-admin-toolbar button {
+        flex: none;
+        padding: 12px 18px !important;
+        border: 1px solid var(--brand-blue, #2196F3) !important;
+        border-radius: 8px !important;
+        background: var(--brand-blue, #2196F3) !important;
+        color: #fff !important;
+        font: 800 13px Arial, sans-serif !important;
+        cursor: pointer;
+      }
+      .shop-admin-tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--shop-admin-border, #dce3eb);
+        padding-bottom: 12px;
+      }
+      .shop-admin-tabs button {
+        padding: 10px 16px !important;
+        border: 1px solid var(--shop-admin-border, #dce3eb) !important;
+        background: var(--shop-admin-bg, #fff) !important;
+        color: var(--shop-admin-text, #1d2939) !important;
+        border-radius: 8px !important;
+        font: 700 13px Arial, sans-serif !important;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .shop-admin-tabs button:hover {
+        border-color: #94a3b8 !important;
+      }
+      .shop-admin-tabs button.active {
+        background: var(--brand-blue, #2196F3) !important;
+        border-color: var(--brand-blue, #2196F3) !important;
+        color: #fff !important;
+      }
+    `}</style>
   </div>;
 }
 

@@ -255,45 +255,188 @@
   white-space: nowrap
 }
 
-.store-orders {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #313a34 !important;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap
-}
-
+/* ── Storefront Desktop Header Action Buttons (Unified Sizing & Harmony) ── */
+.storefront-desktop .store-admin-add,
+.storefront-desktop .store-orders,
+.storefront-desktop .store-wallet-btn,
+.storefront-desktop .store-cart-button,
+.shop-page .store-admin-add,
+.shop-page .store-orders,
+.shop-page .store-wallet-btn,
 .shop-page .store-cart-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: #126739 !important;
-  color: #fff !important;
-  min-width: 120px;
-  border-radius: 8px;
-  padding: 13px 12px !important;
-  font-size: 13px;
-  font-weight: 800;
-  white-space: nowrap
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  border-radius: 9px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  flex: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: all 0.18s ease !important;
 }
 
+/* Secondary Actions: Add Product, Orders, Wallet */
+.storefront-desktop .store-admin-add,
+.storefront-desktop .store-orders,
+.storefront-desktop .store-wallet-btn,
+.shop-page .store-admin-add,
+.shop-page .store-orders,
+.shop-page .store-wallet-btn {
+  padding: 0 14px !important;
+  gap: 7px !important;
+  background: #f0f7ff !important;
+  border: 1px solid #cce3fa !important;
+  color: #0f3e6d !important;
+}
+
+.storefront-desktop .store-admin-add:hover,
+.storefront-desktop .store-orders:hover,
+.storefront-desktop .store-wallet-btn:hover,
+.shop-page .store-admin-add:hover,
+.shop-page .store-orders:hover,
+.shop-page .store-wallet-btn:hover {
+  background: #e2effd !important;
+  border-color: var(--brand-blue, #2196F3) !important;
+  color: #0b3056 !important;
+  transform: translateY(-1px) !important;
+}
+
+.storefront-desktop .store-admin-add:active,
+.storefront-desktop .store-orders:active,
+.storefront-desktop .store-wallet-btn:active,
+.shop-page .store-admin-add:active,
+.shop-page .store-orders:active,
+.shop-page .store-wallet-btn:active {
+  transform: translateY(0) !important;
+}
+
+.storefront-desktop .store-admin-add svg,
+.storefront-desktop .store-orders svg,
+.storefront-desktop .store-wallet-btn svg,
+.shop-page .store-admin-add svg,
+.shop-page .store-orders svg,
+.shop-page .store-wallet-btn svg {
+  color: #1976d2 !important;
+  flex: none !important;
+}
+
+/* Wallet balance pill badge */
+.store-wallet-pill {
+  background: var(--brand-blue, #2196F3) !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  padding: 3px 8px !important;
+  border-radius: 12px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.2px !important;
+}
+
+/* Primary CTA Button: My Cart */
+.storefront-desktop .store-cart-button,
+.shop-page .store-cart-button {
+  padding: 0 16px !important;
+  min-width: 115px !important;
+  gap: 8px !important;
+  background: var(--brand-blue, #2196F3) !important;
+  border: 1px solid var(--brand-blue, #2196F3) !important;
+  color: #ffffff !important;
+}
+
+.storefront-desktop .store-cart-button svg,
+.shop-page .store-cart-button svg {
+  color: #ffffff !important;
+  flex: none !important;
+}
+
+.storefront-desktop .store-cart-button:hover,
 .shop-page .store-cart-button:hover {
-  background: #09542b !important;
-  color: #fff !important
+  background: #1976d2 !important;
+  border-color: #1976d2 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+}
+
+.storefront-desktop .store-cart-button:active,
+.shop-page .store-cart-button:active {
+  transform: translateY(0) !important;
 }
 
 .store-cart-button b {
-  background: #fff;
-  color: #126739;
-  border-radius: 50%;
-  height: 20px;
-  min-width: 20px;
-  display: grid;
-  place-items: center;
-  font-size: 11px
+  background: #ffffff !important;
+  color: var(--brand-blue, #2196F3) !important;
+  border-radius: 10px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  padding: 0 5px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+/* Header Buttons Dark Mode */
+.dark-mode .storefront-desktop .store-admin-add,
+.dark-mode .storefront-desktop .store-orders,
+.dark-mode .storefront-desktop .store-wallet-btn,
+.dark-mode .shop-page .store-admin-add,
+.dark-mode .shop-page .store-orders,
+.dark-mode .shop-page .store-wallet-btn {
+  background: #17263b !important;
+  border: 1px solid #263d5c !important;
+  color: #dbeafe !important;
+}
+
+.dark-mode .storefront-desktop .store-admin-add svg,
+.dark-mode .storefront-desktop .store-orders svg,
+.dark-mode .storefront-desktop .store-wallet-btn svg,
+.dark-mode .shop-page .store-admin-add svg,
+.dark-mode .shop-page .store-orders svg,
+.dark-mode .shop-page .store-wallet-btn svg {
+  color: #60a5fa !important;
+}
+
+.dark-mode .storefront-desktop .store-admin-add:hover,
+.dark-mode .storefront-desktop .store-orders:hover,
+.dark-mode .storefront-desktop .store-wallet-btn:hover,
+.dark-mode .shop-page .store-admin-add:hover,
+.dark-mode .shop-page .store-orders:hover,
+.dark-mode .shop-page .store-wallet-btn:hover {
+  background: #1f334f !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .store-wallet-pill {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .storefront-desktop .store-cart-button,
+.dark-mode .shop-page .store-cart-button {
+  background: #2563eb !important;
+  border: 1px solid #2563eb !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .storefront-desktop .store-cart-button:hover,
+.dark-mode .shop-page .store-cart-button:hover {
+  background: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+}
+
+.dark-mode .store-cart-button b {
+  background: #ffffff !important;
+  color: #2563eb !important;
 }
 
 .store-main {
@@ -2574,26 +2717,6 @@
   color: var(--brand-blue-deep) !important;
 }
 
-.store-admin-add {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  flex: none;
-  white-space: nowrap;
-  padding: 11px 12px;
-  border: 1px solid var(--brand-blue);
-  border-radius: 8px;
-  background: #eff8ff;
-  color: var(--brand-blue-deep) !important;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.store-admin-add:hover {
-  background: var(--brand-blue);
-  color: #fff !important;
-}
 
 /* Category card hover: subtle border glow only */
 @media (hover: hover) and (pointer: fine) {
@@ -5189,32 +5312,6 @@
 }
 
 /* ── Desktop Header Wallet Button & Dark Mode Styles ── */
-.store-wallet-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: #12283f !important;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.18s ease;
-  white-space: nowrap;
-}
-
-.store-wallet-btn:hover {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
-  transform: translateY(-1px);
-}
-
-.store-wallet-btn:active {
-  transform: translateY(0);
-}
-
 .store-wallet-text {
   display: inline;
 }
@@ -5223,32 +5320,6 @@
   .store-wallet-text {
     display: none;
   }
-}
-
-.store-wallet-pill {
-  background: #12283f;
-  color: #ffffff !important;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 2px 7px;
-  border-radius: 12px;
-  line-height: 1.2;
-}
-
-.dark-mode .store-wallet-btn {
-  background: #1e293b;
-  border-color: #334155;
-  color: #f1f5f9 !important;
-}
-
-.dark-mode .store-wallet-btn:hover {
-  background: #334155;
-  border-color: #475569;
-}
-
-.dark-mode .store-wallet-pill {
-  background: #e4572e;
-  color: #ffffff !important;
 }
 
 .dark-mode .mobile-modal-card {

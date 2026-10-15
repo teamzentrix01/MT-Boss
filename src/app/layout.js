@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Navbar from "./components/Navbar";
 import "./globals.css";
+import "./components/ShopNowManager.css";
 import Footer from "./components/Footer";
 import { COMPANY_CONTACT } from "./lib/company";
 import PrivacyConsentGuard from "./components/PrivacyConsentGuard";

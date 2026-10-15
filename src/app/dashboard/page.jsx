@@ -628,7 +628,7 @@ function AdminDashboard() {
     { id: 'shop-categories', label: 'Shop Now Manager', icon: ShoppingCart },
     { id: 'shop-products', label: '+ Add Shop Product', icon: PlusCircle },
     { id: 'shipping-settings', label: 'Shipping Settings', icon: Truck },
-    { id: 'shop-commission-settings', label: 'Shop Vendor Commission', icon: CircleDollarSign },
+    { id: 'shop-commission-settings', label: 'Vendor Commission', icon: CircleDollarSign },
     { id: 'suppliers', label: 'Suppliers', icon: Truck },
     { id: 'vendors', label: 'Vendors', icon: HardHat },
     { id: 'packages', label: 'Package Approvals', icon: PackageCheck },
