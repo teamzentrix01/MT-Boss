@@ -610,7 +610,6 @@ export default function CalculatorManager({ isDarkMode }) {
               <table className="cm-table">
                 <thead>
                   <tr>
-                    <th style={{ width: 48, textAlign: 'center' }}>Select</th>
                     <th style={{ width: 56 }}>Image</th>
                     <th>Category Name</th>
                     <th>Products</th>
@@ -632,16 +631,6 @@ export default function CalculatorManager({ isDarkMode }) {
                           borderLeft: isSelected ? '3px solid var(--cm-accent)' : '3px solid transparent',
                         }}
                       >
-                        <td style={{ textAlign: 'center' }} onClick={e => { e.stopPropagation(); setSelectedCategory(category.name); }}>
-                          <input
-                            type="radio"
-                            name="selected_category_radio"
-                            checked={isSelected}
-                            onChange={() => setSelectedCategory(category.name)}
-                            style={{ cursor: 'pointer', accentColor: 'var(--cm-accent)' }}
-                            aria-label={`Select ${category.name}`}
-                          />
-                        </td>
                         <td>
                           {category.image_url ? (
                             <img
@@ -661,18 +650,6 @@ export default function CalculatorManager({ isDarkMode }) {
                             <strong style={{ fontSize: '.86rem', color: isSelected ? 'var(--cm-accent)' : 'inherit' }}>
                               {category.name}
                             </strong>
-                            {isSelected && (
-                              <span style={{
-                                fontSize: '.64rem',
-                                fontWeight: 800,
-                                color: 'var(--cm-accent)',
-                                background: isDarkMode ? 'rgba(33,150,243,0.18)' : 'rgba(33,150,243,0.12)',
-                                padding: '2px 6px',
-                                borderRadius: 6,
-                              }}>
-                                Selected
-                              </span>
-                            )}
                           </div>
                         </td>
                         <td>
@@ -700,18 +677,6 @@ export default function CalculatorManager({ isDarkMode }) {
                             <button
                               className="cm-act"
                               type="button"
-                              onClick={() => setSelectedCategory(category.name)}
-                              style={{
-                                borderColor: isSelected ? 'var(--cm-accent)' : 'var(--cm-border)',
-                                color: isSelected ? 'var(--cm-accent)' : 'inherit',
-                                background: isSelected ? (isDarkMode ? 'rgba(33,150,243,0.15)' : 'rgba(33,150,243,0.1)') : 'var(--cm-bg)',
-                              }}
-                            >
-                              {isSelected ? 'Selected' : 'Select'}
-                            </button>
-                            <button
-                              className="cm-act"
-                              type="button"
                               onClick={() => handleCategoryEdit(category)}
                             >
                               Edit
@@ -730,7 +695,7 @@ export default function CalculatorManager({ isDarkMode }) {
                   })}
                   {categories.length === 0 && (
                     <tr>
-                      <td colSpan={7} style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--cm-muted)' }}>
+                      <td colSpan={6} style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--cm-muted)' }}>
                         No categories yet. Click &quot;+ Add Category&quot; above to create one.
                       </td>
                     </tr>
