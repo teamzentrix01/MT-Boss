@@ -308,16 +308,17 @@ export default function CashbackManager({ isDarkMode }) {
         <div
           className={`shop-admin-notice ${
             notice.type === 'error'
-              ? 'bg-red-50 text-red-700 border-red-300'
-              : notice.type === 'success'
-              ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-              : ''
+              ? 'bg-slate-100 text-[#12283F] border-slate-300'
+              : 'bg-blue-50 text-blue-900 border-blue-200'
           }`}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
             fontWeight: 600,
+            background: notice.type === 'error' ? 'rgba(18, 40, 63, 0.08)' : 'rgba(33, 150, 243, 0.08)',
+            border: notice.type === 'error' ? '1px solid rgba(18, 40, 63, 0.2)' : '1px solid rgba(33, 150, 243, 0.3)',
+            color: '#12283F',
           }}
         >
           <span>{notice.type === 'error' ? '⚠️' : notice.type === 'success' ? '✅' : 'ℹ️'}</span>
@@ -356,8 +357,8 @@ export default function CashbackManager({ isDarkMode }) {
               padding: '2px 6px',
               borderRadius: '10px',
               fontWeight: 800,
-              background: settings.enabled ? '#10b98125' : '#ef444425',
-              color: settings.enabled ? '#10b981' : '#ef4444',
+              background: settings.enabled ? 'rgba(33, 150, 243, 0.15)' : (isDarkMode ? '#334155' : '#f1f5f9'),
+              color: settings.enabled ? '#2196F3' : (isDarkMode ? '#94a3b8' : '#64748b'),
             }}
           >
             {settings.enabled ? 'Live' : 'Off'}
@@ -384,8 +385,8 @@ export default function CashbackManager({ isDarkMode }) {
                 padding: '2px 6px',
                 borderRadius: '10px',
                 fontWeight: 800,
-                background: firstOrderRule.is_active ? '#10b98125' : '#64748b25',
-                color: firstOrderRule.is_active ? '#10b981' : '#94a3b8',
+                background: firstOrderRule.is_active ? 'rgba(33, 150, 243, 0.15)' : (isDarkMode ? '#334155' : '#f1f5f9'),
+                color: firstOrderRule.is_active ? '#2196F3' : (isDarkMode ? '#94a3b8' : '#64748b'),
               }}
             >
               {firstOrderRule.is_active ? 'Active' : 'Inactive'}
@@ -412,8 +413,8 @@ export default function CashbackManager({ isDarkMode }) {
               padding: '2px 7px',
               borderRadius: '10px',
               fontWeight: 800,
-              background: categoryRules.length > 0 ? '#0284c725' : '#64748b25',
-              color: categoryRules.length > 0 ? '#0284c7' : '#94a3b8',
+              background: categoryRules.length > 0 ? 'rgba(33, 150, 243, 0.15)' : (isDarkMode ? '#334155' : '#f1f5f9'),
+              color: categoryRules.length > 0 ? '#2196F3' : (isDarkMode ? '#94a3b8' : '#64748b'),
             }}
           >
             {categoryRules.length}
@@ -440,8 +441,8 @@ export default function CashbackManager({ isDarkMode }) {
                 padding: '2px 6px',
                 borderRadius: '10px',
                 fontWeight: 800,
-                background: slabRule.is_active ? '#10b98125' : '#64748b25',
-                color: slabRule.is_active ? '#10b981' : '#94a3b8',
+                background: slabRule.is_active ? 'rgba(33, 150, 243, 0.15)' : (isDarkMode ? '#334155' : '#f1f5f9'),
+                color: slabRule.is_active ? '#2196F3' : (isDarkMode ? '#94a3b8' : '#64748b'),
               }}
             >
               {slabRule.is_active ? 'Active' : 'Inactive'}
@@ -677,8 +678,20 @@ export default function CashbackManager({ isDarkMode }) {
                       borderRadius: '16px',
                       fontSize: '11px',
                       fontWeight: 800,
-                      background: firstOrderRule.is_active ? (isDarkMode ? '#065f46' : '#dcfce7') : (isDarkMode ? '#7f1d1d' : '#fee2e2'),
-                      color: firstOrderRule.is_active ? (isDarkMode ? '#6ee7b7' : '#15803d') : (isDarkMode ? '#fca5a5' : '#b91c1c'),
+                      background: firstOrderRule.is_active
+                        ? isDarkMode
+                          ? 'rgba(33, 150, 243, 0.2)'
+                          : '#e3f2fd'
+                        : isDarkMode
+                        ? '#1e293b'
+                        : '#f1f5f9',
+                      color: firstOrderRule.is_active
+                        ? isDarkMode
+                          ? '#90caf9'
+                          : '#1976D2'
+                        : isDarkMode
+                        ? '#94a3b8'
+                        : '#64748b',
                     }}
                   >
                     <span>{firstOrderRule.is_active ? '●' : '○'}</span>
@@ -948,18 +961,18 @@ export default function CashbackManager({ isDarkMode }) {
                                   fontWeight: 800,
                                   background: rule.is_active
                                     ? isDarkMode
-                                      ? '#065f46'
-                                      : '#dcfce7'
+                                      ? 'rgba(33, 150, 243, 0.2)'
+                                      : '#e3f2fd'
                                     : isDarkMode
-                                    ? '#7f1d1d'
-                                    : '#fee2e2',
+                                    ? '#1e293b'
+                                    : '#f1f5f9',
                                   color: rule.is_active
                                     ? isDarkMode
-                                      ? '#6ee7b7'
-                                      : '#15803d'
+                                      ? '#90caf9'
+                                      : '#1976D2'
                                     : isDarkMode
-                                    ? '#fca5a5'
-                                    : '#b91c1c',
+                                    ? '#94a3b8'
+                                    : '#64748b',
                                 }}
                               >
                                 <span>{rule.is_active ? '●' : '○'}</span>
@@ -1024,8 +1037,20 @@ export default function CashbackManager({ isDarkMode }) {
                       borderRadius: '16px',
                       fontSize: '11px',
                       fontWeight: 800,
-                      background: slabRule.is_active ? (isDarkMode ? '#065f46' : '#dcfce7') : (isDarkMode ? '#7f1d1d' : '#fee2e2'),
-                      color: slabRule.is_active ? (isDarkMode ? '#6ee7b7' : '#15803d') : (isDarkMode ? '#fca5a5' : '#b91c1c'),
+                      background: slabRule.is_active
+                        ? isDarkMode
+                          ? 'rgba(33, 150, 243, 0.2)'
+                          : '#e3f2fd'
+                        : isDarkMode
+                        ? '#1e293b'
+                        : '#f1f5f9',
+                      color: slabRule.is_active
+                        ? isDarkMode
+                          ? '#90caf9'
+                          : '#1976D2'
+                        : isDarkMode
+                        ? '#94a3b8'
+                        : '#64748b',
                     }}
                   >
                     <span>{slabRule.is_active ? '●' : '○'}</span>
@@ -1205,15 +1230,15 @@ function StatusToggleRow({ label, description, checked, onChange, isDarkMode, ac
         borderRadius: '10px',
         border: checked
           ? isDarkMode
-            ? '1px solid rgba(16, 185, 129, 0.4)'
-            : '1px solid #a7f3d0'
+            ? '1px solid rgba(33, 150, 243, 0.4)'
+            : '1px solid #90caf9'
           : isDarkMode
           ? '1px solid #334155'
           : '1px solid #e2e8f0',
         background: checked
           ? isDarkMode
-            ? 'rgba(6, 78, 59, 0.22)'
-            : '#f0fdf4'
+            ? 'rgba(33, 150, 243, 0.12)'
+            : '#f0f7ff'
           : isDarkMode
           ? '#1e293b'
           : '#f8fafc',
@@ -1245,15 +1270,15 @@ function StatusToggleRow({ label, description, checked, onChange, isDarkMode, ac
               letterSpacing: '0.04em',
               background: checked
                 ? isDarkMode
-                  ? '#065f46'
-                  : '#dcfce7'
+                  ? 'rgba(33, 150, 243, 0.25)'
+                  : '#e3f2fd'
                 : isDarkMode
                 ? '#334155'
                 : '#f1f5f9',
               color: checked
                 ? isDarkMode
-                  ? '#6ee7b7'
-                  : '#15803d'
+                  ? '#90caf9'
+                  : '#1976D2'
                 : isDarkMode
                 ? '#94a3b8'
                 : '#64748b',
@@ -1301,9 +1326,9 @@ function StatusToggleRow({ label, description, checked, onChange, isDarkMode, ac
             display: 'inline-flex',
             alignItems: 'center',
             gap: '5px',
-            background: checked ? '#10b981' : 'transparent',
+            background: checked ? '#2196F3' : 'transparent',
             color: checked ? '#ffffff' : isDarkMode ? '#94a3b8' : '#64748b',
-            boxShadow: checked ? '0 1px 3px rgba(16, 185, 129, 0.4)' : 'none',
+            boxShadow: checked ? '0 1px 3px rgba(33, 150, 243, 0.4)' : 'none',
           }}
         >
           <span>●</span> {activeText}
@@ -1322,9 +1347,9 @@ function StatusToggleRow({ label, description, checked, onChange, isDarkMode, ac
             display: 'inline-flex',
             alignItems: 'center',
             gap: '5px',
-            background: !checked ? '#ef4444' : 'transparent',
+            background: !checked ? (isDarkMode ? '#334155' : '#12283F') : 'transparent',
             color: !checked ? '#ffffff' : isDarkMode ? '#94a3b8' : '#64748b',
-            boxShadow: !checked ? '0 1px 3px rgba(239, 68, 68, 0.35)' : 'none',
+            boxShadow: !checked ? '0 1px 3px rgba(18, 40, 63, 0.3)' : 'none',
           }}
         >
           <span>○</span> {inactiveText}
@@ -1370,9 +1395,9 @@ function FormStatusSwitch({ label = 'Status', checked, onChange, isDarkMode }) {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
-            background: checked ? '#10b981' : 'transparent',
+            background: checked ? '#2196F3' : 'transparent',
             color: checked ? '#ffffff' : isDarkMode ? '#94a3b8' : '#64748b',
-            boxShadow: checked ? '0 1px 3px rgba(16, 185, 129, 0.4)' : 'none',
+            boxShadow: checked ? '0 1px 3px rgba(33, 150, 243, 0.4)' : 'none',
           }}
         >
           <span>●</span> Active
@@ -1391,9 +1416,9 @@ function FormStatusSwitch({ label = 'Status', checked, onChange, isDarkMode }) {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
-            background: !checked ? '#ef4444' : 'transparent',
+            background: !checked ? (isDarkMode ? '#334155' : '#12283F') : 'transparent',
             color: !checked ? '#ffffff' : isDarkMode ? '#94a3b8' : '#64748b',
-            boxShadow: !checked ? '0 1px 3px rgba(239, 68, 68, 0.35)' : 'none',
+            boxShadow: !checked ? '0 1px 3px rgba(18, 40, 63, 0.3)' : 'none',
           }}
         >
           <span>○</span> Inactive

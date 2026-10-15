@@ -616,7 +616,7 @@ export default function MobileStorefront({
               )}
               {content?.trust_badge_2 !== "" && (
                 <div className="mobile-trust-badge">
-                  <BadgePercent size={14} className="mobile-trust-icon text-[#E4572E]" />
+                  <BadgePercent size={14} className="mobile-trust-icon text-[#2196F3]" />
                   <span>{content?.trust_badge_2 || "2% Cashback"}</span>
                 </div>
               )}
@@ -1238,7 +1238,7 @@ export default function MobileStorefront({
             {/* Wallet Card */}
             <div className="bg-gradient-to-r from-[#12283F] to-[#1c3b5d] text-white rounded-2xl p-4 shadow-md flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-amber-300">
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#2196F3]">
                   <Wallet size={20} />
                 </div>
                 <div>
@@ -1249,7 +1249,7 @@ export default function MobileStorefront({
               <button
                 type="button"
                 onClick={() => setWalletModalOpen(true)}
-                className="px-3 py-1.5 bg-amber-400 text-zinc-900 rounded-lg text-xs font-black shadow-sm active:scale-95"
+                className="px-3 py-1.5 bg-[#2196F3] text-white rounded-lg text-xs font-black shadow-sm active:scale-95"
               >
                 Passbook
               </button>
@@ -1457,14 +1457,14 @@ export default function MobileStorefront({
                 <Wallet size={28} />
               </div>
               <h3 className="text-lg font-black text-[#12283F]">MTBoss Cashback Wallet</h3>
-              <p className="text-3xl font-extrabold text-[#E4572E] my-2">₹0.00</p>
+              <p className="text-3xl font-extrabold text-[#2196F3] my-2">₹0.00</p>
               <div className="bg-[#F8FAFC] border border-gray-200 rounded-xl p-3 text-left mt-3 text-xs text-gray-600 space-y-1.5">
                 <p className="flex items-center gap-2">
-                  <CheckCircle2 size={14} className="text-[#0D9488] flex-shrink-0" />
+                  <CheckCircle2 size={14} className="text-[#2196F3] flex-shrink-0" />
                   <span><strong>2% Instant Cashback</strong> on every bulk material order</span>
                 </p>
                 <p className="flex items-center gap-2">
-                  <CheckCircle2 size={14} className="text-[#0D9488] flex-shrink-0" />
+                  <CheckCircle2 size={14} className="text-[#2196F3] flex-shrink-0" />
                   <span>Auto-applied as credit on your subsequent orders</span>
                 </p>
               </div>
@@ -1776,9 +1776,9 @@ export default function MobileStorefront({
                       margin: '10px 0',
                       padding: '10px 12px',
                       borderRadius: '8px',
-                      backgroundColor: '#e3f3f3',
-                      border: '1px solid #b2dfdb',
-                      color: '#004d40',
+                      backgroundColor: 'rgba(33, 150, 243, 0.08)',
+                      border: '1px solid rgba(33, 150, 243, 0.3)',
+                      color: '#12283F',
                       fontSize: '11.5px',
                       fontWeight: '700',
                       display: 'flex',

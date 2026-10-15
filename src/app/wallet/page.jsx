@@ -92,21 +92,21 @@ export default function WalletPage() {
     const s = String(status || '').toUpperCase();
     if (s === 'AVAILABLE') {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-[#1976D2] border border-blue-200">
           <CheckCircle2 size={12} /> Available
         </span>
       );
     }
     if (s === 'PENDING') {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50/50 text-[#12283F] border border-blue-200">
           <Clock size={12} /> Pending
         </span>
       );
     }
     if (s === 'REVERSED') {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
           <RotateCcw size={12} /> Reversed
         </span>
       );
@@ -141,14 +141,14 @@ export default function WalletPage() {
           </div>
           <Link
             href="/ShopNow"
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl bg-[#E4572E] text-white hover:bg-[#d04a22] transition-colors shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl bg-[#2196F3] text-white hover:bg-[#1976D2] transition-colors shadow-sm"
           >
             Order Materials <ArrowRight size={14} />
           </Link>
         </div>
 
         {error && (
-          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+          <div className="p-4 rounded-xl bg-slate-100 border border-slate-300 text-[#12283F] text-sm font-medium">
             {error}
           </div>
         )}
@@ -161,11 +161,11 @@ export default function WalletPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
                 Available Balance
               </span>
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2196F3] flex items-center justify-center">
                 <Wallet size={20} />
               </div>
             </div>
-            <div className="text-3xl sm:text-4xl font-black text-emerald-600">
+            <div className="text-3xl sm:text-4xl font-black text-[#2196F3]">
               ₹{Number(wallet.balance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <p className="text-xs text-slate-500 mt-2">
@@ -179,11 +179,11 @@ export default function WalletPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
                 Pending Cashback
               </span>
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#12283F] flex items-center justify-center">
                 <Clock size={20} />
               </div>
             </div>
-            <div className="text-3xl sm:text-4xl font-black text-amber-600">
+            <div className="text-3xl sm:text-4xl font-black text-[#12283F]">
               ₹{Number(wallet.pending_balance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <p className="text-xs text-slate-500 mt-2">
@@ -193,8 +193,8 @@ export default function WalletPage() {
         </div>
 
         {/* Info Strip */}
-        <div className={`p-4 rounded-xl border flex items-center gap-3 text-xs ${isDark ? 'bg-zinc-900/60 border-zinc-800 text-slate-400' : 'bg-[#e3f3f3]/60 border-[#c4e6e6] text-[#12283F]'}`}>
-          <TrendingUp size={18} className="text-[#0D9488] shrink-0" />
+        <div className={`p-4 rounded-xl border flex items-center gap-3 text-xs ${isDark ? 'bg-zinc-900/60 border-zinc-800 text-slate-400' : 'bg-blue-50/60 border-blue-200 text-[#12283F]'}`}>
+          <TrendingUp size={18} className="text-[#2196F3] shrink-0" />
           <span>
             <strong>How Cashback Works:</strong> Place orders on MT Boss to earn dynamic cashback. Once delivered, cashback is credited to your wallet according to store policy.
           </span>
@@ -239,7 +239,7 @@ export default function WalletPage() {
                       <tr key={tx.id} className={isDark ? 'hover:bg-zinc-800/40' : 'hover:bg-slate-50/60'}>
                         <td className="py-3.5 px-4 font-semibold">
                           <div className="flex items-center gap-1.5">
-                            <span className={isCredit ? 'text-emerald-600 font-bold' : 'text-rose-600 font-bold'}>
+                            <span className={isCredit ? 'text-[#2196F3] font-bold' : 'text-[#12283F] font-bold'}>
                               {isCredit ? '+' : '-'}
                             </span>
                             <span>{tx.note || tx.source}</span>
@@ -248,7 +248,7 @@ export default function WalletPage() {
                             {formatDate(tx.created_at)}
                           </span>
                         </td>
-                        <td className={`py-3.5 px-4 font-extrabold ${isCredit ? 'text-emerald-600' : 'text-rose-600'}`}>
+                        <td className={`py-3.5 px-4 font-extrabold ${isCredit ? 'text-[#2196F3]' : 'text-[#12283F]'}`}>
                           ₹{Number(tx.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td className="py-3.5 px-4 text-slate-600 font-mono text-[11px]">

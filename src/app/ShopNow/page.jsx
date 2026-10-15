@@ -1257,7 +1257,7 @@ export default function ShopPage() {
                 {/* ── SECTION 5 — Pay using Cashback Wallet ───────────── */}
                 {modalMode !== 'quote' && rawGrandTotal > 0 && (
                   <div className={`mb-5 p-4 rounded-xl border-2 transition-all ${
-                    isDarkMode ? "bg-zinc-800/80 border-zinc-700" : "bg-emerald-50/50 border-emerald-200"
+                    isDarkMode ? "bg-zinc-800/80 border-zinc-700" : "bg-blue-50/60 border-blue-200"
                   }`}>
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
@@ -1267,7 +1267,7 @@ export default function ShopPage() {
                             Use wallet balance
                           </label>
                           <p className={`text-[11px] ${subText}`}>
-                            Available Balance: <strong className="text-emerald-600">₹{Number(walletPreview?.balance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
+                            Available Balance: <strong className="text-[#2196F3]">₹{Number(walletPreview?.balance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
                           </p>
                         </div>
                       </div>
@@ -1283,7 +1283,7 @@ export default function ShopPage() {
                             setWalletAmount(String(walletPreview.maxAllowed));
                           }
                         }}
-                        className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
+                        className="w-4 h-4 accent-[#2196F3] rounded cursor-pointer"
                       />
                     </div>
 
@@ -1292,7 +1292,7 @@ export default function ShopPage() {
                     )}
 
                     {useWallet && walletPreview && (
-                      <div className="mt-3 pt-3 border-t border-emerald-200/50 space-y-2">
+                      <div className="mt-3 pt-3 border-t border-blue-200/60 space-y-2">
                         <div>
                           <label htmlFor="wallet-redeem-input" className="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
                             Redeem Amount (₹)
@@ -1309,13 +1309,13 @@ export default function ShopPage() {
                                 const val = e.target.value;
                                 setWalletAmount(val);
                               }}
-                              className={`${inp} font-bold text-sm text-emerald-700`}
+                              className={`${inp} font-bold text-sm text-[#12283F]`}
                               placeholder={`Max ₹${walletPreview.maxAllowed}`}
                             />
                             <button
                               type="button"
                               onClick={() => setWalletAmount(String(walletPreview.maxAllowed))}
-                              className="px-3 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors whitespace-nowrap"
+                              className="px-3 py-2 text-xs font-bold rounded-lg bg-[#2196F3] text-white hover:bg-[#1976D2] transition-colors whitespace-nowrap"
                             >
                               Max ₹{walletPreview.maxAllowed}
                             </button>
@@ -1328,7 +1328,7 @@ export default function ShopPage() {
                           </p>
                         )}
                         {appliedWalletAmount >= rawGrandTotal && rawGrandTotal > 0 && (
-                          <div className="p-2 rounded-lg bg-emerald-100/70 border border-emerald-300 text-emerald-800 text-[11px] font-bold">
+                          <div className="p-2 rounded-lg bg-blue-50 border border-blue-300 text-[#12283F] text-[11px] font-bold">
                             🎉 Your wallet covers 100% of this order! No payment gateway required.
                           </div>
                         )}
