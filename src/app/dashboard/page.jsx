@@ -45,6 +45,7 @@ const PmDashboard = dynamicManager(() => import('../components/PmDashboard'));
 const PmAuditLog = dynamicManager(() => import('../components/PmAuditLog'));
 const PmBenchmarks = dynamicManager(() => import('../components/PmBenchmarks'));
 const OrdersHistoryManager = dynamicManager(() => import('../components/OrdersHistoryManager'));
+const CashbackManager = dynamicManager(() => import('../components/CashbackManager'));
 
 import {
   LayoutDashboard, UserCog, Calculator, FileText, Briefcase, BriefcaseBusiness,
@@ -52,7 +53,7 @@ import {
   ImageIcon, Newspaper, Layers, MessageSquare, Users, Building2, FolderKanban,
   House, Zap, Wrench, CircleDollarSign, CalendarDays, Tags, ShoppingCart,
   PlusCircle, Truck, HardHat, PackageCheck, Eye, Trash2, Download, LogOut, X,
-  Clock, CheckCircle2, ShieldCheck, Ban, ActionIconButton, Pencil, Plus,
+  Clock, CheckCircle2, ShieldCheck, Ban, ActionIconButton, Pencil, Plus, Wallet,
 } from '@/app/components/ui/icons';
 
 function hasResumeFile(resumeUrl) {
@@ -626,6 +627,7 @@ function AdminDashboard() {
     { id: 'bookings', label: 'Service Bookings', icon: CalendarDays },
     { id: 'orders-history', label: 'Orders History', icon: ClipboardList },
     { id: 'shop-categories', label: 'Shop Now Manager', icon: ShoppingCart },
+    { id: 'cashback', label: 'Cashback & Wallet', icon: Wallet },
     { id: 'shop-products', label: '+ Add Shop Product', icon: PlusCircle },
     { id: 'shipping-settings', label: 'Shipping Settings', icon: Truck },
     { id: 'shop-commission-settings', label: 'Vendor Commission', icon: CircleDollarSign },
@@ -2195,13 +2197,14 @@ function AdminDashboard() {
           {activeTab === 'pm-benchmarks' && <PmBenchmarks isDarkMode={isDarkMode} />}
           {activeTab === 'pm-dashboard' && <PmDashboard isDarkMode={isDarkMode} />}
           {activeTab === 'pm-audit' && <PmAuditLog isDarkMode={isDarkMode} />}
-          {(activeTab === 'shop-categories' || activeTab === 'shop-products' || activeTab === 'cashback') && (
+          {(activeTab === 'shop-categories' || activeTab === 'shop-products') && (
             <ShopNowManager
               key={activeTab}
               isDarkMode={isDarkMode}
-              initialTab={activeTab === 'shop-products' ? 'products' : activeTab === 'cashback' ? 'cashback' : 'categories'}
+              initialTab={activeTab === 'shop-products' ? 'products' : 'categories'}
             />
           )}
+          {activeTab === 'cashback' && <CashbackManager isDarkMode={isDarkMode} />}
           {activeTab === 'shipping-settings' && <ShippingSettingsManager />}
           {activeTab === 'shop-commission-settings' && <ShopCommissionSettingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}

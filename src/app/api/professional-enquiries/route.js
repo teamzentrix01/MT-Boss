@@ -97,7 +97,7 @@ export async function POST(req) {
               A user has enquired about a professional — ${new Date().toLocaleString('en-IN')}
             </p>
 
-            <h3 style="color:#f6b400;font-size:13px;font-weight:700;text-transform:uppercase;
+            <h3 style="color:#2196F3;font-size:13px;font-weight:700;text-transform:uppercase;
                        letter-spacing:0.06em;margin:0 0 8px;">Professional Requested</h3>
             <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:20px;">
               ${[
@@ -112,7 +112,7 @@ export async function POST(req) {
               ).join('')}
             </table>
 
-            <h3 style="color:#f6b400;font-size:13px;font-weight:700;text-transform:uppercase;
+            <h3 style="color:#2196F3;font-size:13px;font-weight:700;text-transform:uppercase;
                        letter-spacing:0.06em;margin:0 0 8px;">Enquirer Details</h3>
             <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:20px;">
               ${[
@@ -127,7 +127,7 @@ export async function POST(req) {
               ).join('')}
             </table>
 
-            <h3 style="color:#f6b400;font-size:13px;font-weight:700;text-transform:uppercase;
+            <h3 style="color:#2196F3;font-size:13px;font-weight:700;text-transform:uppercase;
                        letter-spacing:0.06em;margin:0 0 8px;">Message</h3>
             <div style="padding:16px;background:#f9fafb;border-radius:6px;
                         font-size:14px;color:#374151;line-height:1.6;">

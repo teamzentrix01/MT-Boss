@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { UploadCloud, Plus, X, Star, Sparkles, Image as ImageIcon } from 'lucide-react';
 import ShopCategoriesManager from './ShopCategoriesManager';
 import ShopCouponsManager from './ShopCouponsManager';
-import CashbackManager from './CashbackManager';
 import VendorCommissionSummary from './VendorCommissionSummary';
 import { defaultShopStorefront } from '@/lib/shop-storefront-defaults';
 import { QUALITY_TIER_OPTIONS, qualityTierLabel } from '@/lib/quality-tier';
@@ -702,13 +701,11 @@ export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }
       <button type="button" role="tab" aria-selected={tab === 'products'} className={tab === 'products' ? 'active' : ''} onClick={() => setTab('products')}>Products</button>
       <button type="button" role="tab" aria-selected={tab === 'content'} className={tab === 'content' ? 'active' : ''} onClick={() => setTab('content')}>Storefront Content</button>
       <button type="button" role="tab" aria-selected={tab === 'coupons'} className={tab === 'coupons' ? 'active' : ''} onClick={() => setTab('coupons')}>Promotions & Coupons</button>
-      <button type="button" role="tab" aria-selected={tab === 'cashback'} className={tab === 'cashback' ? 'active' : ''} onClick={() => setTab('cashback')}>Cashback & Wallet</button>
     </div>
     {tab === 'categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}
     {tab === 'products' && <ProductManager />}
     {tab === 'content' && <AppearanceManager />}
     {tab === 'coupons' && <ShopCouponsManager />}
-    {tab === 'cashback' && <CashbackManager isDarkMode={isDarkMode} />}
 
     <style jsx>{`
       .shop-admin-root {
