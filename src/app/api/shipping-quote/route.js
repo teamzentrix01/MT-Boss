@@ -21,6 +21,7 @@ export async function POST(req) {
       );
     }
 
+    const uniqueIds = [...new Set(ids)];
     const result = await pool.query(
       `SELECT m.id, m.name, m.category, m.unit, m.price, m.bulk_pricing,
         COALESCE(NULLIF(TRIM(v.city), ''), NULLIF(TRIM(s.city), ''), CASE WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb))=1 THEN m.available_cities->>0 END) AS source_city
@@ -29,10 +30,10 @@ export async function POST(req) {
        LEFT JOIN suppliers s ON s.id = m.supplier_id
        WHERE m.id = ANY($1::int[]) AND m.is_available = TRUE
          AND (m.vendor_id IS NULL OR COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'approved')`,
-      [ids]
+      [uniqueIds]
     );
 
-    if (result.rows.length !== ids.length) {
+    if (result.rows.length !== uniqueIds.length) {
       return NextResponse.json(
         { success: false, error: 'One or more products are unavailable. Refresh your cart.' },
         { status: 409 }
@@ -67,3 +68,4 @@ export async function POST(req) {
     );
   }
 }
+

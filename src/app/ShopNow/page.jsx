@@ -114,11 +114,21 @@ export default function ShopPage() {
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("mtboss-shop-cart") || "[]");
-      if (Array.isArray(saved)) setCart(saved.filter((item) => (
-        item?.product?.id
-        && Number.isInteger(item.quantity)
-        && item.quantity > 0
-      )));
+      if (Array.isArray(saved)) {
+        const merged = new Map();
+        for (const item of saved) {
+          const id = item?.product?.id;
+          if (id && Number.isInteger(item.quantity) && item.quantity > 0) {
+            if (merged.has(id)) {
+              const existing = merged.get(id);
+              existing.quantity = Math.min(10000, existing.quantity + item.quantity);
+            } else {
+              merged.set(id, { ...item });
+            }
+          }
+        }
+        setCart([...merged.values()]);
+      }
     } catch { /* Ignore stale cart data. */ }
     setCartReady(true);
   }, []);
@@ -213,20 +223,36 @@ export default function ShopPage() {
 
   useEffect(() => {
     if (!cartReady || !productsLoaded || !categories.length) return;
-    setCart((previous) => previous.flatMap((item) => {
-      if (!item.product?.product_id) {
-        const category = categories.find((entry) => String(entry.id) === String(item.product?.category?.id))
-          || categories.find((entry) => entry.name.toLowerCase() === item.product?.category?.name?.toLowerCase());
-        const validNames = Array.isArray(category?.types) && category.types.length ? category.types : [category?.name];
-        if (!category || !validNames.some((name) => name?.toLowerCase() === item.product?.name?.toLowerCase())) return [];
-        return [{ product: { ...item.product, category }, quantity: Math.min(item.quantity, 10000) }];
+    setCart((previous) => {
+      const merged = new Map();
+      for (const item of previous) {
+        if (!item.product?.product_id) {
+          const category = categories.find((entry) => String(entry.id) === String(item.product?.category?.id))
+            || categories.find((entry) => entry.name.toLowerCase() === item.product?.category?.name?.toLowerCase());
+          const validNames = Array.isArray(category?.types) && category.types.length ? category.types : [category?.name];
+          if (!category || !validNames.some((name) => name?.toLowerCase() === item.product?.name?.toLowerCase())) continue;
+          const key = item.product.id || item.product.name;
+          if (merged.has(key)) {
+            merged.get(key).quantity = Math.min(10000, merged.get(key).quantity + item.quantity);
+          } else {
+            merged.set(key, { product: { ...item.product, category }, quantity: Math.min(item.quantity, 10000) });
+          }
+        } else {
+          const current = allProducts.find((product) => product.id === item.product.product_id);
+          const category = categories.find((entry) => entry.name.toLowerCase() === current?.category?.toLowerCase())
+            || categories.find((entry) => current?.name?.toLowerCase().includes(entry.name.toLowerCase()));
+          if (!current || !category || Number(current.quantity) < 1) continue;
+          const key = item.product.id || `supplier-${current.id}`;
+          const resolvedProduct = { ...item.product, ...current, category, image: current.image_url, fromSupplier: true, product_id: current.id };
+          if (merged.has(key)) {
+            merged.get(key).quantity = Math.min(merged.get(key).quantity + item.quantity, Number(current.quantity) || 10000, 10000);
+          } else {
+            merged.set(key, { product: resolvedProduct, quantity: Math.min(item.quantity, Number(current.quantity) || 10000) });
+          }
+        }
       }
-      const current = allProducts.find((product) => product.id === item.product.product_id);
-      const category = categories.find((entry) => entry.name.toLowerCase() === current?.category?.toLowerCase())
-        || categories.find((entry) => current?.name?.toLowerCase().includes(entry.name.toLowerCase()));
-      if (!current || !category || Number(current.quantity) < 1) return [];
-      return [{ product: { ...item.product, ...current, category, image: current.image_url, fromSupplier: true, product_id: current.id }, quantity: Math.min(item.quantity, current.quantity) }];
-    }));
+      return [...merged.values()];
+    });
   }, [allProducts, cartReady, categories, productsLoaded]);
 
   const [shippingSettings, setShippingSettings] = useState(null);
@@ -889,9 +915,10 @@ export default function ShopPage() {
                 {modalMode === "cart" ? (
                   <div className={`rounded-xl border px-4 py-3 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
                     <p className={`text-xs font-bold mb-2 ${headText}`}>Materials in your order</p>
-                    {cart.map((item) => {
+                    {cart.map((item, index) => {
                       const itemUnitPrice = getUnitPrice(item.product, item.quantity);
-                      return <p key={item.product.id} className={`text-xs py-1 ${subText}`}>{item.product.name} · {item.quantity} {displayUnit(item.product.unit)} · {itemUnitPrice > 0 ? `₹${(itemUnitPrice * item.quantity).toLocaleString("en-IN")}` : 'Price on confirmation'}</p>;
+                      const itemKey = item.product?.id ? `${item.product.id}-${index}` : `cart-item-${index}`;
+                      return <p key={itemKey} className={`text-xs py-1 ${subText}`}>{item.product.name} · {item.quantity} {displayUnit(item.product.unit)} · {itemUnitPrice > 0 ? `₹${(itemUnitPrice * item.quantity).toLocaleString("en-IN")}` : 'Price on confirmation'}</p>;
                     })}
                     {couponCalculation.offerAmount > 0 && <p className={`mt-2 text-xs ${subText}`}>Items with existing offers: ₹{couponCalculation.offerAmount.toLocaleString('en-IN')} <span className="text-amber-600">(offer already applied)</span></p>}
                     {couponCalculation.regularAmount > 0 && <p className={`mt-1 text-xs ${subText}`}>Other items: ₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</p>}

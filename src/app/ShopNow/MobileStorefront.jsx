@@ -892,7 +892,7 @@ export default function MobileStorefront({
                               onClick={() => navigateToCategory(cat)}
                               aria-label={`Browse ${cat.name}`}
                             >
-                              <div className="mobile-category-circle">
+                              <div className="mobile-category-square">
                                 {(() => {
                                   const catImgs = Array.from(new Set([
                                     cat.image,
@@ -905,7 +905,8 @@ export default function MobileStorefront({
                                         alt={cat.name}
                                         delay={3000}
                                         showDots={false}
-                                        style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden' }}
+                                        style={{ width: '100%', height: '100%', borderRadius: '10px', overflow: 'hidden' }}
+                                        imageStyle={{ objectFit: 'cover' }}
                                       />
                                     );
                                   }
@@ -1533,7 +1534,7 @@ export default function MobileStorefront({
                 <div className="mobile-cart-item-list">
                   {cart.map((item, index) => {
                     const price = Number(item.product.price) || 0;
-                    const itemKey = item.product?.id ? `${item.product.id}` : `mobile-cart-item-${index}`;
+                    const itemKey = item.product?.id ? `${item.product.id}-${index}` : `mobile-cart-item-${index}`;
                     return (
                       <div key={itemKey} className="mobile-cart-item">
                         <div className="mobile-cart-item-img">

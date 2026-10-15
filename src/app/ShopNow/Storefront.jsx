@@ -700,7 +700,7 @@ export default function Storefront({ categories, products, offers = [], content,
             {cart.length ? <>
               <div className="store-cart-list">{cart.map((item, index) => {
                 const itemUnitPrice = unitPrice(item.product, item.quantity);
-                const itemKey = item.product?.id ? `${item.product.id}` : `cart-item-${index}`;
+                const itemKey = item.product?.id ? `${item.product.id}-${index}` : `cart-item-${index}`;
                 return <div className="store-cart-item" key={itemKey}>
                   <ProductVisual compact image={getProductImage(item.product, item.product.category)} category={item.product.category} name={item.product.name} />
                   <div>
