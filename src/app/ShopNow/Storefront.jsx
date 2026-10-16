@@ -68,6 +68,7 @@ export function ShopImage({ src, alt = '', ...props }) {
   // those URLs so Next.js remote-host allowlisting cannot hide valid images.
   if (isExternal && !isNextImageSafe) {
     const { fill, sizes, quality, priority, unoptimized, style, ...imgProps } = props;
+    // eslint-disable-next-line @next/next/no-img-element
     return <img
       {...imgProps}
       src={normalizedSrc}
@@ -187,7 +188,9 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
       )}
       <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={productImage} category={product.category} name={product.name} /></button>
       <div className="store-product-details">
-        <span className="store-product-tag">Available</span>
+        <span className={`store-product-tag ${!canOrder ? 'store-product-tag-unavailable' : ''}`}>
+          {canOrder ? 'Available' : 'Unavailable'}
+        </span>
         <button type="button" className="store-product-title" onClick={() => onDetails(product)}><h3>{product.name}</h3></button>
         <p className="store-product-category">{(typeof product.category === 'object' ? product.category?.name : product.category) || ''}{product.unit ? ` · ${product.unit}` : ""}</p>
         <div className="store-product-price-slot">
@@ -238,9 +241,10 @@ export default function Storefront({ categories, products, offers = [], content,
   const catalogScrollFrame = useRef(null);
   const storeHeaderRef = useRef(null);
 
+  const effectiveCashbackPreview = (Array.isArray(cart) && cart.length > 0) ? cashbackPreview : null;
+
   useEffect(() => {
     if (!Array.isArray(cart) || cart.length === 0) {
-      setCashbackPreview(null);
       return;
     }
     const token = localStorage.getItem('token');
@@ -541,19 +545,19 @@ export default function Storefront({ categories, products, offers = [], content,
               {cityOpen && <div className="store-city-popover"><label htmlFor="store-city">Choose your city</label><select id="store-city" value={selectedCity} onChange={(e) => { setSelectedCity(e.target.value); setCityOpen(false); }}><option value="">Select city</option>{[...new Set(cities)].map((city) => <option key={city} value={city}>{city}</option>)}</select><p>Availability is checked at checkout.</p></div>}
             </div>
             <label className="store-search"><Search size={20} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={content.search_placeholder} aria-label="Search materials" /></label>
-            {productManagerHref && <Link href={productManagerHref} className="store-admin-add"><Plus size={17} /> Add Product</Link>}
-            <Link href="/material-orders?role=user" className="store-orders" title="Track orders"><ClipboardList size={20} /><span>Orders</span></Link>
+            {productManagerHref && <Link href={productManagerHref} className="store-admin-add"><Plus size={18} /> Add Product</Link>}
+            <Link href="/material-orders?role=user" className="store-orders" title="Track orders"><ClipboardList size={18} /><span>Orders</span></Link>
             <Link
               href="/wallet"
               className="store-wallet-btn"
               aria-label="MT-Boss Cashback Wallet"
               title="My Cashback Wallet"
             >
-              <Wallet size={19} />
+              <Wallet size={18} />
               <span className="store-wallet-text">Wallet</span>
               <span className="store-wallet-pill">₹{walletBalance.toLocaleString('en-IN')}</span>
             </Link>
-            <button type="button" className="store-cart-button" onClick={toggleCart} aria-expanded={cartOpen} aria-controls="store-cart-dialog"><ShoppingCart size={20} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
+            <button type="button" className="store-cart-button" onClick={toggleCart} aria-expanded={cartOpen} aria-controls="store-cart-dialog"><ShoppingCart size={18} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
           </div>
         </header>
 
@@ -696,7 +700,7 @@ export default function Storefront({ categories, products, offers = [], content,
             {cart.length ? <>
               <div className="store-cart-list">{cart.map((item, index) => {
                 const itemUnitPrice = unitPrice(item.product, item.quantity);
-                const itemKey = item.product?.id ? `${item.product.id}` : `cart-item-${index}`;
+                const itemKey = item.product?.id ? `${item.product.id}-${index}` : `cart-item-${index}`;
                 return <div className="store-cart-item" key={itemKey}>
                   <ProductVisual compact image={getProductImage(item.product, item.product.category)} category={item.product.category} name={item.product.name} />
                   <div>
@@ -720,14 +724,14 @@ export default function Storefront({ categories, products, offers = [], content,
                 {couponCalculation?.regularAmount > 0 && <div className="store-cart-breakdown"><span>Other items</span><strong>₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</strong></div>}
                 {activeCoupon && couponCalculation?.eligible && <div className="store-cart-breakdown store-cart-coupon-discount"><span>{activeCoupon.code ? `Coupon “${activeCoupon.code}” applied` : 'Automatic coupon applied'}</span><strong>-₹{couponCalculation.discount.toLocaleString('en-IN')}</strong></div>}
                 {activeCoupon && couponCalculation?.eligible && <div className="store-cart-estimate"><span>Discounted total</span><strong>₹{Math.max(0, pricedTotal - couponCalculation.discount).toLocaleString('en-IN')}</strong></div>}
-                {cashbackPreview?.totalCashback > 0 && (
+                {effectiveCashbackPreview?.totalCashback > 0 && (
                   <div style={{
                     margin: '12px 0',
                     padding: '10px 14px',
                     borderRadius: '8px',
-                    backgroundColor: '#e3f3f3',
-                    border: '1px solid #b2dfdb',
-                    color: '#004d40',
+                    backgroundColor: 'rgba(33, 150, 243, 0.08)',
+                    border: '1px solid rgba(33, 150, 243, 0.3)',
+                    color: '#12283F',
                     fontSize: '12px',
                     fontWeight: '700',
                     display: 'flex',
@@ -735,7 +739,7 @@ export default function Storefront({ categories, products, offers = [], content,
                     gap: '8px',
                   }}>
                     <span>🎉</span>
-                    <span>You will earn <strong>₹{cashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
+                    <span>You will earn <strong>₹{effectiveCashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
                   </div>
                 )}
                 <p>Delivery charges, if applicable, are confirmed separately.</p>

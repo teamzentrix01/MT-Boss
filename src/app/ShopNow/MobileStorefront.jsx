@@ -222,11 +222,26 @@ export default function MobileStorefront({
   const [isDark, setIsDark] = useState(false);
   const [propertyOpen, setPropertyOpen] = useState(false);
   const [localShippingSettings, setLocalShippingSettings] = useState(shippingSettings);
+  const [prevShippingSettings, setPrevShippingSettings] = useState(shippingSettings);
+  if (shippingSettings !== prevShippingSettings) {
+    setPrevShippingSettings(shippingSettings);
+    if (shippingSettings) {
+      setLocalShippingSettings(shippingSettings);
+    }
+  }
+
   const [couponCode, setCouponCode] = useState(activeCoupon?.code || '');
+  const [prevActiveCouponCode, setPrevActiveCouponCode] = useState(activeCoupon?.code);
+  if (activeCoupon?.code && activeCoupon.code !== prevActiveCouponCode) {
+    setPrevActiveCouponCode(activeCoupon.code);
+    setCouponCode(activeCoupon.code);
+  }
+
   const [couponNotice, setCouponNotice] = useState('');
   const [offersOpen, setOffersOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
   const [cashbackPreview, setCashbackPreview] = useState(null);
+  const effectiveCashbackPreview = (Array.isArray(cart) && cart.length > 0) ? cashbackPreview : null;
   const searchInputRef = useRef(null);
   const rightFeedRef = useRef(null);
   const activeCatBtnRef = useRef(null);
@@ -250,7 +265,6 @@ export default function MobileStorefront({
 
   useEffect(() => {
     if (!Array.isArray(cart) || cart.length === 0) {
-      setCashbackPreview(null);
       return;
     }
     const token = localStorage.getItem('token');
@@ -286,15 +300,6 @@ export default function MobileStorefront({
       .catch(() => {});
   }, [cart, activeCoupon, couponCalculation]);
 
-  useEffect(() => {
-    if (activeCoupon?.code) {
-      setCouponCode(activeCoupon.code);
-    }
-  }, [activeCoupon]);
-
-  useEffect(() => {
-    if (shippingSettings) setLocalShippingSettings(shippingSettings);
-  }, [shippingSettings]);
 
   useEffect(() => {
     const loadShipping = () => {
@@ -611,7 +616,7 @@ export default function MobileStorefront({
               )}
               {content?.trust_badge_2 !== "" && (
                 <div className="mobile-trust-badge">
-                  <BadgePercent size={14} className="mobile-trust-icon text-[#E4572E]" />
+                  <BadgePercent size={14} className="mobile-trust-icon text-[#2196F3]" />
                   <span>{content?.trust_badge_2 || "2% Cashback"}</span>
                 </div>
               )}
@@ -887,7 +892,7 @@ export default function MobileStorefront({
                               onClick={() => navigateToCategory(cat)}
                               aria-label={`Browse ${cat.name}`}
                             >
-                              <div className="mobile-category-circle">
+                              <div className="mobile-category-square">
                                 {(() => {
                                   const catImgs = Array.from(new Set([
                                     cat.image,
@@ -900,7 +905,8 @@ export default function MobileStorefront({
                                         alt={cat.name}
                                         delay={3000}
                                         showDots={false}
-                                        style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden' }}
+                                        style={{ width: '100%', height: '100%', borderRadius: '10px', overflow: 'hidden' }}
+                                        imageStyle={{ objectFit: 'cover' }}
                                       />
                                     );
                                   }
@@ -1232,7 +1238,7 @@ export default function MobileStorefront({
             {/* Wallet Card */}
             <div className="bg-gradient-to-r from-[#12283F] to-[#1c3b5d] text-white rounded-2xl p-4 shadow-md flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-amber-300">
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#2196F3]">
                   <Wallet size={20} />
                 </div>
                 <div>
@@ -1243,7 +1249,7 @@ export default function MobileStorefront({
               <button
                 type="button"
                 onClick={() => setWalletModalOpen(true)}
-                className="px-3 py-1.5 bg-amber-400 text-zinc-900 rounded-lg text-xs font-black shadow-sm active:scale-95"
+                className="px-3 py-1.5 bg-[#2196F3] text-white rounded-lg text-xs font-black shadow-sm active:scale-95"
               >
                 Passbook
               </button>
@@ -1451,14 +1457,14 @@ export default function MobileStorefront({
                 <Wallet size={28} />
               </div>
               <h3 className="text-lg font-black text-[#12283F]">MTBoss Cashback Wallet</h3>
-              <p className="text-3xl font-extrabold text-[#E4572E] my-2">₹0.00</p>
+              <p className="text-3xl font-extrabold text-[#2196F3] my-2">₹0.00</p>
               <div className="bg-[#F8FAFC] border border-gray-200 rounded-xl p-3 text-left mt-3 text-xs text-gray-600 space-y-1.5">
                 <p className="flex items-center gap-2">
-                  <CheckCircle2 size={14} className="text-[#0D9488] flex-shrink-0" />
+                  <CheckCircle2 size={14} className="text-[#2196F3] flex-shrink-0" />
                   <span><strong>2% Instant Cashback</strong> on every bulk material order</span>
                 </p>
                 <p className="flex items-center gap-2">
-                  <CheckCircle2 size={14} className="text-[#0D9488] flex-shrink-0" />
+                  <CheckCircle2 size={14} className="text-[#2196F3] flex-shrink-0" />
                   <span>Auto-applied as credit on your subsequent orders</span>
                 </p>
               </div>
@@ -1528,7 +1534,7 @@ export default function MobileStorefront({
                 <div className="mobile-cart-item-list">
                   {cart.map((item, index) => {
                     const price = Number(item.product.price) || 0;
-                    const itemKey = item.product?.id ? `${item.product.id}` : `mobile-cart-item-${index}`;
+                    const itemKey = item.product?.id ? `${item.product.id}-${index}` : `mobile-cart-item-${index}`;
                     return (
                       <div key={itemKey} className="mobile-cart-item">
                         <div className="mobile-cart-item-img">
@@ -1765,14 +1771,14 @@ export default function MobileStorefront({
                     </div>
                   )}
 
-                  {cashbackPreview?.totalCashback > 0 && (
+                  {effectiveCashbackPreview?.totalCashback > 0 && (
                     <div style={{
                       margin: '10px 0',
                       padding: '10px 12px',
                       borderRadius: '8px',
-                      backgroundColor: '#e3f3f3',
-                      border: '1px solid #b2dfdb',
-                      color: '#004d40',
+                      backgroundColor: 'rgba(33, 150, 243, 0.08)',
+                      border: '1px solid rgba(33, 150, 243, 0.3)',
+                      color: '#12283F',
                       fontSize: '11.5px',
                       fontWeight: '700',
                       display: 'flex',
@@ -1780,7 +1786,7 @@ export default function MobileStorefront({
                       gap: '8px',
                     }}>
                       <span>🎉</span>
-                      <span>You will earn <strong>₹{cashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
+                      <span>You will earn <strong>₹{effectiveCashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
                     </div>
                   )}
 

@@ -45,6 +45,7 @@ const PmDashboard = dynamicManager(() => import('../components/PmDashboard'));
 const PmAuditLog = dynamicManager(() => import('../components/PmAuditLog'));
 const PmBenchmarks = dynamicManager(() => import('../components/PmBenchmarks'));
 const OrdersHistoryManager = dynamicManager(() => import('../components/OrdersHistoryManager'));
+const CashbackManager = dynamicManager(() => import('../components/CashbackManager'));
 
 import {
   LayoutDashboard, UserCog, Calculator, FileText, Briefcase, BriefcaseBusiness,
@@ -52,7 +53,7 @@ import {
   ImageIcon, Newspaper, Layers, MessageSquare, Users, Building2, FolderKanban,
   House, Zap, Wrench, CircleDollarSign, CalendarDays, Tags, ShoppingCart,
   PlusCircle, Truck, HardHat, PackageCheck, Eye, Trash2, Download, LogOut, X,
-  Clock, CheckCircle2, ShieldCheck, Ban, ActionIconButton,
+  Clock, CheckCircle2, ShieldCheck, Ban, ActionIconButton, Pencil, Plus, Wallet,
 } from '@/app/components/ui/icons';
 
 function hasResumeFile(resumeUrl) {
@@ -169,6 +170,23 @@ function AdminDashboard() {
   const [pkgVendors, setPkgVendors] = useState([]);
   const [pkgSuppliers, setPkgSuppliers] = useState([]);
   const [pkgMsg, setPkgMsg] = useState('');
+  const [packageSubTab, setPackageSubTab] = useState('approvals'); // 'approvals' | 'plans'
+  const [plansList, setPlansList] = useState([]);
+  const [plansLoading, setPlansLoading] = useState(false);
+  const [planModalOpen, setPlanModalOpen] = useState(false);
+  const [editingPlan, setEditingPlan] = useState(null);
+  const [planSaving, setPlanSaving] = useState(false);
+  const [planFormData, setPlanFormData] = useState({
+    id: '',
+    name: '',
+    duration_months: 6,
+    price: 0,
+    label: '',
+    description: '',
+    is_active: true,
+    target_role: 'both',
+    sort_order: 1,
+  });
   const loadedData = useRef(new Set());
   const router = useRouter();
 
@@ -223,11 +241,154 @@ function AdminDashboard() {
     }
   };
 
+  const fetchPlans = async () => {
+    try {
+      setPlansLoading(true);
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const headers = {};
+      if (token && token !== 'null' && token !== 'undefined') {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      const res = await fetch('/api/admin/packages/plans', { headers });
+      const data = await res.json();
+      if (data.success) {
+        setPlansList(data.plans || data.packages || []);
+      } else {
+        console.error('fetchPlans failed:', data.error);
+      }
+    } catch (err) {
+      console.error('Error fetching plans:', err);
+    } finally {
+      setPlansLoading(false);
+    }
+  };
+
+  const handleOpenPlanModal = (plan = null) => {
+    if (plan) {
+      setEditingPlan(plan);
+      setPlanFormData({
+        id: plan.id,
+        name: plan.name || '',
+        duration_months: plan.duration_months || 0,
+        price: plan.price || 0,
+        label: plan.label || '',
+        description: plan.description || '',
+        is_active: plan.is_active !== false,
+        target_role: plan.target_role === 'both' ? 'all' : (plan.target_role || 'all'),
+        sort_order: plan.sort_order ?? 0,
+      });
+    } else {
+      setEditingPlan(null);
+      setPlanFormData({
+        id: '',
+        name: '',
+        duration_months: 6,
+        price: 0,
+        label: '',
+        description: '',
+        is_active: true,
+        target_role: 'all',
+        sort_order: plansList.length + 1,
+      });
+    }
+    setPlanModalOpen(true);
+  };
+
+  const handleSavePlan = async (e) => {
+    if (e) e.preventDefault();
+    if (!planFormData.name || planFormData.duration_months === '' || planFormData.price === '') {
+      alert('Please fill in Plan Name, Duration, and Price');
+      return;
+    }
+    try {
+      setPlanSaving(true);
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch('/api/admin/packages/plans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(planFormData)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPkgMsg(editingPlan ? 'Plan updated successfully' : 'Plan created successfully');
+        setPlanModalOpen(false);
+        setEditingPlan(null);
+        fetchPlans();
+        setTimeout(() => setPkgMsg(''), 4000);
+      } else {
+        alert(data.error || 'Failed to save plan');
+      }
+    } catch (err) {
+      console.error('Save plan error:', err);
+      alert('Error saving plan');
+    } finally {
+      setPlanSaving(false);
+    }
+  };
+
+  const handleTogglePlanActive = async (plan) => {
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch('/api/admin/packages/plans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...plan,
+          is_active: !plan.is_active
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPkgMsg(`Plan ${!plan.is_active ? 'activated' : 'deactivated'} successfully`);
+        fetchPlans();
+        setTimeout(() => setPkgMsg(''), 4000);
+      } else {
+        alert(data.error || 'Failed to update plan status');
+      }
+    } catch (err) {
+      console.error('Toggle plan status error:', err);
+      alert('Error updating plan');
+    }
+  };
+
+  const handleDeletePlan = async (planId) => {
+    if (!confirm('Are you sure you want to delete this subscription plan?')) return;
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch('/api/admin/packages/plans', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ id: planId })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPkgMsg(data.message || 'Plan deleted');
+        fetchPlans();
+        setTimeout(() => setPkgMsg(''), 4000);
+      } else {
+        alert(data.error || 'Failed to delete plan');
+      }
+    } catch (err) {
+      console.error('Delete plan error:', err);
+      alert('Error deleting plan');
+    }
+  };
+
   useEffect(() => {
     if (activeTab === 'packages') {
       fetchPackageRequests();
+      fetchPlans();
     }
-  }, [activeTab]);
+  }, [activeTab, packageSubTab]);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -466,9 +627,10 @@ function AdminDashboard() {
     { id: 'bookings', label: 'Service Bookings', icon: CalendarDays },
     { id: 'orders-history', label: 'Orders History', icon: ClipboardList },
     { id: 'shop-categories', label: 'Shop Now Manager', icon: ShoppingCart },
+    { id: 'cashback', label: 'Cashback & Wallet', icon: Wallet },
     { id: 'shop-products', label: '+ Add Shop Product', icon: PlusCircle },
     { id: 'shipping-settings', label: 'Shipping Settings', icon: Truck },
-    { id: 'shop-commission-settings', label: 'Shop Vendor Commission', icon: CircleDollarSign },
+    { id: 'shop-commission-settings', label: 'Vendor Commission', icon: CircleDollarSign },
     { id: 'suppliers', label: 'Suppliers', icon: Truck },
     { id: 'vendors', label: 'Vendors', icon: HardHat },
     { id: 'packages', label: 'Package Approvals', icon: PackageCheck },
@@ -1477,122 +1639,545 @@ function AdminDashboard() {
 
           {activeTab === 'packages' && (
             <div>
-              <div className="section-head">
-                <span className="section-head-title">Package Approvals</span>
-                {pkgMsg && <span style={{ color: 'var(--accent)', fontWeight: 700, fontSize: '0.8125rem' }}>{pkgMsg}</span>}
-              </div>
-
-              {/* PENDING REQUESTS PANEL */}
-              <div className="panel" style={{ marginBottom: '1.5rem' }}>
-                <div className="panel-header">
-                  <span className="panel-title">⏳ Pending Package Requests</span>
-                </div>
-                <div className="panel-body" style={{ padding: 0 }}>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
-                      <thead>
-                        <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-                          {['Type', 'Entity Info', 'City', 'Plan Name', 'Price', 'Requested At', 'Actions'].map(col => (
-                            <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          ...pkgVendors.filter(v => v.package_status === 'pending').map(v => ({ ...v, type: 'vendor' })),
-                          ...pkgSuppliers.filter(s => s.package_status === 'pending').map(s => ({ ...s, type: 'supplier' }))
-                        ].map((item) => (
-                          <tr key={`${item.type}-${item.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
-                            <td style={{ padding: '0.6rem 0.875rem' }}>
-                              <span className={`badge ${item.type === 'vendor' ? 'status-contacted' : 'status-pending'}`}>{item.type}</span>
-                            </td>
-                            <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>
-                              {item.email}
-                              <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{item.phone || 'No phone'}</div>
-                            </td>
-                            <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.city}</td>
-                            <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700', color: 'var(--accent)' }}>{item.package_name}</td>
-                            <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700' }}>₹{Number(item.package_price).toLocaleString('en-IN')}</td>
-                            <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_purchased_at).toLocaleString('en-IN')}</td>
-                            <td style={{ padding: '0.6rem 0.875rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                              <ActionIconButton
-                                icon={ShieldCheck}
-                                variant="success"
-                                label="Approve package"
-                                onClick={() => handlePackageAction(item.type, item.id, 'approve')}
-                              />
-                              <ActionIconButton
-                                icon={Ban}
-                                variant="danger"
-                                label="Reject package"
-                                onClick={() => handlePackageAction(item.type, item.id, 'reject')}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                        {pkgVendors.filter(v => v.package_status === 'pending').length === 0 && pkgSuppliers.filter(s => s.package_status === 'pending').length === 0 && (
-                          <tr>
-                            <td colSpan={7} className="empty-state" style={{ textAlign: 'center', padding: '2rem' }}>No pending package requests.</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
+              <div className="section-head" style={{ marginBottom: '1.25rem' }}>
+                <div>
+                  <span className="section-head-title">Package Approvals & Subscriptions</span>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '0.2rem' }}>
+                    Manage vendor/supplier subscription packages and review incoming subscription requests.
                   </div>
                 </div>
+                {pkgMsg && (
+                  <span style={{
+                    color: '#10b981',
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '6px',
+                    fontWeight: 700,
+                    fontSize: '0.8125rem'
+                  }}>
+                    {pkgMsg}
+                  </span>
+                )}
               </div>
 
-              {/* ACTIVE SUBSCRIPTIONS PANEL */}
-              <div className="panel">
-                <div className="panel-header">
-                  <span className="panel-title">✅ Active Packages & Subscriptions</span>
+              {/* Sub-navigation tabs: Requests vs Manage Plans */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '1.25rem',
+                flexWrap: 'wrap',
+                gap: '0.75rem'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  gap: '0.35rem',
+                  background: 'var(--bg)',
+                  padding: '0.3rem',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)'
+                }}>
+                  <button
+                    type="button"
+                    onClick={() => setPackageSubTab('approvals')}
+                    style={{
+                      padding: '0.45rem 1rem',
+                      borderRadius: '6px',
+                      fontSize: '0.8125rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      border: 'none',
+                      background: packageSubTab === 'approvals' ? 'var(--surface)' : 'transparent',
+                      color: packageSubTab === 'approvals' ? 'var(--text)' : 'var(--muted)',
+                      boxShadow: packageSubTab === 'approvals' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    📋 Requests & Subscriptions
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setPackageSubTab('plans'); fetchPlans(); }}
+                    style={{
+                      padding: '0.45rem 1rem',
+                      borderRadius: '6px',
+                      fontSize: '0.8125rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      border: 'none',
+                      background: packageSubTab === 'plans' ? 'var(--surface)' : 'transparent',
+                      color: packageSubTab === 'plans' ? 'var(--text)' : 'var(--muted)',
+                      boxShadow: packageSubTab === 'plans' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    ⚙️ Manage Plans {plansList.length > 0 ? `(${plansList.length})` : ''}
+                  </button>
                 </div>
-                <div className="panel-body" style={{ padding: 0 }}>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
-                      <thead>
-                        <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-                          {['Type', 'Entity Info', 'Plan Name', 'Price', 'Starts At', 'Expires At', 'Days Left'].map(col => (
-                            <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          ...pkgVendors.filter(v => v.package_status === 'active').map(v => ({ ...v, type: 'vendor' })),
-                          ...pkgSuppliers.filter(s => s.package_status === 'active').map(s => ({ ...s, type: 'supplier' }))
-                        ].map((item) => {
-                          const daysLeft = Math.max(0, Math.ceil((new Date(item.package_expires_at) - new Date()) / (1000 * 60 * 60 * 24)));
-                          return (
-                            <tr key={`${item.type}-${item.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
-                              <td style={{ padding: '0.6rem 0.875rem' }}>
-                                <span className={`badge ${item.type === 'vendor' ? 'status-contacted' : 'status-pending'}`}>{item.type}</span>
-                              </td>
-                              <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>
-                                {item.email}
-                                <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{item.city} · {item.phone || 'No phone'}</div>
-                              </td>
-                              <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700', color: 'var(--accent)' }}>{item.package_name}</td>
-                              <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700' }}>₹{Number(item.package_price).toLocaleString('en-IN')}</td>
-                              <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_starts_at).toLocaleDateString('en-IN')}</td>
-                              <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_expires_at).toLocaleDateString('en-IN')}</td>
-                              <td style={{ padding: '0.6rem 0.875rem' }}>
-                                <span className={`badge ${daysLeft > 15 ? 'status-resolved' : 'status-pending'}`} style={{ fontWeight: 700 }}>
-                                  {daysLeft} days
-                                </span>
-                              </td>
+
+                {packageSubTab === 'plans' && (
+                  <button
+                    type="button"
+                    onClick={() => handleOpenPlanModal(null)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      padding: '0.45rem 0.9rem',
+                      background: '#10b981',
+                      color: '#fff',
+                      borderRadius: '6px',
+                      border: 'none',
+                      fontSize: '0.8125rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      boxShadow: '0 1px 2px rgba(16,185,129,0.2)'
+                    }}
+                  >
+                    <Plus size={15} /> Add New Plan
+                  </button>
+                )}
+              </div>
+
+              {/* VIEW 1: REQUESTS & ACTIVE SUBSCRIPTIONS */}
+              {packageSubTab === 'approvals' && (
+                <>
+                  {/* PENDING REQUESTS PANEL */}
+                  <div className="panel" style={{ marginBottom: '1.5rem' }}>
+                    <div className="panel-header">
+                      <span className="panel-title">⏳ Pending Package Requests</span>
+                    </div>
+                    <div className="panel-body" style={{ padding: 0 }}>
+                      <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+                          <thead>
+                            <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+                              {['Type', 'Entity Info', 'City', 'Plan Name', 'Price', 'Requested At', 'Actions'].map(col => (
+                                <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
+                              ))}
                             </tr>
-                          );
-                        })}
-                        {pkgVendors.filter(v => v.package_status === 'active').length === 0 && pkgSuppliers.filter(s => s.package_status === 'active').length === 0 && (
-                          <tr>
-                            <td colSpan={7} className="empty-state" style={{ textAlign: 'center', padding: '2rem' }}>No active package subscriptions.</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
+                          </thead>
+                          <tbody>
+                            {[
+                              ...pkgVendors.filter(v => v.package_status === 'pending').map(v => ({ ...v, type: 'vendor' })),
+                              ...pkgSuppliers.filter(s => s.package_status === 'pending').map(s => ({ ...s, type: 'supplier' }))
+                            ].map((item) => (
+                              <tr key={`${item.type}-${item.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
+                                <td style={{ padding: '0.6rem 0.875rem' }}>
+                                  <span className={`badge ${item.type === 'vendor' ? 'status-contacted' : 'status-pending'}`}>{item.type}</span>
+                                </td>
+                                <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>
+                                  {item.email}
+                                  <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{item.phone || 'No phone'}</div>
+                                </td>
+                                <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.city}</td>
+                                <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700', color: 'var(--accent)' }}>{item.package_name}</td>
+                                <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700' }}>₹{Number(item.package_price).toLocaleString('en-IN')}</td>
+                                <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_purchased_at).toLocaleString('en-IN')}</td>
+                                <td style={{ padding: '0.6rem 0.875rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                  <ActionIconButton
+                                    icon={ShieldCheck}
+                                    variant="success"
+                                    label="Approve package"
+                                    onClick={() => handlePackageAction(item.type, item.id, 'approve')}
+                                  />
+                                  <ActionIconButton
+                                    icon={Ban}
+                                    variant="danger"
+                                    label="Reject package"
+                                    onClick={() => handlePackageAction(item.type, item.id, 'reject')}
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                            {pkgVendors.filter(v => v.package_status === 'pending').length === 0 && pkgSuppliers.filter(s => s.package_status === 'pending').length === 0 && (
+                              <tr>
+                                <td colSpan={7} className="empty-state" style={{ textAlign: 'center', padding: '2rem' }}>No pending package requests.</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ACTIVE SUBSCRIPTIONS PANEL */}
+                  <div className="panel">
+                    <div className="panel-header">
+                      <span className="panel-title">✅ Active Packages & Subscriptions</span>
+                    </div>
+                    <div className="panel-body" style={{ padding: 0 }}>
+                      <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+                          <thead>
+                            <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+                              {['Type', 'Entity Info', 'Plan Name', 'Price', 'Starts At', 'Expires At', 'Days Left'].map(col => (
+                                <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              ...pkgVendors.filter(v => v.package_status === 'active').map(v => ({ ...v, type: 'vendor' })),
+                              ...pkgSuppliers.filter(s => s.package_status === 'active').map(s => ({ ...s, type: 'supplier' }))
+                            ].map((item) => {
+                              const daysLeft = Math.max(0, Math.ceil((new Date(item.package_expires_at) - new Date()) / (1000 * 60 * 60 * 24)));
+                              return (
+                                <tr key={`${item.type}-${item.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
+                                  <td style={{ padding: '0.6rem 0.875rem' }}>
+                                    <span className={`badge ${item.type === 'vendor' ? 'status-contacted' : 'status-pending'}`}>{item.type}</span>
+                                  </td>
+                                  <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>
+                                    {item.email}
+                                    <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{item.city} · {item.phone || 'No phone'}</div>
+                                  </td>
+                                  <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700', color: 'var(--accent)' }}>{item.package_name}</td>
+                                  <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700' }}>₹{Number(item.package_price).toLocaleString('en-IN')}</td>
+                                  <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_starts_at).toLocaleDateString('en-IN')}</td>
+                                  <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_expires_at).toLocaleDateString('en-IN')}</td>
+                                  <td style={{ padding: '0.6rem 0.875rem' }}>
+                                    <span className={`badge ${daysLeft > 15 ? 'status-resolved' : 'status-pending'}`} style={{ fontWeight: 700 }}>
+                                      {daysLeft} days
+                                    </span>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                            {pkgVendors.filter(v => v.package_status === 'active').length === 0 && pkgSuppliers.filter(s => s.package_status === 'active').length === 0 && (
+                              <tr>
+                                <td colSpan={7} className="empty-state" style={{ textAlign: 'center', padding: '2rem' }}>No active package subscriptions.</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* VIEW 2: MANAGE PLANS */}
+              {packageSubTab === 'plans' && (
+                <div className="panel">
+                  <div className="panel-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span className="panel-title">📦 All Subscription Plans</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
+                      Total {plansList.length} plan{plansList.length === 1 ? '' : 's'} configured
+                    </span>
+                  </div>
+                  <div className="panel-body" style={{ padding: 0 }}>
+                    {plansLoading ? (
+                      <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--muted)', fontSize: '0.85rem' }}>
+                        Loading subscription plans...
+                      </div>
+                    ) : plansList.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--muted)', fontSize: '0.85rem' }}>
+                        No subscription plans found. Click <strong>&quot;+ Add New Plan&quot;</strong> to configure your first plan.
+                      </div>
+                    ) : (
+                      <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+                          <thead>
+                            <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+                              {['Order', 'Plan Name', 'Duration', 'Price', 'Target Role', 'Badge', 'Status', 'Actions'].map(col => (
+                                <th key={col} style={{ padding: '0.55rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {plansList.map((plan, idx) => (
+                              <tr key={plan.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                                <td style={{ padding: '0.65rem 0.875rem', color: 'var(--muted)', fontWeight: 600 }}>
+                                  #{plan.sort_order ?? idx + 1}
+                                </td>
+                                <td style={{ padding: '0.65rem 0.875rem' }}>
+                                  <div style={{ fontWeight: 700, color: 'var(--text)' }}>{plan.name}</div>
+                                  <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '2px' }}>
+                                    ID: <code>{plan.id}</code>
+                                    {plan.description && ` · ${plan.description}`}
+                                  </div>
+                                </td>
+                                <td style={{ padding: '0.65rem 0.875rem', fontWeight: 600 }}>
+                                  {plan.duration_months} Months
+                                </td>
+                                <td style={{ padding: '0.65rem 0.875rem', fontWeight: 700, color: '#10b981' }}>
+                                  ₹{Number(plan.price).toLocaleString('en-IN')}
+                                </td>
+                                <td style={{ padding: '0.65rem 0.875rem' }}>
+                                  <span className={`badge ${plan.target_role === 'vendor' ? 'status-contacted' : plan.target_role === 'supplier' ? 'status-pending' : 'status-resolved'}`}>
+                                    {plan.target_role === 'vendor' ? 'Vendors Only' : plan.target_role === 'supplier' ? 'Suppliers Only' : 'Both'}
+                                  </span>
+                                </td>
+                                <td style={{ padding: '0.65rem 0.875rem' }}>
+                                  {plan.label ? (
+                                    <span style={{ fontSize: '0.72rem', background: 'var(--bg)', border: '1px solid var(--border)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 600 }}>
+                                      {plan.label}
+                                    </span>
+                                  ) : (
+                                    <span style={{ color: 'var(--muted)' }}>-</span>
+                                  )}
+                                </td>
+                                <td style={{ padding: '0.65rem 0.875rem' }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleTogglePlanActive(plan)}
+                                    title="Click to toggle active status"
+                                    style={{
+                                      cursor: 'pointer',
+                                      border: 'none',
+                                      background: plan.is_active ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
+                                      color: plan.is_active ? '#10b981' : '#ef4444',
+                                      padding: '0.2rem 0.6rem',
+                                      borderRadius: '999px',
+                                      fontSize: '0.72rem',
+                                      fontWeight: 700
+                                    }}
+                                  >
+                                    {plan.is_active ? '● Active' : '○ Inactive'}
+                                  </button>
+                                </td>
+                                <td style={{ padding: '0.65rem 0.875rem' }}>
+                                  <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleOpenPlanModal(plan)}
+                                      title="Edit plan"
+                                      style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.35rem',
+                                        padding: '0.35rem 0.7rem',
+                                        borderRadius: '6px',
+                                        border: '1px solid var(--border)',
+                                        background: 'var(--surface)',
+                                        color: 'var(--text)',
+                                        fontSize: '0.78rem',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.15s ease',
+                                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                                      }}
+                                    >
+                                      <Pencil size={13} /> Edit
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDeletePlan(plan.id)}
+                                      title="Delete plan"
+                                      style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.35rem',
+                                        padding: '0.35rem 0.7rem',
+                                        borderRadius: '6px',
+                                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                                        background: 'rgba(239, 68, 68, 0.08)',
+                                        color: '#ef4444',
+                                        fontSize: '0.78rem',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.15s ease'
+                                      }}
+                                    >
+                                      <Trash2 size={13} /> Delete
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
+              )}
+
+              {/* MODAL: ADD / EDIT PLAN */}
+              {planModalOpen && (
+                <div className="modal-backdrop" onClick={() => setPlanModalOpen(false)}>
+                  <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '560px' }}>
+                    <div className="modal-head">
+                      <span className="modal-title">{editingPlan ? 'Edit Subscription Plan' : 'Add New Subscription Plan'}</span>
+                      <button className="modal-close" onClick={() => setPlanModalOpen(false)} aria-label="Close" title="Close">
+                        <X size={18} />
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleSavePlan}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                            Plan Name *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g. 1 Year Premium Plan"
+                            value={planFormData.name}
+                            onChange={e => setPlanFormData(prev => ({ ...prev, name: e.target.value }))}
+                            style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: '0.85rem' }}
+                          />
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                              Duration (Months) *
+                            </label>
+                            <input
+                              type="number"
+                              required
+                              min="1"
+                              max="120"
+                              value={planFormData.duration_months}
+                              onChange={e => setPlanFormData(prev => ({ ...prev, duration_months: parseInt(e.target.value, 10) || 0 }))}
+                              style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: '0.85rem' }}
+                            />
+                          </div>
+
+                          <div>
+                            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                              Price (₹) *
+                            </label>
+                            <input
+                              type="number"
+                              required
+                              min="0"
+                              step="1"
+                              value={planFormData.price}
+                              onChange={e => setPlanFormData(prev => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
+                              style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: '0.85rem' }}
+                            />
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                              Target Audience
+                            </label>
+                            <select
+                              value={planFormData.target_role}
+                              onChange={e => setPlanFormData(prev => ({ ...prev, target_role: e.target.value }))}
+                              style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: '0.85rem' }}
+                            >
+                              <option value="all">Both Vendors & Suppliers</option>
+                              <option value="vendor">Vendors Only</option>
+                              <option value="supplier">Suppliers Only</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                              Badge Label (Optional)
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="e.g. Most Popular"
+                              value={planFormData.label}
+                              onChange={e => setPlanFormData(prev => ({ ...prev, label: e.target.value }))}
+                              style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: '0.85rem' }}
+                            />
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                              Plan ID {editingPlan ? '(Read Only)' : '(Optional)'}
+                            </label>
+                            <input
+                              type="text"
+                              disabled={Boolean(editingPlan)}
+                              placeholder="e.g. pkg_3m (auto if empty)"
+                              value={planFormData.id}
+                              onChange={e => setPlanFormData(prev => ({ ...prev, id: e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, '') }))}
+                              style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: editingPlan ? 'var(--surface)' : 'var(--bg)', color: 'var(--text)', fontSize: '0.85rem', opacity: editingPlan ? 0.7 : 1 }}
+                            />
+                          </div>
+
+                          <div>
+                            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                              Display Sort Order
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={planFormData.sort_order}
+                              onChange={e => setPlanFormData(prev => ({ ...prev, sort_order: parseInt(e.target.value, 10) || 0 }))}
+                              style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: '0.85rem' }}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                            Description
+                          </label>
+                          <textarea
+                            rows={3}
+                            placeholder="Describe features and benefits of this plan..."
+                            value={planFormData.description}
+                            onChange={e => setPlanFormData(prev => ({ ...prev, description: e.target.value }))}
+                            style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: '0.85rem', resize: 'vertical' }}
+                          />
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
+                          <input
+                            type="checkbox"
+                            id="plan_is_active"
+                            checked={planFormData.is_active}
+                            onChange={e => setPlanFormData(prev => ({ ...prev, is_active: e.target.checked }))}
+                            style={{ width: '16px', height: '16px', accentColor: '#10b981', cursor: 'pointer' }}
+                          />
+                          <label htmlFor="plan_is_active" style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text)', cursor: 'pointer' }}>
+                            Active (Visible to users for selection & registration)
+                          </label>
+                        </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => setPlanModalOpen(false)}
+                            style={{
+                              padding: '0.5rem 1rem',
+                              borderRadius: '6px',
+                              border: '1px solid var(--border)',
+                              background: 'transparent',
+                              color: 'var(--muted)',
+                              fontSize: '0.8125rem',
+                              fontWeight: 600,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={planSaving}
+                            style={{
+                              padding: '0.5rem 1.25rem',
+                              borderRadius: '6px',
+                              border: 'none',
+                              background: '#10b981',
+                              color: '#fff',
+                              fontSize: '0.8125rem',
+                              fontWeight: 600,
+                              cursor: planSaving ? 'not-allowed' : 'pointer',
+                              opacity: planSaving ? 0.7 : 1
+                            }}
+                          >
+                            {planSaving ? 'Saving...' : editingPlan ? 'Update Plan' : 'Create Plan'}
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           )}
           {activeTab === 'properties' && <PropertiesManager isDarkMode={isDarkMode} />}
@@ -1612,13 +2197,14 @@ function AdminDashboard() {
           {activeTab === 'pm-benchmarks' && <PmBenchmarks isDarkMode={isDarkMode} />}
           {activeTab === 'pm-dashboard' && <PmDashboard isDarkMode={isDarkMode} />}
           {activeTab === 'pm-audit' && <PmAuditLog isDarkMode={isDarkMode} />}
-          {(activeTab === 'shop-categories' || activeTab === 'shop-products' || activeTab === 'cashback') && (
+          {(activeTab === 'shop-categories' || activeTab === 'shop-products') && (
             <ShopNowManager
               key={activeTab}
               isDarkMode={isDarkMode}
-              initialTab={activeTab === 'shop-products' ? 'products' : activeTab === 'cashback' ? 'cashback' : 'categories'}
+              initialTab={activeTab === 'shop-products' ? 'products' : 'categories'}
             />
           )}
+          {activeTab === 'cashback' && <CashbackManager isDarkMode={isDarkMode} />}
           {activeTab === 'shipping-settings' && <ShippingSettingsManager />}
           {activeTab === 'shop-commission-settings' && <ShopCommissionSettingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'bookings' && <BookingsManager isDarkMode={isDarkMode} />}

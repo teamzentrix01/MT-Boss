@@ -9,7 +9,7 @@ const EXCLUDED_PATHS = [
 
 function isPersonalDataForm(form) {
   if (!(form instanceof HTMLFormElement)) return false;
-  if (form.dataset.privacyConsent === 'off' || form.querySelector('[data-privacy-consent-checkbox]')) return false;
+  if (form.dataset.privacyConsent === 'off') return false;
   if (EXCLUDED_PATHS.some((path) => window.location.pathname.includes(path))) return false;
 
   const fields = [...form.querySelectorAll('input, textarea, select')];
@@ -17,6 +17,25 @@ function isPersonalDataForm(form) {
   const hasContactData = /\b(email|tel|phone|mobile|whatsapp|address|message|enquir|applicant|customer|client|user_name|full.?name|shop.?name)\b/.test(signature);
   const isUtilityForm = fields.length <= 2 && /\b(otp|password|search|filter)\b/.test(signature) && !/phone|mobile|email/.test(signature);
   return hasContactData && !isUtilityForm;
+}
+
+function findSubmitInsertionTarget(form) {
+  const submit = form.querySelector('button[type="submit"], input[type="submit"], button:not([type])');
+  if (!submit) return null;
+
+  // Walk up from submit element as long as the parent is not the form
+  // and the parent contains NO other data fields (inputs, textareas, selects),
+  // ensuring we target the submit button / action row container rather than swallowing form inputs.
+  let target = submit;
+  while (
+    target.parentElement &&
+    target.parentElement !== form &&
+    target.parentElement.querySelectorAll('input:not([type="submit"]):not([type="button"]):not([type="hidden"]):not([data-privacy-consent-checkbox]), textarea, select').length === 0
+  ) {
+    target = target.parentElement;
+  }
+
+  return target;
 }
 
 function consentElement() {
@@ -41,11 +60,32 @@ export default function PrivacyConsentGuard() {
       scheduled = false;
       scheduledHandle = null;
       document.querySelectorAll('form').forEach((form) => {
+        if (!(form instanceof HTMLFormElement)) return;
+        if (form.dataset.privacyConsent === 'off') return;
+        if (EXCLUDED_PATHS.some((path) => window.location.pathname.includes(path))) return;
+
+        const target = findSubmitInsertionTarget(form);
+        const existingConsent = form.querySelector('[data-privacy-consent-injected="true"]');
+
+        if (existingConsent) {
+          // If already injected, ensure it is placed directly ABOVE the submit button / button container
+          if (target && target !== existingConsent && existingConsent.nextElementSibling !== target) {
+            target.parentElement.insertBefore(existingConsent, target);
+          }
+          return;
+        }
+
+        // If form has a non-injected privacy consent checkbox already written in JSX, skip
+        if (form.querySelector('[data-privacy-consent-checkbox]')) return;
+
         if (!isPersonalDataForm(form)) return;
+
         const consent = consentElement();
-        const submit = form.querySelector('button[type="submit"], input[type="submit"], button:not([type])');
-        if (submit?.parentNode === form) form.insertBefore(consent, submit);
-        else form.appendChild(consent);
+        if (target && target.parentElement) {
+          target.parentElement.insertBefore(consent, target);
+        } else {
+          form.appendChild(consent);
+        }
       });
     };
     const scheduleSync = () => {

@@ -196,29 +196,34 @@ export async function POST(req) {
         couponDiscount = calculation.discount;
       }
       // Calculate shipping from server-side prices and vendor/source cities. The first
-      // enquiry in a source-city group owns that group's cost; the rest remain ₹0.
       const productIds = orderItems.map((item) => Number(item.product_id)).filter((id) => Number.isInteger(id) && id > 0);
-      const shippingBySourceCity = new Map();
+      let calculatedShipping = { breakdown: [], totalShipping: 0 };
       if (productIds.length) {
-        const shippingProducts = await client.query(`SELECT m.id, m.price, m.bulk_pricing,
+        const shippingProducts = await client.query(`SELECT m.id, m.name, m.category, m.unit, m.price, m.bulk_pricing,
           COALESCE(NULLIF(TRIM(v.city), ''), NULLIF(TRIM(s.city), ''), CASE WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb))=1 THEN m.available_cities->>0 END) AS source_city
           FROM supplier_materials m LEFT JOIN vendors v ON v.id=m.vendor_id LEFT JOIN suppliers s ON s.id=m.supplier_id
           WHERE m.id=ANY($1::int[]) AND m.is_available=TRUE
             AND (m.vendor_id IS NULL OR COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'approved')`, [productIds]);
         const quantities = new Map(orderItems.map((item) => [Number(item.product_id), isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10)]));
-        const groups = new Map();
-        for (const product of shippingProducts.rows) {
-          const quantity = quantities.get(product.id) || 1;
-          const tier = (Array.isArray(product.bulk_pricing) ? product.bulk_pricing : []).filter((entry) => quantity >= Number(entry.min_quantity)).sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity))[0];
-          const key = String(product.source_city || '').trim().toLowerCase();
-          const group = groups.get(key) || { vendorCity: product.source_city || '', orderValue: 0 };
-          group.orderValue += (tier ? Number(tier.price) : Number(product.price) || 0) * quantity;
-          groups.set(key, group);
-        }
-        const shipping = calculateShipping({ groups: [...groups.values()], customerCity: canonicalCity, settings: await getShippingSettings() });
-        shipping.breakdown.forEach((row) => shippingBySourceCity.set(String(row.vendorCity || '').trim().toLowerCase(), row));
+        const preparedItems = shippingProducts.rows.map((row) => {
+          const quantity = quantities.get(row.id) || 1;
+          const tier = (Array.isArray(row.bulk_pricing) ? row.bulk_pricing : []).filter((entry) => quantity >= Number(entry.min_quantity)).sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity))[0];
+          return {
+            product_id: row.id,
+            name: row.name,
+            category: row.category,
+            unit: row.unit,
+            price: tier ? Number(tier.price) : Number(row.price) || 0,
+            quantity,
+            source_city: row.source_city || canonicalCity,
+          };
+        });
+        const shippingSettings = await getShippingSettings();
+        calculatedShipping = calculateShipping({ items: preparedItems, customerCity: canonicalCity, settings: shippingSettings });
       }
+      const chargedCategories = new Set();
       const chargedShippingGroups = new Set();
+      let appliedMinimumAdjustment = false;
       let remainingCouponDiscount = couponDiscount;
       const orders = [];
       const shopVendorCommissionPercent = await getShopVendorCommissionPercent();
@@ -300,14 +305,65 @@ export async function POST(req) {
         }
         const orderReference = `MO-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const itemQuantity = isCart ? `${item.quantity} ${cleanText(item.order_unit) || 'pcs'}` : quantity_text;
-        const shippingRow = item.product_id ? shippingBySourceCity.get(String(sourceCity).trim().toLowerCase()) : null;
-        const shippingCost = shippingRow && !chargedShippingGroups.has(String(shippingRow.vendorCity || '').trim().toLowerCase()) ? shippingRow.shippingCost : 0;
-        if (orderIntent !== 'quote' && shippingRow?.shippingCost === null) {
+        let shippingRow = null;
+        let shippingCost = 0;
+
+        if (item.product_id) {
+          const itemCat = String(item.category_name || product?.category || '').trim().toLowerCase();
+          const catBreakdown = calculatedShipping.breakdown.find(
+            (b) => b.category && String(b.category).trim().toLowerCase() === itemCat
+          );
+
+          if (catBreakdown) {
+            if (!chargedCategories.has(itemCat)) {
+              chargedCategories.add(itemCat);
+              shippingRow = catBreakdown;
+              shippingCost = Number(catBreakdown.shippingCost) || 0;
+            } else {
+              shippingRow = { ...catBreakdown, shippingCost: 0, label: `Included with ${catBreakdown.category} delivery` };
+              shippingCost = 0;
+            }
+          } else {
+            // Fallback source city breakdown
+            const scKey = String(sourceCity || '').trim().toLowerCase();
+            const cityBreakdown = calculatedShipping.breakdown.find(
+              (b) => !b.category && String(b.vendorCity || '').trim().toLowerCase() === scKey
+            );
+            if (cityBreakdown) {
+              if (!chargedShippingGroups.has(scKey)) {
+                chargedShippingGroups.add(scKey);
+                shippingRow = cityBreakdown;
+                shippingCost = Number(cityBreakdown.shippingCost) || 0;
+              } else {
+                shippingRow = { ...cityBreakdown, shippingCost: 0, label: `Included with ${sourceCity} delivery` };
+                shippingCost = 0;
+              }
+            } else if (calculatedShipping.free) {
+              shippingRow = calculatedShipping.breakdown[0] || { label: 'Free shipping', shippingCost: 0 };
+              shippingCost = 0;
+            }
+          }
+
+          // If there was a Minimum Adjustment row in breakdown, apply it to the first item that had shipping
+          const minAdjRow = calculatedShipping.breakdown.find((b) => b.category === 'Minimum Adjustment');
+          if (minAdjRow && !appliedMinimumAdjustment && (shippingCost > 0 || shippingRow)) {
+            shippingCost += Number(minAdjRow.shippingCost) || 0;
+            appliedMinimumAdjustment = true;
+            if (shippingRow) {
+              shippingRow = {
+                ...shippingRow,
+                shippingCost,
+                label: `${shippingRow.label} (+ Minimum adjustment ₹${Number(minAdjRow.shippingCost).toLocaleString('en-IN')})`,
+              };
+            }
+          }
+        }
+
+        if (orderIntent !== 'quote' && calculatedShipping.totalShipping === null) {
           const failure = new Error('Shipping is not configured for this delivery route.');
           failure.status = 409;
           throw failure;
         }
-        if (shippingRow) chargedShippingGroups.add(String(shippingRow.vendorCity || '').trim().toLowerCase());
         const appliedCouponDiscount = couponAppliesToProduct(validatedCoupon, product)
           ? Math.min(productTotal, remainingCouponDiscount)
           : 0;

@@ -114,11 +114,21 @@ export default function ShopPage() {
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("mtboss-shop-cart") || "[]");
-      if (Array.isArray(saved)) setCart(saved.filter((item) => (
-        item?.product?.id
-        && Number.isInteger(item.quantity)
-        && item.quantity > 0
-      )));
+      if (Array.isArray(saved)) {
+        const merged = new Map();
+        for (const item of saved) {
+          const id = item?.product?.id;
+          if (id && Number.isInteger(item.quantity) && item.quantity > 0) {
+            if (merged.has(id)) {
+              const existing = merged.get(id);
+              existing.quantity = Math.min(10000, existing.quantity + item.quantity);
+            } else {
+              merged.set(id, { ...item });
+            }
+          }
+        }
+        setCart([...merged.values()]);
+      }
     } catch { /* Ignore stale cart data. */ }
     setCartReady(true);
   }, []);
@@ -213,20 +223,36 @@ export default function ShopPage() {
 
   useEffect(() => {
     if (!cartReady || !productsLoaded || !categories.length) return;
-    setCart((previous) => previous.flatMap((item) => {
-      if (!item.product?.product_id) {
-        const category = categories.find((entry) => String(entry.id) === String(item.product?.category?.id))
-          || categories.find((entry) => entry.name.toLowerCase() === item.product?.category?.name?.toLowerCase());
-        const validNames = Array.isArray(category?.types) && category.types.length ? category.types : [category?.name];
-        if (!category || !validNames.some((name) => name?.toLowerCase() === item.product?.name?.toLowerCase())) return [];
-        return [{ product: { ...item.product, category }, quantity: Math.min(item.quantity, 10000) }];
+    setCart((previous) => {
+      const merged = new Map();
+      for (const item of previous) {
+        if (!item.product?.product_id) {
+          const category = categories.find((entry) => String(entry.id) === String(item.product?.category?.id))
+            || categories.find((entry) => entry.name.toLowerCase() === item.product?.category?.name?.toLowerCase());
+          const validNames = Array.isArray(category?.types) && category.types.length ? category.types : [category?.name];
+          if (!category || !validNames.some((name) => name?.toLowerCase() === item.product?.name?.toLowerCase())) continue;
+          const key = item.product.id || item.product.name;
+          if (merged.has(key)) {
+            merged.get(key).quantity = Math.min(10000, merged.get(key).quantity + item.quantity);
+          } else {
+            merged.set(key, { product: { ...item.product, category }, quantity: Math.min(item.quantity, 10000) });
+          }
+        } else {
+          const current = allProducts.find((product) => product.id === item.product.product_id);
+          const category = categories.find((entry) => entry.name.toLowerCase() === current?.category?.toLowerCase())
+            || categories.find((entry) => current?.name?.toLowerCase().includes(entry.name.toLowerCase()));
+          if (!current || !category || Number(current.quantity) < 1) continue;
+          const key = item.product.id || `supplier-${current.id}`;
+          const resolvedProduct = { ...item.product, ...current, category, image: current.image_url, fromSupplier: true, product_id: current.id };
+          if (merged.has(key)) {
+            merged.get(key).quantity = Math.min(merged.get(key).quantity + item.quantity, Number(current.quantity) || 10000, 10000);
+          } else {
+            merged.set(key, { product: resolvedProduct, quantity: Math.min(item.quantity, Number(current.quantity) || 10000) });
+          }
+        }
       }
-      const current = allProducts.find((product) => product.id === item.product.product_id);
-      const category = categories.find((entry) => entry.name.toLowerCase() === current?.category?.toLowerCase())
-        || categories.find((entry) => current?.name?.toLowerCase().includes(entry.name.toLowerCase()));
-      if (!current || !category || Number(current.quantity) < 1) return [];
-      return [{ product: { ...item.product, ...current, category, image: current.image_url, fromSupplier: true, product_id: current.id }, quantity: Math.min(item.quantity, current.quantity) }];
-    }));
+      return [...merged.values()];
+    });
   }, [allProducts, cartReady, categories, productsLoaded]);
 
   const [shippingSettings, setShippingSettings] = useState(null);
@@ -889,9 +915,10 @@ export default function ShopPage() {
                 {modalMode === "cart" ? (
                   <div className={`rounded-xl border px-4 py-3 mb-4 ${isDarkMode ? "border-zinc-700 bg-zinc-800" : "border-gray-200 bg-gray-50"}`}>
                     <p className={`text-xs font-bold mb-2 ${headText}`}>Materials in your order</p>
-                    {cart.map((item) => {
+                    {cart.map((item, index) => {
                       const itemUnitPrice = getUnitPrice(item.product, item.quantity);
-                      return <p key={item.product.id} className={`text-xs py-1 ${subText}`}>{item.product.name} · {item.quantity} {displayUnit(item.product.unit)} · {itemUnitPrice > 0 ? `₹${(itemUnitPrice * item.quantity).toLocaleString("en-IN")}` : 'Price on confirmation'}</p>;
+                      const itemKey = item.product?.id ? `${item.product.id}-${index}` : `cart-item-${index}`;
+                      return <p key={itemKey} className={`text-xs py-1 ${subText}`}>{item.product.name} · {item.quantity} {displayUnit(item.product.unit)} · {itemUnitPrice > 0 ? `₹${(itemUnitPrice * item.quantity).toLocaleString("en-IN")}` : 'Price on confirmation'}</p>;
                     })}
                     {couponCalculation.offerAmount > 0 && <p className={`mt-2 text-xs ${subText}`}>Items with existing offers: ₹{couponCalculation.offerAmount.toLocaleString('en-IN')} <span className="text-amber-600">(offer already applied)</span></p>}
                     {couponCalculation.regularAmount > 0 && <p className={`mt-1 text-xs ${subText}`}>Other items: ₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</p>}
@@ -1230,7 +1257,7 @@ export default function ShopPage() {
                 {/* ── SECTION 5 — Pay using Cashback Wallet ───────────── */}
                 {modalMode !== 'quote' && rawGrandTotal > 0 && (
                   <div className={`mb-5 p-4 rounded-xl border-2 transition-all ${
-                    isDarkMode ? "bg-zinc-800/80 border-zinc-700" : "bg-emerald-50/50 border-emerald-200"
+                    isDarkMode ? "bg-zinc-800/80 border-zinc-700" : "bg-blue-50/60 border-blue-200"
                   }`}>
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
@@ -1240,7 +1267,7 @@ export default function ShopPage() {
                             Use wallet balance
                           </label>
                           <p className={`text-[11px] ${subText}`}>
-                            Available Balance: <strong className="text-emerald-600">₹{Number(walletPreview?.balance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
+                            Available Balance: <strong className="text-[#2196F3]">₹{Number(walletPreview?.balance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
                           </p>
                         </div>
                       </div>
@@ -1256,7 +1283,7 @@ export default function ShopPage() {
                             setWalletAmount(String(walletPreview.maxAllowed));
                           }
                         }}
-                        className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
+                        className="w-4 h-4 accent-[#2196F3] rounded cursor-pointer"
                       />
                     </div>
 
@@ -1265,7 +1292,7 @@ export default function ShopPage() {
                     )}
 
                     {useWallet && walletPreview && (
-                      <div className="mt-3 pt-3 border-t border-emerald-200/50 space-y-2">
+                      <div className="mt-3 pt-3 border-t border-blue-200/60 space-y-2">
                         <div>
                           <label htmlFor="wallet-redeem-input" className="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
                             Redeem Amount (₹)
@@ -1282,13 +1309,13 @@ export default function ShopPage() {
                                 const val = e.target.value;
                                 setWalletAmount(val);
                               }}
-                              className={`${inp} font-bold text-sm text-emerald-700`}
+                              className={`${inp} font-bold text-sm text-[#12283F]`}
                               placeholder={`Max ₹${walletPreview.maxAllowed}`}
                             />
                             <button
                               type="button"
                               onClick={() => setWalletAmount(String(walletPreview.maxAllowed))}
-                              className="px-3 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors whitespace-nowrap"
+                              className="px-3 py-2 text-xs font-bold rounded-lg bg-[#2196F3] text-white hover:bg-[#1976D2] transition-colors whitespace-nowrap"
                             >
                               Max ₹{walletPreview.maxAllowed}
                             </button>
@@ -1301,7 +1328,7 @@ export default function ShopPage() {
                           </p>
                         )}
                         {appliedWalletAmount >= rawGrandTotal && rawGrandTotal > 0 && (
-                          <div className="p-2 rounded-lg bg-emerald-100/70 border border-emerald-300 text-emerald-800 text-[11px] font-bold">
+                          <div className="p-2 rounded-lg bg-blue-50 border border-blue-300 text-[#12283F] text-[11px] font-bold">
                             🎉 Your wallet covers 100% of this order! No payment gateway required.
                           </div>
                         )}

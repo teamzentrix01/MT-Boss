@@ -86,6 +86,7 @@ const menuItems = [
   { label: 'Cashback & Wallet', icon: Wallet, tab: 'cashback' },
   { label: '+ Add Shop Product', icon: PlusCircle, tab: 'shop-products' },
   { label: 'Shipping Settings', icon: Truck, tab: 'shipping-settings' },
+  { label: 'Vendor Commission', icon: CircleDollarSign, tab: 'shop-commission-settings' },
   { label: 'Suppliers', icon: Truck, tab: 'suppliers' },
   { label: 'Vendors', icon: HardHat, tab: 'vendors' },
   { label: 'Product Approvals', icon: PackageCheck, tab: 'product-approvals' },

@@ -20,6 +20,32 @@ export default function VendorSignupPage() {
   const [aadharPreview, setAadharPreview] = useState(null);
   const profileRef = useRef();
   const aadharRef = useRef();
+  const [plans, setPlans] = useState([
+    { id: 'free', name: 'Free Registration', duration: 'Free', price: 'Free', desc: 'Submit your vendor profile for admin approval without a paid package.' },
+    { id: 'pkg_6m', name: '6 Months Plan', duration: '6 Months', price: '₹100', desc: 'Perfect for getting started. Complete booking access.' },
+    { id: 'pkg_1y', name: '1 Year Plan', duration: '12 Months', price: '₹4,999', desc: 'Most popular. Great value with a full year of leads.' },
+    { id: 'pkg_2y', name: '2 Years Plan', duration: '24 Months', price: '₹7,999', desc: 'Best deal. Long-term peace of mind and maximum savings.' },
+  ]);
+
+  useEffect(() => {
+    fetch('/api/vendor/packages')
+      .then((r) => r.json())
+      .then((d) => {
+        if (Array.isArray(d?.packages) && d.packages.length > 0) {
+          setPlans([
+            { id: 'free', name: 'Free Registration', duration: 'Free', price: 'Free', desc: 'Submit your vendor profile for admin approval without a paid package.' },
+            ...d.packages.map((pkg) => ({
+              id: pkg.id,
+              name: pkg.name,
+              duration: pkg.duration_months ? `${pkg.duration_months} Months` : 'Custom',
+              price: Number(pkg.price) === 0 ? 'Free' : `₹${Number(pkg.price).toLocaleString('en-IN')}`,
+              desc: pkg.description || `${pkg.name} subscription plan.`,
+            })),
+          ]);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const [formData, setFormData] = useState({
     vendor_name: '',
@@ -838,12 +864,7 @@ const handleSubmit = async (e) => {
                 <>
                   <label className="vs-label">Select a subscription plan *</label>
                   <div className="grid grid-cols-1 gap-3 mt-2">
-                    {[
-                      { id: 'free', name: 'Free Registration', duration: 'Free', price: 'Free', desc: 'Submit your vendor profile for admin approval without a paid package.' },
-                      { id: 'pkg_6m', name: '6 Months Plan', duration: '6 Months', price: '₹100', desc: 'Perfect for getting started. Complete booking access.' },
-                      { id: 'pkg_1y', name: '1 Year Plan', duration: '12 Months', price: '₹4,999', desc: 'Most popular. Great value with a full year of leads.' },
-                      { id: 'pkg_2y', name: '2 Years Plan', duration: '24 Months', price: '₹7,999', desc: 'Best deal. Long-term peace of mind and maximum savings.' },
-                    ].map(pkg => (
+                    {plans.map(pkg => (
                       <div
                         key={pkg.id}
                         onClick={() => setFormData(prev => ({ ...prev, package_id: pkg.id }))}

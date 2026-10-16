@@ -25,6 +25,28 @@ export default function SupplierSignupPage() {
       .finally(() => setCatsLoading(false));
   }, []);
 
+  const [plans, setPlans] = useState([
+    { id: 'pkg_6m', name: '6 Months Plan', price: '₹100', desc: 'Perfect for getting started. Complete material enquiries access.' },
+    { id: 'pkg_1y', name: '1 Year Plan', price: '₹4,999', desc: 'Most popular. Great value with a full year of enquiries.' },
+    { id: 'pkg_2y', name: '2 Years Plan', price: '₹7,999', desc: 'Best deal. Long-term peace of mind and maximum savings.' },
+  ]);
+
+  useEffect(() => {
+    fetch('/api/supplier/packages')
+      .then(r => r.json())
+      .then(d => {
+        if (Array.isArray(d?.packages) && d.packages.length > 0) {
+          setPlans(d.packages.map(pkg => ({
+            id: pkg.id,
+            name: pkg.name,
+            price: Number(pkg.price) === 0 ? 'Free' : `₹${Number(pkg.price).toLocaleString('en-IN')}`,
+            desc: pkg.description || `${pkg.name} subscription plan.`,
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const [formData, setFormData] = useState({
     email: '', password: '', confirmPassword: '',
     shop_name: '', phone: '',
@@ -285,6 +307,7 @@ export default function SupplierSignupPage() {
                       return (
                         <div key={cat.id} className={`cat-chip ${on ? 'selected' : ''}`} onClick={() => toggleCategory(cat.name)}>
                           {cat.image
+                            // eslint-disable-next-line @next/next/no-img-element
                             ? <img src={cat.image} alt={cat.name} className="cat-emoji" style={{ width: '1.4rem', height: '1.4rem', objectFit: 'cover', borderRadius: '3px' }} />
                             : <span className="cat-emoji">{cat.emoji || '🛒'}</span>
                           }
@@ -364,11 +387,7 @@ export default function SupplierSignupPage() {
               <>
                 <label className="ss-label">Select a subscription plan *</label>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
-                  {[
-                    { id: 'pkg_6m', name: '6 Months Plan', price: '₹100', desc: 'Perfect for getting started. Complete material enquiries access.' },
-                    { id: 'pkg_1y', name: '1 Year Plan', price: '₹4,999', desc: 'Most popular. Great value with a full year of enquiries.' },
-                    { id: 'pkg_2y', name: '2 Years Plan', price: '₹7,999', desc: 'Best deal. Long-term peace of mind and maximum savings.' },
-                  ].map(pkg => (
+                  {plans.map(pkg => (
                     <div
                       key={pkg.id}
                       onClick={() => setFormData(prev => ({ ...prev, package_id: pkg.id }))}

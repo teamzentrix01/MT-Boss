@@ -43,7 +43,7 @@ export async function POST(request) {
     await ensurePackageSchema();
     await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS product_categories TEXT[] DEFAULT '{}'`);
 
-    const pkg = getPackageById(package_id || 'pkg_6m');
+    const pkg = await getPackageById(package_id || 'pkg_6m');
     if (!pkg) {
       return NextResponse.json({ error: 'Select a valid subscription plan' }, { status: 400 });
     }

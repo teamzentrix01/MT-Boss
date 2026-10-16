@@ -118,6 +118,7 @@ export default function CalculatorManager({ isDarkMode }) {
   const [managedCities, setManagedCities] = useState(CITIES);
   const [bulkPackage, setBulkPackage] = useState('Basic');
   const [bulkPrice, setBulkPrice] = useState('');
+  const [categoryView, setCategoryView] = useState('table');
 
   /* product image state */
   const [imageMode,  setImageMode]  = useState('url');
@@ -471,13 +472,19 @@ export default function CalculatorManager({ isDarkMode }) {
           --cm-border:  ${isDarkMode ? '#2a2a30' : '#e2e2e7'};
           --cm-text:    ${isDarkMode ? '#f0f0f5' : '#111113'};
           --cm-muted:   ${isDarkMode ? '#8b8b98' : '#6b6b76'};
-          --cm-accent:  ${isDarkMode ? 'var(--brand-blue)' : '#f6b400'};
+          --cm-accent:  ${isDarkMode ? 'var(--brand-blue)' : '#2196F3'};
           color: var(--cm-text);
         }
-        .cm-head    { display:flex; justify-content:space-between; align-items:center; margin-bottom:.9rem; }
+        .cm-head    { display:flex; justify-content:space-between; align-items:center; margin-bottom:.9rem; gap:.75rem; flex-wrap:wrap; }
         .cm-title   { font-weight:800; font-size:.95rem; }
         .cm-btn     { border:0; border-radius:7px; padding:.48rem .9rem; font-weight:800; font-size:.78rem; cursor:pointer; background:var(--cm-accent); color:#111; }
         .cm-btn.secondary { background:transparent; color:var(--cm-muted); border:1px solid var(--cm-border); }
+        .cm-view-toggle { display:inline-flex; border-radius:7px; border:1px solid var(--cm-border); background:var(--cm-bg); padding:2px; }
+        .cm-view-btn { border:0; border-radius:5px; padding:.36rem .65rem; font-size:.72rem; font-weight:800; cursor:pointer; background:transparent; color:var(--cm-muted); transition:all .15s; }
+        .cm-view-btn.active { background:var(--cm-accent); color:#111; }
+        .cm-table-row { cursor:pointer; transition:background .15s; }
+        .cm-table-row:hover td { background:${isDarkMode ? 'rgba(255,255,255,.03)' : 'rgba(0,0,0,.02)'}; }
+        .cm-table-row.active td { background:${isDarkMode ? 'rgba(33, 150, 243, 0.12)' : 'rgba(33, 150, 243, 0.08)'} !important; }
         .cm-alert   { border-radius:7px; padding:.55rem .85rem; margin-bottom:.75rem; font-size:.8rem; }
         .cm-ok      { background:#ecfdf5; color:#166534; border:1px solid #86efac; }
         .cm-err     { background:#fff1f2; color:#9f1239; border:1px solid #fca5a5; }
@@ -569,41 +576,161 @@ export default function CalculatorManager({ isDarkMode }) {
               Manage categories first, then select a category to manage its products.
             </div>
           </div>
-          <button className={`cm-btn${showCategoryForm ? ' secondary' : ''}`}
-            onClick={() => showCategoryForm ? resetCategoryForm() : setShowCategoryForm(true)}>
-            {showCategoryForm ? 'Cancel' : '+ Add Category'}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', flexWrap: 'wrap' }}>
+            <div className="cm-view-toggle">
+              <button
+                type="button"
+                className={`cm-view-btn${categoryView === 'table' ? ' active' : ''}`}
+                onClick={() => setCategoryView('table')}
+              >
+                📋 Table View
+              </button>
+              <button
+                type="button"
+                className={`cm-view-btn${categoryView === 'grid' ? ' active' : ''}`}
+                onClick={() => setCategoryView('grid')}
+              >
+                🔲 Card View
+              </button>
+            </div>
+            <button className={`cm-btn${showCategoryForm ? ' secondary' : ''}`}
+              onClick={() => showCategoryForm ? resetCategoryForm() : setShowCategoryForm(true)}>
+              {showCategoryForm ? 'Cancel' : '+ Add Category'}
+            </button>
+          </div>
         </div>
 
         {message && <div className="cm-alert cm-ok">{message}</div>}
         {error   && <div className="cm-alert cm-err">{error}</div>}
 
-        {/* ── Category Grid ── */}
-        <div className="cm-panel">
-          <div className="cm-category-grid">
-            {categories.map(category => (
-              <div key={category.id} className={`cm-category-card${selectedCategory === category.name ? ' active' : ''}`}>
-                <button type="button" className="cm-category-select" onClick={() => setSelectedCategory(category.name)}>
-                  <div className="cm-category-top">
-                    <div>
-                      <div className="cm-category-name">{category.name}</div>
-                      <div className="cm-category-meta">{category.product_count || 0} products</div>
-                    </div>
-                    <span className="cm-chip">{category.is_active ? 'Active' : 'Hidden'}</span>
-                  </div>
-                  <div className="cm-category-meta">Badge: {category.badge || 'Recommended'}</div>
-                </button>
-                <div className="cm-category-actions">
-                  <button className="cm-act" type="button" onClick={() => handleCategoryEdit(category)}>Edit</button>
-                  <button className="cm-act delete" type="button" onClick={() => handleCategoryDelete(category)}>Delete</button>
-                </div>
-              </div>
-            ))}
-            {categories.length === 0 && (
-              <div style={{ color:'var(--cm-muted)', fontSize:'.8rem' }}>No categories yet.</div>
-            )}
+        {/* ── Categories Display (Table / Grid) ── */}
+        {categoryView === 'table' ? (
+          <div className="cm-panel" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table className="cm-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: 56 }}>Image</th>
+                    <th>Category Name</th>
+                    <th>Products</th>
+                    <th>Badge</th>
+                    <th>Status</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {categories.map(category => {
+                    const isSelected = selectedCategory === category.name;
+                    return (
+                      <tr
+                        key={category.id}
+                        className={`cm-table-row${isSelected ? ' active' : ''}`}
+                        onClick={() => setSelectedCategory(category.name)}
+                        style={{
+                          cursor: 'pointer',
+                          borderLeft: isSelected ? '3px solid var(--cm-accent)' : '3px solid transparent',
+                        }}
+                      >
+                        <td>
+                          {category.image_url ? (
+                            <img
+                              src={category.image_url}
+                              alt={category.name}
+                              style={{ width: 34, height: 34, objectFit: 'cover', borderRadius: 6, border: '1px solid var(--cm-border)' }}
+                              onError={e => { e.target.style.display = 'none'; }}
+                            />
+                          ) : (
+                            <div style={{ width: 34, height: 34, borderRadius: 6, background: 'var(--cm-bg)', border: '1px solid var(--cm-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>
+                              🏷️
+                            </div>
+                          )}
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '.45rem' }}>
+                            <strong style={{ fontSize: '.86rem', color: isSelected ? 'var(--cm-accent)' : 'inherit' }}>
+                              {category.name}
+                            </strong>
+                          </div>
+                        </td>
+                        <td>
+                          <span style={{ fontWeight: 800 }}>{category.product_count || 0}</span>{' '}
+                          <span style={{ color: 'var(--cm-muted)', fontSize: '.72rem' }}>products</span>
+                        </td>
+                        <td>
+                          <span className="cm-chip">{category.badge || 'Recommended'}</span>
+                        </td>
+                        <td>
+                          <span
+                            className="cm-chip"
+                            style={category.is_active ? {
+                              color: '#16a34a',
+                              borderColor: isDarkMode ? '#166534' : '#86efac',
+                              background: isDarkMode ? 'rgba(22,163,74,0.15)' : '#f0fdf4',
+                              fontWeight: 700,
+                            } : {}}
+                          >
+                            {category.is_active ? 'Active' : 'Hidden'}
+                          </span>
+                        </td>
+                        <td style={{ textAlign: 'right' }} onClick={e => e.stopPropagation()}>
+                          <div className="cm-row-actions" style={{ justifyContent: 'flex-end' }}>
+                            <button
+                              className="cm-act"
+                              type="button"
+                              onClick={() => handleCategoryEdit(category)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="cm-act delete"
+                              type="button"
+                              onClick={() => handleCategoryDelete(category)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {categories.length === 0 && (
+                    <tr>
+                      <td colSpan={6} style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--cm-muted)' }}>
+                        No categories yet. Click &quot;+ Add Category&quot; above to create one.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="cm-panel">
+            <div className="cm-category-grid">
+              {categories.map(category => (
+                <div key={category.id} className={`cm-category-card${selectedCategory === category.name ? ' active' : ''}`}>
+                  <button type="button" className="cm-category-select" onClick={() => setSelectedCategory(category.name)}>
+                    <div className="cm-category-top">
+                      <div>
+                        <div className="cm-category-name">{category.name}</div>
+                        <div className="cm-category-meta">{category.product_count || 0} products</div>
+                      </div>
+                      <span className="cm-chip">{category.is_active ? 'Active' : 'Hidden'}</span>
+                    </div>
+                    <div className="cm-category-meta">Badge: {category.badge || 'Recommended'}</div>
+                  </button>
+                  <div className="cm-category-actions">
+                    <button className="cm-act" type="button" onClick={() => handleCategoryEdit(category)}>Edit</button>
+                    <button className="cm-act delete" type="button" onClick={() => handleCategoryDelete(category)}>Delete</button>
+                  </div>
+                </div>
+              ))}
+              {categories.length === 0 && (
+                <div style={{ color:'var(--cm-muted)', fontSize:'.8rem' }}>No categories yet.</div>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="cm-panel">
           <div className="cm-section-head">
