@@ -2,13 +2,25 @@
 // FILE: app/vendor/dashboard/page.jsx
 // VENDOR DASHBOARD - Notifications, Active Booking, Messages
 // ════════════════════════════════════════════════════════════════════════════════
- 
-"use client";
+'use client';
+
 import { Suspense, useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { redirectToPayU } from '@/lib/payu-client';
+import PanelLayout from '@/app/components/PanelLayout';
+import {
+  LayoutDashboard,
+  ShoppingCart,
+  Truck,
+  Layers,
+  CalendarDays,
+  BarChart3,
+  History,
+  Package,
+  User,
+} from '@/app/components/ui/icons';
 
 const panelLoading = () => <div className="min-h-48 flex items-center justify-center text-sm opacity-60">Loading panel...</div>;
 const MaterialOrdersPanel = dynamic(() => import('@/app/components/MaterialOrdersPanel'), { loading: panelLoading });
@@ -17,7 +29,7 @@ const VendorShopProductsManager = dynamic(
   { loading: panelLoading },
 );
 const ShippingSettingsManager = dynamic(() => import('@/app/components/ShippingSettingsManager'), { loading: panelLoading });
-const VENDOR_TABS = ['notifications', 'leads', 'history', 'packages', 'profile', 'materials', 'products', 'shipping'];
+const VENDOR_TABS = ['overview', 'products', 'shipping', 'materials', 'bookings', 'notifications', 'leads', 'history', 'packages', 'profile'];
 
 function ServiceIcon({ icon, className = "h-8 w-8" }) {
   const value = String(icon || "").trim();
@@ -71,7 +83,8 @@ function VendorDashboardContent() {
   const [completeLoading, setCompleteLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(() => {
     const requestedTab = searchParams.get('tab');
-    return VENDOR_TABS.includes(requestedTab) ? requestedTab : 'notifications';
+    if (requestedTab === 'notifications') return 'bookings';
+    return VENDOR_TABS.includes(requestedTab) ? requestedTab : 'overview';
   });
   const [vendorProfile, setVendorProfile] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -127,7 +140,7 @@ function VendorDashboardContent() {
       if (document.visibilityState === 'visible') fetchVendorData(token, activeTab);
     };
     refresh();
-    const shouldPoll = activeTab === 'notifications' || activeTab === 'leads';
+    const shouldPoll = activeTab === 'overview' || activeTab === 'notifications' || activeTab === 'bookings' || activeTab === 'leads';
     const interval = shouldPoll ? setInterval(refresh, 20000) : null;
     document.addEventListener('visibilitychange', refresh);
     return () => {
@@ -141,7 +154,9 @@ function VendorDashboardContent() {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (VENDOR_TABS.includes(tab)) {
+    if (tab === 'notifications') {
+      setActiveTab('bookings');
+    } else if (VENDOR_TABS.includes(tab)) {
       setActiveTab(tab);
       if (tab === 'packages') loadPackages();
     }
@@ -155,10 +170,11 @@ function VendorDashboardContent() {
         fetch(url, { headers }).then(async (response) => ({ key, response, data: await response.json() })),
       );
 
-      if (tab === 'notifications') {
+      if (tab === 'overview' || tab === 'notifications' || tab === 'bookings') {
         addRequest('notifications', '/api/vendor/notifications');
         addRequest('active', '/api/vendor/bookings?type=active');
         addRequest('completed', '/api/vendor/bookings?type=completed');
+        addRequest('leads', '/api/vendor/leads');
       } else if (tab === 'leads') {
         addRequest('leads', '/api/vendor/leads');
       } else if (tab === 'history') {
@@ -394,10 +410,9 @@ function VendorDashboardContent() {
   }
 
   function openBookings() {
-    setActiveTab("notifications");
+    setActiveTab("bookings");
 
-    // "Bookings" is the default tab, so setting the same tab alone has no
-    // visible effect. Move the vendor to the assigned booking/request details.
+    // "Bookings" moves the vendor to the assigned booking/request details.
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         const target = activeBooking ? activeBookingRef.current : incomingBookingsRef.current;
@@ -572,66 +587,95 @@ function VendorDashboardContent() {
     );
   }
  
+  const handleLogout = () => {
+    localStorage.removeItem("vendor-token");
+    router.replace("/vendor/login");
+  };
+
+  const menuItems = [
+    { key: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { key: 'products', label: 'Products', icon: ShoppingCart },
+    { key: 'shipping', label: 'Shipping', icon: Truck },
+    { key: 'materials', label: 'Material Orders', icon: Layers },
+    {
+      key: 'bookings',
+      label: 'Bookings',
+      icon: CalendarDays,
+      badge: notifications.length > 0 ? notifications.length : null,
+      badgeColor: 'bg-amber-500 text-white',
+    },
+    {
+      key: 'leads',
+      label: 'Lead Track',
+      icon: BarChart3,
+      badge: vendorLeadCounts.incoming > 0 ? vendorLeadCounts.incoming : null,
+      badgeColor: 'bg-[var(--brand-blue)] text-black',
+    },
+    { key: 'history', label: 'History', icon: History },
+    { key: 'packages', label: 'Package', icon: Package },
+    { key: 'profile', label: 'Profile', icon: User },
+  ];
+
   return (
-    <main className={`min-h-screen font-serif ${bg} px-4 py-6 sm:p-6`}>
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col gap-4 mb-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0 max-w-full">
-            <h1 className="max-w-full text-[clamp(2rem,13vw,3.25rem)] sm:text-4xl font-black uppercase leading-[0.95]">
-              Vendor<br />Dashboard
-            </h1>
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab("products");
-                window.requestAnimationFrame(() => {
-                  window.requestAnimationFrame(() => {
-                    document.getElementById('vendor-shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  });
-                });
-              }}
-              className="mt-4 inline-flex items-center justify-center rounded-lg bg-[var(--brand-blue)] px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg transition-transform hover:scale-105"
-            >
-              + Add Product
-            </button>
-            <p className={`text-sm ${muted} mt-2 break-words`}>{vendorProfile?.shop_name || "My Shop"} · {vendorProfile?.city || ""}</p>
-          </div>
-          <div className={`grid w-full min-w-0 grid-cols-2 overflow-hidden border ${isDark ? "border-zinc-800" : "border-zinc-200"} sm:flex sm:w-auto sm:flex-wrap lg:shrink-0`}>
-            {[
-              { key: "products", label: "Products" },
-              { key: "shipping", label: "Shipping" },
-              { key: "materials", label: "Material Orders" },
-              { key: "notifications", label: "📬 Bookings" },
-              { key: "leads", label: "Lead Track" },
-              { key: "history", label: "📋 History" },
-              { key: "packages", label: "📦 Package" },
-              { key: "profile", label: "👤 Profile" },
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => {
-                  if (tab.key === "notifications") {
-                    openBookings();
-                    return;
-                  }
-                  setActiveTab(tab.key);
-                  if (tab.key === "packages") loadPackages();
-                }}
-                className={`min-w-0 whitespace-normal break-words px-2.5 py-2.5 text-[10px] font-black uppercase leading-tight tracking-wider transition-all sm:px-5 sm:tracking-widest ${
-                  activeTab === tab.key
-                    ? "bg-[var(--brand-blue)] text-black"
-                    : isDark ? "text-zinc-400 hover:text-white" : "text-zinc-500 hover:text-zinc-900"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
- 
+    <PanelLayout
+      title="Vendor Dashboard"
+      subtitle={`${vendorProfile?.shop_name || 'My Shop'} · ${vendorProfile?.city || ''}`}
+      user={{
+        name: vendorProfile?.shop_name || 'Vendor',
+        city: vendorProfile?.city || '',
+        role: 'Vendor',
+      }}
+      roleBadge="Vendor"
+      menuItems={menuItems}
+      activeTab={activeTab === 'notifications' ? 'bookings' : activeTab}
+      onTabChange={(tab) => {
+        if (tab === 'bookings') {
+          openBookings();
+          return;
+        }
+        setActiveTab(tab);
+        if (tab === 'packages') loadPackages();
+        router.push(`/vendor/dashboard?tab=${tab}`);
+      }}
+      onLogout={handleLogout}
+      actions={
+        activeTab === 'products' ? (
+          <button
+            type="button"
+            onClick={() => {
+              document.getElementById('vendor-shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            // className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--brand-blue)] text-white text-xs font-bold rounded-lg shadow-sm hover:opacity-90 transition-opacity"
+          >
+            {/* + Add Product */}
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fetchVendorData(localStorage.getItem('vendor-token'))}
+            className="px-3 py-1.5 border border-slate-300 dark:border-zinc-700 text-xs font-semibold rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+          >
+            Refresh
+          </button>
+        )
+      }
+    >
+      <div className="space-y-6">
         {activeTab === "products" ? (
-          <VendorShopProductsManager isDarkMode={isDark} />
+          <div className="space-y-4">
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  document.getElementById('vendor-shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--brand-blue)] text-white text-xs font-bold rounded-lg shadow-sm hover:opacity-90 transition-opacity"
+              >
+                + Add Product
+              </button>
+            </div>
+            <VendorShopProductsManager isDarkMode={isDark} />
+          </div>
         ) : activeTab === "shipping" ? (
           <ShippingSettingsManager vendor city={vendorProfile?.city} />
         ) : activeTab === "materials" ? (
@@ -1066,37 +1110,57 @@ function VendorDashboardContent() {
             )}
           </div>
         ) : (
-        <>
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className={`p-6 border ${card}`}>
-            <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Pending</p>
-            <p className="text-3xl font-black mt-2">{notifications.length}</p>
-            <p className={`text-[10px] ${muted} mt-1`}>Incoming requests</p>
-          </div>
- 
-          <button
-            type="button"
-            onClick={openBookings}
-            className={`p-6 border ${card} text-left cursor-pointer hover:border-[var(--brand-blue)] transition-colors no-global-btn`}
-          >
-            <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Active</p>
-            <p className="text-3xl font-black mt-2">{activeBooking ? 1 : 0}</p>
-            <p className={`text-[10px] ${muted} mt-1`}>Current booking</p>
-          </button>
- 
-          <div className={`p-6 border ${card}`}>
-            <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Completed</p>
-            <p className="text-3xl font-black mt-2">{completedCount}</p>
-            <p className={`text-[10px] ${muted} mt-1`}>Total jobs</p>
-          </div>
- 
-          <div className={`p-6 border ${card}`}>
-            <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Your Earnings</p>
-            <p className="text-3xl font-black mt-2">₹{totalEarning.toLocaleString('en-IN')}</p>
-            <p className={`text-[10px] ${muted} mt-1`}>After GST + commission</p>
-          </div>
-        </div>
+          <div className="space-y-6">
+            {activeTab === 'overview' && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-2">
+                <div className={`border ${card} p-5 rounded-lg flex items-center justify-between`}>
+                  <div>
+                    <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>Pending</p>
+                    <p className="text-3xl font-black mt-1 text-amber-500">{notifications.length}</p>
+                    <p className={`text-[10px] ${muted} mt-0.5`}>Incoming requests</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                    <CalendarDays size={22} />
+                  </div>
+                </div>
+
+                <div
+                  onClick={openBookings}
+                  className={`border ${card} p-5 rounded-lg flex items-center justify-between cursor-pointer hover:border-[var(--brand-blue)] transition-colors`}
+                >
+                  <div>
+                    <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>Active</p>
+                    <p className="text-3xl font-black mt-1 text-[var(--brand-blue)]">{activeBooking ? 1 : 0}</p>
+                    <p className={`text-[10px] ${muted} mt-0.5`}>Current booking</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-lg bg-[rgba(33,150,243,0.12)] text-[#0284c7] flex items-center justify-center">
+                    <BarChart3 size={22} />
+                  </div>
+                </div>
+
+                <div className={`border ${card} p-5 rounded-lg flex items-center justify-between`}>
+                  <div>
+                    <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>Completed</p>
+                    <p className="text-3xl font-black mt-1 text-green-500">{completedCount}</p>
+                    <p className={`text-[10px] ${muted} mt-0.5`}>Total jobs</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-lg bg-green-500/10 text-green-500 flex items-center justify-center">
+                    <History size={22} />
+                  </div>
+                </div>
+
+                <div className={`border ${card} p-5 rounded-lg flex items-center justify-between`}>
+                  <div>
+                    <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>Your Earnings</p>
+                    <p className="text-3xl font-black mt-1">₹{totalEarning.toLocaleString('en-IN')}</p>
+                    <p className={`text-[10px] ${muted} mt-0.5`}>After GST + commission</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                    <Layers size={22} />
+                  </div>
+                </div>
+              </div>
+            )}
  
         <div ref={incomingBookingsRef} className="grid grid-cols-1 lg:grid-cols-3 gap-6 scroll-mt-6">
           {/* Notifications / Incoming Requests */}
@@ -1352,7 +1416,7 @@ function VendorDashboardContent() {
             </div>
           </div>
         )}
-        </>
+          </div>
         )}
       </div>
 
@@ -1457,7 +1521,7 @@ function VendorDashboardContent() {
           </div>
         </div>
       )}
-    </main>
+    </PanelLayout>
   );
 }
  

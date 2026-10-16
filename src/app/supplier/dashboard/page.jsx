@@ -5,11 +5,19 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { redirectToPayU } from '@/lib/payu-client';
+import PanelLayout from '@/app/components/PanelLayout';
+import {
+  ClipboardList,
+  Truck,
+  CircleDollarSign,
+  Package,
+  User,
+} from '@/app/components/ui/icons';
 
 const MaterialOrdersPanel = dynamic(() => import('@/app/components/MaterialOrdersPanel'), {
   loading: () => <div className="sd-loading">Loading order tracking...</div>,
 });
-const SUPPLIER_TABS = ['tracking', 'orders', 'earnings', 'packages', 'profile'];
+const SUPPLIER_TABS = ['orders', 'tracking', 'earnings', 'packages', 'profile'];
 
 export default function SupplierDashboard() {
   return (
@@ -445,41 +453,48 @@ function SupplierDashboardContent() {
         @media(max-width:640px){.sd-topbar{padding:0 1rem;}.sd-body{padding:1rem;}.sd-modal{width:95%;padding:1.5rem;}}
       `}</style>
 
-      <div className="sd-page">
-        {/* Topbar */}
-        <div className="sd-topbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div className="sd-logo">SUPPLIER<span>HUB</span></div>
-            <span style={{ width: 1, height: 20, background: border }} />
-            <span style={{ fontSize: '0.8rem', color: muted }}>{supplier?.shop_name}</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span className={`sd-pill ${supplier?.is_active === false ? 'sd-status-inactive' : 'sd-status-active'}`}>
-              {supplier?.is_active === false ? 'Inactive' : 'Active'}
-            </span>
-            <button className="sd-logout-btn" onClick={handleLogout}>Logout</button>
-          </div>
-        </div>
-
-        <div className="sd-body">
-          {/* Tabs */}
-          <div className="sd-tabs">
-            {[
-              { id: 'tracking', label: 'Material Order Tracking' },
-              { id: 'orders',   label: '📋 Orders'   },
-              { id: 'earnings', label: '💰 Earnings'  },
-              { id: 'packages', label: '📦 Package'   },
-              { id: 'profile',  label: '👤 Profile'   },
-            ].map(t => (
-              <button key={t.id} className={`sd-tab${activeTab === t.id ? ' active' : ''}`}
-                onClick={() => {
-                  setActiveTab(t.id);
-                }}>
-                {t.label}
-              </button>
-            ))}
-          </div>
-
+      <PanelLayout
+        title="Supplier Hub"
+        subtitle={`${supplier?.shop_name || 'Supplier'} · ${supplier?.city ? supplier.city + ' · ' : ''}${supplier?.is_active === false ? 'Inactive' : 'Active'}`}
+        user={{
+          name: supplier?.shop_name || 'Supplier',
+          email: supplier?.email || '',
+          city: supplier?.city || '',
+          role: 'Supplier',
+        }}
+        roleBadge="Supplier"
+        menuItems={[
+          {
+            key: 'orders',
+            label: 'Orders',
+            icon: ClipboardList,
+            badge: openEnquiries.length > 0 ? openEnquiries.length : null,
+            badgeColor: 'bg-amber-500 text-white',
+          },
+          { key: 'tracking', label: 'Order Tracking', icon: Truck },
+          { key: 'earnings', label: 'Earnings', icon: CircleDollarSign },
+          { key: 'packages', label: 'Package', icon: Package },
+          { key: 'profile', label: 'Profile', icon: User },
+        ]}
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          setActiveTab(tab);
+          router.push(`/supplier/dashboard?tab=${tab}`);
+        }}
+        onLogout={handleLogout}
+        actions={
+          activeTab === 'orders' ? (
+            <button
+              type="button"
+              onClick={() => fetchOrders()}
+              className="px-3 py-1.5 border border-slate-300 dark:border-zinc-700 text-xs font-semibold rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+            >
+              Refresh Orders
+            </button>
+          ) : null
+        }
+      >
+        <div className="space-y-6">
           {/* ══════════════════════ ORDERS ══════════════════════ */}
           {activeTab === 'orders' && (
             <>
@@ -794,7 +809,7 @@ function SupplierDashboardContent() {
             </div>
           )}
         </div>
-      </div>
+      </PanelLayout>
 
       {/* ── Fulfill Modal ──────────────────────────────────────────────────── */}
       {fulfillModal && (

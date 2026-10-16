@@ -3,6 +3,16 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PartyProjectManagement from '@/app/components/PartyProjectManagement';
+import PanelLayout from '@/app/components/PanelLayout';
+import {
+  LayoutDashboard,
+  ClipboardList,
+  FolderKanban,
+  Building2,
+  CalendarDays,
+  Clock,
+  User,
+} from '@/app/components/ui/icons';
 
 const leadStatuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
 const leadStages = ['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost'];
@@ -45,7 +55,7 @@ function AgentDashboardContent() {
   const [projectOps, setProjectOps] = useState({ payments: [], labour: [], contractors: [], materials: [], expenses: [], transport: [] });
   const [activeTab, setActiveTab] = useState(() => {
     const requestedTab = searchParams.get('tab');
-    return ['leads', 'projects', 'schedule', 'activity', 'profile', 'project-management'].includes(requestedTab) ? requestedTab : 'leads';
+    return ['overview', 'leads', 'projects', 'schedule', 'activity', 'profile', 'project-management'].includes(requestedTab) ? requestedTab : 'overview';
   });
   const loadedTabsRef = useRef(new Set());
   const [message, setMessage] = useState('');
@@ -88,7 +98,7 @@ function AgentDashboardContent() {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (['leads', 'projects', 'schedule', 'activity', 'profile', 'project-management'].includes(tab)) {
+    if (['overview', 'leads', 'projects', 'schedule', 'activity', 'profile', 'project-management'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
@@ -113,6 +123,8 @@ function AgentDashboardContent() {
     return () => observer.disconnect();
   }, []);
 
+  const inFlightAuthFetches = useRef(new Map());
+
   useEffect(() => {
     loadData(activeTab);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -120,7 +132,7 @@ function AgentDashboardContent() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (localStorage.getItem('agent-token')) {
+      if (typeof window !== 'undefined' && localStorage.getItem('agent-token') && document.visibilityState === 'visible') {
         if (activeTab === 'leads') refreshLeads();
         if (activeTab === 'activity') loadActivities(true);
       }
@@ -131,6 +143,11 @@ function AgentDashboardContent() {
 
   useEffect(() => {
     if (loading || !agent || loadedTabsRef.current.has(activeTab)) return;
+    if (activeTab === 'overview') {
+      refreshLeads();
+      loadSchedule();
+      loadProjects();
+    }
     if (activeTab === 'leads') refreshLeads();
     if (activeTab === 'projects') loadProjects();
     if (activeTab === 'schedule') loadSchedule();
@@ -149,25 +166,73 @@ function AgentDashboardContent() {
       return null;
     }
 
-    const res = await fetch(url, {
-      ...options,
-      headers: {
-        ...(options.headers || {}),
-        Authorization: `Bearer ${t}`,
-      },
-    });
-
-    if (res.status === 401 || res.status === 403) {
-      logout();
-      return null;
+    const isGet = !options.method || options.method.toUpperCase() === 'GET';
+    if (isGet && inFlightAuthFetches.current.has(url)) {
+      return inFlightAuthFetches.current.get(url);
     }
 
-    return res;
+    const fetchPromise = (async () => {
+      try {
+        const res = await fetch(url, {
+          ...options,
+          headers: {
+            ...(options.headers || {}),
+            Authorization: `Bearer ${t}`,
+          },
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          logout();
+          return null;
+        }
+
+        return res;
+      } finally {
+        if (isGet) {
+          inFlightAuthFetches.current.delete(url);
+        }
+      }
+    })();
+
+    if (isGet) {
+      inFlightAuthFetches.current.set(url, fetchPromise);
+    }
+
+    return fetchPromise;
   }
 
-  async function loadData(tab = 'leads') {
+  async function loadData(tab = 'overview') {
+    if (loadedTabsRef.current.has(tab) && agent) return;
+    loadedTabsRef.current.add(tab);
     setLoading(true);
     try {
+      if (tab === 'overview') {
+        const [profileRes, leadsRes, schedRes, projRes, actRes] = await Promise.all([
+          authFetch('/api/agent/profile'),
+          authFetch('/api/agent/leads'),
+          authFetch('/api/agent/schedule'),
+          authFetch('/api/agent/projects'),
+          authFetch('/api/agent/activity'),
+        ]);
+        if (!profileRes) return;
+        const profileData = await profileRes.json();
+        if (profileData.success) {
+          setAgent(profileData.agent);
+          localStorage.setItem('agent', JSON.stringify(profileData.agent));
+          if (profileData.agent.must_change_password) setActiveTab('profile');
+        }
+        if (leadsRes) { const d = await leadsRes.json(); if (d.success) setLeads(d.data || []); }
+        if (schedRes) { const d = await schedRes.json(); if (d.success) setSchedule(d.data || []); }
+        if (projRes) { const d = await projRes.json(); if (d.success) setProjects(d.data || []); }
+        if (actRes) { const d = await actRes.json(); if (d.success) { setActivities(d.data || []); setUnreadActivityCount(d.unread_count || 0); } }
+        loadedTabsRef.current.add('overview');
+        loadedTabsRef.current.add('leads');
+        loadedTabsRef.current.add('schedule');
+        loadedTabsRef.current.add('projects');
+        loadedTabsRef.current.add('activity');
+        return;
+      }
+
       const endpoint = {
         leads: '/api/agent/leads',
         schedule: '/api/agent/schedule',
@@ -194,7 +259,6 @@ function AgentDashboardContent() {
         setActivities(tabData.data || []);
         setUnreadActivityCount(tabData.unread_count || 0);
       }
-      loadedTabsRef.current.add(tab);
     } finally {
       setLoading(false);
     }
@@ -706,68 +770,176 @@ function AgentDashboardContent() {
     return <main className={`min-h-screen flex items-center justify-center ${bg}`}>Loading agent dashboard...</main>;
   }
 
+  const menuItems = [
+    { key: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { key: 'leads', label: 'Leads', icon: ClipboardList },
+    { key: 'projects', label: 'Projects', icon: FolderKanban },
+    {
+      key: 'project-management',
+      label: 'Project Management',
+      icon: Building2,
+      hidden: !agent?.has_project_management_access,
+    },
+    { key: 'schedule', label: 'Schedule', icon: CalendarDays },
+    {
+      key: 'activity',
+      label: 'Activity Track',
+      icon: Clock,
+      badge: unreadActivityCount > 0 ? (unreadActivityCount > 99 ? '99+' : unreadActivityCount) : null,
+      badgeColor: 'bg-red-500 text-white',
+    },
+    { key: 'profile', label: 'Profile', icon: User },
+  ];
+
   return (
-    <main className={`min-h-screen ${bg} p-5`}>
-      <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-[var(--brand-blue)]">Agent Workspace</p>
-            <h1 className="text-3xl font-black uppercase mt-1">{agent?.name || 'Agent Dashboard'}</h1>
-            <p className={`text-sm ${muted} mt-1`}>
-              {agent?.agent_type || 'Agent'} - assigned city: <span className="font-black text-[var(--brand-blue)]">{agent?.city}</span>
-              {agent?.state ? `, ${agent.state}` : ''}
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {['leads', 'projects', 'schedule', 'activity', 'profile', ...(agent?.has_project_management_access ? ['project-management'] : [])].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => {
-                  setActiveTab(tab);
-                  router.push(`/agent/dashboard?tab=${tab}`);
-                }}
-                disabled={agent?.must_change_password && tab !== 'profile'}
-                className={`px-5 py-2.5 border text-[10px] font-black uppercase tracking-widest ${activeTab === tab ? 'bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black' : `${card} ${muted}`}`}
-              >
-                {tab === 'activity' ? 'Activity Track' : tab === 'project-management' ? 'Project Management' : tab}
-                {tab === 'activity' && unreadActivityCount > 0 && (
-                  <span className="ml-2 inline-flex min-w-5 h-5 px-1 items-center justify-center rounded-full bg-red-500 text-white text-[9px]">
-                    {unreadActivityCount > 99 ? '99+' : unreadActivityCount}
-                  </span>
-                )}
-              </button>
-            ))}
-            <button onClick={logout} className="px-5 py-2.5 border border-red-500 text-red-500 text-[10px] font-black uppercase tracking-widest">
-              Logout
-            </button>
-          </div>
-        </header>
+    <PanelLayout
+      title="Agent Workspace"
+      subtitle={`${agent?.name || 'Agent'} · ${agent?.city ? agent.city + ', ' : ''}${agent?.state || ''}`}
+      user={agent || {}}
+      roleBadge="Agent"
+      menuItems={menuItems}
+      activeTab={activeTab}
+      onTabChange={(tab) => {
+        if (agent?.must_change_password && tab !== 'profile') return;
+        setActiveTab(tab);
+        router.push(`/agent/dashboard?tab=${tab}`);
+      }}
+      onLogout={logout}
+      actions={
+        activeTab === 'leads' ? (
+          <button
+            type="button"
+            onClick={() => refreshLeads()}
+            className="px-3 py-1.5 border border-slate-300 dark:border-zinc-700 text-xs font-semibold rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+          >
+            Refresh Leads
+          </button>
+        ) : null
+      }
+    >
+      {agent?.must_change_password && (
+        <div className={`border border-[var(--brand-blue)] ${dark ? 'bg-[var(--brand-blue)]/10' : 'bg-sky-50'} p-4 mb-5 text-sm font-bold rounded-lg`}>
+          Change your temporary password to unlock leads, projects, and schedule access.
+        </div>
+      )}
 
-        {agent?.must_change_password && (
-          <div className={`border border-[var(--brand-blue)] ${dark ? 'bg-[var(--brand-blue)]/10' : 'bg-sky-50'} p-4 mb-5 text-sm font-bold`}>
-            Change your temporary password to unlock leads, projects, and schedule access.
-          </div>
-        )}
+      {message && (
+        <div className={`border ${card} p-3 mb-5 text-sm font-bold text-[var(--brand-blue)] rounded-lg`}>
+          {message}
+        </div>
+      )}
 
-        {message && (
-          <div className={`border ${card} p-3 mb-5 text-sm font-bold text-[var(--brand-blue)]`}>
-            {message}
-          </div>
-        )}
-
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
-          {[
-            ['Total Leads', stats.total],
-            ['Today Follow-ups', stats.followUps],
-            ['Converted', stats.converted],
-            ['Active Projects', stats.activeProjects],
-          ].map(([label, value]) => (
-            <div key={label} className={`border ${card} p-5`}>
-              <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>{label}</p>
-              <p className="text-3xl font-black mt-1">{value}</p>
+      {/* ── OVERVIEW TAB ── */}
+      {activeTab === 'overview' && (
+        <div className="space-y-6">
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className={`border ${card} p-5 rounded-lg flex items-center justify-between`}>
+              <div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>Total Leads</p>
+                <p className="text-3xl font-black mt-1">{stats.total}</p>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-[rgba(33,150,243,0.12)] text-[#0284c7] flex items-center justify-center">
+                <ClipboardList size={22} />
+              </div>
             </div>
-          ))}
-        </section>
+            <div className={`border ${card} p-5 rounded-lg flex items-center justify-between`}>
+              <div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>Today Follow-ups</p>
+                <p className="text-3xl font-black mt-1 text-amber-500">{stats.followUps}</p>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                <CalendarDays size={22} />
+              </div>
+            </div>
+            <div className={`border ${card} p-5 rounded-lg flex items-center justify-between`}>
+              <div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>Converted</p>
+                <p className="text-3xl font-black mt-1 text-green-500">{stats.converted}</p>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-green-500/10 text-green-500 flex items-center justify-center">
+                <FolderKanban size={22} />
+              </div>
+            </div>
+            <div className={`border ${card} p-5 rounded-lg flex items-center justify-between`}>
+              <div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>Active Projects</p>
+                <p className="text-3xl font-black mt-1 text-[var(--brand-blue)]">{stats.activeProjects}</p>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-[rgba(33,150,243,0.12)] text-[#0284c7] flex items-center justify-center">
+                <Building2 size={22} />
+              </div>
+            </div>
+          </section>
+
+          {/* Quick overview panels */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Today's Tasks */}
+            <div className={`border ${card} p-5 rounded-lg`}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-black uppercase tracking-wider">Today&apos;s Schedule</h3>
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab('schedule'); router.push('/agent/dashboard?tab=schedule'); }}
+                  className="text-xs text-[var(--brand-blue)] font-bold hover:underline"
+                >
+                  View All →
+                </button>
+              </div>
+              {schedule.filter((item) => item.schedule_date && String(item.schedule_date).slice(0, 10) === todayIso()).length === 0 ? (
+                <p className={`text-xs ${muted} py-6 text-center`}>No tasks or visits scheduled for today.</p>
+              ) : (
+                <div className="space-y-2">
+                  {schedule
+                    .filter((item) => item.schedule_date && String(item.schedule_date).slice(0, 10) === todayIso())
+                    .slice(0, 5)
+                    .map((item) => (
+                      <div key={item.id} className={`p-3 border ${card} rounded-md flex items-center justify-between`}>
+                        <div>
+                          <p className="text-xs font-bold">{item.title}</p>
+                          <p className={`text-[10px] ${muted}`}>{item.schedule_time || 'No time specified'} · {item.type}</p>
+                        </div>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${item.status === 'Done' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                          {item.status}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+
+            {/* Recent Leads */}
+            <div className={`border ${card} p-5 rounded-lg`}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-black uppercase tracking-wider">Recent Leads</h3>
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab('leads'); router.push('/agent/dashboard?tab=leads'); }}
+                  className="text-xs text-[var(--brand-blue)] font-bold hover:underline"
+                >
+                  View All ({leads.length}) →
+                </button>
+              </div>
+              {leads.length === 0 ? (
+                <p className={`text-xs ${muted} py-6 text-center`}>No leads recorded yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {leads.slice(0, 5).map((l) => (
+                    <div key={l.id} className={`p-3 border ${card} rounded-md flex items-center justify-between`}>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold truncate">{l.client_name}</p>
+                        <p className={`text-[10px] ${muted} truncate`}>{l.client_phone} · {l.city || agent?.city || '—'}</p>
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[rgba(33,150,243,0.12)] text-[#0284c7] shrink-0 ml-2">
+                        {l.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
         {activeTab === 'leads' && (
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -1149,10 +1321,10 @@ function AgentDashboardContent() {
                     key={filter}
                     type="button"
                     onClick={() => setActivityFilter(filter)}
-                    className={`px-4 py-2 border text-[9px] font-black uppercase tracking-widest ${
+                    className={`px-3.5 py-1.5 border rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${
                       activityFilter === filter
-                        ? 'bg-[var(--brand-blue)] border-[var(--brand-blue)] text-black'
-                        : `${card} ${muted}`
+                        ? dark ? 'bg-white text-black border-white' : 'bg-slate-900 text-white border-slate-900'
+                        : `${card} ${muted} hover:bg-slate-100 dark:hover:bg-zinc-800`
                     }`}
                   >
                     {filter}{filter === 'unread' ? ` (${unreadActivityCount})` : ''}
@@ -1162,7 +1334,7 @@ function AgentDashboardContent() {
                   type="button"
                   onClick={() => loadActivities()}
                   disabled={activityLoading}
-                  className={`px-4 py-2 border text-[9px] font-black uppercase tracking-widest ${card} ${muted} disabled:opacity-50`}
+                  className={`px-3.5 py-1.5 border rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${card} ${muted} hover:bg-slate-100 dark:hover:bg-zinc-800 disabled:opacity-50`}
                 >
                   {activityLoading ? 'Refreshing...' : 'Refresh'}
                 </button>
@@ -1170,7 +1342,7 @@ function AgentDashboardContent() {
                   type="button"
                   onClick={markAllActivitiesRead}
                   disabled={unreadActivityCount === 0}
-                  className="px-4 py-2 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-widest disabled:opacity-40"
+                  className={`px-3.5 py-1.5 border rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${card} text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 disabled:opacity-40`}
                 >
                   Mark all read
                 </button>
@@ -1189,24 +1361,17 @@ function AgentDashboardContent() {
                   {visibleActivities.map((activity) => {
                     const isLead = activity.entity_type === 'lead';
                     const isProject = activity.entity_type === 'project';
-                    const accent = activity.type === 'account_status'
-                      ? 'border-green-500/40'
-                      : isLead
-                        ? 'border-blue-500/40'
-                        : isProject
-                          ? 'border-purple-500/40'
-                          : 'border-[var(--brand-blue)]/40';
                     return (
                       <button
                         key={activity.id}
                         type="button"
                         onClick={() => markActivityRead(activity.id)}
-                        className={`w-full text-left border ${accent} p-4 transition-colors ${
+                        className={`w-full text-left border rounded-lg p-4 transition-colors hover:bg-slate-50 dark:hover:bg-zinc-900/80 ${
                           activity.is_read
                             ? `${card} opacity-75`
                             : dark
-                              ? 'bg-zinc-900'
-                              : 'bg-sky-50'
+                              ? 'bg-zinc-900/90 border-zinc-700 border-l-4 border-l-sky-500'
+                              : 'bg-white border-slate-200 border-l-4 border-l-sky-500 shadow-xs'
                         }`}
                       >
                         <div className="flex items-start gap-3">
@@ -1394,7 +1559,6 @@ function AgentDashboardContent() {
             </form>
           </div>
         )}
-      </div>
-    </main>
-  );
-}
+      </PanelLayout>
+    );
+  }

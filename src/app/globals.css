@@ -50,14 +50,14 @@ h1, h2, h3, h4, h5, h6, button, a {
   font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif !important;
 }
 
-button:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn, table button, [class*="no-global-btn"])),
-[role="button"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn)),
-a.btn:not(:where(.shop-page, .shop-page *)),
-a[class~="btn"]:not(:where(.shop-page, .shop-page *)),
-a[class*="-btn"]:not(:where(.shop-page, .shop-page *, .action-icon-btn)),
-a[class*="btn-"]:not(:where(.shop-page, .shop-page *)),
-a[href][class*="uppercase"][class*="bg-"]:not(:where(.shop-page, .shop-page *)),
-a[href][class*="uppercase"][class*="border"]:not(:where(.shop-page, .shop-page *)) {
+button:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *, .action-icon-btn, .orders-customer-name-btn, .orders-btn, table button, [class*="no-global-btn"])),
+[role="button"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *, .action-icon-btn, .orders-customer-name-btn, .orders-btn)),
+a.btn:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[class~="btn"]:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[class*="-btn"]:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *, .action-icon-btn)),
+a[class*="btn-"]:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[href][class*="uppercase"][class*="bg-"]:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[href][class*="uppercase"][class*="border"]:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)) {
   background-color: var(--brand-blue) !important;
   background-image: linear-gradient(90deg, #fff 0%, #fff 50%, var(--brand-blue) 50%, var(--brand-blue) 100%) !important;
   background-position: 100% 0 !important;
@@ -120,14 +120,14 @@ a[href][class*="uppercase"][class*="border"]:not(:where(.shop-page, .shop-page *
   contain-intrinsic-size: auto 600px;
 }
 
-button:hover:not(:disabled):not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn, table button, [class*="no-global-btn"])),
-[role="button"]:hover:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn)),
-a.btn:hover:not(:where(.shop-page, .shop-page *)),
-a[class~="btn"]:hover:not(:where(.shop-page, .shop-page *)),
-a[class*="-btn"]:hover:not(:where(.shop-page, .shop-page *)),
-a[class*="btn-"]:hover:not(:where(.shop-page, .shop-page *)),
-a[href][class*="uppercase"][class*="bg-"]:hover:not(:where(.shop-page, .shop-page *)),
-a[href][class*="uppercase"][class*="border"]:hover:not(:where(.shop-page, .shop-page *)) {
+button:hover:not(:disabled):not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *, .action-icon-btn, .orders-customer-name-btn, .orders-btn, table button, [class*="no-global-btn"])),
+[role="button"]:hover:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *, .action-icon-btn, .orders-customer-name-btn, .orders-btn)),
+a.btn:hover:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[class~="btn"]:hover:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[class*="-btn"]:hover:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[class*="btn-"]:hover:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[href][class*="uppercase"][class*="bg-"]:hover:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[href][class*="uppercase"][class*="border"]:hover:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)) {
   background-color: var(--brand-blue) !important;
   background-position: 0 0 !important;
   border-color: var(--brand-blue) !important;
@@ -139,14 +139,14 @@ a[href][class*="uppercase"][class*="border"]:hover:not(:where(.shop-page, .shop-
   transform: translateY(-3px) scale(1.015);
 }
 
-button:active:not(:disabled):not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn, table button, [class*="no-global-btn"])),
-[role="button"]:active:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .action-icon-btn, .orders-customer-name-btn, .orders-btn)),
-a.btn:active:not(:where(.shop-page, .shop-page *)),
-a[class~="btn"]:active:not(:where(.shop-page, .shop-page *)),
-a[class*="-btn"]:active:not(:where(.shop-page, .shop-page *)),
-a[class*="btn-"]:active:not(:where(.shop-page, .shop-page *)),
-a[href][class*="uppercase"][class*="bg-"]:active:not(:where(.shop-page, .shop-page *)),
-a[href][class*="uppercase"][class*="border"]:active:not(:where(.shop-page, .shop-page *)) {
+button:active:not(:disabled):not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *, .action-icon-btn, .orders-customer-name-btn, .orders-btn, table button, [class*="no-global-btn"])),
+[role="button"]:active:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *, .action-icon-btn, .orders-customer-name-btn, .orders-btn)),
+a.btn:active:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[class~="btn"]:active:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[class*="-btn"]:active:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[class*="btn-"]:active:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[href][class*="uppercase"][class*="bg-"]:active:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)),
+a[href][class*="uppercase"][class*="border"]:active:not(:where(.shop-page, .shop-page *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)) {
   box-shadow:
     0 6px 14px color-mix(in srgb, var(--brand-blue) 18%, transparent),
     0 0 0 1px color-mix(in srgb, var(--brand-blue) 28%, transparent) !important;
@@ -269,7 +269,7 @@ button[aria-disabled="true"],
 }
 
 /* Apply the aria-expanded blue style globally only for expanded elements, never inside shop page or admin */
-button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *)) {
+button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)) {
   background: var(--brand-blue) !important;
   background-image: none !important;
   color: #111 !important;
@@ -277,14 +277,14 @@ button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboa
   box-shadow: none !important;
 }
 
-button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *)):hover {
+button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)):hover {
   background: #111 !important;
   color: #fff !important;
   transform: none !important;
 }
 
-button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *)) *,
-button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *)):hover * {
+button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)) *,
+button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboard-root, .admin-dashboard-root *, .panel-layout-root, .panel-layout-root *, [class*="dashboard"], [class*="dashboard"] *)):hover * {
   color: inherit !important;
 }
 

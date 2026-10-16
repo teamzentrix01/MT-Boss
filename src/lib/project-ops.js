@@ -2,6 +2,22 @@ import pool from '@/lib/db';
 import { createInitializationGuard } from '@/lib/api-utils';
 
 export const ensureProjectOpsSchema = createInitializationGuard(async () => {
+  // Fast path: if project ops schema is already initialized, ensure performance index and return
+  const check = await pool.query(`
+    SELECT (SELECT to_regclass('public.project_payments') IS NOT NULL) AS has_ops,
+           (SELECT EXISTS (
+             SELECT 1 FROM information_schema.columns
+             WHERE table_name = 'projects' AND column_name = 'assigned_agent_id'
+           )) AS has_cols
+  `);
+  if (check.rows[0]?.has_ops && check.rows[0]?.has_cols) {
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS projects_assigned_agent_kind_idx
+        ON projects (assigned_agent_id, project_kind);
+    `);
+    return;
+  }
+
   await pool.query(`
     ALTER TABLE projects
       ADD COLUMN IF NOT EXISTS franchise_id INTEGER,

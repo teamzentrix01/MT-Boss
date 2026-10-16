@@ -65,7 +65,11 @@ const poolConfig = cleanDatabaseUrl
       statement_timeout: 30000,
     };
 
-const pool = new Pool(poolConfig);
+const globalForDb = globalThis;
+const pool = globalForDb.__mtboss_pg_pool__ || new Pool(poolConfig);
+if (!globalForDb.__mtboss_pg_pool__) {
+  globalForDb.__mtboss_pg_pool__ = pool;
+}
 
 const transientConnectionError = (error) => {
   const message = String(error?.message || '');
