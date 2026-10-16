@@ -52,11 +52,15 @@ export default function AutoSwipeGallery({
 
   if (cleanImages.length === 0) return null;
 
+  // Helper to check if an image URL points to a PNG
+  const isPng = (url) => typeof url === 'string' && (/\.png(\?|$)/i.test(url) || url.toLowerCase().includes('.png') || url.includes('image/png'));
+
   // Single Image Mode: DO NOT mount swiper or auto-swipe (Requirement)
   if (!hasMultiple) {
+    const singleIsPng = isPng(cleanImages[0]);
     return (
       <div
-        className={`auto-swipe-single ${className}`}
+        className={`auto-swipe-single ${singleIsPng ? 'has-png' : ''} ${className}`}
         style={{
           width: '100%',
           height: '100%',
@@ -69,6 +73,7 @@ export default function AutoSwipeGallery({
         <img
           src={cleanImages[0]}
           alt={alt}
+          className={singleIsPng ? 'is-png-image' : ''}
           style={{
             width: '100%',
             height: '100%',
@@ -85,7 +90,7 @@ export default function AutoSwipeGallery({
   // Multiple Images Mode: Embla Carousel with Auto-Swipe
   return (
     <div
-      className={`auto-swipe-container ${className}`}
+      className={`auto-swipe-container ${cleanImages.some(isPng) ? 'has-png' : ''} ${className}`}
       ref={emblaRef}
       style={{
         width: '100%',
@@ -96,31 +101,35 @@ export default function AutoSwipeGallery({
       }}
     >
       <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-        {cleanImages.map((src, i) => (
-          <div
-            key={`${src}-${i}`}
-            style={{
-              flex: '0 0 100%',
-              minWidth: 0,
-              height: '100%',
-              position: 'relative',
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={src}
-              alt={`${alt} ${i + 1}`}
+        {cleanImages.map((src, i) => {
+          const slideIsPng = isPng(src);
+          return (
+            <div
+              key={`${src}-${i}`}
               style={{
-                width: '100%',
+                flex: '0 0 100%',
+                minWidth: 0,
                 height: '100%',
-                objectFit: 'cover',
-                display: 'block',
-                ...imageStyle,
+                position: 'relative',
               }}
-              loading="lazy"
-            />
-          </div>
-        ))}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt={`${alt} ${i + 1}`}
+                className={slideIsPng ? 'is-png-image' : ''}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                  ...imageStyle,
+                }}
+                loading="lazy"
+              />
+            </div>
+          );
+        })}
       </div>
       {showDots && (
         <div
