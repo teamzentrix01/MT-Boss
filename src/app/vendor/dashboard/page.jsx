@@ -645,9 +645,9 @@ function VendorDashboardContent() {
             onClick={() => {
               document.getElementById('vendor-shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }}
-            // className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--brand-blue)] text-white text-xs font-bold rounded-lg shadow-sm hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white dark:bg-white dark:text-black text-xs font-semibold rounded-md shadow-xs hover:opacity-90 transition-opacity"
           >
-            {/* + Add Product */}
+            + Add Product
           </button>
         ) : (
           <button

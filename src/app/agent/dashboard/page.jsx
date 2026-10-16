@@ -123,8 +123,6 @@ function AgentDashboardContent() {
     return () => observer.disconnect();
   }, []);
 
-  const inFlightAuthFetches = useRef(new Map());
-
   useEffect(() => {
     loadData(activeTab);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -166,39 +164,20 @@ function AgentDashboardContent() {
       return null;
     }
 
-    const isGet = !options.method || options.method.toUpperCase() === 'GET';
-    if (isGet && inFlightAuthFetches.current.has(url)) {
-      return inFlightAuthFetches.current.get(url);
+    const res = await fetch(url, {
+      ...options,
+      headers: {
+        ...(options.headers || {}),
+        Authorization: `Bearer ${t}`,
+      },
+    });
+
+    if (res.status === 401 || res.status === 403) {
+      logout();
+      return null;
     }
 
-    const fetchPromise = (async () => {
-      try {
-        const res = await fetch(url, {
-          ...options,
-          headers: {
-            ...(options.headers || {}),
-            Authorization: `Bearer ${t}`,
-          },
-        });
-
-        if (res.status === 401 || res.status === 403) {
-          logout();
-          return null;
-        }
-
-        return res;
-      } finally {
-        if (isGet) {
-          inFlightAuthFetches.current.delete(url);
-        }
-      }
-    })();
-
-    if (isGet) {
-      inFlightAuthFetches.current.set(url, fetchPromise);
-    }
-
-    return fetchPromise;
+    return res;
   }
 
   async function loadData(tab = 'overview') {
