@@ -242,29 +242,147 @@ export async function DELETE(req, { params }) {
   const paramId = (await params).id;
   const admin = await requirePmAccess(req, paramId);
   if (!admin) return unauthorized();
-  if (admin.role === 'agent') {
-    return NextResponse.json({ success: false, error: 'Unauthorized: Agents cannot delete records (admin only)' }, { status: 403 });
+  if (admin.role !== 'admin') {
+    return NextResponse.json({ success: false, error: 'Unauthorized: Admin only' }, { status: 403 });
   }
   try {
     await ensureProjectManagementPhase5Schema();
     const id = Number(paramId);
+    if (!Number.isInteger(id) || id <= 0) {
+      return NextResponse.json({ success: false, error: 'Invalid project ID' }, { status: 400 });
+    }
+
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const old = (await client.query('SELECT * FROM pm_projects WHERE id = $1 FOR UPDATE', [id])).rows[0];
+      const oldRes = await client.query('SELECT * FROM pm_projects WHERE id = $1 FOR UPDATE', [id]);
+      const old = oldRes.rows[0];
       if (!old) {
         await client.query('ROLLBACK');
         return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
       }
-      const payment = await client.query('SELECT 1 FROM pm_party_payments WHERE project_id = $1 LIMIT 1', [id]);
-      if (payment.rows.length) {
-        await client.query('ROLLBACK');
-        return NextResponse.json({ success: false, error: 'A project with payment history cannot be deleted' }, { status: 409 });
+
+      // Check all transaction/activity tables
+      const [
+        partyPaymentsRes,
+        projectVendorsRes,
+        vendorPaymentsRes,
+        vendorSupplyRes,
+        vendorAttendanceRes,
+        laborRes,
+        laborAttendanceRes,
+        laborPaymentsRes,
+        matReceivedRes,
+        matUsedRes,
+        matAdjustmentsRes,
+        otherExpensesRes,
+      ] = await Promise.all([
+        client.query('SELECT COUNT(*)::int AS count FROM pm_party_payments WHERE project_id = $1 AND NOT is_deleted', [id]),
+        client.query('SELECT COUNT(*)::int AS count FROM pm_project_vendors WHERE project_id = $1', [id]),
+        client.query(
+          'SELECT COUNT(*)::int AS count FROM pm_vendor_payments vp JOIN pm_project_vendors pv ON pv.id = vp.project_vendor_id WHERE pv.project_id = $1 AND NOT vp.is_deleted',
+          [id]
+        ),
+        client.query(
+          'SELECT COUNT(*)::int AS count FROM pm_vendor_material_supply vms JOIN pm_project_vendors pv ON pv.id = vms.project_vendor_id WHERE pv.project_id = $1 AND NOT vms.is_deleted',
+          [id]
+        ),
+        client.query(
+          'SELECT COUNT(*)::int AS count FROM pm_attendance a JOIN pm_project_vendors pv ON pv.id = a.project_vendor_id WHERE pv.project_id = $1',
+          [id]
+        ),
+        client.query('SELECT COUNT(*)::int AS count FROM pm_labor WHERE project_id = $1', [id]),
+        client.query(
+          'SELECT COUNT(*)::int AS count FROM pm_labor_attendance la JOIN pm_labor l ON l.id = la.labor_id WHERE l.project_id = $1',
+          [id]
+        ),
+        client.query(
+          'SELECT COUNT(*)::int AS count FROM pm_labor_payments lp JOIN pm_labor l ON l.id = lp.labor_id WHERE l.project_id = $1 AND NOT lp.is_deleted',
+          [id]
+        ),
+        client.query('SELECT COUNT(*)::int AS count FROM pm_material_received WHERE project_id = $1 AND NOT is_deleted', [id]),
+        client.query('SELECT COUNT(*)::int AS count FROM pm_material_used WHERE project_id = $1 AND NOT is_deleted', [id]),
+        client.query('SELECT COUNT(*)::int AS count FROM pm_material_adjustments WHERE (project_id = $1 OR to_project_id = $1) AND NOT is_deleted', [id]),
+        client.query('SELECT COUNT(*)::int AS count FROM pm_other_expenses WHERE project_id = $1 AND NOT is_deleted', [id]),
+      ]);
+
+      const partyPaymentsCount = partyPaymentsRes.rows[0].count;
+      const vendorsCount = projectVendorsRes.rows[0].count;
+      const vendorPaymentsCount = vendorPaymentsRes.rows[0].count;
+      const vendorSupplyCount = vendorSupplyRes.rows[0].count;
+      const vendorAttendanceCount = vendorAttendanceRes.rows[0].count;
+      const laborCount = laborRes.rows[0].count;
+      const laborAttendanceCount = laborAttendanceRes.rows[0].count;
+      const laborPaymentsCount = laborPaymentsRes.rows[0].count;
+      const matReceivedCount = matReceivedRes.rows[0].count;
+      const matUsedCount = matUsedRes.rows[0].count;
+      const matAdjustmentsCount = matAdjustmentsRes.rows[0].count;
+      const otherExpensesCount = otherExpensesRes.rows[0].count;
+
+      const blockingReasons = [];
+      if (partyPaymentsCount > 0) blockingReasons.push(`${partyPaymentsCount} party payment${partyPaymentsCount > 1 ? 's' : ''}`);
+      if (vendorPaymentsCount > 0) blockingReasons.push(`${vendorPaymentsCount} vendor payment${vendorPaymentsCount > 1 ? 's' : ''}`);
+      if (vendorSupplyCount > 0) blockingReasons.push(`${vendorSupplyCount} vendor material supply entry${vendorSupplyCount > 1 ? 'ies' : ''}`);
+      if (vendorAttendanceCount > 0) blockingReasons.push(`${vendorAttendanceCount} vendor attendance record${vendorAttendanceCount > 1 ? 's' : ''}`);
+      if (vendorsCount > 0 && vendorPaymentsCount === 0 && vendorSupplyCount === 0 && vendorAttendanceCount === 0) {
+        blockingReasons.push(`${vendorsCount} assigned vendor${vendorsCount > 1 ? 's' : ''}`);
       }
+      if (laborPaymentsCount > 0) blockingReasons.push(`${laborPaymentsCount} labor payment${laborPaymentsCount > 1 ? 's' : ''}`);
+      if (laborAttendanceCount > 0) blockingReasons.push(`${laborAttendanceCount} labor attendance record${laborAttendanceCount > 1 ? 's' : ''}`);
+      if (laborCount > 0 && laborPaymentsCount === 0 && laborAttendanceCount === 0) {
+        blockingReasons.push(`${laborCount} labor entry${laborCount > 1 ? 'ies' : ''}`);
+      }
+      const totalMatCount = matReceivedCount + matUsedCount + matAdjustmentsCount;
+      if (totalMatCount > 0) {
+        const parts = [];
+        if (matReceivedCount > 0) parts.push(`${matReceivedCount} received`);
+        if (matUsedCount > 0) parts.push(`${matUsedCount} used`);
+        if (matAdjustmentsCount > 0) parts.push(`${matAdjustmentsCount} adjustment${matAdjustmentsCount > 1 ? 's' : ''}`);
+        blockingReasons.push(`material entries (${parts.join(', ')})`);
+      }
+      if (otherExpensesCount > 0) blockingReasons.push(`${otherExpensesCount} other expense${otherExpensesCount > 1 ? 's' : ''}`);
+
+      if (blockingReasons.length > 0) {
+        await client.query('ROLLBACK');
+        const reasonText = blockingReasons.join(', ');
+        return NextResponse.json(
+          {
+            success: false,
+            error: `This project has ${reasonText}. Set it to On hold or Completed instead.`,
+          },
+          { status: 409 }
+        );
+      }
+
+      // 1. Remove agent assignments
+      await client.query('DELETE FROM pm_project_agents WHERE project_id = $1', [id]);
+
+      // 2. Clear lead conversion link so lead can be converted again
+      if (old.source_lead_id) {
+        await client.query('UPDATE agent_leads SET converted_project_id = NULL WHERE id = $1', [old.source_lead_id]);
+      }
+      await client.query('UPDATE agent_leads SET converted_project_id = NULL WHERE converted_project_id = $1', [id]);
+
+      // 3. Delete the project
       await client.query('DELETE FROM pm_projects WHERE id = $1', [id]);
-      await writePmAudit(client, 'project', id, 'deleted', actorFromAdmin(admin), old, null);
+
+      // 4. Fetch party info for audit log
+      const partyRes = await client.query('SELECT name FROM pm_parties WHERE id = $1', [old.party_id]);
+      const partyName = partyRes.rows[0]?.name || 'Unknown Party';
+
+      // 5. Write audit log (who, when, project name, party, contract value)
+      await writePmAudit(client, 'project', id, 'deleted', actorFromAdmin(admin), {
+        id: old.id,
+        project_name: old.name,
+        party_id: old.party_id,
+        party_name: partyName,
+        contract_value: old.contract_value,
+        start_date: old.start_date,
+        source_lead_id: old.source_lead_id,
+      }, null);
+
       await client.query('COMMIT');
-      return NextResponse.json({ success: true });
+      return NextResponse.json({ success: true, message: 'Project deleted successfully' });
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;
@@ -272,6 +390,7 @@ export async function DELETE(req, { params }) {
       client.release();
     }
   } catch (error) {
+    console.error('Project delete error:', error);
     return NextResponse.json({ success: false, error: error.message || 'Could not delete project' }, { status: 500 });
   }
 }
