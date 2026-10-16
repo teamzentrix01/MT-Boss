@@ -74,17 +74,21 @@ async function validProduct(body) {
   if (!qualityTier) return { error: 'Choose a Quality Tier: All, Basic, Standard, Premium or Luxury' };
 
   const quotePriceRange = String(body.quote_price_range || '').trim();
-  const rangeMatch = quotePriceRange.match(/^(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)\s*[-–]\s*(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)$/i);
-  if (!rangeMatch) return { error: 'Enter the required Get Quote price range like 40-80' };
-  const quoteMinimum = Number(rangeMatch[1]);
-  const quoteMaximum = Number(rangeMatch[2]);
-  if (!(quoteMinimum > 0) || quoteMaximum <= quoteMinimum || quoteMaximum > 99999999.99) {
-    return { error: 'Get Quote maximum price must be greater than its minimum, e.g. 40-80' };
+  let normalizedQuoteRange = null;
+  if (quotePriceRange) {
+    const rangeMatch = quotePriceRange.match(/^(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)\s*[-–]\s*(?:₹\s*|rs\.?\s*)?(\d+(?:\.\d{1,2})?)$/i);
+    if (!rangeMatch) return { error: 'Enter the Get Quote price range like 40-80 or leave empty' };
+    const quoteMinimum = Number(rangeMatch[1]);
+    const quoteMaximum = Number(rangeMatch[2]);
+    if (!(quoteMinimum > 0) || quoteMaximum <= quoteMinimum || quoteMaximum > 99999999.99) {
+      return { error: 'Get Quote maximum price must be greater than its minimum, e.g. 40-80' };
+    }
+    normalizedQuoteRange = `${quoteMinimum}-${quoteMaximum}`;
   }
 
-  const price = Number(body.price);
-  if (!Number.isFinite(price) || price <= 0 || price > 99999999.99) {
-    return { error: 'Enter the required positive Buy Now fixed price' };
+  const price = body.price === '' || body.price == null ? null : Number(body.price);
+  if (price !== null && (!Number.isFinite(price) || price <= 0 || price > 99999999.99)) {
+    return { error: 'Enter a valid positive Buy Now fixed price or leave empty for Price on request' };
   }
   const quantity = Number(body.quantity ?? 0);
   if (!Number.isInteger(quantity) || quantity < 0 || quantity > 100000000) {
@@ -109,7 +113,7 @@ async function validProduct(body) {
     category: categoryResult.rows[0].name,
     subcategory: String(body.subcategory || '').trim().slice(0, 255),
     description: String(body.description || '').trim().slice(0, 2000),
-    quote_price_range: `${quoteMinimum}-${quoteMaximum}`,
+    quote_price_range: normalizedQuoteRange,
     price,
     unit: String(body.unit || categoryResult.rows[0].unit || 'pcs').trim().slice(0, 100),
     quantity,
@@ -155,20 +159,30 @@ export async function POST(req) {
     const parsed = await validProduct(await req.json());
     if (parsed.error) return NextResponse.json({ success: false, error: parsed.error }, { status: 400 });
     const p = parsed.value;
+
+    // Vendor products are ALWAYS created hidden (is_available = false) and pending admin approval.
+    // Never trust request body for approval metadata or visibility.
+    const cleanSpecs = { ...(p.specifications || {}) };
+    delete cleanSpecs.__approval__;
+    cleanSpecs.__approval__ = {
+      status: 'pending',
+      created_at: new Date().toISOString(),
+    };
+
     const result = await pool.query(
       `INSERT INTO supplier_materials
        (supplier_id, vendor_id, name, description, quote_price_range, price, unit, quantity,
         image_url, category, subcategory, brand, compare_at_price, is_featured_deal, images, specifications, bulk_pricing,
         available_cities, is_available, quality_tier)
        VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14::jsonb,
-               $15::jsonb, $16::jsonb, $17::jsonb, $18, $19)
+               $15::jsonb, $16::jsonb, $17::jsonb, FALSE, $18)
        RETURNING *`,
       [vendor.id, p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity,
         p.image_url, p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images),
-        JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing),
-        JSON.stringify(p.available_cities), p.is_available, p.quality_tier]
+        JSON.stringify(cleanSpecs), JSON.stringify(p.bulk_pricing),
+        JSON.stringify(p.available_cities), p.quality_tier]
     );
-    return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
+    return NextResponse.json({ success: true, data: result.rows[0], pending_approval: true }, { status: 201 });
   } catch (error) {
     console.error('POST vendor shop-products error:', error);
     return NextResponse.json({ success: false, error: 'Could not add product' }, { status: 500 });
@@ -184,19 +198,79 @@ export async function PUT(req) {
     const id = Number(body.id);
     if (!Number.isInteger(id) || id < 1) return NextResponse.json({ success: false, error: 'Valid product ID required' }, { status: 400 });
 
+    const existingRes = await pool.query(
+      `SELECT id, name, price, compare_at_price, category, quality_tier, unit, images, description, specifications, is_available
+       FROM supplier_materials
+       WHERE id = $1 AND vendor_id = $2`,
+      [id, vendor.id]
+    );
+    if (!existingRes.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+    const existing = existingRes.rows[0];
+    const existingApproval = existing.specifications?.__approval__ || {};
+    const existingStatus = existingApproval.status || 'approved';
+
     if (body.action === 'toggle') {
+      // If product is pending or rejected, it cannot be made visible on Shop Now
+      if (existingStatus !== 'approved' && body.is_available === true) {
+        return NextResponse.json(
+          { success: false, error: 'Products pending approval or rejected cannot be set to visible on Shop Now' },
+          { status: 400 }
+        );
+      }
       const result = await pool.query(
         `UPDATE supplier_materials SET is_available=$1, updated_at=NOW()
          WHERE id=$2 AND vendor_id=$3 RETURNING *`,
         [body.is_available === true, id, vendor.id]
       );
-      if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
       return NextResponse.json({ success: true, data: result.rows[0] });
     }
 
     const parsed = await validProduct(body);
     if (parsed.error) return NextResponse.json({ success: false, error: parsed.error }, { status: 400 });
     const p = parsed.value;
+
+    // Clean any __approval__ sent by client
+    const cleanSpecs = { ...(p.specifications || {}) };
+    delete cleanSpecs.__approval__;
+
+    // Check if core fields changed: name, price, original price, category, quality tier, unit, images, description
+    const existingImages = Array.isArray(existing.images) ? existing.images : [];
+    const newImages = Array.isArray(p.images) ? p.images : [];
+    const imagesChanged = JSON.stringify(existingImages) !== JSON.stringify(newImages);
+
+    const coreFieldsChanged =
+      String(existing.name || '').trim() !== String(p.name || '').trim() ||
+      Number(existing.price) !== Number(p.price) ||
+      (existing.compare_at_price == null ? null : Number(existing.compare_at_price)) !== (p.compare_at_price == null ? null : Number(p.compare_at_price)) ||
+      String(existing.category || '').trim().toLowerCase() !== String(p.category || '').trim().toLowerCase() ||
+      String(existing.quality_tier || '').trim().toLowerCase() !== String(p.quality_tier || '').trim().toLowerCase() ||
+      String(existing.unit || '').trim().toLowerCase() !== String(p.unit || '').trim().toLowerCase() ||
+      String(existing.description || '').trim() !== String(p.description || '').trim() ||
+      imagesChanged;
+
+    let nextAvailable = existing.is_available;
+    let resubmittedForApproval = false;
+
+    if (coreFieldsChanged) {
+      // Re-pend the product: set hidden and reset approval status to pending (clear rejection reason)
+      nextAvailable = false;
+      cleanSpecs.__approval__ = {
+        status: 'pending',
+        updated_at: new Date().toISOString(),
+      };
+      resubmittedForApproval = true;
+    } else {
+      // Stock-only or minor changes: retain current approval metadata and current availability
+      if (existingApproval.status) {
+        cleanSpecs.__approval__ = existingApproval;
+      }
+      if (existingStatus !== 'approved') {
+        nextAvailable = false;
+      } else {
+        nextAvailable = p.is_available;
+      }
+    }
+
     const result = await pool.query(
       `UPDATE supplier_materials SET name=$1, description=$2, quote_price_range=$3, price=$4,
         unit=$5, quantity=$6, image_url=$7, category=$8, subcategory=$9, brand=$10, compare_at_price=$11,
@@ -205,11 +279,15 @@ export async function PUT(req) {
        WHERE id=$18 AND vendor_id=$19 RETURNING *`,
       [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url,
         p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images),
-        JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing),
-        JSON.stringify(p.available_cities), p.is_available, id, vendor.id, p.quality_tier]
+        JSON.stringify(cleanSpecs), JSON.stringify(p.bulk_pricing),
+        JSON.stringify(p.available_cities), nextAvailable, id, vendor.id, p.quality_tier]
     );
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
-    return NextResponse.json({ success: true, data: result.rows[0] });
+    return NextResponse.json({
+      success: true,
+      data: result.rows[0],
+      resubmitted_for_approval: resubmittedForApproval,
+    });
   } catch (error) {
     console.error('PUT vendor shop-products error:', error);
     return NextResponse.json({ success: false, error: 'Could not update product' }, { status: 500 });

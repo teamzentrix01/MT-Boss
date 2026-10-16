@@ -189,25 +189,31 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
       <div className="store-product-details">
         <span className="store-product-tag">Available</span>
         <button type="button" className="store-product-title" onClick={() => onDetails(product)}><h3>{product.name}</h3></button>
-        <p className="store-product-category">{product.category.name}{product.unit ? ` · ${product.unit}` : ""}</p>
-        <div className="store-product-price">
-          <strong>{hasFixedPrice ? `₹${price.toLocaleString('en-IN')} / ${displayUnit(product.unit)}` : 'Price on request'}</strong>
-          {hasFixedPrice && Number(product.compare_at_price) > price && <del>₹{Number(product.compare_at_price).toLocaleString('en-IN')}</del>}
+        <p className="store-product-category">{(typeof product.category === 'object' ? product.category?.name : product.category) || ''}{product.unit ? ` · ${product.unit}` : ""}</p>
+        <div className="store-product-price-slot">
+          {hasFixedPrice ? (
+            <div className="store-product-price">
+              <strong>₹{price.toLocaleString('en-IN')} / {displayUnit(product.unit)}</strong>
+              {Number(product.compare_at_price) > price && <del>₹{Number(product.compare_at_price).toLocaleString('en-IN')}</del>}
+            </div>
+          ) : null}
         </div>
-        {cityUnavailable && <span className="store-stock-note">Not delivered in {selectedCity}</span>}
-        {product.fromSupplier && Number(product.quantity) === 0 && <span className="store-stock-note">Currently unavailable</span>}
-        <div className="store-product-actions store-product-actions-single">
-          <button type="button" className="store-buy-btn" disabled={!canOrder} onClick={() => onBuy(product)}>{canOrder ? 'Buy Now' : 'Unavailable'}</button>
-        </div>
-        {quantity ? (
-          <div className="store-quantity-control" aria-label={`${product.name} quantity in cart`}>
-            <button type="button" onClick={() => onChangeQty(product.id, -1)} aria-label={`Remove one ${product.name}`}><Minus size={15} /></button>
-            <span>{quantity} in cart</span>
-            <button type="button" onClick={() => onChangeQty(product.id, 1)} aria-label={`Add one ${product.name}`}><Plus size={15} /></button>
+        <div className="store-product-footer">
+          {cityUnavailable && <span className="store-stock-note">Not delivered in {selectedCity}</span>}
+          {product.fromSupplier && Number(product.quantity) === 0 && <span className="store-stock-note">Currently unavailable</span>}
+          <div className="store-product-actions store-product-actions-single">
+            <button type="button" className="store-buy-btn" disabled={!canOrder} onClick={() => onBuy(product)}>{canOrder ? 'Buy Now' : 'Unavailable'}</button>
           </div>
-        ) : (
-          <button type="button" className="store-add-btn" disabled={!canAdd || !canOrder} onClick={() => onAdd(product)}><Plus size={15} /> {!canOrder ? 'Unavailable' : canAdd ? "Add to cart" : "Cart limit reached"}</button>
-        )}
+          {quantity ? (
+            <div className="store-quantity-control" aria-label={`${product.name} quantity in cart`}>
+              <button type="button" onClick={() => onChangeQty(product.id, -1)} aria-label={`Remove one ${product.name}`}><Minus size={15} /></button>
+              <span>{quantity} in cart</span>
+              <button type="button" onClick={() => onChangeQty(product.id, 1)} aria-label={`Add one ${product.name}`}><Plus size={15} /></button>
+            </div>
+          ) : (
+            <button type="button" className="store-add-btn" disabled={!canAdd || !canOrder} onClick={() => onAdd(product)}><Plus size={15} /> {!canOrder ? 'Unavailable' : canAdd ? "Add to cart" : "Cart limit reached"}</button>
+          )}
+        </div>
       </div>
     </article>
   );
@@ -668,8 +674,10 @@ export default function Storefront({ categories, products, offers = [], content,
             <div className="store-detail-info">
               <span className="store-product-tag">{detailsProduct.brand || detailsProduct.category.name}</span>
               <h2>{detailsProduct.name}</h2>
-              <p>{detailsProduct.category.name} · {displayUnit(detailsProduct.unit)}</p>
-              <div className="store-detail-price">{detailsHasFixedPrice ? `₹${Number(detailsProduct.price).toLocaleString('en-IN')} / ${displayUnit(detailsProduct.unit)}` : 'Price on request'}</div>
+              <p>{(typeof detailsProduct.category === 'object' ? detailsProduct.category?.name : detailsProduct.category) || ''} · {displayUnit(detailsProduct.unit)}</p>
+              {detailsHasFixedPrice && (
+                <div className="store-detail-price">₹{Number(detailsProduct.price).toLocaleString('en-IN')} / {displayUnit(detailsProduct.unit)}</div>
+              )}
               {detailsProduct.description && <p className="store-detail-description">{detailsProduct.description}</p>}
               {Object.keys(detailsProduct.specifications || {}).length > 0 && <><h3>Specifications</h3><dl className="store-specs">{Object.entries(detailsProduct.specifications).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{value}</dd></div>)}</dl></>}
               <div className="store-detail-actions store-detail-actions-priced">
@@ -700,7 +708,7 @@ export default function Storefront({ categories, products, offers = [], content,
                 </div>;
               })}</div>
               <div className="store-cart-bottom">
-                <div className="store-cart-estimate"><span>{hasUnpricedItems ? 'Current total' : 'Product total'}</span><strong>{pricedTotal > 0 ? `₹${pricedTotal.toLocaleString("en-IN")}` : 'On confirmation'}{pricedTotal > 0 && hasUnpricedItems ? ' + quote items' : ''}</strong></div>
+                <div className="store-cart-estimate"><span>{hasUnpricedItems ? 'Current total' : 'Product total'}</span><strong>{pricedTotal > 0 ? `₹${pricedTotal.toLocaleString("en-IN")}` : 'Price on confirmation'}{pricedTotal > 0 && hasUnpricedItems ? ' + quote items' : ''}</strong></div>
                 <div className="store-coupon-box">
                   {activeCoupon?.code ? <div className="store-coupon-applied"><span>Coupon <b>{activeCoupon.code}</b>{couponCalculation?.eligible ? ` applied: -₹${couponCalculation.discount.toLocaleString('en-IN')}` : ' selected'}</span><button type="button" onClick={() => { onClearCoupon(); setCouponCode(''); setCouponNotice(''); }}>Remove</button></div> : <form onSubmit={(event) => { event.preventDefault(); const result = onApplyCoupon(couponCode); setCouponNotice(result.error || `Coupon ${result.coupon?.code} applied.`); }}><label htmlFor="store-coupon-code">Have a coupon?</label><div><input id="store-coupon-code" value={couponCode} onChange={(event) => setCouponCode(event.target.value.toUpperCase())} placeholder="Enter coupon code" /><button type="submit" disabled={!couponCode.trim()}>Apply</button></div></form>}
                   {couponNotice && <p className={couponNotice.startsWith('Coupon') ? 'is-success' : ''}>{couponNotice}</p>}

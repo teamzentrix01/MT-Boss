@@ -103,6 +103,7 @@ export async function GET(req) {
            ) OR EXISTS (
              SELECT 1 FROM supplier_materials m
              WHERE m.supplier_id = 0 AND m.is_available = TRUE AND m.quantity > 0
+                AND (m.vendor_id IS NULL OR COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'approved')
                AND LOWER(TRIM(m.category)) = LOWER(TRIM($2))
                AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(COALESCE(m.available_cities, '[]'::jsonb)) available_city WHERE LOWER(TRIM(available_city)) = LOWER(TRIM($1)))
            )`,

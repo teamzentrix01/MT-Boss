@@ -966,7 +966,7 @@ export default function ShopPage() {
                   <div className={`rounded-xl border-2 px-4 py-3 mb-4 ${isDarkMode ? "border-[var(--brand-blue-light)] bg-zinc-800" : "border-[var(--brand-blue)] bg-blue-50"}`}>
                     <div className={`flex items-center justify-between text-xs ${subText}`}>
                       <span>Product total{modalMode === 'cart' && couponCalculation.discount > 0 ? ' (after coupon)' : ''}</span>
-                      <span>{hasFixedOrderPrice ? `₹${orderProductTotal.toLocaleString('en-IN')}` : 'On confirmation'}</span>
+                      <span>{hasFixedOrderPrice ? `₹${orderProductTotal.toLocaleString('en-IN')}` : 'Price on confirmation'}</span>
                     </div>
                     <div className={`mt-1 flex items-center justify-between text-xs ${subText}`}>
                       <span>Shipping</span>
@@ -980,7 +980,7 @@ export default function ShopPage() {
                     )}
                     <div className={`mt-3 flex items-center justify-between border-t pt-3 ${isDarkMode ? "border-zinc-700" : "border-blue-200"}`}>
                       <span className={`text-base font-black ${headText}`}>Payable Grand Total</span>
-                      <strong className={`text-xl font-black ${headText}`}>{orderGrandTotal !== null ? `₹${orderGrandTotal.toLocaleString('en-IN')}` : 'On confirmation'}</strong>
+                      <strong className={`text-xl font-black ${headText}`}>{orderGrandTotal !== null ? `₹${orderGrandTotal.toLocaleString('en-IN')}` : 'Price on confirmation'}</strong>
                     </div>
                   </div>
                 )}

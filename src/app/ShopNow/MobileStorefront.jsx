@@ -1081,7 +1081,9 @@ export default function MobileStorefront({
                             )}
                           </div>
                           <span className="mobile-subcat-card-name">{sName}</span>
-                          {sPrice && <span className="mobile-subcat-card-price">{sPrice.startsWith('₹') ? sPrice : `₹${sPrice}`}</span>}
+                          <span className={`mobile-subcat-card-price ${!sPrice ? 'is-request' : ''}`}>
+                            {sPrice ? (sPrice.startsWith('₹') ? sPrice : `₹${sPrice}`) : 'Price on request'}
+                          </span>
                         </div>
                       );
                     })}
@@ -1550,12 +1552,12 @@ export default function MobileStorefront({
                           <span className="text-[11px] text-gray-500 block">
                             {price > 0
                               ? `₹${price.toLocaleString("en-IN")} / ${displayUnit(item.product.unit)}`
-                              : "Quote upon confirmation"}
+                              : "Price on confirmation"}
                           </span>
                           <span className="font-extrabold text-xs text-[#12283F]">
                             {price > 0
                               ? `₹${(price * item.quantity).toLocaleString("en-IN")}`
-                              : "Price on request"}
+                              : "Price on confirmation"}
                           </span>
                         </div>
                         <div className="mobile-cart-stepper">
@@ -2203,31 +2205,31 @@ function MobileProductCard({
             <h3 className="mobile-card-title">{product.name}</h3>
           </button>
 
-          {/* Price & MRP */}
-          <div className="mobile-card-price-row">
-            <strong className="mobile-card-price">
-              {hasFixedPrice ? `₹${price.toLocaleString("en-IN")}` : "Price on request"}
-              {hasFixedPrice && (
+          {/* Price & MRP (only if rate is added) */}
+          {hasFixedPrice && (
+            <div className="mobile-card-price-row">
+              <strong className="mobile-card-price">
+                ₹{price.toLocaleString("en-IN")}
                 <span className="mobile-card-unit"> / {displayUnit(product.unit)}</span>
+              </strong>
+              {mrp > price && (
+                <del className="mobile-card-mrp">₹{mrp.toLocaleString("en-IN")}</del>
               )}
-            </strong>
-            {mrp > price && hasFixedPrice && (
-              <del className="mobile-card-mrp">₹{mrp.toLocaleString("en-IN")}</del>
-            )}
-          </div>
+            </div>
+          )}
 
-          {/* Bulk Prices link */}
-          <button
-            type="button"
-            className="mobile-bulk-link"
-            onClick={() => onQuote(product)}
-          >
-            {bulkPrice
-              ? `Bulk Prices at ₹${bulkPrice.toLocaleString("en-IN")} →`
-              : "Bulk Prices on request →"}
-          </button>
+          {/* Bulk Prices link (only if bulk pricing is configured) */}
+          {bulkPrice ? (
+            <button
+              type="button"
+              className="mobile-bulk-link"
+              onClick={() => onQuote(product)}
+            >
+              Bulk Prices at ₹{bulkPrice.toLocaleString("en-IN")} →
+            </button>
+          ) : null}
 
-          {/* Action Row: Stepper or Add button + Quote CTA */}
+          {/* Action Row: Stepper or Add button */}
           <div className="mobile-card-actions">
             {quantity > 0 ? (
               <div className="mobile-stepper" aria-label={`${product.name} quantity in cart`}>

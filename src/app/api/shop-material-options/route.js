@@ -77,6 +77,7 @@ export async function GET(req) {
        LEFT JOIN suppliers s ON s.id = m.supplier_id
        LEFT JOIN vendors v ON v.id = m.vendor_id
        WHERE m.is_available = TRUE
+         AND (m.vendor_id IS NULL OR COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'approved')
          AND (
            (m.vendor_id IS NOT NULL AND v.is_approved = TRUE AND v.status = 'active')
            OR (m.vendor_id IS NULL AND (m.supplier_id = 0 OR (s.status = 'approved' AND s.is_active = TRUE)))
@@ -85,28 +86,32 @@ export async function GET(req) {
        ORDER BY m.name ASC, m.id ASC`, [category]
         );
 
-        const products = result.rows.map((row) => ({
-            id: row.id,
-            supplier_id: row.supplier_id,
-            vendor_id: row.vendor_id,
-            name: row.name,
-            description: row.description || '',
-            quote_price_range: row.quote_price_range || '',
-            price: row.price,
-            unit: row.unit || '',
-            quantity: row.quantity,
-            image_url: row.image_url || '',
-            category: row.category || '',
-            subcategory: row.subcategory || '',
-            brand: row.brand || '',
-            compare_at_price: row.compare_at_price,
-            is_featured_deal: row.is_featured_deal === true,
-            images: Array.isArray(row.images) ? row.images : [],
-            specifications: row.specifications || {},
-            bulk_pricing: Array.isArray(row.bulk_pricing) ? row.bulk_pricing : [],
-            available_cities: Array.isArray(row.available_cities) ? row.available_cities : [],
-            created_at: row.created_at,
-        }));
+        const products = result.rows.map((row) => {
+            const specifications = { ...(row.specifications || {}) };
+            delete specifications.__approval__;
+            return {
+                id: row.id,
+                supplier_id: row.supplier_id,
+                vendor_id: row.vendor_id,
+                name: row.name,
+                description: row.description || '',
+                quote_price_range: row.quote_price_range || '',
+                price: row.price,
+                unit: row.unit || '',
+                quantity: row.quantity,
+                image_url: row.image_url || '',
+                category: row.category || '',
+                subcategory: row.subcategory || '',
+                brand: row.brand || '',
+                compare_at_price: row.compare_at_price,
+                is_featured_deal: row.is_featured_deal === true,
+                images: Array.isArray(row.images) ? row.images : [],
+                specifications,
+                bulk_pricing: Array.isArray(row.bulk_pricing) ? row.bulk_pricing : [],
+                available_cities: Array.isArray(row.available_cities) ? row.available_cities : [],
+                created_at: row.created_at,
+            };
+        });
 
         const payload = {
             success: true,
