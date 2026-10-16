@@ -168,7 +168,7 @@ export async function PATCH(req, { params }) {
         body.project_notes ?? '',
         assignmentProvided,
         body.assigned_agent_id ?? '',
-        Number(admin.id || 0) || null,
+        Number(pmAccess?.id || 0) || null,
         id,
       ]
     );
