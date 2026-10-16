@@ -52,6 +52,11 @@ function AgentDashboardContent() {
   const [editLead, setEditLead] = useState(null);
   const [leadSaving, setLeadSaving] = useState(false);
   const [deletingLeadId, setDeletingLeadId] = useState(null);
+  const [convertingLead, setConvertingLead] = useState(null);
+  const [conversionData, setConversionData] = useState(null);
+  const [isSubmittingConvert, setIsSubmittingConvert] = useState(false);
+  const isSubmittingConvertRef = useRef(false);
+  const idempotencyKeyRef = useRef(null);
   const [leadForm, setLeadForm] = useState({
     clientName: '',
     city: '',
@@ -465,6 +470,106 @@ function AgentDashboardContent() {
     }
   }
 
+  async function openConvertModal(lead) {
+    if (lead.converted_project_id) {
+      if (agent?.has_project_management_access) {
+        setActiveTab('project-management');
+        router.push(`/agent/dashboard?tab=project-management&projectId=${lead.converted_project_id}`);
+      } else {
+        router.push(`/dashboard/projects/${lead.converted_project_id}`);
+      }
+      return;
+    }
+    isSubmittingConvertRef.current = false;
+    setIsSubmittingConvert(false);
+    idempotencyKeyRef.current = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `convert_${lead.id}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
+    setConvertingLead(lead);
+    setConversionData({
+      loading: true,
+      partyId: null,
+      partyName: '',
+      newParty: { name: lead.client_name, phone: lead.client_phone, email: lead.client_email || '', address: lead.city || '' },
+      project: {
+        name: lead.service_type || lead.client_requirement || 'New Project',
+        contract_value: lead.final_amount || 0,
+        site_address: lead.city || '',
+        status: 'running',
+        agent_id: lead.agent_id || agent?.id || '',
+        start_date: new Date().toISOString().slice(0, 10),
+      },
+    });
+
+    try {
+      const res = await authFetch('/api/admin/project-management/parties');
+      if (res) {
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data)) {
+          const found = data.data.find((p) => p.phone === lead.client_phone || (lead.client_email && p.email === lead.client_email));
+          if (found) {
+            setConversionData((prev) => ({ ...prev, loading: false, partyId: found.id, partyName: found.name }));
+            return;
+          }
+        }
+      }
+    } catch {}
+    setConversionData((prev) => ({ ...prev, loading: false }));
+  }
+
+  async function submitConversion(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (isSubmittingConvertRef.current) return;
+    isSubmittingConvertRef.current = true;
+    setIsSubmittingConvert(true);
+
+    const payload = {
+      lead_id: convertingLead.id,
+      party_id: conversionData.partyId,
+      new_party: conversionData.partyId ? null : conversionData.newParty,
+      project: conversionData.project,
+    };
+
+    try {
+      const res = await authFetch('/api/admin/lead-management/convert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Idempotency-Key': idempotencyKeyRef.current || `convert_${convertingLead.id}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res) {
+        isSubmittingConvertRef.current = false;
+        setIsSubmittingConvert(false);
+        return;
+      }
+      const data = await res.json();
+      if (data.success) {
+        const targetProjectId = data.project_id;
+        setLeads((prev) => prev.map((l) => (l.id === convertingLead.id ? { ...l, converted_project_id: targetProjectId } : l)));
+        setConvertingLead(null);
+        isSubmittingConvertRef.current = false;
+        setIsSubmittingConvert(false);
+        setMessage('Lead converted to project successfully.');
+        await refreshLeads();
+        if (agent?.has_project_management_access) {
+          setActiveTab('project-management');
+          router.push(`/agent/dashboard?tab=project-management&projectId=${targetProjectId}`);
+        }
+      } else {
+        alert(data.error || 'Conversion failed');
+        isSubmittingConvertRef.current = false;
+        setIsSubmittingConvert(false);
+      }
+    } catch (err) {
+      alert(err.message || 'Conversion failed');
+      isSubmittingConvertRef.current = false;
+      setIsSubmittingConvert(false);
+    }
+  }
+
   async function deleteLead(lead) {
     if (!window.confirm(`Delete lead for ${lead.client_name}? This action cannot be undone.`)) return;
     setDeletingLeadId(lead.id);
@@ -774,6 +879,19 @@ function AgentDashboardContent() {
                       <select disabled={Boolean(lead.project_id)} className={`border px-3 py-2 text-xs font-bold ${input}`} value={lead.lead_stage || 'New'} onChange={(e) => updateLead(lead.id, null, e.target.value)}>
                         {leadStages.map((s) => <option key={s}>{s}</option>)}
                       </select>
+                      {lead.status === 'Converted' && (
+                        <button
+                          type="button"
+                          onClick={() => openConvertModal(lead)}
+                          className={`px-3 py-2 border text-xs font-bold ${
+                            lead.converted_project_id
+                              ? `${card} ${muted}`
+                              : 'bg-[var(--brand-blue)] text-black'
+                          }`}
+                        >
+                          {lead.converted_project_id ? 'Already converted → View Project' : 'Convert to Project'}
+                        </button>
+                      )}
                       <button type="button" onClick={() => startEditLead(lead)} className={`px-3 py-2 border text-xs font-bold ${input}`}>Edit</button>
                       <button
                         type="button"
@@ -1178,6 +1296,103 @@ function AgentDashboardContent() {
           <section className="animate-fade-in">
             <PartyProjectManagement initialScreen="projects" isDarkMode={dark} isAgent={true} agent={agent} />
           </section>
+        )}
+
+        {convertingLead && conversionData && (
+          <div
+            onClick={() => { if (!isSubmittingConvertRef.current) setConvertingLead(null); }}
+            className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+          >
+            <form
+              onSubmit={submitConversion}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => { if (e.key === 'Enter' && isSubmittingConvertRef.current) e.preventDefault(); }}
+              className={`w-full max-w-lg border ${card} p-6 max-h-[90vh] overflow-y-auto`}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-black uppercase">Convert to Project</h3>
+                <button
+                  type="button"
+                  disabled={isSubmittingConvert}
+                  onClick={() => { if (!isSubmittingConvertRef.current) setConvertingLead(null); }}
+                  className={`text-xl font-bold ${muted} ${isSubmittingConvert ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'}`}
+                >
+                  ×
+                </button>
+              </div>
+
+              {conversionData.loading ? (
+                <div className={`p-8 text-center text-sm ${muted}`}>Checking for existing party...</div>
+              ) : (
+                <div className="space-y-4">
+                  {conversionData.partyId ? (
+                    <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded">
+                      <strong>Existing party found:</strong> {conversionData.partyName}<br />
+                      This project will be added under them.
+                    </div>
+                  ) : (
+                    <div className={`border ${card} p-4 space-y-3`}>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">New Party Details</p>
+                      <div>
+                        <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Client Name *</label>
+                        <input className={`w-full border px-3 py-2 text-sm ${input}`} value={conversionData.newParty.name} onChange={(e) => setConversionData((p) => ({ ...p, newParty: { ...p.newParty, name: e.target.value } }))} required disabled={isSubmittingConvert} />
+                      </div>
+                      <div>
+                        <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Phone *</label>
+                        <input className={`w-full border px-3 py-2 text-sm ${input}`} value={conversionData.newParty.phone} onChange={(e) => setConversionData((p) => ({ ...p, newParty: { ...p.newParty, phone: e.target.value } }))} required disabled={isSubmittingConvert} />
+                      </div>
+                      <div>
+                        <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Email</label>
+                        <input className={`w-full border px-3 py-2 text-sm ${input}`} type="email" value={conversionData.newParty.email} onChange={(e) => setConversionData((p) => ({ ...p, newParty: { ...p.newParty, email: e.target.value } }))} disabled={isSubmittingConvert} />
+                      </div>
+                      <div>
+                        <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>City</label>
+                        <input className={`w-full border px-3 py-2 text-sm ${input}`} value={conversionData.newParty.address} onChange={(e) => setConversionData((p) => ({ ...p, newParty: { ...p.newParty, address: e.target.value } }))} disabled={isSubmittingConvert} />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className={`border ${card} p-4 space-y-3`}>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">Project Details</p>
+                    <div>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Project Name *</label>
+                      <input className={`w-full border px-3 py-2 text-sm ${input}`} value={conversionData.project.name} onChange={(e) => setConversionData((p) => ({ ...p, project: { ...p.project, name: e.target.value } }))} required disabled={isSubmittingConvert} />
+                    </div>
+                    <div>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Start Date *</label>
+                      <input className={`w-full border px-3 py-2 text-sm ${input}`} type="date" value={conversionData.project.start_date} onChange={(e) => setConversionData((p) => ({ ...p, project: { ...p.project, start_date: e.target.value } }))} required disabled={isSubmittingConvert} />
+                    </div>
+                    <div>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Contract Value (₹) *</label>
+                      <input className={`w-full border px-3 py-2 text-sm ${input}`} type="number" value={conversionData.project.contract_value} onChange={(e) => setConversionData((p) => ({ ...p, project: { ...p.project, contract_value: e.target.value } }))} required disabled={isSubmittingConvert} />
+                    </div>
+                    <div>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Site / City *</label>
+                      <input className={`w-full border px-3 py-2 text-sm ${input}`} value={conversionData.project.site_address} onChange={(e) => setConversionData((p) => ({ ...p, project: { ...p.project, site_address: e.target.value } }))} required disabled={isSubmittingConvert} />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      type="submit"
+                      disabled={isSubmittingConvert}
+                      className="flex-1 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {isSubmittingConvert ? 'Converting…' : 'Convert to Project'}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isSubmittingConvert}
+                      onClick={() => { if (!isSubmittingConvertRef.current) setConvertingLead(null); }}
+                      className={`flex-1 py-3 border ${card} ${muted} text-[10px] font-black uppercase tracking-widest disabled:cursor-not-allowed disabled:opacity-60`}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </form>
+          </div>
         )}
       </div>
     </main>

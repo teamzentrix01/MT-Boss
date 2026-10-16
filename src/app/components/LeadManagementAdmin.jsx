@@ -49,6 +49,9 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   const [selected, setSelected] = useState(null);
   const [convertingLead, setConvertingLead] = useState(null);
   const [conversionData, setConversionData] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
+  const idempotencyKeyRef = useRef(null);
   const searchInputRef = useRef(null);
   const searchHostRef = useRef(null);
 
@@ -197,6 +200,12 @@ export default function LeadManagementAdmin({ isDarkMode }) {
       window.location.href = `/dashboard?tab=party-project-management&projectId=${lead.converted_project_id}`;
       return;
     }
+    isSubmittingRef.current = false;
+    setIsSubmitting(false);
+    idempotencyKeyRef.current = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `convert_${lead.id}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
     setConvertingLead(lead);
     setConversionData({
       loading: true,
@@ -223,7 +232,11 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   }
 
   async function submitConversion(e) {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+    setIsSubmitting(true);
+
     const payload = {
       lead_id: convertingLead.id,
       party_id: conversionData.partyId,
@@ -231,18 +244,34 @@ export default function LeadManagementAdmin({ isDarkMode }) {
       project: conversionData.project,
     };
     
-    const res = await fetch('/api/admin/lead-management/convert', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (data.success) {
-      setConvertingLead(null);
-      await loadLeads();
-      window.location.href = `/dashboard?tab=party-project-management&projectId=${data.project_id}`;
-    } else {
-      alert(data.error || 'Conversion failed');
+    try {
+      const res = await fetch('/api/admin/lead-management/convert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token()}`,
+          'Idempotency-Key': idempotencyKeyRef.current || `convert_${convertingLead.id}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const targetProjectId = data.project_id;
+        setLeads(prev => prev.map(l => l.id === convertingLead.id ? { ...l, converted_project_id: targetProjectId } : l));
+        setConvertingLead(null);
+        isSubmittingRef.current = false;
+        setIsSubmitting(false);
+        await loadLeads({ silent: true });
+        window.location.href = `/dashboard?tab=party-project-management&projectId=${targetProjectId}`;
+      } else {
+        alert(data.error || 'Conversion failed');
+        isSubmittingRef.current = false;
+        setIsSubmitting(false);
+      }
+    } catch (err) {
+      alert(err.message || 'Conversion failed');
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
     }
   }
 
@@ -624,11 +653,26 @@ export default function LeadManagementAdmin({ isDarkMode }) {
       )}
 
       {convertingLead && conversionData && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <form onSubmit={submitConversion} style={{ width: 'min(500px,100%)', background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: '1.5rem', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div
+          onClick={() => { if (!isSubmittingRef.current) setConvertingLead(null); }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+        >
+          <form
+            onSubmit={submitConversion}
+            onClick={e => e.stopPropagation()}
+            onKeyDown={e => { if (e.key === 'Enter' && isSubmittingRef.current) e.preventDefault(); }}
+            style={{ width: 'min(500px,100%)', background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: '1.5rem', maxHeight: '90vh', overflowY: 'auto' }}
+          >
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
               <div style={{ fontSize: '1.2rem', fontWeight: 900, color: text }}>Convert to Project</div>
-              <button type="button" onClick={() => setConvertingLead(null)} style={{ background: 'transparent', border: 0, color: text, fontSize: '1.2rem', cursor: 'pointer' }}>×</button>
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={() => { if (!isSubmittingRef.current) setConvertingLead(null); }}
+                style={{ background: 'transparent', border: 0, color: text, fontSize: '1.2rem', cursor: isSubmitting ? 'not-allowed' : 'pointer', opacity: isSubmitting ? 0.4 : 1 }}
+              >
+                ×
+              </button>
             </div>
             
             {conversionData.loading ? (
@@ -646,19 +690,19 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                     <div style={{ display: 'grid', gap: 8 }}>
                       <div>
                         <label style={labelStyle}>Client Name *</label>
-                        <input style={inputStyle} value={conversionData.newParty.name} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, name: e.target.value } }))} required />
+                        <input style={inputStyle} value={conversionData.newParty.name} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, name: e.target.value } }))} required disabled={isSubmitting} />
                       </div>
                       <div>
                         <label style={labelStyle}>Phone *</label>
-                        <input style={inputStyle} value={conversionData.newParty.phone} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, phone: e.target.value } }))} required />
+                        <input style={inputStyle} value={conversionData.newParty.phone} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, phone: e.target.value } }))} required disabled={isSubmitting} />
                       </div>
                       <div>
                         <label style={labelStyle}>Email</label>
-                        <input style={inputStyle} type="email" value={conversionData.newParty.email} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, email: e.target.value } }))} />
+                        <input style={inputStyle} type="email" value={conversionData.newParty.email} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, email: e.target.value } }))} disabled={isSubmitting} />
                       </div>
                       <div>
                         <label style={labelStyle}>City</label>
-                        <input style={inputStyle} value={conversionData.newParty.address} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, address: e.target.value } }))} />
+                        <input style={inputStyle} value={conversionData.newParty.address} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, address: e.target.value } }))} disabled={isSubmitting} />
                       </div>
                     </div>
                   </div>
@@ -669,26 +713,59 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                   <div style={{ display: 'grid', gap: 8 }}>
                     <div>
                       <label style={labelStyle}>Project Name *</label>
-                      <input style={inputStyle} value={conversionData.project.name} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, name: e.target.value } }))} required />
+                      <input style={inputStyle} value={conversionData.project.name} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, name: e.target.value } }))} required disabled={isSubmitting} />
                     </div>
                     <div>
                       <label style={labelStyle}>Start Date *</label>
-                      <input type="date" style={inputStyle} value={conversionData.project.start_date} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, start_date: e.target.value } }))} required />
+                      <input type="date" style={inputStyle} value={conversionData.project.start_date} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, start_date: e.target.value } }))} required disabled={isSubmitting} />
                     </div>
                     <div>
                       <label style={labelStyle}>Contract Value (Rs) *</label>
-                      <input type="number" style={inputStyle} value={conversionData.project.contract_value} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, contract_value: e.target.value } }))} required />
+                      <input type="number" style={inputStyle} value={conversionData.project.contract_value} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, contract_value: e.target.value } }))} required disabled={isSubmitting} />
                     </div>
                     <div>
                       <label style={labelStyle}>Site / City *</label>
-                      <input style={inputStyle} value={conversionData.project.site_address} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, site_address: e.target.value } }))} required />
+                      <input style={inputStyle} value={conversionData.project.site_address} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, site_address: e.target.value } }))} required disabled={isSubmitting} />
                     </div>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
-                  <button type="submit" style={{ flex: 1, background: 'var(--accent)', color: '#111', border: 0, padding: '0.65rem', borderRadius: 6, fontWeight: 900, cursor: 'pointer' }}>Convert to Project</button>
-                  <button type="button" onClick={() => setConvertingLead(null)} style={{ flex: 1, background: surface, color: text, border: `1px solid ${border}`, padding: '0.65rem', borderRadius: 6, fontWeight: 900, cursor: 'pointer' }}>Cancel</button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    style={{
+                      flex: 1,
+                      background: 'var(--accent)',
+                      color: '#111',
+                      border: 0,
+                      padding: '0.65rem',
+                      borderRadius: 6,
+                      fontWeight: 900,
+                      cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                      opacity: isSubmitting ? 0.6 : 1,
+                    }}
+                  >
+                    {isSubmitting ? 'Converting…' : 'Convert to Project'}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={() => { if (!isSubmittingRef.current) setConvertingLead(null); }}
+                    style={{
+                      flex: 1,
+                      background: surface,
+                      color: text,
+                      border: `1px solid ${border}`,
+                      padding: '0.65rem',
+                      borderRadius: 6,
+                      fontWeight: 900,
+                      cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                      opacity: isSubmitting ? 0.6 : 1,
+                    }}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             )}
