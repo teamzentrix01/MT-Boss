@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { validateSlabs } from '@/lib/cashback/calculate';
+import { ensureCashbackSchema } from '@/lib/cashback/service';
 
 export async function PUT(req, { params }) {
   try {
@@ -10,6 +11,7 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
     }
 
+    await ensureCashbackSchema();
     const { id } = await params;
     const ruleId = Number(id);
     if (!Number.isInteger(ruleId) || ruleId <= 0) {
@@ -18,14 +20,26 @@ export async function PUT(req, { params }) {
 
     const body = await req.json();
     const valueType = body.value_type === 'FLAT' ? 'FLAT' : 'PERCENT';
-    const value = Math.max(0, Number(body.value || 0));
-    const minOrderValue = Math.max(0, Number(body.min_order_value || 0));
-    const maxCashback = body.max_cashback !== '' && body.max_cashback != null ? Math.max(0, Number(body.max_cashback)) : null;
+    const numValue = Number(body.value);
+    const value = Number.isFinite(numValue) ? Math.max(0, numValue) : 0;
+
+    const numMinOrder = Number(body.min_order_value);
+    const minOrderValue = Number.isFinite(numMinOrder) ? Math.max(0, numMinOrder) : 0;
+
+    const parsedMaxCashback = Number(body.max_cashback);
+    const maxCashback = body.max_cashback !== '' && body.max_cashback != null && Number.isFinite(parsedMaxCashback)
+      ? Math.max(0, parsedMaxCashback)
+      : null;
+
     const startDate = body.start_date || null;
     const endDate = body.end_date || null;
     const isActive = body.is_active !== false;
-    const priority = Number.parseInt(body.priority || 0, 10);
-    const categoryId = body.category_id != null ? Number(body.category_id) : null;
+
+    const parsedPriority = Number.parseInt(body.priority || 0, 10);
+    const priority = Number.isFinite(parsedPriority) ? parsedPriority : 0;
+
+    const parsedCatId = Number(body.category_id);
+    const categoryId = body.category_id != null && Number.isInteger(parsedCatId) ? parsedCatId : null;
     const slabs = Array.isArray(body.slabs) ? body.slabs : [];
 
     // Verify existing rule
@@ -96,6 +110,7 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
     }
 
+    await ensureCashbackSchema();
     const { id } = await params;
     const ruleId = Number(id);
     if (!Number.isInteger(ruleId) || ruleId <= 0) {
@@ -110,6 +125,7 @@ export async function DELETE(req, { params }) {
     return NextResponse.json({ success: true, message: 'Rule deleted successfully' });
   } catch (error) {
     console.error('DELETE /api/admin/cashback/rules/[id] error:', error);
-    return NextResponse.json({ success: false, error: 'Could not delete rule' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Could not delete rule' }, { status: 500 });
   }
 }
+

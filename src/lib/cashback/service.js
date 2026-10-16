@@ -1,10 +1,185 @@
 import pool from '../db.js';
 import { calculateCashback } from './calculate.js';
+import { createInitializationGuard } from '../api-utils.js';
+
+/**
+ * Ensures all Cashback & Wallet tables, columns, indexes, and initial records exist.
+ * Idempotent with TTL caching via createInitializationGuard.
+ */
+export const ensureCashbackSchema = createInitializationGuard(async () => {
+  // 1. Ensure shop_categories exists (for category_id foreign key in cashback_rules)
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS shop_categories (
+      id          SERIAL PRIMARY KEY,
+      name        VARCHAR(200) NOT NULL,
+      image       TEXT,
+      emoji       VARCHAR(20)  DEFAULT '🛒',
+      emoji_image TEXT,
+      label       VARCHAR(100) DEFAULT '',
+      label_color VARCHAR(50)  DEFAULT 'yellow',
+      price_range VARCHAR(100) DEFAULT '',
+      unit        VARCHAR(100) DEFAULT '',
+      sort_order  INTEGER      DEFAULT 0,
+      is_active   BOOLEAN      DEFAULT TRUE,
+      created_at  TIMESTAMP    DEFAULT NOW(),
+      updated_at  TIMESTAMP    DEFAULT NOW()
+    );
+  `);
+
+  // 2. cashback_settings table
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS cashback_settings (
+      id INTEGER PRIMARY KEY DEFAULT 1,
+      enabled BOOLEAN NOT NULL DEFAULT TRUE,
+      stacking_mode VARCHAR(20) NOT NULL DEFAULT 'HIGHEST',
+      allow_with_coupon BOOLEAN NOT NULL DEFAULT TRUE,
+      calc_base VARCHAR(20) NOT NULL DEFAULT 'AFTER_DISCOUNT',
+      max_cashback_per_order NUMERIC(12,2) DEFAULT NULL,
+      pending_days INTEGER NOT NULL DEFAULT 7,
+      expiry_days INTEGER NOT NULL DEFAULT 0,
+      redeem_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+      max_redeem_percent_of_order NUMERIC(5,2) NOT NULL DEFAULT 10.00,
+      min_order_for_redeem NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+      min_redeem_amount NUMERIC(12,2) NOT NULL DEFAULT 1.00,
+      allow_redeem_with_coupon BOOLEAN NOT NULL DEFAULT TRUE,
+      cashback_on_wallet_paid_amount BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      CONSTRAINT single_row_check CHECK (id = 1)
+    );
+  `);
+
+  // Add any columns if table was created in an earlier migration
+  await pool.query(`
+    ALTER TABLE cashback_settings
+      ADD COLUMN IF NOT EXISTS redeem_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+      ADD COLUMN IF NOT EXISTS max_redeem_percent_of_order NUMERIC(5,2) NOT NULL DEFAULT 10.00,
+      ADD COLUMN IF NOT EXISTS min_order_for_redeem NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+      ADD COLUMN IF NOT EXISTS min_redeem_amount NUMERIC(12,2) NOT NULL DEFAULT 1.00,
+      ADD COLUMN IF NOT EXISTS allow_redeem_with_coupon BOOLEAN NOT NULL DEFAULT TRUE,
+      ADD COLUMN IF NOT EXISTS cashback_on_wallet_paid_amount BOOLEAN NOT NULL DEFAULT FALSE;
+  `);
+
+  // Seed default settings row
+  await pool.query(`
+    INSERT INTO cashback_settings (
+      id, enabled, stacking_mode, allow_with_coupon, calc_base, max_cashback_per_order, pending_days, expiry_days,
+      redeem_enabled, max_redeem_percent_of_order, min_order_for_redeem, min_redeem_amount, allow_redeem_with_coupon, cashback_on_wallet_paid_amount
+    )
+    VALUES (1, TRUE, 'HIGHEST', TRUE, 'AFTER_DISCOUNT', NULL, 7, 0, TRUE, 10.00, 0.00, 1.00, TRUE, FALSE)
+    ON CONFLICT (id) DO NOTHING;
+  `);
+
+  // 3. cashback_rules table
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS cashback_rules (
+      id SERIAL PRIMARY KEY,
+      rule_type VARCHAR(30) NOT NULL,
+      value_type VARCHAR(20) NOT NULL DEFAULT 'PERCENT',
+      value NUMERIC(10,2) NOT NULL DEFAULT 0,
+      category_id INTEGER REFERENCES shop_categories(id) ON DELETE CASCADE,
+      slabs JSONB DEFAULT '[]'::jsonb,
+      min_order_value NUMERIC(12,2) DEFAULT 0,
+      max_cashback NUMERIC(12,2) DEFAULT NULL,
+      start_date DATE DEFAULT NULL,
+      end_date DATE DEFAULT NULL,
+      is_active BOOLEAN NOT NULL DEFAULT TRUE,
+      priority INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+
+    CREATE UNIQUE INDEX IF NOT EXISTS uidx_cashback_active_first_order
+    ON cashback_rules (rule_type)
+    WHERE rule_type = 'FIRST_ORDER' AND is_active = TRUE;
+
+    CREATE UNIQUE INDEX IF NOT EXISTS uidx_cashback_active_slab
+    ON cashback_rules (rule_type)
+    WHERE rule_type = 'SLAB' AND is_active = TRUE;
+
+    CREATE UNIQUE INDEX IF NOT EXISTS uidx_cashback_active_category
+    ON cashback_rules (category_id)
+    WHERE rule_type = 'CATEGORY' AND is_active = TRUE AND category_id IS NOT NULL;
+  `);
+
+  // 4. wallets table
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS wallets (
+      user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      balance NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+      pending_balance NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      CONSTRAINT chk_wallet_balance_positive CHECK (balance >= 0),
+      CONSTRAINT chk_wallet_pending_positive CHECK (pending_balance >= 0)
+    );
+  `);
+
+  // 5. wallet_transactions table
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS wallet_transactions (
+      id BIGSERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      order_id INTEGER REFERENCES material_enquiries(id) ON DELETE SET NULL,
+      type VARCHAR(20) NOT NULL,
+      source VARCHAR(30) NOT NULL,
+      status VARCHAR(20) NOT NULL,
+      amount NUMERIC(12,2) NOT NULL,
+      remaining_amount NUMERIC(12,2) DEFAULT NULL,
+      rule_breakdown JSONB DEFAULT '{}'::jsonb,
+      available_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      expires_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+      note TEXT DEFAULT NULL,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+
+    ALTER TABLE wallet_transactions
+      ADD COLUMN IF NOT EXISTS remaining_amount NUMERIC(12,2) DEFAULT NULL;
+
+    CREATE INDEX IF NOT EXISTS idx_wallet_tx_user_created ON wallet_transactions (user_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_wallet_tx_status_available ON wallet_transactions (status, available_at);
+    CREATE INDEX IF NOT EXISTS idx_wallet_tx_status_expires ON wallet_transactions (status, expires_at);
+
+    CREATE UNIQUE INDEX IF NOT EXISTS uidx_wallet_tx_one_cashback_per_order
+    ON wallet_transactions (order_id)
+    WHERE source = 'CASHBACK' AND type = 'CREDIT' AND order_id IS NOT NULL;
+  `);
+
+  // 6. wallet_redemption_allocations table
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS wallet_redemption_allocations (
+      id BIGSERIAL PRIMARY KEY,
+      redeem_txn_id BIGINT NOT NULL REFERENCES wallet_transactions(id) ON DELETE CASCADE,
+      credit_txn_id BIGINT NOT NULL REFERENCES wallet_transactions(id) ON DELETE CASCADE,
+      order_id INTEGER REFERENCES material_enquiries(id) ON DELETE SET NULL,
+      amount NUMERIC(12,2) NOT NULL,
+      restored_amount NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      CONSTRAINT chk_alloc_amount_pos CHECK (amount > 0),
+      CONSTRAINT chk_alloc_restored_le_amount CHECK (restored_amount <= amount)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_alloc_redeem_txn ON wallet_redemption_allocations (redeem_txn_id);
+    CREATE INDEX IF NOT EXISTS idx_alloc_credit_txn ON wallet_redemption_allocations (credit_txn_id);
+    CREATE INDEX IF NOT EXISTS idx_alloc_order_id ON wallet_redemption_allocations (order_id);
+  `);
+
+  // 7. Order snapshot columns on material_enquiries
+  await pool.query(`
+    ALTER TABLE material_enquiries
+      ADD COLUMN IF NOT EXISTS cashback_amount NUMERIC(12,2) DEFAULT 0.00,
+      ADD COLUMN IF NOT EXISTS cashback_breakdown JSONB DEFAULT '{}'::jsonb,
+      ADD COLUMN IF NOT EXISTS cashback_status VARCHAR(30) DEFAULT 'NONE',
+      ADD COLUMN IF NOT EXISTS wallet_used NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+      ADD COLUMN IF NOT EXISTS wallet_redeem_status VARCHAR(30) NOT NULL DEFAULT 'NONE';
+  `);
+});
 
 /**
  * Loads current global cashback settings.
  */
 export async function getCashbackSettings(client = pool) {
+  await ensureCashbackSchema();
   const res = await client.query('SELECT * FROM cashback_settings WHERE id = 1');
   if (res.rows[0]) return res.rows[0];
   return {
@@ -15,6 +190,12 @@ export async function getCashbackSettings(client = pool) {
     max_cashback_per_order: null,
     pending_days: 7,
     expiry_days: 0,
+    redeem_enabled: true,
+    max_redeem_percent_of_order: 10,
+    min_order_for_redeem: 0,
+    min_redeem_amount: 1,
+    allow_redeem_with_coupon: true,
+    cashback_on_wallet_paid_amount: false,
   };
 }
 
@@ -22,6 +203,7 @@ export async function getCashbackSettings(client = pool) {
  * Loads all active cashback rules.
  */
 export async function getActiveCashbackRules(client = pool) {
+  await ensureCashbackSchema();
   const res = await client.query(`
     SELECT * FROM cashback_rules 
     WHERE is_active = TRUE 
@@ -113,6 +295,7 @@ export async function ensureWallet(userId, client = pool) {
   if (!numericId || numericId <= 0 || Number.isNaN(numericId)) return;
 
   try {
+    await ensureCashbackSchema();
     await client.query(
       `INSERT INTO wallets (user_id, balance, pending_balance)
        VALUES ($1, 0.00, 0.00)
@@ -338,6 +521,7 @@ export async function reverseOrderCashback({ orderId, reason = 'Order cancelled/
  *    CRITICAL: Expiry expires only remaining_amount of a lot, NEVER money the user already spent.
  */
 export async function processScheduledMaturityAndExpiry(client = pool) {
+  await ensureCashbackSchema();
   const dbClient = client;
 
   // 1. Mature PENDING transactions

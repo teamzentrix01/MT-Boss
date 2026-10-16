@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
-import { getCashbackSettings } from '@/lib/cashback/service';
+import { getCashbackSettings, ensureCashbackSchema } from '@/lib/cashback/service';
 
 export async function GET(req) {
   try {
@@ -10,11 +10,12 @@ export async function GET(req) {
       return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
     }
 
+    await ensureCashbackSchema();
     const settings = await getCashbackSettings();
     return NextResponse.json({ success: true, data: settings });
   } catch (error) {
     console.error('GET /api/admin/cashback/settings error:', error);
-    return NextResponse.json({ success: false, error: 'Could not fetch settings' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Could not fetch settings' }, { status: 500 });
   }
 }
 
@@ -25,22 +26,38 @@ export async function PUT(req) {
       return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
     }
 
+    await ensureCashbackSchema();
     const body = await req.json();
     const enabled = body.enabled !== false;
     const stackingMode = body.stacking_mode === 'SUM' ? 'SUM' : 'HIGHEST';
     const allowWithCoupon = body.allow_with_coupon !== false;
     const calcBase = body.calc_base === 'BEFORE_DISCOUNT' ? 'BEFORE_DISCOUNT' : 'AFTER_DISCOUNT';
-    const maxCashbackPerOrder = body.max_cashback_per_order !== '' && body.max_cashback_per_order != null
-      ? Math.max(0, Number(body.max_cashback_per_order))
+
+    const parsedMaxCashback = Number(body.max_cashback_per_order);
+    const maxCashbackPerOrder = body.max_cashback_per_order !== '' && body.max_cashback_per_order != null && Number.isFinite(parsedMaxCashback)
+      ? Math.max(0, parsedMaxCashback)
       : null;
-    const pendingDays = Math.max(0, Number.parseInt(body.pending_days ?? 7, 10));
-    const expiryDays = Math.max(0, Number.parseInt(body.expiry_days ?? 0, 10));
+
+    const parsedPending = Number.parseInt(body.pending_days, 10);
+    const pendingDays = Number.isFinite(parsedPending) && parsedPending >= 0 ? parsedPending : 7;
+
+    const parsedExpiry = Number.parseInt(body.expiry_days, 10);
+    const expiryDays = Number.isFinite(parsedExpiry) && parsedExpiry >= 0 ? parsedExpiry : 0;
 
     // Wallet Redemption settings
     const redeemEnabled = body.redeem_enabled !== false;
-    const maxRedeemPercentOfOrder = Math.min(100, Math.max(0, Number(body.max_redeem_percent_of_order ?? 10)));
-    const minOrderForRedeem = Math.max(0, Number(body.min_order_for_redeem ?? 0));
-    const minRedeemAmount = Math.max(0, Number(body.min_redeem_amount ?? 0));
+
+    const parsedMaxRedeem = Number(body.max_redeem_percent_of_order);
+    const maxRedeemPercentOfOrder = Number.isFinite(parsedMaxRedeem)
+      ? Math.min(100, Math.max(0, parsedMaxRedeem))
+      : 10;
+
+    const parsedMinOrderRedeem = Number(body.min_order_for_redeem);
+    const minOrderForRedeem = Number.isFinite(parsedMinOrderRedeem) ? Math.max(0, parsedMinOrderRedeem) : 0;
+
+    const parsedMinRedeem = Number(body.min_redeem_amount);
+    const minRedeemAmount = Number.isFinite(parsedMinRedeem) ? Math.max(0, parsedMinRedeem) : 0;
+
     const allowRedeemWithCoupon = body.allow_redeem_with_coupon !== false;
     const cashbackOnWalletPaidAmount = Boolean(body.cashback_on_wallet_paid_amount);
 
@@ -89,3 +106,4 @@ export async function PUT(req) {
     return NextResponse.json({ success: false, error: error.message || 'Could not update settings' }, { status: 500 });
   }
 }
+
