@@ -13,6 +13,7 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+
     const ids = items.map((item) => Number(item.product_id)).filter((id) => Number.isInteger(id) && id > 0);
     if (ids.length !== items.length) {
       return NextResponse.json(

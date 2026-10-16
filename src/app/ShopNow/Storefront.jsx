@@ -49,9 +49,12 @@ export function getProductImage(product, category = null) {
   return '';
 }
 
-export function ShopImage({ src, alt = '', ...props }) {
+export function ShopImage({ src, alt = '', className = '', ...props }) {
   const normalizedSrc = normalizeShopImageUrl(src);
   if (!normalizedSrc) return null;
+
+  const isPng = typeof normalizedSrc === 'string' && (/\.png(\?|$)/i.test(normalizedSrc) || normalizedSrc.toLowerCase().includes('.png') || normalizedSrc.includes('image/png'));
+  const combinedClassName = [className, isPng ? 'is-png-image' : ''].filter(Boolean).join(' ');
 
   const isExternal = /^https?:\/\//i.test(normalizedSrc);
   let isNextImageSafe = !isExternal;
@@ -71,6 +74,7 @@ export function ShopImage({ src, alt = '', ...props }) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img
       {...imgProps}
+      className={combinedClassName}
       src={normalizedSrc}
       alt={alt}
       loading={priority ? 'eager' : 'lazy'}
@@ -81,7 +85,7 @@ export function ShopImage({ src, alt = '', ...props }) {
     />;
   }
 
-  return <Image src={normalizedSrc} alt={alt} {...props} unoptimized={!isNextImageSafe} />;
+  return <Image src={normalizedSrc} alt={alt} className={combinedClassName} {...props} unoptimized={!isNextImageSafe} />;
 }
 
 function OptimizedImage({ src, alt = '', ...props }) {

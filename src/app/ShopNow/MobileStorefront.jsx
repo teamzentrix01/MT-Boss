@@ -524,7 +524,7 @@ export default function MobileStorefront({
   };
 
   return (
-    <div className="mobile-store-root">
+    <div className={`mobile-store-root ${isDark ? 'is-dark dark-mode' : ''}`}>
       {/* ─────────────────────────────────────────────────────────────
           1. STICKY MOBILE HEADER (When on Home / Discovery View)
          ───────────────────────────────────────────────────────────── */}
@@ -622,7 +622,7 @@ export default function MobileStorefront({
               )}
               {content?.trust_badge_3 !== "" && (
                 <div className="mobile-trust-badge">
-                  <ShieldCheck size={14} className="mobile-trust-icon text-[#12283F]" />
+                  <ShieldCheck size={14} className={`mobile-trust-icon ${isDark ? 'text-sky-400' : 'text-[#12283F]'}`} />
                   <span>{content?.trust_badge_3 || "Pay on Delivery"}</span>
                 </div>
               )}
@@ -808,6 +808,7 @@ export default function MobileStorefront({
                           onDetails={onDetails}
                           selectedCity={selectedCity}
                           categories={categories}
+                          isDark={isDark}
                         />
                       );
                     })}
@@ -910,7 +911,7 @@ export default function MobileStorefront({
                                       />
                                     );
                                   }
-                                  return <Icon size={26} className="text-[#12283F]" />;
+                                  return <Icon size={26} className={isDark ? "text-sky-300" : "text-[#12283F]"} />;
                                 })()}
                               </div>
                               <span className="mobile-category-label">{cat.name}</span>
@@ -970,6 +971,7 @@ export default function MobileStorefront({
                           isFreeDeliveryActive={isFreeDeliveryActive}
                           freeDeliveryMinOrder={freeDeliveryMinOrder}
                           categories={categories}
+                          isDark={isDark}
                         />
                       );
                     })}
@@ -1101,7 +1103,7 @@ export default function MobileStorefront({
               {categoryProducts.length === 0 ? (
                 <div className="mobile-empty-category">
                   <Package size={40} className="text-gray-300 mx-auto mb-2" />
-                  <p className="font-bold text-sm text-[#12283F]">
+                  <p className={`font-bold text-sm ${isDark ? 'text-white' : 'text-[#12283F]'}`}>
                     No materials listed under this category.
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
@@ -1134,6 +1136,7 @@ export default function MobileStorefront({
                         isFreeDeliveryActive={isFreeDeliveryActive}
                         freeDeliveryMinOrder={freeDeliveryMinOrder}
                         categories={categories}
+                        isDark={isDark}
                       />
                     );
                   })}
@@ -2146,6 +2149,7 @@ function MobileProductCard({
   isFreeDeliveryActive = false,
   freeDeliveryMinOrder = 50000,
   categories = [],
+  isDark = false,
 }) {
   const price = Number(product.price) || 0;
   const hasFixedPrice = price > 0;
@@ -2183,7 +2187,7 @@ function MobileProductCard({
             />
           ) : (
             <div className="mobile-card-img-placeholder">
-              <Package size={34} className="text-[#12283F]/60" />
+              <Package size={34} className={isDark ? "text-slate-400" : "text-[#12283F]/60"} />
             </div>
           )}
         </button>
