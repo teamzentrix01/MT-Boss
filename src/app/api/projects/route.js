@@ -21,31 +21,133 @@ export async function GET(req) {
 
     if (kind === 'operational') {
       await ensureAgentSchema();
-      await ensureProjectOpsSchema();
-      const client = await pool.connect();
-      try {
-        await client.query('BEGIN');
-        const finalLeads = await client.query(
-          `SELECT l.id
-             FROM agent_leads l
-             LEFT JOIN projects p ON p.source_lead_id = l.id
-            WHERE l.lead_stage = 'Final' AND p.id IS NULL`
-        );
-        for (const lead of finalLeads.rows) {
-          await convertFinalLeadToProject(client, lead.id);
-        }
-        await client.query('COMMIT');
-      } catch (error) {
-        await client.query('ROLLBACK').catch(() => {});
-        throw error;
-      } finally {
-        client.release();
-      }
-      const [data, agents] = await Promise.all([
-        getProjectSummaries("WHERE p.project_kind = 'operational'"),
+      
+      const query = `
+        WITH project_payments AS (
+          SELECT project_id, COALESCE(SUM(amount), 0) AS received
+          FROM pm_party_payments
+          WHERE NOT is_deleted
+          GROUP BY project_id
+        ),
+        project_agent_agg AS (
+          SELECT 
+            pa.project_id,
+            json_agg(json_build_object(
+              'id', a.id,
+              'name', a.name,
+              'email', a.email,
+              'phone', a.phone,
+              'city', a.city
+            ) ORDER BY pa.assigned_at ASC) AS agents,
+            (array_agg(a.id ORDER BY pa.assigned_at ASC))[1] AS primary_agent_id,
+            (array_agg(a.name ORDER BY pa.assigned_at ASC))[1] AS primary_agent_name
+          FROM pm_project_agents pa
+          JOIN agents a ON a.id = pa.agent_id
+          GROUP BY pa.project_id
+        ),
+        combined_pm_projects AS (
+          SELECT 
+            p.id::text AS id,
+            p.party_id::text AS party_id,
+            p.name AS title,
+            p.name AS project_name,
+            COALESCE(p.site_address, pa.address, '') AS site_address,
+            COALESCE(p.city, p.site_address, pa.address, '') AS location,
+            p.start_date,
+            p.expected_end_date,
+            COALESCE(p.contract_value, 0)::numeric AS deal_amount,
+            COALESCE(p.contract_value, 0)::numeric AS contract_value,
+            p.built_up_area,
+            p.status AS project_status,
+            p.status,
+            p.project_type,
+            COALESCE(al.service_type, p.project_type, 'General') AS category,
+            p.city AS project_city,
+            p.source_lead_id::text AS source_lead_id,
+            p.created_at,
+            pa.name AS client_name,
+            pa.name AS party_name,
+            pa.phone AS client_phone,
+            pa.phone AS party_phone,
+            pa.email AS client_email,
+            pa.email AS party_email,
+            pa.address AS party_address,
+            al.id::text AS lead_id,
+            al.service_type AS lead_service_type,
+            al.client_requirement AS lead_client_requirement,
+            al.notes AS lead_notes,
+            al.daily_visit_notes AS lead_daily_visit_notes,
+            al.city AS lead_city,
+            COALESCE(pp.received, 0)::numeric AS received,
+            (COALESCE(p.contract_value, 0) - COALESCE(pp.received, 0))::numeric AS pending,
+            COALESCE(paa.agents, '[]'::json) AS assigned_agents,
+            paa.primary_agent_id AS assigned_agent_id,
+            paa.primary_agent_name AS assigned_agent_name,
+            CASE WHEN p.source_lead_id IS NOT NULL OR al.id IS NOT NULL THEN 'Lead' ELSE 'Manual' END AS source,
+            false AS is_lead_only
+          FROM pm_projects p
+          JOIN pm_parties pa ON pa.id = p.party_id
+          LEFT JOIN agent_leads al ON (al.id = p.source_lead_id OR al.converted_project_id = p.id)
+          LEFT JOIN project_payments pp ON pp.project_id = p.id
+          LEFT JOIN project_agent_agg paa ON paa.project_id = p.id
+        ),
+        unconverted_leads AS (
+          SELECT 
+            ('lead_' || al.id)::text AS id,
+            NULL::text AS party_id,
+            COALESCE(al.service_type, al.client_requirement, 'Lead Project') AS title,
+            COALESCE(al.service_type, al.client_requirement, 'Lead Project') AS project_name,
+            COALESCE(al.city, '') AS site_address,
+            COALESCE(al.city, '') AS location,
+            al.created_at::date AS start_date,
+            NULL::date AS expected_end_date,
+            COALESCE(al.final_amount, 0)::numeric AS deal_amount,
+            COALESCE(al.final_amount, 0)::numeric AS contract_value,
+            NULL::numeric AS built_up_area,
+            'lead_not_converted' AS project_status,
+            'lead_not_converted' AS status,
+            al.service_type AS project_type,
+            COALESCE(al.service_type, 'Lead') AS category,
+            al.city AS project_city,
+            al.id::text AS source_lead_id,
+            al.created_at,
+            al.client_name AS client_name,
+            al.client_name AS party_name,
+            al.client_phone AS client_phone,
+            al.client_phone AS party_phone,
+            al.client_email AS client_email,
+            al.client_email AS party_email,
+            al.city AS party_address,
+            al.id::text AS lead_id,
+            al.service_type AS lead_service_type,
+            al.client_requirement AS lead_client_requirement,
+            al.notes AS lead_notes,
+            al.daily_visit_notes AS lead_daily_visit_notes,
+            al.city AS lead_city,
+            0::numeric AS received,
+            COALESCE(al.final_amount, 0)::numeric AS pending,
+            '[]'::json AS assigned_agents,
+            NULL::integer AS assigned_agent_id,
+            NULL::text AS assigned_agent_name,
+            'Lead' AS source,
+            true AS is_lead_only
+          FROM agent_leads al
+          WHERE (al.lead_stage = 'Final' OR al.status = 'Converted')
+            AND al.converted_project_id IS NULL
+            AND NOT EXISTS (SELECT 1 FROM pm_projects p WHERE p.source_lead_id = al.id)
+        )
+        SELECT * FROM combined_pm_projects
+        UNION ALL
+        SELECT * FROM unconverted_leads
+        ORDER BY created_at DESC;
+      `;
+
+      const [dataRes, agentsRes] = await Promise.all([
+        pool.query(query),
         pool.query(`SELECT id, name, city FROM agents WHERE status = 'Approved' AND login_enabled = TRUE AND must_change_password = FALSE ORDER BY name ASC`),
       ]);
-      return NextResponse.json({ success: true, data, agents: agents.rows });
+
+      return NextResponse.json({ success: true, data: dataRes.rows, agents: agentsRes.rows });
     }
 
     if (status === 'all') {

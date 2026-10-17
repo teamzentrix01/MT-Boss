@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Eye, Download, RefreshCw, Plus, X, ActionIconButton } from '@/app/components/ui/icons';
+import LeadDetailView from './LeadDetailView';
 
 const statuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
 const stages = ['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost'];
@@ -47,6 +48,13 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   const [selectedAgentId, setSelectedAgentId] = useState('');
   const [form, setForm] = useState(emptyForm);
   const [selected, setSelected] = useState(null);
+  const [detailLeadId, setDetailLeadId] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      return p.get('leadId') || null;
+    }
+    return null;
+  });
   const [convertingLead, setConvertingLead] = useState(null);
   const [conversionData, setConversionData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,6 +64,39 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   const searchHostRef = useRef(null);
 
   const token = () => localStorage.getItem('token') || localStorage.getItem('admin-token');
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window !== 'undefined') {
+        const p = new URLSearchParams(window.location.search);
+        setDetailLeadId(p.get('leadId') || null);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const openDetail = useCallback((leadOrId) => {
+    const id = typeof leadOrId === 'object' && leadOrId !== null ? leadOrId.id : leadOrId;
+    if (!id) return;
+    const strId = String(id);
+    setDetailLeadId(strId);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', 'lead-management');
+      url.searchParams.set('leadId', strId);
+      window.history.pushState({ leadId: strId }, '', url.toString());
+    }
+  }, []);
+
+  const closeDetail = useCallback(() => {
+    setDetailLeadId(null);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('leadId');
+      window.history.pushState({}, '', url.toString());
+    }
+  }, []);
 
   const loadLeads = useCallback(async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
@@ -183,17 +224,26 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   }
 
   async function updateLead(id, patch) {
-    const res = await fetch('/api/admin/lead-management', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
-      body: JSON.stringify({ id, ...patch }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      setLeads((current) => current.map((lead) => lead.id === id ? { ...lead, ...data.data } : lead));
-      setSelected((current) => current?.id === id ? { ...current, ...data.data } : current);
-    } else {
-      setMessage(data.error || 'Update failed.');
+    try {
+      const res = await fetch('/api/admin/lead-management', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
+        body: JSON.stringify({ id, ...patch }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setLeads((current) => current.map((lead) => lead.id === id ? { ...lead, ...data.data } : lead));
+        setSelected((current) => current?.id === id ? { ...current, ...data.data } : current);
+        return { success: true, data: data.data };
+      } else {
+        const errMsg = data.error || 'Update failed.';
+        setMessage(errMsg);
+        return { success: false, error: errMsg };
+      }
+    } catch (err) {
+      const errMsg = err.message || 'Update failed.';
+      setMessage(errMsg);
+      return { success: false, error: errMsg };
     }
   }
 
@@ -335,7 +385,36 @@ export default function LeadManagementAdmin({ isDarkMode }) {
 
   return (
     <div style={{ display: 'grid', gap: '1rem' }}>
-      <div className="section-head">
+      <style>{`
+        .lead-clickable-row {
+          cursor: pointer;
+          transition: background-color 0.15s ease;
+          outline: none;
+        }
+        .lead-clickable-row:hover {
+          background-color: ${isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.025)'} !important;
+        }
+        .lead-clickable-row:focus-visible {
+          outline: 2px solid var(--accent, #f59e0b) !important;
+          outline-offset: -2px;
+        }
+      `}</style>
+
+      {detailLeadId ? (
+        <LeadDetailView
+          leadId={detailLeadId}
+          initialLead={leads.find((l) => String(l.id) === String(detailLeadId)) || null}
+          isDarkMode={isDarkMode}
+          onBack={closeDetail}
+          onUpdateLead={updateLead}
+          onConvertLead={openConvertModal}
+          agents={agents}
+          franchises={franchises}
+          vendors={vendors}
+        />
+      ) : (
+        <>
+          <div className="section-head">
         <span className="section-head-title">Lead Management</span>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button onClick={exportExcel} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, border: 0, background: 'var(--accent)', color: '#111', borderRadius: 5, padding: '0.5rem 0.85rem', fontWeight: 900, cursor: 'pointer' }}>
@@ -563,7 +642,24 @@ export default function LeadManagementAdmin({ isDarkMode }) {
               ) : filteredLeads.length === 0 ? (
                 <tr><td colSpan={10} style={{ padding: '1rem', color: muted }}>No leads found.</td></tr>
               ) : filteredLeads.map((lead) => (
-                <tr key={lead.id} style={{ borderTop: `1px solid ${border}` }}>
+                <tr
+                  key={lead.id}
+                  tabIndex={0}
+                  role="link"
+                  className="lead-clickable-row"
+                  onClick={(e) => {
+                    if (e.target.closest('select, button, a, input, textarea, label')) return;
+                    openDetail(lead);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      if (e.target.closest('select, button, a, input, textarea, label') && e.target !== e.currentTarget) return;
+                      e.preventDefault();
+                      openDetail(lead);
+                    }
+                  }}
+                  style={{ borderTop: `1px solid ${border}` }}
+                >
                   <td style={{ padding: '0.6rem', minWidth: 170 }}>
                     <div style={{ color: text, fontWeight: 800 }}>{lead.client_name}</div>
                     <div style={{ color: muted }}>{lead.client_phone}</div>
@@ -572,12 +668,20 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                   <td style={{ padding: '0.6rem', color: muted }}>{lead.service_type || '-'}<br />{lead.lead_type || ''}</td>
                   <td style={{ padding: '0.6rem', color: muted }}>{lead.lead_source || '-'}</td>
                   <td style={{ padding: '0.6rem' }}>
-                    <select style={inputStyle} value={lead.status || 'New'} onChange={(e) => updateLead(lead.id, { status: e.target.value })}>
+                    <select
+                      style={inputStyle}
+                      value={lead.status || 'New'}
+                      onChange={(e) => updateLead(lead.id, { status: e.target.value })}
+                    >
                       {statuses.map((item) => <option key={item} value={item}>{item}</option>)}
                     </select>
                   </td>
                   <td style={{ padding: '0.6rem' }}>
-                    <select style={inputStyle} value={lead.lead_stage || 'New'} onChange={(e) => updateLead(lead.id, { lead_stage: e.target.value })}>
+                    <select
+                      style={inputStyle}
+                      value={lead.lead_stage || 'New'}
+                      onChange={(e) => updateLead(lead.id, { lead_stage: e.target.value })}
+                    >
                       {stages.map((item) => <option key={item} value={item}>{item}</option>)}
                     </select>
                   </td>
@@ -596,15 +700,31 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                   <td style={{ padding: '0.6rem' }}>
                     <select style={inputStyle} value={lead.agent_id || ''} onChange={(e) => updateLead(lead.id, { agent_id: e.target.value })}>
                       <option value="">Not assigned</option>
-                      {agents.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+                      {agents.map((item) => <option key={item.id} value={item}>{item.name}</option>)}
                     </select>
                   </td>
                   <td style={{ padding: '0.6rem', color: muted, whiteSpace: 'nowrap' }}>{lead.follow_up_date ? new Date(lead.follow_up_date).toLocaleDateString('en-IN') : '-'}</td>
                   <td style={{ padding: '0.6rem' }}>
                     <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                      <button onClick={() => setSelected(lead)} style={{ border: 0, background: 'none', color: 'var(--accent)', fontWeight: 900, cursor: 'pointer' }}>View</button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openDetail(lead);
+                        }}
+                        style={{ border: 0, background: 'none', color: 'var(--accent)', fontWeight: 900, cursor: 'pointer' }}
+                      >
+                        View
+                      </button>
                       {lead.status === 'Converted' && (
-                        <button onClick={() => openConvertModal(lead)} style={{ border: 0, background: lead.converted_project_id ? surface : 'var(--accent)', color: lead.converted_project_id ? text : '#111', borderRadius: 4, padding: '0.3rem 0.5rem', fontWeight: 800, cursor: 'pointer', fontSize: '0.65rem' }}>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openConvertModal(lead);
+                          }}
+                          style={{ border: 0, background: lead.converted_project_id ? surface : 'var(--accent)', color: lead.converted_project_id ? text : '#111', borderRadius: 4, padding: '0.3rem 0.5rem', fontWeight: 800, cursor: 'pointer', fontSize: '0.65rem' }}
+                        >
                           {lead.converted_project_id ? 'Already converted → View Project' : 'Convert to Project'}
                         </button>
                       )}
@@ -616,6 +736,8 @@ export default function LeadManagementAdmin({ isDarkMode }) {
           </table>
         </div>
       </div>
+    </>
+  )}
 
       {selected && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.7)', zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: 20 }} onClick={() => setSelected(null)}>
