@@ -20,6 +20,32 @@ export async function GET(req) {
     await ensureSupplierColumns();
     await ensurePayUIntentSchema();
 
+    const { searchParams } = new URL(req.url);
+    const status = String(searchParams.get('status') || '').trim();
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(200, Math.max(1, parseInt(searchParams.get('limit') || '100', 10) || 100));
+    const offset = (page - 1) * limit;
+    const countsOnly = searchParams.get('counts') === '1';
+
+    const vals = [];
+    const where = [];
+    if (status && status !== 'all') {
+      vals.push(status);
+      where.push(`s.status = $${vals.length}`);
+    }
+    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    const countRes = await pool.query(`SELECT COUNT(*)::INT AS total FROM suppliers s ${whereSql}`, vals);
+    const total = countRes.rows[0]?.total || 0;
+
+    if (countsOnly) {
+      return NextResponse.json({
+        success: true,
+        data: [],
+        pagination: { page: 1, limit: 1, total, pages: 1 },
+      });
+    }
+
+    vals.push(limit, offset);
     const result = await pool.query(
       `SELECT
         s.id, s.email, s.shop_name, s.phone,
@@ -53,10 +79,17 @@ export async function GET(req) {
          ORDER BY created_at DESC, id DESC
          LIMIT 1
        ) payment ON TRUE
-       ORDER BY s.created_at DESC`
+       ${whereSql}
+       ORDER BY s.created_at DESC
+       LIMIT $${vals.length - 1} OFFSET $${vals.length}`,
+      vals
     );
 
-    return NextResponse.json({ success: true, data: result.rows });
+    return NextResponse.json({
+      success: true,
+      data: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
+    });
   } catch (error) {
     console.error('Error fetching suppliers:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

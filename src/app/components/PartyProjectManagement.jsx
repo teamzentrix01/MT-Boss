@@ -157,6 +157,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [party, setParty] = useState(null);
   const [partyForm, setPartyForm] = useState(partyBlank);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
   const [message, setMessage] = useState('');
 
@@ -171,6 +172,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       setProjectTab(allowedTabs[0]);
     }
   }, [isAgent, allowedTabs, projectTab]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  useEffect(() => {
+    setPagination((prev) => (prev.page === 1 ? prev : { ...prev, page: 1 }));
+  }, [debouncedSearch]);
 
   // Phase 1: Party payments
   const [partyPayments, setPartyPayments] = useState([]);
@@ -381,23 +391,23 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   // ── Load Parties ─────────────────────────────────────────────────────────────
   const loadParties = useCallback(async () => {
     try {
-      const d = await api(`/api/admin/project-management/parties?search=${encodeURIComponent(search)}&page=${pagination.page}&pageSize=20`);
+      const d = await api(`/api/admin/project-management/parties?search=${encodeURIComponent(debouncedSearch)}&page=${pagination.page}&pageSize=20`);
       setParties(d.data || []);
       setPagination(d.pagination || { page: 1, totalPages: 1 });
     } catch (e) {
       setMessage(e.message);
     }
-  }, [search, pagination.page]);
+  }, [debouncedSearch, pagination.page]);
 
   const loadAgentProjects = useCallback(async () => {
     try {
-      const d = await api(`/api/admin/project-management/projects?search=${encodeURIComponent(search)}&page=${pagination.page}&pageSize=20`);
+      const d = await api(`/api/admin/project-management/projects?search=${encodeURIComponent(debouncedSearch)}&page=${pagination.page}&pageSize=20`);
       setAllProjectsList(d.data || []);
       setPagination(d.pagination || { page: 1, totalPages: 1 });
     } catch (e) {
       setMessage(e.message);
     }
-  }, [search, pagination.page]);
+  }, [debouncedSearch, pagination.page]);
 
   useEffect(() => {
     if (screen === 'parties') loadParties();
@@ -521,7 +531,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         api(`/api/admin/project-management/vendors?page=1&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/labor?projectId=${id}&pageSize=200`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/projects/${id}/agents`).catch(() => ({ data: [] })),
-        api(`/api/admin/lead-management`).catch(() => ({ agents: [] })),
+        api(`/api/admin/lead-management?assigneesOnly=1`).catch(() => ({ agents: [] })),
       ]);
       setProject(projRes.data);
       setPartyPayments(ppRes.data || []);

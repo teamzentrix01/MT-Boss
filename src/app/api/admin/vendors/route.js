@@ -25,48 +25,99 @@ export async function GET(req) {
     await ensureServiceCitiesSchema();
     await ensurePackageSchema();
 
+    const { searchParams } = new URL(req.url);
+    const status = String(searchParams.get('status') || '').trim();
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(200, Math.max(1, parseInt(searchParams.get('limit') || '100', 10) || 100));
+    const offset = (page - 1) * limit;
+    const countsOnly = searchParams.get('counts') === '1';
+    const lite = searchParams.get('lite') === '1' || countsOnly;
+
+    const vals = [];
+    const where = [];
+    if (status === 'pending') {
+      where.push(`COALESCE(v.verification_status, 'pending') = 'pending'`);
+    } else if (status) {
+      vals.push(status);
+      where.push(`v.verification_status = $${vals.length}`);
+    }
+    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+
+    const countRes = await pool.query(
+      `SELECT COUNT(*)::INT AS total FROM vendors v ${whereSql}`,
+      vals
+    );
+    const total = countRes.rows[0]?.total || 0;
+
+    if (countsOnly) {
+      return NextResponse.json({
+        success: true,
+        data: [],
+        pagination: { page: 1, limit: 1, total, pages: 1 },
+      });
+    }
+
+    vals.push(limit, offset);
     const result = await pool.query(
-      `SELECT
-        v.id, v.vendor_name, v.email, v.shop_name, v.phone,
-        v.city, v.state, v.country, v.postal_code,
-        v.aadhar_number,
-        (v.profile_photo IS NOT NULL) AS profile_photo,
-        (v.aadhar_image  IS NOT NULL) AS aadhar_image,
-        v.status, v.verification_status, v.is_approved,
-        v.package_id, v.package_name, v.package_price, v.package_status,
-        v.created_at, v.updated_at,
-        COALESCE(assigned.services, '[]'::json) AS services
-       FROM vendors v
-       LEFT JOIN LATERAL (
-         SELECT json_agg(
-           json_build_object(
-             'id', qs.id,
-             'label', qs.label,
-             'icon', qs.icon
-           ) ORDER BY qs.label
-         ) AS services
-         FROM vendor_services vs
-         JOIN quick_services qs ON qs.id = vs.quick_service_id
-         WHERE vs.vendor_id = v.id AND vs.is_active = TRUE
-       ) assigned ON TRUE
-       ORDER BY v.created_at DESC`
+      lite
+        ? `SELECT
+            v.id, v.vendor_name, v.email, v.shop_name, v.phone,
+            v.city, v.state, v.status, v.verification_status, v.is_approved,
+            v.package_status, v.created_at,
+            '[]'::json AS services
+           FROM vendors v
+           ${whereSql}
+           ORDER BY v.created_at DESC
+           LIMIT $${vals.length - 1} OFFSET $${vals.length}`
+        : `SELECT
+            v.id, v.vendor_name, v.email, v.shop_name, v.phone,
+            v.city, v.state, v.country, v.postal_code,
+            v.aadhar_number,
+            (v.profile_photo IS NOT NULL) AS profile_photo,
+            (v.aadhar_image  IS NOT NULL) AS aadhar_image,
+            v.status, v.verification_status, v.is_approved,
+            v.package_id, v.package_name, v.package_price, v.package_status,
+            v.created_at, v.updated_at,
+            COALESCE(assigned.services, '[]'::json) AS services
+           FROM vendors v
+           LEFT JOIN LATERAL (
+             SELECT json_agg(
+               json_build_object(
+                 'id', qs.id,
+                 'label', qs.label,
+                 'icon', qs.icon
+               ) ORDER BY qs.label
+             ) AS services
+             FROM vendor_services vs
+             JOIN quick_services qs ON qs.id = vs.quick_service_id
+             WHERE vs.vendor_id = v.id AND vs.is_active = TRUE
+           ) assigned ON TRUE
+           ${whereSql}
+           ORDER BY v.created_at DESC
+           LIMIT $${vals.length - 1} OFFSET $${vals.length}`,
+      vals
     );
 
-    const [servicesResult, managedCities] = await Promise.all([
-      pool.query(
-      `SELECT id, label, icon, cities
-       FROM quick_services
-       WHERE COALESCE(is_service_active, TRUE) = TRUE
-       ORDER BY label ASC`
-      ),
-      getManagedCities(),
-    ]);
-    const cityNames = managedCities.map((city) => city.name);
+    let available_services = [];
+    if (!lite) {
+      const [servicesResult, managedCities] = await Promise.all([
+        pool.query(
+          `SELECT id, label, icon, cities
+           FROM quick_services
+           WHERE COALESCE(is_service_active, TRUE) = TRUE
+           ORDER BY label ASC`
+        ),
+        getManagedCities(),
+      ]);
+      const cityNames = managedCities.map((city) => city.name);
+      available_services = servicesResult.rows.map((service) => ({ ...service, cities: cityNames }));
+    }
 
     return NextResponse.json({
       success: true,
       data: result.rows,
-      available_services: servicesResult.rows.map((service) => ({ ...service, cities: cityNames })),
+      available_services,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
     });
 
   } catch (error) {

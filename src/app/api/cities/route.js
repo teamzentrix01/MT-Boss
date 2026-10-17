@@ -5,6 +5,7 @@ import {
   cleanCityName,
   ensureCitiesSchema,
   getManagedCities,
+  invalidateManagedCitiesCache,
   managedCityColumns,
 } from '@/lib/cities';
 import { handleApiError } from '@/lib/api-utils';
@@ -81,13 +82,30 @@ async function activateCityForQuickServices(city) {
 
 export async function GET(req) {
   try {
-    const includeInactive = new URL(req.url).searchParams.get('all') === '1';
+    const { searchParams } = new URL(req.url);
+    const includeInactive = searchParams.get('all') === '1';
+    const fields = searchParams.get('fields');
     if (includeInactive && !requireRole(req, 'admin')) return unauthorized();
     const data = await getManagedCities({ includeInactive });
+    const cities = data.filter((city) => city.is_active).map((city) => city.name);
+    // Dropdown / calculator: names only
+    if (fields === 'lite' || fields === 'names') {
+      return NextResponse.json({
+        success: true,
+        data: data.map((city) => ({ id: city.id, name: city.name, is_active: city.is_active })),
+        cities,
+      }, {
+        headers: { 'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300' },
+      });
+    }
     return NextResponse.json({
       success: true,
       data,
-      cities: data.filter((city) => city.is_active).map((city) => city.name),
+      cities,
+    }, {
+      headers: includeInactive
+        ? undefined
+        : { 'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300' },
     });
   } catch (error) {
     return handleApiError(error);
@@ -109,6 +127,7 @@ export async function POST(req) {
       [name, state, isActive, sortOrder]
     );
     if (isActive) await activateCityForQuickServices(name);
+    invalidateManagedCitiesCache();
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
     if (error?.code === '23505') {
@@ -206,6 +225,7 @@ export async function PATCH(req) {
     await client.query('COMMIT');
     if (!isActive) await deactivateCityReferences(name);
     else await activateCityForQuickServices(name);
+    invalidateManagedCitiesCache();
     return NextResponse.json({ success: true, data: updated.rows[0] });
   } catch (error) {
     if (client) await client.query('ROLLBACK').catch(() => {});
@@ -235,6 +255,7 @@ export async function DELETE(req) {
     }
     const city = result.rows[0].name;
     await deactivateCityReferences(city);
+    invalidateManagedCitiesCache();
     return NextResponse.json({
       success: true,
       data: result.rows[0],

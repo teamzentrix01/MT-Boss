@@ -5,33 +5,98 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, memo, useMemo } from 'react';
 import { formatIndianPhone, toIndianPhoneTel } from '@/lib/phone-utils';
 import { Eye, X, ActionIconButton } from '@/app/components/ui/icons';
+
+const STATUS_STYLES = {
+  WAITING_FOR_VENDOR_ACCEPTANCE: { bg: '#fff7ed', text: '#9a3412', label: 'Waiting' },
+  WAITING_FOR_ADMIN_ASSIGNMENT: { bg: '#fee2e2', text: '#991b1b', label: 'Admin Queue' },
+  ADMIN_ACCEPTED: { bg: '#fef3c7', text: '#92400e', label: 'Admin Accepted' },
+  VENDOR_ACCEPTED: { bg: '#dbeafe', text: '#1e40af', label: 'Accepted' },
+  VENDOR_ON_WAY: { bg: 'var(--brand-blue-soft)', text: '#92400e', label: 'On Way' },
+  IN_PROGRESS: { bg: '#ffe4e6', text: '#831843', label: 'In Progress' },
+  COMPLETED: { bg: '#dcfce7', text: '#166534', label: 'Completed' },
+  CANCELLED: { bg: '#f3f4f6', text: '#374151', label: 'Cancelled' },
+};
+
+function getStatusStyle(status) {
+  return STATUS_STYLES[status] || { bg: '#f3f4f6', text: '#374151', label: status };
+}
+
+const BookingTableRow = memo(function BookingTableRow({ booking, onView }) {
+  const style = useMemo(() => getStatusStyle(booking.status), [booking.status]);
+  const createdLabel = useMemo(
+    () => new Date(booking.created_at).toLocaleDateString(),
+    [booking.created_at],
+  );
+
+  return (
+    <tr>
+      <td style={{ fontWeight: '600' }}>{booking.booking_reference}</td>
+      <td>{booking.user_name}</td>
+      <td>{booking.service_label || booking.quick_service_id}</td>
+      <td>{booking.service_city}</td>
+      <td>
+        <span className="status-badge" style={{ background: style.bg, color: style.text }}>
+          {style.label}
+        </span>
+      </td>
+      <td style={{ fontWeight: '600' }}>₹{booking.total_amount}</td>
+      <td style={{ color: 'var(--muted)' }}>{createdLabel}</td>
+      <td>
+        <ActionIconButton icon={Eye} label="View booking details" onClick={() => onView(booking)} />
+      </td>
+    </tr>
+  );
+});
 
 export default function BookingsManager({ isDarkMode, title = 'Service Bookings' }) {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('all');
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ page: 1, limit: 25, total: 0, pages: 1 });
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
   const [selectedVendorId, setSelectedVendorId] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState('');
 
   useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filterStatus, debouncedSearch]);
+
+  useEffect(() => {
     fetchBookings();
-  }, [filterStatus]);
+  }, [filterStatus, debouncedSearch, page]);
 
   async function fetchBookings() {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`/api/admin/bookings${filterStatus !== 'all' ? `?status=${filterStatus}` : ''}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: '25',
+        sort: 'created_at',
+        order: 'desc',
+      });
+      if (filterStatus !== 'all') params.set('status', filterStatus);
+      if (debouncedSearch) params.set('q', debouncedSearch);
+      const res = await fetch(`/api/admin/bookings?${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (data.success) {
         setBookings(data.data || []);
+        setPagination(data.pagination || { page: 1, limit: 25, total: 0, pages: 1 });
       }
     } catch (error) {
       console.error('Error fetching bookings:', error);
@@ -39,6 +104,25 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
       setLoading(false);
     }
   }
+
+  const openBookingDetail = useCallback(async (booking) => {
+    setSelectedVendorId('');
+    setActionError('');
+    setDetailLoading(true);
+    setSelectedBooking(booking);
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch(`/api/admin/bookings?id=${booking.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success && data.data) setSelectedBooking(data.data);
+    } catch (error) {
+      console.error('Error fetching booking detail:', error);
+    } finally {
+      setDetailLoading(false);
+    }
+  }, []);
 
   async function runAdminAction(action) {
     const isReassignment = action === 'assign_vendor' && Boolean(selectedBooking?.vendor_id);
@@ -66,21 +150,6 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
       setActionLoading(false);
     }
   }
-
-  const statusColors = {
-    'WAITING_FOR_VENDOR_ACCEPTANCE': { bg: '#fff7ed', text: '#9a3412', label: 'Waiting' },
-    'WAITING_FOR_ADMIN_ASSIGNMENT': { bg: '#fee2e2', text: '#991b1b', label: 'Admin Queue' },
-    'ADMIN_ACCEPTED': { bg: '#fef3c7', text: '#92400e', label: 'Admin Accepted' },
-    'VENDOR_ACCEPTED': { bg: '#dbeafe', text: '#1e40af', label: 'Accepted' },
-    'VENDOR_ON_WAY': { bg: 'var(--brand-blue-soft)', text: '#92400e', label: 'On Way' },
-    'IN_PROGRESS': { bg: '#ffe4e6', text: '#831843', label: 'In Progress' },
-    'COMPLETED': { bg: '#dcfce7', text: '#166534', label: 'Completed' },
-    'CANCELLED': { bg: '#f3f4f6', text: '#374151', label: 'Cancelled' },
-  };
-
-  const getStatusStyle = (status) => {
-    return statusColors[status] || { bg: '#f3f4f6', text: '#374151', label: status };
-  };
 
   return (
     <>
@@ -236,11 +305,24 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
               ))}
             </div>
 
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search ref, customer, phone, city, service…"
+              style={{
+                width: '100%', maxWidth: 420, marginBottom: '0.75rem',
+                padding: '0.5rem 0.75rem', borderRadius: 6,
+                border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)',
+                fontSize: '0.8125rem',
+              }}
+            />
+
             {loading ? (
               <p style={{ color: 'var(--muted)', textAlign: 'center', padding: '2rem' }}>Loading bookings...</p>
             ) : bookings.length === 0 ? (
               <p style={{ color: 'var(--muted)', textAlign: 'center', padding: '2rem' }}>No bookings found.</p>
             ) : (
+              <>
               <div style={{ overflowX: 'auto' }}>
                 <table className="booking-table">
                   <thead>
@@ -257,49 +339,34 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
                   </thead>
                   <tbody>
                     {bookings.map((booking) => (
-                      <tr key={booking.id}>
-                        <td style={{ fontWeight: '600' }}>{booking.booking_reference}</td>
-                        <td>{booking.user_name}</td>
-                        <td>{booking.service_label || booking.quick_service_id}</td>
-                        <td>{booking.service_city}</td>
-                        <td>
-                          <span
-                            className="status-badge"
-                            style={{
-                              background: getStatusStyle(booking.status).bg,
-                              color: getStatusStyle(booking.status).text,
-                            }}
-                          >
-                            {getStatusStyle(booking.status).label}
-                          </span>
-                        </td>
-                        <td style={{ fontWeight: '600' }}>₹{booking.total_amount}</td>
-                        <td style={{ color: 'var(--muted)' }}>
-                          {new Date(booking.created_at).toLocaleDateString()}
-                        </td>
-                        <td>
-                          <ActionIconButton
-                            icon={Eye}
-                            label="View booking details"
-                            onClick={() => {
-                              setSelectedBooking(booking);
-                              setSelectedVendorId('');
-                              setActionError('');
-                            }}
-                          />
-                        </td>
-                      </tr>
+                      <BookingTableRow
+                        key={booking.id}
+                        booking={booking}
+                        onView={openBookingDetail}
+                      />
                     ))}
                   </tbody>
                 </table>
               </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem', gap: 8, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
+                  Page {pagination.page} of {pagination.pages} · {pagination.total} total
+                </span>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button type="button" className="filter-btn" disabled={page <= 1 || loading} onClick={() => setPage((p) => Math.max(1, p - 1))}>Prev</button>
+                  <button type="button" className="filter-btn" disabled={page >= pagination.pages || loading} onClick={() => setPage((p) => p + 1)}>Next</button>
+                </div>
+              </div>
+              </>
             )}
           </div>
         </>
       ) : (
         <div className="booking-detail">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '0.875rem', fontWeight: '700' }}>Booking Details</h3>
+            <h3 style={{ fontSize: '0.875rem', fontWeight: '700' }}>
+              Booking Details{detailLoading ? '…' : ''}
+            </h3>
             <button
               onClick={() => setSelectedBooking(null)}
               aria-label="Close details"

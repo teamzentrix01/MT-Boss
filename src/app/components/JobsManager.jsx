@@ -61,7 +61,7 @@ export default function JobsManager({ isDarkMode }) {
     try {
       const [res, cityRes] = await Promise.all([
         fetch('/api/jobs?status=all', { headers: adminHeaders() }),
-        fetch('/api/cities', { cache: 'no-store' }),
+        fetch('/api/cities?fields=lite', { cache: 'no-store' }),
       ]);
       const [data, cityData] = await Promise.all([res.json(), cityRes.json()]);
       if (data.success) setJobs(data.data);

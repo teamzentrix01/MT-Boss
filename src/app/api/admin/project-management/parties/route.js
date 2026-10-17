@@ -8,8 +8,33 @@ export async function GET(req) {
   const admin = await requirePmAccess(req); if (!admin) return unauthorized();
   try {
     await ensureProjectManagementSchema();
-    const { searchParams } = new URL(req.url); const search = String(searchParams.get('search') || '').trim();
+    const { searchParams } = new URL(req.url);
+    const search = String(searchParams.get('search') || '').trim();
+    const lite = searchParams.get('lite') === '1';
     const { page, pageSize, offset } = pageParams(searchParams);
+
+    // Typeahead / convert-modal: skip payment/project aggregates
+    if (lite) {
+      const result = await pool.query(
+        `SELECT p.id, p.name, p.phone, p.email, p.gst_no, p.address, p.created_at,
+                COUNT(*) OVER()::int AS total_count
+           FROM pm_parties p
+          WHERE $1 = ''
+             OR p.name ILIKE '%' || $1 || '%'
+             OR COALESCE(p.phone,'') ILIKE '%' || $1 || '%'
+             OR COALESCE(p.email,'') ILIKE '%' || $1 || '%'
+          ORDER BY p.created_at DESC
+          LIMIT $2 OFFSET $3`,
+        [search, pageSize, offset]
+      );
+      const total = Number(result.rows[0]?.total_count || 0);
+      return NextResponse.json({
+        success: true,
+        data: result.rows,
+        pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) || 1 },
+      });
+    }
+
     const result = await pool.query(`WITH filtered AS (
       SELECT p.*, COUNT(*) OVER()::int AS total_count FROM pm_parties p
       WHERE $1 = '' OR p.name ILIKE '%' || $1 || '%' OR COALESCE(p.phone,'') ILIKE '%' || $1 || '%' OR COALESCE(p.email,'') ILIKE '%' || $1 || '%'

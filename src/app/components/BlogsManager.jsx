@@ -76,13 +76,15 @@ export default function BlogsManager({ isDarkMode }) {
     setIsModalOpen(true);
   };
 
-  const openEditModal = (blog) => {
+  const openEditModal = async (blog) => {
+    setError('');
+    setIsModalOpen(true);
     setEditingBlog(blog);
     setForm({
       title: blog.title || '',
       slug: blog.slug || '',
       excerpt: blog.excerpt || '',
-      content: blog.content || '',
+      content: '',
       cover_image: blog.cover_image || '',
       category: blog.category || 'Construction Guide',
       tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : '',
@@ -93,8 +95,32 @@ export default function BlogsManager({ isDarkMode }) {
       meta_keywords: blog.meta_keywords || '',
       is_published: blog.is_published ?? true,
     });
-    setError('');
-    setIsModalOpen(true);
+    try {
+      const res = await fetch(`/api/blogs/${encodeURIComponent(blog.slug)}`);
+      const json = await res.json();
+      if (json.success && json.data) {
+        const full = json.data;
+        setEditingBlog(full);
+        setForm({
+          title: full.title || '',
+          slug: full.slug || '',
+          excerpt: full.excerpt || '',
+          content: full.content || '',
+          cover_image: full.cover_image || '',
+          category: full.category || 'Construction Guide',
+          tags: Array.isArray(full.tags) ? full.tags.join(', ') : '',
+          author_name: full.author_name || 'MTBOSS Editorial',
+          read_time: full.read_time || '5 min read',
+          meta_title: full.meta_title || '',
+          meta_description: full.meta_description || '',
+          meta_keywords: full.meta_keywords || '',
+          is_published: full.is_published ?? true,
+        });
+      }
+    } catch (err) {
+      console.error('Failed to load blog detail:', err);
+      setError('Could not load full article content.');
+    }
   };
 
   const handleSave = async (e) => {

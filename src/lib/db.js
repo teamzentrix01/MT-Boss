@@ -103,9 +103,9 @@ pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);
 });
 
-pool.on('connect', () => {
-  console.log('Connected to PostgreSQL database');
-});
+// pool.on('connect', () => {
+//   console.log('Connected to PostgreSQL database');
+// });
 
 // Health check function
 export async function checkPoolHealth() {

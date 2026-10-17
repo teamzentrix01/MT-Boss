@@ -16,6 +16,7 @@ const ProfessionalServicesManager = dynamicManager(() => import('../components/P
 const ProfessionalEnquiriesManager = dynamicManager(() => import('../components/ProfessionalEnquiriesManager'));
 const ShopNowManager = dynamicManager(() => import('../components/ShopNowManager'));
 const PropertiesManager = dynamicManager(() => import('../components/PropertiesManager'));
+const PropertyBookingsManager = dynamicManager(() => import('../components/PropertyBookingsManager'));
 const ProjectsManager = dynamicManager(() => import('../components/ProjectsManager'));
 const OperationalProjectsManager = dynamicManager(() => import('../components/OperationalProjectsManager'));
 const PartyProjectManagement = dynamicManager(() => import('../components/PartyProjectManagement'));
@@ -490,7 +491,7 @@ function AdminDashboard() {
         }
 
         if (activeTab === 'calculator-quotes') {
-          const data = await requestJson('/api/calculator-quote-otp');
+          const data = await requestJson('/api/calculator-quote-otp?limit=100&page=1');
           if (data?.success) setCalculatorQuotes(data.data || []);
           return;
         }
@@ -501,7 +502,7 @@ function AdminDashboard() {
         }
 
         if (activeTab === 'career-enquiries') {
-          const data = await requestJson('/api/career-enquiries');
+          const data = await requestJson('/api/career-enquiries?limit=100&page=1');
           if (data?.success) setCareerEnquiries(data.data || []);
           return;
         }
@@ -513,14 +514,14 @@ function AdminDashboard() {
           requestJson('/api/contact').then((data) => {
             if (data?.success) setSubmissions(data.data || []);
           }),
-          requestJson('/api/properties?status=all').then((data) => {
-            if (data?.success) setPendingProperties((data.data || []).filter(p => p.status === 'pending').length);
+          requestJson('/api/properties?status=pending&fields=list&limit=1&page=1').then((data) => {
+            if (data?.success) setPendingProperties(data.pagination?.total || (data.data || []).length);
           }),
-          requestJson('/api/admin/vendors').then((data) => {
-            if (data?.success) setPendingVendors((data.data || []).filter(v => v.verification_status === 'pending').length);
+          requestJson('/api/admin/vendors?status=pending&counts=1').then((data) => {
+            if (data?.success) setPendingVendors(data.pagination?.total || 0);
           }),
-          requestJson('/api/admin/suppliers').then((data) => {
-            if (data?.success) setPendingSuppliers((data.data || []).filter(s => s.status === 'pending').length);
+          requestJson('/api/admin/suppliers?status=pending&counts=1').then((data) => {
+            if (data?.success) setPendingSuppliers(data.pagination?.total || 0);
           }),
           requestJson('/api/admin/suppliers', { method: 'PATCH' }).then((data) => {
             if (data?.success) {
@@ -636,7 +637,7 @@ function AdminDashboard() {
     { id: 'packages', label: 'Package Approvals', icon: PackageCheck },
   ];
 
-  const openCareerEnquiry = (application) => {
+  const openCareerEnquiry = async (application) => {
     setSelectedCareerEnquiry(application);
     setCareerEditForm(makeCareerEditForm(application));
     setCareerEditResume(null);
@@ -645,6 +646,26 @@ function AdminDashboard() {
     setCareerInterviewAt(application.interview_at
       ? new Date(application.interview_at).toISOString().slice(0, 16)
       : '');
+    try {
+      const data = await requestJson(`/api/career-enquiries?id=${application.id}`);
+      if (data?.success && data.data) {
+        setSelectedCareerEnquiry(data.data);
+        setCareerEditForm(makeCareerEditForm(data.data));
+        setCareerStatus(data.data.status || 'New');
+        setCareerNote(data.data.status_note || '');
+        setCareerInterviewAt(data.data.interview_at
+          ? new Date(data.data.interview_at).toISOString().slice(0, 16)
+          : '');
+      }
+    } catch { /* keep list row */ }
+  };
+
+  const openCalculatorQuote = async (item) => {
+    setSelectedCalculatorQuote(item);
+    try {
+      const data = await requestJson(`/api/calculator-quote-otp?id=${item.id}`);
+      if (data?.success && data.data) setSelectedCalculatorQuote(data.data);
+    } catch { /* keep list row */ }
   };
 
   const updateCareerApplication = async () => {
@@ -2181,6 +2202,11 @@ function AdminDashboard() {
             </div>
           )}
           {activeTab === 'properties' && <PropertiesManager isDarkMode={isDarkMode} />}
+          {activeTab === 'room-rentals' && <PropertiesManager isDarkMode={isDarkMode} categoryFilter="room_rent" />}
+          {activeTab === 'flats' && <PropertiesManager isDarkMode={isDarkMode} categoryFilter="flat" />}
+          {activeTab === 'plots' && <PropertiesManager isDarkMode={isDarkMode} categoryFilter="plot" />}
+          {activeTab === 'create-property' && <PropertiesManager isDarkMode={isDarkMode} createMode />}
+          {activeTab === 'property-bookings' && <PropertyBookingsManager isDarkMode={isDarkMode} />}
           {activeTab === 'cities' && <CitiesManager />}
           {activeTab === 'property-enquiries' && <PropertyEnquiriesManager isDarkMode={isDarkMode} />}
           {activeTab === 'quick-services' && <QuickServicesManager isDarkMode={isDarkMode} />}
@@ -2267,7 +2293,7 @@ function AdminDashboard() {
                               <ActionIconButton
                                 icon={Eye}
                                 label="View calculator quote"
-                                onClick={() => setSelectedCalculatorQuote(item)}
+                                onClick={() => openCalculatorQuote(item)}
                               />
                             </td>
                           </tr>

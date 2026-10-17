@@ -11,6 +11,11 @@ import { ensurePackageSchema } from '@/lib/packages';
 const STATUSES = new Set(['New', 'Contacted', 'Follow-up', 'Converted', 'Lost']);
 const STAGES = new Set(['New', 'Meeting Done', 'Estimate Sent', 'Negotiation', 'Final', 'Lost']);
 
+const SYNC_TTL_MS = 5 * 60 * 1000;
+const ASSIGNEE_TTL_MS = 60 * 1000;
+let lastLeadSyncAt = 0;
+let assigneeCache = { expiresAt: 0, agents: null, franchises: null, vendors: null };
+
 const ensureLeadManagementSchema = createInitializationGuard(async () => {
   await ensureAgentSchema();
   await ensurePackageSchema();
@@ -26,7 +31,8 @@ const ensureLeadManagementSchema = createInitializationGuard(async () => {
   for (const sql of alters) await pool.query(sql);
 });
 
-async function syncExternalLeads() {
+async function syncExternalLeads({ force = false } = {}) {
+  if (!force && lastLeadSyncAt && Date.now() - lastLeadSyncAt < SYNC_TTL_MS) return;
   const syncs = [
     `INSERT INTO agent_leads
        (city, client_name, client_phone, client_email, service_type, lead_type, status,
@@ -121,6 +127,35 @@ async function syncExternalLeads() {
   for (const sql of syncs) {
     try { await pool.query(sql); } catch (error) { console.warn('Lead sync skipped:', error.message); }
   }
+  lastLeadSyncAt = Date.now();
+}
+
+async function getAssignableDirectories() {
+  if (assigneeCache.agents && assigneeCache.expiresAt > Date.now()) {
+    return {
+      agents: assigneeCache.agents,
+      franchises: assigneeCache.franchises,
+      vendors: assigneeCache.vendors,
+    };
+  }
+  const [agents, franchises, vendors] = await Promise.all([
+    pool.query(`SELECT id, name, email, phone, city, state FROM agents WHERE status = 'Approved' ORDER BY name ASC`),
+    pool.query(`SELECT id, name, email, phone, city, state FROM franchises WHERE status = 'Approved' ORDER BY name ASC`),
+    pool.query(`SELECT id, shop_name, email, phone, city, state
+                  FROM vendors
+                 WHERE is_approved = TRUE
+                   AND status = 'active'
+                   AND package_status = 'active'
+                   AND (package_expires_at IS NULL OR package_expires_at > NOW())
+                 ORDER BY shop_name ASC`),
+  ]);
+  assigneeCache = {
+    expiresAt: Date.now() + ASSIGNEE_TTL_MS,
+    agents: agents.rows,
+    franchises: franchises.rows,
+    vendors: vendors.rows,
+  };
+  return assigneeCache;
 }
 
 function csvCell(value) {
@@ -128,7 +163,15 @@ function csvCell(value) {
   return `"${text.replaceAll('"', '""')}"`;
 }
 
-async function getLeadRows({ search = '', status = '', source = '', city = '' } = {}) {
+async function getLeadRows({
+  search = '',
+  status = '',
+  source = '',
+  city = '',
+  page = 1,
+  limit = 100,
+  unbounded = false,
+} = {}) {
   const params = [];
   const filters = [];
 
@@ -156,9 +199,50 @@ async function getLeadRows({ search = '', status = '', source = '', city = '' } 
   }
 
   const where = filters.length ? `WHERE ${filters.join(' AND ')}` : '';
+  const orderSql = `
+     ORDER BY
+       CASE
+         WHEN l.status = 'Lost' OR l.lead_stage = 'Lost' THEN 2
+         WHEN l.status = 'New' OR l.lead_stage = 'New' THEN 0
+         ELSE 1
+       END ASC,
+       l.created_at DESC`;
+
+  if (unbounded) {
+    const result = await pool.query(
+      `SELECT
+         l.*,
+         a.name AS agent_name,
+         a.email AS agent_email,
+         a.phone AS agent_phone,
+         f.name AS franchise_name,
+         f.email AS franchise_email,
+         f.phone AS franchise_phone,
+         v.shop_name AS vendor_name,
+         v.phone AS vendor_phone
+       FROM agent_leads l
+       LEFT JOIN agents a ON a.id = l.agent_id
+       LEFT JOIN franchises f ON f.id = l.assigned_franchise_id
+       LEFT JOIN vendors v ON v.id = l.assigned_vendor_id
+       ${where}
+       ${orderSql}`,
+      params
+    );
+    return { rows: result.rows, total: result.rows.length };
+  }
+
+  const safePage = Math.max(1, parseInt(page, 10) || 1);
+  const safeLimit = Math.min(200, Math.max(1, parseInt(limit, 10) || 100));
+  const offset = (safePage - 1) * safeLimit;
+  const countRes = await pool.query(`SELECT COUNT(*)::INT AS total FROM agent_leads l ${where}`, params);
+  const total = countRes.rows[0]?.total || 0;
+  params.push(safeLimit, offset);
   const result = await pool.query(
     `SELECT
-       l.*,
+       l.id, l.agent_id, l.assigned_franchise_id, l.assigned_vendor_id, l.city,
+       l.client_name, l.client_phone, l.client_email, l.service_type, l.lead_type,
+       l.status, l.lead_stage, l.lead_source, l.priority, l.follow_up_date,
+       l.final_amount, l.client_requirement, l.notes, l.created_at, l.updated_at,
        a.name AS agent_name,
        a.email AS agent_email,
        a.phone AS agent_phone,
@@ -172,16 +256,11 @@ async function getLeadRows({ search = '', status = '', source = '', city = '' } 
      LEFT JOIN franchises f ON f.id = l.assigned_franchise_id
      LEFT JOIN vendors v ON v.id = l.assigned_vendor_id
      ${where}
-     ORDER BY
-       CASE
-         WHEN l.status = 'Lost' OR l.lead_stage = 'Lost' THEN 2
-         WHEN l.status = 'New' OR l.lead_stage = 'New' THEN 0
-         ELSE 1
-       END ASC,
-       l.created_at DESC`,
+     ${orderSql}
+     LIMIT $${params.length - 1} OFFSET $${params.length}`,
     params
   );
-  return result.rows;
+  return { rows: result.rows, total, page: safePage, limit: safeLimit };
 }
 
 export async function GET(req) {
@@ -190,18 +269,38 @@ export async function GET(req) {
       return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
     }
     await ensureLeadManagementSchema();
-    await syncExternalLeads();
 
     const { searchParams } = new URL(req.url);
     const exportType = searchParams.get('export');
-    const rows = await getLeadRows({
-      search: searchParams.get('search') || '',
+    const assigneesOnly = searchParams.get('assigneesOnly') === '1' || searchParams.get('assignees_only') === '1';
+    const lite = searchParams.get('lite') === '1';
+    const forceSync = searchParams.get('sync') === '1';
+
+    // Project screens only need the agent directory — skip sync + full lead dump.
+    if (assigneesOnly) {
+      const dirs = await getAssignableDirectories();
+      return NextResponse.json({
+        success: true,
+        data: [],
+        agents: dirs.agents,
+        franchises: dirs.franchises,
+        vendors: dirs.vendors,
+      });
+    }
+
+    if (!lite) {
+      await syncExternalLeads({ force: forceSync });
+    }
+
+    const filters = {
+      search: searchParams.get('search') || searchParams.get('q') || '',
       status: searchParams.get('status') || '',
       source: searchParams.get('source') || '',
       city: searchParams.get('city') || '',
-    });
+    };
 
     if (exportType === 'csv' || exportType === 'xlsx' || exportType === 'excel') {
+      const { rows } = await getLeadRows({ ...filters, unbounded: true });
       const headers = [
         'ID', 'Client Name', 'Phone', 'Email', 'City', 'Service Type', 'Lead Type',
         'Source', 'Status', 'Stage', 'Agent', 'Franchise', 'Follow Up', 'Final Amount',
@@ -238,24 +337,20 @@ export async function GET(req) {
       });
     }
 
-    const [agents, franchises, vendors] = await Promise.all([
-      pool.query(`SELECT id, name, email, phone, city, state FROM agents WHERE status = 'Approved' ORDER BY name ASC`),
-      pool.query(`SELECT id, name, email, phone, city, state FROM franchises WHERE status = 'Approved' ORDER BY name ASC`),
-      pool.query(`SELECT id, shop_name, email, phone, city, state
-                    FROM vendors
-                   WHERE is_approved = TRUE
-                     AND status = 'active'
-                     AND package_status = 'active'
-                     AND (package_expires_at IS NULL OR package_expires_at > NOW())
-                   ORDER BY shop_name ASC`),
-    ]);
+    const page = searchParams.get('page') || '1';
+    const limit = searchParams.get('limit') || '100';
+    const { rows, total, page: p, limit: l } = await getLeadRows({ ...filters, page, limit });
+    const dirs = lite
+      ? { agents: [], franchises: [], vendors: [] }
+      : await getAssignableDirectories();
 
     return NextResponse.json({
       success: true,
       data: rows,
-      agents: agents.rows,
-      franchises: franchises.rows,
-      vendors: vendors.rows,
+      agents: dirs.agents,
+      franchises: dirs.franchises,
+      vendors: dirs.vendors,
+      pagination: { page: p, limit: l, total, pages: Math.ceil(total / l) || 1 },
     });
   } catch (error) {
     console.error('Lead management GET error:', error);

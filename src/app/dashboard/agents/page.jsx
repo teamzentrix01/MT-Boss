@@ -53,7 +53,7 @@ export default function AgentsPage() {
     fetchAgents();
     const onAgentsUpdated = () => fetchAgents();
     window.addEventListener('agentsUpdated', onAgentsUpdated);
-    const interval = setInterval(fetchAgents, 15000);
+    const interval = setInterval(fetchAgents, 60000);
     return () => {
       window.removeEventListener('agentsUpdated', onAgentsUpdated);
       clearInterval(interval);
@@ -63,7 +63,7 @@ export default function AgentsPage() {
   const fetchAgents = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/agents', {
+      const res = await fetch('/api/agents?limit=100', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

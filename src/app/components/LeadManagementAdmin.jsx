@@ -60,15 +60,17 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   const loadLeads = useCallback(async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
     try {
-      const res = await fetch('/api/admin/lead-management', {
+      // Silent polls skip heavy external sync (TTL-gated server-side) and keep assignees warm.
+      const qs = silent ? '?limit=200&lite=0' : '?limit=200';
+      const res = await fetch(`/api/admin/lead-management${qs}`, {
         headers: { Authorization: `Bearer ${token()}` },
       });
       const data = await res.json();
       if (data.success) {
         setLeads(data.data || []);
-        setAgents(data.agents || []);
-        setFranchises(data.franchises || []);
-        setVendors(data.vendors || []);
+        if (Array.isArray(data.agents) && data.agents.length) setAgents(data.agents);
+        if (Array.isArray(data.franchises) && data.franchises.length) setFranchises(data.franchises);
+        if (Array.isArray(data.vendors) && data.vendors.length) setVendors(data.vendors);
       } else {
         setMessage(data.error || 'Could not load leads.');
       }
@@ -82,7 +84,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   useEffect(() => { loadLeads(); }, [loadLeads]);
 
   useEffect(() => {
-    const timer = setInterval(() => loadLeads({ silent: true }), 20000);
+    const timer = setInterval(() => loadLeads({ silent: true }), 60000);
     return () => clearInterval(timer);
   }, [loadLeads]);
 
@@ -216,10 +218,13 @@ export default function LeadManagementAdmin({ isDarkMode }) {
     });
 
     try {
-      const res = await fetch('/api/admin/project-management/parties', { headers: { Authorization: `Bearer ${token()}` } });
+      const q = encodeURIComponent(lead.client_phone || lead.client_email || '');
+      const res = await fetch(`/api/admin/project-management/parties?search=${q}&page=1&pageSize=20&lite=1`, {
+        headers: { Authorization: `Bearer ${token()}` },
+      });
       const data = await res.json();
       if (data.success) {
-        const found = data.data.find(p => p.phone === lead.client_phone || (lead.client_email && p.email === lead.client_email));
+        const found = (data.data || []).find(p => p.phone === lead.client_phone || (lead.client_email && p.email === lead.client_email));
         if (found) {
           setConversionData(prev => ({ ...prev, loading: false, partyId: found.id, partyName: found.name }));
         } else {
