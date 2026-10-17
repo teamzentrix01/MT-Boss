@@ -28,7 +28,7 @@ I am your official AI Project Advisor. You can ask me anything in **English** or
 - 💬 **WhatsApp Support:** [+91 94584 10866](https://wa.me/919458410866)`,
 };
 
-export default function ChatbotWidget({ isDarkMode }) {
+export default function ChatbotWidget({ isDarkMode, hideLauncher = false }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
@@ -40,6 +40,14 @@ export default function ChatbotWidget({ isDarkMode }) {
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
 
+  useEffect(() => {
+    const openAssistant = () => {
+      setIsOpen(true);
+      setHasUnread(false);
+    };
+    window.addEventListener("mtboss:open-chat", openAssistant);
+    return () => window.removeEventListener("mtboss:open-chat", openAssistant);
+  }, []);
   // Play subtle feedback chime
   const playChime = (type = 'receive') => {
     try {
@@ -244,7 +252,7 @@ export default function ChatbotWidget({ isDarkMode }) {
   return (
     <>
       {/* ── FLOATING LAUNCHER BUTTON ── */}
-      <div className="fixed bottom-15 right-24 z-[9998] flex items-center">
+      <div className={hideLauncher ? "hidden" : "fixed bottom-15 right-24 z-[9998] flex items-center"}>
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}

@@ -558,7 +558,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
       {/* Page Header */}
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'1.25rem', flexWrap:'wrap', gap:'0.75rem' }}>
         <div>
-          <h2 style={{ margin:0, fontSize:'1.1rem', fontWeight:800, color:text }}>📦 Supplier Hub</h2>
+          <h2 style={{ margin:0, fontSize:'1.1rem', fontWeight:800, color:text }}>Supplier hub</h2>
           <p style={{ margin:'0.2rem 0 0', fontSize:'0.8125rem', color:muted }}>
             {pendingCount} pending · {activeCount} active · {suppliers.length} total suppliers · {enquiries.length} enquiries
           </p>

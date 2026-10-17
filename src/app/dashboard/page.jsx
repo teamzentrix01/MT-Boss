@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { AdminStatCard, AdminSectionCard, AdminMoney, AdminButton, AdminInput } from './AdminUI';
 
 const managerLoading = () => <div className="empty-state">Loading section...</div>;
 const dynamicManager = (loader) => dynamic(loader, { loading: managerLoading });
@@ -53,7 +54,7 @@ import {
   ClipboardList, MapPin, Building, Mail, Store, CalendarClock, HelpCircle, Star,
   ImageIcon, Newspaper, Layers, MessageSquare, Users, Building2, FolderKanban,
   House, Zap, Wrench, CircleDollarSign, CalendarDays, Tags, ShoppingCart,
-  PlusCircle, Truck, HardHat, PackageCheck, Eye, Trash2, Download, LogOut, X,
+  PlusCircle, Truck, HardHat, PackageCheck, Eye, Trash2, X,
   Clock, CheckCircle2, ShieldCheck, Ban, ActionIconButton, Pencil, Plus, Wallet,
 } from '@/app/components/ui/icons';
 
@@ -128,7 +129,7 @@ function AdminDashboard() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(() => searchParams.get('tab') || 'overview');
   const initialProjectId = searchParams.get('projectId') || null;
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const isDarkMode = false;
   const [loading, setLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
@@ -390,18 +391,6 @@ function AdminDashboard() {
       fetchPlans();
     }
   }, [activeTab, packageSubTab]);
-
-  useEffect(() => {
-    const html = document.documentElement;
-    const isDark = html.classList.contains('dark-mode');
-    setIsDarkMode(isDark);
-
-    const observer = new MutationObserver(() => {
-      setIsDarkMode(html.classList.contains('dark-mode'));
-    });
-    observer.observe(html, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
-  }, []);
 
   const fetchPrimaryServiceEnquiries = useCallback(async () => {
     try {
@@ -735,372 +724,8 @@ function AdminDashboard() {
     );
   }
 
-  const handleLogout = async () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/login');
-  };
-
   return (
     <>
-      <style>{`
-        /* ── Tokens ── */
-        :root {
-          --bg:        #f5f5f7;
-          --surface:   #ffffff;
-          --border:    #e2e2e7;
-          --text:      #111113;
-          --muted:     #6b6b76;
-          --accent:    #2563eb;
-          --accent-lt: #eff4ff;
-
-          --stat-a-bg: #f0f4ff;
-          --stat-a-tx: #1e3a8a;
-          --stat-b-bg: #fff7ed;
-          --stat-b-tx: #9a3412;
-          --stat-c-bg: #f0fdf4;
-          --stat-c-tx: #14532d;
-          --stat-d-bg: var(--brand-blue-soft);
-          --stat-d-tx: #92400e;
-
-          --sn-bg: #dbeafe; --sn-tx: #1e40af;
-          --sp-bg: #ffedd5; --sp-tx: #9a3412;
-          --sc-bg: #dbeafe; --sc-tx: #1e40af;
-          --sr-bg: #dcfce7; --sr-tx: #166534;
-        }
-        .dark-mode {
-          --bg:        #0f0f11;
-          --surface:   #18181c;
-          --border:    #2a2a30;
-          --text:      #f0f0f5;
-          --muted:     #7c7c8a;
-          --accent:    #60a5fa;
-          --accent-lt: #1e2a3a;
-
-          --stat-a-bg: #1a2035; --stat-a-tx: #93c5fd;
-          --stat-b-bg: #2a1a0e; --stat-b-tx: #fb923c;
-          --stat-c-bg: #0f2a18; --stat-c-tx: #86efac;
-          --stat-d-bg: #2a1f0e; --stat-d-tx: var(--brand-blue-light);
-
-          --sn-bg: #1e2a3a; --sn-tx: #93c5fd;
-          --sp-bg: #2a1a0e; --sp-tx: #fb923c;
-          --sc-bg: #1e2a3a; --sc-tx: #93c5fd;
-          --sr-bg: #0f2a18; --sr-tx: #86efac;
-        }
-
-        /* ── Base ── */
-        .dash-root {
-          min-height: 100%;
-          display: flex;
-          flex-direction: column;
-          background: var(--bg);
-          font-family: 'DM Sans', system-ui, sans-serif;
-          color: var(--text);
-        }
-        .dash-loading {
-          display: flex; align-items: center; justify-content: center;
-          min-height: 100vh;
-          background: var(--bg); color: var(--muted);
-          font-size: 0.875rem;
-        }
-
-        /* ── Header ── */
-        .dash-header {
-          background: var(--surface);
-          border-bottom: 1px solid var(--border);
-        }
-        .dash-header-inner {
-          max-width: 1280px; margin: 0 auto;
-          padding: 0.875rem 1.5rem;
-          display: flex; align-items: center; justify-content: space-between;
-        }
-        .dash-title { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.02em; }
-        .dash-subtitle { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
-        .dash-export-btn {
-          display: inline-flex; align-items: center; gap: 0.375rem;
-          padding: 0.4rem 0.875rem;
-          background: var(--accent); color: #fff;
-          border: none; border-radius: 6px;
-          font-size: 0.8125rem; font-weight: 600;
-          cursor: pointer; transition: opacity .15s;
-        }
-        .dash-export-btn:hover { opacity: .85; }
-
-        .dash-logout-btn {
-          display: inline-flex; align-items: center; gap: 0.375rem;
-          padding: 0.4rem 0.875rem;
-          background: transparent; color: var(--muted);
-          border: 1px solid var(--border); border-radius: 6px;
-          font-size: 0.8125rem; font-weight: 600;
-          cursor: pointer; transition: all .15s;
-        }
-        .dash-logout-btn:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
-
-        /* ── Tabs ── */
-        .dash-tabs-bar {
-          background: var(--surface);
-          border-bottom: 1px solid var(--border);
-          position: sticky; top: 0; z-index: 40;
-          display: none;
-        }
-        .dash-tabs-inner {
-          max-width: 1280px; margin: 0 auto;
-          padding: 0 1.5rem 4px;
-          display: flex; overflow-x: auto;
-          scrollbar-width: thin;
-          scrollbar-color: var(--border) transparent;
-        }
-        .dash-tabs-inner::-webkit-scrollbar { height: 4px; }
-        .dash-tabs-inner::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-        .dash-tabs-inner::-webkit-scrollbar-track { background: transparent; }
-        .dash-tab {
-          display: flex; align-items: center; gap: 0.375rem;
-          padding: 0.6rem 1rem;
-          font-size: 0.8125rem; font-weight: 500;
-          color: var(--muted);
-          border: none; background: none;
-          background-color: transparent !important;
-          background-image: none !important;
-          box-shadow: none !important;
-          transform: none !important;
-          border-bottom: 2px solid transparent;
-          cursor: pointer; white-space: nowrap;
-          transition: color .15s, border-color .15s;
-          margin-bottom: -1px;
-        }
-        .dash-tab:hover {
-          color: var(--text) !important;
-          background: transparent !important;
-          background-image: none !important;
-          box-shadow: none !important;
-          transform: none !important;
-        }
-        .dash-tab.active {
-          color: var(--accent) !important;
-          border-bottom-color: var(--accent);
-        }
-        .dash-tab-icon { font-size: 0.875rem; }
-
-        /* ── Content ── */
-        .dash-content {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          max-width: 1280px;
-          width: 100%;
-          margin: 0 auto;
-          padding: 1.25rem 1.5rem;
-          box-sizing: border-box;
-        }
-
-        /* ── Stat Cards ── */
-        .dash-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.75rem; margin-bottom: 1rem; }
-        @media(max-width:1024px){ .dash-stats { grid-template-columns: repeat(2,1fr); } }
-        @media(max-width:640px){ .dash-stats { grid-template-columns: 1fr; } }
-
-        .stat-card {
-          background: var(--surface);
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          padding: 1rem 1.25rem;
-          display: flex; align-items: center; justify-content: space-between;
-        }
-        .stat-card-a { background: var(--stat-a-bg); border-color: transparent; }
-        .stat-card-b { background: var(--stat-b-bg); border-color: transparent; }
-        .stat-card-c { background: var(--stat-c-bg); border-color: transparent; }
-        .stat-card-d { background: var(--stat-d-bg); border-color: transparent; }
-        .stat-label {
-          font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
-          letter-spacing: .06em; color: var(--muted); margin-bottom: 0.25rem;
-        }
-        .stat-card-a .stat-label { color: var(--stat-a-tx); opacity: .7; }
-        .stat-card-b .stat-label { color: var(--stat-b-tx); opacity: .7; }
-        .stat-card-c .stat-label { color: var(--stat-c-tx); opacity: .7; }
-        .stat-card-d .stat-label { color: var(--stat-d-tx); opacity: .7; }
-        .stat-value { font-size: 1.75rem; font-weight: 700; line-height: 1; }
-        .stat-card-a .stat-value { color: var(--stat-a-tx); }
-        .stat-card-b .stat-value { color: var(--stat-b-tx); }
-        .stat-card-c .stat-value { color: var(--stat-c-tx); }
-        .stat-card-d .stat-value { color: var(--stat-d-tx); }
-        .stat-icon { font-size: 1.5rem; opacity: .5; }
-
-        /* ── Panel ── */
-        .panel {
-          background: var(--surface);
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          margin-bottom: 0.75rem;
-          overflow: hidden;
-        }
-        .panel-header {
-          padding: 0.75rem 1.25rem;
-          border-bottom: 1px solid var(--border);
-          display: flex; align-items: center; justify-content: space-between;
-        }
-        .panel-title { font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
-        .panel-body { padding: 0.875rem 1.25rem; }
-
-        /* ── Submission Row ── */
-        .sub-row {
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 0.6rem 0.75rem;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: background .12s;
-        }
-        .sub-row:hover { background: var(--bg); }
-        .sub-name { font-size: 0.8125rem; font-weight: 600; }
-        .sub-meta { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
-
-        /* ── Status Badges ── */
-        .badge {
-          display: inline-block;
-          padding: 0.15rem 0.55rem;
-          border-radius: 999px;
-          font-size: 0.6875rem; font-weight: 600;
-        }
-        .status-new      { background: var(--sn-bg); color: var(--sn-tx); }
-        .status-pending  { background: var(--sp-bg); color: var(--sp-tx); }
-        .status-contacted{ background: var(--sc-bg); color: var(--sc-tx); }
-        .status-resolved { background: var(--sr-bg); color: var(--sr-tx); }
-
-        /* ── Pending Alert ── */
-        .pending-alert {
-          background: var(--surface);
-          border: 1px solid var(--border);
-          border-left: 3px solid #f97316;
-          border-radius: 8px;
-          padding: 1rem 1.25rem;
-        }
-        .pending-alert-title { font-size: 0.8125rem; font-weight: 700; margin-bottom: 0.375rem; }
-        .pending-alert-body  { font-size: 0.8125rem; color: var(--muted); margin-bottom: 0.75rem; }
-        .pending-alert-body strong { color: #f97316; }
-        .review-btn {
-          padding: 0.4rem 0.875rem;
-          background: #f97316; color: #fff;
-          border: none; border-radius: 6px;
-          font-size: 0.8125rem; font-weight: 600;
-          cursor: pointer; transition: opacity .15s;
-        }
-        .review-btn:hover { opacity: .85; }
-
-        /* ── Submissions Tab ── */
-        .section-head {
-          display: flex; align-items: center; justify-content: space-between;
-          margin-bottom: 0.75rem;
-        }
-        .section-head-title { font-size: 0.875rem; font-weight: 700; }
-        .search-input {
-          padding: 0.35rem 0.75rem;
-          border: 1px solid var(--border);
-          border-radius: 6px;
-          background: var(--surface);
-          color: var(--text);
-          font-size: 0.8125rem;
-          outline: none;
-          width: 200px;
-          transition: border-color .15s;
-        }
-        .search-input:focus { border-color: var(--accent); }
-        .search-input::placeholder { color: var(--muted); }
-
-        /* ── Modal ── */
-        .modal-backdrop {
-          position: fixed; inset: 0;
-          background: rgba(0,0,0,.45);
-          display: flex; align-items: center; justify-content: center;
-          padding: 1rem; z-index: 200;
-        }
-        .modal {
-          background: var(--surface);
-          border: 1px solid var(--border);
-          border-radius: 10px;
-          max-width: min(540px, calc(100vw - 2rem)); width: 100%;
-          max-height: 90vh; overflow-y: auto;
-          padding: 1.5rem;
-          box-shadow: 0 20px 60px rgba(0,0,0,.2);
-        }
-        .modal-head {
-          display: flex; align-items: center; justify-content: space-between;
-          margin-bottom: 1.25rem;
-        }
-        .modal-title { font-size: 0.9375rem; font-weight: 700; }
-        .modal-close {
-          background: none; border: none; cursor: pointer;
-          color: var(--muted); font-size: 1.25rem; line-height: 1;
-          padding: 0.125rem 0.25rem; border-radius: 4px;
-          transition: background .12s;
-        }
-        .modal-close:hover { background: var(--bg); }
-        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-        .modal-field-label {
-          font-size: 0.6875rem; font-weight: 600;
-          text-transform: uppercase; letter-spacing: .06em;
-          color: var(--muted); margin-bottom: 0.25rem;
-        }
-        .modal-field-value { font-size: 0.8125rem; font-weight: 600; }
-        .modal-message {
-          background: var(--bg); border-radius: 6px;
-          padding: 0.75rem; font-size: 0.8125rem;
-          color: var(--muted); line-height: 1.6;
-          margin-bottom: 1.25rem;
-        }
-        .modal-close-btn {
-          width: 100%; padding: 0.5rem;
-          background: var(--accent); color: #fff;
-          border: none; border-radius: 6px;
-          font-size: 0.8125rem; font-weight: 600;
-          cursor: pointer; transition: opacity .15s;
-        }
-        .modal-close-btn:hover { opacity: .85; }
-
-        @media(max-width:720px){
-          .dash-header-inner {
-            padding: 0.75rem 1rem;
-            align-items: flex-start;
-            flex-direction: column;
-            gap: 0.75rem;
-          }
-          .dash-tabs-inner {
-            padding: 0 1rem 4px;
-          }
-          .dash-content {
-            padding: 1rem;
-            overflow-x: hidden;
-          }
-          .dash-content table {
-            display: block;
-            max-width: 100%;
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-          }
-          .modal-backdrop {
-            align-items: flex-end;
-            padding: 0.75rem;
-          }
-          .modal {
-            max-width: 100%;
-            max-height: calc(100dvh - 1.5rem);
-            padding: 1rem;
-          }
-          .modal-grid {
-            grid-template-columns: 1fr;
-          }
-          .modal-head {
-            gap: 0.75rem;
-          }
-          .modal-title {
-            line-height: 1.3;
-          }
-        }
-
-        .empty-state {
-          text-align: center; padding: 2rem;
-          font-size: 0.8125rem; color: var(--muted);
-        }
-      `}</style>
 
       <div className={`dash-root${isDarkMode ? ' dark-mode' : ''}`}>
         {/* Header */}
@@ -1108,16 +733,8 @@ function AdminDashboard() {
           <div className="dash-header">
             <div className="dash-header-inner">
               <div>
-                <div className="dash-title">Admin Dashboard</div>
+                <div className="dash-title">Welcome back, Admin</div>
                 <div className="dash-subtitle">Manage properties, forms, vendors &amp; services</div>
-              </div>
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                <button className="dash-export-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                  <Download size={14} strokeWidth={1.75} aria-hidden="true" /> Export
-                </button>
-                <button className="dash-logout-btn" onClick={handleLogout} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                  <LogOut size={14} strokeWidth={1.75} aria-hidden="true" /> Logout
-                </button>
               </div>
             </div>
           </div>
@@ -1151,66 +768,56 @@ function AdminDashboard() {
           {activeTab === 'overview' && (
             <>
               <div className="dash-stats">
-                {stats.map((s, i) => {
-                  const StatIcon = s.icon;
-                  return (
-                    <div key={i} className={`stat-card stat-card-${['a', 'b', 'c', 'd'][i]}`}>
-                      <div>
-                        <div className="stat-label">{s.label}</div>
-                        <div className="stat-value">{s.value}</div>
-                      </div>
-                      <span className="stat-icon">
-                        {StatIcon ? (typeof StatIcon === 'string' ? StatIcon : <StatIcon size={24} strokeWidth={1.75} aria-hidden="true" />) : null}
-                      </span>
-                    </div>
-                  );
-                })}
+                {stats.map((stat, index) => (
+                  <AdminStatCard
+                    key={stat.label}
+                    label={stat.label}
+                    value={stat.value}
+                    icon={stat.icon}
+                    tone={["info", "warning", "success", "accent"][index]}
+                  />
+                ))}
               </div>
 
-              {/* Admin Earnings */}
-              <div className="panel" style={{ marginBottom: '1rem' }}>
-                <div className="panel-header">
-                  <span className="panel-title">💰 Admin Earnings (Commission)</span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem', padding: '1rem' }}>
-                  {[
-                    { label: "Today's Commission", value: `₹${todayCommission.toLocaleString('en-IN')}`, sub: '15% of today\'s bookings', color: 'var(--brand-blue)' },
-                    { label: 'Total Commission', value: `₹${totalCommission.toLocaleString('en-IN')}`, sub: '15% of all completed', color: '#4ade80' },
-                    { label: 'Total GST Collected', value: `₹${totalGST.toLocaleString('en-IN')}`, sub: '18% collected from users', color: '#60a5fa' },
-                  ].map(({ label, value, sub, color }) => (
-                    <div key={label} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '1.25rem' }}>
-                      <p style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)', marginBottom: '0.5rem' }}>{label}</p>
-                      <p style={{ fontSize: '1.75rem', fontWeight: 900, color }}>{value}</p>
-                      <p style={{ fontSize: '0.6875rem', color: 'var(--muted)', marginTop: '0.25rem' }}>{sub}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <AdminSectionCard
+                title="Admin earnings"
+                tag="Commission"
+                bodyClassName="admin-section-card__body--metrics"
+              >
+                {[
+                  { label: "Today's commission", value: <AdminMoney value={todayCommission} />, helper: "15% of today's bookings" },
+                  { label: "Total commission", value: <AdminMoney value={totalCommission} />, helper: "15% of completed bookings", positive: true },
+                  { label: "Total GST collected", value: <AdminMoney value={totalGST} />, helper: "18% collected from users" },
+                ].map((metric) => (
+                  <div className="admin-metric" key={metric.label}>
+                    <p className="admin-metric__label">{metric.label}</p>
+                    <p className={`admin-metric__value ${metric.positive ? "admin-metric__value--success" : ""}`}>{metric.value}</p>
+                    <p className="admin-metric__helper">{metric.helper}</p>
+                  </div>
+                ))}
+              </AdminSectionCard>
 
-              {/* Supplier Marketplace Commission */}
-              <div className="panel" style={{ marginBottom: '1rem' }}>
-                <div className="panel-header">
-                  <span className="panel-title">📦 Supplier Marketplace Commission (15%)</span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem', padding: '1rem' }}>
-                  {[
-                    { label: "Today's Commission", value: `₹${supplierCommission.today.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: 'var(--brand-blue)' },
-                    { label: 'Total Commission', value: `₹${supplierCommission.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: '#4ade80' },
-                    { label: 'Orders Fulfilled', value: supplierCommission.fulfilled, color: '#60a5fa' },
-                    { label: 'Open Enquiries', value: supplierCommission.open, color: '#f97316' },
-                  ].map(({ label, value, color }) => (
-                    <div key={label} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '1rem' }}>
-                      <p style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)', marginBottom: '0.5rem' }}>{label}</p>
-                      <p style={{ fontSize: '1.5rem', fontWeight: 900, color }}>{value}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
+              <AdminSectionCard
+                title="Supplier marketplace"
+                tag="15% commission"
+                bodyClassName="admin-section-card__body--metrics admin-section-card__body--four"
+              >
+                {[
+                  { label: "Today's commission", value: <AdminMoney value={supplierCommission.today} /> },
+                  { label: "Total commission", value: <AdminMoney value={supplierCommission.total} />, positive: true },
+                  { label: "Orders fulfilled", value: supplierCommission.fulfilled, number: true },
+                  { label: "Open enquiries", value: supplierCommission.open, tone: "warning", number: true },
+                ].map((metric) => (
+                  <div className="admin-metric" key={metric.label}>
+                    <p className="admin-metric__label">{metric.label}</p>
+                    <p className={`admin-metric__value ${metric.positive ? "admin-metric__value--success" : ""} ${metric.tone ? `admin-metric__value--${metric.tone}` : ""} ${metric.number ? "admin-number" : ""}`}>{metric.value}</p>
+                  </div>
+                ))}
+              </AdminSectionCard>
               {/* 🛒 Shop Vendor Commission */}
               <div className="panel" style={{ marginBottom: '1rem' }}>
                 <div className="panel-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span className="panel-title">🛒 Shop Vendor Commission</span>
+                  <span className="panel-title inline-flex items-center gap-2"><ShoppingCart size={20} strokeWidth={1.7} aria-hidden="true" /> Shop vendor commission</span>
                   <button
                     onClick={() => setActiveTab('shop-commission-settings')}
                     style={{
@@ -1295,7 +902,7 @@ function AdminDashboard() {
                                     setSettleNote('Settled offline by admin');
                                   }}
                                   style={{
-                                    background: '#10b981',
+                                    background: 'var(--brand-blue)',
                                     color: '#fff',
                                     border: 'none',
                                     borderRadius: '6px',
@@ -1371,7 +978,7 @@ function AdminDashboard() {
 
               {pendingSuppliers > 0 && (
                 <div className="pending-alert">
-                  <div className="pending-alert-title">📦 Pending Supplier Applications</div>
+                  <div className="pending-alert-title">Pending supplier applications</div>
                   <div className="pending-alert-body">
                     <strong>{pendingSuppliers}</strong> {pendingSuppliers === 1 ? 'supplier' : 'suppliers'} awaiting approval.
                   </div>
@@ -1395,7 +1002,7 @@ function AdminDashboard() {
 
               {activeVendorBookings > 0 && (
                 <div className="pending-alert">
-                  <div className="pending-alert-title">🚀 Active Vendor Bookings</div>
+                  <div className="pending-alert-title">Active vendor bookings</div>
                   <div className="pending-alert-body">
                     <strong>{activeVendorBookings}</strong> {activeVendorBookings === 1 ? 'booking is' : 'bookings are'} currently being worked on.
                   </div>
@@ -1452,17 +1059,16 @@ function AdminDashboard() {
           {activeTab === 'primary-service-enquiries' && (
             <div>
               <div className="section-head">
-                <span className="section-head-title">Construction Enquiry</span>
-                <button
-                  type="button"
-                  className="dash-export-btn"
-                  onClick={fetchPrimaryServiceEnquiries}
-                >
+                <span className="section-head-title">Construction enquiry</span>
+                <AdminButton className="dash-export-btn" onClick={fetchPrimaryServiceEnquiries}>
                   Refresh
-                </button>
-                <input
+                </AdminButton>
+                <AdminInput
+                  bare
+                  id="construction-enquiry-search"
                   type="text"
-                  placeholder="Search name, phone, alternate phone, service, email…"
+                  aria-label="Search construction enquiries"
+                  placeholder="Search name, phone, service or email"
                   className="search-input"
                   value={pseSearch}
                   onChange={e => setPseSearch(e.target.value)}
@@ -1715,7 +1321,7 @@ function AdminDashboard() {
                       transition: 'all 0.15s ease'
                     }}
                   >
-                    📋 Requests & Subscriptions
+                    Requests and subscriptions
                   </button>
                   <button
                     type="button"
@@ -1746,7 +1352,7 @@ function AdminDashboard() {
                       alignItems: 'center',
                       gap: '0.4rem',
                       padding: '0.45rem 0.9rem',
-                      background: '#10b981',
+                      background: 'var(--brand-blue)',
                       color: '#fff',
                       borderRadius: '6px',
                       border: 'none',
@@ -1767,7 +1373,7 @@ function AdminDashboard() {
                   {/* PENDING REQUESTS PANEL */}
                   <div className="panel" style={{ marginBottom: '1.5rem' }}>
                     <div className="panel-header">
-                      <span className="panel-title">⏳ Pending Package Requests</span>
+                      <span className="panel-title inline-flex items-center gap-2"><Clock size={20} strokeWidth={1.7} aria-hidden="true" /> Pending package requests</span>
                     </div>
                     <div className="panel-body" style={{ padding: 0 }}>
                       <div style={{ overflowX: 'auto' }}>
@@ -1882,7 +1488,7 @@ function AdminDashboard() {
               {packageSubTab === 'plans' && (
                 <div className="panel">
                   <div className="panel-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="panel-title">📦 All Subscription Plans</span>
+                    <span className="panel-title inline-flex items-center gap-2"><PackageCheck size={20} strokeWidth={1.7} aria-hidden="true" /> All subscription plans</span>
                     <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
                       Total {plansList.length} plan{plansList.length === 1 ? '' : 's'} configured
                     </span>
@@ -2183,7 +1789,7 @@ function AdminDashboard() {
                               padding: '0.5rem 1.25rem',
                               borderRadius: '6px',
                               border: 'none',
-                              background: '#10b981',
+                              background: 'var(--brand-blue)',
                               color: '#fff',
                               fontSize: '0.8125rem',
                               fontWeight: 600,
@@ -2877,7 +2483,7 @@ function AdminDashboard() {
                   type="button"
                   style={{
                     padding: '0.45rem 1rem',
-                    background: '#10b981',
+                    background: 'var(--brand-blue)',
                     color: '#fff',
                     border: 'none',
                     borderRadius: '6px',
