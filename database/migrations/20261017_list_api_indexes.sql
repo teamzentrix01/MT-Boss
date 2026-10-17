@@ -54,3 +54,6 @@ CREATE INDEX IF NOT EXISTS idx_blogs_published_created
 
 CREATE INDEX IF NOT EXISTS idx_managed_cities_active_sort
   ON managed_cities (is_active, sort_order ASC, name ASC);
+
+CREATE INDEX IF NOT EXISTS pm_parties_created_at_idx
+  ON pm_parties (created_at DESC);
