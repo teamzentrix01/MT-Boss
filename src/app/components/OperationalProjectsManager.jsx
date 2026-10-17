@@ -75,7 +75,6 @@ export default function OperationalProjectsManager({ isDarkMode }) {
         (filter === 'running' && ['started', 'ongoing', 'running'].includes(pStatus)) ||
         (filter === 'completed' && pStatus === 'completed') ||
         (filter === 'on_hold' && pStatus === 'on_hold') ||
-        (filter === 'lead_not_converted' && (project.is_lead_only || pStatus === 'lead_not_converted')) ||
         pStatus === filter;
 
       const haystack = [
@@ -555,7 +554,6 @@ export default function OperationalProjectsManager({ isDarkMode }) {
           <option value="running">Running</option>
           <option value="completed">Completed</option>
           <option value="on_hold">On hold</option>
-          <option value="lead_not_converted">Lead, not converted</option>
         </select>
       </div>
 

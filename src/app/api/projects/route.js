@@ -83,62 +83,16 @@ export async function GET(req) {
             COALESCE(paa.agents, '[]'::json) AS assigned_agents,
             paa.primary_agent_id AS assigned_agent_id,
             paa.primary_agent_name AS assigned_agent_name,
-            CASE WHEN p.source_lead_id IS NOT NULL OR al.id IS NOT NULL THEN 'Lead' ELSE 'Manual' END AS source,
+            'Lead' AS source,
             false AS is_lead_only
           FROM pm_projects p
           JOIN pm_parties pa ON pa.id = p.party_id
           LEFT JOIN agent_leads al ON (al.id = p.source_lead_id OR al.converted_project_id = p.id)
           LEFT JOIN project_payments pp ON pp.project_id = p.id
           LEFT JOIN project_agent_agg paa ON paa.project_id = p.id
-        ),
-        unconverted_leads AS (
-          SELECT 
-            ('lead_' || al.id)::text AS id,
-            NULL::text AS party_id,
-            COALESCE(al.service_type, al.client_requirement, 'Lead Project') AS title,
-            COALESCE(al.service_type, al.client_requirement, 'Lead Project') AS project_name,
-            COALESCE(al.city, '') AS site_address,
-            COALESCE(al.city, '') AS location,
-            al.created_at::date AS start_date,
-            NULL::date AS expected_end_date,
-            COALESCE(al.final_amount, 0)::numeric AS deal_amount,
-            COALESCE(al.final_amount, 0)::numeric AS contract_value,
-            NULL::numeric AS built_up_area,
-            'lead_not_converted' AS project_status,
-            'lead_not_converted' AS status,
-            al.service_type AS project_type,
-            COALESCE(al.service_type, 'Lead') AS category,
-            al.city AS project_city,
-            al.id::text AS source_lead_id,
-            al.created_at,
-            al.client_name AS client_name,
-            al.client_name AS party_name,
-            al.client_phone AS client_phone,
-            al.client_phone AS party_phone,
-            al.client_email AS client_email,
-            al.client_email AS party_email,
-            al.city AS party_address,
-            al.id::text AS lead_id,
-            al.service_type AS lead_service_type,
-            al.client_requirement AS lead_client_requirement,
-            al.notes AS lead_notes,
-            al.daily_visit_notes AS lead_daily_visit_notes,
-            al.city AS lead_city,
-            0::numeric AS received,
-            COALESCE(al.final_amount, 0)::numeric AS pending,
-            '[]'::json AS assigned_agents,
-            NULL::integer AS assigned_agent_id,
-            NULL::text AS assigned_agent_name,
-            'Lead' AS source,
-            true AS is_lead_only
-          FROM agent_leads al
-          WHERE (al.lead_stage = 'Final' OR al.status = 'Converted')
-            AND al.converted_project_id IS NULL
-            AND NOT EXISTS (SELECT 1 FROM pm_projects p WHERE p.source_lead_id = al.id)
+          WHERE (p.source_lead_id IS NOT NULL OR al.id IS NOT NULL)
         )
         SELECT * FROM combined_pm_projects
-        UNION ALL
-        SELECT * FROM unconverted_leads
         ORDER BY created_at DESC;
       `;
 

@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Eye, Download, RefreshCw, Plus, X, ActionIconButton } from '@/app/components/ui/icons';
+import { Eye, Download, RefreshCw, Plus, X, ArrowLeft, ActionIconButton } from '@/app/components/ui/icons';
 import LeadDetailView from './LeadDetailView';
 
 const statuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
@@ -55,6 +55,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
     }
     return null;
   });
+  const [isCreatingLead, setIsCreatingLead] = useState(false);
   const [convertingLead, setConvertingLead] = useState(null);
   const [conversionData, setConversionData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -216,7 +217,8 @@ export default function LeadManagementAdmin({ isDarkMode }) {
     const data = await res.json();
     if (data.success) {
       setForm(emptyForm);
-      setMessage('Lead created.');
+      setMessage('Lead created successfully.');
+      setIsCreatingLead(false);
       await loadLeads();
     } else {
       setMessage(data.error || 'Could not create lead.');
@@ -412,11 +414,184 @@ export default function LeadManagementAdmin({ isDarkMode }) {
           franchises={franchises}
           vendors={vendors}
         />
+      ) : isCreatingLead ? (
+        <div style={{ display: 'grid', gap: '1rem', color: text }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => {
+                setIsCreatingLead(false);
+                setMessage('');
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                border: `1px solid ${border}`,
+                background: surface,
+                color: text,
+                borderRadius: 6,
+                padding: '0.5rem 0.85rem',
+                fontWeight: 800,
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+              }}
+            >
+              <ArrowLeft size={16} strokeWidth={2} aria-hidden="true" />
+              Back to leads
+            </button>
+            <span style={{ fontSize: '0.82rem', fontWeight: 800, color: muted }}>Create Manual Lead Page</span>
+          </div>
+
+          <form onSubmit={createLead} style={{ background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: '1.25rem' }}>
+            <div style={{ marginBottom: '1.25rem', borderBottom: `1px solid ${border}`, paddingBottom: '0.75rem' }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: 900, color: text }}>Create Manual Lead</div>
+              <div style={{ color: muted, fontSize: '0.78rem', marginTop: 3 }}>
+                Fill in the client information, service requirements, and assignments to create a new lead.
+              </div>
+            </div>
+
+            {message && (
+              <div
+                style={{
+                  marginBottom: '1rem',
+                  padding: '0.75rem 1rem',
+                  border: `1px solid ${border}`,
+                  background: surface,
+                  color: text,
+                  borderRadius: 6,
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                }}
+              >
+                {message}
+              </div>
+            )}
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.85rem' }}>
+              {[
+                ['Client Name *', 'client_name'],
+                ['Phone *', 'client_phone'],
+                ['Email', 'client_email'],
+                ['City *', 'city'],
+                ['Service Type', 'service_type'],
+                ['Lead Type', 'lead_type'],
+                ['Follow Up', 'follow_up_date', 'date'],
+              ].map(([label, key, type]) => (
+                <div key={key}>
+                  <label style={labelStyle}>{label}</label>
+                  <input
+                    style={inputStyle}
+                    type={type || 'text'}
+                    value={form[key]}
+                    onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                    required={key === 'client_name' || key === 'client_phone' || key === 'city'}
+                  />
+                </div>
+              ))}
+              <div>
+                <label style={labelStyle}>Priority</label>
+                <select style={inputStyle} value={form.priority} onChange={(e) => setForm((f) => ({ ...f, priority: e.target.value }))}>
+                  {priorities.map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={labelStyle}>Franchise</label>
+                <select style={inputStyle} value={form.assigned_franchise_id} onChange={(e) => setForm((f) => ({ ...f, assigned_franchise_id: e.target.value }))}>
+                  <option value="">Not assigned</option>
+                  {franchises.filter((item) => !form.city || item.city?.trim().toLowerCase() === form.city.trim().toLowerCase()).map((item) => <option key={item.id} value={item.id}>{item.name} - {item.city}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={labelStyle}>Vendor</label>
+                <select style={inputStyle} value={form.assigned_vendor_id} onChange={(e) => setForm((f) => ({ ...f, assigned_vendor_id: e.target.value }))}>
+                  <option value="">Not assigned</option>
+                  {vendors.filter((item) => !form.city || item.city?.trim().toLowerCase() === form.city.trim().toLowerCase()).map((item) => <option key={item.id} value={item.id}>{item.shop_name} - {item.city}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={labelStyle}>Agent / Sub-agent</label>
+                <select style={inputStyle} value={form.agent_id} onChange={(e) => setForm((f) => ({ ...f, agent_id: e.target.value }))}>
+                  <option value="">Not assigned</option>
+                  {agents.map((item) => <option key={item.id} value={item.id}>{item.name} - {item.city}</option>)}
+                </select>
+              </div>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={labelStyle}>Requirement</label>
+                <input style={inputStyle} value={form.client_requirement} onChange={(e) => setForm((f) => ({ ...f, client_requirement: e.target.value }))} />
+              </div>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={labelStyle}>Notes</label>
+                <input style={inputStyle} value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} />
+              </div>
+            </div>
+
+            <div style={{ marginTop: '1.25rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <button
+                type="submit"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  border: 0,
+                  background: 'var(--accent, #2563eb)',
+                  color: '#fff',
+                  borderRadius: 6,
+                  padding: '0.65rem 1.25rem',
+                  fontWeight: 900,
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                }}
+              >
+                <Plus size={16} strokeWidth={2} aria-hidden="true" />
+                Submit Lead
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCreatingLead(false);
+                  setMessage('');
+                }}
+                style={{
+                  border: `1px solid ${border}`,
+                  background: surface,
+                  color: text,
+                  borderRadius: 6,
+                  padding: '0.65rem 1rem',
+                  fontWeight: 800,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       ) : (
         <>
           <div className="section-head">
         <span className="section-head-title">Lead Management</span>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() => setIsCreatingLead(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              border: 0,
+              background: 'var(--accent, #2563eb)',
+              color: '#fff',
+              borderRadius: 5,
+              padding: '0.5rem 0.95rem',
+              fontWeight: 900,
+              cursor: 'pointer',
+            }}
+          >
+            <Plus size={15} strokeWidth={2} aria-hidden="true" />
+            Create Manual Lead
+          </button>
           <button onClick={exportExcel} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, border: 0, background: 'var(--accent)', color: '#111', borderRadius: 5, padding: '0.5rem 0.85rem', fontWeight: 900, cursor: 'pointer' }}>
             <Download size={15} strokeWidth={1.75} aria-hidden="true" />
             Export Excel
@@ -443,65 +618,6 @@ export default function LeadManagementAdmin({ isDarkMode }) {
           </div>
         ))}
       </div>
-
-      <form onSubmit={createLead} style={{ background: bg, border: `1px solid ${border}`, borderRadius: 6, padding: '1rem' }}>
-        <div style={{ fontSize: '0.95rem', fontWeight: 900, color: text, marginBottom: '0.8rem' }}>Create Manual Lead</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 10 }}>
-          {[
-            ['Client Name *', 'client_name'],
-            ['Phone *', 'client_phone'],
-            ['Email', 'client_email'],
-            ['City *', 'city'],
-            ['Service Type', 'service_type'],
-            ['Lead Type', 'lead_type'],
-            ['Follow Up', 'follow_up_date', 'date'],
-          ].map(([label, key, type]) => (
-            <div key={key}>
-              <label style={labelStyle}>{label}</label>
-              <input style={inputStyle} type={type || 'text'} value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} />
-            </div>
-          ))}
-          <div>
-            <label style={labelStyle}>Priority</label>
-            <select style={inputStyle} value={form.priority} onChange={(e) => setForm((f) => ({ ...f, priority: e.target.value }))}>
-              {priorities.map((item) => <option key={item} value={item}>{item}</option>)}
-            </select>
-          </div>
-          <div>
-            <label style={labelStyle}>Franchise</label>
-            <select style={inputStyle} value={form.assigned_franchise_id} onChange={(e) => setForm((f) => ({ ...f, assigned_franchise_id: e.target.value }))}>
-              <option value="">Not assigned</option>
-              {franchises.filter((item) => !form.city || item.city?.trim().toLowerCase() === form.city.trim().toLowerCase()).map((item) => <option key={item.id} value={item.id}>{item.name} - {item.city}</option>)}
-            </select>
-          </div>
-          <div>
-            <label style={labelStyle}>Vendor</label>
-            <select style={inputStyle} value={form.assigned_vendor_id} onChange={(e) => setForm((f) => ({ ...f, assigned_vendor_id: e.target.value }))}>
-              <option value="">Not assigned</option>
-              {vendors.filter((item) => !form.city || item.city?.trim().toLowerCase() === form.city.trim().toLowerCase()).map((item) => <option key={item.id} value={item.id}>{item.shop_name} - {item.city}</option>)}
-            </select>
-          </div>
-          <div>
-            <label style={labelStyle}>Agent / Sub-agent</label>
-            <select style={inputStyle} value={form.agent_id} onChange={(e) => setForm((f) => ({ ...f, agent_id: e.target.value }))}>
-              <option value="">Not assigned</option>
-              {agents.map((item) => <option key={item.id} value={item.id}>{item.name} - {item.city}</option>)}
-            </select>
-          </div>
-          <div style={{ gridColumn: 'span 2' }}>
-            <label style={labelStyle}>Requirement</label>
-            <input style={inputStyle} value={form.client_requirement} onChange={(e) => setForm((f) => ({ ...f, client_requirement: e.target.value }))} />
-          </div>
-          <div style={{ gridColumn: 'span 2' }}>
-            <label style={labelStyle}>Notes</label>
-            <input style={inputStyle} value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} />
-          </div>
-        </div>
-        <button type="submit" style={{ marginTop: 12, display: 'inline-flex', alignItems: 'center', gap: 6, border: 0, background: 'var(--accent)', color: '#111', borderRadius: 5, padding: '0.65rem 1rem', fontWeight: 900, cursor: 'pointer' }}>
-          <Plus size={16} strokeWidth={1.75} aria-hidden="true" />
-          Add Lead
-        </button>
-      </form>
 
       <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 6, padding: '1rem' }}>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>

@@ -497,8 +497,70 @@ function SupplierDashboardContent() {
         <div className="space-y-6">
           {/* ══════════════════════ ORDERS ══════════════════════ */}
           {activeTab === 'orders' && (
-            <>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            fulfillModal ? (
+              <div style={{ maxWidth: '640px', margin: '0 auto', background: surface, border: `1px solid ${border}`, borderRadius: 14, padding: '1.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: `1px solid ${border}` }}>
+                  <button
+                    onClick={() => setFulfillModal(null)}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.45rem 0.9rem', background: 'transparent', border: `1px solid ${border}`, borderRadius: 6, color: text, cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}
+                  >
+                    ← Back to Orders
+                  </button>
+                  <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: text }}>Mark Order as Fulfilled</h2>
+                </div>
+
+                {/* Order summary */}
+                <div style={{ background: dark ? '#1a1a1a' : '#f9f9f9', borderRadius: 8, padding: '0.875rem', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
+                  <div style={{ fontWeight: 700, color: text, marginBottom: '0.4rem' }}>
+                    {fulfillModal.category_emoji} {fulfillModal.category_name}
+                    {fulfillModal.material_type ? ` — ${fulfillModal.material_type}` : ''}
+                  </div>
+                  {fulfillModal.brand_company && <div style={{ color: muted, fontSize: '0.78rem' }}>Brand: {fulfillModal.brand_company}</div>}
+                  {fulfillModal.quantity_text && <div style={{ color: muted, fontSize: '0.78rem' }}>Qty: {fulfillModal.quantity_text}</div>}
+                  <div style={{ color: muted, marginTop: '0.25rem' }}>
+                    Customer: <strong style={{ color: text }}>{fulfillModal.user_name}</strong> · {fulfillModal.user_phone}
+                  </div>
+                  {fulfillModal.delivery_address && (
+                    <div style={{ color: muted, fontSize: '0.75rem', marginTop: '0.2rem' }}>📍 {fulfillModal.delivery_address}</div>
+                  )}
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted, marginBottom: '0.4rem' }}>
+                    Total Amount Received (₹) *
+                  </label>
+                  <input
+                    type="number" className="sd-form-input" value={fulfillAmount}
+                    onChange={e => setFulfillAmount(e.target.value)}
+                    placeholder="e.g., 15000" min="0" step="0.01" autoFocus
+                  />
+                  {fulfillAmount && !isNaN(parseFloat(fulfillAmount)) && (
+                    <div style={{ marginTop: '0.5rem', fontSize: '0.78rem', color: muted }}>
+                      Commission (15%): <strong style={{ color: '#f97316' }}>₹{(parseFloat(fulfillAmount) * 0.15).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
+                      {' '}· Your net: <strong style={{ color: '#22c55e' }}>₹{(parseFloat(fulfillAmount) * 0.85).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
+                    </div>
+                  )}
+                </div>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted, marginBottom: '0.4rem' }}>
+                    Delivery Notes (optional)
+                  </label>
+                  <textarea className="sd-form-input" rows={2} style={{ resize: 'vertical' }} value={fulfillNotes} onChange={e => setFulfillNotes(e.target.value)} placeholder="Any notes about delivery…" />
+                </div>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <button onClick={submitFulfill} disabled={fulfilling}
+                    style={{ flex: 1, padding: '0.75rem', background: 'var(--brand-blue-dark)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', opacity: fulfilling ? 0.6 : 1, fontFamily: 'inherit' }}>
+                    {fulfilling ? 'Saving…' : '✅ Mark as Fulfilled'}
+                  </button>
+                  <button onClick={() => setFulfillModal(null)}
+                    style={{ flex: 1, padding: '0.75rem', background: 'transparent', color: muted, border: `1px solid ${border}`, borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit' }}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <div>
                   <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>Lead Management 📋</div>
                   <div style={{ fontSize: '0.85rem', color: muted }}>Accept open leads and manage your active orders</div>
@@ -570,7 +632,8 @@ function SupplierDashboardContent() {
                 </>
               )}
             </>
-          )}
+          )
+        )}
 
           {/* ══════════════════════ EARNINGS ══════════════════════ */}
           {activeTab === 'tracking' && (
@@ -810,64 +873,6 @@ function SupplierDashboardContent() {
           )}
         </div>
       </PanelLayout>
-
-      {/* ── Fulfill Modal ──────────────────────────────────────────────────── */}
-      {fulfillModal && (
-        <div className="sd-modal-overlay" onClick={() => setFulfillModal(null)}>
-          <div className="sd-modal" onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1.25rem', color: text }}>📝 Mark Order as Fulfilled</h2>
-
-            {/* Order summary */}
-            <div style={{ background: dark ? '#1a1a1a' : '#f9f9f9', borderRadius: 8, padding: '0.875rem', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
-              <div style={{ fontWeight: 700, color: text, marginBottom: '0.4rem' }}>
-                {fulfillModal.category_emoji} {fulfillModal.category_name}
-                {fulfillModal.material_type ? ` — ${fulfillModal.material_type}` : ''}
-              </div>
-              {fulfillModal.brand_company && <div style={{ color: muted, fontSize: '0.78rem' }}>Brand: {fulfillModal.brand_company}</div>}
-              {fulfillModal.quantity_text && <div style={{ color: muted, fontSize: '0.78rem' }}>Qty: {fulfillModal.quantity_text}</div>}
-              <div style={{ color: muted, marginTop: '0.25rem' }}>
-                Customer: <strong style={{ color: text }}>{fulfillModal.user_name}</strong> · {fulfillModal.user_phone}
-              </div>
-              {fulfillModal.delivery_address && (
-                <div style={{ color: muted, fontSize: '0.75rem', marginTop: '0.2rem' }}>📍 {fulfillModal.delivery_address}</div>
-              )}
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted, marginBottom: '0.4rem' }}>
-                Total Amount Received (₹) *
-              </label>
-              <input
-                type="number" className="sd-form-input" value={fulfillAmount}
-                onChange={e => setFulfillAmount(e.target.value)}
-                placeholder="e.g., 15000" min="0" step="0.01" autoFocus
-              />
-              {fulfillAmount && !isNaN(parseFloat(fulfillAmount)) && (
-                <div style={{ marginTop: '0.5rem', fontSize: '0.78rem', color: muted }}>
-                  Commission (15%): <strong style={{ color: '#f97316' }}>₹{(parseFloat(fulfillAmount) * 0.15).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
-                  {' '}· Your net: <strong style={{ color: '#22c55e' }}>₹{(parseFloat(fulfillAmount) * 0.85).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
-                </div>
-              )}
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted, marginBottom: '0.4rem' }}>
-                Delivery Notes (optional)
-              </label>
-              <textarea className="sd-form-input" rows={2} style={{ resize: 'vertical' }} value={fulfillNotes} onChange={e => setFulfillNotes(e.target.value)} placeholder="Any notes about delivery…" />
-            </div>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button onClick={submitFulfill} disabled={fulfilling}
-                style={{ flex: 1, padding: '0.75rem', background: 'var(--brand-blue-dark)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', opacity: fulfilling ? 0.6 : 1, fontFamily: 'inherit' }}>
-                {fulfilling ? 'Saving…' : '✅ Mark as Fulfilled'}
-              </button>
-              <button onClick={() => setFulfillModal(null)}
-                style={{ flex: 1, padding: '0.75rem', background: 'transparent', color: muted, border: `1px solid ${border}`, borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit' }}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

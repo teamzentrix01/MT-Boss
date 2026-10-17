@@ -12,6 +12,8 @@ import {
   CalendarDays,
   Clock,
   User,
+  Plus,
+  ArrowLeft,
 } from '@/app/components/ui/icons';
 
 const leadStatuses = ['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'];
@@ -59,6 +61,8 @@ function AgentDashboardContent() {
   });
   const loadedTabsRef = useRef(new Set());
   const [message, setMessage] = useState('');
+  const [showLeadForm, setShowLeadForm] = useState(false);
+  const [showTaskForm, setShowTaskForm] = useState(false);
   const [editLead, setEditLead] = useState(null);
   const [leadSaving, setLeadSaving] = useState(false);
   const [deletingLeadId, setDeletingLeadId] = useState(null);
@@ -371,6 +375,7 @@ function AgentDashboardContent() {
           setLeads((prev) => prev.map((l) => l.id === editLead.id ? data.data : l));
           setLeadForm(resetLeadForm());
           setEditLead(null);
+          setShowLeadForm(false);
           setMessage(data.project ? 'Lead finalized and sent to admin for project assignment.' : 'Lead updated.');
         } else {
           setMessage(data.error || 'Lead could not be updated.');
@@ -390,6 +395,7 @@ function AgentDashboardContent() {
           : [data.data, ...prev]
         );
         setLeadForm(resetLeadForm());
+        setShowLeadForm(false);
         setMessage(data.duplicate
           ? 'This lead was already saved; duplicate entry was prevented.'
           : data.project ? 'Lead finalized and sent to admin for project assignment.' : 'Lead added for your assigned city.'
@@ -457,6 +463,7 @@ function AgentDashboardContent() {
 
   function startEditLead(lead) {
     setEditLead(lead);
+    setShowLeadForm(true);
     setLeadForm({
       clientName: lead.client_name || '', clientPhone: lead.client_phone || '',
       city: lead.city || agent?.city || '',
@@ -655,6 +662,7 @@ function AgentDashboardContent() {
       });
       setTaskForm({ title: '', scheduleDate: todayIso(), scheduleTime: '', type: 'Follow-up', status: 'Planned', notes: '' });
       setEditTask(null);
+      setShowTaskForm(false);
       setMessage(editTask ? 'Schedule item updated.' : 'Schedule item added.');
     } else {
       setMessage(data.error || 'Schedule item could not be saved.');
@@ -663,6 +671,7 @@ function AgentDashboardContent() {
 
   function startEditTask(item) {
     setEditTask(item);
+    setShowTaskForm(true);
     setTaskForm({
       title: item.title || '',
       scheduleDate: item.schedule_date ? String(item.schedule_date).slice(0, 10) : todayIso(),
@@ -921,144 +930,193 @@ function AgentDashboardContent() {
       )}
 
         {activeTab === 'leads' && (
-          <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <form onSubmit={createLead} className={`border ${card} p-5 h-fit`}>
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">{editLead ? 'Edit Lead' : 'Add Lead'}</p>
-                {editLead && <button type="button" onClick={() => { setEditLead(null); setLeadForm(resetLeadForm()); }} className={`text-[10px] font-black uppercase ${muted}`}>Cancel</button>}
+          showLeadForm || editLead ? (
+            <section className="space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => { setShowLeadForm(false); setEditLead(null); setLeadForm(resetLeadForm()); }}
+                  className={`inline-flex items-center gap-2 px-3 py-1.5 border rounded text-xs font-bold ${input}`}
+                >
+                  <ArrowLeft size={14} /> Back to Leads
+                </button>
+                <p className="text-xs font-black uppercase tracking-widest text-[var(--brand-blue)]">
+                  {editLead ? 'Edit Lead' : 'Create New Lead'}
+                </p>
               </div>
-              {[ 
-                ['Client Name *', 'clientName', 'text'],
-                ['Lead City *', 'city', 'text'],
-                ['Client Phone *', 'clientPhone', 'tel'],
-                ['Client Email', 'clientEmail', 'email'],
-                ['Service Type', 'serviceType', 'text'],
-                ['Lead Type', 'leadType', 'text'],
-              ].map(([label, key, type]) => (
-                <div key={key} className="mb-3">
-                  <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>{label}</label>
-                  <input
-                    className={`w-full border px-3 py-2 text-sm outline-none ${input}`}
-                    type={type}
-                    name={key}
-                    value={leadForm[key]}
-                    onChange={(e) => {
-                      const value = key === 'clientPhone' ? phoneInputValue(e.target.value) : e.target.value;
-                      setLeadForm((f) => ({ ...f, [key]: value }));
-                    }}
-                    required={key === 'clientName' || key === 'clientPhone'}
-                    {...(key === 'clientPhone' ? {
-                      inputMode: 'numeric',
-                      // Allow a pasted +91 value; onChange stores only 10 digits.
-                      maxLength: 16,
-                      pattern: '[6-9][0-9]{9}',
-                      placeholder: '10-digit mobile number',
-                    } : {})}
-                  />
-                </div>
-              ))}
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <div>
-                  <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Lead Stage</label>
-                  <select disabled={Boolean(editLead?.project_id)} className={`w-full border px-3 py-2 text-sm ${input}`} value={leadForm.lead_stage} onChange={(e) => setLeadForm((f) => ({ ...f, lead_stage: e.target.value }))}>
-                    {leadStages.map((s) => <option key={s}>{s}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Source</label>
-                  <select className={`w-full border px-3 py-2 text-sm ${input}`} value={leadForm.lead_source} onChange={(e) => setLeadForm((f) => ({ ...f, lead_source: e.target.value }))}>
-                    {['offline', 'online', 'referral', 'walk-in', 'social-media', 'other'].map((s) => <option key={s}>{s}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <label className={`flex items-center gap-2 text-[10px] font-black uppercase ${muted}`}>
-                  <input type="checkbox" checked={leadForm.meeting_done} onChange={(e) => setLeadForm((f) => ({ ...f, meeting_done: e.target.checked }))} className="accent-[var(--brand-blue)]" /> Meeting Done
-                </label>
-                <label className={`flex items-center gap-2 text-[10px] font-black uppercase ${muted}`}>
-                  <input type="checkbox" checked={leadForm.estimate_sent} onChange={(e) => setLeadForm((f) => ({ ...f, estimate_sent: e.target.checked }))} className="accent-[var(--brand-blue)]" /> Estimate Sent
-                </label>
-              </div>
-              <div className="mb-3">
-                <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Deal / Final Amount</label>
-                <input className={`w-full border px-3 py-2 text-sm outline-none ${input}`} type="number" placeholder="₹" value={leadForm.final_amount} onChange={(e) => setLeadForm((f) => ({ ...f, final_amount: e.target.value }))} />
-              </div>
-              <div className="mb-3">
-                <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Client Requirement</label>
-                <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={2} placeholder="What client needs" value={leadForm.client_requirement} onChange={(e) => setLeadForm((f) => ({ ...f, client_requirement: e.target.value }))} />
-              </div>
-              <div className="mb-3">
-                <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Follow-up Date</label>
-                <input className={`w-full border px-3 py-2 text-sm outline-none ${input}`} type="date" value={leadForm.followUpDate} onChange={(e) => setLeadForm((f) => ({ ...f, followUpDate: e.target.value }))} />
-              </div>
-              <div className="mb-3">
-                <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Daily Visit Notes</label>
-                <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={2} placeholder="Today's visit notes" value={leadForm.daily_visit_notes} onChange={(e) => setLeadForm((f) => ({ ...f, daily_visit_notes: e.target.value }))} />
-              </div>
-              <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={2} placeholder="General notes" value={leadForm.notes} onChange={(e) => setLeadForm((f) => ({ ...f, notes: e.target.value }))} />
-              <button disabled={leadSaving} className="w-full mt-4 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest disabled:cursor-not-allowed disabled:opacity-60">
-                {leadSaving ? 'Saving...' : editLead ? 'Update Lead' : 'Save Lead'}
-              </button>
-            </form>
 
-            <div className="lg:col-span-2 space-y-3">
-              {leads.length === 0 ? (
-                <div className={`border ${card} p-8 text-center ${muted}`}>No leads yet for {agent?.city}.</div>
-              ) : leads.map((lead) => (
-                <div key={lead.id} className={`border ${card} p-4`}>
-                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-black">{lead.client_name}</p>
-                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-sm ${lead.lead_stage === 'Final' ? 'bg-green-500/20 text-green-400' : lead.lead_stage === 'Lost' ? 'bg-red-500/20 text-red-400' : 'bg-[var(--brand-blue)]/20 text-[var(--brand-blue)]'}`}>{lead.lead_stage || 'New'}</span>
-                        {lead.meeting_done && <span className="text-[9px] font-bold px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-sm">Meeting ✓</span>}
-                        {lead.estimate_sent && <span className="text-[9px] font-bold px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded-sm">Estimate ✓</span>}
-                      </div>
-                      <p className={`text-xs ${muted} mt-1`}>{lead.client_phone} - {lead.city} {lead.lead_source ? `(${lead.lead_source})` : ''}</p>
-                      <p className={`text-xs ${muted}`}>{lead.service_type || 'Service not set'} {lead.lead_type ? `- ${lead.lead_type}` : ''}</p>
-                      {lead.client_requirement && <p className={`text-xs mt-1 ${muted}`}><strong>Need:</strong> {lead.client_requirement}</p>}
-                      {Number(lead.final_amount || 0) > 0 && <p className="text-xs font-black text-[var(--brand-blue)] mt-1">Deal: ₹{Number(lead.final_amount).toLocaleString('en-IN')}</p>}
-                      {lead.daily_visit_notes && <p className={`text-xs mt-1 ${muted}`}><strong>Visit:</strong> {lead.daily_visit_notes}</p>}
-                      {lead.notes && <p className="text-sm mt-2">{lead.notes}</p>}
+              <form onSubmit={createLead} className={`border ${card} p-6 max-w-3xl mx-auto rounded-md shadow-sm`}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[ 
+                    ['Client Name *', 'clientName', 'text'],
+                    ['Lead City *', 'city', 'text'],
+                    ['Client Phone *', 'clientPhone', 'tel'],
+                    ['Client Email', 'clientEmail', 'email'],
+                    ['Service Type', 'serviceType', 'text'],
+                    ['Lead Type', 'leadType', 'text'],
+                  ].map(([label, key, type]) => (
+                    <div key={key}>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>{label}</label>
+                      <input
+                        className={`w-full border px-3 py-2 text-sm outline-none ${input}`}
+                        type={type}
+                        name={key}
+                        value={leadForm[key]}
+                        onChange={(e) => {
+                          const value = key === 'clientPhone' ? phoneInputValue(e.target.value) : e.target.value;
+                          setLeadForm((f) => ({ ...f, [key]: value }));
+                        }}
+                        required={key === 'clientName' || key === 'clientPhone'}
+                        {...(key === 'clientPhone' ? {
+                          inputMode: 'numeric',
+                          maxLength: 16,
+                          pattern: '[6-9][0-9]{9}',
+                          placeholder: '10-digit mobile number',
+                        } : {})}
+                      />
                     </div>
-                    <div className="flex flex-wrap gap-2 items-center">
-                      <select aria-label="Lead status" className={`border px-3 py-2 text-xs font-bold ${input}`}
-                        disabled={Boolean(lead.project_id)}
-                        value={lead.status || 'New'} onChange={(e) => updateLead(lead.id, e.target.value, null)}>
-                        {leadStatuses.map((s) => <option key={s}>{s}</option>)}
-                      </select>
-                      <select disabled={Boolean(lead.project_id)} className={`border px-3 py-2 text-xs font-bold ${input}`} value={lead.lead_stage || 'New'} onChange={(e) => updateLead(lead.id, null, e.target.value)}>
-                        {leadStages.map((s) => <option key={s}>{s}</option>)}
-                      </select>
-                      {lead.status === 'Converted' && (
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div>
+                    <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Lead Stage</label>
+                    <select disabled={Boolean(editLead?.project_id)} className={`w-full border px-3 py-2 text-sm ${input}`} value={leadForm.lead_stage} onChange={(e) => setLeadForm((f) => ({ ...f, lead_stage: e.target.value }))}>
+                      {leadStages.map((s) => <option key={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Source</label>
+                    <select className={`w-full border px-3 py-2 text-sm ${input}`} value={leadForm.lead_source} onChange={(e) => setLeadForm((f) => ({ ...f, lead_source: e.target.value }))}>
+                      {['offline', 'online', 'referral', 'walk-in', 'social-media', 'other'].map((s) => <option key={s}>{s}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  <label className={`flex items-center gap-2 text-[10px] font-black uppercase ${muted}`}>
+                    <input type="checkbox" checked={leadForm.meeting_done} onChange={(e) => setLeadForm((f) => ({ ...f, meeting_done: e.target.checked }))} className="accent-[var(--brand-blue)]" /> Meeting Done
+                  </label>
+                  <label className={`flex items-center gap-2 text-[10px] font-black uppercase ${muted}`}>
+                    <input type="checkbox" checked={leadForm.estimate_sent} onChange={(e) => setLeadForm((f) => ({ ...f, estimate_sent: e.target.checked }))} className="accent-[var(--brand-blue)]" /> Estimate Sent
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div>
+                    <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Deal / Final Amount</label>
+                    <input className={`w-full border px-3 py-2 text-sm outline-none ${input}`} type="number" placeholder="₹" value={leadForm.final_amount} onChange={(e) => setLeadForm((f) => ({ ...f, final_amount: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Follow-up Date</label>
+                    <input className={`w-full border px-3 py-2 text-sm outline-none ${input}`} type="date" value={leadForm.followUpDate} onChange={(e) => setLeadForm((f) => ({ ...f, followUpDate: e.target.value }))} />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Client Requirement</label>
+                  <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={2} placeholder="What client needs" value={leadForm.client_requirement} onChange={(e) => setLeadForm((f) => ({ ...f, client_requirement: e.target.value }))} />
+                </div>
+
+                <div className="mt-4">
+                  <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Daily Visit Notes</label>
+                  <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={2} placeholder="Today's visit notes" value={leadForm.daily_visit_notes} onChange={(e) => setLeadForm((f) => ({ ...f, daily_visit_notes: e.target.value }))} />
+                </div>
+
+                <div className="mt-4">
+                  <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>General Notes</label>
+                  <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={2} placeholder="General notes" value={leadForm.notes} onChange={(e) => setLeadForm((f) => ({ ...f, notes: e.target.value }))} />
+                </div>
+
+                <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+                  <button
+                    type="button"
+                    onClick={() => { setShowLeadForm(false); setEditLead(null); setLeadForm(resetLeadForm()); }}
+                    className={`px-4 py-2.5 border text-xs font-bold ${input}`}
+                  >
+                    Cancel
+                  </button>
+                  <button disabled={leadSaving} className="px-6 py-2.5 bg-[var(--brand-blue)] text-black text-xs font-black uppercase tracking-wider disabled:cursor-not-allowed disabled:opacity-60 rounded">
+                    {leadSaving ? 'Saving...' : editLead ? 'Update Lead' : 'Save Lead'}
+                  </button>
+                </div>
+              </form>
+            </section>
+          ) : (
+            <section className="space-y-4">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <h3 className="text-sm font-black uppercase tracking-wider">Leads Management</h3>
+                  <p className={`text-xs ${muted}`}>Manage and track leads for {agent?.city || 'Agent'}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setShowLeadForm(true); setEditLead(null); setLeadForm(resetLeadForm()); }}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--brand-blue)] text-black text-xs font-black uppercase tracking-wider rounded shadow-sm hover:opacity-90"
+                >
+                  <Plus size={14} /> Add New Lead
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {leads.length === 0 ? (
+                  <div className={`border ${card} p-8 text-center ${muted}`}>No leads yet for {agent?.city}.</div>
+                ) : leads.map((lead) => (
+                  <div key={lead.id} className={`border ${card} p-4`}>
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-black">{lead.client_name}</p>
+                          <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-sm ${lead.lead_stage === 'Final' ? 'bg-green-500/20 text-green-400' : lead.lead_stage === 'Lost' ? 'bg-red-500/20 text-red-400' : 'bg-[var(--brand-blue)]/20 text-[var(--brand-blue)]'}`}>{lead.lead_stage || 'New'}</span>
+                          {lead.meeting_done && <span className="text-[9px] font-bold px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-sm">Meeting ✓</span>}
+                          {lead.estimate_sent && <span className="text-[9px] font-bold px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded-sm">Estimate ✓</span>}
+                        </div>
+                        <p className={`text-xs ${muted} mt-1`}>{lead.client_phone} - {lead.city} {lead.lead_source ? `(${lead.lead_source})` : ''}</p>
+                        <p className={`text-xs ${muted}`}>{lead.service_type || 'Service not set'} {lead.lead_type ? `- ${lead.lead_type}` : ''}</p>
+                        {lead.client_requirement && <p className={`text-xs mt-1 ${muted}`}><strong>Need:</strong> {lead.client_requirement}</p>}
+                        {Number(lead.final_amount || 0) > 0 && <p className="text-xs font-black text-[var(--brand-blue)] mt-1">Deal: ₹{Number(lead.final_amount).toLocaleString('en-IN')}</p>}
+                        {lead.daily_visit_notes && <p className={`text-xs mt-1 ${muted}`}><strong>Visit:</strong> {lead.daily_visit_notes}</p>}
+                        {lead.notes && <p className="text-sm mt-2">{lead.notes}</p>}
+                      </div>
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <select aria-label="Lead status" className={`border px-3 py-2 text-xs font-bold ${input}`}
+                          disabled={Boolean(lead.project_id)}
+                          value={lead.status || 'New'} onChange={(e) => updateLead(lead.id, e.target.value, null)}>
+                          {leadStatuses.map((s) => <option key={s}>{s}</option>)}
+                        </select>
+                        <select disabled={Boolean(lead.project_id)} className={`border px-3 py-2 text-xs font-bold ${input}`} value={lead.lead_stage || 'New'} onChange={(e) => updateLead(lead.id, null, e.target.value)}>
+                          {leadStages.map((s) => <option key={s}>{s}</option>)}
+                        </select>
+                        {lead.status === 'Converted' && (
+                          <button
+                            type="button"
+                            onClick={() => openConvertModal(lead)}
+                            className={`px-3 py-2 border text-xs font-bold ${
+                              lead.converted_project_id
+                                ? `${card} ${muted}`
+                                : 'bg-[var(--brand-blue)] text-black'
+                            }`}
+                          >
+                            {lead.converted_project_id ? 'Already converted → View Project' : 'Convert to Project'}
+                          </button>
+                        )}
+                        <button type="button" onClick={() => startEditLead(lead)} className={`px-3 py-2 border text-xs font-bold ${input}`}>Edit</button>
                         <button
                           type="button"
-                          onClick={() => openConvertModal(lead)}
-                          className={`px-3 py-2 border text-xs font-bold ${
-                            lead.converted_project_id
-                              ? `${card} ${muted}`
-                              : 'bg-[var(--brand-blue)] text-black'
-                          }`}
+                          onClick={() => deleteLead(lead)}
+                          disabled={deletingLeadId === lead.id}
+                          className="px-3 py-2 border border-red-500/50 text-xs font-bold text-red-500 hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          {lead.converted_project_id ? 'Already converted → View Project' : 'Convert to Project'}
+                          {deletingLeadId === lead.id ? 'Deleting...' : 'Delete'}
                         </button>
-                      )}
-                      <button type="button" onClick={() => startEditLead(lead)} className={`px-3 py-2 border text-xs font-bold ${input}`}>Edit</button>
-                      <button
-                        type="button"
-                        onClick={() => deleteLead(lead)}
-                        disabled={deletingLeadId === lead.id}
-                        className="px-3 py-2 border border-red-500/50 text-xs font-bold text-red-500 hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        {deletingLeadId === lead.id ? 'Deleting...' : 'Delete'}
-                      </button>
+                      </div>
                     </div>
+                    {lead.follow_up_date && <p className="text-xs text-[var(--brand-blue)] font-black mt-3">Follow-up: {new Date(lead.follow_up_date).toLocaleDateString('en-IN')}</p>}
                   </div>
-                  {lead.follow_up_date && <p className="text-xs text-[var(--brand-blue)] font-black mt-3">Follow-up: {new Date(lead.follow_up_date).toLocaleDateString('en-IN')}</p>}
-                </div>
-              ))}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
+          )
         )}
 
         {activeTab === 'projects' && (
@@ -1229,59 +1287,118 @@ function AgentDashboardContent() {
         )}
 
         {activeTab === 'schedule' && (
-          <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <form onSubmit={createTask} className={`border ${card} p-5 h-fit`}>
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">{editTask ? 'Edit Schedule' : 'Plan Day'} in {agent?.city}</p>
-                {editTask && (
+          showTaskForm || editTask ? (
+            <section className="space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowTaskForm(false);
+                    setEditTask(null);
+                    setTaskForm({ title: '', scheduleDate: todayIso(), scheduleTime: '', type: 'Follow-up', status: 'Planned', notes: '' });
+                  }}
+                  className={`inline-flex items-center gap-2 px-3 py-1.5 border rounded text-xs font-bold ${input}`}
+                >
+                  <ArrowLeft size={14} /> Back to Schedule
+                </button>
+                <p className="text-xs font-black uppercase tracking-widest text-[var(--brand-blue)]">
+                  {editTask ? 'Edit Schedule' : 'Plan Day'} in {agent?.city}
+                </p>
+              </div>
+
+              <form onSubmit={createTask} className={`border ${card} p-6 max-w-2xl mx-auto rounded-md shadow-sm`}>
+                <div className="space-y-4">
+                  <div>
+                    <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Title *</label>
+                    <input className={`w-full border px-3 py-2 text-sm outline-none ${input}`} placeholder="Title" value={taskForm.title} onChange={(e) => setTaskForm((f) => ({ ...f, title: e.target.value }))} required />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Date *</label>
+                      <input className={`w-full border px-3 py-2 text-sm outline-none ${input}`} type="date" value={taskForm.scheduleDate} onChange={(e) => setTaskForm((f) => ({ ...f, scheduleDate: e.target.value }))} required />
+                    </div>
+                    <div>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Time</label>
+                      <input className={`w-full border px-3 py-2 text-sm outline-none ${input}`} type="time" value={taskForm.scheduleTime} onChange={(e) => setTaskForm((f) => ({ ...f, scheduleTime: e.target.value }))} />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Task Type</label>
+                    <input className={`w-full border px-3 py-2 text-sm outline-none ${input}`} placeholder="e.g. Follow-up, Site Visit" value={taskForm.type} onChange={(e) => setTaskForm((f) => ({ ...f, type: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Notes</label>
+                    <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={3} placeholder="Notes" value={taskForm.notes} onChange={(e) => setTaskForm((f) => ({ ...f, notes: e.target.value }))} />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-800">
                   <button
                     type="button"
-                    className={`text-[10px] font-black uppercase ${muted}`}
                     onClick={() => {
+                      setShowTaskForm(false);
                       setEditTask(null);
                       setTaskForm({ title: '', scheduleDate: todayIso(), scheduleTime: '', type: 'Follow-up', status: 'Planned', notes: '' });
                     }}
+                    className={`px-4 py-2.5 border text-xs font-bold ${input}`}
                   >
                     Cancel
                   </button>
-                )}
-              </div>
-              <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} placeholder="Title" value={taskForm.title} onChange={(e) => setTaskForm((f) => ({ ...f, title: e.target.value }))} required />
-              <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="date" value={taskForm.scheduleDate} onChange={(e) => setTaskForm((f) => ({ ...f, scheduleDate: e.target.value }))} required />
-              <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} type="time" value={taskForm.scheduleTime} onChange={(e) => setTaskForm((f) => ({ ...f, scheduleTime: e.target.value }))} />
-              <input className={`w-full border px-3 py-2 text-sm outline-none mb-3 ${input}`} placeholder="Type" value={taskForm.type} onChange={(e) => setTaskForm((f) => ({ ...f, type: e.target.value }))} />
-              <textarea className={`w-full border px-3 py-2 text-sm outline-none resize-none ${input}`} rows={3} placeholder="Notes" value={taskForm.notes} onChange={(e) => setTaskForm((f) => ({ ...f, notes: e.target.value }))} />
-              <button className="w-full mt-4 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest">{editTask ? 'Update Schedule' : 'Add Schedule'}</button>
-            </form>
-
-            <div className="lg:col-span-2 space-y-3">
-              {schedule.length === 0 ? (
-                <div className={`border ${card} p-8 text-center ${muted}`}>No schedule items yet.</div>
-              ) : schedule.map((item) => (
-                <div key={item.id} className={`border ${card} p-4 flex flex-col md:flex-row md:items-center justify-between gap-3`}>
-                  <div>
-                    <p className="font-black">{item.title}</p>
-                    <p className={`text-xs ${muted}`}>{new Date(item.schedule_date).toLocaleDateString('en-IN')} {item.schedule_time || ''} - {item.city}</p>
-                    {item.notes && <p className="text-sm mt-2">{item.notes}</p>}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <select className={`border px-3 py-2 text-xs font-bold ${input}`} value={item.status} onChange={(e) => updateTask(item.id, e.target.value)}>
-                      {scheduleStatuses.map((status) => <option key={status}>{status}</option>)}
-                    </select>
-                    <button type="button" className={`border px-3 py-2 text-xs font-bold ${input}`} onClick={() => startEditTask(item)}>Edit</button>
-                    <button
-                      type="button"
-                      disabled={deletingTaskId === item.id}
-                      className="border border-red-500/50 px-3 py-2 text-xs font-bold text-red-500 disabled:opacity-50"
-                      onClick={() => deleteTask(item)}
-                    >
-                      {deletingTaskId === item.id ? 'Deleting...' : 'Delete'}
-                    </button>
-                  </div>
+                  <button className="px-6 py-2.5 bg-[var(--brand-blue)] text-black text-xs font-black uppercase tracking-wider rounded">
+                    {editTask ? 'Update Schedule' : 'Add Schedule'}
+                  </button>
                 </div>
-              ))}
-            </div>
-          </section>
+              </form>
+            </section>
+          ) : (
+            <section className="space-y-4">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <h3 className="text-sm font-black uppercase tracking-wider">Schedule & Daily Tasks</h3>
+                  <p className={`text-xs ${muted}`}>Plan visits and follow-ups in {agent?.city || 'your city'}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowTaskForm(true);
+                    setEditTask(null);
+                    setTaskForm({ title: '', scheduleDate: todayIso(), scheduleTime: '', type: 'Follow-up', status: 'Planned', notes: '' });
+                  }}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--brand-blue)] text-black text-xs font-black uppercase tracking-wider rounded shadow-sm hover:opacity-90"
+                >
+                  <Plus size={14} /> Add Schedule
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {schedule.length === 0 ? (
+                  <div className={`border ${card} p-8 text-center ${muted}`}>No schedule items yet.</div>
+                ) : schedule.map((item) => (
+                  <div key={item.id} className={`border ${card} p-4 flex flex-col md:flex-row md:items-center justify-between gap-3`}>
+                    <div>
+                      <p className="font-black">{item.title}</p>
+                      <p className={`text-xs ${muted}`}>{new Date(item.schedule_date).toLocaleDateString('en-IN')} {item.schedule_time || ''} - {item.city}</p>
+                      {item.notes && <p className="text-sm mt-2">{item.notes}</p>}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <select className={`border px-3 py-2 text-xs font-bold ${input}`} value={item.status} onChange={(e) => updateTask(item.id, e.target.value)}>
+                        {scheduleStatuses.map((status) => <option key={status}>{status}</option>)}
+                      </select>
+                      <button type="button" className={`border px-3 py-2 text-xs font-bold ${input}`} onClick={() => startEditTask(item)}>Edit</button>
+                      <button
+                        type="button"
+                        disabled={deletingTaskId === item.id}
+                        className="border border-red-500/50 px-3 py-2 text-xs font-bold text-red-500 disabled:opacity-50"
+                        onClick={() => deleteTask(item)}
+                      >
+                        {deletingTaskId === item.id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )
         )}
 
         {activeTab === 'activity' && (

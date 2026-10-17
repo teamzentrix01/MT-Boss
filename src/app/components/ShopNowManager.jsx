@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { UploadCloud, Plus, X, Star, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { UploadCloud, Plus, X, Star, Sparkles, Image as ImageIcon, ArrowLeft } from 'lucide-react';
 import VendorCommissionSummary from './VendorCommissionSummary';
 import { defaultShopStorefront } from '@/lib/shop-storefront-defaults';
 import { QUALITY_TIER_OPTIONS, qualityTierLabel } from '@/lib/quality-tier';
@@ -95,6 +95,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
   const [specsText, setSpecsText] = useState('');
   const [bulkText, setBulkText] = useState('');
   const [editingId, setEditingId] = useState(null);
+  const [showProductForm, setShowProductForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -168,6 +169,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
       } catch { /* use list row */ }
     }
     setEditingId(full.id);
+    setShowProductForm(true);
     const existingImgs = Array.from(new Set([
       full.image_url,
       ...(Array.isArray(full.images) ? full.images : [])
@@ -187,6 +189,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
 
   const reset = () => {
     setEditingId(null);
+    setShowProductForm(false);
     setForm(emptyProduct);
     setImagesList([]);
     setNewImageUrl('');
@@ -351,9 +354,36 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
   };
 
   return <div className="shop-admin-panel">
-    <div className="shop-admin-heading"><div><h2>{isVendor ? 'My products' : 'Products'}</h2><p>Every product needs a Get Quote range and a fixed Buy Now price.{!isVendor && ' Supplier and vendor uploads appear here too.'}</p></div><button type="button" onClick={load}>Refresh</button></div>
-    {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
-    <form id={formId} className="shop-admin-card" onSubmit={save}>
+    {showProductForm || editingId ? (
+      <>
+        <div className="shop-admin-heading">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button
+              type="button"
+              onClick={reset}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 14px',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                background: 'transparent',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: 13
+              }}
+            >
+              <ArrowLeft size={16} /> Back to products
+            </button>
+            <div>
+              <h2>{editingId ? 'Edit product' : 'Add product'}</h2>
+              <p>{isVendor ? 'Fill out product details for admin approval.' : 'Every product needs a Get Quote range and a fixed Buy Now price.'}</p>
+            </div>
+          </div>
+        </div>
+        {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
+        <form id={formId} className="shop-admin-card" onSubmit={save}>
       <h3>{editingId ? 'Edit product' : 'Add product'}</h3>
       <div className="shop-admin-fields">
         <label>Product name *<input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
@@ -481,7 +511,39 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
       </div>
       <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-check"><input type="checkbox" checked={form.is_featured_deal} onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })} /> Feature in Deals of the Week</label><button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
     </form>
-    <div className="shop-admin-card"><div className="shop-admin-list-head"><h3>{isVendor ? 'My products' : 'All products'} ({isVendor ? products.length : productPagination.total})</h3><div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>{!isVendor && <input value={productSearch} onChange={(e) => setProductSearch(e.target.value)} placeholder="Search products…" style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)', minWidth: 180 }} />}<label className="shop-admin-tier-filter">Quality Tier<select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}><option value="any">All products</option><option value="none">No Quality Tier set</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.value === 'all' ? 'All tiers' : tier.label}</option>)}</select></label></div></div>{loading ? <p>Loading products...</p> : !products.length ? <p>No products yet. Add the first product above.</p> : !visibleProducts.length ? <p>No products match this Quality Tier filter.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Quality</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isVendor && <th>Discount</th>}{!isVendor && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{visibleProducts.map((product) => { const price = Number(product.price); const originalPrice = Number(product.compare_at_price); const discountPercent = originalPrice > price && price > 0 ? Math.round(((originalPrice - price) / originalPrice) * 100) : null; return <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{qualityTierLabel(product.quality_tier) || <span className="shop-admin-tier-missing">Not set</span>}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{price > 0 ? `₹${price.toLocaleString('en-IN')} / ${product.unit || 'unit'}` : <span style={{ color: '#d97706', fontWeight: 600 }}>Price on request</span>}</td>{!isVendor && <td>{discountPercent === null ? '—' : `${discountPercent}% OFF`}</td>}{!isVendor && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{isVendor ? (() => {
+      </>
+    ) : (
+      <>
+        <div className="shop-admin-heading">
+          <div>
+            <h2>{isVendor ? 'My products' : 'Products'}</h2>
+            <p>Every product needs a Get Quote range and a fixed Buy Now price.{!isVendor && ' Supplier and vendor uploads appear here too.'}</p>
+          </div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button
+              type="button"
+              onClick={() => { setShowProductForm(true); reset(); }}
+              style={{
+                background: 'var(--brand-blue, #2563eb)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 6,
+                padding: '8px 16px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 13
+              }}
+            >
+              <Plus size={16} /> Add Product
+            </button>
+            <button type="button" onClick={load}>Refresh</button>
+          </div>
+        </div>
+        {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
+        <div className="shop-admin-card"><div className="shop-admin-list-head"><h3>{isVendor ? 'My products' : 'All products'} ({isVendor ? products.length : productPagination.total})</h3><div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>{!isVendor && <input value={productSearch} onChange={(e) => setProductSearch(e.target.value)} placeholder="Search products…" style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)', minWidth: 180 }} />}<label className="shop-admin-tier-filter">Quality Tier<select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}><option value="any">All products</option><option value="none">No Quality Tier set</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.value === 'all' ? 'All tiers' : tier.label}</option>)}</select></label></div></div>{loading ? <p>Loading products...</p> : !products.length ? <p>No products yet. Add the first product above.</p> : !visibleProducts.length ? <p>No products match this Quality Tier filter.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Quality</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isVendor && <th>Discount</th>}{!isVendor && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{visibleProducts.map((product) => { const price = Number(product.price); const originalPrice = Number(product.compare_at_price); const discountPercent = originalPrice > price && price > 0 ? Math.round(((originalPrice - price) / originalPrice) * 100) : null; return <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{qualityTierLabel(product.quality_tier) || <span className="shop-admin-tier-missing">Not set</span>}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{price > 0 ? `₹${price.toLocaleString('en-IN')} / ${product.unit || 'unit'}` : <span style={{ color: '#d97706', fontWeight: 600 }}>Price on request</span>}</td>{!isVendor && <td>{discountPercent === null ? '—' : `${discountPercent}% OFF`}</td>}{!isVendor && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{isVendor ? (() => {
   const approval = product.specifications?.__approval__;
   const status = approval?.status || 'approved';
   if (status === 'pending') {
@@ -511,6 +573,8 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
       </div>
     ) : null}
     </div>
+      </>
+    )}
   </div>;
 }
 
