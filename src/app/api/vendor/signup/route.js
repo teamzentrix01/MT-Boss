@@ -15,7 +15,8 @@ export async function POST(req) {
   try {
     let vendor_name, email, password, phone, city, state, country, postal_code,
         aadhar_number, services, profilePhotoBuffer, profilePhotoMime,
-        aadharImageBuffer, aadharImageMime, package_id, registration_otp;
+        aadharImageBuffer, aadharImageMime, package_id, registration_otp,
+        is_contractor, contractor_trade, labor_roles, labor_team_size;
 
     const contentType = req.headers.get('content-type') || '';
 
@@ -42,6 +43,10 @@ export async function POST(req) {
       services      = JSON.parse(fd.get('services') || '[]');
       package_id    = fd.get('package_id');
       registration_otp = fd.get('registration_otp');
+      is_contractor = fd.get('is_contractor') === 'true';
+      contractor_trade = fd.get('contractor_trade');
+      labor_roles = JSON.parse(fd.get('labor_roles') || '[]');
+      labor_team_size = fd.get('labor_team_size');
 
       const profileFile = fd.get('profile_photo');
       const aadharFile  = fd.get('aadhar_image');
@@ -71,6 +76,10 @@ export async function POST(req) {
       services      = body.services || [];
       package_id    = body.package_id;
       registration_otp = body.registration_otp;
+      is_contractor = Boolean(body.is_contractor);
+      contractor_trade = body.contractor_trade;
+      labor_roles = body.labor_roles || [];
+      labor_team_size = body.labor_team_size;
     }
 
     vendor_name = cleanText(vendor_name);
@@ -133,7 +142,7 @@ export async function POST(req) {
       );
     }
 
-    if (!Array.isArray(services) || services.length === 0) {
+    if (!Array.isArray(services) || (services.length === 0 && !is_contractor)) {
       console.warn('❌ [SIGNUP] No services selected');
       return NextResponse.json(
         { error: 'Please select at least one service' },
@@ -224,6 +233,11 @@ export async function POST(req) {
     // ════════════════════════════════════════════════════════════════
 
     await ensurePackageSchema();
+    // Kept here so deployments upgrade existing databases automatically.
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS is_contractor BOOLEAN NOT NULL DEFAULT FALSE`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS contractor_trade VARCHAR(120)`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS labor_roles JSONB NOT NULL DEFAULT '[]'::jsonb`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS labor_team_size VARCHAR(50)`);
 
     console.log('💾 [SIGNUP] Getting database connection...');
     client = await pool.connect();
@@ -277,6 +291,11 @@ export async function POST(req) {
 
     if (cols.has('shop_name'))     fields.shop_name     = vendor_name;
     if (cols.has('business_name')) fields.business_name = vendor_name;
+    if (cols.has('is_contractor')) fields.is_contractor = Boolean(is_contractor);
+    if (cols.has('business_type')) fields.business_type = is_contractor ? 'Contractor' : 'Vendor';
+    if (cols.has('contractor_trade')) fields.contractor_trade = is_contractor ? cleanText(contractor_trade) : null;
+    if (cols.has('labor_roles')) fields.labor_roles = JSON.stringify(is_contractor && Array.isArray(labor_roles) ? labor_roles : []);
+    if (cols.has('labor_team_size')) fields.labor_team_size = is_contractor ? cleanText(labor_team_size) : null;
 
     if (cols.has('aadhar_number') && aadhar_number)
       fields.aadhar_number = aadhar_number;

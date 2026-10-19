@@ -154,6 +154,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
   // Interactive Vendor states
   const [selectedServiceIds, setSelectedServiceIds] = useState([]);
   const [serviceSaving, setServiceSaving] = useState(false);
+  const [contractorSaving, setContractorSaving] = useState(false);
   const [vendorActionLoading, setVendorActionLoading] = useState(false);
 
   // Interactive Supplier states
@@ -661,6 +662,27 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
       setNotice({ type: 'error', message: err.message || 'Error saving services' });
     } finally {
       setServiceSaving(false);
+    }
+  };
+
+  const handleContractorChange = async (vendorId, isContractor) => {
+    setContractorSaving(true);
+    try {
+      const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const res = await fetch('/api/admin/vendors', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ vendor_id: vendorId, action: 'update_contractor', is_contractor: isContractor }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Could not update contractor status');
+      setUserDetails((current) => current ? { ...current, vendor: { ...current.vendor, ...data.data } } : current);
+      setNotice({ type: 'success', message: isContractor ? 'Vendor is now a contractor.' : 'Contractor role removed.' });
+      fetchUsers(page);
+    } catch (err) {
+      setNotice({ type: 'error', message: err.message || 'Could not update contractor status' });
+    } finally {
+      setContractorSaving(false);
     }
   };
 
@@ -2728,6 +2750,26 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                         <div style={{ fontWeight: 700 }}>{vendorData?.postal_code || '—'}</div>
                       </div>
                     </div>
+                  </div>
+
+                  {/* CONTRACTOR ROLE */}
+                  <div style={{ marginBottom: '24px' }}>
+                    <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted, #475569)', marginBottom: '12px' }}>
+                      PROJECT MANAGEMENT ROLE
+                    </div>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', border: '1px solid #86efac', borderRadius: '8px', background: '#f0fdf4', cursor: contractorSaving ? 'wait' : 'pointer', maxWidth: '420px' }}>
+                      <input
+                        type="checkbox"
+                        disabled={contractorSaving}
+                        checked={Boolean(vendorData?.is_contractor || String(vendorData?.business_type || '').toLowerCase().includes('contractor'))}
+                        onChange={(event) => handleContractorChange(vendorData?.id || selectedUser.real_id, event.target.checked)}
+                        style={{ width: '17px', height: '17px', cursor: contractorSaving ? 'wait' : 'pointer' }}
+                      />
+                      <span>
+                        <strong style={{ display: 'block', fontSize: '13px', color: '#166534' }}>Register as Contractor</strong>
+                        <small style={{ color: '#4b5563' }}>Show this vendor in Project Management contractor selection.</small>
+                      </span>
+                    </label>
                   </div>
 
                   {/* ASSIGNED SERVICES */}

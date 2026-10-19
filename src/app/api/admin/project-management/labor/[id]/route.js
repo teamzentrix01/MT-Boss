@@ -69,6 +69,7 @@ export async function PATCH(req, { params }) {
     const phone = b.phone !== undefined ? (b.phone ? String(b.phone).trim() : null) : undefined;
     const trade = b.trade !== undefined ? (b.trade ? String(b.trade).trim() : null) : undefined;
     const vendorId = b.vendor_id !== undefined ? (b.vendor_id ? Number(b.vendor_id) : null) : undefined;
+    const projectVendorId = b.project_vendor_id !== undefined ? (b.project_vendor_id ? Number(b.project_vendor_id) : null) : undefined;
     const dailyRate = b.daily_rate !== undefined ? Number(b.daily_rate) : undefined;
     const isActive = b.is_active !== undefined ? Boolean(b.is_active) : undefined;
 
@@ -94,15 +95,26 @@ export async function PATCH(req, { params }) {
         return auth.response;
       }
 
+      let linkedVendorId = vendorId;
+      if (projectVendorId !== undefined && projectVendorId !== null) {
+        const assignment = (await client.query(
+          `SELECT vendor_id FROM pm_project_vendors WHERE id = $1 AND project_id = $2`,
+          [projectVendorId, old.project_id]
+        )).rows[0];
+        if (!assignment) throw new Error('Selected contractor is not assigned to this project');
+        linkedVendorId = Number(assignment.vendor_id);
+      }
+
       const updated = await client.query(
         `UPDATE pm_labor
          SET name = COALESCE($1, name),
              phone = CASE WHEN $2::text IS NOT NULL OR $3 = true THEN $2 ELSE phone END,
              trade = CASE WHEN $4::text IS NOT NULL OR $5 = true THEN $4 ELSE trade END,
              vendor_id = CASE WHEN $6::bigint IS NOT NULL OR $7 = true THEN $6::bigint ELSE vendor_id END,
-             daily_rate = COALESCE($8, daily_rate),
-             is_active = COALESCE($9, is_active)
-         WHERE id = $10
+             project_vendor_id = CASE WHEN $8::bigint IS NOT NULL OR $9 = true THEN $8::bigint ELSE project_vendor_id END,
+             daily_rate = COALESCE($10, daily_rate),
+             is_active = COALESCE($11, is_active)
+         WHERE id = $12
          RETURNING *`,
         [
           name,
@@ -110,8 +122,10 @@ export async function PATCH(req, { params }) {
           phone !== undefined,
           trade ?? null,
           trade !== undefined,
-          vendorId ?? null,
-          vendorId !== undefined,
+          linkedVendorId ?? null,
+          vendorId !== undefined || projectVendorId !== undefined,
+          projectVendorId ?? null,
+          projectVendorId !== undefined,
           dailyRate ?? null,
           isActive ?? null,
           id,

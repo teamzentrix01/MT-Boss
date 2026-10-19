@@ -82,7 +82,7 @@ export async function GET(req) {
               a.updated_at,
               EXISTS (
                 SELECT 1 FROM pm_labor l
-                WHERE l.project_id = p.project_id AND l.vendor_id = p.vendor_id AND l.is_active = TRUE
+                WHERE l.project_vendor_id = p.id AND l.is_active = TRUE
               ) AS has_linked_labor
        FROM paged p
        JOIN pm_vendors v ON v.id = p.vendor_id
@@ -150,7 +150,7 @@ export async function PUT(req) {
           `SELECT pv.daily_rate, pv.project_id, pv.vendor_id, v.name AS vendor_name,
                   EXISTS (
                     SELECT 1 FROM pm_labor l
-                    WHERE l.project_id = pv.project_id AND l.vendor_id = pv.vendor_id AND l.is_active = TRUE
+                    WHERE l.project_vendor_id = pv.id AND l.is_active = TRUE
                   ) AS has_linked_labor
            FROM pm_project_vendors pv
            JOIN pm_vendors v ON v.id = pv.vendor_id

@@ -97,6 +97,14 @@ const projectBlank = {
 
 const materialBlank = { name: '', unit: 'kg', category: 'Civil', min_stock_level: 0, is_active: true };
 const receivedBlank = { material_id: '', quantity: '', rate: '', received_date: today(), supplier_name: '', challan_no: '', note: '', bill_url: '', bill_filename: '' };
+const contractorTrades = ['General Vendor', 'Civil Contractor', 'Plumber / Plumbing', 'Electrician', 'Mason', 'Carpenter', 'Painter', 'Fabricator', 'Tile / Flooring', 'Waterproofing', 'HVAC', 'Other'];
+const matchesContractorType = (trade, filter) => {
+  if (filter === 'all') return true;
+  const value = String(trade || 'General Vendor').toLowerCase();
+  if (filter === 'plumber / plumbing') return value.includes('plumb');
+  if (filter === 'general vendor') return value.includes('vendor') || value === 'general';
+  return value === filter;
+};
 const usedBlank = { material_id: '', quantity: '', used_date: today(), used_for: '', note: '' };
 const adjustmentBlank = { material_id: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', note: '', bill_url: '', bill_filename: '' };
 const expenseBlank = { category: 'transport', amount: '', expense_date: today(), note: '' };
@@ -294,6 +302,19 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     }
   }, []);
 
+  const updateProjectUrl = useCallback((projectId) => {
+    if (typeof window !== 'undefined' && window.history?.replaceState) {
+      const url = new URL(window.location.href);
+      if (projectId) url.searchParams.set('projectId', String(projectId));
+      else {
+        url.searchParams.delete('projectId');
+        url.searchParams.delete('section');
+        url.searchParams.delete('sub');
+      }
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, []);
+
   const handleSectionChange = (sec) => {
     setProjectTab(sec);
     setSelectedVendor(null);
@@ -358,6 +379,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   // Phase 2: Project Vendors
   const [projectVendors, setProjectVendors] = useState([]);
   const [allVendorsMaster, setAllVendorsMaster] = useState([]);
+  const [suppliersMaster, setSuppliersMaster] = useState([]);
+  const [vendorTypeFilter, setVendorTypeFilter] = useState('all');
+  const [contractorMenuOpen, setContractorMenuOpen] = useState(false);
+  const [supplierView, setSupplierView] = useState(false);
   const [addVendorModal, setAddVendorModal] = useState(false);
   const [vendorMode, setVendorMode] = useState('existing');
   const [assignForm, setAssignForm] = useState({
@@ -420,7 +445,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [selectedLabor, setSelectedLabor] = useState(null);
   const [addLaborModal, setAddLaborModal] = useState(false);
   const [editingLaborId, setEditingLaborId] = useState(null);
-  const [laborForm, setLaborForm] = useState({ name: '', phone: '', trade: '', vendor_id: '', daily_rate: '' });
+  const [laborForm, setLaborForm] = useState({ name: '', phone: '', trade: '', project_vendor_id: '', daily_rate: '' });
   const [laborAttendanceDate, setLaborAttendanceDate] = useState(today());
   const [laborAttendanceRows, setLaborAttendanceRows] = useState([]);
   const [savingLaborAttendance, setSavingLaborAttendance] = useState(false);
@@ -588,6 +613,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       const d = await api(`/api/admin/project-management/parties/${id}?page=1&pageSize=100`);
       setParty(d.data);
       setScreen('party');
+      updateProjectUrl(null);
     } catch (e) {
       setMessage(e.message);
     }
@@ -684,7 +710,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   // ── Show Single Project Overview ─────────────────────────────────────────────
   const showProject = async (id) => {
     try {
-      const [projRes, ppRes, pvRes, vListRes, laborRes, assignedAgentsRes, allAgentsRes] = await Promise.all([
+      const [projRes, ppRes, pvRes, vListRes, laborRes, assignedAgentsRes, allAgentsRes, suppliersRes] = await Promise.all([
         api(`/api/admin/project-management/projects/${id}`),
         api(`/api/admin/project-management/payments?projectId=${id}&page=1&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/project-vendors?projectId=${id}&page=1&pageSize=100`).catch(() => ({ data: [] })),
@@ -692,17 +718,20 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         api(`/api/admin/project-management/labor?projectId=${id}&pageSize=200`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/projects/${id}/agents`).catch(() => ({ data: [] })),
         api(`/api/admin/lead-management?assigneesOnly=1`).catch(() => ({ agents: [] })),
+        api('/api/admin/suppliers?status=approved&limit=200').catch(() => ({ data: [] })),
       ]);
       setProject(projRes.data);
       setPartyPayments(ppRes.data || []);
       setProjectVendors(pvRes.data || []);
       setAllVendorsMaster(vListRes.data || []);
+      setSuppliersMaster((suppliersRes.data || []).filter((supplier) => supplier.is_active !== false));
       setProjectLabors(laborRes.data || []);
       setProjectAgents(assignedAgentsRes.data || []);
       setAllAgentsList(allAgentsRes.agents || []);
       setSelectedVendor(null);
       setSelectedLabor(null);
       setScreen('project');
+      updateProjectUrl(id);
       const rawSec = getUrlParam('section');
       const normSec = normalizeSection(rawSec);
       const targetSec = (normSec && allowedMainTabs.includes(normSec))
@@ -1355,7 +1384,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         name: laborForm.name,
         phone: laborForm.phone,
         trade: laborForm.trade,
-        vendor_id: laborForm.vendor_id ? Number(laborForm.vendor_id) : null,
+        project_vendor_id: laborForm.project_vendor_id ? Number(laborForm.project_vendor_id) : null,
         daily_rate: Number(laborForm.daily_rate || 0),
         is_active: laborForm.is_active !== undefined ? laborForm.is_active : true,
       };
@@ -1375,7 +1404,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       }
       setAddLaborModal(false);
       setEditingLaborId(null);
-      setLaborForm({ name: '', phone: '', trade: '', vendor_id: '', daily_rate: '', is_active: true });
+      setLaborForm({ name: '', phone: '', trade: '', project_vendor_id: '', daily_rate: '', is_active: true });
       loadProjectLabors(project.id);
       refreshProjectData(project.id);
     } catch (err) {
@@ -1469,6 +1498,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 if (screen === 'project' && party) setScreen('party');
                 else if (screen === 'projectForm' && party) setScreen('party');
                 else setScreen('parties');
+                updateProjectUrl(null);
               }}
             >
               &larr; Back
@@ -2045,15 +2075,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {allowedMainTabs.includes('vendors') && (
                       <button
                         className={projectTab === 'vendors' ? 'active' : ''}
-                        onClick={() => handleSectionChange('vendors')}
+                        onClick={() => { setSupplierView(false); handleSectionChange('vendors'); setContractorMenuOpen((open) => !open); }}
                       >
-                        👷 Vendors ({projectVendors.length})
+                        👷 Contractors ({projectVendors.length}) ▾
                       </button>
                     )}
                     {allowedMainTabs.includes('labor') && (
                       <button
                         className={projectTab === 'labor' ? 'active' : ''}
-                        onClick={() => handleSectionChange('labor')}
+                        onClick={() => { setSupplierView(false); setContractorMenuOpen(false); handleSectionChange('labor'); }}
                       >
                         🦺 Labor ({projectLabors.length})
                       </button>
@@ -2061,7 +2091,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {allowedMainTabs.includes('attendance') && (
                       <button
                         className={projectTab === 'attendance' ? 'active' : ''}
-                        onClick={() => handleSectionChange('attendance')}
+                        onClick={() => { setSupplierView(false); setContractorMenuOpen(false); handleSectionChange('attendance'); }}
                       >
                         📅 Attendance
                       </button>
@@ -2069,28 +2099,61 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {allowedMainTabs.includes('payments') && (
                       <button
                         className={projectTab === 'payments' ? 'active' : ''}
-                        onClick={() => handleSectionChange('payments')}
+                        onClick={() => { setSupplierView(false); setContractorMenuOpen(false); handleSectionChange('payments'); }}
                       >
                         💳 Payments
                       </button>
                     )}
                     {allowedMainTabs.includes('construction') && (
                       <button
-                        className={projectTab === 'construction' ? 'active' : ''}
-                        onClick={() => handleSectionChange('construction')}
+                        className={projectTab === 'construction' && !supplierView ? 'active' : ''}
+                        onClick={() => { setSupplierView(false); setContractorMenuOpen(false); handleSectionChange('construction'); }}
                       >
                         🏗️ Construction
                       </button>
                     )}
+                    {allowedMainTabs.includes('construction') && (
+                      <button
+                        className={supplierView ? 'active' : ''}
+                        onClick={() => { setContractorMenuOpen(false); setSupplierView(true); setProjectTab('construction'); handleConstructionSubChange('received'); }}
+                      >
+                        🚚 Suppliers
+                      </button>
+                    )}
                   </div>
+
+                  {contractorMenuOpen && projectTab === 'vendors' && (
+                    <div className="card" style={{ margin: '-8px 0 16px', padding: 12, border: '1px solid #bfdbfe', background: '#f8fbff' }}>
+                      <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 8, color: '#1e3a8a' }}>Select contractor / vendor type</div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                        <button className={vendorTypeFilter === 'all' ? 'active-btn' : 'muted'} onClick={() => setVendorTypeFilter('all')}>All Contractors</button>
+                        {contractorTrades.map((trade) => (
+                          <button key={trade} className={vendorTypeFilter === trade.toLowerCase() ? 'active-btn' : 'muted'} onClick={() => setVendorTypeFilter(trade.toLowerCase())}>{trade}</button>
+                        ))}
+                      </div>
+                      {vendorTypeFilter !== 'all' && vendorTypeFilter !== 'general vendor' && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12, paddingTop: 12, borderTop: '1px solid #dbeafe' }}>
+                          <strong style={{ fontSize: 13, padding: '8px 2px' }}>👷 {contractorTrades.find((trade) => trade.toLowerCase() === vendorTypeFilter)} team:</strong>
+                          <button onClick={() => {
+                            const matching = projectVendors.filter((pv) => matchesContractorType(pv.trade, vendorTypeFilter));
+                            setLaborForm({ name: '', phone: '', trade: '', project_vendor_id: matching.length === 1 ? String(matching[0].id) : '', daily_rate: '', is_active: true });
+                            setEditingLaborId(null); setAddLaborModal(true);
+                          }}>+ Add Labour</button>
+                          <button className="muted" onClick={() => { setContractorMenuOpen(false); handleSectionChange('attendance'); }}>📅 Labour Attendance</button>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* ── 1. VENDORS TAB ────────────────────────────────────────── */}
                   {/* ── TAB 1: VENDORS ON THIS PROJECT ──────────────────────────── */}
               {projectTab === 'vendors' && (
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                    <h4 style={{ margin: 0, fontSize: 16 }}>Project Vendors &amp; Subcontractors</h4>
-                    <button onClick={() => setAddVendorModal(true)}>+ Add Vendor to Project</button>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+                    <h4 style={{ margin: 0, fontSize: 16 }}>Project Contractors &amp; Subcontractors</h4>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <button onClick={() => setAddVendorModal(true)}>+ Add Contractor</button>
+                    </div>
                   </div>
 
                   <table>
@@ -2109,7 +2172,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       </tr>
                     </thead>
                     <tbody>
-                      {projectVendors.map((pv) => {
+                      {projectVendors.filter((pv) => matchesContractorType(pv.trade, vendorTypeFilter)).map((pv) => {
                         const earnedVal = pv.total_earned ?? pv.earned ?? 0;
                         const paidVal = pv.total_paid ?? pv.paid ?? 0;
                         const dueVal = pv.balance_due ?? pv.balance ?? (Number(earnedVal) - Number(paidVal));
@@ -2160,10 +2223,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           </tr>
                         );
                       })}
-                      {projectVendors.length === 0 && (
+                      {projectVendors.filter((pv) => matchesContractorType(pv.trade, vendorTypeFilter)).length === 0 && (
                         <tr>
                           <td colSpan={(!isAgent || hasAgentPayment) ? (isSupervisor ? 8 : 10) : 6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                            No vendors assigned to this project yet. Click &ldquo;+ Add Vendor to Project&rdquo; above.
+                            {vendorTypeFilter === 'all' ? 'No contractors assigned to this project yet.' : `No ${vendorTypeFilter} contractor is assigned to this project.`} Click &ldquo;+ Add Contractor&rdquo; above.
                           </td>
                         </tr>
                       )}
@@ -2179,7 +2242,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         <h4 style={{ margin: 0, fontSize: 16 }}>Laborers &amp; Direct Workers</h4>
                         <button
                           onClick={() => {
-                            setLaborForm({ name: '', phone: '', trade: '', vendor_id: '', daily_rate: '', is_active: true });
+                            setLaborForm({ name: '', phone: '', trade: '', project_vendor_id: '', daily_rate: '', is_active: true });
                             setEditingLaborId(null);
                             setAddLaborModal(true);
                           }}
@@ -2256,7 +2319,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       name: lab.name,
                                       phone: lab.phone || '',
                                       trade: lab.trade || '',
-                                      vendor_id: lab.vendor_id || '',
+                                      project_vendor_id: lab.project_vendor_id || '',
                                       daily_rate: lab.daily_rate,
                                       is_active: lab.is_active,
                                     });
@@ -2297,7 +2360,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               className={attendanceSubTab === 'vendor' ? 'active-btn' : 'muted'}
                               onClick={() => handleAttendanceSubChange('vendor')}
                             >
-                              Vendor Attendance
+                              Contractors Attendance
                             </button>
                           )}
                           {allowedAttendanceSubTabs.includes('labor') && (
@@ -2479,10 +2542,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     </tbody>
                   </table>
 
-                  {/* Vendor Attendance History Log */}
+                  {/* Contractors Attendance History Log */}
                   <div style={{ marginTop: 24, borderTop: '1px solid #e2e8f0', paddingTop: 16 }}>
                     <h4 style={{ margin: '0 0 10px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
-                      📋 Vendor Attendance History
+                      📋 Contractors Attendance History
                       <span style={{ fontSize: 12, color: '#64748b', fontWeight: 400 }}>
                         ({projectVendorAttendanceHistory.length} records)
                       </span>
@@ -3077,40 +3140,44 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                          <button
+                          {!supplierView && <button
                             className={constructionSubTab === 'stock' ? 'active-btn' : 'muted'}
                             onClick={() => handleConstructionSubChange('stock')}
                           >
                             Stock Summary ({stockRows.length})
-                          </button>
+                          </button>}
                           <button
                             className={constructionSubTab === 'received' ? 'active-btn' : 'muted'}
                             onClick={() => handleConstructionSubChange('received')}
                           >
-                            Received History ({receivedRows.length})
+                            Supplier Material Received ({receivedRows.length})
                           </button>
-                          <button
+                          {!supplierView && <button
                             className={constructionSubTab === 'used' ? 'active-btn' : 'muted'}
                             onClick={() => handleConstructionSubChange('used')}
                           >
-                            Usage History ({usedRows.length})
-                          </button>
-                          <button
+                            Site Material Used ({usedRows.length})
+                          </button>}
+                          {!supplierView && <button
                             className={constructionSubTab === 'adjustments' ? 'active-btn' : 'muted'}
                             onClick={() => handleConstructionSubChange('adjustments')}
                           >
-                            Adjustments ({adjustmentRows.length})
-                          </button>
-                          <button
+                            Wastage / Adjustments ({adjustmentRows.length})
+                          </button>}
+                          {!supplierView && <button
                             className={constructionSubTab === 'expenses' ? 'active-btn' : 'muted'}
                             onClick={() => handleConstructionSubChange('expenses')}
                           >
                             Other Expenses ({expenseRows.length})
-                          </button>
+                          </button>}
                         </div>
 
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                          {constructionSubTab !== 'expenses' ? (
+                          {supplierView ? (
+                            <button onClick={() => { setReceivedForm(receivedBlank); setEditingReceivedId(null); setReceivedModal(true); }}>
+                              + Record Material Delivered to Site
+                            </button>
+                          ) : constructionSubTab !== 'expenses' ? (
                             <>
                               <button
                                 onClick={() => {
@@ -3119,7 +3186,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   setReceivedModal(true);
                                 }}
                               >
-                                + Material Received
+                                + Supplier Material Entry
                               </button>
                               <button
                                 onClick={() => {
@@ -3995,12 +4062,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         Contractor / Linked Vendor
                       </small>
                       <select
-                        value={laborForm.vendor_id}
-                        onChange={(e) => setLaborForm({ ...laborForm, vendor_id: e.target.value })}
+                        value={laborForm.project_vendor_id}
+                        onChange={(e) => setLaborForm({ ...laborForm, project_vendor_id: e.target.value })}
                       >
                         <option value="">Independent (Direct Worker / No Contractor)</option>
                         {projectVendors.map((pv) => (
-                          <option key={pv.vendor_id || pv.id} value={pv.vendor_id}>
+                          <option key={pv.id} value={pv.id}>
                             🏢 {pv.vendor_name} ({pv.trade || 'Vendor'})
                           </option>
                         ))}
@@ -4144,7 +4211,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={assignVendorToProject} className="modal-card">
                 <h3 style={{ margin: '0 0 12px', fontSize: 17, color: '#0f172a' }}>
-                  Add Vendor to Project
+                  Add Contractor to Project
                 </h3>
 
                 <div style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
@@ -4153,27 +4220,27 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     className={vendorMode === 'existing' ? 'active-btn' : 'muted'}
                     onClick={() => setVendorMode('existing')}
                   >
-                    Select Existing Vendor
+                    Select Existing Contractor
                   </button>
                   <button
                     type="button"
                     className={vendorMode === 'new' ? 'active-btn' : 'muted'}
                     onClick={() => setVendorMode('new')}
                   >
-                    + Create New Vendor
+                    + Create New Contractor
                   </button>
                 </div>
 
                 {vendorMode === 'existing' ? (
                   <div style={{ marginBottom: 12 }}>
                     <label>
-                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Vendor</small>
+                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Contractor</small>
                       <select
                         required
                         value={assignForm.vendor_id}
                         onChange={(e) => setAssignForm({ ...assignForm, vendor_id: e.target.value })}
                       >
-                        <option value="">Select Vendor</option>
+                        <option value="">Select Contractor</option>
                         {allVendorsMaster.map((v) => (
                           <option value={v.id} key={v.id}>
                             {v.name} ({v.trade || 'General'})
@@ -4184,9 +4251,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </div>
                 ) : (
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
-                    <Input label="Vendor Name" name="new_vendor_name" value={assignForm.new_vendor_name} set={setAssignForm} required />
+                    <Input label="Contractor Name" name="new_vendor_name" value={assignForm.new_vendor_name} set={setAssignForm} required />
                     <Input label="Phone" name="new_vendor_phone" value={assignForm.new_vendor_phone} set={setAssignForm} />
-                    <Input label="Trade (e.g. Mason, Electrician)" name="new_vendor_trade" value={assignForm.new_vendor_trade} set={setAssignForm} />
+                    <label>
+                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Contractor Type / Trade</small>
+                      <select value={assignForm.new_vendor_trade} onChange={(e) => setAssignForm({ ...assignForm, new_vendor_trade: e.target.value })}>
+                        <option value="">Select contractor type</option>
+                        {contractorTrades.map((trade) => <option key={trade} value={trade}>{trade}</option>)}
+                      </select>
+                    </label>
                     <Input label="Address" name="new_vendor_address" value={assignForm.new_vendor_address} set={setAssignForm} />
                   </div>
                 )}
@@ -4218,7 +4291,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <button type="button" className="muted" onClick={() => setAddVendorModal(false)}>
                     Cancel
                   </button>
-                  <button type="submit">Assign Vendor</button>
+                  <button type="submit">Assign Contractor</button>
                 </div>
               </form>
             </div>
@@ -4303,7 +4376,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={saveReceivedEntry} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {editingReceivedId ? 'Edit' : 'Record'} Material Received
+                  {editingReceivedId ? 'Edit' : 'Record'} Supplier Material Delivery
                 </h3>
                 <div className="grid">
                   <label>
@@ -4326,7 +4399,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     <Input label="Rate (₹ per unit)" name="rate" type="number" step="any" min="0" value={receivedForm.rate} set={setReceivedForm} required />
                   )}
                   <Input label="Received Date" name="received_date" type="date" value={receivedForm.received_date} set={setReceivedForm} required />
-                  <Input label="Supplier / Vendor Name" name="supplier_name" value={receivedForm.supplier_name} set={setReceivedForm} placeholder="e.g. Ultratech Distributor" />
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Supplier</small>
+                    <select value={receivedForm.supplier_name} onChange={(e) => setReceivedForm({ ...receivedForm, supplier_name: e.target.value })}>
+                      <option value="">Select registered supplier (or enter below)</option>
+                      {suppliersMaster.map((supplier) => (
+                        <option key={supplier.id} value={supplier.shop_name || supplier.email}>{supplier.shop_name || supplier.email}{supplier.product_categories?.length ? ` — ${supplier.product_categories.join(', ')}` : ''}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <Input label="Supplier Name (if not registered)" name="supplier_name" value={receivedForm.supplier_name} set={setReceivedForm} placeholder="e.g. Ultratech Distributor" />
                   <Input label="Challan / Invoice No." name="challan_no" value={receivedForm.challan_no} set={setReceivedForm} />
                   <Input label="Note" name="note" value={receivedForm.note} set={setReceivedForm} />
                   <label>
@@ -4343,7 +4425,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <button type="button" className="muted" onClick={() => setReceivedModal(false)}>
                     Cancel
                   </button>
-                  <button type="submit">Save Received Entry</button>
+                  <button type="submit">Save Supplier Delivery</button>
                 </div>
               </form>
             </div>
@@ -4982,6 +5064,22 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           flex-shrink: 0 !important;
           min-width: max-content !important;
           transition: all 0.15s ease;
+        }
+        .subtabs select {
+          background: #f8fafc;
+          color: #475569;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          padding: 10px 14px;
+          min-height: 42px;
+          font-weight: 700;
+          font-size: 14px;
+          transition: all 0.15s ease;
+        }
+        .subtabs select.active {
+          color: #ffffff;
+          background: #1e40af;
+          border-color: #1e40af;
         }
         .subtabs button:hover {
           color: #1e40af;

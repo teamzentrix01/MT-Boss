@@ -147,6 +147,7 @@ export async function PUT(req) {
       vendor_id,
       action, // 'approve', 'reject', 'activate', 'deactivate'
       services, // Array of quick_service_ids to assign
+      is_contractor,
       admin_notes
     } = await req.json();
 
@@ -161,6 +162,7 @@ export async function PUT(req) {
     try {
       await client.query('BEGIN');
       await ensureServiceCitiesSchema();
+      await client.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS is_contractor BOOLEAN NOT NULL DEFAULT FALSE`);
 
       if (action === 'approve') {
         // Approve vendor and assign services
@@ -291,6 +293,26 @@ export async function PUT(req) {
           message: 'Vendor deactivated successfully',
           data: vendorResult.rows[0]
         });
+      } else if (action === 'update_contractor') {
+        if (typeof is_contractor !== 'boolean') {
+          await client.query('ROLLBACK');
+          return NextResponse.json({ error: 'is_contractor must be true or false' }, { status: 400 });
+        }
+        const vendorResult = await client.query(
+          `UPDATE vendors
+           SET is_contractor = $1,
+               business_type = CASE WHEN $1 THEN 'Contractor' ELSE 'Vendor' END,
+               updated_at = NOW()
+           WHERE id = $2
+           RETURNING id, vendor_name, is_contractor, business_type`,
+          [is_contractor, vendor_id]
+        );
+        if (!vendorResult.rows[0]) {
+          await client.query('ROLLBACK');
+          return NextResponse.json({ error: 'Vendor not found' }, { status: 404 });
+        }
+        await client.query('COMMIT');
+        return NextResponse.json({ success: true, message: 'Contractor status updated', data: vendorResult.rows[0] });
       } else if (action === 'update_services') {
         const serviceIds = [...new Set(
           (Array.isArray(services) ? services : [])
