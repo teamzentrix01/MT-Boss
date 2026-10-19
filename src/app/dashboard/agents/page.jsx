@@ -53,7 +53,7 @@ export default function AgentsPage() {
     fetchAgents();
     const onAgentsUpdated = () => fetchAgents();
     window.addEventListener('agentsUpdated', onAgentsUpdated);
-    const interval = setInterval(fetchAgents, 15000);
+    const interval = setInterval(fetchAgents, 60000);
     return () => {
       window.removeEventListener('agentsUpdated', onAgentsUpdated);
       clearInterval(interval);
@@ -63,7 +63,7 @@ export default function AgentsPage() {
   const fetchAgents = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/agents', {
+      const res = await fetch('/api/agents?limit=100', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -518,8 +518,198 @@ export default function AgentsPage() {
         }
       `}</style>
 
-      <div className="ag-wrap">
-        {error && (
+      {showCreateModal ? (
+        <div className="ag-wrap">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border)' }}>
+            <button
+              type="button"
+              className="ag-cancel-btn"
+              onClick={() => setShowCreateModal(false)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', padding: '0.45rem 0.9rem', cursor: 'pointer' }}
+            >
+              ← Back to Agents
+            </button>
+            <span className="ag-title" style={{ fontSize: '1rem' }}>Create New Agent</span>
+          </div>
+
+          <div style={{ maxWidth: '800px', margin: '0 auto', background: 'var(--card-bg, #fff)', border: '1px solid var(--border)', borderRadius: '8px', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+            <form onSubmit={handleCreateAgent}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Full Name *</label>
+                  <input
+                    required
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.name}
+                    onChange={e => setCreateForm(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="e.g. Rahul Sharma"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Email *</label>
+                  <input
+                    type="email"
+                    required
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.email}
+                    onChange={e => setCreateForm(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="e.g. rahul@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Phone *</label>
+                  <input
+                    required
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.phone}
+                    onChange={e => setCreateForm(prev => ({ ...prev, phone: e.target.value }))}
+                    placeholder="e.g. 9876543210"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>City *</label>
+                  <input
+                    required
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.city}
+                    onChange={e => setCreateForm(prev => ({ ...prev, city: e.target.value }))}
+                    placeholder="e.g. Moradabad"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>State *</label>
+                  <input
+                    required
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.state}
+                    onChange={e => setCreateForm(prev => ({ ...prev, state: e.target.value }))}
+                    placeholder="e.g. Uttar Pradesh"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Occupation</label>
+                  <input
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.occupation}
+                    onChange={e => setCreateForm(prev => ({ ...prev, occupation: e.target.value }))}
+                    placeholder="e.g. Contractor"
+                  />
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Agent Type *</label>
+                  <select
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.agentType}
+                    onChange={e => setCreateForm(prev => ({ ...prev, agentType: e.target.value }))}
+                  >
+                    <option value="contractor">Contractor</option>
+                    <option value="broker">Broker / Real Estate</option>
+                    <option value="engineer">Engineer</option>
+                    <option value="architect">Architect</option>
+                    <option value="interior_designer">Interior Designer</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Experience</label>
+                  <input
+                    className="ag-search"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                    value={createForm.experience}
+                    onChange={e => setCreateForm(prev => ({ ...prev, experience: e.target.value }))}
+                    placeholder="e.g. 5+ years"
+                  />
+                </div>
+              </div>
+
+              {/* Specializations multi-select checkboxes */}
+              <div style={{ marginBottom: '1rem', padding: '0.875rem', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--bg)' }}>
+                <div className="ag-field-label" style={{ marginBottom: 4 }}>Specializations (Project Management)</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: 8 }}>Select the allowed capabilities for this agent:</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem' }}>
+                  {SPECIALIZATION_OPTIONS.map(spec => {
+                    const isChecked = createForm.specializations.includes(spec.key);
+                    return (
+                      <label
+                        key={spec.key}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: 8,
+                          cursor: 'pointer',
+                          padding: '6px 8px',
+                          borderRadius: 6,
+                          background: isChecked ? 'color-mix(in srgb, var(--accent) 8%, transparent)' : 'var(--surface)',
+                          border: `1px solid ${isChecked ? 'var(--accent)' : 'var(--border)'}`,
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={e => {
+                            const updated = e.target.checked
+                              ? [...createForm.specializations, spec.key]
+                              : createForm.specializations.filter(k => k !== spec.key);
+                            setCreateForm(prev => ({
+                              ...prev,
+                              specializations: updated,
+                              has_project_management_access: updated.length > 0 ? true : prev.has_project_management_access
+                            }));
+                          }}
+                          style={{ marginTop: 2 }}
+                        />
+                        <div>
+                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text)' }}>{spec.label}</div>
+                          <div style={{ fontSize: '0.6875rem', color: 'var(--muted)' }}>{spec.desc}</div>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1.25rem' }}>
+                <input
+                  type="checkbox"
+                  id="create_pm_access"
+                  checked={createForm.has_project_management_access}
+                  onChange={e => setCreateForm(prev => ({ ...prev, has_project_management_access: e.target.checked }))}
+                />
+                <label htmlFor="create_pm_access" style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text)', cursor: 'pointer' }}>
+                  Grant Project Management Access
+                </label>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+                <button
+                  type="button"
+                  className="ag-cancel-btn"
+                  onClick={() => setShowCreateModal(false)}
+                  disabled={createSaving}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="ag-ok-btn"
+                  disabled={createSaving}
+                >
+                  {createSaving ? 'Creating...' : 'Create Agent'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      ) : (
+        <div className="ag-wrap">
+          {error && (
           <div style={{ marginBottom: '0.75rem', padding: '0.75rem 1rem', border: '1px solid #fecaca', borderRadius: 8, background: '#fef2f2', color: '#991b1b', fontSize: '0.8rem', fontWeight: 700 }}>
             {error}
           </div>
@@ -664,6 +854,7 @@ export default function AgentsPage() {
           )}
         </div>
       </div>
+      )}
 
       {/* Detail Modal */}
       {selected && (
@@ -1066,198 +1257,6 @@ export default function AgentsPage() {
             <div className="ag-modal-footer" style={{ marginTop: '1rem' }}>
               <button className="ag-close-btn" onClick={() => setSelectedLead(null)}>Close</button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Create Agent Modal */}
-      {showCreateModal && (
-        <div className="ag-backdrop" onClick={() => setShowCreateModal(false)}>
-          <div className="ag-modal" onClick={e => e.stopPropagation()}>
-            <div className="ag-modal-head">
-              <span className="ag-modal-title">Create New Agent</span>
-              <button
-                className="ag-modal-close"
-                onClick={() => setShowCreateModal(false)}
-                aria-label="Close modal"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >
-                <X size={16} strokeWidth={1.75} aria-hidden="true" />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateAgent}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-                <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>Full Name *</label>
-                  <input
-                    required
-                    className="ag-search"
-                    style={{ width: '100%', boxSizing: 'border-box' }}
-                    value={createForm.name}
-                    onChange={e => setCreateForm(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="e.g. Rahul Sharma"
-                  />
-                </div>
-                <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>Email *</label>
-                  <input
-                    type="email"
-                    required
-                    className="ag-search"
-                    style={{ width: '100%', boxSizing: 'border-box' }}
-                    value={createForm.email}
-                    onChange={e => setCreateForm(prev => ({ ...prev, email: e.target.value }))}
-                    placeholder="e.g. rahul@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>Phone *</label>
-                  <input
-                    required
-                    className="ag-search"
-                    style={{ width: '100%', boxSizing: 'border-box' }}
-                    value={createForm.phone}
-                    onChange={e => setCreateForm(prev => ({ ...prev, phone: e.target.value }))}
-                    placeholder="e.g. 9876543210"
-                  />
-                </div>
-                <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>City *</label>
-                  <input
-                    required
-                    className="ag-search"
-                    style={{ width: '100%', boxSizing: 'border-box' }}
-                    value={createForm.city}
-                    onChange={e => setCreateForm(prev => ({ ...prev, city: e.target.value }))}
-                    placeholder="e.g. Moradabad"
-                  />
-                </div>
-                <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>State *</label>
-                  <input
-                    required
-                    className="ag-search"
-                    style={{ width: '100%', boxSizing: 'border-box' }}
-                    value={createForm.state}
-                    onChange={e => setCreateForm(prev => ({ ...prev, state: e.target.value }))}
-                    placeholder="e.g. Uttar Pradesh"
-                  />
-                </div>
-                <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>Occupation</label>
-                  <input
-                    className="ag-search"
-                    style={{ width: '100%', boxSizing: 'border-box' }}
-                    value={createForm.occupation}
-                    onChange={e => setCreateForm(prev => ({ ...prev, occupation: e.target.value }))}
-                    placeholder="e.g. Contractor"
-                  />
-                </div>
-                <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>Agent Type *</label>
-                  <select
-                    className="ag-search"
-                    style={{ width: '100%', boxSizing: 'border-box' }}
-                    value={createForm.agentType}
-                    onChange={e => setCreateForm(prev => ({ ...prev, agentType: e.target.value }))}
-                  >
-                    <option value="contractor">Contractor</option>
-                    <option value="broker">Broker / Real Estate</option>
-                    <option value="engineer">Engineer</option>
-                    <option value="architect">Architect</option>
-                    <option value="interior_designer">Interior Designer</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>Experience</label>
-                  <input
-                    className="ag-search"
-                    style={{ width: '100%', boxSizing: 'border-box' }}
-                    value={createForm.experience}
-                    onChange={e => setCreateForm(prev => ({ ...prev, experience: e.target.value }))}
-                    placeholder="e.g. 5+ years"
-                  />
-                </div>
-              </div>
-
-              {/* Specializations multi-select checkboxes */}
-              <div style={{ marginBottom: '1rem', padding: '0.875rem', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--bg)' }}>
-                <div className="ag-field-label" style={{ marginBottom: 4 }}>Specializations (Project Management)</div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: 8 }}>Select the allowed capabilities for this agent:</div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem' }}>
-                  {SPECIALIZATION_OPTIONS.map(spec => {
-                    const isChecked = createForm.specializations.includes(spec.key);
-                    return (
-                      <label
-                        key={spec.key}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: 8,
-                          cursor: 'pointer',
-                          padding: '6px 8px',
-                          borderRadius: 6,
-                          background: isChecked ? 'color-mix(in srgb, var(--accent) 8%, transparent)' : 'var(--surface)',
-                          border: `1px solid ${isChecked ? 'var(--accent)' : 'var(--border)'}`,
-                        }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={e => {
-                            const updated = e.target.checked
-                              ? [...createForm.specializations, spec.key]
-                              : createForm.specializations.filter(k => k !== spec.key);
-                            setCreateForm(prev => ({
-                              ...prev,
-                              specializations: updated,
-                              has_project_management_access: updated.length > 0 ? true : prev.has_project_management_access
-                            }));
-                          }}
-                          style={{ marginTop: 2 }}
-                        />
-                        <div>
-                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text)' }}>{spec.label}</div>
-                          <div style={{ fontSize: '0.6875rem', color: 'var(--muted)' }}>{spec.desc}</div>
-                        </div>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1.25rem' }}>
-                <input
-                  type="checkbox"
-                  id="create_pm_access"
-                  checked={createForm.has_project_management_access}
-                  onChange={e => setCreateForm(prev => ({ ...prev, has_project_management_access: e.target.checked }))}
-                />
-                <label htmlFor="create_pm_access" style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text)', cursor: 'pointer' }}>
-                  Grant Project Management Access
-                </label>
-              </div>
-
-              <div className="ag-modal-footer">
-                <button
-                  type="button"
-                  className="ag-cancel-btn"
-                  onClick={() => setShowCreateModal(false)}
-                  disabled={createSaving}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="ag-ok-btn"
-                  disabled={createSaving}
-                >
-                  {createSaving ? 'Creating...' : 'Create Agent'}
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}

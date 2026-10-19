@@ -23,8 +23,17 @@ export async function GET(req, { params }) {
           WHERE id = $1`,
         [id]
       ),
-      pool.query('SELECT * FROM agent_leads WHERE agent_id = $1 ORDER BY created_at DESC', [id]),
-      pool.query('SELECT * FROM agent_schedule WHERE agent_id = $1 ORDER BY schedule_date ASC, schedule_time ASC NULLS LAST', [id]),
+      pool.query(
+        `SELECT * FROM agent_leads WHERE agent_id = $1
+         ORDER BY created_at DESC LIMIT 200`,
+        [id]
+      ),
+      pool.query(
+        `SELECT * FROM agent_schedule WHERE agent_id = $1
+         ORDER BY schedule_date ASC, schedule_time ASC NULLS LAST
+         LIMIT 200`,
+        [id]
+      ),
       pool.query(
         `SELECT id, type, title, message, entity_type, entity_id, metadata,
                 is_read, read_at, created_at

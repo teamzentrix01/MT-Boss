@@ -1,15 +1,23 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { UploadCloud, Plus, X, Star, Sparkles, Image as ImageIcon } from 'lucide-react';
-import ShopCategoriesManager from './ShopCategoriesManager';
-import ShopCouponsManager from './ShopCouponsManager';
+import { UploadCloud, Plus, X, Star, Sparkles, Image as ImageIcon, ArrowLeft } from 'lucide-react';
 import VendorCommissionSummary from './VendorCommissionSummary';
 import { defaultShopStorefront } from '@/lib/shop-storefront-defaults';
 import { QUALITY_TIER_OPTIONS, qualityTierLabel } from '@/lib/quality-tier';
 import './ShopNowManager.css';
+
+const ShopCategoriesManager = dynamic(() => import('./ShopCategoriesManager'), {
+  ssr: false,
+  loading: () => <p>Loading categories…</p>,
+});
+const ShopCouponsManager = dynamic(() => import('./ShopCouponsManager'), {
+  ssr: false,
+  loading: () => <p>Loading coupons…</p>,
+});
 
 const units = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
 const emptyProduct = { name: '', description: '', category: '', subcategory: '', quality_tier: '', quote_price_range: '', price: '', compare_at_price: '', is_featured_deal: false, brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
@@ -87,56 +95,101 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
   const [specsText, setSpecsText] = useState('');
   const [bulkText, setBulkText] = useState('');
   const [editingId, setEditingId] = useState(null);
+  const [showProductForm, setShowProductForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [notice, setNotice] = useState('');
   const [tierFilter, setTierFilter] = useState('any');
-  const untieredCount = products.filter((product) => !product.quality_tier).length;
-  const visibleProducts = tierFilter === 'any'
-    ? products
-    : products.filter((product) => (tierFilter === 'none' ? !product.quality_tier : product.quality_tier === tierFilter));
+  const [productPage, setProductPage] = useState(1);
+  const [productPagination, setProductPagination] = useState({ page: 1, limit: 25, total: 0, pages: 1 });
+  const [productSearch, setProductSearch] = useState('');
+  const [debouncedProductSearch, setDebouncedProductSearch] = useState('');
+  const untieredCount = 0;
+  const visibleProducts = products;
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedProductSearch(productSearch.trim()), 300);
+    return () => clearTimeout(t);
+  }, [productSearch]);
+
+  useEffect(() => { setProductPage(1); }, [tierFilter, debouncedProductSearch]);
+
+  const loadReferenceData = useCallback(async () => {
+    try {
+      const [categoryRes, cityRes] = await Promise.all([
+        fetch(isVendor ? '/api/shop-categories?fields=list' : '/api/shop-categories?admin=true&fields=list', { headers: shopHeaders(ownerRole) }),
+        fetch('/api/cities'),
+      ]);
+      const [categoryData, cityData] = await Promise.all([readApiJson(categoryRes), readApiJson(cityRes)]);
+      if (!categoryRes.ok || !cityRes.ok) throw new Error(categoryData.error || cityData.error || 'Could not load shop reference data');
+      setCategories(categoryData.data || []);
+      setCities(cityData.cities || []);
+    } catch (error) {
+      setNotice(error.message);
+    }
+  }, [isVendor, ownerRole]);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [productRes, categoryRes, cityRes] = await Promise.all([
-        fetch(productEndpoint, { headers: shopHeaders(ownerRole) }),
-        fetch(isVendor ? '/api/shop-categories' : '/api/shop-categories?admin=true', { headers: shopHeaders(ownerRole) }),
-        fetch('/api/cities'),
-      ]);
-      const [productData, categoryData, cityData] = await Promise.all([readApiJson(productRes), readApiJson(categoryRes), readApiJson(cityRes)]);
-      if (!productRes.ok || !categoryRes.ok || !cityRes.ok) throw new Error(productData.error || categoryData.error || cityData.error || 'Could not load shop data');
+      const productUrl = isVendor
+        ? productEndpoint
+        : (() => {
+            const params = new URLSearchParams({
+              page: String(productPage),
+              limit: '25',
+              fields: 'list',
+              sort: 'created_at',
+              order: 'desc',
+            });
+            if (debouncedProductSearch) params.set('q', debouncedProductSearch);
+            if (tierFilter !== 'any') params.set('tier', tierFilter);
+            return `${productEndpoint}?${params}`;
+          })();
+      const productRes = await fetch(productUrl, { headers: shopHeaders(ownerRole) });
+      const productData = await readApiJson(productRes);
+      if (!productRes.ok) throw new Error(productData.error || 'Could not load shop data');
       setProducts(productData.data || []);
-      setCategories(categoryData.data || []);
-      setCities(cityData.cities || []);
+      setProductPagination(productData.pagination || { page: 1, limit: 25, total: (productData.data || []).length, pages: 1 });
     } catch (error) { setNotice(error.message); }
     finally { setLoading(false); }
-  }, [isVendor, ownerRole, productEndpoint]);
+  }, [isVendor, ownerRole, productEndpoint, productPage, debouncedProductSearch, tierFilter]);
 
+  useEffect(() => { loadReferenceData(); }, [loadReferenceData]);
   useEffect(() => { load(); }, [load]);
 
-  const edit = (product) => {
-    setEditingId(product.id);
+  const edit = async (product) => {
+    let full = product;
+    if (!isVendor && (!Array.isArray(product.images) || product.specifications == null)) {
+      try {
+        const res = await fetch(`${productEndpoint}?id=${product.id}`, { headers: shopHeaders(ownerRole) });
+        const data = await readApiJson(res);
+        if (res.ok && data.data) full = data.data;
+      } catch { /* use list row */ }
+    }
+    setEditingId(full.id);
+    setShowProductForm(true);
     const existingImgs = Array.from(new Set([
-      product.image_url,
-      ...(Array.isArray(product.images) ? product.images : [])
+      full.image_url,
+      ...(Array.isArray(full.images) ? full.images : [])
     ].filter(Boolean)));
     setImagesList(existingImgs);
     setForm({
-      name: product.name || '', description: product.description || '', category: product.category || '', subcategory: product.subcategory || '', quality_tier: product.quality_tier || '',
-      quote_price_range: product.quote_price_range || '', price: product.price ?? '', compare_at_price: product.compare_at_price ?? '', is_featured_deal: product.is_featured_deal === true, brand: product.brand || '', unit: product.unit || '', quantity: product.quantity ?? 0,
-      image_url: existingImgs[0] || product.image_url || '', available_cities: product.available_cities || [], is_available: product.is_available !== false,
+      name: full.name || '', description: full.description || '', category: full.category || '', subcategory: full.subcategory || '', quality_tier: full.quality_tier || '',
+      quote_price_range: full.quote_price_range || '', price: full.price ?? '', compare_at_price: full.compare_at_price ?? '', is_featured_deal: full.is_featured_deal === true, brand: full.brand || '', unit: full.unit || '', quantity: full.quantity ?? 0,
+      image_url: existingImgs[0] || full.image_url || '', available_cities: full.available_cities || [], is_available: full.is_available !== false,
     });
     setGalleryText(existingImgs.join('\n'));
-    setSpecsText(Object.entries(product.specifications || {}).map(([key, value]) => `${key}: ${value}`).join('\n'));
-    setBulkText((product.bulk_pricing || []).map((tier) => `${tier.min_quantity}: ${tier.price}`).join('\n'));
+    setSpecsText(Object.entries(full.specifications || {}).map(([key, value]) => `${key}: ${value}`).join('\n'));
+    setBulkText((full.bulk_pricing || []).map((tier) => `${tier.min_quantity}: ${tier.price}`).join('\n'));
     setNotice('');
     document.getElementById(formId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const reset = () => {
     setEditingId(null);
+    setShowProductForm(false);
     setForm(emptyProduct);
     setImagesList([]);
     setNewImageUrl('');
@@ -301,9 +354,36 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
   };
 
   return <div className="shop-admin-panel">
-    <div className="shop-admin-heading"><div><h2>{isVendor ? 'My products' : 'Products'}</h2><p>Every product needs a Get Quote range and a fixed Buy Now price.{!isVendor && ' Supplier and vendor uploads appear here too.'}</p></div><button type="button" onClick={load}>Refresh</button></div>
-    {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
-    <form id={formId} className="shop-admin-card" onSubmit={save}>
+    {showProductForm || editingId ? (
+      <>
+        <div className="shop-admin-heading">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button
+              type="button"
+              onClick={reset}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 14px',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                background: 'transparent',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: 13
+              }}
+            >
+              <ArrowLeft size={16} /> Back to products
+            </button>
+            <div>
+              <h2>{editingId ? 'Edit product' : 'Add product'}</h2>
+              <p>{isVendor ? 'Fill out product details for admin approval.' : 'Every product needs a Get Quote range and a fixed Buy Now price.'}</p>
+            </div>
+          </div>
+        </div>
+        {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
+        <form id={formId} className="shop-admin-card" onSubmit={save}>
       <h3>{editingId ? 'Edit product' : 'Add product'}</h3>
       <div className="shop-admin-fields">
         <label>Product name *<input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
@@ -431,7 +511,39 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
       </div>
       <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-check"><input type="checkbox" checked={form.is_featured_deal} onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })} /> Feature in Deals of the Week</label><button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
     </form>
-    <div className="shop-admin-card"><div className="shop-admin-list-head"><h3>{isVendor ? 'My products' : 'All products'} ({tierFilter === 'any' ? products.length : `${visibleProducts.length} of ${products.length}`})</h3><label className="shop-admin-tier-filter">Quality Tier<select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}><option value="any">All products</option><option value="none">No Quality Tier set ({untieredCount})</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.value === 'all' ? 'All tiers' : tier.label}</option>)}</select></label></div>{loading ? <p>Loading products...</p> : !products.length ? <p>No products yet. Add the first product above.</p> : !visibleProducts.length ? <p>No products match this Quality Tier filter.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Quality</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isVendor && <th>Discount</th>}{!isVendor && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{visibleProducts.map((product) => { const price = Number(product.price); const originalPrice = Number(product.compare_at_price); const discountPercent = originalPrice > price && price > 0 ? Math.round(((originalPrice - price) / originalPrice) * 100) : null; return <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{qualityTierLabel(product.quality_tier) || <span className="shop-admin-tier-missing">Not set</span>}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{price > 0 ? `₹${price.toLocaleString('en-IN')} / ${product.unit || 'unit'}` : <span style={{ color: '#d97706', fontWeight: 600 }}>Price on request</span>}</td>{!isVendor && <td>{discountPercent === null ? '—' : `${discountPercent}% OFF`}</td>}{!isVendor && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{isVendor ? (() => {
+      </>
+    ) : (
+      <>
+        <div className="shop-admin-heading">
+          <div>
+            <h2>{isVendor ? 'My products' : 'Products'}</h2>
+            <p>Every product needs a Get Quote range and a fixed Buy Now price.{!isVendor && ' Supplier and vendor uploads appear here too.'}</p>
+          </div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button
+              type="button"
+              onClick={() => { setShowProductForm(true); reset(); }}
+              style={{
+                background: 'var(--brand-blue, #2563eb)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 6,
+                padding: '8px 16px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 13
+              }}
+            >
+              <Plus size={16} /> Add Product
+            </button>
+            <button type="button" onClick={load}>Refresh</button>
+          </div>
+        </div>
+        {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
+        <div className="shop-admin-card"><div className="shop-admin-list-head"><h3>{isVendor ? 'My products' : 'All products'} ({isVendor ? products.length : productPagination.total})</h3><div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>{!isVendor && <input value={productSearch} onChange={(e) => setProductSearch(e.target.value)} placeholder="Search products…" style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)', minWidth: 180 }} />}<label className="shop-admin-tier-filter">Quality Tier<select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}><option value="any">All products</option><option value="none">No Quality Tier set</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.value === 'all' ? 'All tiers' : tier.label}</option>)}</select></label></div></div>{loading ? <p>Loading products...</p> : !products.length ? <p>No products yet. Add the first product above.</p> : !visibleProducts.length ? <p>No products match this Quality Tier filter.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Quality</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isVendor && <th>Discount</th>}{!isVendor && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{visibleProducts.map((product) => { const price = Number(product.price); const originalPrice = Number(product.compare_at_price); const discountPercent = originalPrice > price && price > 0 ? Math.round(((originalPrice - price) / originalPrice) * 100) : null; return <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{qualityTierLabel(product.quality_tier) || <span className="shop-admin-tier-missing">Not set</span>}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{price > 0 ? `₹${price.toLocaleString('en-IN')} / ${product.unit || 'unit'}` : <span style={{ color: '#d97706', fontWeight: 600 }}>Price on request</span>}</td>{!isVendor && <td>{discountPercent === null ? '—' : `${discountPercent}% OFF`}</td>}{!isVendor && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{isVendor ? (() => {
   const approval = product.specifications?.__approval__;
   const status = approval?.status || 'approved';
   if (status === 'pending') {
@@ -450,7 +562,19 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
     );
   }
   return <span className="shop-approval-badge badge-approved" title="Approved by admin">✓ Approved {product.is_available ? '' : '(Hidden)'}</span>;
-})() : (product.is_available ? 'Visible' : 'Hidden')}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button>{(!isVendor || !product.specifications?.__approval__?.status || product.specifications.__approval__.status === 'approved') && <button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button>}<button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>; })}</tbody></table></div>}</div>
+})() : (product.is_available ? 'Visible' : 'Hidden')}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button>{(!isVendor || !product.specifications?.__approval__?.status || product.specifications.__approval__.status === 'approved') && <button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button>}<button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>; })}</tbody></table></div>}
+    {!isVendor && !loading && productPagination.pages > 1 ? (
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, gap: 8, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 12, color: 'var(--muted)' }}>Page {productPagination.page} of {productPagination.pages}</span>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button type="button" disabled={productPage <= 1} onClick={() => setProductPage((p) => Math.max(1, p - 1))}>Prev</button>
+          <button type="button" disabled={productPage >= productPagination.pages} onClick={() => setProductPage((p) => p + 1)}>Next</button>
+        </div>
+      </div>
+    ) : null}
+    </div>
+      </>
+    )}
   </div>;
 }
 
@@ -634,20 +758,25 @@ function OfferManager() {
   const [editingId, setEditingId] = useState(null);
   const [notice, setNotice] = useState('');
   const [loading, setLoading] = useState(true);
+  const loadCategories = useCallback(async () => {
+    try {
+      const categoriesRes = await fetch('/api/shop-categories?admin=true&fields=list', { headers: shopHeaders() });
+      const categoriesData = await readApiJson(categoriesRes);
+      if (categoriesRes.ok) setCategories(categoriesData.data || []);
+    } catch { /* optional for offer form */ }
+  }, []);
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [offersRes, categoriesRes] = await Promise.all([
-        fetch('/api/shop-offers?admin=true', { headers: shopHeaders() }),
-        fetch('/api/shop-categories?admin=true', { headers: shopHeaders() }),
-      ]);
+      const offersRes = await fetch('/api/shop-offers?admin=true', { headers: shopHeaders() });
       const offersData = await readApiJson(offersRes);
-      const categoriesData = await readApiJson(categoriesRes);
       if (!offersRes.ok) throw new Error(offersData.error || 'Could not load offers');
-      setOffers(offersData.data || []); setCategories(categoriesData.data || []);
+      setOffers(offersData.data || []);
     } catch (error) { setNotice(error.message); }
     finally { setLoading(false); }
   }, []);
+  useEffect(() => { loadCategories(); }, [loadCategories]);
   useEffect(() => { load(); }, [load]);
   const save = async (event) => {
     event.preventDefault(); setNotice('');
@@ -702,10 +831,12 @@ export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }
       <button type="button" role="tab" aria-selected={tab === 'content'} className={tab === 'content' ? 'active' : ''} onClick={() => setTab('content')}>Storefront Content</button>
       <button type="button" role="tab" aria-selected={tab === 'coupons'} className={tab === 'coupons' ? 'active' : ''} onClick={() => setTab('coupons')}>Promotions & Coupons</button>
     </div>
-    {tab === 'categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}
-    {tab === 'products' && <ProductManager />}
-    {tab === 'content' && <AppearanceManager />}
-    {tab === 'coupons' && <ShopCouponsManager />}
+    <Suspense fallback={<p>Loading shop panel…</p>}>
+      {tab === 'categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}
+      {tab === 'products' && <ProductManager />}
+      {tab === 'content' && <AppearanceManager />}
+      {tab === 'coupons' && <ShopCouponsManager />}
+    </Suspense>
 
     <style jsx>{`
       .shop-admin-root {

@@ -54,7 +54,7 @@ export default function FranchisesPage() {
   const fetchFranchises = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/franchises', {
+      const res = await fetch('/api/franchises?limit=200&page=1', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

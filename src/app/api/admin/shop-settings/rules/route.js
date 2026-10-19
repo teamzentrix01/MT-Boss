@@ -31,7 +31,10 @@ export async function GET(req) {
 
     const [rules, targets] = await Promise.all([
       getShopCommissionRules(),
-      getAvailableCommissionTargets(),
+      getAvailableCommissionTargets({
+        productLimit: searchParams.get('product_limit') || 200,
+        q: searchParams.get('q') || searchParams.get('product_q') || '',
+      }),
     ]);
 
     return NextResponse.json({

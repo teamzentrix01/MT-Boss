@@ -119,19 +119,97 @@ export async function GET(req) {
     if (user) {
       // User can see enquiries submitted by themselves OR enquiries received for their properties
       const result = await pool.query(
-        `SELECT * FROM property_enquiries
+        `SELECT id, property_id, property_title, property_location, listing_type,
+                enquirer_name, enquirer_phone, enquirer_email, message, status,
+                admin_notes, user_id, owner_user_id, owner_name, owner_email,
+                created_at, updated_at
+          FROM property_enquiries
           WHERE user_id=$1
              OR owner_user_id=$1
              OR (owner_email IS NOT NULL AND LOWER(TRIM(owner_email))=LOWER(TRIM($2)))
              OR (enquirer_email IS NOT NULL AND LOWER(TRIM(enquirer_email))=LOWER(TRIM($2)))
-          ORDER BY created_at DESC`,
+          ORDER BY created_at DESC
+          LIMIT 100`,
         [user.id, user.email || '']
       );
       return NextResponse.json({ success: true, data: result.rows });
     }
     if (!requireRole(req, 'admin')) return unauthorized();
-    const result = await pool.query(`SELECT * FROM property_enquiries ORDER BY created_at DESC`);
-    return NextResponse.json({ success: true, data: result.rows });
+    const { searchParams } = new URL(req.url);
+    const status = (searchParams.get('status') || '').trim();
+    const listingType = (searchParams.get('listing_type') || '').trim().toLowerCase();
+    const q = (searchParams.get('q') || '').trim();
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '25', 10) || 25));
+    const offset = (page - 1) * limit;
+    const sort = ['created_at', 'status', 'property_title'].includes(searchParams.get('sort'))
+      ? searchParams.get('sort')
+      : 'created_at';
+    const order = String(searchParams.get('order') || 'desc').toLowerCase() === 'asc' ? 'ASC' : 'DESC';
+    const metricsOnly = searchParams.get('metrics') === '1' || searchParams.get('counts') === '1';
+
+    if (metricsOnly) {
+      const metricsRes = await pool.query(`
+        SELECT
+          COUNT(*)::INT AS total,
+          COUNT(*) FILTER (WHERE status = 'new')::INT AS new_count,
+          COUNT(*) FILTER (WHERE status = 'contacted')::INT AS contacted_count,
+          COUNT(*) FILTER (WHERE status = 'converted')::INT AS converted_count,
+          COUNT(*) FILTER (WHERE COALESCE(listing_type, 'buy') = 'buy')::INT AS buy_count,
+          COUNT(*) FILTER (WHERE COALESCE(listing_type, 'buy') = 'rent')::INT AS rent_count
+        FROM property_enquiries
+      `);
+      const m = metricsRes.rows[0] || {};
+      return NextResponse.json({
+        success: true,
+        data: {
+          total: m.total || 0,
+          newCount: m.new_count || 0,
+          contactedCount: m.contacted_count || 0,
+          convertedCount: m.converted_count || 0,
+          buyCount: m.buy_count || 0,
+          rentCount: m.rent_count || 0,
+        },
+      });
+    }
+
+    const vals = [];
+    const where = [];
+    if (status && status !== 'all') {
+      vals.push(status);
+      where.push(`status = $${vals.length}`);
+    }
+    if (listingType === 'buy' || listingType === 'rent') {
+      vals.push(listingType);
+      where.push(`COALESCE(listing_type, 'buy') = $${vals.length}`);
+    }
+    if (q) {
+      vals.push(`%${q}%`);
+      where.push(`(
+        property_title ILIKE $${vals.length}
+        OR enquirer_name ILIKE $${vals.length}
+        OR enquirer_phone ILIKE $${vals.length}
+        OR COALESCE(enquirer_email,'') ILIKE $${vals.length}
+        OR COALESCE(property_location,'') ILIKE $${vals.length}
+        OR COALESCE(owner_name,'') ILIKE $${vals.length}
+      )`);
+    }
+    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    const countRes = await pool.query(`SELECT COUNT(*)::INT AS total FROM property_enquiries ${whereSql}`, vals);
+    const total = countRes.rows[0]?.total || 0;
+    vals.push(limit, offset);
+    const result = await pool.query(
+      `SELECT * FROM property_enquiries ${whereSql}
+       ORDER BY ${sort} ${order}, id DESC
+       LIMIT $${vals.length - 1} OFFSET $${vals.length}`,
+      vals
+    );
+    return NextResponse.json({
+      success: true,
+      data: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
+      sort: { field: sort, order: order.toLowerCase() },
+    });
   } catch (error) {
     console.error('GET property enquiries error:', error);
     return NextResponse.json({ success: false, error: 'Unable to load enquiries' }, { status: 500 });

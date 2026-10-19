@@ -177,7 +177,7 @@ export default function PmAuditLog({ isDarkMode }) {
       <Drawer row={drawer} onClose={() => setDrawer(null)} isDarkMode={isDarkMode} />
       <div className={`pal-root${isDarkMode ? ' dark-mode' : ''}`}>
         <div className="pal-header">
-          <h1 className="pal-title">🗂 Activity Log</h1>
+          <h1 className="pal-title">Activity log</h1>
           <p className="pal-sub">Immutable record of all admin changes across PM tables</p>
         </div>
 

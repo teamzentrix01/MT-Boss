@@ -162,9 +162,21 @@ function ensureTable() {
   return readyPromise;
 }
 
+let publicProductsCache = { expiresAt: 0, rows: null };
+const PUBLIC_PRODUCTS_TTL_MS = 60 * 1000;
+
+function invalidateCalculatorProductsCache() {
+  publicProductsCache = { expiresAt: 0, rows: null };
+}
+
 function selectProducts(isAdmin) {
+  // Public calculator needs pricing matrices; admin edit needs full row.
+  const selectSql = isAdmin
+    ? `SELECT *`
+    : `SELECT id, category, badge, name, description, image_url, unit, price,
+              city_prices, price_matrix, available_cities, sort_order, is_active`;
   return pool.query(
-    `SELECT * FROM calculator_products
+    `${selectSql} FROM calculator_products
      ${isAdmin ? '' : 'WHERE is_active = TRUE'}
      ORDER BY sort_order ASC, id ASC`
   );
@@ -243,6 +255,13 @@ export async function GET(req) {
     const isAdmin = searchParams.get('admin') === 'true';
     if (isAdmin && !requireRole(req, 'admin')) return unauthorized();
 
+    if (!isAdmin && publicProductsCache.rows && publicProductsCache.expiresAt > Date.now()) {
+      return NextResponse.json(
+        { success: true, data: publicProductsCache.rows },
+        { headers: { 'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300' } }
+      );
+    }
+
     let result;
     try {
       result = await selectProducts(isAdmin);
@@ -257,7 +276,14 @@ export async function GET(req) {
       result = await selectProducts(isAdmin);
     }
 
-    return NextResponse.json({ success: true, data: result.rows });
+    if (!isAdmin) {
+      publicProductsCache = { expiresAt: Date.now() + PUBLIC_PRODUCTS_TTL_MS, rows: result.rows };
+    }
+
+    return NextResponse.json(
+      { success: true, data: result.rows },
+      isAdmin ? undefined : { headers: { 'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300' } }
+    );
   } catch (error) {
     console.error('GET calculator-products error:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
@@ -295,6 +321,7 @@ export async function POST(req) {
       ]
     );
 
+    invalidateCalculatorProductsCache();
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
     console.error('POST calculator-products error:', error);
@@ -335,6 +362,7 @@ export async function PUT(req) {
     );
 
     if (result.rows.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    invalidateCalculatorProductsCache();
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
     console.error('PUT calculator-products error:', error);
@@ -353,7 +381,7 @@ export async function DELETE(req) {
 
     const result = await pool.query('DELETE FROM calculator_products WHERE id=$1 RETURNING id', [id]);
     if (result.rows.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-
+    invalidateCalculatorProductsCache();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('DELETE calculator-products error:', error);

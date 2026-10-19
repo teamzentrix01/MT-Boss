@@ -144,14 +144,45 @@ export async function assertAgentAccess(userOrReq, projectId = null, category = 
   };
 }
 
+async function pmSchemaLooksReady() {
+  // One round-trip: if the latest phase-1/3 objects exist, skip the heavy DDL fan-out.
+  // Migrations remain the source of truth; this only avoids re-running dozens of
+  // CREATE IF NOT EXISTS statements on every serverless cold start (~10–15s on Neon).
+  const result = await pool.query(`
+    SELECT
+      to_regclass('public.pm_parties') IS NOT NULL AS has_parties,
+      to_regclass('public.pm_projects') IS NOT NULL AS has_projects,
+      to_regclass('public.pm_party_payments') IS NOT NULL AS has_payments,
+      to_regclass('public.pm_labor_payments') IS NOT NULL AS has_labor_payments,
+      EXISTS (
+        SELECT 1
+          FROM information_schema.columns
+         WHERE table_schema = 'public'
+           AND table_name = 'pm_projects'
+           AND column_name = 'source_lead_id'
+      ) AS has_source_lead
+  `);
+  const row = result.rows[0] || {};
+  return Boolean(
+    row.has_parties
+    && row.has_projects
+    && row.has_payments
+    && row.has_labor_payments
+    && row.has_source_lead
+  );
+}
+
 // Migrations are the source of truth. This guarded bootstrap makes fresh Neon
 // previews usable before the deployment migration runner has executed.
 export const ensureProjectManagementSchema = createInitializationGuard(async () => {
+  if (await pmSchemaLooksReady()) return;
+
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_parties (id BIGSERIAL PRIMARY KEY, name VARCHAR(200) NOT NULL, phone VARCHAR(30), email VARCHAR(255), gst_no VARCHAR(30), address TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_projects (id BIGSERIAL PRIMARY KEY, party_id BIGINT NOT NULL REFERENCES pm_parties(id) ON DELETE RESTRICT, name VARCHAR(250) NOT NULL, site_address TEXT, start_date DATE NOT NULL, expected_end_date DATE, contract_value NUMERIC(14,2) NOT NULL DEFAULT 0 CHECK (contract_value >= 0), built_up_area NUMERIC(14,2), status VARCHAR(20) NOT NULL DEFAULT 'running' CHECK (status IN ('running','completed','on_hold')), created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_party_payments (id BIGSERIAL PRIMARY KEY, project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT, amount NUMERIC(14,2) NOT NULL CHECK (amount > 0), payment_date DATE NOT NULL DEFAULT CURRENT_DATE, mode VARCHAR(50), note TEXT, created_by TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_by TEXT, updated_at TIMESTAMPTZ, is_deleted BOOLEAN NOT NULL DEFAULT FALSE, deleted_by TEXT, deleted_at TIMESTAMPTZ)`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_audit_logs (id BIGSERIAL PRIMARY KEY, entity_type VARCHAR(40) NOT NULL, entity_id BIGINT NOT NULL, action VARCHAR(30) NOT NULL, changed_by TEXT NOT NULL, before_data JSONB, after_data JSONB, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
   await pool.query(`CREATE INDEX IF NOT EXISTS pm_projects_party_id_idx ON pm_projects(party_id)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS pm_parties_created_at_idx ON pm_parties(created_at DESC)`);
   await pool.query(`CREATE INDEX IF NOT EXISTS pm_party_payments_project_id_idx ON pm_party_payments(project_id)`);
   await pool.query(`CREATE INDEX IF NOT EXISTS pm_party_payments_active_project_date_idx ON pm_party_payments(project_id, payment_date DESC) WHERE NOT is_deleted`);
   await pool.query(`CREATE INDEX IF NOT EXISTS pm_audit_logs_entity_idx ON pm_audit_logs(entity_type, entity_id, created_at DESC)`);
@@ -315,6 +346,12 @@ export function money(value) {
 // Phase 4: alert dismissals + settings schema guard
 export const ensureProjectManagementPhase4Schema = createInitializationGuard(async () => {
   await ensureProjectManagementSchema(); // phases 1-3
+  const ready = await pool.query(`
+    SELECT to_regclass('public.pm_alert_dismissals') IS NOT NULL AS has_dismissals,
+           to_regclass('public.pm_settings') IS NOT NULL AS has_settings
+  `);
+  if (ready.rows[0]?.has_dismissals && ready.rows[0]?.has_settings) return;
+
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_alert_dismissals(id BIGSERIAL PRIMARY KEY,alert_key TEXT NOT NULL,dismissed_by TEXT NOT NULL,dismissed_until TIMESTAMPTZ,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_settings(key VARCHAR(100) PRIMARY KEY,value TEXT NOT NULL,updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
   await pool.query(`INSERT INTO pm_settings(key,value) VALUES('party_payment_gap_days','30'),('contract_paid_warning_percent','90') ON CONFLICT(key) DO NOTHING`);
@@ -324,6 +361,12 @@ export const ensureProjectManagementPhase4Schema = createInitializationGuard(asy
 // Phase 5: benchmarks, rate summary, calculator overrides schema guard
 export const ensureProjectManagementPhase5Schema = createInitializationGuard(async () => {
   await ensureProjectManagementPhase4Schema();
+  const ready = await pool.query(`
+    SELECT to_regclass('public.pm_project_benchmarks') IS NOT NULL AS has_benchmarks,
+           to_regclass('public.pm_calculator_rate_overrides') IS NOT NULL AS has_overrides
+  `);
+  if (ready.rows[0]?.has_benchmarks && ready.rows[0]?.has_overrides) return;
+
   // 1. Alter pm_projects
   await pool.query(`
     ALTER TABLE pm_projects

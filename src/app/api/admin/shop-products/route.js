@@ -114,10 +114,71 @@ export async function GET(req) {
   if (!requireRole(req, 'admin')) return unauthorized();
   try {
     await ensureTable();
-    const result = await pool.query(`SELECT id, supplier_id, vendor_id, name, description, quote_price_range, price, unit,
-      quantity, image_url, category, subcategory, brand, compare_at_price, is_featured_deal, images, specifications, bulk_pricing, available_cities, is_available, quality_tier, created_at
-      FROM supplier_materials ORDER BY created_at DESC, id DESC`);
-    return NextResponse.json({ success: true, data: result.rows });
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    if (id) {
+      const one = await pool.query(
+        `SELECT id, supplier_id, vendor_id, name, description, quote_price_range, price, unit,
+          quantity, image_url, category, subcategory, brand, compare_at_price, is_featured_deal,
+          images, specifications, bulk_pricing, available_cities, is_available, quality_tier, created_at
+         FROM supplier_materials WHERE id=$1`,
+        [id]
+      );
+      if (!one.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+      return NextResponse.json({ success: true, data: one.rows[0] });
+    }
+
+    const q = String(searchParams.get('q') || '').trim();
+    const tier = String(searchParams.get('tier') || searchParams.get('quality_tier') || '').trim();
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '25', 10) || 25));
+    const offset = (page - 1) * limit;
+    const sort = ['created_at', 'name', 'price', 'category'].includes(searchParams.get('sort'))
+      ? searchParams.get('sort')
+      : 'created_at';
+    const order = String(searchParams.get('order') || 'desc').toLowerCase() === 'asc' ? 'ASC' : 'DESC';
+    const fields = searchParams.get('fields') === 'full' ? 'full' : 'list';
+
+    const where = [];
+    const params = [];
+    if (q) {
+      params.push(`%${q}%`);
+      where.push(`(name ILIKE $${params.length} OR category ILIKE $${params.length} OR COALESCE(brand,'') ILIKE $${params.length})`);
+    }
+    if (tier === 'none') {
+      where.push(`(quality_tier IS NULL OR TRIM(quality_tier) = '')`);
+    } else if (tier && tier !== 'any' && tier !== 'all') {
+      params.push(tier);
+      where.push(`quality_tier = $${params.length}`);
+    }
+
+    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    const countRes = await pool.query(`SELECT COUNT(*)::INT AS total FROM supplier_materials ${whereSql}`, params);
+    const total = countRes.rows[0]?.total || 0;
+
+    const selectList = fields === 'full'
+      ? `id, supplier_id, vendor_id, name, description, quote_price_range, price, unit,
+         quantity, image_url, category, subcategory, brand, compare_at_price, is_featured_deal,
+         images, specifications, bulk_pricing, available_cities, is_available, quality_tier, created_at`
+      : `id, supplier_id, vendor_id, name, quote_price_range, price, unit, quantity, image_url,
+         category, subcategory, brand, compare_at_price, is_featured_deal, is_available, quality_tier, created_at`;
+
+    params.push(limit, offset);
+    const result = await pool.query(
+      `SELECT ${selectList}
+       FROM supplier_materials
+       ${whereSql}
+       ORDER BY ${sort} ${order}, id DESC
+       LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
+    );
+
+    return NextResponse.json({
+      success: true,
+      data: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
+      sort: { field: sort, order: order.toLowerCase() },
+    });
   } catch (error) {
     console.error('GET admin shop-products error:', error);
     return NextResponse.json({ success: false, error: 'Could not load products' }, { status: 500 });

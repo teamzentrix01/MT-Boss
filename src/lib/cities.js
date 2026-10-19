@@ -94,7 +94,18 @@ export const ensureCitiesSchema = createInitializationGuard(async () => {
   }
 });
 
+let citiesCache = { active: null, all: null, expiresAt: 0 };
+const CITIES_TTL_MS = 60 * 1000;
+
+export function invalidateManagedCitiesCache() {
+  citiesCache = { active: null, all: null, expiresAt: 0 };
+}
+
 export async function getManagedCities({ includeInactive = false } = {}) {
+  if (citiesCache.expiresAt > Date.now()) {
+    const hit = includeInactive ? citiesCache.all : citiesCache.active;
+    if (hit) return hit;
+  }
   await ensureCitiesSchema();
   const result = await pool.query(
     `SELECT id, name, state, is_active, sort_order, created_at, updated_at
@@ -102,6 +113,13 @@ export async function getManagedCities({ includeInactive = false } = {}) {
       ${includeInactive ? '' : 'WHERE is_active = TRUE'}
       ORDER BY sort_order ASC, name ASC`
   );
+  if (includeInactive) {
+    citiesCache.all = result.rows;
+    citiesCache.active = result.rows.filter((row) => row.is_active);
+  } else {
+    citiesCache.active = result.rows;
+  }
+  citiesCache.expiresAt = Date.now() + CITIES_TTL_MS;
   return result.rows;
 }
 

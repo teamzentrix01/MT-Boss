@@ -98,7 +98,7 @@ const expenseBlank = { category: 'transport', amount: '', expense_date: today(),
 export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
   // Navigation: 'parties' | 'party' | 'partyForm' | 'project' | 'projectForm' | 'reports'
   const [screen, setScreen] = useState(initialProjectId ? 'project' : initialScreen);
-  const [role, setRole] = useState('admin');
+  const [role, setRole] = useState(isAgent ? 'agent' : 'admin');
 
   // Agent Specialization state
   const [currentAgent, setCurrentAgent] = useState(passedAgent || null);
@@ -157,6 +157,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [party, setParty] = useState(null);
   const [partyForm, setPartyForm] = useState(partyBlank);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
   const [message, setMessage] = useState('');
 
@@ -171,6 +172,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       setProjectTab(allowedTabs[0]);
     }
   }, [isAgent, allowedTabs, projectTab]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  useEffect(() => {
+    setPagination((prev) => (prev.page === 1 ? prev : { ...prev, page: 1 }));
+  }, [debouncedSearch]);
 
   // Phase 1: Party payments
   const [partyPayments, setPartyPayments] = useState([]);
@@ -366,34 +376,38 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
   // Check supervisor role
   useEffect(() => {
+    if (isAgent) {
+      setRole('agent');
+      return;
+    }
     try {
       const u = JSON.parse(localStorage.getItem('admin-user') || localStorage.getItem('user') || '{}');
       if (u.role === 'site_supervisor') setRole('site_supervisor');
     } catch {}
-  }, []);
+  }, [isAgent]);
 
   const isSupervisor = role === 'site_supervisor';
 
   // ── Load Parties ─────────────────────────────────────────────────────────────
   const loadParties = useCallback(async () => {
     try {
-      const d = await api(`/api/admin/project-management/parties?search=${encodeURIComponent(search)}&page=${pagination.page}&pageSize=20`);
+      const d = await api(`/api/admin/project-management/parties?search=${encodeURIComponent(debouncedSearch)}&page=${pagination.page}&pageSize=20`);
       setParties(d.data || []);
       setPagination(d.pagination || { page: 1, totalPages: 1 });
     } catch (e) {
       setMessage(e.message);
     }
-  }, [search, pagination.page]);
+  }, [debouncedSearch, pagination.page]);
 
   const loadAgentProjects = useCallback(async () => {
     try {
-      const d = await api(`/api/admin/project-management/projects?search=${encodeURIComponent(search)}&page=${pagination.page}&pageSize=20`);
+      const d = await api(`/api/admin/project-management/projects?search=${encodeURIComponent(debouncedSearch)}&page=${pagination.page}&pageSize=20`);
       setAllProjectsList(d.data || []);
       setPagination(d.pagination || { page: 1, totalPages: 1 });
     } catch (e) {
       setMessage(e.message);
     }
-  }, [search, pagination.page]);
+  }, [debouncedSearch, pagination.page]);
 
   useEffect(() => {
     if (screen === 'parties') loadParties();
@@ -517,7 +531,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         api(`/api/admin/project-management/vendors?page=1&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/labor?projectId=${id}&pageSize=200`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/projects/${id}/agents`).catch(() => ({ data: [] })),
-        api(`/api/admin/lead-management`).catch(() => ({ agents: [] })),
+        api(`/api/admin/lead-management?assigneesOnly=1`).catch(() => ({ agents: [] })),
       ]);
       setProject(projRes.data);
       setPartyPayments(ppRes.data || []);
@@ -1224,9 +1238,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             </button>
           )}
           <h2 style={{ margin: 0, fontSize: 20 }}>Project Management</h2>
-          <span style={{ fontSize: 12, background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
-            {role.toUpperCase()}
-          </span>
+          {!isAgent && (
+            <span style={{ fontSize: 12, background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
+              {role.toUpperCase()}
+            </span>
+          )}
         </div>
 
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -1237,7 +1253,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           >
             📊 Reports &amp; CSV
           </button>
-          {screen === 'parties' && (
+          {screen === 'parties' && !isAgent && (
             <button
               onClick={() => {
                 setPartyForm(partyBlank);

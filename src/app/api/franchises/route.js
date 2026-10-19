@@ -61,6 +61,26 @@ function hasSavedPermissions(value) {
   return value && typeof value === 'object' && Object.values(value).some(Boolean);
 }
 
+function sanitizeFranchise(row) {
+  if (!row) return row;
+  const { password_hash: _passwordHash, ...safe } = row;
+  return safe;
+}
+
+const FRANCHISE_LIST_COLUMNS = `
+  id, name, father_name, dob, gender, marital_status, phone, email,
+  occupation, qualification, annual_income, id_type, id_number, pan,
+  address, district, city, state, pin_code, current_business, experience,
+  construction_exp, employees, network, bank_name, branch_name,
+  account_number, ifsc_code, model, investment, territory, referral_source,
+  start_date, service_category, office_area, office_district, premises_ownership,
+  lease_duration, office_area_sqft, office_type, message, other_franchise,
+  training_willing, status, login_enabled, permissions,
+  registration_fee, payment_status, payment_gateway, payment_gateway_id,
+  payment_completed_at, created_at, updated_at, approved_at, approved_by_email,
+  last_login_at
+`;
+
 async function cityTaken(city, excludeId = null) {
   const normalized = normalizeCity(city);
   if (!normalized) return false;
@@ -150,10 +170,24 @@ export async function GET(req) {
     }
 
     await ensureFranchiseColumns();
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(500, Math.max(1, parseInt(searchParams.get('limit') || '200', 10) || 200));
+    const offset = (page - 1) * limit;
+    const countRes = await pool.query(`SELECT COUNT(*)::INT AS total FROM franchises`);
+    const total = countRes.rows[0]?.total || 0;
+    // Never return password_hash in list responses
     const result = await pool.query(
-      'SELECT * FROM franchises ORDER BY created_at DESC'
+      `SELECT ${FRANCHISE_LIST_COLUMNS}
+       FROM franchises
+       ORDER BY created_at DESC
+       LIMIT $1 OFFSET $2`,
+      [limit, offset]
     );
-    return NextResponse.json({ success: true, data: result.rows });
+    return NextResponse.json({
+      success: true,
+      data: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
+    });
   } catch (error) {
     console.error('Franchises fetch error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
@@ -509,7 +543,7 @@ export async function PATCH(req) {
         });
         return NextResponse.json({
           success: true,
-          data: result.rows[0],
+          data: sanitizeFranchise(result.rows[0]),
           credentialsEmailed: true,
           message: generatedPassword
             ? `Franchise approved and credentials sent to ${current.email}`
@@ -519,7 +553,7 @@ export async function PATCH(req) {
         console.warn('Franchise approval email failed:', mailError.message);
         return NextResponse.json({
           success: true,
-          data: result.rows[0],
+          data: sanitizeFranchise(result.rows[0]),
           credentialsEmailed: false,
           warning: `Franchise approved, but credentials email failed: ${mailError.message}`,
         });
@@ -528,7 +562,7 @@ export async function PATCH(req) {
 
     return NextResponse.json({
       success: true,
-      data: result.rows[0],
+      data: sanitizeFranchise(result.rows[0]),
       credentialsEmailed: false,
       message: `Franchise status updated to ${status}.`,
     });

@@ -5,11 +5,19 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { redirectToPayU } from '@/lib/payu-client';
+import PanelLayout from '@/app/components/PanelLayout';
+import {
+  ClipboardList,
+  Truck,
+  CircleDollarSign,
+  Package,
+  User,
+} from '@/app/components/ui/icons';
 
 const MaterialOrdersPanel = dynamic(() => import('@/app/components/MaterialOrdersPanel'), {
   loading: () => <div className="sd-loading">Loading order tracking...</div>,
 });
-const SUPPLIER_TABS = ['tracking', 'orders', 'earnings', 'packages', 'profile'];
+const SUPPLIER_TABS = ['orders', 'tracking', 'earnings', 'packages', 'profile'];
 
 export default function SupplierDashboard() {
   return (
@@ -445,45 +453,114 @@ function SupplierDashboardContent() {
         @media(max-width:640px){.sd-topbar{padding:0 1rem;}.sd-body{padding:1rem;}.sd-modal{width:95%;padding:1.5rem;}}
       `}</style>
 
-      <div className="sd-page">
-        {/* Topbar */}
-        <div className="sd-topbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div className="sd-logo">SUPPLIER<span>HUB</span></div>
-            <span style={{ width: 1, height: 20, background: border }} />
-            <span style={{ fontSize: '0.8rem', color: muted }}>{supplier?.shop_name}</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span className={`sd-pill ${supplier?.is_active === false ? 'sd-status-inactive' : 'sd-status-active'}`}>
-              {supplier?.is_active === false ? 'Inactive' : 'Active'}
-            </span>
-            <button className="sd-logout-btn" onClick={handleLogout}>Logout</button>
-          </div>
-        </div>
-
-        <div className="sd-body">
-          {/* Tabs */}
-          <div className="sd-tabs">
-            {[
-              { id: 'tracking', label: 'Material Order Tracking' },
-              { id: 'orders',   label: '📋 Orders'   },
-              { id: 'earnings', label: '💰 Earnings'  },
-              { id: 'packages', label: '📦 Package'   },
-              { id: 'profile',  label: '👤 Profile'   },
-            ].map(t => (
-              <button key={t.id} className={`sd-tab${activeTab === t.id ? ' active' : ''}`}
-                onClick={() => {
-                  setActiveTab(t.id);
-                }}>
-                {t.label}
-              </button>
-            ))}
-          </div>
-
+      <PanelLayout
+        title="Supplier Hub"
+        subtitle={`${supplier?.shop_name || 'Supplier'} · ${supplier?.city ? supplier.city + ' · ' : ''}${supplier?.is_active === false ? 'Inactive' : 'Active'}`}
+        user={{
+          name: supplier?.shop_name || 'Supplier',
+          email: supplier?.email || '',
+          city: supplier?.city || '',
+          role: 'Supplier',
+        }}
+        roleBadge="Supplier"
+        menuItems={[
+          {
+            key: 'orders',
+            label: 'Orders',
+            icon: ClipboardList,
+            badge: openEnquiries.length > 0 ? openEnquiries.length : null,
+            badgeColor: 'bg-amber-500 text-white',
+          },
+          { key: 'tracking', label: 'Order Tracking', icon: Truck },
+          { key: 'earnings', label: 'Earnings', icon: CircleDollarSign },
+          { key: 'packages', label: 'Package', icon: Package },
+          { key: 'profile', label: 'Profile', icon: User },
+        ]}
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          setActiveTab(tab);
+          router.push(`/supplier/dashboard?tab=${tab}`);
+        }}
+        onLogout={handleLogout}
+        actions={
+          activeTab === 'orders' ? (
+            <button
+              type="button"
+              onClick={() => fetchOrders()}
+              className="px-3 py-1.5 border border-slate-300 dark:border-zinc-700 text-xs font-semibold rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+            >
+              Refresh Orders
+            </button>
+          ) : null
+        }
+      >
+        <div className="space-y-6">
           {/* ══════════════════════ ORDERS ══════════════════════ */}
           {activeTab === 'orders' && (
-            <>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            fulfillModal ? (
+              <div style={{ maxWidth: '640px', margin: '0 auto', background: surface, border: `1px solid ${border}`, borderRadius: 14, padding: '1.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: `1px solid ${border}` }}>
+                  <button
+                    onClick={() => setFulfillModal(null)}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.45rem 0.9rem', background: 'transparent', border: `1px solid ${border}`, borderRadius: 6, color: text, cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}
+                  >
+                    ← Back to Orders
+                  </button>
+                  <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: text }}>Mark Order as Fulfilled</h2>
+                </div>
+
+                {/* Order summary */}
+                <div style={{ background: dark ? '#1a1a1a' : '#f9f9f9', borderRadius: 8, padding: '0.875rem', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
+                  <div style={{ fontWeight: 700, color: text, marginBottom: '0.4rem' }}>
+                    {fulfillModal.category_emoji} {fulfillModal.category_name}
+                    {fulfillModal.material_type ? ` — ${fulfillModal.material_type}` : ''}
+                  </div>
+                  {fulfillModal.brand_company && <div style={{ color: muted, fontSize: '0.78rem' }}>Brand: {fulfillModal.brand_company}</div>}
+                  {fulfillModal.quantity_text && <div style={{ color: muted, fontSize: '0.78rem' }}>Qty: {fulfillModal.quantity_text}</div>}
+                  <div style={{ color: muted, marginTop: '0.25rem' }}>
+                    Customer: <strong style={{ color: text }}>{fulfillModal.user_name}</strong> · {fulfillModal.user_phone}
+                  </div>
+                  {fulfillModal.delivery_address && (
+                    <div style={{ color: muted, fontSize: '0.75rem', marginTop: '0.2rem' }}>📍 {fulfillModal.delivery_address}</div>
+                  )}
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted, marginBottom: '0.4rem' }}>
+                    Total Amount Received (₹) *
+                  </label>
+                  <input
+                    type="number" className="sd-form-input" value={fulfillAmount}
+                    onChange={e => setFulfillAmount(e.target.value)}
+                    placeholder="e.g., 15000" min="0" step="0.01" autoFocus
+                  />
+                  {fulfillAmount && !isNaN(parseFloat(fulfillAmount)) && (
+                    <div style={{ marginTop: '0.5rem', fontSize: '0.78rem', color: muted }}>
+                      Commission (15%): <strong style={{ color: '#f97316' }}>₹{(parseFloat(fulfillAmount) * 0.15).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
+                      {' '}· Your net: <strong style={{ color: '#22c55e' }}>₹{(parseFloat(fulfillAmount) * 0.85).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
+                    </div>
+                  )}
+                </div>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted, marginBottom: '0.4rem' }}>
+                    Delivery Notes (optional)
+                  </label>
+                  <textarea className="sd-form-input" rows={2} style={{ resize: 'vertical' }} value={fulfillNotes} onChange={e => setFulfillNotes(e.target.value)} placeholder="Any notes about delivery…" />
+                </div>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <button onClick={submitFulfill} disabled={fulfilling}
+                    style={{ flex: 1, padding: '0.75rem', background: 'var(--brand-blue-dark)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', opacity: fulfilling ? 0.6 : 1, fontFamily: 'inherit' }}>
+                    {fulfilling ? 'Saving…' : '✅ Mark as Fulfilled'}
+                  </button>
+                  <button onClick={() => setFulfillModal(null)}
+                    style={{ flex: 1, padding: '0.75rem', background: 'transparent', color: muted, border: `1px solid ${border}`, borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit' }}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <div>
                   <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>Lead Management 📋</div>
                   <div style={{ fontSize: '0.85rem', color: muted }}>Accept open leads and manage your active orders</div>
@@ -555,7 +632,8 @@ function SupplierDashboardContent() {
                 </>
               )}
             </>
-          )}
+          )
+        )}
 
           {/* ══════════════════════ EARNINGS ══════════════════════ */}
           {activeTab === 'tracking' && (
@@ -794,65 +872,7 @@ function SupplierDashboardContent() {
             </div>
           )}
         </div>
-      </div>
-
-      {/* ── Fulfill Modal ──────────────────────────────────────────────────── */}
-      {fulfillModal && (
-        <div className="sd-modal-overlay" onClick={() => setFulfillModal(null)}>
-          <div className="sd-modal" onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1.25rem', color: text }}>📝 Mark Order as Fulfilled</h2>
-
-            {/* Order summary */}
-            <div style={{ background: dark ? '#1a1a1a' : '#f9f9f9', borderRadius: 8, padding: '0.875rem', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
-              <div style={{ fontWeight: 700, color: text, marginBottom: '0.4rem' }}>
-                {fulfillModal.category_emoji} {fulfillModal.category_name}
-                {fulfillModal.material_type ? ` — ${fulfillModal.material_type}` : ''}
-              </div>
-              {fulfillModal.brand_company && <div style={{ color: muted, fontSize: '0.78rem' }}>Brand: {fulfillModal.brand_company}</div>}
-              {fulfillModal.quantity_text && <div style={{ color: muted, fontSize: '0.78rem' }}>Qty: {fulfillModal.quantity_text}</div>}
-              <div style={{ color: muted, marginTop: '0.25rem' }}>
-                Customer: <strong style={{ color: text }}>{fulfillModal.user_name}</strong> · {fulfillModal.user_phone}
-              </div>
-              {fulfillModal.delivery_address && (
-                <div style={{ color: muted, fontSize: '0.75rem', marginTop: '0.2rem' }}>📍 {fulfillModal.delivery_address}</div>
-              )}
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted, marginBottom: '0.4rem' }}>
-                Total Amount Received (₹) *
-              </label>
-              <input
-                type="number" className="sd-form-input" value={fulfillAmount}
-                onChange={e => setFulfillAmount(e.target.value)}
-                placeholder="e.g., 15000" min="0" step="0.01" autoFocus
-              />
-              {fulfillAmount && !isNaN(parseFloat(fulfillAmount)) && (
-                <div style={{ marginTop: '0.5rem', fontSize: '0.78rem', color: muted }}>
-                  Commission (15%): <strong style={{ color: '#f97316' }}>₹{(parseFloat(fulfillAmount) * 0.15).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
-                  {' '}· Your net: <strong style={{ color: '#22c55e' }}>₹{(parseFloat(fulfillAmount) * 0.85).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
-                </div>
-              )}
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted, marginBottom: '0.4rem' }}>
-                Delivery Notes (optional)
-              </label>
-              <textarea className="sd-form-input" rows={2} style={{ resize: 'vertical' }} value={fulfillNotes} onChange={e => setFulfillNotes(e.target.value)} placeholder="Any notes about delivery…" />
-            </div>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button onClick={submitFulfill} disabled={fulfilling}
-                style={{ flex: 1, padding: '0.75rem', background: 'var(--brand-blue-dark)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', opacity: fulfilling ? 0.6 : 1, fontFamily: 'inherit' }}>
-                {fulfilling ? 'Saving…' : '✅ Mark as Fulfilled'}
-              </button>
-              <button onClick={() => setFulfillModal(null)}
-                style={{ flex: 1, padding: '0.75rem', background: 'transparent', color: muted, border: `1px solid ${border}`, borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit' }}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      </PanelLayout>
     </>
   );
 }

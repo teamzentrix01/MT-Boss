@@ -58,6 +58,22 @@ export function requireAdmin(req) {
 }
 
 export const ensureAgentSchema = createInitializationGuard(async () => {
+  // Fast path: if core tables already exist, ensure high-performance indexes and exit immediately
+  const tablesCheck = await pool.query(`
+    SELECT (SELECT to_regclass('public.agents') IS NOT NULL) AS has_agents,
+           (SELECT to_regclass('public.agent_leads') IS NOT NULL) AS has_leads,
+           (SELECT to_regclass('public.agent_schedule') IS NOT NULL) AS has_schedule
+  `);
+  if (tablesCheck.rows[0]?.has_agents && tablesCheck.rows[0]?.has_leads && tablesCheck.rows[0]?.has_schedule) {
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS agent_leads_agent_status_created_idx
+        ON agent_leads (agent_id, status, created_at DESC);
+      CREATE INDEX IF NOT EXISTS agent_schedule_agent_date_idx
+        ON agent_schedule (agent_id, schedule_date);
+    `);
+    return;
+  }
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS agents (
       id SERIAL PRIMARY KEY,

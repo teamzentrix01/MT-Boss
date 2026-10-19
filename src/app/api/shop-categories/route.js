@@ -6,10 +6,13 @@ import { fallbackResponse, fallbackShopCategories } from '@/lib/public-fallbacks
 import { normalizeManagedCityList } from '@/lib/cities';
 
 let publicCategoriesCache = { expiresAt: 0, rows: null };
+let adminCategoriesCache = { expiresAt: 0, rows: null };
 const publicCacheHeaders = { 'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300' };
+const ADMIN_CATEGORIES_TTL_MS = 30 * 1000;
 
 function invalidatePublicCategoriesCache() {
   publicCategoriesCache = { expiresAt: 0, rows: null };
+  adminCategoriesCache = { expiresAt: 0, rows: null };
 }
 
 async function canonicalCityPrices(value) {
@@ -68,13 +71,24 @@ export async function GET(req) {
     if (!isAdmin && publicCategoriesCache.rows && publicCategoriesCache.expiresAt > Date.now()) {
       return NextResponse.json({ success: true, data: publicCategoriesCache.rows }, { headers: publicCacheHeaders });
     }
+    if (isAdmin && adminCategoriesCache.rows && adminCategoriesCache.expiresAt > Date.now()) {
+      return NextResponse.json({ success: true, data: adminCategoriesCache.rows });
+    }
+
+    const fields = searchParams.get('fields');
+    const slim = fields === 'list' || fields === 'lite';
+    const selectSql = slim
+      ? `SELECT id, name, image, emoji, emoji_image, label, label_color, price_range, unit, sort_order, is_active, shipping_charge`
+      : `SELECT *`;
 
     const result = isAdmin
-      ? await pool.query(`SELECT * FROM shop_categories ORDER BY sort_order ASC, id ASC`)
-      : await pool.query(`SELECT * FROM shop_categories WHERE is_active = TRUE ORDER BY sort_order ASC, id ASC`);
+      ? await pool.query(`${selectSql} FROM shop_categories ORDER BY sort_order ASC, id ASC`)
+      : await pool.query(`${selectSql} FROM shop_categories WHERE is_active = TRUE ORDER BY sort_order ASC, id ASC`);
 
     if (!isAdmin) {
       publicCategoriesCache = { expiresAt: Date.now() + 60000, rows: result.rows };
+    } else if (!slim) {
+      adminCategoriesCache = { expiresAt: Date.now() + ADMIN_CATEGORIES_TTL_MS, rows: result.rows };
     }
     return NextResponse.json(
       { success: true, data: result.rows },

@@ -5,35 +5,53 @@ import { ensureAgentNotificationsSchema } from '@/lib/agent-notifications';
 
 export async function GET(req) {
   try {
-    await ensureAgentSchema();
-    const agent = await requireAgent(req);
+    const [agent] = await Promise.all([
+      requireAgent(req),
+      ensureAgentSchema(),
+      ensureAgentNotificationsSchema(),
+    ]);
+
     if (!agent) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
-    await ensureAgentNotificationsSchema();
-
-    await pool.query(
-      `INSERT INTO agent_notifications (
-         agent_id, type, title, message, entity_type, entity_id, dedupe_key, created_at
-       )
-       SELECT id, 'account_status', 'Account approved',
-              'Your agent account has been approved and activated.',
-              'agent', id, 'account-approved-' || COALESCE(auth_version, 0)::TEXT,
-              COALESCE(approved_at, created_at, NOW())
-       FROM agents
-       WHERE id = $1 AND status = 'Approved'
-       ON CONFLICT (agent_id, dedupe_key) WHERE dedupe_key IS NOT NULL DO NOTHING`,
-      [agent.id]
-    );
 
     const result = await pool.query(
       `SELECT id, type, title, message, entity_type, entity_id, metadata,
               is_read, read_at, created_at
        FROM agent_notifications
        WHERE agent_id = $1
-       ORDER BY created_at DESC, id DESC`,
+       ORDER BY created_at DESC, id DESC
+       LIMIT 100`,
       [agent.id]
     );
+
+    // If no notifications exist yet for an approved agent, seed the welcome notification
+    if (result.rows.length === 0 && agent.status === 'Approved') {
+      await pool.query(
+        `INSERT INTO agent_notifications (
+           agent_id, type, title, message, entity_type, entity_id, dedupe_key, created_at
+         )
+         SELECT id, 'account_status', 'Account approved',
+                'Your agent account has been approved and activated.',
+                'agent', id, 'account-approved-' || COALESCE(auth_version, 0)::TEXT,
+                COALESCE(approved_at, created_at, NOW())
+         FROM agents
+         WHERE id = $1 AND status = 'Approved'
+         ON CONFLICT (agent_id, dedupe_key) WHERE dedupe_key IS NOT NULL DO NOTHING`,
+        [agent.id]
+      );
+      const recheck = await pool.query(
+        `SELECT id, type, title, message, entity_type, entity_id, metadata,
+                is_read, read_at, created_at
+         FROM agent_notifications
+         WHERE agent_id = $1
+         ORDER BY created_at DESC, id DESC
+         LIMIT 100`,
+        [agent.id]
+      );
+      result.rows = recheck.rows;
+    }
+
     const unreadCount = result.rows.reduce((count, item) => count + (item.is_read ? 0 : 1), 0);
 
     return NextResponse.json({

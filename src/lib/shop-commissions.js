@@ -405,9 +405,18 @@ export async function toggleShopCommissionRule(id, isActive, { client = null } =
 /**
  * Get available categories and vendor products for rule creation selectors.
  */
-export async function getAvailableCommissionTargets({ client = null } = {}) {
+export async function getAvailableCommissionTargets({ client = null, productLimit = 200, q = '' } = {}) {
   await ensureShopVendorCommissionsSchema();
   const executor = client || pool;
+  const limit = Math.min(500, Math.max(20, Number(productLimit) || 200));
+  const search = String(q || '').trim();
+  const productParams = [];
+  let productWhere = 'sm.vendor_id IS NOT NULL AND sm.vendor_id > 0';
+  if (search) {
+    productParams.push(`%${search}%`);
+    productWhere += ` AND (sm.name ILIKE $${productParams.length} OR COALESCE(sm.category,'') ILIKE $${productParams.length})`;
+  }
+  productParams.push(limit);
 
   const [categoriesRes, productsRes] = await Promise.all([
     executor.query(`
@@ -416,7 +425,8 @@ export async function getAvailableCommissionTargets({ client = null } = {}) {
       WHERE is_active = TRUE
       ORDER BY sort_order ASC, name ASC
     `),
-    executor.query(`
+    executor.query(
+      `
       SELECT
         sm.id,
         sm.name,
@@ -426,9 +436,12 @@ export async function getAvailableCommissionTargets({ client = null } = {}) {
         COALESCE(v.shop_name, v.business_name, 'Vendor #' || sm.vendor_id) AS vendor_name
       FROM supplier_materials sm
       LEFT JOIN vendors v ON sm.vendor_id = v.id
-      WHERE sm.vendor_id IS NOT NULL AND sm.vendor_id > 0
+      WHERE ${productWhere}
       ORDER BY sm.name ASC
-    `),
+      LIMIT $${productParams.length}
+    `,
+      productParams
+    ),
   ]);
 
   return {
@@ -596,14 +609,13 @@ export async function getShopVendorCommissionOverview() {
         v.phone,
         v.email,
         COUNT(svc.id)::int AS pending_orders_count,
-        COALESCE(SUM(svc.commission_amount), 0)::numeric AS pending_due_amount,
-        array_agg(svc.id ORDER BY svc.id DESC) AS commission_ids,
-        array_agg(svc.order_id ORDER BY svc.id DESC) AS order_ids
+        COALESCE(SUM(svc.commission_amount), 0)::numeric AS pending_due_amount
       FROM shop_vendor_commissions svc
       LEFT JOIN vendors v ON v.id = svc.vendor_id
       WHERE svc.status = 'pending'
       GROUP BY svc.vendor_id, v.shop_name, v.business_name, v.phone, v.email
       ORDER BY pending_due_amount DESC
+      LIMIT 100
     `),
   ]);
 
@@ -623,8 +635,9 @@ export async function getShopVendorCommissionOverview() {
       email: v.email || '',
       pending_orders_count: Number(v.pending_orders_count || 0),
       pending_due_amount: Number(v.pending_due_amount || 0),
-      commission_ids: v.commission_ids || [],
-      order_ids: v.order_ids || [],
+      // IDs loaded on settle action — omit heavy array_agg from overview
+      commission_ids: [],
+      order_ids: [],
     })),
   };
 }

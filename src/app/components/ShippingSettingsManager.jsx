@@ -357,122 +357,123 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
     );
   }
 
-  // ── VENDOR READ-ONLY VIEW ──────────────────────────────────────────────────
-  if (vendor) {
-    const ownCity = settings.coreCities.find(
-      (row) => row.is_active && row.city_name.trim().toLowerCase() === String(city).trim().toLowerCase()
-    );
-    const activeCats = (settings.quantityRules?.categories || []).filter((c) => c.enabled !== false);
+  // ── VENDOR READ-ONLY VIEW OR ADMIN VIEW ────────────────────────────────────
+  const ownCity = vendor
+    ? settings.coreCities?.find(
+        (row) => row.is_active && row.city_name.trim().toLowerCase() === String(city).trim().toLowerCase()
+      )
+    : null;
+  const activeCats = vendor
+    ? (settings.quantityRules?.categories || []).filter((c) => c.enabled !== false)
+    : [];
 
-    return (
-      <section className="shop-admin-panel">
-        <div className="shop-admin-heading">
-          <div>
-            <h2>Shipping Settings (Vendor View)</h2>
-            <p>Platform-wide shipping rules are set by the MT-Boss Admin.</p>
-          </div>
-        </div>
-
-        {notice && <p className={`shop-admin-notice ${noticeType}`}>{notice}</p>}
-
-        <div className="vendor-summary-grid">
-          <div className="shop-admin-card stat-card">
-            <h4>Your City Fixed Rate</h4>
-            <strong>
-              {ownCity ? `₹${ownCity.fixed_cost} (${ownCity.city_name})` : 'Not configured as core city'}
-            </strong>
-            <small>Applies to same-city deliveries when no quantity rule matches.</small>
-          </div>
-
-          <div className="shop-admin-card stat-card">
-            <h4>Cross-City Distance Rate</h4>
-            <strong>
-              {settings.distanceRule?.is_active ? `₹${settings.distanceRule.rate_per_km}/km` : 'Disabled'}
-            </strong>
-            <small>Calculated on actual route distance.</small>
-          </div>
-
-          <div className="shop-admin-card stat-card">
-            <h4>Free Shipping Threshold</h4>
-            <strong>
-              {settings.freeRule?.is_active
-                ? `₹${Number(settings.freeRule.min_order_value).toLocaleString('en-IN')}+`
-                : 'Disabled'}
-            </strong>
-            <small>
-              {settings.freeRule?.applicable_only_to_same_city ? 'Same-city orders only' : 'All orders'}
-            </small>
-          </div>
-        </div>
-
-        <div className="shop-admin-card">
-          <div className="card-header-row">
-            <div>
-              <h3>Category Quantity-Based Shipping Rules</h3>
-              <p>These rates are charged automatically based on customer order quantity.</p>
-            </div>
-            {settings.quantityRules?.minimum_shipping > 0 && (
-              <span className="badge-info">
-                Min order shipping: ₹{Number(settings.quantityRules.minimum_shipping).toLocaleString('en-IN')}
-              </span>
-            )}
-          </div>
-
-          <div className="table-responsive">
-            <table className="rules-table">
-              <thead>
-                <tr>
-                  <th>Category</th>
-                  <th>Unit</th>
-                  <th>Max Per Trip</th>
-                  <th>Trip Cap</th>
-                  <th>City Rates (Base + Extra/unit)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {activeCats.map((cat) => {
-                  const cityEntries = Object.entries(cat.cities || {});
-                  return (
-                    <tr key={cat.id || cat.category}>
-                      <td>
-                        <strong>{cat.category}</strong>
-                      </td>
-                      <td>{cat.unit}</td>
-                      <td>{cat.max_units_per_trip || 'Single trip'}</td>
-                      <td>{cat.cap > 0 ? `₹${Number(cat.cap).toLocaleString('en-IN')}` : 'No Cap'}</td>
-                      <td>
-                        <div className="city-chips-wrap">
-                          {cityEntries.map(([cName, rate]) => {
-                            const isOwnCity = cName.trim().toLowerCase() === String(city).trim().toLowerCase();
-                            return (
-                              <span
-                                key={cName}
-                                className={`city-rate-chip ${isOwnCity ? 'is-own-city' : ''}`}
-                              >
-                                <b>{cName}:</b> ₹{rate.base_charge} base + ₹{rate.extra_unit_rate}/unit
-                                {isOwnCity && <em className="own-tag"> (Your City)</em>}
-                              </span>
-                            );
-                          })}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // ── ADMIN FULL MANAGEMENT VIEW ─────────────────────────────────────────────
   return (
-    <section className="shop-admin-panel">
-      <div className="shop-admin-heading">
-        <div>
-          <h2>Shipping Settings</h2>
+    <section className="shop-admin-root shop-admin-panel">
+      {vendor ? (
+        <>
+          <div className="shop-admin-heading">
+            <div>
+              <h2>Shipping Settings (Vendor View)</h2>
+              <p>Platform-wide shipping rules are set by the MT-Boss Admin.</p>
+            </div>
+          </div>
+
+          {notice && <p className={`shop-admin-notice ${noticeType}`}>{notice}</p>}
+
+          <div className="vendor-summary-grid">
+            <div className="shop-admin-card stat-card">
+              <h4>Your City Fixed Rate</h4>
+              <strong>
+                {ownCity ? `₹${ownCity.fixed_cost} (${ownCity.city_name})` : 'Not configured as core city'}
+              </strong>
+              <small>Applies to same-city deliveries when no quantity rule matches.</small>
+            </div>
+
+            <div className="shop-admin-card stat-card">
+              <h4>Cross-City Distance Rate</h4>
+              <strong>
+                {settings.distanceRule?.is_active ? `₹${settings.distanceRule.rate_per_km}/km` : 'Disabled'}
+              </strong>
+              <small>Calculated on actual route distance.</small>
+            </div>
+
+            <div className="shop-admin-card stat-card">
+              <h4>Free Shipping Threshold</h4>
+              <strong>
+                {settings.freeRule?.is_active
+                  ? `₹${Number(settings.freeRule.min_order_value).toLocaleString('en-IN')}+`
+                  : 'Disabled'}
+              </strong>
+              <small>
+                {settings.freeRule?.applicable_only_to_same_city ? 'Same-city orders only' : 'All orders'}
+              </small>
+            </div>
+          </div>
+
+          <div className="shop-admin-card">
+            <div className="card-header-row">
+              <div>
+                <h3>Category Quantity-Based Shipping Rules</h3>
+                <p>These rates are charged automatically based on customer order quantity.</p>
+              </div>
+              {settings.quantityRules?.minimum_shipping > 0 && (
+                <span className="badge-info">
+                  Min order shipping: ₹{Number(settings.quantityRules.minimum_shipping).toLocaleString('en-IN')}
+                </span>
+              )}
+            </div>
+
+            <div className="table-responsive">
+              <table className="rules-table">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Unit</th>
+                    <th>Max Per Trip</th>
+                    <th>Trip Cap</th>
+                    <th>City Rates (Base + Extra/unit)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activeCats.map((cat) => {
+                    const cityEntries = Object.entries(cat.cities || {});
+                    return (
+                      <tr key={cat.id || cat.category}>
+                        <td>
+                          <strong>{cat.category}</strong>
+                        </td>
+                        <td>{cat.unit}</td>
+                        <td>{cat.max_units_per_trip || 'Single trip'}</td>
+                        <td>{cat.cap > 0 ? `₹${Number(cat.cap).toLocaleString('en-IN')}` : 'No Cap'}</td>
+                        <td>
+                          <div className="city-chips-wrap">
+                            {cityEntries.map(([cName, rate]) => {
+                              const isOwnCity = cName.trim().toLowerCase() === String(city).trim().toLowerCase();
+                              return (
+                                <span
+                                  key={cName}
+                                  className={`city-rate-chip ${isOwnCity ? 'is-own-city' : ''}`}
+                                >
+                                  <b>{cName}:</b> ₹{rate.base_charge} base + ₹{rate.extra_unit_rate}/unit
+                                  {isOwnCity && <em className="own-tag"> (Your City)</em>}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="shop-admin-heading">
+            <div>
+              <h2>Shipping Settings</h2>
           <p>Configure category quantity rules, city & distance delivery rates, and platform thresholds.</p>
         </div>
         <div className="header-actions">
@@ -1284,6 +1285,8 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
           </div>
         </div>
       )}
+    </>
+  )}
 
       {/* ── Scoped CSS Styles ────────────────────────────────────────────── */}
       <style jsx>{`
