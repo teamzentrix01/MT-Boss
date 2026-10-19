@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireActiveUser } from '@/lib/user-moderation';
-import { ensureWallet } from '@/lib/cashback/service';
+import { ensureWallet, processScheduledMaturityAndExpiry } from '@/lib/cashback/service';
 import { handleApiError } from '@/lib/api-utils';
 
 export async function GET(req) {
@@ -27,6 +27,9 @@ export async function GET(req) {
     }
 
     await ensureWallet(userId);
+    // On-demand maturity: transition any pending cashback lots whose return window has elapsed
+    await processScheduledMaturityAndExpiry(pool, userId);
+
     const result = await pool.query(
       `SELECT balance, pending_balance, updated_at 
        FROM wallets 

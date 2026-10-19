@@ -158,6 +158,30 @@ export default function CashbackManager({ isDarkMode }) {
     loadData();
   }, []);
 
+  const [settling, setSettling] = useState(false);
+
+  const settlePendingCashback = async () => {
+    setSettling(true);
+    setNotice({ text: '', type: 'info' });
+    try {
+      const res = await fetch('/api/admin/cashback/settle', {
+        method: 'POST',
+        headers: headers(),
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Failed to process cashback maturity');
+      setNotice({
+        text: `Maturity sync completed: ${data.data?.maturedCount || 0} transaction(s) matured into Available Balance.`,
+        type: 'success',
+      });
+    } catch (err) {
+      setNotice({ text: err.message, type: 'error' });
+    } finally {
+      setSettling(false);
+    }
+  };
+
   const saveSettings = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -673,9 +697,29 @@ export default function CashbackManager({ isDarkMode }) {
                 </div>
               </div>
 
-              <div className="shop-admin-form-footer" style={{ marginTop: '4px' }}>
+              <div className="shop-admin-form-footer" style={{ marginTop: '4px', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
                 <button type="submit" disabled={saving} style={{ cursor: 'pointer' }}>
                   {saving ? 'Saving...' : 'Save Settings'}
+                </button>
+                <button
+                  type="button"
+                  onClick={settlePendingCashback}
+                  disabled={settling}
+                  style={{
+                    cursor: 'pointer',
+                    background: isDarkMode ? '#1e293b' : '#f0fdf4',
+                    color: isDarkMode ? '#4ade80' : '#16a34a',
+                    border: '1px solid rgba(34, 197, 94, 0.4)',
+                    padding: '10px 18px',
+                    borderRadius: '8px',
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  ⚡ {settling ? 'Processing...' : 'Settle & Release Pending Cashback Now'}
                 </button>
               </div>
             </form>

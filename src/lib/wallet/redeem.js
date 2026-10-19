@@ -1,5 +1,5 @@
 import pool from '../db.js';
-import { getCashbackSettings, ensureWallet } from '../cashback/service.js';
+import { getCashbackSettings, ensureWallet, processScheduledMaturityAndExpiry } from '../cashback/service.js';
 
 /**
  * Compute maximum spendable wallet balance on an order.
@@ -60,6 +60,7 @@ export async function computeRedeemLimit(arg1, arg2, arg3) {
   const numUserId = Number.parseInt(userId, 10);
   if (numUserId && numUserId > 0) {
     await ensureWallet(numUserId, dbClient);
+    await processScheduledMaturityAndExpiry(dbClient, numUserId);
     const wRes = await dbClient.query('SELECT balance FROM wallets WHERE user_id = $1', [numUserId]);
     balance = Math.max(0, Number(wRes.rows[0]?.balance) || 0);
   }

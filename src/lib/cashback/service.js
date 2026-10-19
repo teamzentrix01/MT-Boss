@@ -515,33 +515,70 @@ export async function reverseOrderCashback({ orderId, reason = 'Order cancelled/
 }
 
 /**
- * Daily cron processor:
- * 1. Moves PENDING cashback to AVAILABLE when available_at <= NOW().
+ * Maturity and Expiry processor:
+ * 1. Moves PENDING cashback to AVAILABLE when available_at <= NOW() (or immediately if pending_days === 0).
+ *    If maturity was delayed past initial expires_at, extends expires_at to give customer their full validity window.
  * 2. Expires AVAILABLE cashback when expires_at <= NOW().
  *    CRITICAL: Expiry expires only remaining_amount of a lot, NEVER money the user already spent.
+ * Can be run globally (cron) or scoped to a specific userId (on-demand lazy settlement).
  */
-export async function processScheduledMaturityAndExpiry(client = pool) {
+export async function processScheduledMaturityAndExpiry(client = pool, userId = null) {
   await ensureCashbackSchema();
   const dbClient = client;
 
+  const settings = await getCashbackSettings(dbClient);
+  const expiryDays = Number(settings.expiry_days) || 0;
+  const pendingDays = Number(settings.pending_days) || 0;
+
   // 1. Mature PENDING transactions
-  const maturingRes = await dbClient.query(`
-    SELECT id, user_id, amount, remaining_amount 
+  let maturitySql = `
+    SELECT id, user_id, amount, remaining_amount, available_at, expires_at 
     FROM wallet_transactions 
-    WHERE status = 'PENDING' AND available_at <= NOW()
-  `);
+    WHERE status = 'PENDING'
+  `;
+  const params = [];
+
+  // If pendingDays > 0, mature only when return window has elapsed.
+  // If pendingDays === 0, any pending transaction is eligible to mature immediately.
+  if (pendingDays > 0) {
+    maturitySql += ` AND available_at <= NOW()`;
+  }
+
+  if (userId) {
+    params.push(Number(userId));
+    maturitySql += ` AND user_id = $${params.length}`;
+  }
+
+  const maturingRes = await dbClient.query(maturitySql, params);
 
   let maturedCount = 0;
   for (const tx of maturingRes.rows) {
     const amt = Number(tx.amount);
+
+    // Calculate new expires_at:
+    // If settings has expiry_days > 0:
+    // If the transaction's existing expires_at is null OR has already passed (due to delayed cron/system check),
+    // extend expires_at to NOW() + expiryDays so the customer actually receives their valid spendable window!
+    let newExpiresAt = tx.expires_at;
+    if (expiryDays > 0) {
+      if (!newExpiresAt || new Date(newExpiresAt) <= new Date()) {
+        const ext = new Date();
+        ext.setDate(ext.getDate() + expiryDays);
+        newExpiresAt = ext;
+      }
+    } else {
+      newExpiresAt = null;
+    }
+
     await dbClient.query('BEGIN');
     try {
       await dbClient.query(
         `UPDATE wallet_transactions
          SET status = 'AVAILABLE',
-             remaining_amount = COALESCE(remaining_amount, amount)
-         WHERE id = $1`,
-        [tx.id]
+             remaining_amount = COALESCE(remaining_amount, amount),
+             expires_at = $1
+         WHERE id = $2`,
+        [newExpiresAt, tx.id]
       );
       await dbClient.query(
         `UPDATE wallets 
@@ -561,14 +598,21 @@ export async function processScheduledMaturityAndExpiry(client = pool) {
 
   // 2. Expire AVAILABLE transactions whose expires_at <= NOW()
   // CRITICAL: Only expire remaining_amount > 0, never money already spent by user!
-  const expiringRes = await dbClient.query(`
+  let expiringSql = `
     SELECT id, user_id, amount, COALESCE(remaining_amount, amount) AS unspent_amount 
     FROM wallet_transactions 
     WHERE status = 'AVAILABLE' 
       AND expires_at IS NOT NULL 
       AND expires_at <= NOW()
       AND COALESCE(remaining_amount, amount) > 0
-  `);
+  `;
+  const expParams = [];
+  if (userId) {
+    expParams.push(Number(userId));
+    expiringSql += ` AND user_id = $${expParams.length}`;
+  }
+
+  const expiringRes = await dbClient.query(expiringSql, expParams);
 
   let expiredCount = 0;
   for (const tx of expiringRes.rows) {

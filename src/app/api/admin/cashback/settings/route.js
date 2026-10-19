@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
-import { getCashbackSettings, ensureCashbackSchema } from '@/lib/cashback/service';
+import { getCashbackSettings, ensureCashbackSchema, processScheduledMaturityAndExpiry } from '@/lib/cashback/service';
 
 export async function GET(req) {
   try {
@@ -11,6 +11,12 @@ export async function GET(req) {
     }
 
     await ensureCashbackSchema();
+    try {
+      await processScheduledMaturityAndExpiry(pool);
+    } catch (settleErr) {
+      console.error('Auto-settle on settings GET error:', settleErr);
+    }
+
     const settings = await getCashbackSettings();
     return NextResponse.json({ success: true, data: settings });
   } catch (error) {
@@ -100,7 +106,19 @@ export async function PUT(req) {
       ]
     );
 
-    return NextResponse.json({ success: true, data: result.rows[0] });
+    // Automatically trigger maturity processor so if pending_days was updated or matured lots exist, balances sync immediately.
+    let settleResult = null;
+    try {
+      settleResult = await processScheduledMaturityAndExpiry(pool);
+    } catch (settleErr) {
+      console.error('Auto-settle on settings update error:', settleErr);
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: result.rows[0],
+      settleResult,
+    });
   } catch (error) {
     console.error('PUT /api/admin/cashback/settings error:', error);
     return NextResponse.json({ success: false, error: error.message || 'Could not update settings' }, { status: 500 });
