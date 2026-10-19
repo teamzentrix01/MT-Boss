@@ -207,12 +207,40 @@ export default function ContractorPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
+      // 1. Create account in database
+      const signupRes = await fetch("/api/contractor/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          password: form.password || `Mt@${form.phone.slice(-4)}`,
+          company_name: form.companyName,
+          city: form.city,
+          state: form.state,
+          vendor_type: form.vendorType,
+          experience: form.experience,
+          gst: form.gst,
+          pan: form.pan,
+          message: form.message,
+        }),
+      }).catch(() => null);
+
+      if (signupRes && signupRes.ok) {
+        const signupData = await signupRes.json();
+        if (signupData.token) {
+          localStorage.setItem('contractor-token', signupData.token);
+          localStorage.setItem('contractor', JSON.stringify(signupData.contractor || signupData.user));
+          localStorage.setItem('user', JSON.stringify(signupData.user || signupData.contractor));
+          window.dispatchEvent(new Event('userLoggedIn'));
+        }
+      }
+
+      // 2. Also submit to email notifier
+      fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           "Full Name": form.name,
           "Email": form.email,
@@ -231,14 +259,9 @@ export default function ContractorPage() {
           "_template": "table",
           "_captcha": "false",
         }),
-      });
+      }).catch(() => {});
 
-      const data = await res.json();
-      if (data.success === "true" || data.success === true) {
-        setSubmitted(true);
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
+      setSubmitted(true);
     } catch (err) {
       setError("Network error. Please try again.");
     } finally {
@@ -279,24 +302,29 @@ export default function ContractorPage() {
             Our team will verify your details and contact you within 2-3 business days on{" "}
             <span className={`font-black ${dark ? "text-white" : "text-zinc-800"}`}>{form.email}</span>
           </p>
-          <div className="flex gap-3 justify-center">
+          <div className="flex flex-wrap gap-3 justify-center">
             <Link
-              href="/"
+              href="/contractor/dashboard"
+              className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all shadow-md"
+            >
+              Go To Contractor Dashboard →
+            </Link>
+            <Link
+              href="/contractor/login"
               className={`px-6 py-3 border-2 text-[10px] font-black uppercase tracking-widest transition-all ${
-                dark ? "border-zinc-700 text-zinc-400 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]" : "border-gray-200 text-zinc-500 hover:border-zinc-800 hover:text-zinc-800"
+                dark ? "border-zinc-700 text-zinc-300 hover:border-white hover:text-white" : "border-gray-300 text-zinc-700 hover:border-zinc-900 hover:text-zinc-900"
               }`}
             >
-              Go Home
+              Contractor Login
             </Link>
-            <button
-              onClick={() => {
-                setSubmitted(false);
-                setForm({ name: "", email: "", phone: "", companyName: "", city: "", state: "", vendorType: "", experience: "", gst: "", pan: "", plan: "Free Listing", supplierDetails: "", message: "" });
-              }}
-              className="px-6 py-3 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
+            <Link
+              href="/"
+              className={`px-6 py-3 border text-[10px] font-bold uppercase tracking-widest transition-all ${
+                dark ? "border-zinc-800 text-zinc-500 hover:text-zinc-300" : "border-gray-200 text-zinc-400 hover:text-zinc-600"
+              }`}
             >
-              New Registration
-            </button>
+              Home
+            </Link>
           </div>
         </div>
       </main>
@@ -322,10 +350,10 @@ export default function ContractorPage() {
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Join Our
-            <span className="block text-[var(--brand-blue)]">Vendor Network</span>
+            <span className="block text-[var(--brand-blue)]">Contractor Network</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-            Register as a contractor or vendor with MTBOSS Construction. Get access to real projects, verified status, and a growing network of opportunities across India.
+            Register as a contractor or civil partner with MTBOSS Construction. Get access to verified site projects, muster roll management, and milestone payouts across India.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-8 mt-6">
@@ -341,16 +369,24 @@ export default function ContractorPage() {
               </div>
             ))}
           </div>
-<a
-          
-            href="#contractor-form"
-            className="mt-10 inline-flex items-center gap-3 px-10 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
-          >
-            Register Now
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </a>
+
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <a
+              href="#contractor-form"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
+            >
+              Register Now
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+            <Link
+              href="/contractor/login"
+              className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white text-white font-black uppercase text-xs tracking-widest hover:bg-white hover:text-black transition-all"
+            >
+              <span>🏗️ Contractor Login</span>
+            </Link>
+          </div>
         </div>
       </section>
 

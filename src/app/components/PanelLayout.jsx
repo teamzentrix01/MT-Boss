@@ -116,16 +116,17 @@ export default function PanelLayout({
 
         {/* Sidebar Navigation */}
         <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-1">
-          {visibleItems.map((item) => {
+          {visibleItems.map((item, idx) => {
+            const itemKey = item.key || item.tab || item.id || `nav-item-${idx}`;
             const IconComponent = item.icon;
-            const isActive = activeTab === item.key;
+            const isActive = activeTab === itemKey || activeTab === item.tab || activeTab === item.key;
 
             return (
               <button
-                key={item.key}
+                key={itemKey}
                 type="button"
                 onClick={() => {
-                  onTabChange(item.key);
+                  onTabChange(itemKey);
                   closeSidebarOnMobile();
                 }}
                 title={item.label}

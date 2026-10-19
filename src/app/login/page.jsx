@@ -537,15 +537,19 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            {/* Vendor + Supplier links — compact */}
-            <div style={{ marginTop: '1rem', paddingTop: '0.875rem', borderTop: '1px solid var(--lp-border)', display: 'flex', gap: '0.5rem' }}>
-              <Link href="/vendor/login" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, padding: '0.45rem', border: '1px solid #10b981', color: '#10b981', borderRadius: 7, fontSize: '0.75rem', fontWeight: 600, textDecoration: 'none', transition: 'opacity 0.15s' }}
+            {/* Vendor + Contractor + Supplier links — compact */}
+            <div style={{ marginTop: '1rem', paddingTop: '0.875rem', borderTop: '1px solid var(--lp-border)', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.4rem' }}>
+              <Link href="/vendor/login" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '0.45rem 0.25rem', border: '1px solid #10b981', color: '#10b981', borderRadius: 7, fontSize: '0.72rem', fontWeight: 600, textDecoration: 'none', transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}
                 onMouseEnter={e => e.currentTarget.style.opacity = '0.8'} onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-                🏪 Vendor Login
+                🏪 Vendor
               </Link>
-              <Link href="/supplier/login" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, padding: '0.45rem', border: '1px solid #6366f1', color: '#6366f1', borderRadius: 7, fontSize: '0.75rem', fontWeight: 600, textDecoration: 'none', transition: 'opacity 0.15s' }}
+              <Link href="/contractor/login" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '0.45rem 0.25rem', border: '1px solid #2563eb', color: '#2563eb', borderRadius: 7, fontSize: '0.72rem', fontWeight: 600, textDecoration: 'none', transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}
                 onMouseEnter={e => e.currentTarget.style.opacity = '0.8'} onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-                📦 Supplier Login
+                🏗️ Contractor
+              </Link>
+              <Link href="/supplier/login" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '0.45rem 0.25rem', border: '1px solid #6366f1', color: '#6366f1', borderRadius: 7, fontSize: '0.72rem', fontWeight: 600, textDecoration: 'none', transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '0.8'} onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+                📦 Supplier
               </Link>
             </div>
 

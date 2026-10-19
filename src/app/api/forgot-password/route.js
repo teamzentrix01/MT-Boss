@@ -34,7 +34,7 @@ export async function POST(req) {
     if (!email || !user_type) {
       return NextResponse.json({ success: false, error: 'Email and user type required' }, { status: 400 });
     }
-    if (!['user', 'supplier', 'vendor', 'agent'].includes(user_type)) {
+    if (!['user', 'supplier', 'vendor', 'agent', 'contractor'].includes(user_type)) {
       return NextResponse.json({ success: false, error: 'Invalid user type' }, { status: 400 });
     }
     const normalizedEmail = String(email).trim().toLowerCase();
@@ -44,7 +44,7 @@ export async function POST(req) {
     // Check user exists in the right table
     const table = user_type === 'supplier'
       ? 'suppliers'
-      : user_type === 'vendor'
+      : (user_type === 'vendor' || user_type === 'contractor')
         ? 'vendors'
         : user_type === 'agent'
           ? 'agents'

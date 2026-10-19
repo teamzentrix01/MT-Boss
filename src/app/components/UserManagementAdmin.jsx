@@ -923,7 +923,8 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                 {[
                   { id: 'Customer', label: 'Customer / User', icon: '👤', desc: 'Place material orders, enquiry & book home services' },
                   { id: 'Agent', label: 'Agent', icon: '🤝', desc: 'Manage project leads, client schedule & site supervision' },
-                  { id: 'Vendor', label: 'Vendor / Contractor', icon: '🧑‍💼', desc: 'Accept construction tasks, service orders & quick services' },
+                  { id: 'Vendor', label: 'Vendor', icon: '🧑‍💼', desc: 'Accept construction tasks, service orders & quick services' },
+                  { id: 'Contractor', label: 'Contractor', icon: '🏗️', desc: 'Civil & MEP projects, daily site labor & work orders' },
                   { id: 'Supplier', label: 'Supplier', icon: '🏭', desc: 'Fulfill material enquiries, supply orders & shop products' },
                 ].map((sec) => {
                   const isSelected = createRole === sec.id;
@@ -966,7 +967,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '20px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--muted, #475569)', marginBottom: '6px' }}>
-                    {createRole === 'Supplier' || createRole === 'Vendor' ? 'Owner / Contact Full Name *' : 'Full Name *'}
+                    {createRole === 'Supplier' || createRole === 'Vendor' || createRole === 'Contractor' ? 'Owner / Contact Full Name *' : 'Full Name *'}
                   </label>
                   <input
                     type="text"
@@ -1047,8 +1048,8 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                 </div>
               </div>
 
-              {/* Vendor & Supplier Business Details */}
-              {(createRole === 'Vendor' || createRole === 'Supplier') && (
+              {/* Vendor, Contractor & Supplier Business Details */}
+              {(createRole === 'Vendor' || createRole === 'Supplier' || createRole === 'Contractor') && (
                 <div style={{ background: '#f8fafc', border: '1px solid var(--border, #e2e8f0)', borderRadius: '10px', padding: '16px', marginBottom: '20px' }}>
                   <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted, #475569)', marginBottom: '12px' }}>
                     Shop &amp; Business Information

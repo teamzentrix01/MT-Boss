@@ -16,6 +16,7 @@ const ROLE_COOKIE_NAMES = {
   admin: 'auth-token',
   user: 'auth-token',
   vendor: 'vendor-auth-token',
+  contractor: 'contractor-auth-token',
   supplier: 'supplier-auth-token',
   franchise: 'franchise-auth-token',
   agent: 'agent-auth-token',
