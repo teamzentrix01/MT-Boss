@@ -38,12 +38,30 @@ export async function GET(req) {
     const { page, pageSize, offset } = pageParams(s);
     const project = Number(s.get('projectId'));
     const date = s.get('date');
-    if (!Number.isInteger(project) || !validDate(date)) {
-      return NextResponse.json({ success: false, error: 'projectId and valid date (or projectVendorId) are required' }, { status: 400 });
+    const history = s.get('history') === '1' || s.get('all') === '1';
+
+    if (!Number.isInteger(project)) {
+      return NextResponse.json({ success: false, error: 'projectId is required' }, { status: 400 });
     }
 
     const auth = await assertAgentAccess(req, project, 'labor');
     if (!auth.allowed) return auth.response;
+
+    if (history || !validDate(date)) {
+      const month = s.get('month') || '';
+      const r = await pool.query(
+        `SELECT a.*, pv.daily_rate, pv.pay_type, v.name AS vendor_name, v.trade
+         FROM pm_attendance a
+         JOIN pm_project_vendors pv ON pv.id = a.project_vendor_id
+         JOIN pm_vendors v ON v.id = pv.vendor_id
+         WHERE pv.project_id = $1
+           AND ($2 = '' OR TO_CHAR(a.attendance_date, 'YYYY-MM') = $2)
+         ORDER BY a.attendance_date DESC, a.created_at DESC
+         LIMIT 100`,
+        [project, month]
+      );
+      return NextResponse.json({ success: true, data: r.rows });
+    }
 
     const r = await pool.query(
       `WITH paged AS (
@@ -59,6 +77,9 @@ export async function GET(req) {
               COALESCE(a.rate_per_worker, p.daily_rate) rate_per_worker,
               COALESCE(a.wage_amount, 0) wage_amount,
               a.note,
+              a.created_by,
+              a.created_at,
+              a.updated_at,
               EXISTS (
                 SELECT 1 FROM pm_labor l
                 WHERE l.project_id = p.project_id AND l.vendor_id = p.vendor_id AND l.is_active = TRUE
@@ -85,7 +106,14 @@ export async function PUT(req) {
   try {
     await ensureProjectManagementSchema();
     const b = await req.json();
-    const entries = Array.isArray(b.entries) ? b.entries : [];
+    const rawList = Array.isArray(b.entries) ? b.entries : Array.isArray(b.records) ? b.records : [];
+    const globalDate = b.attendance_date || '';
+    const entries = rawList.map((e) => ({
+      ...e,
+      attendance_date: e.attendance_date || globalDate,
+      status: e.status || 'present',
+    }));
+
     if (!entries.length) {
       return NextResponse.json({ success: false, error: 'Attendance entries are required' }, { status: 400 });
     }
@@ -174,4 +202,8 @@ export async function PUT(req) {
   } catch (e) {
     return NextResponse.json({ success: false, error: e.message }, { status: 500 });
   }
+}
+
+export async function POST(req) {
+  return PUT(req);
 }

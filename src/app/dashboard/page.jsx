@@ -589,7 +589,6 @@ function AdminDashboard() {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'users', label: 'Users', icon: Users },
-    { id: 'agents', label: 'Agents', icon: UserCog },
     { id: 'calculator', label: 'Calculator', icon: Calculator },
     { id: 'calculator-quotes', label: 'Calculator Quotes', icon: FileText },
     { id: 'hero-banners', label: 'Hero Banners', icon: ImageIcon },
@@ -621,8 +620,6 @@ function AdminDashboard() {
     { id: 'shop-products', label: '+ Add Shop Product', icon: PlusCircle },
     { id: 'shipping-settings', label: 'Shipping Settings', icon: Truck },
     { id: 'shop-commission-settings', label: 'Vendor Commission', icon: CircleDollarSign },
-    { id: 'suppliers', label: 'Suppliers', icon: Truck },
-    { id: 'vendors', label: 'Vendors', icon: HardHat },
     { id: 'packages', label: 'Package Approvals', icon: PackageCheck },
   ];
 
@@ -1259,10 +1256,11 @@ function AdminDashboard() {
             </div>
           )}
 
-          {activeTab === 'vendors' && <VendorManagementAdmin isDarkMode={isDarkMode} />}
-          {activeTab === 'product-approvals' && <ProductApprovalsAdmin isDarkMode={isDarkMode} />}
-          {activeTab === 'users' && <UserManagementAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'suppliers' && <SupplierHubAdmin isDarkMode={isDarkMode} />}
+          {(activeTab === 'users' || activeTab === 'vendors' || activeTab === 'agents') && (
+            <UserManagementAdmin isDarkMode={isDarkMode} initialRoleView={activeTab} />
+          )}
+          {activeTab === 'product-approvals' && <ProductApprovalsAdmin isDarkMode={isDarkMode} />}
 
           {activeTab === 'packages' && (
             <div>
@@ -1820,7 +1818,6 @@ function AdminDashboard() {
           {activeTab === 'primary-services' && <PrimaryServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'professionals' && <ProfessionalServicesManager isDarkMode={isDarkMode} />}
           {activeTab === 'professional-enquiries' && <ProfessionalEnquiriesManager isDarkMode={isDarkMode} />}
-          {activeTab === 'agents' && <AgentsManager />}
           {activeTab === 'franchises' && <FranchisesManager />}
           {activeTab === 'projects' && <ProjectsManager />}
           {activeTab === 'project-management' && <OperationalProjectsManager isDarkMode={isDarkMode} />}

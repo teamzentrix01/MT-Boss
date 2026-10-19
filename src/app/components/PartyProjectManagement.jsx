@@ -48,9 +48,15 @@ async function api(path, opts = {}) {
     },
   });
 
-  const data = await res.json();
+  const text = await res.text();
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(text || `Request failed with status ${res.status}`);
+  }
   if (!res.ok || data.success === false) {
-    throw new Error(data.error || 'Request failed');
+    throw new Error(data.error || `Request failed with status ${res.status}`);
   }
   return data;
 }
@@ -100,6 +106,20 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [screen, setScreen] = useState(initialProjectId ? 'project' : initialScreen);
   const [role, setRole] = useState(isAgent ? 'agent' : 'admin');
 
+  // Check supervisor role
+  useEffect(() => {
+    if (isAgent) {
+      setRole('agent');
+      return;
+    }
+    try {
+      const u = JSON.parse(localStorage.getItem('admin-user') || localStorage.getItem('user') || '{}');
+      if (u.role === 'site_supervisor') setRole('site_supervisor');
+    } catch {}
+  }, [isAgent]);
+
+  const isSupervisor = role === 'site_supervisor';
+
   // Agent Specialization state
   const [currentAgent, setCurrentAgent] = useState(passedAgent || null);
 
@@ -132,25 +152,79 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const hasAgentVendor = !isAgent || agentSpecs.includes('vendor');
   const hasAgentConstruction = !isAgent || agentSpecs.includes('construction');
 
-  const allowedTabs = useMemo(() => {
-    if (!isAgent) {
-      return ['materials', 'vendors', 'labor', 'attendance', 'payments', 'expenses', 'party_payments'];
-    }
+  // 5 Main tabs (in this order): Vendors, Labor, Attendance, Payments, Construction
+  const allowedMainTabs = useMemo(() => {
     const tabs = [];
-    if (agentSpecs.includes('construction')) {
-      tabs.push('materials', 'expenses');
-    }
-    if (agentSpecs.includes('vendor')) {
+    if (!isAgent || agentSpecs.includes('vendor')) {
       tabs.push('vendors');
     }
-    if (agentSpecs.includes('labor')) {
-      tabs.push('labor', 'attendance');
+    if (!isAgent || agentSpecs.includes('labor')) {
+      tabs.push('labor');
     }
-    if (agentSpecs.includes('payments')) {
-      tabs.push('payments', 'party_payments');
+    if (!isAgent || agentSpecs.includes('labor') || agentSpecs.includes('vendor')) {
+      tabs.push('attendance');
+    }
+    if ((!isAgent && !isSupervisor) || (isAgent && agentSpecs.includes('payments'))) {
+      tabs.push('payments');
+    }
+    if (!isAgent || agentSpecs.includes('construction')) {
+      tabs.push('construction');
     }
     return tabs;
+  }, [isAgent, isSupervisor, agentSpecs]);
+
+  const allowedAttendanceSubTabs = useMemo(() => {
+    const subs = [];
+    if (!isAgent || agentSpecs.includes('vendor')) subs.push('vendor');
+    if (!isAgent || agentSpecs.includes('labor')) subs.push('labor');
+    return subs;
   }, [isAgent, agentSpecs]);
+
+  const allowedTabs = allowedMainTabs;
+
+  const getUrlParam = (key) => {
+    if (typeof window === 'undefined') return null;
+    return new URLSearchParams(window.location.search).get(key);
+  };
+
+  const normalizeSection = (sec) => {
+    if (!sec) return null;
+    const s = sec.toLowerCase().trim();
+    if (s === 'vendors' || s === 'vendor') return 'vendors';
+    if (s === 'labor' || s === 'labour') return 'labor';
+    if (s === 'attendance') return 'attendance';
+    if (s === 'payments' || s === 'payment') return 'payments';
+    if (s === 'construction' || s === 'materials' || s === 'expenses') return 'construction';
+    return null;
+  };
+
+  const normalizeAttendanceSub = (sub) => {
+    if (!sub) return null;
+    const s = sub.toLowerCase().trim();
+    if (s === 'labor' || s === 'labor-attendance' || s === 'labor_attendance') return 'labor';
+    if (s === 'vendor' || s === 'vendor-attendance' || s === 'vendor_attendance') return 'vendor';
+    return null;
+  };
+
+  const normalizePaymentsSub = (sub) => {
+    if (!sub) return null;
+    const s = sub.toLowerCase().trim();
+    if (s === 'labor' || s === 'labor-payment' || s === 'labor_payment') return 'labor';
+    if (s === 'party' || s === 'party-payment' || s === 'party_payment') return 'party';
+    if (s === 'vendor' || s === 'vendor-payment' || s === 'vendor_payment') return 'vendor';
+    return null;
+  };
+
+  const normalizeConstructionSub = (sub) => {
+    if (!sub) return null;
+    const s = sub.toLowerCase().trim();
+    if (s === 'received' || s === 'received-history' || s === 'received_history') return 'received';
+    if (s === 'used' || s === 'usage-history' || s === 'usage_history') return 'used';
+    if (s === 'adjustments' || s === 'adjustment' || s === 'wastage') return 'adjustments';
+    if (s === 'expenses' || s === 'other-expenses' || s === 'other_expenses') return 'expenses';
+    if (s === 'stock' || s === 'stock-summary' || s === 'stock_summary') return 'stock';
+    return null;
+  };
 
   // Parties state
   const [parties, setParties] = useState([]);
@@ -164,14 +238,109 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   // Project state
   const [project, setProject] = useState(null);
   const [projectForm, setProjectForm] = useState(projectBlank);
-  // 'vendors' | 'attendance' | 'materials' | 'expenses' | 'payments' | 'party_payments'
-  const [projectTab, setProjectTab] = useState(() => (allowedTabs.length > 0 ? allowedTabs[0] : 'materials'));
+
+  // Main Project Tab: 'vendors' | 'labor' | 'attendance' | 'payments' | 'construction'
+  const [projectTab, setProjectTab] = useState(() => {
+    const rawSec = getUrlParam('section');
+    const norm = normalizeSection(rawSec);
+    if (norm && allowedMainTabs.includes(norm)) return norm;
+    return allowedMainTabs.length > 0 ? allowedMainTabs[0] : 'vendors';
+  });
+
+  // Sub-tabs
+  const [attendanceSubTab, setAttendanceSubTab] = useState(() => {
+    const rawSub = getUrlParam('sub');
+    const norm = normalizeAttendanceSub(rawSub);
+    if (norm && allowedAttendanceSubTabs.includes(norm)) return norm;
+    return allowedAttendanceSubTabs.includes('vendor') ? 'vendor' : (allowedAttendanceSubTabs[0] || 'vendor');
+  });
+
+  const [paymentsSubTab, setPaymentsSubTab] = useState(() => {
+    const rawSub = getUrlParam('sub');
+    const norm = normalizePaymentsSub(rawSub);
+    if (norm) return norm;
+    return 'vendor';
+  });
+
+  const [constructionSubTab, setConstructionSubTab] = useState(() => {
+    const rawSub = getUrlParam('sub');
+    const norm = normalizeConstructionSub(rawSub);
+    if (norm) return norm;
+    return 'stock';
+  });
 
   useEffect(() => {
-    if (isAgent && allowedTabs.length > 0 && !allowedTabs.includes(projectTab)) {
-      setProjectTab(allowedTabs[0]);
+    if (allowedMainTabs.length > 0 && !allowedMainTabs.includes(projectTab)) {
+      setProjectTab(allowedMainTabs[0]);
     }
-  }, [isAgent, allowedTabs, projectTab]);
+  }, [allowedMainTabs, projectTab]);
+
+  useEffect(() => {
+    if (allowedAttendanceSubTabs.length > 0 && !allowedAttendanceSubTabs.includes(attendanceSubTab)) {
+      setAttendanceSubTab(allowedAttendanceSubTabs[0]);
+    }
+  }, [allowedAttendanceSubTabs, attendanceSubTab]);
+
+  const updateUrlParams = useCallback((section, sub) => {
+    if (typeof window !== 'undefined' && window.history?.replaceState) {
+      const url = new URL(window.location.href);
+      if (section) url.searchParams.set('section', section);
+      if (sub) {
+        url.searchParams.set('sub', sub);
+      } else {
+        url.searchParams.delete('sub');
+      }
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, []);
+
+  const handleSectionChange = (sec) => {
+    setProjectTab(sec);
+    setSelectedVendor(null);
+    setSelectedLabor(null);
+    let subVal = null;
+    if (sec === 'attendance') subVal = attendanceSubTab;
+    else if (sec === 'payments') subVal = paymentsSubTab;
+    else if (sec === 'construction') subVal = constructionSubTab;
+    updateUrlParams(sec, subVal);
+  };
+
+  const handleAttendanceSubChange = (sub) => {
+    setAttendanceSubTab(sub);
+    updateUrlParams('attendance', sub);
+  };
+
+  const handlePaymentsSubChange = (sub) => {
+    setPaymentsSubTab(sub);
+    updateUrlParams('payments', sub);
+  };
+
+  const handleConstructionSubChange = (sub) => {
+    setConstructionSubTab(sub);
+    updateUrlParams('construction', sub);
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const sec = normalizeSection(getUrlParam('section'));
+      if (sec && allowedMainTabs.includes(sec)) {
+        setProjectTab(sec);
+        const sub = getUrlParam('sub');
+        if (sec === 'attendance') {
+          const normSub = normalizeAttendanceSub(sub);
+          if (normSub) setAttendanceSubTab(normSub);
+        } else if (sec === 'payments') {
+          const normSub = normalizePaymentsSub(sub);
+          if (normSub) setPaymentsSubTab(normSub);
+        } else if (sec === 'construction') {
+          const normSub = normalizeConstructionSub(sub);
+          if (normSub) setConstructionSubTab(normSub);
+        }
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [allowedMainTabs]);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
@@ -214,6 +383,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [attendanceDate, setAttendanceDate] = useState(today());
   const [attendanceRows, setAttendanceRows] = useState([]);
   const [savingAttendance, setSavingAttendance] = useState(false);
+  const [projectVendorAttendanceHistory, setProjectVendorAttendanceHistory] = useState([]);
+  const [projectLaborAttendanceHistory, setProjectLaborAttendanceHistory] = useState([]);
 
   // Phase 2: Vendor Payments Tab
   const [vendorPaymentsList, setVendorPaymentsList] = useState([]);
@@ -267,7 +438,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   // ── Phase 3: Materials & Stock State ───────────────────────────────────────
   const [materialsMaster, setMaterialsMaster] = useState([]);
   const [stockRows, setStockRows] = useState([]);
-  const [materialsSubTab, setMaterialsSubTab] = useState('stock'); // 'stock' | 'received' | 'used' | 'adjustments'
+  const materialsSubTab = constructionSubTab;
+  const setMaterialsSubTab = setConstructionSubTab;
   const [receivedRows, setReceivedRows] = useState([]);
   const [usedRows, setUsedRows] = useState([]);
   const [adjustmentRows, setAdjustmentRows] = useState([]);
@@ -374,19 +546,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     }
   };
 
-  // Check supervisor role
-  useEffect(() => {
-    if (isAgent) {
-      setRole('agent');
-      return;
-    }
-    try {
-      const u = JSON.parse(localStorage.getItem('admin-user') || localStorage.getItem('user') || '{}');
-      if (u.role === 'site_supervisor') setRole('site_supervisor');
-    } catch {}
-  }, [isAgent]);
 
-  const isSupervisor = role === 'site_supervisor';
 
   // ── Load Parties ─────────────────────────────────────────────────────────────
   const loadParties = useCallback(async () => {
@@ -543,8 +703,28 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       setSelectedVendor(null);
       setSelectedLabor(null);
       setScreen('project');
-      setProjectTab('materials');
+      const rawSec = getUrlParam('section');
+      const normSec = normalizeSection(rawSec);
+      const targetSec = (normSec && allowedMainTabs.includes(normSec))
+        ? normSec
+        : (allowedMainTabs.includes(projectTab) ? projectTab : (allowedMainTabs[0] || 'vendors'));
+      setProjectTab(targetSec);
+      const rawSub = getUrlParam('sub');
+      if (rawSub) {
+        if (targetSec === 'attendance') {
+          const nSub = normalizeAttendanceSub(rawSub);
+          if (nSub && allowedAttendanceSubTabs.includes(nSub)) setAttendanceSubTab(nSub);
+        } else if (targetSec === 'payments') {
+          const nSub = normalizePaymentsSub(rawSub);
+          if (nSub) setPaymentsSubTab(nSub);
+        } else if (targetSec === 'construction') {
+          const nSub = normalizeConstructionSub(rawSub);
+          if (nSub) setConstructionSubTab(nSub);
+        }
+      }
       loadPhase3ProjectData(id);
+      loadProjectVendorAttendanceHistory(id);
+      loadProjectLaborAttendanceHistory(id);
     } catch (e) {
       setMessage(e.message);
     }
@@ -596,7 +776,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       setProjectVendors(pvRes.data || []);
       setPartyPayments(ppRes.data || []);
       setProjectLabors(laborRes.data || []);
+      if (selectedVendor) {
+        const uv = (pvRes.data || []).find((v) => Number(v.id) === Number(selectedVendor.id));
+        if (uv) setSelectedVendor(uv);
+      }
       loadPhase3ProjectData(pid);
+      loadProjectVendorAttendanceHistory(pid);
+      loadProjectLaborAttendanceHistory(pid);
     } catch (e) {
       setMessage(e.message);
     }
@@ -967,6 +1153,28 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     }
   };
 
+  const loadProjectVendorAttendanceHistory = useCallback(async (projId) => {
+    const pid = projId || project?.id;
+    if (!pid) return;
+    try {
+      const res = await api(`/api/admin/project-management/attendance?projectId=${pid}&history=1`);
+      setProjectVendorAttendanceHistory(res.data || []);
+    } catch {
+      setProjectVendorAttendanceHistory([]);
+    }
+  }, [project?.id]);
+
+  const loadProjectLaborAttendanceHistory = useCallback(async (projId) => {
+    const pid = projId || project?.id;
+    if (!pid) return;
+    try {
+      const res = await api(`/api/admin/project-management/labor/attendance?projectId=${pid}&history=1`);
+      setProjectLaborAttendanceHistory(res.data || []);
+    } catch {
+      setProjectLaborAttendanceHistory([]);
+    }
+  }, [project?.id]);
+
   // ── Phase 2: Bulk Attendance ────────────────────────────────────────────────
   const loadDailyAttendance = useCallback(async (date) => {
     if (!project?.id) return;
@@ -978,16 +1186,28 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       const rows = dailyVendors.map((pv) => {
         const ex = existingMap.get(Number(pv.id));
         const hasLinkedLabor = Boolean(ex?.has_linked_labor);
+        const isMarked = Boolean(ex && ex.attendance_id);
+        const initialStatus = isMarked
+          ? (ex.attendance_status || 'present')
+          : (hasLinkedLabor ? 'absent' : 'present');
+        const workers = isMarked ? Number(ex.workers_count || 1) : 1;
+        const rate = isMarked ? Number(ex.rate_per_worker || pv.daily_rate || 0) : Number(pv.daily_rate || 0);
+        const mult = initialStatus === 'present' ? 1 : initialStatus === 'half_day' ? 0.5 : 0;
+        const wage = hasLinkedLabor ? 0 : (isMarked ? Number(ex.wage_amount) : mult * workers * rate);
+
         return {
           project_vendor_id: pv.id,
           vendor_name: pv.vendor_name,
           trade: pv.trade,
-          status: ex && ex.attendance_id ? ex.attendance_status : (hasLinkedLabor ? 'absent' : (ex?.status || 'present')),
-          workers_count: ex ? Number(ex.workers_count) : 1,
-          rate_per_worker: ex ? Number(ex.rate_per_worker) : Number(pv.daily_rate || 0),
-          wage_amount: hasLinkedLabor ? 0 : (ex ? Number(ex.wage_amount) : Number(pv.daily_rate || 0)),
+          status: initialStatus,
+          workers_count: workers,
+          rate_per_worker: rate,
+          wage_amount: wage,
           note: ex ? ex.note || '' : '',
           has_linked_labor: hasLinkedLabor,
+          is_marked: isMarked,
+          created_by: ex?.created_by || null,
+          created_at: ex?.created_at || null,
         };
       });
       setAttendanceRows(rows);
@@ -998,30 +1218,42 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
   useEffect(() => {
     if (projectTab === 'attendance' && project?.id) {
-      loadDailyAttendance(attendanceDate);
+      if (attendanceSubTab === 'vendor') {
+        loadDailyAttendance(attendanceDate);
+        loadProjectVendorAttendanceHistory(project.id);
+      } else if (attendanceSubTab === 'labor') {
+        loadLaborAttendance(laborAttendanceDate, project.id);
+        loadProjectLaborAttendanceHistory(project.id);
+      }
     }
-  }, [projectTab, attendanceDate, loadDailyAttendance, project?.id]);
+  }, [projectTab, attendanceSubTab, attendanceDate, laborAttendanceDate, loadDailyAttendance, loadLaborAttendance, loadProjectVendorAttendanceHistory, loadProjectLaborAttendanceHistory, project?.id]);
 
   const saveAllAttendance = async () => {
     setSavingAttendance(true);
     try {
+      const payloadEntries = attendanceRows
+        .filter((r) => !r.has_linked_labor)
+        .map((r) => ({
+          project_vendor_id: r.project_vendor_id,
+          attendance_date: attendanceDate,
+          status: r.status,
+          workers_count: r.workers_count,
+          rate_per_worker: r.rate_per_worker,
+          note: r.note,
+        }));
+
       await api('/api/admin/project-management/attendance', {
         method: 'POST',
         body: JSON.stringify({
           attendance_date: attendanceDate,
-          records: attendanceRows
-            .filter((r) => !r.has_linked_labor)
-            .map((r) => ({
-              project_vendor_id: r.project_vendor_id,
-              status: r.status,
-              workers_count: r.workers_count,
-              rate_per_worker: r.rate_per_worker,
-              note: r.note,
-            })),
+          entries: payloadEntries,
+          records: payloadEntries,
         }),
       });
       setMessage('Attendance saved for all vendors');
       refreshProjectData();
+      loadDailyAttendance(attendanceDate);
+      loadProjectVendorAttendanceHistory(project?.id);
     } catch (e) {
       setMessage(e.message);
     } finally {
@@ -1047,9 +1279,19 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
   useEffect(() => {
     if (projectTab === 'payments' && project?.id) {
-      loadVendorPayments();
+      if (paymentsSubTab === 'vendor') {
+        loadVendorPayments();
+      } else if (paymentsSubTab === 'labor') {
+        loadLaborPayments(project.id, laborPaymentFilterLabor, laborPaymentFilterFrom, laborPaymentFilterTo);
+      }
     }
-  }, [projectTab, loadVendorPayments, project?.id]);
+  }, [projectTab, paymentsSubTab, loadVendorPayments, loadLaborPayments, laborPaymentFilterLabor, laborPaymentFilterFrom, laborPaymentFilterTo, project?.id]);
+
+  useEffect(() => {
+    if (project?.id && (projectTab === 'labor' || (projectTab === 'payments' && paymentsSubTab === 'labor') || (projectTab === 'attendance' && attendanceSubTab === 'labor'))) {
+      loadProjectLabors(project.id);
+    }
+  }, [projectTab, paymentsSubTab, attendanceSubTab, loadProjectLabors, project?.id]);
 
   const saveVendorPayment = async (e) => {
     e.preventDefault();
@@ -1100,15 +1342,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   // ── Labor (Individual Worker) Handlers ─────────────────────────────────────
   useEffect(() => {
     if (projectTab === 'labor' && project?.id) {
-      if (laborSubTab === 'list') {
-        loadProjectLabors(project.id);
-      } else if (laborSubTab === 'attendance') {
-        loadLaborAttendance(laborAttendanceDate, project.id);
-      } else if (laborSubTab === 'payments') {
-        loadLaborPayments(project.id, laborPaymentFilterLabor, laborPaymentFilterFrom, laborPaymentFilterTo);
-      }
+      loadProjectLabors(project.id);
     }
-  }, [projectTab, laborSubTab, laborAttendanceDate, laborPaymentFilterLabor, laborPaymentFilterFrom, laborPaymentFilterTo, loadProjectLabors, loadLaborAttendance, loadLaborPayments, project?.id]);
+  }, [projectTab, loadProjectLabors, project?.id]);
 
   const saveLabor = async (e) => {
     e.preventDefault();
@@ -1171,6 +1407,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       loadLaborAttendance(laborAttendanceDate, project.id);
       loadProjectLabors(project.id);
       refreshProjectData(project.id);
+      loadProjectLaborAttendanceHistory(project.id);
     } catch (e) {
       setMessage(e.message);
     } finally {
@@ -1803,609 +2040,52 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               {/* Subtabs Navigation */}
               {!selectedVendor && !selectedLabor ? (
                 <>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
-                    {/* 1. PEOPLE */}
-                    {(hasAgentVendor || hasAgentLabor || (hasAgentPayment && !isSupervisor)) && (
-                      <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
-                          People (Manpower & Payroll)
-                        </div>
-                        <div className="subtabs" style={{ marginBottom: 0 }}>
-                          {hasAgentVendor && (
-                            <button
-                              className={projectTab === 'vendors' ? 'active' : ''}
-                              onClick={() => setProjectTab('vendors')}
-                            >
-                              👷 Vendors ({projectVendors.length})
-                            </button>
-                          )}
-                          {hasAgentLabor && (
-                            <button
-                              className={projectTab === 'labor' ? 'active' : ''}
-                              onClick={() => {
-                                setProjectTab('labor');
-                                setSelectedLabor(null);
-                              }}
-                            >
-                              🦺 Labor ({projectLabors.length})
-                            </button>
-                          )}
-                          {hasAgentLabor && (
-                            <button
-                              className={projectTab === 'attendance' ? 'active' : ''}
-                              onClick={() => setProjectTab('attendance')}
-                            >
-                              📅 Daily Attendance
-                            </button>
-                          )}
-                          {!isSupervisor && hasAgentPayment && (
-                            <button
-                              className={projectTab === 'payments' ? 'active' : ''}
-                              onClick={() => setProjectTab('payments')}
-                            >
-                              💸 Vendor Payments
-                            </button>
-                          )}
-                        </div>
-                      </div>
+                  {/* 5 Main Tabs Navigation: Vendors, Labor, Attendance, Payments, Construction */}
+                  <div className="subtabs" style={{ marginBottom: '1.25rem' }}>
+                    {allowedMainTabs.includes('vendors') && (
+                      <button
+                        className={projectTab === 'vendors' ? 'active' : ''}
+                        onClick={() => handleSectionChange('vendors')}
+                      >
+                        👷 Vendors ({projectVendors.length})
+                      </button>
                     )}
-
-                    {/* 2. CONSTRUCTION */}
-                    {hasAgentConstruction && (
-                      <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
-                          Construction (Materials & Site Expenses)
-                        </div>
-                        <div className="subtabs" style={{ marginBottom: 0 }}>
-                          <button
-                            className={projectTab === 'materials' ? 'active' : ''}
-                            onClick={() => setProjectTab('materials')}
-                          >
-                            📦 Materials &amp; Stock
-                          </button>
-                          <button
-                            className={projectTab === 'expenses' ? 'active' : ''}
-                            onClick={() => setProjectTab('expenses')}
-                          >
-                            🧾 Other Expenses
-                          </button>
-                        </div>
-                      </div>
+                    {allowedMainTabs.includes('labor') && (
+                      <button
+                        className={projectTab === 'labor' ? 'active' : ''}
+                        onClick={() => handleSectionChange('labor')}
+                      >
+                        🦺 Labor ({projectLabors.length})
+                      </button>
                     )}
-
-                    {/* 3. CLIENT */}
-                    {!isSupervisor && hasAgentPayment && (
-                      <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '6px', marginLeft: '2px' }}>
-                          Client (Money In)
-                        </div>
-                        <div className="subtabs" style={{ marginBottom: 0 }}>
-                          <button
-                            className={projectTab === 'party_payments' ? 'active' : ''}
-                            onClick={() => setProjectTab('party_payments')}
-                          >
-                            🏦 Party Payments ({partyPayments.length})
-                          </button>
-                        </div>
-                      </div>
+                    {allowedMainTabs.includes('attendance') && (
+                      <button
+                        className={projectTab === 'attendance' ? 'active' : ''}
+                        onClick={() => handleSectionChange('attendance')}
+                      >
+                        📅 Attendance
+                      </button>
+                    )}
+                    {allowedMainTabs.includes('payments') && (
+                      <button
+                        className={projectTab === 'payments' ? 'active' : ''}
+                        onClick={() => handleSectionChange('payments')}
+                      >
+                        💳 Payments
+                      </button>
+                    )}
+                    {allowedMainTabs.includes('construction') && (
+                      <button
+                        className={projectTab === 'construction' ? 'active' : ''}
+                        onClick={() => handleSectionChange('construction')}
+                      >
+                        🏗️ Construction
+                      </button>
                     )}
                   </div>
 
-              {/* ── TAB: MATERIALS & STOCK (PHASE 3) ────────────────────────── */}
-              {projectTab === 'materials' && (
-                <div>
-                  {/* Action Bar */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
-                    <div style={{ display: 'flex', gap: 6 }}>
-                      <button
-                        className={materialsSubTab === 'stock' ? 'active-btn' : 'muted'}
-                        onClick={() => setMaterialsSubTab('stock')}
-                      >
-                        Stock Summary ({stockRows.length})
-                      </button>
-                      <button
-                        className={materialsSubTab === 'received' ? 'active-btn' : 'muted'}
-                        onClick={() => setMaterialsSubTab('received')}
-                      >
-                        Received History ({receivedRows.length})
-                      </button>
-                      <button
-                        className={materialsSubTab === 'used' ? 'active-btn' : 'muted'}
-                        onClick={() => setMaterialsSubTab('used')}
-                      >
-                        Usage History ({usedRows.length})
-                      </button>
-                      <button
-                        className={materialsSubTab === 'adjustments' ? 'active-btn' : 'muted'}
-                        onClick={() => setMaterialsSubTab('adjustments')}
-                      >
-                        Adjustments ({adjustmentRows.length})
-                      </button>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                      <button
-                        onClick={() => {
-                          setReceivedForm(receivedBlank);
-                          setEditingReceivedId(null);
-                          setReceivedModal(true);
-                        }}
-                      >
-                        + Material Received
-                      </button>
-                      <button
-                        onClick={() => {
-                          setUsedForm(usedBlank);
-                          setEditingUsedId(null);
-                          setUsedModal(true);
-                        }}
-                      >
-                        - Material Used
-                      </button>
-                      <button
-                        className="muted"
-                        onClick={() => {
-                          setAdjustmentForm(adjustmentBlank);
-                          setEditingAdjId(null);
-                          setAdjustmentModal(true);
-                        }}
-                      >
-                        ⚡ Adjustment / Wastage
-                      </button>
-                      <button
-                        className="muted"
-                        onClick={() => {
-                          setMaterialForm(materialBlank);
-                          setAddMaterialModal(true);
-                        }}
-                      >
-                        + Master Material
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* SUBTAB 1: STOCK SUMMARY */}
-                  {materialsSubTab === 'stock' && (
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Material</th>
-                          <th>Category</th>
-                          <th>Unit</th>
-                          <th>Received</th>
-                          <th>Used</th>
-                          <th>Adjusted</th>
-                          <th>Current Stock</th>
-                          {!isSupervisor && <th>Avg Rate</th>}
-                          {!isSupervisor && <th>Stock Value</th>}
-                          <th>Status</th>
-                          <th style={{ textAlign: 'right' }}>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {stockRows.map((r) => {
-                          const isLow = Number(r.stock) <= Number(r.min_stock_level || 0);
-                          const isOverUsed = Number(r.stock) < 0;
-                          return (
-                            <tr key={r.id}>
-                              <td>
-                                <b>{r.name}</b>
-                                {r.min_stock_level > 0 && (
-                                  <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>
-                                    Min: {Number(r.min_stock_level).toFixed(2)} {r.unit}
-                                  </span>
-                                )}
-                              </td>
-                              <td>{r.category || '—'}</td>
-                              <td>{r.unit}</td>
-                              <td>{Number(r.received).toFixed(2)}</td>
-                              <td>{Number(r.used).toFixed(2)}</td>
-                              <td>{Number(r.adjusted).toFixed(2)}</td>
-                              <td style={{ fontWeight: 700, color: isOverUsed ? '#dc2626' : '#0f172a' }}>
-                                {Number(r.stock).toFixed(2)}
-                              </td>
-                              {!isSupervisor && <td>{INR(r.average_rate)}</td>}
-                              {!isSupervisor && <td style={{ fontWeight: 600 }}>{INR(r.stock_value)}</td>}
-                              <td>
-                                {isOverUsed ? (
-                                  <span className="badge badge-overused">⚠️ Over-used</span>
-                                ) : isLow ? (
-                                  <span className="badge badge-lowstock">Low Stock</span>
-                                ) : (
-                                  <span className="badge badge-active">Adequate</span>
-                                )}
-                              </td>
-                              <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                                <button
-                                  className="muted"
-                                  onClick={() => openMaterialTimeline(r)}
-                                  title="View running timeline history"
-                                >
-                                  🔍 Timeline History
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                        {stockRows.length === 0 && (
-                          <tr>
-                            <td colSpan={11} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                              No material records yet for this project. Click &ldquo;+ Material Received&rdquo; to record initial deliveries.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  )}
-
-                  {/* SUBTAB 2: RECEIVED HISTORY */}
-                  {materialsSubTab === 'received' && (
-                    <>
-                      <div className="bar" style={{ marginBottom: 12, gap: 10, flexWrap: 'wrap' }}>
-                        <select
-                          value={matFilterId}
-                          onChange={(e) => setMatFilterId(e.target.value)}
-                          style={{ maxWidth: 200 }}
-                        >
-                          <option value="">All Materials</option>
-                          {materialsMaster.map((m) => (
-                            <option value={m.id} key={m.id}>{m.name}</option>
-                          ))}
-                        </select>
-                        <input
-                          type="date"
-                          value={matFilterFrom}
-                          onChange={(e) => setMatFilterFrom(e.target.value)}
-                          placeholder="From date"
-                        />
-                        <input
-                          type="date"
-                          value={matFilterTo}
-                          onChange={(e) => setMatFilterTo(e.target.value)}
-                          placeholder="To date"
-                        />
-                      </div>
-
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Date</th>
-                            <th>Material</th>
-                            <th>Supplier / Source</th>
-                            <th>Quantity</th>
-                            {!isSupervisor && <th>Rate</th>}
-                            {!isSupervisor && <th>Total Amount</th>}
-                            <th>Challan No</th>
-                            <th>Bill</th>
-                            <th>Note</th>
-                            <th style={{ textAlign: 'right' }}>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {receivedRows
-                            .filter((r) => !matFilterId || String(r.material_id) === matFilterId)
-                            .filter((r) => !matFilterFrom || r.received_date >= matFilterFrom)
-                            .filter((r) => !matFilterTo || r.received_date <= matFilterTo)
-                            .map((r) => (
-                              <tr key={r.id}>
-                                <td>{r.received_date}</td>
-                                <td><b>{r.material_name}</b></td>
-                                <td>
-                                  {r.supplier_name || '—'}
-                                  {r.transfer_in && <span className="badge badge-active" style={{ marginLeft: 4 }}>Transfer In</span>}
-                                </td>
-                                <td>{Number(r.quantity).toFixed(2)} {r.material_unit}</td>
-                                {!isSupervisor && <td>{INR(r.rate)}</td>}
-                                {!isSupervisor && <td style={{ fontWeight: 600 }}>{INR(r.amount)}</td>}
-                                <td>{r.challan_no || '—'}</td>
-                                <td>
-                                  {r.bill_url ? (
-                                    <a href={r.bill_url} target="_blank" rel="noreferrer" title={r.bill_filename} style={{ textDecoration: 'none' }}>
-                                      📄
-                                    </a>
-                                  ) : '—'}
-                                </td>
-                                <td>{r.note || '—'}</td>
-                                <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                                  <button
-                                    className="muted"
-                                    onClick={() => {
-                                      setEditingReceivedId(r.id);
-                                      setReceivedForm({
-                                        material_id: String(r.material_id),
-                                        quantity: r.quantity,
-                                        rate: r.rate,
-                                        received_date: r.received_date,
-                                        supplier_name: r.supplier_name || '',
-                                        challan_no: r.challan_no || '',
-                                        note: r.note || '',
-                                      });
-                                      setReceivedModal(true);
-                                    }}
-                                  >
-                                    Edit
-                                  </button>
-                                  {!isAgent && (
-                                    <button className="danger" onClick={() => del('received', r.id)}>
-                                      Delete
-                                    </button>
-                                  )}
-                                </td>
-                              </tr>
-                            ))}
-                          {receivedRows.length === 0 && (
-                            <tr>
-                              <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                                No material received entries.
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </>
-                  )}
-
-                  {/* SUBTAB 3: USAGE HISTORY */}
-                  {materialsSubTab === 'used' && (
-                    <>
-                      <div className="bar" style={{ marginBottom: 12, gap: 10, flexWrap: 'wrap' }}>
-                        <select
-                          value={matFilterId}
-                          onChange={(e) => setMatFilterId(e.target.value)}
-                          style={{ maxWidth: 200 }}
-                        >
-                          <option value="">All Materials</option>
-                          {materialsMaster.map((m) => (
-                            <option value={m.id} key={m.id}>{m.name}</option>
-                          ))}
-                        </select>
-                        <input
-                          type="date"
-                          value={matFilterFrom}
-                          onChange={(e) => setMatFilterFrom(e.target.value)}
-                        />
-                        <input
-                          type="date"
-                          value={matFilterTo}
-                          onChange={(e) => setMatFilterTo(e.target.value)}
-                        />
-                      </div>
-
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Date</th>
-                            <th>Material</th>
-                            <th>Quantity Used</th>
-                            <th>Used For</th>
-                            <th>Note</th>
-                            <th>Status</th>
-                            <th style={{ textAlign: 'right' }}>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {usedRows
-                            .filter((r) => !matFilterId || String(r.material_id) === matFilterId)
-                            .filter((r) => !matFilterFrom || r.used_date >= matFilterFrom)
-                            .filter((r) => !matFilterTo || r.used_date <= matFilterTo)
-                            .map((r) => (
-                              <tr key={r.id}>
-                                <td>{r.used_date}</td>
-                                <td><b>{r.material_name}</b></td>
-                                <td style={{ fontWeight: 600 }}>{Number(r.quantity).toFixed(2)} {r.material_unit}</td>
-                                <td>{r.used_for || '—'}</td>
-                                <td>{r.note || '—'}</td>
-                                <td>
-                                  {r.over_used && <span className="badge badge-overused">Over-used</span>}
-                                </td>
-                                <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                                  <button
-                                    className="muted"
-                                    onClick={() => {
-                                      setEditingUsedId(r.id);
-                                      setUsedForm({
-                                        material_id: String(r.material_id),
-                                        quantity: r.quantity,
-                                        used_date: r.used_date,
-                                        used_for: r.used_for || '',
-                                        note: r.note || '',
-                                      });
-                                      setUsedModal(true);
-                                    }}
-                                  >
-                                    Edit
-                                  </button>
-                                  {!isAgent && (
-                                    <button className="danger" onClick={() => del('used', r.id)}>
-                                      Delete
-                                    </button>
-                                  )}
-                                </td>
-                              </tr>
-                            ))}
-                          {usedRows.length === 0 && (
-                            <tr>
-                              <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                                No material usage entries yet.
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </>
-                  )}
-
-                  {/* SUBTAB 4: ADJUSTMENTS HISTORY */}
-                  {materialsSubTab === 'adjustments' && (
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Date</th>
-                          <th>Material</th>
-                          <th>Type</th>
-                          <th>Quantity</th>
-                          <th>Destination / Details</th>
-                          <th>Bill</th>
-                          <th>Note</th>
-                          <th>Status</th>
-                          <th style={{ textAlign: 'right' }}>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {adjustmentRows.map((r) => (
-                          <tr key={r.id}>
-                            <td>{r.adjustment_date}</td>
-                            <td><b>{r.material_name}</b></td>
-                            <td>
-                              <span className="badge badge-active" style={{ textTransform: 'capitalize' }}>
-                                {r.adjustment_type?.replace(/_/g, ' ')}
-                              </span>
-                            </td>
-                            <td style={{ fontWeight: 600 }}>{Number(r.quantity).toFixed(2)} {r.material_unit}</td>
-                            <td>{r.to_project_name ? `Transfer to: ${r.to_project_name}` : '—'}</td>
-                            <td>
-                              {r.bill_url ? (
-                                <a href={r.bill_url} target="_blank" rel="noreferrer" title={r.bill_filename} style={{ textDecoration: 'none' }}>
-                                  📄
-                                </a>
-                              ) : '—'}
-                            </td>
-                            <td>{r.note || '—'}</td>
-                            <td>{r.over_used && <span className="badge badge-overused">Over-used</span>}</td>
-                            <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                              <button
-                                className="muted"
-                                onClick={() => {
-                                  setEditingAdjId(r.id);
-                                  setAdjustmentForm({
-                                    material_id: String(r.material_id),
-                                    adjustment_type: r.adjustment_type,
-                                    quantity: r.quantity,
-                                    adjustment_date: r.adjustment_date,
-                                    to_project_id: r.to_project_id ? String(r.to_project_id) : '',
-                                    note: r.note || '',
-                                  });
-                                  setAdjustmentModal(true);
-                                }}
-                              >
-                                Edit
-                              </button>
-                              {!isAgent && (
-                                <button className="danger" onClick={() => del('adjustment', r.id)}>
-                                  Delete
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                        {adjustmentRows.length === 0 && (
-                          <tr>
-                            <td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                              No adjustments or wastage entries recorded.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  )}
-                </div>
-              )}
-
-              {/* ── TAB: OTHER EXPENSES (PHASE 3) ───────────────────────────── */}
-              {projectTab === 'expenses' && (
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                      <select
-                        value={expenseCategoryFilter}
-                        onChange={(e) => setExpenseCategoryFilter(e.target.value)}
-                        style={{ maxWidth: 220 }}
-                      >
-                        <option value="">All Categories</option>
-                        <option value="transport">Transport</option>
-                        <option value="machine_rent">Machine Rent</option>
-                        <option value="electricity_water">Electricity &amp; Water</option>
-                        <option value="permit">Permits &amp; Approvals</option>
-                        <option value="misc">Miscellaneous</option>
-                      </select>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>
-                        Total: {INR(expenseSummary.totalAmount)}
-                      </span>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        setExpenseForm(expenseBlank);
-                        setEditingExpenseId(null);
-                        setExpenseModal(true);
-                      }}
-                    >
-                      + Record Other Expense
-                    </button>
-                  </div>
-
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Date</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                        <th>Note</th>
-                        <th>Recorded By</th>
-                        <th style={{ textAlign: 'right' }}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {expenseRows
-                        .filter((r) => !expenseCategoryFilter || r.category === expenseCategoryFilter)
-                        .map((r) => (
-                          <tr key={r.id}>
-                            <td>{r.expense_date}</td>
-                            <td>
-                              <span className="badge badge-active" style={{ textTransform: 'capitalize' }}>
-                                {r.category?.replace(/_/g, ' ')}
-                              </span>
-                            </td>
-                            <td style={{ fontWeight: 700, color: '#b45309' }}>{INR(r.amount)}</td>
-                            <td>{r.note || '—'}</td>
-                            <td style={{ fontSize: 11, color: '#64748b' }}>{r.created_by}</td>
-                            <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                              <button
-                                className="muted"
-                                onClick={() => {
-                                  setEditingExpenseId(r.id);
-                                  setExpenseForm({
-                                    category: r.category,
-                                    amount: r.amount,
-                                    expense_date: r.expense_date,
-                                    note: r.note || '',
-                                  });
-                                  setExpenseModal(true);
-                                }}
-                              >
-                                Edit
-                              </button>
-                              {!isAgent && (
-                                <button className="danger" onClick={() => del('expense', r.id)}>
-                                  Delete
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      {expenseRows.length === 0 && (
-                        <tr>
-                          <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                            No other expenses recorded for this project.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {/* ── TAB 1: VENDORS ON THIS PROJECT ──────────────────────────── */}
+                  {/* ── 1. VENDORS TAB ────────────────────────────────────────── */}
+                  {/* ── TAB 1: VENDORS ON THIS PROJECT ──────────────────────────── */}
               {projectTab === 'vendors' && (
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
@@ -2430,7 +2110,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     </thead>
                     <tbody>
                       {projectVendors.map((pv) => {
-                        const isOverpaid = Number(pv.balance_due || 0) < 0;
+                        const earnedVal = pv.total_earned ?? pv.earned ?? 0;
+                        const paidVal = pv.total_paid ?? pv.paid ?? 0;
+                        const dueVal = pv.balance_due ?? pv.balance ?? (Number(earnedVal) - Number(paidVal));
+                        const isOverpaid = Number(dueVal || 0) < 0;
                         return (
                           <tr key={pv.id}>
                             <td>
@@ -2451,13 +2134,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               </td>
                             )}
                             {(!isAgent || hasAgentPayment) && (
-                              <td style={{ fontWeight: 600 }}>{INR(pv.total_earned)}</td>
+                              <td style={{ fontWeight: 600 }}>{INR(earnedVal)}</td>
                             )}
-                            {!isSupervisor && (!isAgent || hasAgentPayment) && <td style={{ color: '#16a34a' }}>{INR(pv.total_paid)}</td>}
+                            {!isSupervisor && (!isAgent || hasAgentPayment) && <td style={{ color: '#16a34a' }}>{INR(paidVal)}</td>}
                             {!isSupervisor && (!isAgent || hasAgentPayment) && (
                               <td>
                                 <b style={{ color: isOverpaid ? '#dc2626' : '#0f172a' }}>
-                                  {INR(pv.balance_due)}
+                                  {INR(dueVal)}
                                 </b>
                                 {isOverpaid && (
                                   <span className="badge badge-overused" style={{ marginLeft: 4 }}>
@@ -2489,25 +2172,203 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </div>
               )}
 
-              {/* ── TAB 2: DAILY ATTENDANCE ─────────────────────────────────── */}
-              {projectTab === 'attendance' && (
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 13, fontWeight: 600 }}>Attendance Date:</span>
-                      <input
-                        type="date"
-                        value={attendanceDate}
-                        onChange={(e) => setAttendanceDate(e.target.value)}
-                        style={{ maxWidth: 170 }}
-                      />
-                    </div>
-                    <button onClick={saveAllAttendance} disabled={savingAttendance}>
-                      {savingAttendance ? 'Saving...' : '💾 Save Attendance for All'}
-                    </button>
-                  </div>
+                  {/* ── 2. LABOR TAB ──────────────────────────────────────────── */}
+                  {projectTab === 'labor' && (
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                        <h4 style={{ margin: 0, fontSize: 16 }}>Laborers &amp; Direct Workers</h4>
+                        <button
+                          onClick={() => {
+                            setLaborForm({ name: '', phone: '', trade: '', vendor_id: '', daily_rate: '', is_active: true });
+                            setEditingLaborId(null);
+                            setAddLaborModal(true);
+                          }}
+                        >
+                          + Add Labor
+                        </button>
+                      </div>
 
-                  <table>
+                      <table>
+                      <thead>
+                        <tr>
+                          <th>Labor Name</th>
+                          <th>Trade</th>
+                          <th>Contractor / Vendor</th>
+                          <th>Daily Rate</th>
+                          <th>Total Earned</th>
+                          {!isSupervisor && <th>Total Paid</th>}
+                          {!isSupervisor && <th>Balance Due</th>}
+                          <th>Status</th>
+                          <th style={{ textAlign: 'right' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {projectLabors.map((lab) => {
+                          const isOverpaid = Number(lab.balance_due || 0) < 0;
+                          return (
+                            <tr key={lab.id}>
+                              <td>
+                                <b>{lab.name}</b>
+                                {lab.phone && <div style={{ fontSize: 11, color: '#64748b' }}>{lab.phone}</div>}
+                              </td>
+                              <td>{lab.trade || 'Helper'}</td>
+                              <td>
+                                {lab.vendor_name ? (
+                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                    <span style={{ fontSize: 11, background: '#f1f5f9', color: '#334155', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
+                                      🏢 {lab.vendor_name}
+                                    </span>
+                                  </span>
+                                ) : (
+                                  <span style={{ fontSize: 11, background: '#ecfdf5', color: '#047857', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
+                                    ⚡ Independent
+                                  </span>
+                                )}
+                              </td>
+                              <td style={{ fontWeight: 600 }}>{INR(lab.daily_rate)}/day</td>
+                              <td style={{ fontWeight: 600 }}>{INR(lab.total_earned)}</td>
+                              {!isSupervisor && <td style={{ color: '#16a34a', fontWeight: 600 }}>{INR(lab.total_paid)}</td>}
+                              {!isSupervisor && (
+                                <td>
+                                  <b style={{ color: isOverpaid ? '#dc2626' : '#0f172a' }}>
+                                    {INR(lab.balance_due)}
+                                  </b>
+                                  {isOverpaid && (
+                                    <span className="badge badge-overused" style={{ marginLeft: 4 }}>
+                                      ⚠️ Overpaid
+                                    </span>
+                                  )}
+                                </td>
+                              )}
+                              <td>
+                                <span className={`badge ${lab.is_active ? 'badge-active' : 'badge-completed'}`}>
+                                  {lab.is_active ? 'Active' : 'Inactive'}
+                                </span>
+                              </td>
+                              <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                                <button onClick={() => openLaborDetail(lab)}>
+                                  View Details &rarr;
+                                </button>
+                                <button
+                                  className="muted"
+                                  onClick={() => {
+                                    setLaborForm({
+                                      name: lab.name,
+                                      phone: lab.phone || '',
+                                      trade: lab.trade || '',
+                                      vendor_id: lab.vendor_id || '',
+                                      daily_rate: lab.daily_rate,
+                                      is_active: lab.is_active,
+                                    });
+                                    setEditingLaborId(lab.id);
+                                    setAddLaborModal(true);
+                                  }}
+                                >
+                                  Edit
+                                </button>
+                                {!isAgent && (
+                                  <button className="danger" onClick={() => del('labor', lab.id)}>
+                                    Delete
+                                  </button>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {projectLabors.length === 0 && (
+                          <tr>
+                            <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                              No laborers added to this project yet. Click &ldquo;+ Add Labor&rdquo; above.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                    </div>
+                  )}
+
+                  {/* ── 3. ATTENDANCE TAB ─────────────────────────────────────── */}
+                  {projectTab === 'attendance' && (
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          {allowedAttendanceSubTabs.includes('vendor') && (
+                            <button
+                              className={attendanceSubTab === 'vendor' ? 'active-btn' : 'muted'}
+                              onClick={() => handleAttendanceSubChange('vendor')}
+                            >
+                              Vendor Attendance
+                            </button>
+                          )}
+                          {allowedAttendanceSubTabs.includes('labor') && (
+                            <button
+                              className={attendanceSubTab === 'labor' ? 'active-btn' : 'muted'}
+                              onClick={() => handleAttendanceSubChange('labor')}
+                            >
+                              Labor Attendance
+                            </button>
+                          )}
+                        </div>
+
+                        {attendanceSubTab === 'vendor' && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: 13, fontWeight: 600 }}>Attendance Date:</span>
+                            <input
+                              type="date"
+                              value={attendanceDate}
+                              onChange={(e) => {
+                                setAttendanceDate(e.target.value);
+                                loadDailyAttendance(e.target.value);
+                              }}
+                              style={{ maxWidth: 170 }}
+                            />
+                            <button onClick={saveAllAttendance} disabled={savingAttendance}>
+                              {savingAttendance ? 'Saving...' : '💾 Save Attendance for All'}
+                            </button>
+                            {attendanceRows.some((r) => r.is_marked) ? (
+                              <span style={{ fontSize: 12, padding: '4px 8px', borderRadius: 4, background: '#dcfce7', color: '#166534', fontWeight: 600 }}>
+                                ✓ Marked for {attendanceDate}
+                                {attendanceRows.find((r) => r.created_by)?.created_by ? ` (by ${attendanceRows.find((r) => r.created_by)?.created_by})` : ''}
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: 12, padding: '4px 8px', borderRadius: 4, background: '#fef3c7', color: '#92400e', fontWeight: 600 }}>
+                                ⏳ Not yet saved for {attendanceDate}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {attendanceSubTab === 'labor' && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: 13, fontWeight: 600 }}>Date:</span>
+                            <input
+                              type="date"
+                              value={laborAttendanceDate}
+                              onChange={(e) => {
+                                setLaborAttendanceDate(e.target.value);
+                                loadLaborAttendance(e.target.value, project.id);
+                              }}
+                              style={{ maxWidth: 160 }}
+                            />
+                            <button onClick={saveAllLaborAttendance} disabled={savingLaborAttendance}>
+                              {savingLaborAttendance ? 'Saving...' : '💾 Save Attendance'}
+                            </button>
+                            {laborAttendanceRows.some((r) => r.is_marked) ? (
+                              <span style={{ fontSize: 12, padding: '4px 8px', borderRadius: 4, background: '#dcfce7', color: '#166534', fontWeight: 600 }}>
+                                ✓ Marked for {laborAttendanceDate}
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: 12, padding: '4px 8px', borderRadius: 4, background: '#fef3c7', color: '#92400e', fontWeight: 600 }}>
+                                ⏳ Not yet saved for {laborAttendanceDate}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {attendanceSubTab === 'vendor' && (
+                        <div>
+                          <table>
                     <thead>
                       <tr>
                         <th>Vendor (Daily Wage)</th>
@@ -2617,13 +2478,283 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       )}
                     </tbody>
                   </table>
+
+                  {/* Vendor Attendance History Log */}
+                  <div style={{ marginTop: 24, borderTop: '1px solid #e2e8f0', paddingTop: 16 }}>
+                    <h4 style={{ margin: '0 0 10px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
+                      📋 Vendor Attendance History
+                      <span style={{ fontSize: 12, color: '#64748b', fontWeight: 400 }}>
+                        ({projectVendorAttendanceHistory.length} records)
+                      </span>
+                    </h4>
+                    {projectVendorAttendanceHistory.length > 0 ? (
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>Vendor</th>
+                            <th>Trade</th>
+                            <th>Status</th>
+                            <th>Workers</th>
+                            <th>Rate / Worker</th>
+                            <th>Wage Amount</th>
+                            <th>Marked By</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {projectVendorAttendanceHistory.map((h) => {
+                            const dateStr = typeof h.attendance_date === 'string' ? h.attendance_date.slice(0, 10) : new Date(h.attendance_date).toISOString().slice(0, 10);
+                            return (
+                              <tr key={h.id}>
+                                <td><b>{dateStr}</b></td>
+                                <td>{h.vendor_name}</td>
+                                <td>{h.trade || '—'}</td>
+                                <td>
+                                  <span className={`badge badge-${h.status === 'present' ? 'active' : h.status === 'half_day' ? 'warning' : 'danger'}`}>
+                                    {h.status === 'present' ? 'Present' : h.status === 'half_day' ? 'Half Day' : 'Absent'}
+                                  </span>
+                                </td>
+                                <td>{h.workers_count || 1}</td>
+                                <td>{INR(h.rate_per_worker)}</td>
+                                <td style={{ fontWeight: 600, color: '#16a34a' }}>{INR(h.wage_amount)}</td>
+                                <td style={{ fontSize: 12, color: '#64748b' }}>{h.created_by || '—'}</td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="muted"
+                                    style={{ padding: '2px 8px', fontSize: 11 }}
+                                    onClick={() => {
+                                      setAttendanceDate(dateStr);
+                                      loadDailyAttendance(dateStr);
+                                    }}
+                                  >
+                                    View / Edit Date
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <p style={{ color: '#64748b', fontSize: 13, margin: '8px 0' }}>
+                        No attendance recorded yet for this project.
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
 
-              {/* ── TAB 3: VENDOR PAYMENTS ───────────────────────────────────── */}
-              {projectTab === 'payments' && !isSupervisor && (
-                <div>
-                  <form onSubmit={saveVendorPayment} className="card" style={{ marginBottom: 16 }}>
+                      {attendanceSubTab === 'labor' && (
+                        <div>
+                          {(() => {
+                        const groups = {};
+                        laborAttendanceRows.forEach((r) => {
+                          const key = r.vendor_name ? `Vendor: ${r.vendor_name}` : 'Independent (Direct Workers)';
+                          if (!groups[key]) groups[key] = [];
+                          groups[key].push(r);
+                        });
+
+                        const groupKeys = Object.keys(groups);
+                        if (groupKeys.length === 0) {
+                          return (
+                            <div style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                              No active laborers found for this project. Add laborers in the Labor tab first.
+                            </div>
+                          );
+                        }
+
+                        return groupKeys.map((grpTitle) => (
+                          <div key={grpTitle} className="card" style={{ marginBottom: 16 }}>
+                            <h4 style={{ margin: '0 0 10px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span>{grpTitle.startsWith('Vendor') ? '🏢' : '⚡'}</span>
+                              <span>{grpTitle}</span>
+                              <span style={{ fontSize: 12, color: '#64748b', fontWeight: 'normal' }}>
+                                ({groups[grpTitle].length} {groups[grpTitle].length === 1 ? 'worker' : 'workers'})
+                              </span>
+                            </h4>
+
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Labor Name</th>
+                                  <th>Trade</th>
+                                  <th>Daily Rate</th>
+                                  <th>Status</th>
+                                  <th>Wage Amount</th>
+                                  <th>Note</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {groups[grpTitle].map((row) => {
+                                  const idx = laborAttendanceRows.findIndex((x) => x.labor_id === row.labor_id);
+                                  return (
+                                    <tr key={row.labor_id}>
+                                      <td>
+                                        <b>{row.name}</b>
+                                        {row.phone && <span style={{ fontSize: 11, color: '#64748b', display: 'block' }}>{row.phone}</span>}
+                                      </td>
+                                      <td>{row.trade || 'Helper'}</td>
+                                      <td>{INR(row.daily_rate)}/day</td>
+                                      <td>
+                                        <div style={{ display: 'flex', gap: 4 }}>
+                                          {['present', 'half_day', 'absent'].map((st) => (
+                                            <button
+                                              key={st}
+                                              type="button"
+                                              onClick={() => {
+                                                const next = [...laborAttendanceRows];
+                                                next[idx].status = st;
+                                                const mult = st === 'present' ? 1 : st === 'half_day' ? 0.5 : 0;
+                                                next[idx].wage_amount = mult * Number(row.daily_rate || 0);
+                                                setLaborAttendanceRows(next);
+                                              }}
+                                              className={row.status === st ? 'active-btn' : 'muted'}
+                                              style={{ padding: '3px 8px', fontSize: 11 }}
+                                            >
+                                              {st === 'present' ? 'Present' : st === 'half_day' ? 'Half Day' : 'Absent'}
+                                            </button>
+                                          ))}
+                                        </div>
+                                      </td>
+                                      <td style={{ fontWeight: 700, color: '#16a34a' }}>
+                                        {INR(row.wage_amount)}
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          placeholder="Note..."
+                                          value={row.note || ''}
+                                          onChange={(e) => {
+                                            const next = [...laborAttendanceRows];
+                                            next[idx].note = e.target.value;
+                                            setLaborAttendanceRows(next);
+                                          }}
+                                          style={{ width: 140 }}
+                                        />
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        ));
+                      })()}
+
+                      {/* Labor Attendance History Log */}
+                      <div style={{ marginTop: 24, borderTop: '1px solid #e2e8f0', paddingTop: 16 }}>
+                        <h4 style={{ margin: '0 0 10px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
+                          📋 Labor Attendance History
+                          <span style={{ fontSize: 12, color: '#64748b', fontWeight: 400 }}>
+                            ({projectLaborAttendanceHistory.length} records)
+                          </span>
+                        </h4>
+                        {projectLaborAttendanceHistory.length > 0 ? (
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Date</th>
+                                <th>Labor Name</th>
+                                <th>Trade</th>
+                                <th>Status</th>
+                                <th>Wage Amount</th>
+                                <th>Marked By</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {projectLaborAttendanceHistory.map((h) => {
+                                const dateStr = typeof h.attendance_date === 'string' ? h.attendance_date.slice(0, 10) : new Date(h.attendance_date).toISOString().slice(0, 10);
+                                return (
+                                  <tr key={h.id}>
+                                    <td><b>{dateStr}</b></td>
+                                    <td>{h.labor_name}</td>
+                                    <td>{h.trade || 'Helper'}</td>
+                                    <td>
+                                      <span className={`badge badge-${h.status === 'present' ? 'active' : h.status === 'half_day' ? 'warning' : 'danger'}`}>
+                                        {h.status === 'present' ? 'Present' : h.status === 'half_day' ? 'Half Day' : 'Absent'}
+                                      </span>
+                                    </td>
+                                    <td style={{ fontWeight: 600, color: '#16a34a' }}>{INR(h.wage_amount)}</td>
+                                    <td style={{ fontSize: 12, color: '#64748b' }}>{h.created_by || '—'}</td>
+                                    <td>
+                                      <button
+                                        type="button"
+                                        className="muted"
+                                        style={{ padding: '2px 8px', fontSize: 11 }}
+                                        onClick={() => {
+                                          setLaborAttendanceDate(dateStr);
+                                          loadLaborAttendance(dateStr, project.id);
+                                        }}
+                                      >
+                                        View / Edit Date
+                                      </button>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <p style={{ color: '#64748b', fontSize: 13, margin: '8px 0' }}>
+                            No labor attendance recorded yet for this project.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+                  {/* ── 4. PAYMENTS TAB ───────────────────────────────────────── */}
+                  {projectTab === 'payments' && !isSupervisor && (
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button
+                            className={paymentsSubTab === 'vendor' ? 'active-btn' : 'muted'}
+                            onClick={() => handlePaymentsSubChange('vendor')}
+                          >
+                            Vendor Payment ({vendorPaymentsList.length})
+                          </button>
+                          <button
+                            className={paymentsSubTab === 'labor' ? 'active-btn' : 'muted'}
+                            onClick={() => handlePaymentsSubChange('labor')}
+                          >
+                            Labor Payment ({laborPaymentsList.length})
+                          </button>
+                          <button
+                            className={paymentsSubTab === 'party' ? 'active-btn' : 'muted'}
+                            onClick={() => handlePaymentsSubChange('party')}
+                          >
+                            Party Payment ({partyPayments.length})
+                          </button>
+                        </div>
+
+                        {paymentsSubTab === 'labor' && !isSupervisor && (
+                          <button
+                            onClick={() => {
+                              setLaborPaymentForm({
+                                labor_id: projectLabors[0]?.id || '',
+                                amount: '',
+                                payment_date: today(),
+                                mode: 'cash',
+                                note: '',
+                              });
+                              setEditingLaborPaymentId(null);
+                              setLaborPaymentModal(true);
+                            }}
+                          >
+                            + Record Labor Payment
+                          </button>
+                        )}
+                      </div>
+
+                      {paymentsSubTab === 'vendor' && (
+                        <div>
+                          <form onSubmit={saveVendorPayment} className="card" style={{ marginBottom: 16 }}>
                     <h4 style={{ margin: '0 0 12px', fontSize: 15 }}>Record Vendor Payment</h4>
                     <div className="grid">
                       <label>
@@ -2636,7 +2767,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           <option value="">Select Vendor</option>
                           {projectVendors.map((pv) => (
                             <option value={pv.id} key={pv.id}>
-                              {pv.vendor_name} ({pv.pay_type === 'daily_wage' ? 'Daily Wage' : 'Contract'}) &bull; Due: {INR(pv.balance_due)}
+                              {pv.vendor_name} ({pv.pay_type === 'daily_wage' ? 'Daily Wage' : 'Contract'}) &bull; Due: {INR(pv.balance_due ?? pv.balance)}
                             </option>
                           ))}
                         </select>
@@ -2760,361 +2891,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       )}
                     </tbody>
                   </table>
-                </div>
-              )}
-
-              {/* ── TAB 4: PARTY PAYMENTS ───────────────────────────────────── */}
-              {projectTab === 'party_payments' && !isSupervisor && (
-                <div>
-                  <form onSubmit={savePartyPayment} className="card" style={{ marginBottom: 16 }}>
-                    <h4 style={{ margin: '0 0 12px', fontSize: 15 }}>Record Party Payment (Client Receipts)</h4>
-                    <div className="grid">
-                      <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={partyPaymentForm.amount} set={setPartyPaymentForm} required />
-                      <Input label="Date" name="payment_date" type="date" value={partyPaymentForm.payment_date} set={setPartyPaymentForm} required />
-                      <label>
-                        <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Mode</small>
-                        <select
-                          value={partyPaymentForm.mode}
-                          onChange={(e) => setPartyPaymentForm((f) => ({ ...f, mode: e.target.value }))}
-                        >
-                          <option value="bank">Bank Transfer</option>
-                          <option value="cheque">Cheque</option>
-                          <option value="cash">Cash</option>
-                          <option value="upi">UPI</option>
-                        </select>
-                      </label>
-                      {(partyPaymentForm.mode === 'upi' || partyPaymentForm.mode === 'bank') && (
-                        <Input label="Transaction Reference / UPI ID" name="transaction_reference" value={partyPaymentForm.transaction_reference || ''} set={setPartyPaymentForm} placeholder="e.g. UPI ID, UTR number, or bank transaction ID" />
-                      )}
-                      <Input label="Note / Reference" name="note" value={partyPaymentForm.note} set={setPartyPaymentForm} />
-                    </div>
-                    <p style={{ marginTop: 12, textAlign: 'right' }}>
-                      <button type="submit">Record Payment</button>
-                    </p>
-                  </form>
-
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Date</th>
-                        <th>Amount</th>
-                        <th>Mode</th>
-                        <th>Note</th>
-                        <th style={{ textAlign: 'right' }}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {partyPayments.map((p) => (
-                        <tr key={p.id}>
-                          <td>{p.payment_date}</td>
-                          <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
-                          <td style={{ textTransform: 'uppercase', fontSize: 11 }}>{p.mode}</td>
-                          <td>
-                            {p.note || '—'}
-                            {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
-                          </td>
-                          <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                            {!isAgent && (
-                              <button className="danger" onClick={() => del('partyPayment', p.id)}>
-                                Delete
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                      {partyPayments.length === 0 && (
-                        <tr>
-                          <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                            No party payments recorded yet.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {/* ── TAB: LABOR (INDIVIDUAL WORKERS) ────────────────────────────── */}
-              {projectTab === 'labor' && (
-                <div>
-                  {/* Sub-navigation for Labor: Workers List, Daily Attendance, Payments */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
-                    <div style={{ display: 'flex', gap: 6 }}>
-                      <button
-                        className={laborSubTab === 'list' ? 'active-btn' : 'muted'}
-                        onClick={() => setLaborSubTab('list')}
-                      >
-                        👷 Laborers ({projectLabors.length})
-                      </button>
-                      <button
-                        className={laborSubTab === 'attendance' ? 'active-btn' : 'muted'}
-                        onClick={() => {
-                          setLaborSubTab('attendance');
-                          loadLaborAttendance(laborAttendanceDate, project.id);
-                        }}
-                      >
-                        📅 Daily Attendance
-                      </button>
-                      {!isSupervisor && (
-                        <button
-                          className={laborSubTab === 'payments' ? 'active-btn' : 'muted'}
-                          onClick={() => {
-                            setLaborSubTab('payments');
-                            loadLaborPayments(project.id);
-                          }}
-                        >
-                          💸 Labor Payments ({laborPaymentsList.length})
-                        </button>
-                      )}
-                    </div>
-
-                    <div>
-                      {laborSubTab === 'list' && (
-                        <button
-                          onClick={() => {
-                            setLaborForm({ name: '', phone: '', trade: '', vendor_id: '', daily_rate: '', is_active: true });
-                            setEditingLaborId(null);
-                            setAddLaborModal(true);
-                          }}
-                        >
-                          + Add Labor
-                        </button>
-                      )}
-                      {laborSubTab === 'attendance' && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ fontSize: 13, fontWeight: 600 }}>Date:</span>
-                          <input
-                            type="date"
-                            value={laborAttendanceDate}
-                            onChange={(e) => {
-                              setLaborAttendanceDate(e.target.value);
-                              loadLaborAttendance(e.target.value, project.id);
-                            }}
-                            style={{ maxWidth: 160 }}
-                          />
-                          <button onClick={saveAllLaborAttendance} disabled={savingLaborAttendance}>
-                            {savingLaborAttendance ? 'Saving...' : '💾 Save Attendance'}
-                          </button>
                         </div>
                       )}
-                      {laborSubTab === 'payments' && !isSupervisor && (
-                        <button
-                          onClick={() => {
-                            setLaborPaymentForm({ labor_id: projectLabors[0]?.id || '', amount: '', payment_date: today(), mode: 'cash', note: '' });
-                            setEditingLaborPaymentId(null);
-                            setLaborPaymentModal(true);
-                          }}
-                        >
-                          + Record Labor Payment
-                        </button>
-                      )}
-                    </div>
-                  </div>
 
-                  {/* 1. LABOR LIST */}
-                  {laborSubTab === 'list' && (
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Labor Name</th>
-                          <th>Trade</th>
-                          <th>Contractor / Vendor</th>
-                          <th>Daily Rate</th>
-                          <th>Total Earned</th>
-                          {!isSupervisor && <th>Total Paid</th>}
-                          {!isSupervisor && <th>Balance Due</th>}
-                          <th>Status</th>
-                          <th style={{ textAlign: 'right' }}>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {projectLabors.map((lab) => {
-                          const isOverpaid = Number(lab.balance_due || 0) < 0;
-                          return (
-                            <tr key={lab.id}>
-                              <td>
-                                <b>{lab.name}</b>
-                                {lab.phone && <div style={{ fontSize: 11, color: '#64748b' }}>{lab.phone}</div>}
-                              </td>
-                              <td>{lab.trade || 'Helper'}</td>
-                              <td>
-                                {lab.vendor_name ? (
-                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                                    <span style={{ fontSize: 11, background: '#f1f5f9', color: '#334155', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
-                                      🏢 {lab.vendor_name}
-                                    </span>
-                                  </span>
-                                ) : (
-                                  <span style={{ fontSize: 11, background: '#ecfdf5', color: '#047857', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
-                                    ⚡ Independent
-                                  </span>
-                                )}
-                              </td>
-                              <td style={{ fontWeight: 600 }}>{INR(lab.daily_rate)}/day</td>
-                              <td style={{ fontWeight: 600 }}>{INR(lab.total_earned)}</td>
-                              {!isSupervisor && <td style={{ color: '#16a34a', fontWeight: 600 }}>{INR(lab.total_paid)}</td>}
-                              {!isSupervisor && (
-                                <td>
-                                  <b style={{ color: isOverpaid ? '#dc2626' : '#0f172a' }}>
-                                    {INR(lab.balance_due)}
-                                  </b>
-                                  {isOverpaid && (
-                                    <span className="badge badge-overused" style={{ marginLeft: 4 }}>
-                                      ⚠️ Overpaid
-                                    </span>
-                                  )}
-                                </td>
-                              )}
-                              <td>
-                                <span className={`badge ${lab.is_active ? 'badge-active' : 'badge-completed'}`}>
-                                  {lab.is_active ? 'Active' : 'Inactive'}
-                                </span>
-                              </td>
-                              <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                                <button onClick={() => openLaborDetail(lab)}>
-                                  View Details &rarr;
-                                </button>
-                                <button
-                                  className="muted"
-                                  onClick={() => {
-                                    setLaborForm({
-                                      name: lab.name,
-                                      phone: lab.phone || '',
-                                      trade: lab.trade || '',
-                                      vendor_id: lab.vendor_id || '',
-                                      daily_rate: lab.daily_rate,
-                                      is_active: lab.is_active,
-                                    });
-                                    setEditingLaborId(lab.id);
-                                    setAddLaborModal(true);
-                                  }}
-                                >
-                                  Edit
-                                </button>
-                                {!isAgent && (
-                                  <button className="danger" onClick={() => del('labor', lab.id)}>
-                                    Delete
-                                  </button>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                        {projectLabors.length === 0 && (
-                          <tr>
-                            <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                              No laborers added to this project yet. Click &ldquo;+ Add Labor&rdquo; above.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  )}
-
-                  {/* 2. LABOR ATTENDANCE SUB-TAB (Grouped by Vendor or Independent) */}
-                  {laborSubTab === 'attendance' && (
-                    <div>
-                      {(() => {
-                        const groups = {};
-                        laborAttendanceRows.forEach((r) => {
-                          const key = r.vendor_name ? `Vendor: ${r.vendor_name}` : 'Independent (Direct Workers)';
-                          if (!groups[key]) groups[key] = [];
-                          groups[key].push(r);
-                        });
-
-                        const groupKeys = Object.keys(groups);
-                        if (groupKeys.length === 0) {
-                          return (
-                            <div style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
-                              No active laborers found for this project. Add laborers in the Labor tab first.
-                            </div>
-                          );
-                        }
-
-                        return groupKeys.map((grpTitle) => (
-                          <div key={grpTitle} className="card" style={{ marginBottom: 16 }}>
-                            <h4 style={{ margin: '0 0 10px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
-                              <span>{grpTitle.startsWith('Vendor') ? '🏢' : '⚡'}</span>
-                              <span>{grpTitle}</span>
-                              <span style={{ fontSize: 12, color: '#64748b', fontWeight: 'normal' }}>
-                                ({groups[grpTitle].length} {groups[grpTitle].length === 1 ? 'worker' : 'workers'})
-                              </span>
-                            </h4>
-
-                            <table>
-                              <thead>
-                                <tr>
-                                  <th>Labor Name</th>
-                                  <th>Trade</th>
-                                  <th>Daily Rate</th>
-                                  <th>Status</th>
-                                  <th>Wage Amount</th>
-                                  <th>Note</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {groups[grpTitle].map((row) => {
-                                  const idx = laborAttendanceRows.findIndex((x) => x.labor_id === row.labor_id);
-                                  return (
-                                    <tr key={row.labor_id}>
-                                      <td>
-                                        <b>{row.name}</b>
-                                        {row.phone && <span style={{ fontSize: 11, color: '#64748b', display: 'block' }}>{row.phone}</span>}
-                                      </td>
-                                      <td>{row.trade || 'Helper'}</td>
-                                      <td>{INR(row.daily_rate)}/day</td>
-                                      <td>
-                                        <div style={{ display: 'flex', gap: 4 }}>
-                                          {['present', 'half_day', 'absent'].map((st) => (
-                                            <button
-                                              key={st}
-                                              type="button"
-                                              onClick={() => {
-                                                const next = [...laborAttendanceRows];
-                                                next[idx].status = st;
-                                                const mult = st === 'present' ? 1 : st === 'half_day' ? 0.5 : 0;
-                                                next[idx].wage_amount = mult * Number(row.daily_rate || 0);
-                                                setLaborAttendanceRows(next);
-                                              }}
-                                              className={row.status === st ? 'active-btn' : 'muted'}
-                                              style={{ padding: '3px 8px', fontSize: 11 }}
-                                            >
-                                              {st === 'present' ? 'Present' : st === 'half_day' ? 'Half Day' : 'Absent'}
-                                            </button>
-                                          ))}
-                                        </div>
-                                      </td>
-                                      <td style={{ fontWeight: 700, color: '#16a34a' }}>
-                                        {INR(row.wage_amount)}
-                                      </td>
-                                      <td>
-                                        <input
-                                          type="text"
-                                          placeholder="Note..."
-                                          value={row.note || ''}
-                                          onChange={(e) => {
-                                            const next = [...laborAttendanceRows];
-                                            next[idx].note = e.target.value;
-                                            setLaborAttendanceRows(next);
-                                          }}
-                                          style={{ width: 140 }}
-                                        />
-                                      </td>
-                                    </tr>
-                                  );
-                                })}
-                              </tbody>
-                            </table>
-                          </div>
-                        ));
-                      })()}
-                    </div>
-                  )}
-
-                  {/* 3. LABOR PAYMENTS SUB-TAB */}
-                  {laborSubTab === 'payments' && !isSupervisor && (
-                    <div>
-                      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
+                      {paymentsSubTab === 'labor' && (
+                        <div>
+                          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
                         <select
                           value={laborPaymentFilterLabor}
                           onChange={(e) => setLaborPaymentFilterLabor(e.target.value)}
@@ -3215,10 +2997,615 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           )}
                         </tbody>
                       </table>
+                        </div>
+                      )}
+
+                      {paymentsSubTab === 'party' && (
+                        <div>
+                          <form onSubmit={savePartyPayment} className="card" style={{ marginBottom: 16 }}>
+                    <h4 style={{ margin: '0 0 12px', fontSize: 15 }}>Record Party Payment (Client Receipts)</h4>
+                    <div className="grid">
+                      <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={partyPaymentForm.amount} set={setPartyPaymentForm} required />
+                      <Input label="Date" name="payment_date" type="date" value={partyPaymentForm.payment_date} set={setPartyPaymentForm} required />
+                      <label>
+                        <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Mode</small>
+                        <select
+                          value={partyPaymentForm.mode}
+                          onChange={(e) => setPartyPaymentForm((f) => ({ ...f, mode: e.target.value }))}
+                        >
+                          <option value="bank">Bank Transfer</option>
+                          <option value="cheque">Cheque</option>
+                          <option value="cash">Cash</option>
+                          <option value="upi">UPI</option>
+                        </select>
+                      </label>
+                      {(partyPaymentForm.mode === 'upi' || partyPaymentForm.mode === 'bank') && (
+                        <Input label="Transaction Reference / UPI ID" name="transaction_reference" value={partyPaymentForm.transaction_reference || ''} set={setPartyPaymentForm} placeholder="e.g. UPI ID, UTR number, or bank transaction ID" />
+                      )}
+                      <Input label="Note / Reference" name="note" value={partyPaymentForm.note} set={setPartyPaymentForm} />
+                    </div>
+                    <p style={{ marginTop: 12, textAlign: 'right' }}>
+                      <button type="submit">Record Payment</button>
+                    </p>
+                  </form>
+
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Mode</th>
+                        <th>Note</th>
+                        <th style={{ textAlign: 'right' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {partyPayments.map((p) => (
+                        <tr key={p.id}>
+                          <td>{p.payment_date}</td>
+                          <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
+                          <td style={{ textTransform: 'uppercase', fontSize: 11 }}>{p.mode}</td>
+                          <td>
+                            {p.note || '—'}
+                            {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
+                          </td>
+                          <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                            {!isAgent && (
+                              <button className="danger" onClick={() => del('partyPayment', p.id)}>
+                                Delete
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                      {partyPayments.length === 0 && (
+                        <tr>
+                          <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                            No party payments recorded yet.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                        </div>
+                      )}
                     </div>
                   )}
-                </div>
-              )}
+
+                  {/* ── 5. CONSTRUCTION TAB ───────────────────────────────────── */}
+                  {projectTab === 'construction' && (
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          <button
+                            className={constructionSubTab === 'stock' ? 'active-btn' : 'muted'}
+                            onClick={() => handleConstructionSubChange('stock')}
+                          >
+                            Stock Summary ({stockRows.length})
+                          </button>
+                          <button
+                            className={constructionSubTab === 'received' ? 'active-btn' : 'muted'}
+                            onClick={() => handleConstructionSubChange('received')}
+                          >
+                            Received History ({receivedRows.length})
+                          </button>
+                          <button
+                            className={constructionSubTab === 'used' ? 'active-btn' : 'muted'}
+                            onClick={() => handleConstructionSubChange('used')}
+                          >
+                            Usage History ({usedRows.length})
+                          </button>
+                          <button
+                            className={constructionSubTab === 'adjustments' ? 'active-btn' : 'muted'}
+                            onClick={() => handleConstructionSubChange('adjustments')}
+                          >
+                            Adjustments ({adjustmentRows.length})
+                          </button>
+                          <button
+                            className={constructionSubTab === 'expenses' ? 'active-btn' : 'muted'}
+                            onClick={() => handleConstructionSubChange('expenses')}
+                          >
+                            Other Expenses ({expenseRows.length})
+                          </button>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          {constructionSubTab !== 'expenses' ? (
+                            <>
+                              <button
+                                onClick={() => {
+                                  setReceivedForm(receivedBlank);
+                                  setEditingReceivedId(null);
+                                  setReceivedModal(true);
+                                }}
+                              >
+                                + Material Received
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setUsedForm(usedBlank);
+                                  setEditingUsedId(null);
+                                  setUsedModal(true);
+                                }}
+                              >
+                                - Material Used
+                              </button>
+                              <button
+                                className="muted"
+                                onClick={() => {
+                                  setAdjustmentForm(adjustmentBlank);
+                                  setEditingAdjId(null);
+                                  setAdjustmentModal(true);
+                                }}
+                              >
+                                ⚡ Adjustment / Wastage
+                              </button>
+                              <button
+                                className="muted"
+                                onClick={() => {
+                                  setMaterialForm(materialBlank);
+                                  setAddMaterialModal(true);
+                                }}
+                              >
+                                + Master Material
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                setExpenseForm(expenseBlank);
+                                setEditingExpenseId(null);
+                                setExpenseModal(true);
+                              }}
+                            >
+                              + Record Other Expense
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {materialsSubTab === 'stock' && (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Material</th>
+                          <th>Category</th>
+                          <th>Unit</th>
+                          <th>Received</th>
+                          <th>Used</th>
+                          <th>Adjusted</th>
+                          <th>Current Stock</th>
+                          {!isSupervisor && <th>Avg Rate</th>}
+                          {!isSupervisor && <th>Stock Value</th>}
+                          <th>Status</th>
+                          <th style={{ textAlign: 'right' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {stockRows.map((r) => {
+                          const isLow = Number(r.stock) <= Number(r.min_stock_level || 0);
+                          const isOverUsed = Number(r.stock) < 0;
+                          return (
+                            <tr key={r.id}>
+                              <td>
+                                <b>{r.name}</b>
+                                {r.min_stock_level > 0 && (
+                                  <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>
+                                    Min: {Number(r.min_stock_level).toFixed(2)} {r.unit}
+                                  </span>
+                                )}
+                              </td>
+                              <td>{r.category || '—'}</td>
+                              <td>{r.unit}</td>
+                              <td>{Number(r.received).toFixed(2)}</td>
+                              <td>{Number(r.used).toFixed(2)}</td>
+                              <td>{Number(r.adjusted).toFixed(2)}</td>
+                              <td style={{ fontWeight: 700, color: isOverUsed ? '#dc2626' : '#0f172a' }}>
+                                {Number(r.stock).toFixed(2)}
+                              </td>
+                              {!isSupervisor && <td>{INR(r.average_rate)}</td>}
+                              {!isSupervisor && <td style={{ fontWeight: 600 }}>{INR(r.stock_value)}</td>}
+                              <td>
+                                {isOverUsed ? (
+                                  <span className="badge badge-overused">⚠️ Over-used</span>
+                                ) : isLow ? (
+                                  <span className="badge badge-lowstock">Low Stock</span>
+                                ) : (
+                                  <span className="badge badge-active">Adequate</span>
+                                )}
+                              </td>
+                              <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                                <button
+                                  className="muted"
+                                  onClick={() => openMaterialTimeline(r)}
+                                  title="View running timeline history"
+                                >
+                                  🔍 Timeline History
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {stockRows.length === 0 && (
+                          <tr>
+                            <td colSpan={11} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                              No material records yet for this project. Click &ldquo;+ Material Received&rdquo; to record initial deliveries.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  )}
+
+                  {/* SUBTAB 2: RECEIVED HISTORY */}
+
+                      {materialsSubTab === 'received' && (
+                    <>
+                      <div className="bar" style={{ marginBottom: 12, gap: 10, flexWrap: 'wrap' }}>
+                        <select
+                          value={matFilterId}
+                          onChange={(e) => setMatFilterId(e.target.value)}
+                          style={{ maxWidth: 200 }}
+                        >
+                          <option value="">All Materials</option>
+                          {materialsMaster.map((m) => (
+                            <option value={m.id} key={m.id}>{m.name}</option>
+                          ))}
+                        </select>
+                        <input
+                          type="date"
+                          value={matFilterFrom}
+                          onChange={(e) => setMatFilterFrom(e.target.value)}
+                          placeholder="From date"
+                        />
+                        <input
+                          type="date"
+                          value={matFilterTo}
+                          onChange={(e) => setMatFilterTo(e.target.value)}
+                          placeholder="To date"
+                        />
+                      </div>
+
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>Material</th>
+                            <th>Supplier / Source</th>
+                            <th>Quantity</th>
+                            {!isSupervisor && <th>Rate</th>}
+                            {!isSupervisor && <th>Total Amount</th>}
+                            <th>Challan No</th>
+                            <th>Bill</th>
+                            <th>Note</th>
+                            <th style={{ textAlign: 'right' }}>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {receivedRows
+                            .filter((r) => !matFilterId || String(r.material_id) === matFilterId)
+                            .filter((r) => !matFilterFrom || r.received_date >= matFilterFrom)
+                            .filter((r) => !matFilterTo || r.received_date <= matFilterTo)
+                            .map((r) => (
+                              <tr key={r.id}>
+                                <td>{r.received_date}</td>
+                                <td><b>{r.material_name}</b></td>
+                                <td>
+                                  {r.supplier_name || '—'}
+                                  {r.transfer_in && <span className="badge badge-active" style={{ marginLeft: 4 }}>Transfer In</span>}
+                                </td>
+                                <td>{Number(r.quantity).toFixed(2)} {r.material_unit}</td>
+                                {!isSupervisor && <td>{INR(r.rate)}</td>}
+                                {!isSupervisor && <td style={{ fontWeight: 600 }}>{INR(r.amount)}</td>}
+                                <td>{r.challan_no || '—'}</td>
+                                <td>
+                                  {r.bill_url ? (
+                                    <a href={r.bill_url} target="_blank" rel="noreferrer" title={r.bill_filename} style={{ textDecoration: 'none' }}>
+                                      📄
+                                    </a>
+                                  ) : '—'}
+                                </td>
+                                <td>{r.note || '—'}</td>
+                                <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                                  <button
+                                    className="muted"
+                                    onClick={() => {
+                                      setEditingReceivedId(r.id);
+                                      setReceivedForm({
+                                        material_id: String(r.material_id),
+                                        quantity: r.quantity,
+                                        rate: r.rate,
+                                        received_date: r.received_date,
+                                        supplier_name: r.supplier_name || '',
+                                        challan_no: r.challan_no || '',
+                                        note: r.note || '',
+                                      });
+                                      setReceivedModal(true);
+                                    }}
+                                  >
+                                    Edit
+                                  </button>
+                                  {!isAgent && (
+                                    <button className="danger" onClick={() => del('received', r.id)}>
+                                      Delete
+                                    </button>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          {receivedRows.length === 0 && (
+                            <tr>
+                              <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                No material received entries.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </>
+                  )}
+
+                  {/* SUBTAB 3: USAGE HISTORY */}
+
+                      {materialsSubTab === 'used' && (
+                    <>
+                      <div className="bar" style={{ marginBottom: 12, gap: 10, flexWrap: 'wrap' }}>
+                        <select
+                          value={matFilterId}
+                          onChange={(e) => setMatFilterId(e.target.value)}
+                          style={{ maxWidth: 200 }}
+                        >
+                          <option value="">All Materials</option>
+                          {materialsMaster.map((m) => (
+                            <option value={m.id} key={m.id}>{m.name}</option>
+                          ))}
+                        </select>
+                        <input
+                          type="date"
+                          value={matFilterFrom}
+                          onChange={(e) => setMatFilterFrom(e.target.value)}
+                        />
+                        <input
+                          type="date"
+                          value={matFilterTo}
+                          onChange={(e) => setMatFilterTo(e.target.value)}
+                        />
+                      </div>
+
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>Material</th>
+                            <th>Quantity Used</th>
+                            <th>Used For</th>
+                            <th>Note</th>
+                            <th>Status</th>
+                            <th style={{ textAlign: 'right' }}>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {usedRows
+                            .filter((r) => !matFilterId || String(r.material_id) === matFilterId)
+                            .filter((r) => !matFilterFrom || r.used_date >= matFilterFrom)
+                            .filter((r) => !matFilterTo || r.used_date <= matFilterTo)
+                            .map((r) => (
+                              <tr key={r.id}>
+                                <td>{r.used_date}</td>
+                                <td><b>{r.material_name}</b></td>
+                                <td style={{ fontWeight: 600 }}>{Number(r.quantity).toFixed(2)} {r.material_unit}</td>
+                                <td>{r.used_for || '—'}</td>
+                                <td>{r.note || '—'}</td>
+                                <td>
+                                  {r.over_used && <span className="badge badge-overused">Over-used</span>}
+                                </td>
+                                <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                                  <button
+                                    className="muted"
+                                    onClick={() => {
+                                      setEditingUsedId(r.id);
+                                      setUsedForm({
+                                        material_id: String(r.material_id),
+                                        quantity: r.quantity,
+                                        used_date: r.used_date,
+                                        used_for: r.used_for || '',
+                                        note: r.note || '',
+                                      });
+                                      setUsedModal(true);
+                                    }}
+                                  >
+                                    Edit
+                                  </button>
+                                  {!isAgent && (
+                                    <button className="danger" onClick={() => del('used', r.id)}>
+                                      Delete
+                                    </button>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          {usedRows.length === 0 && (
+                            <tr>
+                              <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                No material usage entries yet.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </>
+                  )}
+
+                  {/* SUBTAB 4: ADJUSTMENTS HISTORY */}
+
+                      {materialsSubTab === 'adjustments' && (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Material</th>
+                          <th>Type</th>
+                          <th>Quantity</th>
+                          <th>Destination / Details</th>
+                          <th>Bill</th>
+                          <th>Note</th>
+                          <th>Status</th>
+                          <th style={{ textAlign: 'right' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {adjustmentRows.map((r) => (
+                          <tr key={r.id}>
+                            <td>{r.adjustment_date}</td>
+                            <td><b>{r.material_name}</b></td>
+                            <td>
+                              <span className="badge badge-active" style={{ textTransform: 'capitalize' }}>
+                                {r.adjustment_type?.replace(/_/g, ' ')}
+                              </span>
+                            </td>
+                            <td style={{ fontWeight: 600 }}>{Number(r.quantity).toFixed(2)} {r.material_unit}</td>
+                            <td>{r.to_project_name ? `Transfer to: ${r.to_project_name}` : '—'}</td>
+                            <td>
+                              {r.bill_url ? (
+                                <a href={r.bill_url} target="_blank" rel="noreferrer" title={r.bill_filename} style={{ textDecoration: 'none' }}>
+                                  📄
+                                </a>
+                              ) : '—'}
+                            </td>
+                            <td>{r.note || '—'}</td>
+                            <td>{r.over_used && <span className="badge badge-overused">Over-used</span>}</td>
+                            <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                              <button
+                                className="muted"
+                                onClick={() => {
+                                  setEditingAdjId(r.id);
+                                  setAdjustmentForm({
+                                    material_id: String(r.material_id),
+                                    adjustment_type: r.adjustment_type,
+                                    quantity: r.quantity,
+                                    adjustment_date: r.adjustment_date,
+                                    to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                    note: r.note || '',
+                                  });
+                                  setAdjustmentModal(true);
+                                }}
+                              >
+                                Edit
+                              </button>
+                              {!isAgent && (
+                                <button className="danger" onClick={() => del('adjustment', r.id)}>
+                                  Delete
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                        {adjustmentRows.length === 0 && (
+                          <tr>
+                            <td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                              No adjustments or wastage entries recorded.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  )}
+
+                      {constructionSubTab === 'expenses' && (
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <select
+                        value={expenseCategoryFilter}
+                        onChange={(e) => setExpenseCategoryFilter(e.target.value)}
+                        style={{ maxWidth: 220 }}
+                      >
+                        <option value="">All Categories</option>
+                        <option value="transport">Transport</option>
+                        <option value="machine_rent">Machine Rent</option>
+                        <option value="electricity_water">Electricity &amp; Water</option>
+                        <option value="permit">Permits &amp; Approvals</option>
+                        <option value="misc">Miscellaneous</option>
+                      </select>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>
+                        Total: {INR(expenseSummary.totalAmount)}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setExpenseForm(expenseBlank);
+                        setEditingExpenseId(null);
+                        setExpenseModal(true);
+                      }}
+                    >
+                      + Record Other Expense
+                    </button>
+                  </div>
+
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Note</th>
+                        <th>Recorded By</th>
+                        <th style={{ textAlign: 'right' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {expenseRows
+                        .filter((r) => !expenseCategoryFilter || r.category === expenseCategoryFilter)
+                        .map((r) => (
+                          <tr key={r.id}>
+                            <td>{r.expense_date}</td>
+                            <td>
+                              <span className="badge badge-active" style={{ textTransform: 'capitalize' }}>
+                                {r.category?.replace(/_/g, ' ')}
+                              </span>
+                            </td>
+                            <td style={{ fontWeight: 700, color: '#b45309' }}>{INR(r.amount)}</td>
+                            <td>{r.note || '—'}</td>
+                            <td style={{ fontSize: 11, color: '#64748b' }}>{r.created_by}</td>
+                            <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                              <button
+                                className="muted"
+                                onClick={() => {
+                                  setEditingExpenseId(r.id);
+                                  setExpenseForm({
+                                    category: r.category,
+                                    amount: r.amount,
+                                    expense_date: r.expense_date,
+                                    note: r.note || '',
+                                  });
+                                  setExpenseModal(true);
+                                }}
+                              >
+                                Edit
+                              </button>
+                              {!isAgent && (
+                                <button className="danger" onClick={() => del('expense', r.id)}>
+                                  Delete
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      {expenseRows.length === 0 && (
+                        <tr>
+                          <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                            No other expenses recorded for this project.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
             </>
           ) : selectedVendor ? (
             /* ── VENDOR DETAIL SCREEN (ATTENDANCE CALENDAR & MATERIAL HISTORY) ── */
@@ -3243,18 +3630,18 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <div className="stats" style={{ marginTop: 12 }}>
                     <div className="stat">
                       <small>Total Earned</small>
-                      <b>{INR(selectedVendor.total_earned)}</b>
+                      <b>{INR(selectedVendor.total_earned ?? selectedVendor.earned)}</b>
                     </div>
                     {!isSupervisor && (
                       <>
                         <div className="stat">
                           <small>Total Paid</small>
-                          <b style={{ color: '#16a34a' }}>{INR(selectedVendor.total_paid)}</b>
+                          <b style={{ color: '#16a34a' }}>{INR(selectedVendor.total_paid ?? selectedVendor.paid)}</b>
                         </div>
                         <div className="stat">
                           <small>Balance Due</small>
-                          <b style={{ color: selectedVendor.balance_due < 0 ? '#dc2626' : '#0f172a' }}>
-                            {INR(selectedVendor.balance_due)}
+                          <b style={{ color: Number(selectedVendor.balance_due ?? selectedVendor.balance) < 0 ? '#dc2626' : '#0f172a' }}>
+                            {INR(selectedVendor.balance_due ?? selectedVendor.balance)}
                           </b>
                         </div>
                       </>
@@ -3411,23 +3798,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 <button className="muted" onClick={() => setSelectedLabor(null)}>
                   &larr; Back to Project Overview
                 </button>
-                {!isSupervisor && (
-                  <button
-                    onClick={() => {
-                      setLaborPaymentForm({
-                        labor_id: selectedLabor.id,
-                        amount: '',
-                        payment_date: today(),
-                        mode: 'cash',
-                        note: '',
-                      });
-                      setEditingLaborPaymentId(null);
-                      setLaborPaymentModal(true);
-                    }}
-                  >
-                    + Record Labor Payment
-                  </button>
-                )}
+
               </div>
 
               <div className="card" style={{ marginBottom: 16 }}>
@@ -3529,21 +3900,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 <div className="card">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                     <h4 style={{ margin: 0, fontSize: 15 }}>Payment History</h4>
-                    <button
-                      onClick={() => {
-                        setLaborPaymentForm({
-                          labor_id: selectedLabor.id,
-                          amount: '',
-                          payment_date: today(),
-                          mode: 'cash',
-                          note: '',
-                        });
-                        setEditingLaborPaymentId(null);
-                        setLaborPaymentModal(true);
-                      }}
-                    >
-                      + Record Payment
-                    </button>
+
                   </div>
                   <table>
                     <thead>

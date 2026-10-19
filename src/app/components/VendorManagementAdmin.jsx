@@ -609,99 +609,38 @@ export default function VendorManagementAdmin({ isDarkMode }) {
         </div>
       )}
 
-      {/* Stats */}
-      <div className="stats-grid">
-        {stats.map((stat, idx) => (
-          <div key={idx} className={`stat-card ${stat.color}`}>
-            <div>
-              <div className="stat-label">{stat.label}</div>
-              <div className="stat-value">{stat.value}</div>
+      {selectedVendor ? (
+        <div style={{ width: '100%', padding: '0.25rem 0 2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <button
+              onClick={() => setSelectedVendor(null)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'transparent',
+                border: `1px solid ${isDarkMode ? '#333' : '#e2e8f0'}`,
+                color: isDarkMode ? '#f3f4f6' : '#111827',
+                padding: '0.5rem 1rem',
+                borderRadius: 8,
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '0.875rem'
+              }}
+            >
+              ← Back to Vendors
+            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span className={`badge badge-${selectedVendor.verification_status}`}>
+                ● {formatStatus(selectedVendor.verification_status)}
+              </span>
+              <span className={`badge badge-${selectedVendor.status}`}>
+                {selectedVendor.status}
+              </span>
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* Controls */}
-      <div className="controls">
-        <div className="filter-tabs">
-          {['all', 'pending', 'verified', 'active', 'inactive'].map(f => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`filter-btn ${filter === f ? 'active' : ''}`}
-            >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
-            </button>
-          ))}
-        </div>
-        <input
-          type="text"
-          placeholder="Search vendors..."
-          className="search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      {/* Table */}
-      {loading ? (
-        <div className="loading">Loading vendors...</div>
-      ) : filteredVendors.length === 0 ? (
-        <div className="empty-state">
-          {vendors.length === 0 
-            ? 'No vendors registered yet.' 
-            : `No vendors match filter "${filter}" ${searchTerm ? `and search "${searchTerm}"` : ''}`}
-        </div>
-      ) : (
-        <table className="vendors-table">
-          <thead>
-            <tr>
-              <th>Vendor</th>
-              <th>Email</th>
-              <th>City</th>
-              <th>Services</th>
-              <th>Verification</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredVendors.map(vendor => (
-              <tr key={vendor.id}>
-                <td>
-                  <div className="vendor-name">{vendor.vendor_name || vendor.shop_name || vendor.email}</div>
-                  <div className="vendor-meta">{vendor.shop_name || 'Shop not added'}</div>
-                  <div className="vendor-meta">{vendor.city}, {vendor.state}</div>
-                </td>
-                <td className="vendor-meta">{vendor.email}</td>
-                <td className="vendor-meta">{vendor.city}</td>
-                <td className="vendor-meta">{vendor.services?.length || 0}</td>
-                <td>
-                  <span className={`badge badge-${vendor.verification_status}`}>
-                    {formatStatus(vendor.verification_status)}
-                  </span>
-                </td>
-                <td>
-                  <span className={`badge badge-${vendor.status}`}>
-                    {vendor.status}
-                  </span>
-                </td>
-                <td>
-                  <ActionIconButton
-                    icon={Eye}
-                    label="View vendor details"
-                    onClick={() => openVendor(vendor)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-
-      {/* Modal */}
-      {selectedVendor && (
-        <div className="modal-backdrop" onClick={() => setSelectedVendor(null)}>
+          <div style={{ background: isDarkMode ? '#1a1a1f' : '#ffffff', border: `1px solid ${isDarkMode ? '#2d2d35' : '#e2e8f0'}`, borderRadius: 14, padding: '1.75rem', width: '100%', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
           <div className="modal" onClick={e => e.stopPropagation()}>
 
             {/* Header */}
@@ -920,7 +859,101 @@ export default function VendorManagementAdmin({ isDarkMode }) {
               <button className="modal-btn modal-btn-cancel" onClick={() => setSelectedVendor(null)}>Close</button>
             </div>
           </div>
+          </div>
         </div>
+      ) : (
+        <>
+      {/* Stats */}
+      <div className="stats-grid">
+        {stats.map((stat, idx) => (
+          <div key={idx} className={`stat-card ${stat.color}`}>
+            <div>
+              <div className="stat-label">{stat.label}</div>
+              <div className="stat-value">{stat.value}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Controls */}
+      <div className="controls">
+        <div className="filter-tabs">
+          {['all', 'pending', 'verified', 'active', 'inactive'].map(f => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`filter-btn ${filter === f ? 'active' : ''}`}
+            >
+              {f.charAt(0).toUpperCase() + f.slice(1)}
+            </button>
+          ))}
+        </div>
+        <input
+          type="text"
+          placeholder="Search vendors..."
+          className="search-input"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      {/* Table */}
+      {loading ? (
+        <div className="loading">Loading vendors...</div>
+      ) : filteredVendors.length === 0 ? (
+        <div className="empty-state">
+          {vendors.length === 0 
+            ? 'No vendors registered yet.' 
+            : `No vendors match filter "${filter}" ${searchTerm ? `and search "${searchTerm}"` : ''}`}
+        </div>
+      ) : (
+        <table className="vendors-table">
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th>Email</th>
+              <th>City</th>
+              <th>Services</th>
+              <th>Verification</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredVendors.map(vendor => (
+              <tr key={vendor.id}>
+                <td>
+                  <div className="vendor-name">{vendor.vendor_name || vendor.shop_name || vendor.email}</div>
+                  <div className="vendor-meta">{vendor.shop_name || 'Shop not added'}</div>
+                  <div className="vendor-meta">{vendor.city}, {vendor.state}</div>
+                </td>
+                <td className="vendor-meta">{vendor.email}</td>
+                <td className="vendor-meta">{vendor.city}</td>
+                <td className="vendor-meta">{vendor.services?.length || 0}</td>
+                <td>
+                  <span className={`badge badge-${vendor.verification_status}`}>
+                    {formatStatus(vendor.verification_status)}
+                  </span>
+                </td>
+                <td>
+                  <span className={`badge badge-${vendor.status}`}>
+                    {vendor.status}
+                  </span>
+                </td>
+                <td>
+                  <ActionIconButton
+                    icon={Eye}
+                    label="View vendor details"
+                    onClick={() => openVendor(vendor)}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+        </>
       )}
     </div>
   );

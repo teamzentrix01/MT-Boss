@@ -36,12 +36,30 @@ export async function GET(req) {
     // Mode 2: Project-wide daily labor attendance for bulk marking
     const projectId = Number(s.get('projectId'));
     const date = s.get('date');
-    if (!Number.isInteger(projectId) || !validDate(date)) {
-      return NextResponse.json({ success: false, error: 'projectId and valid date (or laborId) are required' }, { status: 400 });
+    const history = s.get('history') === '1' || s.get('all') === '1';
+
+    if (!Number.isInteger(projectId)) {
+      return NextResponse.json({ success: false, error: 'projectId is required' }, { status: 400 });
     }
 
     const auth = await assertAgentAccess(req, projectId, 'labor');
     if (!auth.allowed) return auth.response;
+
+    if (history || !validDate(date)) {
+      const month = s.get('month') || '';
+      const r = await pool.query(
+        `SELECT la.*, l.name AS labor_name, l.phone, l.trade, l.daily_rate, v.name AS vendor_name
+         FROM pm_labor_attendance la
+         JOIN pm_labor l ON l.id = la.labor_id
+         LEFT JOIN pm_vendors v ON v.id = l.vendor_id
+         WHERE l.project_id = $1
+           AND ($2 = '' OR TO_CHAR(la.attendance_date, 'YYYY-MM') = $2)
+         ORDER BY la.attendance_date DESC, la.created_at DESC
+         LIMIT 100`,
+        [projectId, month]
+      );
+      return NextResponse.json({ success: true, data: r.rows });
+    }
 
     const r = await pool.query(
       `SELECT l.id AS labor_id, l.name, l.name AS labor_name, l.phone, l.trade, l.daily_rate,
@@ -49,7 +67,9 @@ export async function GET(req) {
               la.id AS attendance_id,
               COALESCE(la.status, 'present') AS attendance_status,
               COALESCE(la.wage_amount, l.daily_rate) AS wage_amount,
-              la.note
+              la.note,
+              la.created_by,
+              la.created_at
        FROM pm_labor l
        LEFT JOIN pm_vendors v ON v.id = l.vendor_id
        LEFT JOIN pm_labor_attendance la ON la.labor_id = l.id AND la.attendance_date = $2

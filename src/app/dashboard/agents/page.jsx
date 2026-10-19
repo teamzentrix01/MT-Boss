@@ -707,169 +707,42 @@ export default function AgentsPage() {
             </form>
           </div>
         </div>
-      ) : (
-        <div className="ag-wrap">
-          {error && (
-          <div style={{ marginBottom: '0.75rem', padding: '0.75rem 1rem', border: '1px solid #fecaca', borderRadius: 8, background: '#fef2f2', color: '#991b1b', fontSize: '0.8rem', fontWeight: 700 }}>
-            {error}
-          </div>
-        )}
-
-        {/* Toolbar */}
-        <div className="ag-toolbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span className="ag-title">Agent Applications</span>
+      ) : selected ? (
+        <div className="ag-wrap" style={{ width: '100%', padding: '0.5rem 0 2rem' }}>
+          {/* Top navigation */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
             <button
               type="button"
-              className="ag-ok-btn"
-              onClick={() => setShowCreateModal(true)}
-              style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }}
+              onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setShowActivity(false); setSelectedLead(null); setPendingStatus(''); }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'transparent',
+                border: '1px solid var(--border)',
+                color: 'var(--text)',
+                padding: '0.5rem 1rem',
+                borderRadius: 8,
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '0.875rem'
+              }}
             >
-              + Create Agent
+              ← Back to Agents
             </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span className="ag-badge" style={{ background: statusStyle[selected.status]?.bg, color: statusStyle[selected.status]?.tx }}>
+                ● {selected.status}
+              </span>
+            </div>
           </div>
-          <input
-            className="ag-search"
-            placeholder="Search name, email, city…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
 
-        {/* Stats */}
-        <div className="ag-stats">
-          {[
-            { label: 'Total',    value: counts.All },
-            { label: 'Pending',  value: counts.Pending },
-            { label: 'Approved', value: counts.Approved },
-            { label: 'Rejected', value: counts.Rejected },
-          ].map(s => (
-            <div key={s.label} className="ag-stat">
-              <div className="ag-stat-label">{s.label}</div>
-              <div className="ag-stat-value">{s.value}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Filter tabs */}
-        <div className="ag-filters">
-          {['All', ...STATUS_OPTIONS].map(f => (
-            <button
-              key={f}
-              className={`ag-filter-btn${filter === f ? ' active' : ''}`}
-              onClick={() => setFilter(f)}
-            >
-              {f}
-              <span className="ag-count">{counts[f] ?? 0}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Table */}
-        <div className="ag-panel">
-          {loading ? (
-            <div className="ag-loading">Loading agents…</div>
-          ) : filtered.length === 0 ? (
-            <div className="ag-empty">No agent applications found.</div>
-          ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table className="ag-table">
-                <thead>
-                  <tr>
-                    {['Name', 'Contact', 'Location', 'Type', 'Experience', 'Status', 'PM Access', 'Specializations', 'Date', 'Action'].map(h => (
-                      <th key={h}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map(agent => {
-                    const st = statusStyle[agent.status] || statusStyle.Pending;
-                    const agentSpecs = Array.isArray(agent.specializations)
-                      ? agent.specializations
-                      : (typeof agent.specializations === 'string' ? JSON.parse(agent.specializations || '[]') : []);
-                    return (
-                      <tr key={agent.id} onClick={() => openAgent(agent)}>
-                        <td>
-                          <div className="ag-name">{agent.name}</div>
-                          <div className="ag-muted">{agent.occupation}</div>
-                        </td>
-                        <td>
-                          <div style={{ fontSize: '0.8125rem' }}>{agent.email}</div>
-                          <div className="ag-muted">{agent.phone}</div>
-                        </td>
-                        <td className="ag-muted">{agent.city}, {agent.state}</td>
-                        <td><span className="ag-type-badge">{agent.agent_type}</span></td>
-                        <td className="ag-muted">{agent.experience || '—'}</td>
-                        <td>
-                          <span
-                            className="ag-badge"
-                            style={{ background: st.bg, color: st.tx }}
-                          >
-                            {agent.status}
-                          </span>
-                        </td>
-                        <td>
-                          {agent.has_project_management_access ? (
-                            <span className="ag-badge" style={{ background: '#dbeafe', color: '#1e40af' }}>Granted</span>
-                          ) : (
-                            <span className="ag-badge" style={{ background: '#f1f5f9', color: '#64748b' }}>Not Granted</span>
-                          )}
-                        </td>
-                        <td>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                            {agentSpecs.length > 0 ? (
-                              agentSpecs.map(specKey => {
-                                const spec = SPECIALIZATION_OPTIONS.find(s => s.key === specKey);
-                                return spec ? (
-                                  <span
-                                    key={specKey}
-                                    className="ag-badge"
-                                    style={{ background: spec.bg, color: spec.tx, fontSize: '0.6875rem', padding: '2px 6px' }}
-                                  >
-                                    {spec.label}
-                                  </span>
-                                ) : null;
-                              })
-                            ) : (
-                              <span className="ag-muted" style={{ fontSize: '0.75rem' }}>None</span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="ag-muted">
-                          {new Date(agent.created_at).toLocaleDateString()}
-                        </td>
-                        <td>
-                          <ActionIconButton
-                            icon={Eye}
-                            label="View agent application"
-                            onClick={e => { e.stopPropagation(); openAgent(agent); }}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
-      )}
-
-      {/* Detail Modal */}
-      {selected && (
-        <div className="ag-backdrop" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setShowActivity(false); setSelectedLead(null); }}>
-          <div className="ag-modal" onClick={e => e.stopPropagation()}>
-            <div className="ag-modal-head">
-              <span className="ag-modal-title">Agent Application</span>
-              <button
-                className="ag-modal-close"
-                onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setShowActivity(false); setSelectedLead(null); setPendingStatus(''); }}
-                aria-label="Close modal"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >
-                <X size={16} strokeWidth={1.75} aria-hidden="true" />
-              </button>
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.75rem', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)' }}>{selected.name}</h2>
+                <div style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.2rem' }}>{selected.email} · {selected.phone}</div>
+              </div>
             </div>
 
             <div className="ag-modal-grid">
@@ -1214,11 +1087,165 @@ export default function AgentsPage() {
               </div>
             )}
 
-            <div className="ag-modal-footer">
-              <button className="ag-close-btn" onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setShowActivity(false); setSelectedLead(null); }}>Close</button>
+
+            <div style={{ marginTop: '1.5rem', borderTop: '1px solid var(--border)', paddingTop: '1.25rem' }}>
+              <button
+                type="button"
+                className="ag-close-btn"
+                onClick={() => { setSelected(null); setTempLogin(null); setWorkspace(null); setShowLeads(false); setShowActivity(false); setSelectedLead(null); }}
+              >
+                Back to Agents
+              </button>
             </div>
           </div>
         </div>
+      ) : (
+        <div className="ag-wrap">
+          {error && (
+          <div style={{ marginBottom: '0.75rem', padding: '0.75rem 1rem', border: '1px solid #fecaca', borderRadius: 8, background: '#fef2f2', color: '#991b1b', fontSize: '0.8rem', fontWeight: 700 }}>
+            {error}
+          </div>
+        )}
+
+        {/* Toolbar */}
+        <div className="ag-toolbar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span className="ag-title">Agent Applications</span>
+            <button
+              type="button"
+              className="ag-ok-btn"
+              onClick={() => setShowCreateModal(true)}
+              style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }}
+            >
+              + Create Agent
+            </button>
+          </div>
+          <input
+            className="ag-search"
+            placeholder="Search name, email, city…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+
+        {/* Stats */}
+        <div className="ag-stats">
+          {[
+            { label: 'Total',    value: counts.All },
+            { label: 'Pending',  value: counts.Pending },
+            { label: 'Approved', value: counts.Approved },
+            { label: 'Rejected', value: counts.Rejected },
+          ].map(s => (
+            <div key={s.label} className="ag-stat">
+              <div className="ag-stat-label">{s.label}</div>
+              <div className="ag-stat-value">{s.value}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Filter tabs */}
+        <div className="ag-filters">
+          {['All', ...STATUS_OPTIONS].map(f => (
+            <button
+              key={f}
+              className={`ag-filter-btn${filter === f ? ' active' : ''}`}
+              onClick={() => setFilter(f)}
+            >
+              {f}
+              <span className="ag-count">{counts[f] ?? 0}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Table */}
+        <div className="ag-panel">
+          {loading ? (
+            <div className="ag-loading">Loading agents…</div>
+          ) : filtered.length === 0 ? (
+            <div className="ag-empty">No agent applications found.</div>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table className="ag-table">
+                <thead>
+                  <tr>
+                    {['Name', 'Contact', 'Location', 'Type', 'Experience', 'Status', 'PM Access', 'Specializations', 'Date', 'Action'].map(h => (
+                      <th key={h}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map(agent => {
+                    const st = statusStyle[agent.status] || statusStyle.Pending;
+                    const agentSpecs = Array.isArray(agent.specializations)
+                      ? agent.specializations
+                      : (typeof agent.specializations === 'string' ? JSON.parse(agent.specializations || '[]') : []);
+                    return (
+                      <tr key={agent.id} onClick={() => openAgent(agent)}>
+                        <td>
+                          <div className="ag-name">{agent.name}</div>
+                          <div className="ag-muted">{agent.occupation}</div>
+                        </td>
+                        <td>
+                          <div style={{ fontSize: '0.8125rem' }}>{agent.email}</div>
+                          <div className="ag-muted">{agent.phone}</div>
+                        </td>
+                        <td className="ag-muted">{agent.city}, {agent.state}</td>
+                        <td><span className="ag-type-badge">{agent.agent_type}</span></td>
+                        <td className="ag-muted">{agent.experience || '—'}</td>
+                        <td>
+                          <span
+                            className="ag-badge"
+                            style={{ background: st.bg, color: st.tx }}
+                          >
+                            {agent.status}
+                          </span>
+                        </td>
+                        <td>
+                          {agent.has_project_management_access ? (
+                            <span className="ag-badge" style={{ background: '#dbeafe', color: '#1e40af' }}>Granted</span>
+                          ) : (
+                            <span className="ag-badge" style={{ background: '#f1f5f9', color: '#64748b' }}>Not Granted</span>
+                          )}
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                            {agentSpecs.length > 0 ? (
+                              agentSpecs.map(specKey => {
+                                const spec = SPECIALIZATION_OPTIONS.find(s => s.key === specKey);
+                                return spec ? (
+                                  <span
+                                    key={specKey}
+                                    className="ag-badge"
+                                    style={{ background: spec.bg, color: spec.tx, fontSize: '0.6875rem', padding: '2px 6px' }}
+                                  >
+                                    {spec.label}
+                                  </span>
+                                ) : null;
+                              })
+                            ) : (
+                              <span className="ag-muted" style={{ fontSize: '0.75rem' }}>None</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="ag-muted">
+                          {new Date(agent.created_at).toLocaleDateString()}
+                        </td>
+                        <td>
+                          <ActionIconButton
+                            icon={Eye}
+                            label="View agent application"
+                            onClick={e => { e.stopPropagation(); openAgent(agent); }}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
       )}
 
       {selectedLead && (

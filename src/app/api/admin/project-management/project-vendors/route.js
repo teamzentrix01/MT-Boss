@@ -77,8 +77,11 @@ export async function GET(req) {
               COALESCE(l.amount, 0) labour_earned,
               COALESCE(m.amount, 0) material_earned,
               COALESCE(x.amount, 0) paid,
+              COALESCE(x.amount, 0) total_paid,
               CASE WHEN p.pay_type = 'contract' THEN p.contract_amount ELSE COALESCE(l.amount, 0) END + COALESCE(m.amount, 0) earned,
-              (CASE WHEN p.pay_type = 'contract' THEN p.contract_amount ELSE COALESCE(l.amount, 0) END + COALESCE(m.amount, 0)) - COALESCE(x.amount, 0) balance
+              CASE WHEN p.pay_type = 'contract' THEN p.contract_amount ELSE COALESCE(l.amount, 0) END + COALESCE(m.amount, 0) total_earned,
+              (CASE WHEN p.pay_type = 'contract' THEN p.contract_amount ELSE COALESCE(l.amount, 0) END + COALESCE(m.amount, 0)) - COALESCE(x.amount, 0) balance,
+              (CASE WHEN p.pay_type = 'contract' THEN p.contract_amount ELSE COALESCE(l.amount, 0) END + COALESCE(m.amount, 0)) - COALESCE(x.amount, 0) balance_due
        FROM paged p
        JOIN pm_vendors v ON v.id = p.vendor_id
        LEFT JOIN labour l ON l.project_vendor_id = p.id
@@ -96,8 +99,11 @@ export async function GET(req) {
           labour_earned: null,
           material_earned: null,
           paid: null,
+          total_paid: null,
           earned: null,
+          total_earned: null,
           balance: null,
+          balance_due: null,
           daily_rate: null,
           contract_amount: null,
         }));
