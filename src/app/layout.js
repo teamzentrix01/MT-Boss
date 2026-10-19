@@ -10,7 +10,6 @@ import { COMPANY_CONTACT } from "./lib/company";
 import PrivacyConsentGuard from "./components/PrivacyConsentGuard";
 import FreeWhatsAppNotifier from "./components/FreeWhatsAppNotifier";
 import { usePathname } from "next/navigation";
-
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const plusJakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--font-plus-jakarta-sans" });
 const ChatbotWidget = dynamic(() => import("./components/ChatbotWidget"), { ssr: false });
