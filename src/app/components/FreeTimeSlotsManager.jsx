@@ -20,6 +20,11 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
   const [filterCity, setFilterCity] = useState('all');
   const [cityOptions, setCityOptions] = useState(defaultCity ? [defaultCity] : []);
   const [editingSlot, setEditingSlot] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
+  const [removeImage, setRemoveImage] = useState(false);
+  const [imageError, setImageError] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
     quick_service_id: '',
@@ -90,15 +95,19 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
       return;
     }
 
+    setSaving(true);
     try {
       const token = localStorage.getItem(tokenKey) || localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const payload = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        payload.append(key, Array.isArray(value) ? JSON.stringify(value) : String(value));
+      });
+      if (imageFile) payload.append('image', imageFile);
+      if (removeImage) payload.append('remove_image', 'true');
       const res = await fetch(editingSlot ? `/api/free-slots/${editingSlot.id}` : '/api/free-slots', {
         method: editingSlot ? 'PATCH' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: payload
       });
 
       const data = await res.json();
@@ -106,6 +115,10 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
         alert(editingSlot ? 'Free slot updated successfully!' : `${data.count || 0} free slot(s) created successfully!`);
         setShowForm(false);
         setEditingSlot(null);
+        setImageFile(null);
+        setImagePreview('');
+        setRemoveImage(false);
+        setImageError('');
         setFormData({
           quick_service_id: '',
           quick_service_ids: [],
@@ -123,6 +136,8 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
     } catch (error) {
       console.error('Error creating slot:', error);
       alert('Error creating slot');
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -182,12 +197,20 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
       city: slot.city || defaultCity || '',
       max_bookings: slot.max_bookings || 1,
     });
+    setImageFile(null);
+    setImagePreview(slot.image_url || '');
+    setRemoveImage(false);
+    setImageError('');
     setShowForm(true);
   }
 
   function resetForm() {
     setEditingSlot(null);
     setShowForm(false);
+    setImageFile(null);
+    setImagePreview('');
+    setRemoveImage(false);
+    setImageError('');
     setFormData({
       quick_service_id: '',
       quick_service_ids: [],
@@ -438,10 +461,50 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
                 </select>
                 <small style={{ color: 'var(--muted)' }}>Each service exposes only one morning and one evening free slot.</small>
               </div>
+
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label className="form-label">Slot image (optional)</label>
+                <input
+                  className="form-input"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    setImageError('');
+                    if (!file) return;
+                    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+                      setImageError('Choose a JPG, PNG, or WebP image.');
+                      event.target.value = '';
+                      return;
+                    }
+                    if (file.size > 5 * 1024 * 1024) {
+                      setImageError('Image must be smaller than 5 MB.');
+                      event.target.value = '';
+                      return;
+                    }
+                    setImageFile(file);
+                    setImagePreview(URL.createObjectURL(file));
+                    setRemoveImage(false);
+                  }}
+                />
+                {imagePreview && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
+                    <img src={imagePreview} alt="Free slot preview" style={{ width: 84, height: 64, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)' }} />
+                    <button type="button" className="btn-small btn-delete" onClick={() => {
+                      setImageFile(null);
+                      setImagePreview('');
+                      setRemoveImage(Boolean(editingSlot?.image_url));
+                    }}>Remove image</button>
+                  </div>
+                )}
+                <small style={{ color: imageError ? '#dc2626' : 'var(--muted)' }}>
+                  {imageError || 'JPG, PNG, or WebP, up to 5 MB. The image appears with this slot in the mobile app.'}
+                </small>
+              </div>
             </div>
 
-            <button onClick={handleCreateSlot} className="btn-primary" style={{ width: '100%' }}>
-              {editingSlot ? 'Save Slot' : 'Create Slot'}
+            <button onClick={handleCreateSlot} disabled={saving || Boolean(imageError)} className="btn-primary" style={{ width: '100%', opacity: saving || imageError ? 0.65 : 1 }}>
+              {saving ? 'Saving…' : editingSlot ? 'Save Slot' : 'Create Slot'}
             </button>
           </div>
         )}
@@ -487,7 +550,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
                     <tr key={slot.id}>
                       <td style={{ fontWeight: '600' }}>
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <QuickServiceIcon value={slot.service_icon} label={slot.service_label} className="inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded" imageClassName="h-full w-full object-contain" />
+                          <QuickServiceIcon value={slot.image_url || slot.service_icon} label={slot.service_label} className="inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded" imageClassName="h-full w-full object-contain" />
                           <span>{slot.service_label || `Service #${slot.quick_service_id}`}</span>
                         </span>
                       </td>
