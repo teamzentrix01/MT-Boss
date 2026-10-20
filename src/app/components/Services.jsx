@@ -59,24 +59,24 @@ function ServiceCard({ service, index, isDark }) {
         src={service.image}
         alt={service.title}
         fill
-        sizes="(max-width: 767px) 100vw, 33vw"
+        sizes="(max-width: 1023px) 50vw, 33vw"
         loading="lazy"
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-80"
       />
       
       {/* Dark gradient for default/mobile view */}
-      <div className={`absolute inset-0 bg-gradient-to-t ${isDark ? 'from-black via-black/60' : 'from-black/95 via-black/50'} to-transparent transition-opacity duration-300 md:group-hover:opacity-0`} />
+      <div className={`absolute inset-0 bg-gradient-to-t ${isDark ? 'from-black via-black/60' : 'from-black/95 via-black/50'} to-transparent transition-opacity duration-300 lg:group-hover:opacity-0`} />
       
       {/* Mobile visible content & Desktop base content */}
-      <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 flex flex-col justify-end transition-all duration-300 md:group-hover:opacity-0 md:group-hover:translate-y-4">
+      <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 flex flex-col justify-end transition-all duration-300 lg:group-hover:opacity-0 lg:group-hover:translate-y-4">
         <div className="w-12 h-0.5 bg-[var(--brand-blue)] mb-3" />
         <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-tight mb-2 drop-shadow-md">{service.title}</h3>
         {service.description && (
-          <p className="text-xs text-zinc-300 line-clamp-2 mb-4 md:hidden leading-relaxed font-medium">
+          <p className="text-xs text-zinc-300 line-clamp-2 mb-4 lg:hidden leading-relaxed font-medium">
             {service.description}
           </p>
         )}
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--brand-blue)] text-black text-[10px] font-black uppercase tracking-[0.2em] shadow-lg rounded-none">
             View Details
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +87,7 @@ function ServiceCard({ service, index, isDark }) {
       </div>
 
       {/* Desktop Hover Overlay */}
-      <div className="hidden md:flex absolute inset-0 bg-[var(--brand-blue)] flex-col items-center justify-center text-center p-8 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 z-20 pointer-events-none">
+      <div className="hidden lg:flex absolute inset-0 bg-[var(--brand-blue)] flex-col items-center justify-center text-center p-8 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 z-20 pointer-events-none">
         <h3 className="text-2xl font-black text-black uppercase mb-4 tracking-tighter">{service.title}</h3>
         <p className="text-sm text-black font-bold leading-relaxed mb-8">{service.description}</p>
         
@@ -143,7 +143,7 @@ export default function Services() {
           <div className="w-20 h-1.5 bg-[var(--brand-blue)] mx-auto rounded-full" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
           {services.map((service, i) => (
             <ServiceCard key={service.id} service={service} index={i} isDark={isDark} />
           ))}

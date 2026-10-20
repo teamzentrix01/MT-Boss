@@ -436,6 +436,36 @@ button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboa
   }
 }
 
+/* Tablet layout (641px–1023px)
+   Keep tablet content comfortably readable instead of inheriting the compact
+   desktop grids that start at Tailwind's `md` breakpoint.  Attribute selectors
+   intentionally target only responsive utility classes, so page-specific
+   desktop and mobile layouts remain unchanged. */
+@media (min-width: 641px) and (max-width: 1023px) {
+  [class~="md:grid-cols-3"],
+  [class~="md:grid-cols-4"],
+  [class~="md:grid-cols-5"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  /* Five quick-service tiles are too narrow on portrait tablets. */
+  [class~="sm:grid-cols-5"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  /* Large utility grids retain useful breathing space at tablet widths. */
+  [class~="lg:grid-cols-4"],
+  [class~="lg:grid-cols-5"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-navbar .nav-theme-toggle {
+    width: 40px !important;
+    min-width: 40px !important;
+    height: 40px !important;
+  }
+}
+
 /* Disable global button transition & hover styles for flat choice/tab buttons */
 .qs-choice,
 .appointment-tab {
