@@ -498,16 +498,17 @@ export async function POST(req) {
         }
       }
 
+      const assignedUserRole = normRole === 'contractor' ? 'Contractor' : 'Vendor';
       if (existingUser.rows.length === 0) {
         await queryWithConnectionRetry(
           `INSERT INTO users (name, email, phone, delivery_city, password, role, is_blocked, created_at, updated_at)
-           VALUES ($1, $2, $3, $4, $5, 'Vendor', false, NOW(), NOW())`,
-          [cleanName, cleanEmail, cleanPhone, cleanCity, passwordHash]
+           VALUES ($1, $2, $3, $4, $5, $6, false, NOW(), NOW())`,
+          [cleanName, cleanEmail, cleanPhone, cleanCity, passwordHash, assignedUserRole]
         );
       } else {
         await queryWithConnectionRetry(
-          `UPDATE users SET role = 'Vendor', phone = COALESCE(phone, $2), delivery_city = COALESCE(delivery_city, $3) WHERE id = $1`,
-          [existingUser.rows[0].id, cleanPhone, cleanCity]
+          `UPDATE users SET role = $4, phone = COALESCE(phone, $2), delivery_city = COALESCE(delivery_city, $3) WHERE id = $1`,
+          [existingUser.rows[0].id, cleanPhone, cleanCity, assignedUserRole]
         );
       }
 
