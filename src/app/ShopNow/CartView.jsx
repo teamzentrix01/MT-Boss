@@ -286,7 +286,7 @@ export default function CartView() {
       </nav>
 
       {/* ── MAIN CONTENT ──────────────────────────────────────────────────── */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-4 pb-24 lg:pb-12">
         {cart.length === 0 ? (
           /* Empty Cart State */
           <div className={`max-w-md mx-auto text-center py-16 px-6 rounded-3xl border mt-6 ${cardBg}`}>
@@ -450,7 +450,7 @@ export default function CartView() {
             </div>
 
             {/* ── RIGHT: ORDER SUMMARY & CHECKOUT SIDEBAR ─────────────────────── */}
-            <div className="lg:col-span-5 sticky top-20 space-y-4">
+            <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-4">
               <div className={`p-5 sm:p-6 rounded-3xl border ${cardBg}`}>
                 <h2 className="text-base font-black uppercase tracking-wider mb-4">
                   Order Summary

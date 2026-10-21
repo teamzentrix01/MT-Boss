@@ -21,7 +21,13 @@ const LeadConsultationModal = dynamic(
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
-  const isShopPage = pathname?.toLowerCase() === "/shopnow";
+  const isShopPage = Boolean(
+    pathname &&
+    (pathname.toLowerCase() === "/shopnow" ||
+     pathname.toLowerCase().startsWith("/shopnow/") ||
+     pathname.toLowerCase() === "/cart" ||
+     pathname.toLowerCase().startsWith("/cart/"))
+  );
   const isHomePage = pathname === "/";
   const isAdminDashboard = pathname?.startsWith("/dashboard");
 

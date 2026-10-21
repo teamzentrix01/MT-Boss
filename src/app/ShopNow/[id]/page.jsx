@@ -430,12 +430,12 @@ export default function ProductDetailPage({ params }) {
       )}
 
       {/* ── MAIN PRODUCT SECTION (2-COLUMN GRID) ──────────────────────────────── */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 pb-28 md:pb-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 pb-36 md:pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* ─────────────────────────────────────────────────────────────
               LEFT COLUMN: PRODUCT IMAGE GALLERY
              ───────────────────────────────────────────────────────────── */}
-          <div className="lg:col-span-6 sticky top-20">
+          <div className="lg:col-span-6 lg:sticky lg:top-24">
             <div className={`p-4 sm:p-6 rounded-3xl border relative ${cardBg}`}>
               {/* Badges on top of image */}
               <div className="absolute top-6 left-6 z-10 flex flex-col gap-2">
@@ -928,7 +928,7 @@ export default function ProductDetailPage({ params }) {
       {/* ─────────────────────────────────────────────────────────────
           MOBILE STICKY BOTTOM ACTION BAR (Viewport <= 768px)
          ───────────────────────────────────────────────────────────── */}
-      <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 p-3 border-t backdrop-blur-lg ${
+      <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t backdrop-blur-lg ${
         isDarkMode ? "bg-zinc-950/95 border-zinc-800" : "bg-white/95 border-slate-200 shadow-2xl"
       }`}>
         <div className="flex items-center justify-between gap-3">

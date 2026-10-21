@@ -3363,6 +3363,7 @@
   .shop-route a[href*="wa.me"],
   .shop-route a[href*="whatsapp"],
   .shop-route a[title*="WhatsApp"],
+  .shop-route a[href^="tel:"],
   .shop-route a[aria-label*="Call MT Boss"],
   .shop-route a[title*="Call"],
   .shop-route [aria-label*="MTBOSS Assistant Chat"],
