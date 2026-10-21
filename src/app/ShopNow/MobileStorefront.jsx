@@ -569,15 +569,14 @@ export default function MobileStorefront({
                 <span className="mobile-wallet-pill">₹{walletBalance.toLocaleString('en-IN')}</span>
               </Link>
 
-              <button
-                type="button"
+              <Link
+                href="/ShopNow/cart"
                 className="mobile-header-icon-btn mobile-cart-btn"
-                onClick={() => setMobileCartOpen(true)}
                 aria-label="Shopping Cart"
               >
                 <ShoppingCart size={21} />
                 {cartCategoryCount > 0 && <span className="mobile-cart-badge">{cartCategoryCount}</span>}
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -680,15 +679,14 @@ export default function MobileStorefront({
                 <Search size={20} />
               </button>
 
-              <button
-                type="button"
+              <Link
+                href="/ShopNow/cart"
                 className="mobile-listing-action-btn mobile-cart-btn"
-                onClick={() => setMobileCartOpen(true)}
                 aria-label="Shopping Cart"
               >
                 <ShoppingCart size={20} />
                 {cartCategoryCount > 0 && <span className="mobile-cart-badge">{cartCategoryCount}</span>}
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -751,15 +749,14 @@ export default function MobileStorefront({
             </div>
 
             <div className="mobile-listing-header-actions">
-              <button
-                type="button"
+              <Link
+                href="/ShopNow/cart"
                 className="mobile-listing-action-btn mobile-cart-btn"
-                onClick={() => setMobileCartOpen(true)}
                 aria-label="Shopping Cart"
               >
                 <ShoppingCart size={20} />
                 {cartCategoryCount > 0 && <span className="mobile-cart-badge">{cartCategoryCount}</span>}
-              </button>
+              </Link>
             </div>
           </div>
         </header>
@@ -1486,7 +1483,7 @@ export default function MobileStorefront({
       {/* ─────────────────────────────────────────────────────────────
           MOBILE CART BOTTOM DRAWER
          ───────────────────────────────────────────────────────────── */}
-      {mobileCartOpen && (
+      {false && mobileCartOpen && (
         <div className="mobile-sheet-backdrop" onClick={() => setMobileCartOpen(false)}>
           <div className="mobile-cart-drawer" onClick={(e) => e.stopPropagation()}>
             <div className="mobile-cart-drawer-head">
@@ -2160,6 +2157,8 @@ function MobileProductCard({
 
   const canOrder = !product.fromSupplier || Number(product.quantity) > 0;
   const isAvailable = canOrder;
+  const detailId = product.product_id || (String(product.id).startsWith('supplier-') ? product.id.replace('supplier-', '') : product.id);
+  const detailHref = `/ShopNow/${detailId}`;
 
   return (
     <article className="mobile-product-card">
@@ -2170,10 +2169,9 @@ function MobileProductCard({
 
       <div className="mobile-card-inner">
         {/* Left: Product image */}
-        <button
-          type="button"
+        <Link
+          href={detailHref}
           className="mobile-card-img-btn"
-          onClick={() => onDetails?.(product)}
           aria-label={`View ${product.name} details`}
         >
           {productImage ? (
@@ -2190,7 +2188,7 @@ function MobileProductCard({
               <Package size={34} className={isDark ? "text-slate-400" : "text-[#12283F]/60"} />
             </div>
           )}
-        </button>
+        </Link>
 
         {/* Right: Product details */}
         <div className="mobile-card-details">
@@ -2207,13 +2205,12 @@ function MobileProductCard({
           )}
 
           {/* Product Name */}
-          <button
-            type="button"
+          <Link
+            href={detailHref}
             className="mobile-card-title-btn"
-            onClick={() => onDetails?.(product)}
           >
             <h3 className="mobile-card-title">{product.name}</h3>
-          </button>
+          </Link>
 
           {/* Price & MRP (only if rate is added) */}
           {hasFixedPrice && (
@@ -2264,7 +2261,7 @@ function MobileProductCard({
                 type="button"
                 className="mobile-add-btn"
                 disabled={!isAvailable}
-                onClick={() => onAdd(product)}
+                onClick={(e) => onAdd(product, e)}
               >
                 <Plus size={14} /> ADD
               </button>

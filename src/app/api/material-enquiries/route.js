@@ -10,7 +10,7 @@ import { notifyAdminSubmission, deliverMaterialOrderReceipt } from '@/lib/custom
 import { calculateShipping, getShippingSettings } from '@/lib/shipping';
 import { calculateCoupon, couponIsCurrentlyActive, productHasOffer } from '@/lib/coupon-calculations';
 import { getShopVendorCommissionPercent, recordShopVendorCommission, resolveCommissionRate } from '@/lib/shop-commissions';
-import { snapshotOrderCashback } from '@/lib/cashback/service';
+import { snapshotOrderCashback, ensureCashbackSchema } from '@/lib/cashback/service';
 import { computeRedeemLimit, reserveWalletRedeem } from '@/lib/wallet/redeem';
 
 const ensureTable = createInitializationGuard(async () => {
@@ -65,6 +65,11 @@ const ensureTable = createInitializationGuard(async () => {
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS grand_total NUMERIC(12,2) DEFAULT 0`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS coupon_code VARCHAR(60)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS coupon_discount NUMERIC(12,2) DEFAULT 0`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS cashback_amount NUMERIC(12,2) DEFAULT 0.00`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS cashback_breakdown JSONB DEFAULT '{}'::jsonb`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS cashback_status VARCHAR(30) DEFAULT 'NONE'`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS wallet_used NUMERIC(12,2) NOT NULL DEFAULT 0.00`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS wallet_redeem_status VARCHAR(30) NOT NULL DEFAULT 'NONE'`,
   ];
   for (const sql of migrations) {
     try { await pool.query(sql); } catch { /* already correct type or column exists */ }
@@ -84,6 +89,7 @@ export async function POST(req) {
   try {
     await ensureTable();
     await ensureMaterialOrderSchema();
+    await ensureCashbackSchema();
     const { user, blocked } = await requireActiveUser(req);
     if (blocked) {
       return NextResponse.json({ success: false, error: BLOCKED_ACCOUNT_MESSAGE }, { status: 403 });

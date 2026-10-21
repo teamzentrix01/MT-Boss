@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requireRole, unauthorized } from '@/lib/auth';
+import { requireAnyRole, unauthorized } from '@/lib/auth';
 import { createInitializationGuard, handleApiError } from '@/lib/api-utils';
 import { cleanText } from '@/lib/validation';
-import { resolveManagedCity } from '@/lib/cities';
+import { resolveManagedCity, cleanCityName } from '@/lib/cities';
 
 const ensureAddressSchema = createInitializationGuard(async () => {
   await pool.query(`
@@ -33,7 +33,7 @@ function coordinate(value, limit) {
 }
 
 export async function GET(req) {
-  const user = requireRole(req, 'user');
+  const user = requireAnyRole(req, ['user', 'admin']);
   if (!user) return unauthorized();
 
   try {
@@ -49,18 +49,18 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const user = requireRole(req, 'user');
+  const user = requireAnyRole(req, ['user', 'admin']);
   if (!user) return unauthorized();
 
   try {
     const body = await req.json().catch(() => ({}));
-    const label = cleanText(body.label).slice(0, 60);
+    const label = cleanText(body.label).slice(0, 60) || 'Home';
     const addressLine = cleanText(body.address_line);
     const pincode = cleanText(body.pincode).replace(/\D/g, '');
     const latitude = coordinate(body.latitude, 90);
     const longitude = coordinate(body.longitude, 180);
 
-    if (!label || addressLine.length < 8) {
+    if (!label || addressLine.length < 5) {
       return NextResponse.json({ success: false, error: 'Add a label and a full address.' }, { status: 400 });
     }
     if (pincode && !/^\d{6}$/.test(pincode)) {
@@ -70,9 +70,10 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Invalid location coordinates.' }, { status: 400 });
     }
 
-    const city = await resolveManagedCity(body.city);
+    const resolvedCity = await resolveManagedCity(body.city);
+    const city = resolvedCity || cleanCityName(body.city);
     if (!city) {
-      return NextResponse.json({ success: false, error: 'Select a city we currently serve.' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Select a valid delivery city.' }, { status: 400 });
     }
 
     await ensureAddressSchema();
@@ -95,7 +96,7 @@ export async function POST(req) {
 }
 
 export async function PATCH(req) {
-  const user = requireRole(req, 'user');
+  const user = requireAnyRole(req, ['user', 'admin']);
   if (!user) return unauthorized();
 
   try {
@@ -119,7 +120,7 @@ export async function PATCH(req) {
 }
 
 export async function DELETE(req) {
-  const user = requireRole(req, 'user');
+  const user = requireAnyRole(req, ['user', 'admin']);
   if (!user) return unauthorized();
 
   try {

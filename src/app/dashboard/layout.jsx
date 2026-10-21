@@ -323,14 +323,14 @@ export default function DashboardLayout({ children }) {
           className="admin-topbar sticky top-0 z-40 flex items-center justify-between"
         >
           <div className="flex items-center gap-3">
-            <button
+            {/* <button
               type="button"
               onClick={goBack}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold ${isDarkMode ? "text-white hover:bg-white/10" : "text-slate-800 hover:bg-slate-100"}`}
               aria-label="Go to previous page"
             >
               ← Back
-            </button>
+            </button> */}
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}

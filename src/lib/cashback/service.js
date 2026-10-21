@@ -165,15 +165,28 @@ export const ensureCashbackSchema = createInitializationGuard(async () => {
   `);
 
   // 7. Order snapshot columns on material_enquiries
-  await pool.query(`
-    ALTER TABLE material_enquiries
-      ADD COLUMN IF NOT EXISTS cashback_amount NUMERIC(12,2) DEFAULT 0.00,
-      ADD COLUMN IF NOT EXISTS cashback_breakdown JSONB DEFAULT '{}'::jsonb,
-      ADD COLUMN IF NOT EXISTS cashback_status VARCHAR(30) DEFAULT 'NONE',
-      ADD COLUMN IF NOT EXISTS wallet_used NUMERIC(12,2) NOT NULL DEFAULT 0.00,
-      ADD COLUMN IF NOT EXISTS wallet_redeem_status VARCHAR(30) NOT NULL DEFAULT 'NONE';
-  `);
-});
+  try {
+    const colCheck = await pool.query(`
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' 
+        AND table_name = 'material_enquiries' 
+        AND column_name = 'cashback_amount'
+      LIMIT 1
+    `);
+    if (!colCheck.rows.length) {
+      await pool.query(`
+        ALTER TABLE material_enquiries
+          ADD COLUMN IF NOT EXISTS cashback_amount NUMERIC(12,2) DEFAULT 0.00,
+          ADD COLUMN IF NOT EXISTS cashback_breakdown JSONB DEFAULT '{}'::jsonb,
+          ADD COLUMN IF NOT EXISTS cashback_status VARCHAR(30) DEFAULT 'NONE',
+          ADD COLUMN IF NOT EXISTS wallet_used NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+          ADD COLUMN IF NOT EXISTS wallet_redeem_status VARCHAR(30) NOT NULL DEFAULT 'NONE';
+      `);
+    }
+  } catch (err) {
+    console.warn('Could not verify/alter cashback columns on material_enquiries:', err.message);
+  }
+}, 24 * 60 * 60 * 1000, 'cashback_schema_guard');
 
 /**
  * Loads current global cashback settings.

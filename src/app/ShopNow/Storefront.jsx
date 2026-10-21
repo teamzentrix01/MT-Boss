@@ -177,7 +177,7 @@ function applyOffer(product, offer) {
   };
 }
 
-function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, onDetails, selectedCity }) {
+function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, selectedCity }) {
   const productImage = getProductImage(product, product.category);
   const price = Number(product.price);
   const hasFixedPrice = Number.isFinite(price) && price > 0;
@@ -185,17 +185,23 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   const normalizedCity = selectedCity.trim().toLowerCase();
   const cityUnavailable = Boolean(normalizedCity && product.available_cities?.length && !product.available_cities.some((city) => city.trim().toLowerCase() === normalizedCity));
   const canOrder = productCanOrder(product, selectedCity);
+  const detailId = product.product_id || (String(product.id).startsWith('supplier-') ? product.id.replace('supplier-', '') : product.id);
+  const detailHref = `/ShopNow/${detailId}`;
   return (
     <article className="store-product-card">
       {(product.offer?.display_badge || discount > 0) && (
         <span className="store-discount-badge">{product.offer?.display_badge || `${discount}% OFF`}</span>
       )}
-      <button type="button" className="store-product-image-button" onClick={() => onDetails(product)} aria-label={`View ${product.name} details`}><ProductVisual image={productImage} category={product.category} name={product.name} /></button>
+      <Link href={detailHref} className="store-product-image-button" aria-label={`View ${product.name} details`}>
+        <ProductVisual image={productImage} category={product.category} name={product.name} />
+      </Link>
       <div className="store-product-details">
         <span className={`store-product-tag ${!canOrder ? 'store-product-tag-unavailable' : ''}`}>
           {canOrder ? 'Available' : 'Unavailable'}
         </span>
-        <button type="button" className="store-product-title" onClick={() => onDetails(product)}><h3>{product.name}</h3></button>
+        <Link href={detailHref} className="store-product-title">
+          <h3>{product.name}</h3>
+        </Link>
         <p className="store-product-category">{(typeof product.category === 'object' ? product.category?.name : product.category) || ''}{product.unit ? ` · ${product.unit}` : ""}</p>
         <div className="store-product-price-slot">
           {hasFixedPrice ? (
@@ -218,7 +224,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
               <button type="button" onClick={() => onChangeQty(product.id, 1)} aria-label={`Add one ${product.name}`}><Plus size={15} /></button>
             </div>
           ) : (
-            <button type="button" className="store-add-btn" disabled={!canAdd || !canOrder} onClick={() => onAdd(product)}><Plus size={15} /> {!canOrder ? 'Unavailable' : canAdd ? "Add to cart" : "Cart limit reached"}</button>
+            <button type="button" className="store-add-btn" disabled={!canAdd || !canOrder} onClick={(e) => onAdd(product, e)}><Plus size={15} /> {!canOrder ? 'Unavailable' : canAdd ? "Add to cart" : "Cart limit reached"}</button>
           )}
         </div>
       </div>
@@ -232,7 +238,6 @@ export default function Storefront({ categories, products, offers = [], content,
   const [cartOpen, setCartOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
   const [productManagerHref, setProductManagerHref] = useState('');
-  const [detailsProduct, setDetailsProduct] = useState(null);
   const [sortBy, setSortBy] = useState('featured');
   const [brandFilter, setBrandFilter] = useState('all');
   const [cartOverlayTop, setCartOverlayTop] = useState(0);
@@ -469,8 +474,6 @@ export default function Storefront({ categories, products, offers = [], content,
   }, [cart]);
   const pricedTotal = cart.reduce((sum, item) => sum + unitPrice(item.product, item.quantity) * item.quantity, 0);
   const hasUnpricedItems = cart.some((item) => !(Number(item.product.price) > 0));
-  const detailsCanOrder = detailsProduct ? productCanOrder(detailsProduct, selectedCity) : false;
-  const detailsHasFixedPrice = Number(detailsProduct?.price) > 0;
 
   const toggleCart = () => {
     if (cartOpen) {
@@ -525,7 +528,6 @@ export default function Storefront({ categories, products, offers = [], content,
           onQuote={onQuote}
           onBuy={onBuy}
           onCheckout={onCheckout}
-          onDetails={setDetailsProduct}
           shippingSettings={shippingSettings}
           shippingQuote={shippingQuote}
           activeCoupon={activeCoupon}
@@ -561,7 +563,15 @@ export default function Storefront({ categories, products, offers = [], content,
               <span className="store-wallet-text">Wallet</span>
               <span className="store-wallet-pill">₹{walletBalance.toLocaleString('en-IN')}</span>
             </Link>
-            <button type="button" className="store-cart-button" onClick={toggleCart} aria-expanded={cartOpen} aria-controls="store-cart-dialog"><ShoppingCart size={18} /><span>My Cart</span>{cartCount > 0 && <b>{cartCount}</b>}</button>
+            <Link
+              href="/ShopNow/cart"
+              className="store-cart-button"
+              aria-label="Shopping Cart"
+            >
+              <ShoppingCart size={18} />
+              <span>My Cart</span>
+              {cartCount > 0 && <b>{cartCount}</b>}
+            </Link>
           </div>
         </header>
 
@@ -609,11 +619,11 @@ export default function Storefront({ categories, products, offers = [], content,
             })}</div> : <div className="store-empty">Categories are being added. Please check back soon.</div>}
           </section>
 
-          {!searchTerm && activeCategory === "all" && featured.length > 0 && <section className="store-section" aria-labelledby="store-featured-heading"><div className="store-section-heading"><div><span className="store-section-kicker">POPULAR PICKS</span><h2 id="store-featured-heading">{content.featured_heading}</h2></div><span className="store-section-note">Fixed-price orders and custom quotes</span></div><div className="store-product-grid">{featured.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
+          {!searchTerm && activeCategory === "all" && featured.length > 0 && <section className="store-section" aria-labelledby="store-featured-heading"><div className="store-section-heading"><div><span className="store-section-kicker">POPULAR PICKS</span><h2 id="store-featured-heading">{content.featured_heading}</h2></div><span className="store-section-note">Fixed-price orders and custom quotes</span></div><div className="store-product-grid">{featured.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div></section>}
 
-          {!searchTerm && activeCategory === 'all' && deals.length > 0 && <section className="store-section" aria-labelledby="store-deals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">CURRENT OFFERS</span><h2 id="store-deals-heading">{content.deals_heading}</h2></div><span className="store-section-note">Request today&apos;s best supplier quote</span></div><div className="store-product-grid">{deals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
+          {!searchTerm && activeCategory === 'all' && deals.length > 0 && <section className="store-section" aria-labelledby="store-deals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">CURRENT OFFERS</span><h2 id="store-deals-heading">{content.deals_heading}</h2></div><span className="store-section-note">Request today&apos;s best supplier quote</span></div><div className="store-product-grid">{deals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div></section>}
 
-          {!searchTerm && activeCategory === 'all' && arrivals.length > 0 && <section className="store-section" aria-labelledby="store-arrivals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">JUST ADDED</span><h2 id="store-arrivals-heading">{content.arrivals_heading}</h2></div><span className="store-section-note">Recently added products</span></div><div className="store-product-grid">{arrivals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div></section>}
+          {!searchTerm && activeCategory === 'all' && arrivals.length > 0 && <section className="store-section" aria-labelledby="store-arrivals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">JUST ADDED</span><h2 id="store-arrivals-heading">{content.arrivals_heading}</h2></div><span className="store-section-note">Recently added products</span></div><div className="store-product-grid">{arrivals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div></section>}
 
           <section className="store-section store-catalog" id="store-products" aria-labelledby="store-products-heading">
             <div className="store-section-heading"><div><span className="store-section-kicker">THE CATALOGUE</span><h2 id="store-products-heading">{searchTerm ? `Results for “${search}”` : activeCategory === "all" ? content.catalog_heading : categories.find((category) => String(category.id) === String(activeCategory))?.name || "Materials"}</h2></div><span className="store-section-note">{visible.length} items</span></div>
@@ -668,91 +678,10 @@ export default function Storefront({ categories, products, offers = [], content,
             })()}
 
             <div className="store-catalog-tools"><label>Brand <select value={brandFilter} onChange={(event) => setBrandFilter(event.target.value)}><option value="all">All brands</option>{brands.map((brand) => <option key={brand} value={brand}>{brand}</option>)}</select></label><label>Sort by <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="featured">Featured</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name: A to Z</option></select></label></div>
-            {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} onDetails={setDetailsProduct} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found. Try another search or category.</div>}
+            {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found. Try another search or category.</div>}
           </section>
         </main>
       </div>
-      {detailsProduct && (
-        <div className="store-overlay" onClick={() => setDetailsProduct(null)}>
-          <section className="store-detail-dialog" role="dialog" aria-modal="true" aria-label={`${detailsProduct.name} details`} onClick={(event) => event.stopPropagation()}>
-            <button type="button" className="store-detail-close" onClick={() => setDetailsProduct(null)} aria-label="Close product details"><X size={22} /></button>
-            <div className="store-detail-gallery">
-              <ProductGalleryCarousel product={detailsProduct} category={detailsProduct.category} />
-            </div>
-            <div className="store-detail-info">
-              <span className="store-product-tag">{detailsProduct.brand || detailsProduct.category.name}</span>
-              <h2>{detailsProduct.name}</h2>
-              <p>{(typeof detailsProduct.category === 'object' ? detailsProduct.category?.name : detailsProduct.category) || ''} · {displayUnit(detailsProduct.unit)}</p>
-              {detailsHasFixedPrice && (
-                <div className="store-detail-price">₹{Number(detailsProduct.price).toLocaleString('en-IN')} / {displayUnit(detailsProduct.unit)}</div>
-              )}
-              {detailsProduct.description && <p className="store-detail-description">{detailsProduct.description}</p>}
-              {Object.keys(detailsProduct.specifications || {}).length > 0 && <><h3>Specifications</h3><dl className="store-specs">{Object.entries(detailsProduct.specifications).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{value}</dd></div>)}</dl></>}
-              <div className="store-detail-actions store-detail-actions-priced">
-                <button type="button" className="store-detail-buy" disabled={!detailsCanOrder} onClick={() => { onBuy(detailsProduct); setDetailsProduct(null); }}>{detailsCanOrder ? 'Buy Now' : 'Unavailable'}</button>
-                <button type="button" className="store-detail-add" disabled={!detailsCanOrder || cart.length >= 20} onClick={() => onAdd(detailsProduct)}>Add to cart</button>
-              </div>
-            </div>
-          </section>
-        </div>
-      )}
-
-      {cartOpen && (
-        <div className="store-overlay store-cart-overlay" style={{ '--store-cart-top': `${cartOverlayTop}px` }} onClick={() => setCartOpen(false)}>
-          <aside id="store-cart-dialog" className="store-cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping cart" onClick={(e) => e.stopPropagation()}>
-            <div className="store-drawer-head"><div><span>YOUR SELECTION</span><h2>My cart <small>({cartCount} {cartCount === 1 ? 'category' : 'categories'})</small></h2></div><button type="button" aria-label="Close cart" onClick={() => setCartOpen(false)}><X size={23} /></button></div>
-            {cart.length ? <>
-              <div className="store-cart-list">{cart.map((item, index) => {
-                const itemUnitPrice = unitPrice(item.product, item.quantity);
-                const itemKey = item.product?.id ? `${item.product.id}-${index}` : `cart-item-${index}`;
-                return <div className="store-cart-item" key={itemKey}>
-                  <ProductVisual compact image={getProductImage(item.product, item.product.category)} category={item.product.category} name={item.product.name} />
-                  <div>
-                    <strong>{item.product.name}</strong>
-                    <span>{item.product.category?.name || 'Material'}{item.product.unit ? ` · ${displayUnit(item.product.unit)}` : ''} · {itemUnitPrice > 0 ? `₹${itemUnitPrice.toLocaleString('en-IN')} / ${displayUnit(item.product.unit)}` : 'Price on confirmation'}</span>
-                    <span>{itemUnitPrice > 0 ? `Line total: ₹${(itemUnitPrice * item.quantity).toLocaleString('en-IN')}` : 'Supplier will confirm the price'}</span>
-                    <div className="store-cart-quantity"><button type="button" onClick={() => onChangeQty(item.product.id, -1)} aria-label={`Remove one ${item.product.name}`}><Minus size={14} /></button><b>{item.quantity}</b><button type="button" onClick={() => onChangeQty(item.product.id, 1)} aria-label={`Add one ${item.product.name}`}><Plus size={14} /></button></div>
-                  </div>
-                </div>;
-              })}</div>
-              <div className="store-cart-bottom">
-                <div className="store-cart-estimate"><span>{hasUnpricedItems ? 'Current total' : 'Product total'}</span><strong>{pricedTotal > 0 ? `₹${pricedTotal.toLocaleString("en-IN")}` : 'Price on confirmation'}{pricedTotal > 0 && hasUnpricedItems ? ' + quote items' : ''}</strong></div>
-                <div className="store-coupon-box">
-                  {activeCoupon?.code ? <div className="store-coupon-applied"><span>Coupon <b>{activeCoupon.code}</b>{couponCalculation?.eligible ? ` applied: -₹${couponCalculation.discount.toLocaleString('en-IN')}` : ' selected'}</span><button type="button" onClick={() => { onClearCoupon(); setCouponCode(''); setCouponNotice(''); }}>Remove</button></div> : <form onSubmit={(event) => { event.preventDefault(); const result = onApplyCoupon(couponCode); setCouponNotice(result.error || `Coupon ${result.coupon?.code} applied.`); }}><label htmlFor="store-coupon-code">Have a coupon?</label><div><input id="store-coupon-code" value={couponCode} onChange={(event) => setCouponCode(event.target.value.toUpperCase())} placeholder="Enter coupon code" /><button type="submit" disabled={!couponCode.trim()}>Apply</button></div></form>}
-                  {couponNotice && <p className={couponNotice.startsWith('Coupon') ? 'is-success' : ''}>{couponNotice}</p>}
-                  {activeCoupon && !couponCalculation?.eligible && <p>Add ₹{couponCalculation.gap.toLocaleString('en-IN')} more of regular-price items to unlock this coupon. Offer-priced items do not count.</p>}
-                </div>
-                {!activeCoupon?.code && <button type="button" className="store-view-offers" onClick={() => setOffersOpen((open) => !open)}>{offersOpen ? 'Hide available offers' : `View available offers${couponOffers?.length ? ` (${couponOffers.length})` : ''}`}</button>}
-                {offersOpen && !activeCoupon?.code && <div className="store-available-offers">{couponOffers?.length ? couponOffers.map(({ coupon, calculation }) => <div className={`store-available-offer${calculation.eligible ? ' is-eligible' : ''}`} key={coupon.id}><div><strong>{coupon.code || 'Automatic offer'}</strong><span>{coupon.discount_type === 'percentage' ? `${coupon.discount_value}% OFF${Number(coupon.max_discount_cap) > 0 ? ` up to ₹${coupon.max_discount_cap}` : ''}` : `₹${coupon.discount_value} OFF`}</span><small>On regular-price items of ₹{coupon.min_cart_value.toLocaleString('en-IN')} or more{coupon.applicable_categories?.length ? ` · Valid on: ${coupon.applicable_categories.join(', ')}` : ' · Valid on all products'}</small>{!calculation.eligible && <em>Add ₹{calculation.gap.toLocaleString('en-IN')} more to unlock</em>}</div>{!coupon.code ? <b>{calculation.eligible ? 'Automatically applied' : 'Auto offer'}</b> : <button type="button" disabled={!calculation.eligible} onClick={() => { const result = onSelectCoupon(coupon); setCouponNotice(result.error || `Coupon ${coupon.code} applied.`); setCouponCode(coupon.code); setOffersOpen(false); }}>{calculation.eligible ? 'Apply' : 'Locked'}</button>}</div>) : <p>No active offers right now.</p>}</div>}
-                {couponCalculation?.offerAmount > 0 && <div className="store-cart-breakdown"><span>Items with existing offers</span><strong>₹{couponCalculation.offerAmount.toLocaleString('en-IN')}</strong><small>Offer already applied</small></div>}
-                {couponCalculation?.regularAmount > 0 && <div className="store-cart-breakdown"><span>Other items</span><strong>₹{couponCalculation.regularAmount.toLocaleString('en-IN')}</strong></div>}
-                {activeCoupon && couponCalculation?.eligible && <div className="store-cart-breakdown store-cart-coupon-discount"><span>{activeCoupon.code ? `Coupon “${activeCoupon.code}” applied` : 'Automatic coupon applied'}</span><strong>-₹{couponCalculation.discount.toLocaleString('en-IN')}</strong></div>}
-                {activeCoupon && couponCalculation?.eligible && <div className="store-cart-estimate"><span>Discounted total</span><strong>₹{Math.max(0, pricedTotal - couponCalculation.discount).toLocaleString('en-IN')}</strong></div>}
-                {effectiveCashbackPreview?.totalCashback > 0 && (
-                  <div style={{
-                    margin: '12px 0',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    backgroundColor: 'rgba(33, 150, 243, 0.08)',
-                    border: '1px solid rgba(33, 150, 243, 0.3)',
-                    color: '#12283F',
-                    fontSize: '12px',
-                    fontWeight: '700',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                  }}>
-                    <span>🎉</span>
-                    <span>You will earn <strong>₹{effectiveCashbackPreview.totalCashback.toLocaleString('en-IN')}</strong> cashback on this order!</span>
-                  </div>
-                )}
-                <p>Delivery charges, if applicable, are confirmed separately.</p>
-                <button type="button" className="store-checkout-button" onClick={() => { setCartOpen(false); onCheckout(); }}>Continue to checkout <ArrowRight size={18} /></button>
-              </div>
-            </> : <div className="store-cart-empty"><ShoppingCart size={48} /><h3>Your cart is empty</h3><p>Add materials to place an order together.</p><button type="button" onClick={() => setCartOpen(false)}>Continue shopping</button></div>}
-          </aside>
-        </div>
-      )}
     </div>
   );
 }

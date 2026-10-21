@@ -3,11 +3,14 @@
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { MapPin, Plus, Check, Trash2, Home, Building2, Briefcase } from "lucide-react";
 import { useCities } from "@/hooks/useCities";
 import Storefront, { displayUnit } from "./Storefront";
 import { defaultShopStorefront } from "@/lib/shop-storefront-defaults";
 import { calculateCoupon } from "@/lib/coupon-calculations";
 import { getCartStep } from "@/lib/cart-step";
+import { triggerFlyToCart } from "./flyToCart";
 // Dark-mode watcher
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -91,6 +94,7 @@ async function parseJsonResponse(response) {
 }
 
 export default function ShopPage() {
+  const router = useRouter();
   const isDarkMode = useDarkMode();
   const { cities: supportedCities } = useCities();
 
@@ -340,6 +344,17 @@ export default function ShopPage() {
   const [locationCoords, setLocationCoords] = useState(null);
   const [locationError, setLocationError] = useState("");
 
+  // Address & Profile Management
+  const [savedAddresses, setSavedAddresses]             = useState([]);
+  const [loadingAddresses, setLoadingAddresses]         = useState(false);
+  const [addressMode, setAddressMode]                   = useState("new"); // "select" or "new"
+  const [selectedAddressId, setSelectedAddressId]       = useState("new");
+  const [newAddressLabel, setNewAddressLabel]           = useState("Home");
+  const [customAddressLabel, setCustomAddressLabel]     = useState("");
+  const [newAddressPincode, setNewAddressPincode]       = useState("");
+  const [saveAddressToProfile, setSaveAddressToProfile] = useState(true);
+  const [makeDefaultAddress, setMakeDefaultAddress]     = useState(false);
+
   // Wallet Redemption State
   const [useWallet, setUseWallet] = useState(false);
   const [walletAmount, setWalletAmount] = useState("");
@@ -378,7 +393,29 @@ export default function ShopPage() {
     setSubmitError("");
     setCityError("");
     setCityVerified(false);
-    setFormData({ name: "", email: "", phone: "", quantity: product && mode !== "cart" ? "1" : "", address: "", message: "" });
+
+    // Prefill user details from storage if available
+    let prefillName = "";
+    let prefillEmail = "";
+    let prefillPhone = "";
+    try {
+      const stored = localStorage.getItem("user") || localStorage.getItem("admin");
+      if (stored) {
+        const u = JSON.parse(stored);
+        prefillName = u.name || "";
+        prefillEmail = u.email || "";
+        prefillPhone = u.phone || "";
+      }
+    } catch {}
+
+    setFormData({
+      name: prefillName,
+      email: prefillEmail,
+      phone: prefillPhone,
+      quantity: product && mode !== "cart" ? "1" : "",
+      address: "",
+      message: ""
+    });
     setMaterialType(product?.name || "");
     setCustomType(product?.name || "");
     setSubcategoryVal("");
@@ -397,7 +434,10 @@ export default function ShopPage() {
     setIsModalOpen(true);
   };
 
-  const addToCart = (product) => {
+  const addToCart = (product, event) => {
+    if (event) {
+      triggerFlyToCart(event, product);
+    }
     setCart((previous) => {
       const existing = previous.find((item) => item.product.id === product.id);
       const step = getCartStep(product);
@@ -534,6 +574,12 @@ export default function ShopPage() {
           address: prev.address?.trim() ? prev.address : data.display_name,
         }));
       }
+      if (data.address?.postcode) {
+        const rawPin = String(data.address.postcode).replace(/\D/g, "").slice(0, 6);
+        if (rawPin.length === 6) {
+          setNewAddressPincode((prev) => prev || rawPin);
+        }
+      }
     } catch {
       // Keep the captured coordinates even if reverse geocoding is unavailable.
     }
@@ -607,6 +653,184 @@ export default function ShopPage() {
     }
   };
 
+  const applyAddress = (addr) => {
+    if (!addr) return;
+    setSelectedAddressId(addr.id);
+    setFormData((prev) => ({
+      ...prev,
+      address: addr.address_line || "",
+    }));
+    if (addr.pincode) {
+      setNewAddressPincode(addr.pincode);
+    }
+    if (addr.city) {
+      setSelectedCity(addr.city);
+      setCityVerified(true);
+      setCityError("");
+      checkCityAvailability(addr.city);
+    }
+    if (addr.latitude && addr.longitude) {
+      setLocationCoords({
+        latitude: Number(addr.latitude),
+        longitude: Number(addr.longitude),
+      });
+      setLocationStatus("success");
+      setLocationError("");
+    } else {
+      setLocationCoords(null);
+      setLocationStatus("idle");
+    }
+  };
+
+  const loadAddresses = async () => {
+    setLoadingAddresses(true);
+    const token = localStorage.getItem("token") || localStorage.getItem("admin-token");
+    let list = [];
+    if (token) {
+      try {
+        const res = await fetch("/api/user/addresses", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data)) {
+          list = data.data;
+        }
+      } catch (e) {
+        console.warn("Could not fetch addresses:", e);
+      }
+    }
+
+    try {
+      const localAddrs = JSON.parse(localStorage.getItem("mtboss_saved_addresses") || "[]");
+      if (Array.isArray(localAddrs) && localAddrs.length > 0) {
+        const existingLines = new Set(list.map((a) => (a.address_line || "").trim().toLowerCase()));
+        for (const item of localAddrs) {
+          if (!existingLines.has((item.address_line || "").trim().toLowerCase())) {
+            list.push(item);
+          }
+        }
+      }
+    } catch {}
+
+    setSavedAddresses(list);
+    if (list.length > 0) {
+      const defaultAddr = list.find((a) => a.is_default) || list[0];
+      setAddressMode("select");
+      setSelectedAddressId(defaultAddr.id);
+      applyAddress(defaultAddr);
+    } else {
+      setAddressMode("new");
+      setSelectedAddressId("new");
+      setMakeDefaultAddress(true);
+    }
+    setLoadingAddresses(false);
+  };
+
+  useEffect(() => {
+    if (!isModalOpen) return;
+    loadAddresses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModalOpen]);
+
+  const saveAddressToServerOrLocal = async (addressData) => {
+    const token = localStorage.getItem("token") || localStorage.getItem("admin-token");
+    let savedObj = null;
+    if (token) {
+      try {
+        const res = await fetch("/api/user/addresses", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(addressData),
+        });
+        const data = await res.json();
+        if (data.success && data.data) {
+          savedObj = data.data;
+        }
+      } catch (err) {
+        console.warn("Error saving address to API:", err);
+      }
+    }
+
+    if (!savedObj) {
+      savedObj = {
+        id: `local_${Date.now()}`,
+        ...addressData,
+        created_at: new Date().toISOString(),
+      };
+    }
+
+    try {
+      const existing = JSON.parse(localStorage.getItem("mtboss_saved_addresses") || "[]");
+      const updated = [savedObj, ...existing.filter((a) => a.address_line !== savedObj.address_line)].slice(0, 10);
+      localStorage.setItem("mtboss_saved_addresses", JSON.stringify(updated));
+    } catch {}
+
+    return savedObj;
+  };
+
+  const handleDeleteAddress = async (e, addressId) => {
+    e.stopPropagation();
+    if (!window.confirm("Are you sure you want to delete this address?")) return;
+    const token = localStorage.getItem("token") || localStorage.getItem("admin-token");
+    if (token && typeof addressId === "number") {
+      try {
+        await fetch(`/api/user/addresses?id=${addressId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (err) {
+        console.error("Failed to delete address:", err);
+      }
+    }
+    try {
+      const existing = JSON.parse(localStorage.getItem("mtboss_saved_addresses") || "[]");
+      const filtered = existing.filter((a) => a.id !== addressId);
+      localStorage.setItem("mtboss_saved_addresses", JSON.stringify(filtered));
+    } catch {}
+
+    const remaining = savedAddresses.filter((a) => a.id !== addressId);
+    setSavedAddresses(remaining);
+    if (selectedAddressId === addressId) {
+      if (remaining.length > 0) {
+        applyAddress(remaining[0]);
+      } else {
+        setSelectedAddressId("new");
+        setAddressMode("new");
+        setFormData((prev) => ({ ...prev, address: "" }));
+        setLocationCoords(null);
+        setLocationStatus("idle");
+      }
+    }
+  };
+
+  const handleSetDefaultAddress = async (e, addressId) => {
+    e.stopPropagation();
+    const token = localStorage.getItem("token") || localStorage.getItem("admin-token");
+    if (token && typeof addressId === "number") {
+      try {
+        await fetch("/api/user/addresses", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ id: addressId }),
+        });
+      } catch (err) {
+        console.error("Failed to set default address:", err);
+      }
+    }
+    setSavedAddresses((prev) =>
+      prev.map((a) => ({
+        ...a,
+        is_default: a.id === addressId,
+      }))
+    );
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'phone') {
@@ -649,8 +873,8 @@ export default function ShopPage() {
       }
     }
 
-    if (!locationCoords?.latitude || !locationCoords?.longitude) {
-      setSubmitError("Please click 'Get Live Location' before submitting this material enquiry.");
+    if (!formData.address?.trim()) {
+      setSubmitError("Please enter your delivery address.");
       setSubmitting(false);
       return;
     }
@@ -709,6 +933,20 @@ export default function ShopPage() {
       setSubmittedOrder(data.data);
       if (modalMode === "cart") setCart([]);
       setSubmitted(true);
+
+      // Save new address to profile / local storage if chosen
+      if (addressMode === "new" && saveAddressToProfile && formData.address?.trim()) {
+        const finalLabel = newAddressLabel === "Other" ? (customAddressLabel.trim() || "Other") : newAddressLabel;
+        saveAddressToServerOrLocal({
+          label: finalLabel,
+          address_line: formData.address.trim(),
+          city: selectedCity,
+          pincode: newAddressPincode?.trim() || null,
+          latitude: locationCoords?.latitude || null,
+          longitude: locationCoords?.longitude || null,
+          is_default: makeDefaultAddress || savedAddresses.length === 0,
+        }).catch(() => {});
+      }
     } catch (err) {
       setSubmitError(err.message);
     } finally {
@@ -761,7 +999,7 @@ export default function ShopPage() {
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => openModal(product.category, product, "buy")} onCheckout={openCartCheckout} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} shippingQuote={shippingQuote} />
+      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => { const pId = product.product_id || (String(product.id).startsWith('supplier-') ? product.id.replace('supplier-', '') : product.id); router.push('/ShopNow/' + pId + '/checkout?from=shop'); }} onCheckout={() => router.push('/ShopNow/checkout?mode=cart&from=shop')} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} shippingQuote={shippingQuote} />
 
       {isModalOpen && mounted && createPortal(
         <div className="shop-checkout-modal fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>
@@ -1165,32 +1403,263 @@ export default function ShopPage() {
                   </div>
                 </div>
 
-                {/* Delivery Address */}
-                <div className="mb-3">
-                  <label className={lbl}>🏠 Delivery Address *</label>
-                  <textarea
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    required
-                    rows={2}
-                    placeholder="Full delivery address (plot no., street, city, state, PIN)"
-                    className={`${inp} resize-none`}
-                  />
+                {/* ── SECTION 3.5 — Delivery Address ───────────────────── */}
+                <SectionLabel isDark={isDarkMode}>🏠 Delivery Address</SectionLabel>
+
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`text-[11px] font-black uppercase tracking-wider ${labelText}`}>
+                      {addressMode === "select" ? "Select Delivery Address *" : "Add New Delivery Address *"}
+                    </span>
+                    {savedAddresses.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (addressMode === "select") {
+                            setAddressMode("new");
+                            setSelectedAddressId("new");
+                            setFormData((prev) => ({ ...prev, address: "" }));
+                            setLocationCoords(null);
+                            setLocationStatus("idle");
+                          } else {
+                            setAddressMode("select");
+                            const def = savedAddresses.find((a) => a.is_default) || savedAddresses[0];
+                            applyAddress(def);
+                          }
+                        }}
+                        className="text-[11px] font-bold text-[var(--brand-blue)] hover:underline flex items-center gap-1 transition-all"
+                      >
+                        {addressMode === "select" ? (
+                          <>
+                            <Plus size={13} />
+                            <span>Add New Address</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>← Choose Saved ({savedAddresses.length})</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+
+                  {addressMode === "select" && savedAddresses.length > 0 ? (
+                    <div className="space-y-2.5">
+                      {savedAddresses.map((addr) => {
+                        const isSelected = selectedAddressId === addr.id;
+                        const labelLower = (addr.label || "").toLowerCase();
+                        return (
+                          <div
+                            key={addr.id}
+                            onClick={() => applyAddress(addr)}
+                            className={`group relative p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                              isSelected
+                                ? isDarkMode
+                                  ? "border-[var(--brand-blue)] bg-[var(--brand-blue)]/10 shadow-md"
+                                  : "border-[var(--brand-blue)] bg-sky-50/80 shadow-sm"
+                                : isDarkMode
+                                  ? "border-zinc-800 bg-zinc-800/40 hover:border-zinc-700"
+                                  : "border-gray-200 bg-gray-50/80 hover:border-gray-300"
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
+                                  isSelected ? "border-[var(--brand-blue)] bg-[var(--brand-blue)]" : "border-gray-400"
+                                }`}>
+                                  {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                                </div>
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
+                                  labelLower.includes("home")
+                                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+                                    : labelLower.includes("office")
+                                    ? "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300"
+                                    : labelLower.includes("site")
+                                    ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+                                    : "bg-zinc-200 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-200"
+                                }`}>
+                                  {labelLower.includes("home") && "🏠"}
+                                  {labelLower.includes("office") && "🏢"}
+                                  {labelLower.includes("site") && "🏗️"}
+                                  {!labelLower.includes("home") && !labelLower.includes("office") && !labelLower.includes("site") && "📍"}
+                                  <span>{addr.label || "Address"}</span>
+                                </span>
+                                {addr.is_default && (
+                                  <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                                    Default
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                                {!addr.is_default && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => handleSetDefaultAddress(e, addr.id)}
+                                    className="text-[9px] font-bold text-gray-400 hover:text-[var(--brand-blue)] transition-colors"
+                                  >
+                                    Set default
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleDeleteAddress(e, addr.id)}
+                                  className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                  title="Delete address"
+                                >
+                                  <Trash2 size={13} />
+                                </button>
+                              </div>
+                            </div>
+
+                            <p className={`mt-2 text-xs font-semibold leading-relaxed line-clamp-2 ${headText}`}>
+                              {addr.address_line}
+                            </p>
+                            <div className="mt-1 flex items-center justify-between text-[10px] text-gray-500 dark:text-zinc-400 font-medium">
+                              <span>{addr.city}{addr.pincode ? ` • ${addr.pincode}` : ""}</span>
+                              {addr.latitude && addr.longitude ? (
+                                <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5">
+                                  <Check size={12} /> Live GPS Attached
+                                </span>
+                              ) : (
+                                <span className="text-amber-500">Live GPS needed</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {/* Add new address button card */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAddressMode("new");
+                          setSelectedAddressId("new");
+                          setFormData((prev) => ({ ...prev, address: "" }));
+                          setLocationCoords(null);
+                          setLocationStatus("idle");
+                        }}
+                        className={`w-full py-2.5 px-3 rounded-xl border-2 border-dashed flex items-center justify-center gap-2 text-xs font-bold transition-all ${
+                          isDarkMode
+                            ? "border-zinc-700 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue-light)] hover:bg-zinc-800/40"
+                            : "border-gray-300 text-gray-600 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)] hover:bg-sky-50/50"
+                        }`}
+                      >
+                        <Plus size={14} /> Add Another Delivery Address
+                      </button>
+                    </div>
+                  ) : (
+                    <div className={`p-3.5 rounded-xl border-2 space-y-3 ${
+                      isDarkMode ? "bg-zinc-800/40 border-zinc-700" : "bg-gray-50/80 border-gray-200"
+                    }`}>
+                      {/* Address Tag Selector */}
+                      <div>
+                        <label className={lbl}>Address Type / Label</label>
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            { label: "Home", icon: "🏠" },
+                            { label: "Office", icon: "🏢" },
+                            { label: "Site", icon: "🏗️" },
+                            { label: "Other", icon: "📍" },
+                          ].map((item) => (
+                            <button
+                              key={item.label}
+                              type="button"
+                              onClick={() => setNewAddressLabel(item.label)}
+                              className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all flex items-center gap-1.5 ${
+                                newAddressLabel === item.label
+                                  ? "border-[var(--brand-blue)] bg-[var(--brand-blue)] text-white shadow-sm"
+                                  : isDarkMode
+                                    ? "border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-zinc-600"
+                                    : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                              }`}
+                            >
+                              <span>{item.icon}</span>
+                              <span>{item.label}</span>
+                            </button>
+                          ))}
+                        </div>
+                        {newAddressLabel === "Other" && (
+                          <input
+                            type="text"
+                            value={customAddressLabel}
+                            onChange={(e) => setCustomAddressLabel(e.target.value)}
+                            placeholder="e.g. Warehouse, Farmhouse, Project B"
+                            className={`mt-2 ${inp}`}
+                          />
+                        )}
+                      </div>
+
+                      {/* Full delivery address */}
+                      <div>
+                        <label className={lbl}>Street Address / Plot / Flat No. *</label>
+                        <textarea
+                          name="address"
+                          value={formData.address}
+                          onChange={handleInputChange}
+                          required
+                          rows={2}
+                          placeholder="House/Plot/Shop no., Building name, Street, Area, Landmark"
+                          className={`${inp} resize-none`}
+                        />
+                      </div>
+
+                      {/* PIN Code */}
+                      <div>
+                        <label className={lbl}>PIN Code (Optional)</label>
+                        <input
+                          type="text"
+                          maxLength={6}
+                          value={newAddressPincode}
+                          onChange={(e) => setNewAddressPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                          placeholder="e.g. 244001"
+                          className={inp}
+                        />
+                      </div>
+
+                      {/* Save address toggle checkboxes */}
+                      <div className="pt-2 border-t border-gray-200 dark:border-zinc-700 space-y-2">
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={saveAddressToProfile}
+                            onChange={(e) => setSaveAddressToProfile(e.target.checked)}
+                            className="w-4 h-4 rounded accent-[var(--brand-blue)]"
+                          />
+                          <span className={`text-xs font-bold ${headText}`}>
+                            Save this address for future orders
+                          </span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={makeDefaultAddress}
+                            onChange={(e) => setMakeDefaultAddress(e.target.checked)}
+                            className="w-4 h-4 rounded accent-[var(--brand-blue)]"
+                          />
+                          <span className={`text-[11px] ${subText}`}>
+                            Set as default address
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* ── SECTION 4 — GPS Location ────────────────────────── */}
-                <SectionLabel isDark={isDarkMode}>📍 Live Location</SectionLabel>
+                <SectionLabel isDark={isDarkMode}>📍 Live Location (Optional)</SectionLabel>
 
-                <div className="mb-3">
-                  <div className="flex items-center justify-between mb-1">
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-1.5">
                     <span className={`text-[10px] font-bold ${isDarkMode ? "text-zinc-400" : "text-gray-500"}`}>
-                      Share your location for faster supplier matching
+                      {locationStatus === "success" && locationCoords
+                        ? "GPS Location attached for instant supplier matching"
+                        : "Optional: Detect live GPS location to link with your delivery address"}
                     </span>
                     {locationStatus === "success" && (
                       <button type="button" onClick={retryLocation}
                         className={`text-[10px] font-bold px-2 py-0.5 rounded border transition-all ${isDarkMode ? "border-zinc-600 text-zinc-300 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue-light)]" : "border-gray-300 text-gray-500 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue-deep)]"}`}>
-                        🔄 Retry
+                        🔄 Update GPS
                       </button>
                     )}
                   </div>
@@ -1199,13 +1668,14 @@ export default function ShopPage() {
                     <button
                       type="button"
                       onClick={retryLocation}
-                      className={`w-full py-2.5 px-3 mb-2 text-[10px] font-black uppercase tracking-widest border transition-all ${
+                      className={`w-full py-2.5 px-3 mb-2 text-[10px] font-black uppercase tracking-widest border transition-all flex items-center justify-center gap-1.5 ${
                         isDarkMode
                           ? "border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/10"
                           : "border-zinc-900 text-zinc-900 hover:bg-zinc-100"
                       }`}
                     >
-                      {locationStatus === "error" ? "Try Again - Get Live Location" : "Get Live Location"}
+                      <MapPin size={13} />
+                      <span>{locationStatus === "error" ? "Try Again - Get Live Location" : "Detect Current Live Location"}</span>
                     </button>
                   )}
 
@@ -1233,7 +1703,7 @@ export default function ShopPage() {
                       />
                       <div className={`flex items-center justify-between px-3 py-1.5 ${isDarkMode ? "bg-green-900/20" : "bg-green-50"}`}>
                         <span className={`text-[10px] font-mono font-bold ${isDarkMode ? "text-green-400" : "text-green-700"}`}>
-                          ✅ {locationCoords.latitude.toFixed(5)}, {locationCoords.longitude.toFixed(5)}
+                          ✅ {Number(locationCoords.latitude).toFixed(5)}, {Number(locationCoords.longitude).toFixed(5)}
                         </span>
                         <a href={`https://www.google.com/maps?q=${locationCoords.latitude},${locationCoords.longitude}`}
                           target="_blank" rel="noopener noreferrer"

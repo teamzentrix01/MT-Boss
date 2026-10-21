@@ -5,20 +5,49 @@ import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { ChevronLeft, ChevronRight, Package, Image as ImageIcon } from 'lucide-react';
 
+export function normalizeShopImageUrl(value) {
+  const imageUrl = String(value || '').trim();
+  if (!imageUrl) return '';
+  if (/^(?:https?:|data:image\/|blob:|\/)/i.test(imageUrl)) return imageUrl;
+  if (/^(?:www\.)/i.test(imageUrl)) return `https://${imageUrl}`;
+  return `/${imageUrl}`;
+}
+
 export function getProductImages(product, category) {
   if (!product) return [];
   const list = [];
-  if (product.image_url) list.push(product.image_url.trim());
+  const directCandidates = [
+    product.image_url,
+    product.image,
+    product.imageUrl,
+    product.product_image,
+    product.category_image,
+  ];
+  for (const c of directCandidates) {
+    if (c && typeof c === 'string' && c.trim()) {
+      list.push(normalizeShopImageUrl(c.trim()));
+    }
+  }
   if (Array.isArray(product.images)) {
     for (const img of product.images) {
-      if (img && typeof img === 'string') {
-        list.push(img.trim());
+      if (img && typeof img === 'string' && img.trim()) {
+        list.push(normalizeShopImageUrl(img.trim()));
+      }
+    }
+  }
+  if (Array.isArray(product.category_images)) {
+    for (const img of product.category_images) {
+      if (img && typeof img === 'string' && img.trim()) {
+        list.push(normalizeShopImageUrl(img.trim()));
       }
     }
   }
   const unique = Array.from(new Set(list.filter(Boolean)));
-  if (unique.length === 0 && (category?.image || product.category?.image)) {
-    unique.push(category?.image || product.category?.image);
+  if (unique.length === 0) {
+    const catFallback = category?.image || product.category?.image || (typeof category === 'string' ? category : '');
+    if (catFallback && typeof catFallback === 'string') {
+      unique.push(normalizeShopImageUrl(catFallback.trim()));
+    }
   }
   return unique;
 }

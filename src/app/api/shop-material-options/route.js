@@ -53,6 +53,73 @@ export async function GET(req) {
     try {
         await ensureTable();
         const { searchParams } = new URL(req.url);
+        const idParam = searchParams.get('id');
+
+        if (idParam) {
+            const rawId = String(idParam).replace(/^supplier-/, '');
+            const numId = parseInt(rawId, 10);
+            if (!isNaN(numId)) {
+                const singleRes = await pool.query(
+                    `SELECT m.id, m.supplier_id, m.vendor_id, m.name, m.description, m.quote_price_range, m.price, m.unit, m.quantity, m.image_url, m.category, m.subcategory,
+                      m.brand, m.compare_at_price, m.is_featured_deal, m.images, m.specifications, m.bulk_pricing,
+                      c.image AS category_image, c.images AS category_images,
+                      CASE
+                        WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
+                        WHEN m.vendor_id IS NOT NULL AND v.city IS NOT NULL THEN jsonb_build_array(v.city)
+                        WHEN m.supplier_id <> 0 AND s.city IS NOT NULL THEN jsonb_build_array(s.city)
+                        ELSE '[]'::jsonb
+                      END AS available_cities,
+                      m.created_at
+               FROM supplier_materials m
+               LEFT JOIN suppliers s ON s.id = m.supplier_id
+               LEFT JOIN vendors v ON v.id = m.vendor_id
+               LEFT JOIN shop_categories c ON LOWER(TRIM(c.name)) = LOWER(TRIM(m.category))
+               WHERE m.id = $1`, [numId]
+                );
+
+                if (singleRes.rows.length === 0) {
+                    return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+                }
+
+                const row = singleRes.rows[0];
+                const specifications = { ...(row.specifications || {}) };
+                delete specifications.__approval__;
+
+                const fallbackImage = row.category_image || '';
+                const rawImages = Array.isArray(row.images) ? row.images.filter(Boolean) : [];
+                const categoryImages = Array.isArray(row.category_images) ? row.category_images.filter(Boolean) : [];
+                const fallbackImages = rawImages.length > 0 ? rawImages : (categoryImages.length > 0 ? categoryImages : (fallbackImage ? [fallbackImage] : []));
+                const resolvedImageUrl = row.image_url || fallbackImage || (fallbackImages[0] || '');
+
+                const product = {
+                    id: row.id,
+                    product_id: row.id,
+                    supplier_id: row.supplier_id,
+                    vendor_id: row.vendor_id,
+                    name: row.name,
+                    description: row.description || '',
+                    quote_price_range: row.quote_price_range || '',
+                    price: row.price,
+                    unit: row.unit || '',
+                    quantity: row.quantity,
+                    image_url: resolvedImageUrl,
+                    category_image: fallbackImage,
+                    category: row.category || '',
+                    subcategory: row.subcategory || '',
+                    brand: row.brand || '',
+                    compare_at_price: row.compare_at_price,
+                    is_featured_deal: row.is_featured_deal === true,
+                    images: fallbackImages,
+                    specifications,
+                    bulk_pricing: Array.isArray(row.bulk_pricing) ? row.bulk_pricing : [],
+                    available_cities: Array.isArray(row.available_cities) ? row.available_cities : [],
+                    created_at: row.created_at,
+                };
+
+                return NextResponse.json({ success: true, data: { product } });
+            }
+        }
+
         const category = String(searchParams.get('category') || '').trim();
         const bypassCache = searchParams.get('fresh') === '1';
         const cacheKey = category.toLowerCase();
@@ -66,6 +133,7 @@ export async function GET(req) {
         const result = await pool.query(
             `SELECT m.id, m.supplier_id, m.vendor_id, m.name, m.description, m.quote_price_range, m.price, m.unit, m.quantity, m.image_url, m.category, m.subcategory,
               m.brand, m.compare_at_price, m.is_featured_deal, m.images, m.specifications, m.bulk_pricing,
+              c.image AS category_image, c.images AS category_images,
               CASE
                 WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
                 WHEN m.vendor_id IS NOT NULL AND v.city IS NOT NULL THEN jsonb_build_array(v.city)
@@ -76,6 +144,7 @@ export async function GET(req) {
        FROM supplier_materials m
        LEFT JOIN suppliers s ON s.id = m.supplier_id
        LEFT JOIN vendors v ON v.id = m.vendor_id
+       LEFT JOIN shop_categories c ON LOWER(TRIM(c.name)) = LOWER(TRIM(m.category))
        WHERE m.is_available = TRUE
          AND (m.vendor_id IS NULL OR COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'approved')
          AND (
@@ -89,6 +158,12 @@ export async function GET(req) {
         const products = result.rows.map((row) => {
             const specifications = { ...(row.specifications || {}) };
             delete specifications.__approval__;
+            const fallbackImage = row.category_image || '';
+            const rawImages = Array.isArray(row.images) ? row.images.filter(Boolean) : [];
+            const categoryImages = Array.isArray(row.category_images) ? row.category_images.filter(Boolean) : [];
+            const fallbackImages = rawImages.length > 0 ? rawImages : (categoryImages.length > 0 ? categoryImages : (fallbackImage ? [fallbackImage] : []));
+            const resolvedImageUrl = row.image_url || fallbackImage || (fallbackImages[0] || '');
+
             return {
                 id: row.id,
                 supplier_id: row.supplier_id,
@@ -99,13 +174,14 @@ export async function GET(req) {
                 price: row.price,
                 unit: row.unit || '',
                 quantity: row.quantity,
-                image_url: row.image_url || '',
+                image_url: resolvedImageUrl,
+                category_image: fallbackImage,
                 category: row.category || '',
                 subcategory: row.subcategory || '',
                 brand: row.brand || '',
                 compare_at_price: row.compare_at_price,
                 is_featured_deal: row.is_featured_deal === true,
-                images: Array.isArray(row.images) ? row.images : [],
+                images: fallbackImages,
                 specifications,
                 bulk_pricing: Array.isArray(row.bulk_pricing) ? row.bulk_pricing : [],
                 available_cities: Array.isArray(row.available_cities) ? row.available_cities : [],
