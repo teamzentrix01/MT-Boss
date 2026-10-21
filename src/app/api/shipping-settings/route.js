@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireRole, verifyBearer } from '@/lib/auth';
 import pool from '@/lib/db';
-import { getShippingSettings, ensureShippingSchema, validateQuantityRules } from '@/lib/shipping';
+import { getShippingSettings, ensureShippingSchema, validateQuantityRules, invalidateShippingSettingsCache } from '@/lib/shipping';
 
 export async function GET(req) {
   const isAdmin = requireRole(req, 'admin');
@@ -169,6 +169,7 @@ export async function PUT(req) {
       client.release();
     }
 
+    invalidateShippingSettingsCache();
     const updatedData = await getShippingSettings();
     return NextResponse.json({ success: true, data: updatedData });
   } catch (error) {

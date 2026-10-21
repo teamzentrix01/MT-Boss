@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireActiveUser } from '@/lib/user-moderation';
 import { handleApiError } from '@/lib/api-utils';
+import { ensureCashbackSchema, processScheduledMaturityAndExpiry } from '@/lib/cashback/service';
 
 export async function GET(req) {
   try {
@@ -20,6 +21,10 @@ export async function GET(req) {
         data: [],
       });
     }
+
+    await ensureCashbackSchema();
+    // On-demand maturity: ensure wallet transactions list reflects newly matured lots
+    await processScheduledMaturityAndExpiry(pool, userId);
 
     const { searchParams } = new URL(req.url);
     const limit = Math.min(100, Math.max(1, Number.parseInt(searchParams.get('limit') || 50, 10)));

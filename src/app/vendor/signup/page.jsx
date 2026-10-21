@@ -61,6 +61,10 @@ export default function VendorSignupPage() {
     aadhar_image: null,
     profile_photo: null,
     services: [],
+    is_contractor: false,
+    contractor_trade: '',
+    labor_roles: [],
+    labor_team_size: '',
     package_id: 'free',
   });
 
@@ -175,8 +179,8 @@ export default function VendorSignupPage() {
         return true;
 
       case 3:
-        if (formData.services.length === 0) {
-          setError('Select at least one service'); return false;
+        if (formData.services.length === 0 && !formData.is_contractor) {
+          setError('Select at least one service or register as a contractor'); return false;
         }
         return true;
 
@@ -215,6 +219,10 @@ const handleSubmit = async (e) => {
       payload.append('postal_code', formData.postal_code);
       payload.append('aadhar_number', formData.aadhar_number);
       payload.append('services', JSON.stringify(formData.services));
+      payload.append('is_contractor', formData.is_contractor ? 'true' : 'false');
+      payload.append('contractor_trade', formData.contractor_trade);
+      payload.append('labor_roles', JSON.stringify(formData.labor_roles));
+      payload.append('labor_team_size', formData.labor_team_size);
       payload.append('package_id', formData.package_id);
       payload.append('registration_otp', registrationOtp);
       if (formData.profile_photo) payload.append('profile_photo', formData.profile_photo);
@@ -822,6 +830,28 @@ const handleSubmit = async (e) => {
               {/* STEP 3 */}
               {step === 3 && (
                 <>
+                  <label className={`vs-service-card ${formData.is_contractor ? 'selected' : ''}`} style={{ display: 'flex', gap: 12, marginBottom: 18, borderColor: formData.is_contractor ? '#16a34a' : undefined }}>
+                    <input
+                      type="checkbox"
+                      checked={formData.is_contractor}
+                      onChange={(e) => setFormData((current) => ({ ...current, is_contractor: e.target.checked }))}
+                      style={{ width: 18, height: 18, marginTop: 3 }}
+                    />
+                    <div>
+                      <div className="vs-service-name">Register as a Contractor</div>
+                      <div className="vs-service-price">Enable contractor profile, labour team and project work access.</div>
+                    </div>
+                  </label>
+
+                  {formData.is_contractor && (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, padding: 12, marginBottom: 18, border: '1px solid #bbf7d0', borderRadius: 10, background: dark ? '#16351f' : '#f0fdf4' }}>
+                      <input className="vs-input" value={formData.contractor_trade} onChange={(e) => setFormData((current) => ({ ...current, contractor_trade: e.target.value }))} placeholder="Contractor trade (Civil, Electrical...)" />
+                      <select className="vs-input" value={formData.labor_team_size} onChange={(e) => setFormData((current) => ({ ...current, labor_team_size: e.target.value }))}>
+                        <option value="">Labour team size</option>
+                        <option value="1-5">1-5</option><option value="6-15">6-15</option><option value="16-30">16-30</option><option value="30+">30+</option>
+                      </select>
+                    </div>
+                  )}
                   <label className="vs-label">Select services you provide *</label>
                   {loadingServices ? (
                     <div style={{ textAlign: 'center', padding: '2rem', color: dark ? '#555' : '#aaa', fontSize: '0.85rem' }}>

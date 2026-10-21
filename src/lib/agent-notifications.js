@@ -2,6 +2,15 @@ import pool from '@/lib/db';
 import { createInitializationGuard } from '@/lib/api-utils';
 
 export const ensureAgentNotificationsSchema = createInitializationGuard(async () => {
+  // Fast path: if agent_notifications table and triggers already exist, exit immediately
+  const check = await pool.query(`
+    SELECT (SELECT to_regclass('public.agent_notifications') IS NOT NULL) AS has_table,
+           (SELECT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'agents_activity_trigger')) AS has_trigger
+  `);
+  if (check.rows[0]?.has_table && check.rows[0]?.has_trigger) {
+    return;
+  }
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS agent_notifications (
       id BIGSERIAL PRIMARY KEY,

@@ -3,6 +3,28 @@ import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { resolveServiceCity } from '@/lib/service-cities';
 import { franchiseAccessResponse, getFranchiseAccess } from '@/lib/franchise-access';
+import { createInitializationGuard } from '@/lib/api-utils';
+import { uploadBannerImage } from '@/lib/banner-cloudinary.mjs';
+
+const ensureFreeSlotImageColumn = createInitializationGuard(async () => {
+  await pool.query('ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS image_url TEXT');
+});
+
+async function readSlotPayload(req) {
+  if (!req.headers.get('content-type')?.includes('multipart/form-data')) {
+    const body = await req.json();
+    return { body, imageFile: null, removeImage: body.remove_image === true || body.remove_image === 'true' };
+  }
+  const form = await req.formData();
+  const body = {};
+  let imageFile = null;
+  for (const [key, value] of form.entries()) {
+    if (key === 'image' && typeof value?.arrayBuffer === 'function') imageFile = value;
+    else if (typeof value === 'string') body[key] = value;
+  }
+  if (body.max_bookings !== undefined) body.max_bookings = Number(body.max_bookings);
+  return { body, imageFile, removeImage: body.remove_image === 'true' };
+}
 
 async function getSlotManager(req, permission) {
   const admin = requireRole(req, 'admin');
@@ -18,11 +40,12 @@ export async function PATCH(req, { params }) {
   try {
     const manager = await getSlotManager(req, 'slots.free.edit');
     if (!manager.allowed) return franchiseAccessResponse(manager);
+    await ensureFreeSlotImageColumn();
 
     const { id } = await params;
-    const body = await req.json();
+    const { body, imageFile, removeImage } = await readSlotPayload(req);
     const current = await pool.query(
-      `SELECT quick_service_id, city, slot_start, slot_end FROM free_time_slots WHERE id = $1`,
+      `SELECT quick_service_id, city, slot_start, slot_end, image_url FROM free_time_slots WHERE id = $1`,
       [id]
     );
     if (current.rows.length === 0) {
@@ -46,6 +69,18 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ error: 'Free slots are fixed to Morning or Evening.' }, { status: 400 });
     }
 
+    let imageUrl = current.rows[0].image_url || null;
+    if (removeImage) imageUrl = null;
+    if (imageFile) {
+      try {
+        const uploaded = await uploadBannerImage(imageFile, 'mtboss/free-slots');
+        imageUrl = uploaded.url;
+      } catch (error) {
+        const status = /choose a JPG|smaller than 5 MB|contents do not match/i.test(error.message) ? 400 : 502;
+        return NextResponse.json({ error: error.message || 'Image upload failed.' }, { status });
+      }
+    }
+
     const result = await pool.query(
       `UPDATE free_time_slots
        SET quick_service_id = COALESCE($1::INTEGER, quick_service_id),
@@ -54,8 +89,9 @@ export async function PATCH(req, { params }) {
            slot_end = COALESCE($4::TIME, slot_end),
            city = COALESCE(NULLIF(TRIM($5::TEXT), ''), city),
            max_bookings = GREATEST(COALESCE($6::INTEGER, max_bookings), 1),
-           is_available = COALESCE($7::BOOLEAN, is_available)
-       WHERE id = $8::INTEGER
+           is_available = COALESCE($7::BOOLEAN, is_available),
+           image_url = $8::TEXT
+       WHERE id = $9::INTEGER
        RETURNING *, TO_CHAR(slot_date::DATE, 'YYYY-MM-DD') AS slot_date`,
       [
         body.quick_service_id || null,
@@ -65,6 +101,7 @@ export async function PATCH(req, { params }) {
         canonicalCity,
         body.max_bookings === undefined ? null : Number(body.max_bookings),
         body.is_available,
+        imageUrl,
         id,
       ]
     );

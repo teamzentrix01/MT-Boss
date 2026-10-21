@@ -80,7 +80,9 @@ export async function GET(req) {
     const search = searchParams.get('search');
     const all = searchParams.get('all') === '1';
 
-    let query = 'SELECT * FROM blogs';
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50', 10) || 50));
+    const offset = (page - 1) * limit;
     const params = [];
     const conditions = [];
 
@@ -100,14 +102,26 @@ export async function GET(req) {
       conditions.push(`(LOWER(title) LIKE $${params.length} OR LOWER(excerpt) LIKE $${params.length} OR LOWER(content) LIKE $${params.length})`);
     }
 
-    if (conditions.length > 0) {
-      query += ' WHERE ' + conditions.join(' AND ');
-    }
-
-    query += ' ORDER BY created_at DESC';
-
-    const result = await pool.query(query, params);
-    return NextResponse.json({ success: true, data: result.rows });
+    const whereSql = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const countRes = await pool.query(`SELECT COUNT(*)::INT AS total FROM blogs ${whereSql}`, params);
+    const total = countRes.rows[0]?.total || 0;
+    params.push(limit, offset);
+    // List omits full article body — detail via /api/blogs/[slug]
+    const result = await pool.query(
+      `SELECT id, slug, title, excerpt, cover_image, category, tags, author_name,
+              read_time, meta_title, meta_description, meta_keywords,
+              is_published, views_count, created_at, updated_at
+       FROM blogs
+       ${whereSql}
+       ORDER BY created_at DESC
+       LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
+    );
+    return NextResponse.json({
+      success: true,
+      data: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
+    });
   } catch (error) {
     console.error('GET /api/blogs error:', error);
     return NextResponse.json({ success: false, error: 'Failed to fetch blogs' }, { status: 500 });

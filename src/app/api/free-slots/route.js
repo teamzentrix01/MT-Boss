@@ -4,11 +4,13 @@ import { requireRole } from '@/lib/auth';
 import { createInitializationGuard } from '@/lib/api-utils';
 import { addServiceCity, resolveServiceCity } from '@/lib/service-cities';
 import { franchiseAccessResponse, getFranchiseAccess } from '@/lib/franchise-access';
+import { uploadBannerImage } from '@/lib/banner-cloudinary.mjs';
 
 const ensureFreeSlotsColumns = createInitializationGuard(async () => {
   await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS current_bookings INTEGER DEFAULT 0`);
   await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS max_bookings INTEGER DEFAULT 1`);
   await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS is_available BOOLEAN DEFAULT TRUE`);
+  await pool.query(`ALTER TABLE free_time_slots ADD COLUMN IF NOT EXISTS image_url TEXT`);
   await pool.query(`UPDATE free_time_slots SET current_bookings = 0 WHERE current_bookings IS NULL`);
   await pool.query(`UPDATE free_time_slots SET max_bookings = 1 WHERE max_bookings IS NULL`);
 });
@@ -24,6 +26,30 @@ async function getSlotManager(req, permission) {
   return { ...access, isAdmin: false };
 }
 
+async function readSlotPayload(req) {
+  if (!req.headers.get('content-type')?.includes('multipart/form-data')) {
+    return { body: await req.json(), imageFile: null, removeImage: false };
+  }
+
+  const form = await req.formData();
+  const body = {};
+  let imageFile = null;
+  for (const [key, value] of form.entries()) {
+    if (key === 'image' && typeof value?.arrayBuffer === 'function') {
+      imageFile = value;
+    } else if (typeof value === 'string') {
+      body[key] = value;
+    }
+  }
+  if (typeof body.quick_service_ids === 'string') {
+    try { body.quick_service_ids = JSON.parse(body.quick_service_ids); } catch { body.quick_service_ids = []; }
+  }
+  if (body.max_bookings !== undefined) body.max_bookings = Number(body.max_bookings);
+  return { body, imageFile, removeImage: body.remove_image === true || body.remove_image === 'true' };
+}
+
+export { ensureFreeSlotsColumns };
+
 // GET — user mode: city + service_id; admin mode: no params
 export async function GET(req) {
   try {
@@ -38,6 +64,7 @@ export async function GET(req) {
     // Common SELECT with service label join
     const baseSelect = `
       SELECT fts.id, fts.quick_service_id, qs.label AS service_label, qs.icon AS service_icon,
+             fts.image_url,
              fts.slot_start, fts.slot_end,
              TO_CHAR(fts.slot_date::DATE, 'YYYY-MM-DD') AS slot_date,
              fts.city, fts.is_available, fts.max_bookings,
@@ -97,7 +124,8 @@ export async function POST(req) {
     if (!manager.allowed) return franchiseAccessResponse(manager);
     await ensureFreeSlotsColumns();
 
-    const { quick_service_id, quick_service_ids, slot_date, slot_end_date, slot_start, slot_end, city, max_bookings = 1 } = await req.json();
+    const { body, imageFile } = await readSlotPayload(req);
+    const { quick_service_id, quick_service_ids, slot_date, slot_end_date, slot_start, slot_end, city, max_bookings = 1 } = body;
     const serviceIds = [...new Set(
       (Array.isArray(quick_service_ids) && quick_service_ids.length ? quick_service_ids : [quick_service_id])
         .map(Number)
@@ -131,6 +159,16 @@ export async function POST(req) {
     if (endDate < startDate) {
       return NextResponse.json({ error: 'End date cannot be before start date' }, { status: 400 });
     }
+
+    let uploadedImage = null;
+    if (imageFile) {
+      try {
+        uploadedImage = await uploadBannerImage(imageFile, 'mtboss/free-slots');
+      } catch (error) {
+        const status = /choose a JPG|smaller than 5 MB|contents do not match/i.test(error.message) ? 400 : 502;
+        return NextResponse.json({ error: error.message || 'Image upload failed.' }, { status });
+      }
+    }
     const client = await pool.connect();
     const createdRows = [];
     try {
@@ -138,8 +176,8 @@ export async function POST(req) {
       for (let index = 0; index < serviceIds.length; index += 1) {
         const result = await client.query(
           `INSERT INTO free_time_slots
-         (quick_service_id, slot_date, slot_start, slot_end, city, max_bookings, current_bookings, is_available, created_at)
-       SELECT $1::INTEGER, day::DATE, $3::TIME, $4::TIME, $5::TEXT, $6::INTEGER, 0, TRUE, NOW()
+         (quick_service_id, slot_date, slot_start, slot_end, city, max_bookings, current_bookings, is_available, image_url, created_at)
+       SELECT $1::INTEGER, day::DATE, $3::TIME, $4::TIME, $5::TEXT, $6::INTEGER, 0, TRUE, $8::TEXT, NOW()
        FROM GENERATE_SERIES($2::DATE, $7::DATE, INTERVAL '1 day') day
        WHERE NOT EXISTS (
          SELECT 1 FROM free_time_slots existing
@@ -150,7 +188,7 @@ export async function POST(req) {
             AND LOWER(TRIM(existing.city)) = LOWER(TRIM($5::TEXT))
        )
        RETURNING *, TO_CHAR(slot_date::DATE, 'YYYY-MM-DD') AS slot_date`,
-          [serviceIds[index], startDate, slot_start, slot_end, canonicalCities[index], Math.max(Number(max_bookings) || 1, 1), endDate]
+          [serviceIds[index], startDate, slot_start, slot_end, canonicalCities[index], Math.max(Number(max_bookings) || 1, 1), endDate, uploadedImage?.url || null]
         );
         createdRows.push(...result.rows);
       }

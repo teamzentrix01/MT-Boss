@@ -3,10 +3,18 @@
 import { useEffect, useState } from 'react';
 import './ShopNowManager.css';
 
-const headers = () => ({
-  'Content-Type': 'application/json',
-  Authorization: `Bearer ${localStorage.getItem('admin-token') || localStorage.getItem('token') || ''}`,
-});
+const headers = () => {
+  const token =
+    (typeof localStorage !== 'undefined' &&
+      (localStorage.getItem('admin-token') ||
+        localStorage.getItem('token') ||
+        localStorage.getItem('auth-token'))) ||
+    '';
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+};
 
 export default function CashbackManager({ isDarkMode }) {
   const [activeTab, setActiveTab] = useState('settings'); // 'settings' | 'first-order' | 'category' | 'slab'
@@ -74,18 +82,23 @@ export default function CashbackManager({ isDarkMode }) {
     setLoading(true);
     try {
       const [settingsRes, rulesRes, catRes] = await Promise.all([
-        fetch('/api/admin/cashback/settings', { headers: headers() }),
-        fetch('/api/admin/cashback/rules', { headers: headers() }),
-        fetch('/api/shop-categories'),
+        fetch('/api/admin/cashback/settings', { headers: headers(), credentials: 'include' }),
+        fetch('/api/admin/cashback/rules', { headers: headers(), credentials: 'include' }),
+        fetch('/api/shop-categories', { credentials: 'include' }),
       ]);
 
       const [settingsData, rulesData, catData] = await Promise.all([
-        settingsRes.json(),
-        rulesRes.json(),
-        catRes.json(),
+        settingsRes.json().catch(() => ({})),
+        rulesRes.json().catch(() => ({})),
+        catRes.json().catch(() => ({})),
       ]);
 
-      if (settingsData.success && settingsData.data) {
+      if (!settingsRes.ok || !settingsData.success) {
+        setNotice({
+          text: settingsData.error || `Could not load cashback settings (Status ${settingsRes.status})`,
+          type: 'error',
+        });
+      } else if (settingsData.data) {
         setSettings({
           ...settingsData.data,
           max_cashback_per_order: settingsData.data.max_cashback_per_order ?? '',
@@ -96,7 +109,12 @@ export default function CashbackManager({ isDarkMode }) {
         setCategories(catData.data);
       }
 
-      if (rulesData.success && Array.isArray(rulesData.data)) {
+      if (!rulesRes.ok || !rulesData.success) {
+        setNotice({
+          text: rulesData.error || `Could not load cashback rules (Status ${rulesRes.status})`,
+          type: 'error',
+        });
+      } else if (Array.isArray(rulesData.data)) {
         const rules = rulesData.data;
         const fo = rules.find((r) => r.rule_type === 'FIRST_ORDER');
         const sl = rules.find((r) => r.rule_type === 'SLAB');
@@ -140,6 +158,30 @@ export default function CashbackManager({ isDarkMode }) {
     loadData();
   }, []);
 
+  const [settling, setSettling] = useState(false);
+
+  const settlePendingCashback = async () => {
+    setSettling(true);
+    setNotice({ text: '', type: 'info' });
+    try {
+      const res = await fetch('/api/admin/cashback/settle', {
+        method: 'POST',
+        headers: headers(),
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Failed to process cashback maturity');
+      setNotice({
+        text: `Maturity sync completed: ${data.data?.maturedCount || 0} transaction(s) matured into Available Balance.`,
+        type: 'success',
+      });
+    } catch (err) {
+      setNotice({ text: err.message, type: 'error' });
+    } finally {
+      setSettling(false);
+    }
+  };
+
   const saveSettings = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -148,6 +190,7 @@ export default function CashbackManager({ isDarkMode }) {
       const res = await fetch('/api/admin/cashback/settings', {
         method: 'PUT',
         headers: headers(),
+        credentials: 'include',
         body: JSON.stringify(settings),
       });
       const data = await res.json();
@@ -175,6 +218,7 @@ export default function CashbackManager({ isDarkMode }) {
       const res = await fetch(url, {
         method,
         headers: headers(),
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
       const data = await res.json();
@@ -204,6 +248,7 @@ export default function CashbackManager({ isDarkMode }) {
       const res = await fetch(url, {
         method,
         headers: headers(),
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
       const data = await res.json();
@@ -224,6 +269,7 @@ export default function CashbackManager({ isDarkMode }) {
       const res = await fetch(`/api/admin/cashback/rules/${ruleId}`, {
         method: 'DELETE',
         headers: headers(),
+        credentials: 'include',
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || 'Failed to delete rule');
@@ -282,6 +328,7 @@ export default function CashbackManager({ isDarkMode }) {
       const res = await fetch(url, {
         method,
         headers: headers(),
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
       const data = await res.json();
@@ -650,9 +697,29 @@ export default function CashbackManager({ isDarkMode }) {
                 </div>
               </div>
 
-              <div className="shop-admin-form-footer" style={{ marginTop: '4px' }}>
+              <div className="shop-admin-form-footer" style={{ marginTop: '4px', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
                 <button type="submit" disabled={saving} style={{ cursor: 'pointer' }}>
                   {saving ? 'Saving...' : 'Save Settings'}
+                </button>
+                <button
+                  type="button"
+                  onClick={settlePendingCashback}
+                  disabled={settling}
+                  style={{
+                    cursor: 'pointer',
+                    background: isDarkMode ? '#1e293b' : '#f0fdf4',
+                    color: isDarkMode ? '#4ade80' : '#16a34a',
+                    border: '1px solid rgba(34, 197, 94, 0.4)',
+                    padding: '10px 18px',
+                    borderRadius: '8px',
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  ⚡ {settling ? 'Processing...' : 'Settle & Release Pending Cashback Now'}
                 </button>
               </div>
             </form>

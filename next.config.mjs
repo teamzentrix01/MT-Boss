@@ -10,6 +10,9 @@ dotenv.config({ path: path.join(projectRoot, "src", ".env") });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // This repository has its own lockfile inside a parent workspace. Explicitly
+  // setting the tracing root prevents Next from selecting the parent project.
+  outputFileTracingRoot: projectRoot,
   /* config options here */
   experimental: {
     // Compile in the main process and use threads for type checking. This avoids
@@ -23,6 +26,11 @@ const nextConfig = {
   distDir: process.env.NODE_ENV === 'development' ? '.next-dev' : '.next',
   reactCompiler: true,
   images: {
+    // Cloudinary images occasionally time out when fetched through Next's
+    // development image-optimization proxy on Windows. Let the browser load
+    // the already CDN-hosted images directly, which prevents /_next/image 500s
+    // without changing any Image component or its URL.
+    unoptimized: true,
     qualities: [70, 75, 80],
     remotePatterns: [
       { protocol: 'https', hostname: 'res.cloudinary.com' },

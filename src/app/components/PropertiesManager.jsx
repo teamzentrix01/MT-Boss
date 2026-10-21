@@ -1,7 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { Eye, ShieldCheck, Ban, Trash2, X, ActionIconButton, House, RotateCcw } from '@/app/components/ui/icons';
+
+const PropertyEditor = dynamic(() => import('@/app/components/PropertyEditor'), {
+  ssr: false,
+  loading: () => <div style={{ padding: 24, fontSize: 13, color: '#71717a' }}>Loading editor…</div>,
+});
 
 const STATUS_COLORS = {
   pending:  { bg: 'sp-pending',  label: 'Pending' },
@@ -9,28 +15,181 @@ const STATUS_COLORS = {
   rejected: { bg: 'sp-rejected', label: 'Rejected' },
 };
 
-export default function PropertiesManager({ isDarkMode }) {
+const CATEGORY_LABELS = {
+  room_rent: 'Room Rent',
+  flat: 'Flat',
+  plot: 'Plot',
+  general: 'General',
+};
+
+const PropertyTableRow = memo(function PropertyTableRow({
+  property: p,
+  onDetail,
+  onEdit,
+  onAction,
+  onDelete,
+}) {
+  const sc = STATUS_COLORS[p.status] || STATUS_COLORS.pending;
+  const location = useMemo(
+    () => [p.locality, p.location].filter(Boolean).join(', '),
+    [p.locality, p.location],
+  );
+  const thumb = Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : null;
+
+  return (
+    <tr onClick={() => onDetail(p)}>
+      <td>
+        <div className="pm-thumb">
+          {thumb
+            ? <img src={thumb} alt="" loading="lazy" onError={(e) => { e.target.style.display = 'none'; }} />
+            : <div className="pm-thumb-placeholder"><House size={16} strokeWidth={1.75} /></div>}
+          <span className="pm-prop-name">#{p.id} · {p.title}</span>
+        </div>
+      </td>
+      <td style={{ color: 'var(--pm-muted)' }}>{CATEGORY_LABELS[p.property_category] || p.type}</td>
+      <td>
+        <span className={`badge-sm badge-${p.listing_type}`}>{p.listing_type}</span>
+      </td>
+      <td style={{ color: 'var(--pm-muted)' }}>{location}</td>
+      <td style={{ fontWeight: 600 }}>₹{p.price}</td>
+      <td style={{ color: 'var(--pm-muted)' }}>
+        {p.seller_name || '—'}
+        {p.seller_type && <span style={{ display: 'block', fontSize: '0.65rem' }}>{p.seller_type}</span>}
+      </td>
+      <td><span className={`badge-sm ${sc.bg}`}>{sc.label}</span></td>
+      <td onClick={(e) => e.stopPropagation()}>
+        <div className="pm-actions" style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+          <ActionIconButton icon={Eye} label="View property details" onClick={() => onDetail(p)} />
+          <button type="button" className="act-btn act-verify" onClick={() => onEdit(p)}>Edit</button>
+          {p.status !== 'verified' && (
+            <ActionIconButton icon={ShieldCheck} variant="success" label="Verify property" onClick={() => onAction(p.id, 'verify')} />
+          )}
+          {p.status !== 'rejected' && (
+            <ActionIconButton icon={Ban} variant="danger" label="Reject property" onClick={() => onAction(p.id, 'reject')} />
+          )}
+          <ActionIconButton icon={Trash2} variant="danger" label="Delete property" onClick={() => onDelete(p.id)} />
+        </div>
+      </td>
+    </tr>
+  );
+});
+
+export default function PropertiesManager({ isDarkMode, categoryFilter = null, createMode = false }) {
   const [properties, setProperties] = useState([]);
   const [loading,    setLoading]    = useState(true);
   const [filter,     setFilter]     = useState('all');
   const [listFilter, setListFilter] = useState('all');
+  const [categoryTab, setCategoryTab] = useState(categoryFilter || 'all');
   const [selected,   setSelected]   = useState(null);
+  const [editing,    setEditing]    = useState(null);
+  const [showCreate, setShowCreate] = useState(Boolean(createMode));
+  const [search,     setSearch]     = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ page: 1, limit: 25, total: 0, pages: 1 });
+  const [statusCounts, setStatusCounts] = useState({ all: 0, pending: 0, verified: 0, rejected: 0 });
   const [error,      setError]      = useState('');
   const [success,    setSuccess]    = useState('');
 
-  useEffect(() => { fetchProperties(); }, []);
+  useEffect(() => {
+    setCategoryTab(categoryFilter || 'all');
+    if (createMode) setShowCreate(true);
+  }, [categoryFilter, createMode]);
 
-  const fetchProperties = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res   = await fetch('/api/properties?status=all', { headers: { 'Authorization': `Bearer ${token}` } });
-      const data  = await res.json();
-      if (data.success) setProperties(data.data);
-    } catch { setError('Error fetching properties'); }
-    finally  { setLoading(false); }
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  useEffect(() => { setPage(1); }, [filter, listFilter, categoryTab, debouncedSearch, categoryFilter]);
+
+  useEffect(() => { fetchProperties(); }, [filter, listFilter, categoryTab, debouncedSearch, page, categoryFilter]);
+  useEffect(() => { fetchStatusCounts(); }, [listFilter, categoryTab, debouncedSearch, categoryFilter]);
+
+  const buildFilterParams = (statusValue) => {
+    const params = new URLSearchParams({
+      limit: '1',
+      fields: 'list',
+      status: statusValue,
+    });
+    if (listFilter !== 'all') params.set('listing_type', listFilter);
+    const cat = categoryFilter || (categoryTab !== 'all' ? categoryTab : '');
+    if (cat) params.set('category', cat);
+    if (debouncedSearch) params.set('q', debouncedSearch);
+    return params;
   };
 
-  const action = async (id, act) => {
+  const fetchStatusCounts = async () => {
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const [all, pending, verified, rejected] = await Promise.all(
+        ['all', 'pending', 'verified', 'rejected'].map(async (s) => {
+          const cr = await fetch(`/api/properties?${buildFilterParams(s)}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const cd = await cr.json();
+          return cd.pagination?.total || 0;
+        })
+      );
+      setStatusCounts({ all, pending, verified, rejected });
+    } catch { /* ignore */ }
+  };
+
+  const fetchProperties = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: '25',
+        fields: 'list',
+        sort: 'created_at',
+        order: 'desc',
+        status: filter === 'all' ? 'all' : filter,
+      });
+      if (listFilter !== 'all') params.set('listing_type', listFilter);
+      const cat = categoryFilter || (categoryTab !== 'all' ? categoryTab : '');
+      if (cat) params.set('category', cat);
+      if (debouncedSearch) params.set('q', debouncedSearch);
+
+      const res = await fetch(`/api/properties?${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProperties(data.data || []);
+        setPagination(data.pagination || { page: 1, limit: 25, total: 0, pages: 1 });
+      }
+    } catch { setError('Error fetching properties'); }
+    finally { setLoading(false); }
+  };
+
+  const openDetail = useCallback(async (row) => {
+    setSelected(row);
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch(`/api/properties?id=${row.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success && data.data) setSelected(data.data);
+    } catch { /* keep list row */ }
+  }, []);
+
+  const openEdit = useCallback(async (row) => {
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch(`/api/properties?id=${row.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setEditing(data.success && data.data ? data.data : row);
+    } catch {
+      setEditing(row);
+    }
+  }, []);
+
+  const action = useCallback(async (id, act) => {
     setError(''); setSuccess('');
     try {
       const token = localStorage.getItem('token');
@@ -46,9 +205,9 @@ export default function PropertiesManager({ isDarkMode }) {
         fetchProperties();
       } else setError(data.error || 'Action failed');
     } catch { setError('Network error'); }
-  };
+  }, [page, filter, listFilter, categoryTab, debouncedSearch, categoryFilter]);
 
-  const handleDelete = async (id) => {
+  const handleDelete = useCallback(async (id) => {
     if (!confirm('Delete this property listing permanently?')) return;
     try {
       const token = localStorage.getItem('token');
@@ -57,32 +216,53 @@ export default function PropertiesManager({ isDarkMode }) {
       if (data.success) { setSuccess('Deleted'); setSelected(null); fetchProperties(); }
       else setError(data.error || 'Delete failed');
     } catch { setError('Network error'); }
-  };
+  }, [page, filter, listFilter, categoryTab, debouncedSearch, categoryFilter]);
 
-  const displayed = properties.filter(p => {
-    const statusMatch  = filter     === 'all' || p.status       === filter;
-    const listingMatch = listFilter === 'all' || p.listing_type === listFilter;
-    return statusMatch && listingMatch;
-  });
-
-  const counts = {
-    all:      properties.length,
-    pending:  properties.filter(p => p.status === 'pending').length,
-    verified: properties.filter(p => p.status === 'verified').length,
-    rejected: properties.filter(p => p.status === 'rejected').length,
-  };
+  const displayed = properties;
+  const counts = statusCounts;
+  const themeTokens = useMemo(() => ({
+    bg: isDarkMode ? '#0f0f11' : '#f5f5f7',
+    surface: isDarkMode ? '#18181c' : '#ffffff',
+    border: isDarkMode ? '#2a2a30' : '#e2e2e7',
+    text: isDarkMode ? '#f0f0f5' : '#111113',
+  }), [isDarkMode]);
 
   if (loading) return <div style={{ color: 'var(--pm-muted)', fontSize: '0.8125rem' }}>Loading…</div>;
+
+  if (showCreate || editing) {
+    return (
+      <div style={{ background: themeTokens.surface, border: `1px solid ${themeTokens.border}`, borderRadius: 8, padding: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+          <strong>{editing ? `Edit property #${editing.id}` : 'Create property'}</strong>
+          <button type="button" onClick={() => { setShowCreate(false); setEditing(null); }} style={{ cursor: 'pointer' }}>Close</button>
+        </div>
+        <Suspense fallback={<div style={{ padding: 24, fontSize: 13, color: '#71717a' }}>Loading editor…</div>}>
+          <PropertyEditor
+            isDarkMode={isDarkMode}
+            initialCategory={categoryFilter || (categoryTab !== 'all' ? categoryTab : 'room_rent')}
+            property={editing}
+            onCancel={() => { setShowCreate(false); setEditing(null); }}
+            onSaved={() => {
+              setShowCreate(false);
+              setEditing(null);
+              setSuccess(editing ? 'Property updated' : 'Property created');
+              fetchProperties();
+            }}
+          />
+        </Suspense>
+      </div>
+    );
+  }
 
   return (
     <>
       <style>{`
         /* ── Tokens ── */
         .pm-root {
-          --pm-bg:       ${isDarkMode ? '#0f0f11' : '#f5f5f7'};
-          --pm-surface:  ${isDarkMode ? '#18181c' : '#ffffff'};
-          --pm-border:   ${isDarkMode ? '#2a2a30' : '#e2e2e7'};
-          --pm-text:     ${isDarkMode ? '#f0f0f5' : '#111113'};
+          --pm-bg:       ${themeTokens.bg};
+          --pm-surface:  ${themeTokens.surface};
+          --pm-border:   ${themeTokens.border};
+          --pm-text:     ${themeTokens.text};
           --pm-muted:    ${isDarkMode ? '#7c7c8a' : '#6b6b76'};
           --pm-accent:   ${isDarkMode ? '#60a5fa' : '#2563eb'};
           --pm-row-hov:  ${isDarkMode ? '#1e1e24' : '#f8f8fa'};
@@ -298,18 +478,38 @@ export default function PropertiesManager({ isDarkMode }) {
       <div className="pm-root">
         {/* Header */}
         <div className="pm-header">
-          <span className="pm-title">Properties Management</span>
-          <div className="pm-toggles">
-            {['all','buy','rent'].map(t => (
-              <button key={t} className={`pm-toggle${listFilter===t?' active':''}`} onClick={() => setListFilter(t)}>
-                {t === 'all' ? 'All' : t === 'buy' ? 'Buy' : 'Rent'}
-              </button>
-            ))}
+          <span className="pm-title">
+            Properties Management
+            {categoryFilter ? ` · ${CATEGORY_LABELS[categoryFilter] || categoryFilter}` : ''}
+          </span>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search title, ID, owner, location…"
+              style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid var(--pm-border)', background: 'var(--pm-surface)', color: 'var(--pm-text)', fontSize: 12, minWidth: 220 }}
+            />
+            <button type="button" className="pm-toggle active" onClick={() => setShowCreate(true)}>+ Create</button>
+            <div className="pm-toggles">
+              {['all','buy','rent'].map(t => (
+                <button key={t} className={`pm-toggle${listFilter===t?' active':''}`} onClick={() => setListFilter(t)}>
+                  {t === 'all' ? 'All' : t === 'buy' ? 'Buy' : 'Rent'}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         {error   && <div className="pm-alert pm-alert-err">{error}</div>}
         {success && <div className="pm-alert pm-alert-ok">{success}</div>}
+
+        {!categoryFilter && (
+          <div className="pm-toggles" style={{ marginBottom: 10 }}>
+            {[['all','All'],['room_rent','Room Rent'],['flat','Flats'],['plot','Plots'],['general','General']].map(([id, label]) => (
+              <button key={id} className={`pm-toggle${categoryTab===id?' active':''}`} onClick={() => setCategoryTab(id)}>{label}</button>
+            ))}
+          </div>
+        )}
 
         <div className="pm-panel">
           {/* Status tabs */}
@@ -327,69 +527,22 @@ export default function PropertiesManager({ isDarkMode }) {
             <table className="pm-table">
               <thead>
                 <tr>
-                  {['Property','Type','Listing','Location','Price','Seller','Status','Actions'].map(col => (
+                  {['Property','Category','Listing','Location','Price','Seller','Status','Actions'].map(col => (
                     <th key={col}>{col}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {displayed.length > 0 ? displayed.map(p => {
-                  const sc = STATUS_COLORS[p.status] || STATUS_COLORS.pending;
-                  return (
-                    <tr key={p.id} onClick={() => setSelected(p)}>
-                      <td>
-                        <div className="pm-thumb">
-                          {Array.isArray(p.images) && p.images.length > 0
-                            ? <img src={p.images[0]} alt="" onError={e => { e.target.style.display='none'; }} />
-                            : <div className="pm-thumb-placeholder"><House size={16} strokeWidth={1.75} /></div>}
-                          <span className="pm-prop-name">{p.title}</span>
-                        </div>
-                      </td>
-                      <td style={{ color: 'var(--pm-muted)' }}>{p.type}</td>
-                      <td>
-                        <span className={`badge-sm badge-${p.listing_type}`}>{p.listing_type}</span>
-                      </td>
-                      <td style={{ color: 'var(--pm-muted)' }}>{p.location}</td>
-                      <td style={{ fontWeight: 600 }}>₹{p.price}</td>
-                      <td style={{ color: 'var(--pm-muted)' }}>
-                        {p.seller_name || '—'}
-                        {p.seller_type && <span style={{ display:'block', fontSize:'0.65rem' }}>{p.seller_type}</span>}
-                      </td>
-                      <td><span className={`badge-sm ${sc.bg}`}>{sc.label}</span></td>
-                      <td onClick={e => e.stopPropagation()}>
-                        <div className="pm-actions" style={{ display:'flex', gap:'4px', alignItems:'center' }}>
-                          <ActionIconButton
-                            icon={Eye}
-                            label="View property details"
-                            onClick={() => setSelected(p)}
-                          />
-                          {p.status !== 'verified' && (
-                            <ActionIconButton
-                              icon={ShieldCheck}
-                              variant="success"
-                              label="Verify property"
-                              onClick={() => action(p.id, 'verify')}
-                            />
-                          )}
-                          {p.status !== 'rejected' && (
-                            <ActionIconButton
-                              icon={Ban}
-                              variant="danger"
-                              label="Reject property"
-                              onClick={() => action(p.id, 'reject')}
-                            />
-                          )}
-                          <ActionIconButton
-                            icon={Trash2}
-                            variant="danger"
-                            label="Delete property"
-                            onClick={() => handleDelete(p.id)}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                }) : (
+                {displayed.length > 0 ? displayed.map((p) => (
+                  <PropertyTableRow
+                    key={p.id}
+                    property={p}
+                    onDetail={openDetail}
+                    onEdit={openEdit}
+                    onAction={action}
+                    onDelete={handleDelete}
+                  />
+                )) : (
                   <tr><td colSpan={8}><div className="pm-empty">No properties in this category.</div></td></tr>
                 )}
               </tbody>
@@ -397,7 +550,13 @@ export default function PropertiesManager({ isDarkMode }) {
           </div>
         </div>
 
-        <p className="pm-footer">Showing <strong>{displayed.length}</strong> of <strong>{properties.length}</strong> total listings</p>
+        <div className="pm-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <span>Showing <strong>{displayed.length}</strong> of <strong>{pagination.total}</strong> listings (page {pagination.page}/{pagination.pages})</span>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button type="button" className="pm-toggle" disabled={page <= 1 || loading} onClick={() => setPage((p) => Math.max(1, p - 1))}>Prev</button>
+            <button type="button" className="pm-toggle" disabled={page >= pagination.pages || loading} onClick={() => setPage((p) => p + 1)}>Next</button>
+          </div>
+        </div>
 
         {/* Detail Modal */}
         {selected && (
@@ -427,17 +586,22 @@ export default function PropertiesManager({ isDarkMode }) {
                 <div style={{ display:'flex', gap:'0.375rem', marginBottom:'0.875rem', flexWrap:'wrap' }}>
                   <span className={`badge-sm ${STATUS_COLORS[selected.status]?.bg}`}>{STATUS_COLORS[selected.status]?.label}</span>
                   <span className={`badge-sm badge-${selected.listing_type}`}>{selected.listing_type}</span>
+                  <span className="badge-sm badge-buy">{CATEGORY_LABELS[selected.property_category] || selected.property_category || 'general'}</span>
                 </div>
 
                 {/* Details grid */}
                 <div className="pm-detail-grid">
                   {[
                     ['Type',     selected.type],
-                    ['Location', selected.location],
+                    ['Location', [selected.locality, selected.location].filter(Boolean).join(', ')],
                     ['Price',    `₹${selected.price}`],
+                    ['Deposit',  selected.security_deposit != null ? `₹${selected.security_deposit}` : '—'],
                     ['Area',     selected.area ? `${selected.area} ${{ sqft: 'sq.ft', sqm: 'sq.meter', sqyd: 'sq.yard' }[selected.area_unit] || 'sq.ft'}` : '—'],
-                    ['Beds',     selected.beds  || '—'],
-                    ['Baths',    selected.baths || '—'],
+                    ['Furnishing', selected.furnishing || '—'],
+                    ['Beds',     selected.beds  || selected.details?.bedrooms || '—'],
+                    ['Baths',    selected.baths || selected.details?.bathrooms || '—'],
+                    ['BHK',      selected.details?.bhk_config || '—'],
+                    ['Plot use', selected.details?.plot_category || '—'],
                   ].map(([k,v]) => (
                     <div key={k}>
                       <div className="pm-detail-label">{k}</div>
@@ -445,6 +609,30 @@ export default function PropertiesManager({ isDarkMode }) {
                     </div>
                   ))}
                 </div>
+
+                {Array.isArray(selected.nearby_places) && selected.nearby_places.length > 0 && (
+                  <>
+                    <div className="pm-section-label">Nearby places</div>
+                    <div className="pm-highlights">
+                      {selected.nearby_places.map((place, i) => (
+                        <span key={i} className="pm-tag">
+                          {place.type}: {place.name}{place.distance_km != null ? ` (${place.distance_km} km)` : ''}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {Array.isArray(selected.amenities) && selected.amenities.length > 0 && (
+                  <>
+                    <div className="pm-section-label">Amenities</div>
+                    <div className="pm-highlights">
+                      {selected.amenities.map((a, i) => (
+                        <span key={i} className="pm-tag">{a.name || a}</span>
+                      ))}
+                    </div>
+                  </>
+                )}
 
                 {/* Address */}
                 {selected.address && (
@@ -485,6 +673,9 @@ export default function PropertiesManager({ isDarkMode }) {
 
                 {/* Actions */}
                 <div className="pm-modal-actions">
+                  <button className="pm-modal-btn pm-modal-btn-pending" onClick={() => { openEdit(selected); setSelected(null); }}>
+                    Edit listing
+                  </button>
                   {selected.status !== 'verified' && (
                     <button className="pm-modal-btn pm-modal-btn-verify" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'6px' }} onClick={() => action(selected.id, 'verify')}>
                       <ShieldCheck size={16} strokeWidth={1.75} aria-hidden="true" />

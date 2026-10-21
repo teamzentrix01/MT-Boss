@@ -562,13 +562,41 @@ export async function GET(req) {
     if (!admin) {
       return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
     }
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50', 10) || 50));
+    const offset = (page - 1) * limit;
+    const status = String(searchParams.get('status') || '').trim();
+    const vals = [];
+    const where = [];
+    if (status && status !== 'all') {
+      vals.push(status);
+      where.push(`me.status = $${vals.length}`);
+    }
+    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    const countRes = await pool.query(
+      `SELECT COUNT(*)::INT AS total FROM material_enquiries me ${whereSql}`,
+      vals
+    );
+    const total = countRes.rows[0]?.total || 0;
+    vals.push(limit, offset);
     const result = await pool.query(
-      `SELECT me.*, s.shop_name AS accepted_by_shop
+      `SELECT me.id, me.order_reference, me.user_id, me.user_name, me.user_phone, me.user_email,
+              me.category_name, me.subcategory_name, me.material_type, me.quantity_text,
+              me.order_unit, me.selected_city, me.status, me.grand_total, me.product_total,
+              me.created_at, me.accepted_by_supplier_id, s.shop_name AS accepted_by_shop
        FROM material_enquiries me
        LEFT JOIN suppliers s ON s.id = me.accepted_by_supplier_id
-       ORDER BY me.created_at DESC`
+       ${whereSql}
+       ORDER BY me.created_at DESC
+       LIMIT $${vals.length - 1} OFFSET $${vals.length}`,
+      vals
     );
-    return NextResponse.json({ success: true, data: result.rows });
+    return NextResponse.json({
+      success: true,
+      data: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
+    });
   } catch (err) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }

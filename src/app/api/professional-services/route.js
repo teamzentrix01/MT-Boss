@@ -98,8 +98,15 @@ export async function GET(req) {
     const isAdmin = searchParams.get('admin') === 'true';
     const idParam = searchParams.get('id');
 
-    // Single professional by ID (public profile page)
+    // Single professional by ID (public profile / admin edit)
     if (idParam) {
+      if (isAdmin) {
+        if (!requireRole(req, 'admin')) return unauthorized();
+        const result = await pool.query(`SELECT * FROM professional_services WHERE id = $1`, [idParam]);
+        if (result.rows.length === 0)
+          return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
+        return NextResponse.json({ success: true, data: result.rows[0] });
+      }
       const result = await pool.query(
         `SELECT * FROM professional_services WHERE id = $1 AND status = 'approved'`,
         [idParam]
@@ -109,25 +116,52 @@ export async function GET(req) {
       return NextResponse.json({ success: true, data: result.rows[0] });
     }
 
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(200, Math.max(1, parseInt(searchParams.get('limit') || '100', 10) || 100));
+    const offset = (page - 1) * limit;
+
     if (isAdmin) {
       if (!requireRole(req, 'admin')) return unauthorized();
+      const countRes = await pool.query(`SELECT COUNT(*)::INT AS total FROM professional_services`);
+      const total = countRes.rows[0]?.total || 0;
+      // Admin list: skip portfolio_images (loaded on detail / edit when needed)
       const result = await pool.query(`
-        SELECT * FROM professional_services
+        SELECT id, name, title, category, profile_picture, experience, description,
+               specializations, certifications, city, phone, email, website, instagram,
+               linkedin, status, sort_order, created_at, updated_at,
+               COALESCE(jsonb_array_length(portfolio_images), 0) AS portfolio_count
+        FROM professional_services
         ORDER BY
           CASE status WHEN 'pending' THEN 0 WHEN 'approved' THEN 1 ELSE 2 END ASC,
           COALESCE(sort_order, 0) ASC,
           created_at DESC
-      `);
-      return NextResponse.json({ success: true, data: result.rows });
+        LIMIT $1 OFFSET $2
+      `, [limit, offset]);
+      return NextResponse.json({
+        success: true,
+        data: result.rows,
+        pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
+      });
     }
 
-    // Public — approved only
+    // Public — approved only; card grids need profile fields, not full portfolios
+    const countRes = await pool.query(
+      `SELECT COUNT(*)::INT AS total FROM professional_services WHERE status = 'approved'`
+    );
+    const total = countRes.rows[0]?.total || 0;
     const result = await pool.query(`
-      SELECT * FROM professional_services
+      SELECT id, name, title, category, profile_picture, experience, description,
+             specializations, city, status, sort_order
+      FROM professional_services
       WHERE status = 'approved'
       ORDER BY COALESCE(sort_order, 0) ASC, id ASC
-    `);
-    return NextResponse.json({ success: true, data: result.rows });
+      LIMIT $1 OFFSET $2
+    `, [limit, offset]);
+    return NextResponse.json({
+      success: true,
+      data: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
+    });
   } catch (error) {
     console.error('GET professionals error:', error);
     if (isDatabaseConnectionError(error)) {

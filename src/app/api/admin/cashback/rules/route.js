@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 import { validateSlabs } from '@/lib/cashback/calculate';
+import { ensureCashbackSchema } from '@/lib/cashback/service';
 
 export async function GET(req) {
   try {
@@ -10,6 +11,7 @@ export async function GET(req) {
       return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
     }
 
+    await ensureCashbackSchema();
     const { searchParams } = new URL(req.url);
     const type = searchParams.get('type');
 
@@ -29,7 +31,7 @@ export async function GET(req) {
     return NextResponse.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('GET /api/admin/cashback/rules error:', error);
-    return NextResponse.json({ success: false, error: 'Could not fetch rules' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Could not fetch rules' }, { status: 500 });
   }
 }
 
@@ -40,6 +42,7 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 403 });
     }
 
+    await ensureCashbackSchema();
     const body = await req.json();
     const ruleType = String(body.rule_type || '').trim().toUpperCase();
     if (!['FIRST_ORDER', 'CATEGORY', 'SLAB'].includes(ruleType)) {
@@ -47,14 +50,26 @@ export async function POST(req) {
     }
 
     const valueType = body.value_type === 'FLAT' ? 'FLAT' : 'PERCENT';
-    const value = Math.max(0, Number(body.value || 0));
-    const minOrderValue = Math.max(0, Number(body.min_order_value || 0));
-    const maxCashback = body.max_cashback !== '' && body.max_cashback != null ? Math.max(0, Number(body.max_cashback)) : null;
+    const numValue = Number(body.value);
+    const value = Number.isFinite(numValue) ? Math.max(0, numValue) : 0;
+
+    const numMinOrder = Number(body.min_order_value);
+    const minOrderValue = Number.isFinite(numMinOrder) ? Math.max(0, numMinOrder) : 0;
+
+    const parsedMaxCashback = Number(body.max_cashback);
+    const maxCashback = body.max_cashback !== '' && body.max_cashback != null && Number.isFinite(parsedMaxCashback)
+      ? Math.max(0, parsedMaxCashback)
+      : null;
+
     const startDate = body.start_date || null;
     const endDate = body.end_date || null;
     const isActive = body.is_active !== false;
-    const priority = Number.parseInt(body.priority || 0, 10);
-    const categoryId = ruleType === 'CATEGORY' ? Number(body.category_id) : null;
+
+    const parsedPriority = Number.parseInt(body.priority || 0, 10);
+    const priority = Number.isFinite(parsedPriority) ? parsedPriority : 0;
+
+    const parsedCatId = Number(body.category_id);
+    const categoryId = ruleType === 'CATEGORY' && Number.isInteger(parsedCatId) ? parsedCatId : null;
     const slabs = ruleType === 'SLAB' ? (Array.isArray(body.slabs) ? body.slabs : []) : [];
 
     if (ruleType === 'CATEGORY') {
@@ -115,3 +130,4 @@ export async function POST(req) {
     return NextResponse.json({ success: false, error: error.message || 'Could not create rule' }, { status: 500 });
   }
 }
+

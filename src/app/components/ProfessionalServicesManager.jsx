@@ -516,13 +516,27 @@ export default function ProfessionalServicesManager({ isDarkMode }) {
                         <ActionIconButton
                           icon={Pencil}
                           label="Edit professional"
-                          onClick={e => {
+                          onClick={async (e) => {
                             e.stopPropagation();
-                            const s = toFormState(pro);
-                            setEditPro(pro);
-                            setForm(s.fields);
-                            setProfilePic(s.profilePic);
-                            setPortfolioImgs(s.portfolioImgs);
+                            try {
+                              const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+                              const res = await fetch(`/api/professional-services?admin=true&id=${pro.id}`, {
+                                headers: { Authorization: `Bearer ${token}` },
+                              });
+                              const data = await res.json();
+                              const full = data.success && data.data ? data.data : pro;
+                              const s = toFormState(full);
+                              setEditPro(full);
+                              setForm(s.fields);
+                              setProfilePic(s.profilePic);
+                              setPortfolioImgs(s.portfolioImgs);
+                            } catch {
+                              const s = toFormState(pro);
+                              setEditPro(pro);
+                              setForm(s.fields);
+                              setProfilePic(s.profilePic);
+                              setPortfolioImgs(s.portfolioImgs);
+                            }
                           }}
                         />
                         <ActionIconButton

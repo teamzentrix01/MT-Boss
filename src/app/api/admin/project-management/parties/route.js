@@ -8,23 +8,76 @@ export async function GET(req) {
   const admin = await requirePmAccess(req); if (!admin) return unauthorized();
   try {
     await ensureProjectManagementSchema();
-    const { searchParams } = new URL(req.url); const search = String(searchParams.get('search') || '').trim();
+    const { searchParams } = new URL(req.url);
+    const search = String(searchParams.get('search') || '').trim();
+    const lite = searchParams.get('lite') === '1';
     const { page, pageSize, offset } = pageParams(searchParams);
-    const result = await pool.query(`WITH filtered AS (
-      SELECT p.*, COUNT(*) OVER()::int AS total_count FROM pm_parties p
-      WHERE $1 = '' OR p.name ILIKE '%' || $1 || '%' OR COALESCE(p.phone,'') ILIKE '%' || $1 || '%' OR COALESCE(p.email,'') ILIKE '%' || $1 || '%'
-      ORDER BY p.created_at DESC LIMIT $2 OFFSET $3
-    ), project_totals AS (
-      SELECT pr.party_id, COUNT(*)::int AS project_count, COALESCE(SUM(pr.contract_value),0) AS total_contract_value
-      FROM pm_projects pr JOIN filtered f ON f.id=pr.party_id GROUP BY pr.party_id
-    ), payment_totals AS (
-      SELECT pr.party_id, COALESCE(SUM(pay.amount),0) AS total_received FROM pm_projects pr
-      JOIN filtered f ON f.id=pr.party_id LEFT JOIN pm_party_payments pay ON pay.project_id=pr.id AND NOT pay.is_deleted GROUP BY pr.party_id
-    ) SELECT f.*, COALESCE(pt.project_count,0) AS project_count, COALESCE(pt.total_contract_value,0) AS total_contract_value,
-      COALESCE(py.total_received,0) AS total_received, COALESCE(pt.total_contract_value,0)-COALESCE(py.total_received,0) AS total_pending
-      FROM filtered f LEFT JOIN project_totals pt ON pt.party_id=f.id LEFT JOIN payment_totals py ON py.party_id=f.id ORDER BY f.created_at DESC`, [search, pageSize, offset]);
+
+    // Typeahead / convert-modal: skip payment/project aggregates
+    if (lite) {
+      const result = await pool.query(
+        `SELECT p.id, p.name, p.phone, p.email, p.gst_no, p.address, p.created_at,
+                COUNT(*) OVER()::int AS total_count
+           FROM pm_parties p
+          WHERE $1 = ''
+             OR p.name ILIKE '%' || $1 || '%'
+             OR COALESCE(p.phone,'') ILIKE '%' || $1 || '%'
+             OR COALESCE(p.email,'') ILIKE '%' || $1 || '%'
+          ORDER BY p.created_at DESC
+          LIMIT $2 OFFSET $3`,
+        [search, pageSize, offset]
+      );
+      const total = Number(result.rows[0]?.total_count || 0);
+      return NextResponse.json({
+        success: true,
+        data: result.rows,
+        pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) || 1 },
+      });
+    }
+
+    const result = await pool.query(
+      `WITH filtered AS (
+         SELECT p.id, p.name, p.phone, p.email, p.gst_no, p.address, p.created_at,
+                COUNT(*) OVER()::int AS total_count
+           FROM pm_parties p
+          WHERE $1 = ''
+             OR p.name ILIKE '%' || $1 || '%'
+             OR COALESCE(p.phone, '') ILIKE '%' || $1 || '%'
+             OR COALESCE(p.email, '') ILIKE '%' || $1 || '%'
+          ORDER BY p.created_at DESC
+          LIMIT $2 OFFSET $3
+       ),
+       totals AS (
+         SELECT pr.party_id,
+                COUNT(*)::int AS project_count,
+                COALESCE(SUM(pr.contract_value), 0) AS total_contract_value,
+                COALESCE(SUM(pay.received), 0) AS total_received
+           FROM pm_projects pr
+           JOIN filtered f ON f.id = pr.party_id
+           LEFT JOIN LATERAL (
+             SELECT COALESCE(SUM(amount), 0) AS received
+               FROM pm_party_payments
+              WHERE project_id = pr.id
+                AND NOT is_deleted
+           ) pay ON TRUE
+          GROUP BY pr.party_id
+       )
+       SELECT f.id, f.name, f.phone, f.email, f.gst_no, f.address, f.created_at, f.total_count,
+              COALESCE(t.project_count, 0) AS project_count,
+              COALESCE(t.total_contract_value, 0) AS total_contract_value,
+              COALESCE(t.total_received, 0) AS total_received,
+              COALESCE(t.total_contract_value, 0) - COALESCE(t.total_received, 0) AS total_pending
+         FROM filtered f
+         LEFT JOIN totals t ON t.party_id = f.id
+        ORDER BY f.created_at DESC`,
+      [search, pageSize, offset]
+    );
     const total = Number(result.rows[0]?.total_count || 0);
-    return NextResponse.json({ success:true, data:result.rows, pagination:{page,pageSize,total,totalPages:Math.ceil(total/pageSize)} });
+    return NextResponse.json({
+      success: true,
+      data: result.rows,
+      pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) || 1 },
+    });
   } catch (error) { return NextResponse.json({ success:false, error:error.message || 'Could not load parties' }, { status:500 }); }
 }
 

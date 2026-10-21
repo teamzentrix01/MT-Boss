@@ -8,6 +8,21 @@ export async function GET(req) {
     const auth = await assertAgentAccess(req, null, 'vendor');
     if (!auth.allowed) return auth.response;
 
+    // Approved vendor accounts that selected the contractor checkbox become
+    // available in the Project → Contractors dropdown without a duplicate
+    // registration. Suppliers are stored in their separate supplier module.
+    await pool.query(
+      `INSERT INTO pm_vendors (external_vendor_id, name, phone, trade, is_active)
+       SELECT v.id, COALESCE(v.vendor_name, v.business_name, v.shop_name, v.email), v.phone,
+              COALESCE(v.contractor_trade, v.business_type), TRUE
+       FROM vendors v
+       WHERE (v.is_contractor = TRUE OR LOWER(COALESCE(v.business_type, '')) LIKE '%contractor%')
+         AND COALESCE(v.is_approved, FALSE) = TRUE
+         AND COALESCE(v.status, 'inactive') = 'active'
+       ON CONFLICT (external_vendor_id) WHERE external_vendor_id IS NOT NULL
+       DO UPDATE SET name = EXCLUDED.name, phone = EXCLUDED.phone, trade = EXCLUDED.trade, is_active = TRUE`
+    );
+
     const s = new URL(req.url).searchParams;
     const { page, pageSize, offset } = pageParams(s);
     const q = String(s.get('search') || '').trim();

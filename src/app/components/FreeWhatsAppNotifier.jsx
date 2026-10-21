@@ -75,17 +75,37 @@ export default function FreeWhatsAppNotifier() {
   useEffect(() => {
     const adminNumber = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP_NUMBER;
     if (!adminNumber) return undefined;
+    if (typeof window === 'undefined' || window.__mtboss_whatsapp_fetch_patched__) return undefined;
+    window.__mtboss_whatsapp_fetch_patched__ = true;
+
     const originalFetch = window.fetch.bind(window);
 
     window.fetch = async (input, init = {}) => {
-      const response = await originalFetch(input, init);
+      const method = String(init.method || (typeof input !== 'string' ? input?.method : '') || 'GET').toUpperCase();
+      // Fast path: Only intercept POST requests to tracked public form endpoints
+      if (method !== 'POST') {
+        return originalFetch(input, init);
+      }
+
       const endpoint = endpointFrom(input);
       const type = TRACKED_ENDPOINTS.get(endpoint);
-      const method = String(init.method || (typeof input !== 'string' ? input?.method : '') || 'GET').toUpperCase();
+      if (!type) {
+        return originalFetch(input, init);
+      }
+
+      const isDashboardRoute = /(^|\/)(dashboard|agent|vendor|supplier|franchise)(\/|$)/.test(window.location.pathname);
+      if (isDashboardRoute) {
+        return originalFetch(input, init);
+      }
+
       const details = requestDetails(init.body);
-      const isAdminScreen = /(^|\/)dashboard(\/|$)/.test(window.location.pathname);
       const isOtpVerification = endpoint === '/api/calculator-quote-otp' && details.action === 'verify';
-      if (!type || method !== 'POST' || !response.ok || isAdminScreen || isOtpVerification) return response;
+      if (isOtpVerification) {
+        return originalFetch(input, init);
+      }
+
+      const response = await originalFetch(input, init);
+      if (!response.ok) return response;
 
       try {
         const responseData = await response.clone().json().catch(() => ({}));
@@ -100,7 +120,10 @@ export default function FreeWhatsAppNotifier() {
       return response;
     };
 
-    return () => { window.fetch = originalFetch; };
+    return () => {
+      window.fetch = originalFetch;
+      delete window.__mtboss_whatsapp_fetch_patched__;
+    };
   }, []);
 
   if (!pendingShare) return null;

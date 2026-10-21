@@ -12,7 +12,13 @@ export async function POST(req) {
     if (!file.size || file.size > 5 * 1024 * 1024) {
       return Response.json({ success: false, error: 'Choose an image smaller than 5 MB.' }, { status: 400 });
     }
-    return Response.json({ success: true, ...await uploadBannerImage(file) });
+    const requestedFolder = body.get('folder');
+    const allowedFolders = new Set([
+      'mtboss/quick-services',
+      'mtboss/quick-service-subcategories',
+    ]);
+    const folder = allowedFolders.has(requestedFolder) ? requestedFolder : 'mtboss/hero-banners';
+    return Response.json({ success: true, ...await uploadBannerImage(file, folder) });
   } catch (error) {
     console.error('Banner image upload failed:', error.message);
     return Response.json({ success: false, error: 'Image could not be uploaded to Cloudinary. Please try again.' }, { status: 502 });

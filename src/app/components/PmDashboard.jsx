@@ -299,7 +299,7 @@ export default function PmDashboard({ isDarkMode }) {
         {/* Header */}
         <div className="pmd-header">
           <div>
-            <h1 className="pmd-title">📊 Project Management Dashboard</h1>
+            <h1 className="pmd-title">Project management dashboard</h1>
             <p className="pmd-sub">Live overview of all PM projects, expenses and financials</p>
           </div>
           <div className="pmd-header-actions">

@@ -618,7 +618,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
         const [productRes, settingsRes, cityRes] = await Promise.all([
           fetch('/api/calculator-products'),
           fetch('/api/calculator-settings'),
-          fetch('/api/cities'),
+          fetch('/api/cities?fields=lite'),
         ]);
         const productData = await productRes.json();
         const settingsData = await settingsRes.json();

@@ -58,6 +58,7 @@ export {
   CircleUser,
   CircleUserRound,
   Lock,
+  ArrowLeft,
   ChevronLeft,
   ChevronRight,
   RotateCcw,

@@ -304,34 +304,54 @@ export default function SupplierHubAdmin({ isDarkMode }) {
         </div>
       )}
 
-      {/* ── Supplier Detail Modal ─────────────────────────────────────────── */}
-      {selectedSupplier && (
-        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.55)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:65, padding:'1rem' }} onClick={() => setSelectedSupplier(null)}>
-          <div style={{ background:surface, border:`1px solid ${border}`, borderRadius:14, padding:'1.75rem', width:'100%', maxWidth:660, maxHeight:'90vh', overflowY:'auto' }} onClick={e => e.stopPropagation()}>
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'1.25rem' }}>
+      {/* ── Supplier / Enquiry Detail In-Page View ─────────────────────── */}
+      {selectedSupplier ? (
+        <div style={{ width: '100%', padding: '0.25rem 0 2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <button
+              onClick={() => setSelectedSupplier(null)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'transparent',
+                border: `1px solid ${border}`,
+                color: text,
+                padding: '0.5rem 1rem',
+                borderRadius: 8,
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '0.875rem'
+              }}
+            >
+              ← Back to Suppliers
+            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <StatusBadge s={selectedSupplier} />
+            </div>
+          </div>
+
+          <div style={{ background: surface, border: `1px solid ${border}`, borderRadius: 14, padding: '1.75rem', width: '100%', width: '100%', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
               <div>
-                <h2 style={{ margin:0, fontSize:'1.15rem', fontWeight:700, color:text }}>{selectedSupplier.shop_name}</h2>
-                <p style={{ margin:'0.25rem 0 0', fontSize:'0.8125rem', color:muted }}>{selectedSupplier.email}</p>
-              </div>
-              <div style={{ display:'flex', gap:'0.5rem', alignItems:'center' }}>
-                <StatusBadge s={selectedSupplier} />
-                <button onClick={() => setSelectedSupplier(null)} style={{ background:'none', border:'none', cursor:'pointer', color:muted, fontSize:'1.25rem', lineHeight:1 }}>✕</button>
+                <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800, color: text }}>{selectedSupplier.shop_name}</h2>
+                <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: muted }}>{selectedSupplier.email}</p>
               </div>
             </div>
 
             {/* Aadhaar */}
-            <div style={{ background: selectedSupplier.aadhaar_number ? (isDarkMode?'#0a1f0a':'#f0fdf4') : (isDarkMode?'#2a1a0a':'#fff7ed'), border:`2px solid ${selectedSupplier.aadhaar_number ? '#16a34a' : '#f97316'}`, borderRadius:10, padding:'1rem 1.25rem', marginBottom:'1.25rem', display:'flex', alignItems:'center', gap:'1rem' }}>
-              <span style={{ fontSize:'2rem' }}>🪪</span>
+            <div style={{ background: selectedSupplier.aadhaar_number ? (isDarkMode?'#0a1f0a':'#f0fdf4') : (isDarkMode?'#2a1a0a':'#fff7ed'), border: `2px solid ${selectedSupplier.aadhaar_number ? '#16a34a' : '#f97316'}`, borderRadius: 10, padding: '1rem 1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <span style={{ fontSize: '2rem' }}>🪪</span>
               <div>
-                <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.07em', color:muted, marginBottom:'0.25rem' }}>Aadhaar — Verify before approving</div>
-                <div style={{ fontSize:'1.35rem', fontWeight:800, letterSpacing:'0.18em', color: selectedSupplier.aadhaar_number ? text : '#f97316', fontFamily:'monospace' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted, marginBottom: '0.25rem' }}>Aadhaar — Verify before approving</div>
+                <div style={{ fontSize: '1.35rem', fontWeight: 800, letterSpacing: '0.18em', color: selectedSupplier.aadhaar_number ? text : '#f97316', fontFamily: 'monospace' }}>
                   {selectedSupplier.aadhaar_number ? selectedSupplier.aadhaar_number.replace(/(\d{4})(\d{4})(\d{4})/, '$1 $2 $3') : 'Not provided'}
                 </div>
               </div>
             </div>
 
             {/* Info grid */}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem', marginBottom:'1.25rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
               {[
                 ['Phone',        selectedSupplier.phone],
                 ['City',         selectedSupplier.city],
@@ -341,104 +361,126 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                 ['Registered',   fmtD(selectedSupplier.created_at)],
               ].map(([label, value]) => (
                 <div key={label}>
-                  <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.2rem' }}>{label}</div>
-                  <div style={{ fontSize:'0.875rem', fontWeight:600, color:text }}>{value || '—'}</div>
+                  <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: muted, marginBottom: '0.2rem' }}>{label}</div>
+                  <div style={{ fontSize: '0.875rem', fontWeight: 600, color: text }}>{value || '—'}</div>
                 </div>
               ))}
             </div>
 
             {/* Categories */}
             {selectedSupplier.product_categories?.length > 0 && (
-              <div style={{ marginBottom:'1.25rem' }}>
-                <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.5rem' }}>Products Sold</div>
-                <div style={{ display:'flex', flexWrap:'wrap', gap:'0.4rem' }}>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: muted, marginBottom: '0.5rem' }}>Products Sold</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
                   {selectedSupplier.product_categories.map(cat => (
-                    <span key={cat} style={{ background: isDarkMode?'#1a2a1a':'#f0fdf4', color:'#16a34a', border:'1px solid #16a34a44', padding:'0.25rem 0.75rem', borderRadius:20, fontSize:'0.78rem', fontWeight:700 }}>{cat}</span>
+                    <span key={cat} style={{ background: isDarkMode?'#1a2a1a':'#f0fdf4', color: '#16a34a', border: '1px solid #16a34a44', padding: '0.25rem 0.75rem', borderRadius: 20, fontSize: '0.78rem', fontWeight: 700 }}>{cat}</span>
                   ))}
                 </div>
               </div>
             )}
 
-            <div style={{ background:isDarkMode?'#102019':'#f0fdf4', border:'1px solid #16a34a55', borderRadius:8, padding:'1rem', marginBottom:'1.25rem' }}>
-              <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.75rem' }}>Registration / Package Payment</div>
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:'0.75rem' }}>
-                <div><div style={{ fontSize:'0.65rem', color:muted }}>Status</div><div style={{ fontWeight:800, color:selectedSupplier.payment_status === 'PAID' ? '#16a34a' : '#f97316' }}>{selectedSupplier.payment_status || 'No online payment record'}</div></div>
-                <div><div style={{ fontSize:'0.65rem', color:muted }}>Amount</div><div style={{ fontWeight:800, color:text }}>{selectedSupplier.payment_amount ? fmt(selectedSupplier.payment_amount) : '—'}</div></div>
-                <div><div style={{ fontSize:'0.65rem', color:muted }}>Reference</div><div style={{ fontSize:'0.78rem', fontWeight:700, color:text }}>{selectedSupplier.payment_reference || '—'}</div></div>
-                <div><div style={{ fontSize:'0.65rem', color:muted }}>Received</div><div style={{ fontSize:'0.78rem', fontWeight:700, color:text }}>{selectedSupplier.payment_completed_at ? fmtD(selectedSupplier.payment_completed_at) : '—'}</div></div>
+            {/* Registration / Package Payment */}
+            <div style={{ background: isDarkMode?'#102019':'#f0fdf4', border: '1px solid #16a34a55', borderRadius: 8, padding: '1rem', marginBottom: '1.25rem' }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: muted, marginBottom: '0.75rem' }}>Registration / Package Payment</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '0.75rem' }}>
+                <div><div style={{ fontSize: '0.65rem', color: muted }}>Status</div><div style={{ fontWeight: 800, color: selectedSupplier.payment_status === 'PAID' ? '#16a34a' : '#f97316' }}>{selectedSupplier.payment_status || 'No online payment record'}</div></div>
+                <div><div style={{ fontSize: '0.65rem', color: muted }}>Amount</div><div style={{ fontWeight: 800, color: text }}>{selectedSupplier.payment_amount ? fmt(selectedSupplier.payment_amount) : '—'}</div></div>
+                <div><div style={{ fontSize: '0.65rem', color: muted }}>Reference</div><div style={{ fontSize: '0.78rem', fontWeight: 700, color: text }}>{selectedSupplier.payment_reference || '—'}</div></div>
+                <div><div style={{ fontSize: '0.65rem', color: muted }}>Received</div><div style={{ fontSize: '0.78rem', fontWeight: 700, color: text }}>{selectedSupplier.payment_completed_at ? fmtD(selectedSupplier.payment_completed_at) : '—'}</div></div>
               </div>
             </div>
 
             {/* Earnings */}
-            <div style={{ background:bg, borderRadius:8, padding:'1rem', marginBottom:'1.25rem' }}>
-              <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.75rem' }}>Earnings Summary</div>
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'0.75rem' }}>
+            <div style={{ background: bg, borderRadius: 8, padding: '1rem', marginBottom: '1.25rem' }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: muted, marginBottom: '0.75rem' }}>Earnings Summary</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '0.75rem' }}>
                 {[
                   ['Orders Fulfilled', selectedSupplier.total_fulfilled || 0, text],
                   ['Total Revenue',    fmt(selectedSupplier.total_earned),    '#16a34a'],
                   ['Commission (15%)', fmt(selectedSupplier.total_commission), '#f97316'],
                 ].map(([l, v, c]) => (
-                  <div key={l}><div style={{ fontSize:'0.65rem', color:muted }}>{l}</div><div style={{ fontSize:'1.05rem', fontWeight:800, color:c }}>{v}</div></div>
+                  <div key={l}><div style={{ fontSize: '0.65rem', color: muted }}>{l}</div><div style={{ fontSize: '1.05rem', fontWeight: 800, color: c }}>{v}</div></div>
                 ))}
               </div>
             </div>
 
             {/* Rejection reason */}
             {selectedSupplier.status === 'rejected' && selectedSupplier.rejection_reason && (
-              <div style={{ marginBottom:'1.25rem', background:'#fef2f2', borderRadius:8, padding:'0.75rem', fontSize:'0.8125rem', color:'#b91c1c' }}>
+              <div style={{ marginBottom: '1.25rem', background: '#fef2f2', borderRadius: 8, padding: '0.75rem', fontSize: '0.8125rem', color: '#b91c1c' }}>
                 <strong>Rejection reason:</strong> {selectedSupplier.rejection_reason}
               </div>
             )}
 
             {/* Action buttons */}
-            <div style={{ display:'flex', gap:'0.75rem', flexWrap:'wrap' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '1.5rem', borderTop: `1px solid ${border}`, paddingTop: '1.25rem' }}>
               {selectedSupplier.status === 'pending' && (<>
                 <button onClick={() => handleApprove(selectedSupplier.id)} disabled={!!actionLoading}
-                  style={{ flex:1, minWidth:120, padding:'0.65rem', background:'#16a34a', color:'#fff', border:'none', borderRadius:8, fontWeight:700, fontSize:'0.875rem', cursor:'pointer', opacity:actionLoading ? 0.6 : 1, fontFamily:'inherit' }}>
+                  style={{ flex: 1, minWidth: 120, padding: '0.65rem', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', opacity: actionLoading ? 0.6 : 1, fontFamily: 'inherit' }}>
                   ✓ Approve
                 </button>
                 <button onClick={() => { setSelectedSupplier(null); openRejectModal(selectedSupplier); }} disabled={!!actionLoading}
-                  style={{ flex:1, minWidth:120, padding:'0.65rem', background:'#dc2626', color:'#fff', border:'none', borderRadius:8, fontWeight:700, fontSize:'0.875rem', cursor:'pointer', opacity:actionLoading ? 0.6 : 1, fontFamily:'inherit' }}>
+                  style={{ flex: 1, minWidth: 120, padding: '0.65rem', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', opacity: actionLoading ? 0.6 : 1, fontFamily: 'inherit' }}>
                   ✕ Reject
                 </button>
               </>)}
               {selectedSupplier.status === 'approved' && (
                 selectedSupplier.is_active ? (
                   <button onClick={() => handleDeactivate(selectedSupplier.id)} disabled={!!actionLoading}
-                    style={{ flex:1, padding:'0.65rem', background:'#f97316', color:'#fff', border:'none', borderRadius:8, fontWeight:700, fontSize:'0.875rem', cursor:'pointer', opacity:actionLoading ? 0.6 : 1, fontFamily:'inherit' }}>
+                    style={{ flex: 1, padding: '0.65rem', background: '#f97316', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', opacity: actionLoading ? 0.6 : 1, fontFamily: 'inherit' }}>
                     ⏸ Deactivate
                   </button>
                 ) : (
                   <button onClick={() => handleActivate(selectedSupplier.id)} disabled={!!actionLoading}
-                    style={{ flex:1, padding:'0.65rem', background:'#16a34a', color:'#fff', border:'none', borderRadius:8, fontWeight:700, fontSize:'0.875rem', cursor:'pointer', opacity:actionLoading ? 0.6 : 1, fontFamily:'inherit' }}>
+                    style={{ flex: 1, padding: '0.65rem', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', opacity: actionLoading ? 0.6 : 1, fontFamily: 'inherit' }}>
                     ▶ Reactivate
                   </button>
                 )
               )}
+              <button onClick={() => setSelectedSupplier(null)}
+                style={{ padding: '0.65rem 1.25rem', background: 'transparent', color: muted, border: `1px solid ${border}`, borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit' }}>
+                Back to List
+              </button>
             </div>
           </div>
         </div>
-      )}
+      ) : selectedEnq ? (
+        <div style={{ width: '100%', padding: '0.25rem 0 2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <button
+              onClick={() => setSelectedEnq(null)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'transparent',
+                border: `1px solid ${border}`,
+                color: text,
+                padding: '0.5rem 1rem',
+                borderRadius: 8,
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '0.875rem'
+              }}
+            >
+              ← Back to Enquiries
+            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <EnqStatusBadge status={selectedEnq.status} />
+            </div>
+          </div>
 
-      {/* ── Enquiry Detail Modal ──────────────────────────────────────────── */}
-      {selectedEnq && (
-        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.55)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:65, padding:'1rem' }} onClick={() => setSelectedEnq(null)}>
-          <div style={{ background:surface, border:`1px solid ${border}`, borderRadius:14, padding:'1.75rem', width:'100%', maxWidth:640, maxHeight:'90vh', overflowY:'auto' }} onClick={e => e.stopPropagation()}>
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'1.25rem' }}>
+          <div style={{ background: surface, border: `1px solid ${border}`, borderRadius: 14, padding: '1.75rem', width: '100%', width: '100%', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
               <div>
-                <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.07em', color:muted }}>Enquiry #{selectedEnq.id}</div>
-                <h2 style={{ margin:'0.25rem 0 0', fontSize:'1.1rem', fontWeight:700, color:text }}>{selectedEnq.category_emoji} {selectedEnq.category_name}</h2>
-              </div>
-              <div style={{ display:'flex', gap:'0.5rem', alignItems:'center' }}>
-                <EnqStatusBadge status={selectedEnq.status} />
-                <button onClick={() => setSelectedEnq(null)} style={{ background:'none', border:'none', cursor:'pointer', color:muted, fontSize:'1.25rem', lineHeight:1 }}>✕</button>
+                <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted }}>Enquiry #{selectedEnq.id}</div>
+                <h2 style={{ margin: '0.25rem 0 0', fontSize: '1.25rem', fontWeight: 800, color: text }}>{selectedEnq.category_emoji} {selectedEnq.category_name}</h2>
               </div>
             </div>
 
             {/* Material details */}
-            <div style={{ background:bg, borderRadius:8, padding:'1rem', marginBottom:'1rem' }}>
-              <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.6rem' }}>Material Details</div>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.75rem' }}>
+            <div style={{ background: bg, borderRadius: 8, padding: '1rem', marginBottom: '1rem' }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: muted, marginBottom: '0.6rem' }}>Material Details</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 {[
                   ['Category',      selectedEnq.category_name],
                   ['Material Type', selectedEnq.material_type || '—'],
@@ -447,69 +489,69 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                   ['Quantity',      selectedEnq.quantity_text || '—'],
                   ['Delivery Date', fmtD(selectedEnq.delivery_date)],
                 ].map(([l, v]) => (
-                  <div key={l}><div style={{ fontSize:'0.65rem', color:muted, marginBottom:'0.2rem' }}>{l}</div><div style={{ fontSize:'0.875rem', fontWeight:600, color:text }}>{v}</div></div>
+                  <div key={l}><div style={{ fontSize: '0.65rem', color: muted, marginBottom: '0.2rem' }}>{l}</div><div style={{ fontSize: '0.875rem', fontWeight: 600, color: text }}>{v}</div></div>
                 ))}
               </div>
             </div>
 
             {/* Customer details */}
-            <div style={{ background:bg, borderRadius:8, padding:'1rem', marginBottom:'1rem' }}>
-              <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.6rem' }}>Customer Details</div>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.75rem' }}>
+            <div style={{ background: bg, borderRadius: 8, padding: '1rem', marginBottom: '1rem' }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: muted, marginBottom: '0.6rem' }}>Customer Details</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 {[
                   ['Name',    selectedEnq.user_name],
                   ['Phone',   selectedEnq.user_phone],
                   ['Email',   selectedEnq.user_email || '—'],
                   ['Enquiry Placed', fmtDT(selectedEnq.created_at)],
                 ].map(([l, v]) => (
-                  <div key={l}><div style={{ fontSize:'0.65rem', color:muted, marginBottom:'0.2rem' }}>{l}</div><div style={{ fontSize:'0.875rem', fontWeight:600, color:text }}>{v}</div></div>
+                  <div key={l}><div style={{ fontSize: '0.65rem', color: muted, marginBottom: '0.2rem' }}>{l}</div><div style={{ fontSize: '0.875rem', fontWeight: 600, color: text }}>{v}</div></div>
                 ))}
               </div>
             </div>
 
             {/* Address + GPS */}
             {selectedEnq.delivery_address && (
-              <div style={{ marginBottom:'0.75rem' }}>
-                <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.35rem' }}>Delivery Address</div>
-                <div style={{ fontSize:'0.875rem', color:text }}>{selectedEnq.delivery_address}</div>
+              <div style={{ marginBottom: '0.75rem' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: muted, marginBottom: '0.35rem' }}>Delivery Address</div>
+                <div style={{ fontSize: '0.875rem', color: text }}>{selectedEnq.delivery_address}</div>
               </div>
             )}
             {selectedEnq.latitude && selectedEnq.longitude && (
-              <div style={{ marginBottom:'0.75rem' }}>
+              <div style={{ marginBottom: '0.75rem' }}>
                 <a href={`https://www.google.com/maps?q=${selectedEnq.latitude},${selectedEnq.longitude}`} target="_blank" rel="noopener noreferrer"
-                  style={{ fontSize:'0.8125rem', color:'#3b82f6', fontWeight:700, textDecoration:'underline' }}>
+                  style={{ fontSize: '0.8125rem', color: '#3b82f6', fontWeight: 700, textDecoration: 'underline' }}>
                   🗺 Open GPS Location in Google Maps
                 </a>
-                <span style={{ fontSize:'0.72rem', color:muted, marginLeft:'0.5rem' }}>({parseFloat(selectedEnq.latitude).toFixed(5)}, {parseFloat(selectedEnq.longitude).toFixed(5)})</span>
+                <span style={{ fontSize: '0.72rem', color: muted, marginLeft: '0.5rem' }}>({parseFloat(selectedEnq.latitude).toFixed(5)}, {parseFloat(selectedEnq.longitude).toFixed(5)})</span>
               </div>
             )}
 
             {/* Notes */}
             {selectedEnq.message && (
-              <div style={{ background:bg, borderRadius:8, padding:'0.875rem', marginBottom:'0.75rem' }}>
-                <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.35rem' }}>Additional Requirements</div>
-                <div style={{ fontSize:'0.875rem', color:text, lineHeight:1.6 }}>{selectedEnq.message}</div>
+              <div style={{ background: bg, borderRadius: 8, padding: '0.875rem', marginBottom: '0.75rem' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: muted, marginBottom: '0.35rem' }}>Additional Requirements</div>
+                <div style={{ fontSize: '0.875rem', color: text, lineHeight: 1.6 }}>{selectedEnq.message}</div>
               </div>
             )}
 
             {/* Fulfilment info */}
             {selectedEnq.status === 'fulfilled' && (
-              <div style={{ background: isDarkMode?'#0a2a14':'#f0fdf4', border:'1px solid #16a34a33', borderRadius:8, padding:'0.875rem', marginBottom:'0.75rem' }}>
-                <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:'#16a34a', marginBottom:'0.35rem' }}>Fulfilment</div>
-                <div style={{ display:'flex', gap:'1.5rem', flexWrap:'wrap' }}>
-                  <span style={{ fontSize:'0.875rem', color:text }}>Amount: <strong style={{ color:'#16a34a' }}>{fmt(selectedEnq.amount_received)}</strong></span>
-                  <span style={{ fontSize:'0.875rem', color:text }}>Commission (15%): <strong style={{ color:'#f97316' }}>{fmt(selectedEnq.admin_commission)}</strong></span>
+              <div style={{ background: isDarkMode?'#0a2a14':'#f0fdf4', border: '1px solid #16a34a33', borderRadius: 8, padding: '0.875rem', marginBottom: '0.75rem' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#16a34a', marginBottom: '0.35rem' }}>Fulfilment</div>
+                <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.875rem', color: text }}>Amount: <strong style={{ color: '#16a34a' }}>{fmt(selectedEnq.amount_received)}</strong></span>
+                  <span style={{ fontSize: '0.875rem', color: text }}>Commission (15%): <strong style={{ color: '#f97316' }}>{fmt(selectedEnq.admin_commission)}</strong></span>
                 </div>
-                {selectedEnq.accepted_by_shop && <div style={{ fontSize:'0.8rem', color:muted, marginTop:'0.35rem' }}>Fulfilled by: {selectedEnq.accepted_by_shop}</div>}
-                {selectedEnq.supplier_notes && <div style={{ fontSize:'0.8rem', color:muted, marginTop:'0.25rem' }}>Note: {selectedEnq.supplier_notes}</div>}
+                {selectedEnq.accepted_by_shop && <div style={{ fontSize: '0.8rem', color: muted, marginTop: '0.35rem' }}>Fulfilled by: {selectedEnq.accepted_by_shop}</div>}
+                {selectedEnq.supplier_notes && <div style={{ fontSize: '0.8rem', color: muted, marginTop: '0.25rem' }}>Note: {selectedEnq.supplier_notes}</div>}
               </div>
             )}
 
-            <div style={{ background:bg, borderRadius:8, padding:'1rem', marginBottom:'1rem' }}>
-              <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.6rem' }}>Assign Order</div>
-              <div style={{ display:'flex', gap:'0.5rem', flexWrap:'wrap' }}>
+            <div style={{ background: bg, borderRadius: 8, padding: '1rem', marginBottom: '1rem' }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: muted, marginBottom: '0.6rem' }}>Assign Order</div>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <select value={assignmentValue} onChange={e => setAssignmentValue(e.target.value)}
-                  style={{ ...inpStyle, flex:'1 1 280px' }}>
+                  style={{ ...inpStyle, flex: '1 1 280px' }}>
                   <option value="">Select approved supplier, vendor or franchise</option>
                   {assignees.map(person => (
                     <option key={`${person.role}:${person.id}`} value={`${person.role}:${person.id}`}>
@@ -518,16 +560,16 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                   ))}
                 </select>
                 <button onClick={assignMaterialOrder} disabled={!assignmentValue || orderActionLoading}
-                  style={{ padding:'0.55rem 1rem', background:accent, color:'#fff', border:'none', borderRadius:7, fontWeight:700, cursor:'pointer', opacity:(!assignmentValue || orderActionLoading) ? 0.55 : 1 }}>
+                  style={{ padding: '0.55rem 1rem', background: accent, color: '#fff', border: 'none', borderRadius: 7, fontWeight: 700, cursor: 'pointer', opacity: (!assignmentValue || orderActionLoading) ? 0.55 : 1 }}>
                   {orderActionLoading ? 'Saving…' : selectedEnq.assigned_entity_id ? 'Reassign' : 'Assign'}
                 </button>
               </div>
-              {selectedEnq.assigned_name && <div style={{ marginTop:'0.5rem', fontSize:'0.75rem', color:muted }}>Currently assigned to: <strong style={{ color:text }}>{selectedEnq.assigned_name}</strong></div>}
+              {selectedEnq.assigned_name && <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: muted }}>Currently assigned to: <strong style={{ color: text }}>{selectedEnq.assigned_name}</strong></div>}
             </div>
 
-            <div style={{ background:bg, borderRadius:8, padding:'1rem', marginBottom:'1rem' }}>
-              <div style={{ fontSize:'0.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:muted, marginBottom:'0.6rem' }}>Update Tracking Status</div>
-              <div style={{ display:'grid', gridTemplateColumns:'minmax(160px, .7fr) minmax(220px, 1.3fr)', gap:'0.5rem' }}>
+            <div style={{ background: bg, borderRadius: 8, padding: '1rem', marginBottom: '1rem' }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: muted, marginBottom: '0.6rem' }}>Update Tracking Status</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(160px, .7fr) minmax(220px, 1.3fr)', gap: '0.5rem' }}>
                 <select value={orderStatus} onChange={e => setOrderStatus(e.target.value)} style={inpStyle}>
                   {[
                     ['accepted','Accepted'], ['confirmed','Confirmed'], ['processing','Processing'],
@@ -539,26 +581,28 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                   placeholder="Update note visible to customer" style={inpStyle} />
               </div>
               <button onClick={updateMaterialOrder} disabled={orderActionLoading}
-                style={{ marginTop:'0.6rem', padding:'0.55rem 1rem', background:'#16a34a', color:'#fff', border:'none', borderRadius:7, fontWeight:700, cursor:'pointer', opacity:orderActionLoading ? 0.55 : 1 }}>
+                style={{ marginTop: '0.6rem', padding: '0.55rem 1rem', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 7, fontWeight: 700, cursor: 'pointer', opacity: orderActionLoading ? 0.55 : 1 }}>
                 Post Status Update
               </button>
             </div>
 
-            <button onClick={() => setSelectedEnq(null)}
-              style={{ width:'100%', padding:'0.6rem', background:accent, color:'#fff', border:'none', borderRadius:8, fontWeight:700, fontSize:'0.875rem', cursor:'pointer', fontFamily:'inherit' }}>
-              Close
-            </button>
+            <div style={{ marginTop: '1.5rem', borderTop: `1px solid ${border}`, paddingTop: '1.25rem' }}>
+              <button onClick={() => setSelectedEnq(null)}
+                style={{ width: '100%', padding: '0.65rem', background: accent, color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit' }}>
+                Back to Enquiries
+              </button>
+            </div>
           </div>
         </div>
-      )}
-
+      ) : (
+        <>
       {/* ════════════════════════════════════════════════════════════════════
           PAGE SHELL
       ════════════════════════════════════════════════════════════════════ */}
       {/* Page Header */}
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'1.25rem', flexWrap:'wrap', gap:'0.75rem' }}>
         <div>
-          <h2 style={{ margin:0, fontSize:'1.1rem', fontWeight:800, color:text }}>📦 Supplier Hub</h2>
+          <h2 style={{ margin:0, fontSize:'1.1rem', fontWeight:800, color:text }}>Supplier hub</h2>
           <p style={{ margin:'0.2rem 0 0', fontSize:'0.8125rem', color:muted }}>
             {pendingCount} pending · {activeCount} active · {suppliers.length} total suppliers · {enquiries.length} enquiries
           </p>
@@ -958,6 +1002,8 @@ export default function SupplierHubAdmin({ isDarkMode }) {
             </div>
           </div>
         </>
+      )}
+    </>
       )}
     </>
   );

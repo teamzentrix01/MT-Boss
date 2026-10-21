@@ -76,6 +76,7 @@ export async function POST(req) {
     const b = await req.json();
     const projectId = Number(b.project_id);
     const vendorId = b.vendor_id ? Number(b.vendor_id) : null;
+    const projectVendorId = b.project_vendor_id ? Number(b.project_vendor_id) : null;
     const name = String(b.name || '').trim();
     const phone = b.phone ? String(b.phone).trim() : null;
     const trade = b.trade ? String(b.trade).trim() : null;
@@ -98,11 +99,20 @@ export async function POST(req) {
     try {
       await client.query('BEGIN');
       const actor = actorFromAdmin(auth.user);
+      let linkedVendorId = vendorId;
+      if (projectVendorId) {
+        const assignment = (await client.query(
+          `SELECT vendor_id FROM pm_project_vendors WHERE id = $1 AND project_id = $2`,
+          [projectVendorId, projectId]
+        )).rows[0];
+        if (!assignment) throw new Error('Selected contractor is not assigned to this project');
+        linkedVendorId = Number(assignment.vendor_id);
+      }
       const r = await client.query(
-        `INSERT INTO pm_labor(project_id, vendor_id, name, phone, trade, daily_rate, is_active)
-         VALUES($1, $2, $3, $4, $5, $6, TRUE)
+        `INSERT INTO pm_labor(project_id, vendor_id, project_vendor_id, name, phone, trade, daily_rate, is_active)
+         VALUES($1, $2, $3, $4, $5, $6, $7, TRUE)
          RETURNING *`,
-        [projectId, vendorId, name, phone, trade, dailyRate]
+        [projectId, linkedVendorId, projectVendorId, name, phone, trade, dailyRate]
       );
       await writePmPhase2Audit(client, 'pm_labor', r.rows[0].id, 'created', actor, null, r.rows[0]);
       await client.query('COMMIT');

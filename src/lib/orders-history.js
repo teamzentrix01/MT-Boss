@@ -155,7 +155,7 @@ export async function getAdminOrders({
 
   const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-  // Base queries for shop orders and service bookings with child subqueries
+  // List/summary: slim rows (no events / supplier / vendor JSON — those load on detail)
   const shopQuery = `
     SELECT
       me.id,
@@ -188,23 +188,9 @@ export async function getAdminOrders({
       me.order_intent,
       COALESCE(me.message, me.status_note) AS notes,
       me.accepted_by_supplier_id,
-      (
-        SELECT row_to_json(sup)
-        FROM (
-          SELECT s.id, s.shop_name, s.business_name, s.phone, s.email, s.city
-          FROM suppliers s
-          WHERE s.id = me.accepted_by_supplier_id
-        ) sup
-      ) AS supplier,
+      NULL::JSON AS supplier,
       NULL::JSON AS vendor,
-      (
-        SELECT COALESCE(json_agg(ev ORDER BY ev.created_at ASC), '[]'::json)
-        FROM (
-          SELECT moe.id, moe.status, moe.title, moe.note, moe.actor_role, moe.actor_name, moe.created_at
-          FROM material_order_events moe
-          WHERE moe.order_id = me.id
-        ) ev
-      ) AS events,
+      '[]'::JSON AS events,
       1 AS type_sort_priority
     FROM material_enquiries me
     LEFT JOIN users u ON u.id = me.user_id
@@ -243,14 +229,7 @@ export async function getAdminOrders({
       COALESCE(sb.user_notes, sb.admin_notes, sb.vendor_notes) AS notes,
       NULL::INT AS accepted_by_supplier_id,
       NULL::JSON AS supplier,
-      (
-        SELECT row_to_json(v)
-        FROM (
-          SELECT id, vendor_name, shop_name, phone, email, city
-          FROM vendors
-          WHERE id = sb.vendor_id
-        ) v
-      ) AS vendor,
+      NULL::JSON AS vendor,
       '[]'::JSON AS events,
       2 AS type_sort_priority
     FROM service_bookings sb

@@ -337,39 +337,76 @@ export async function GET(req) {
     const user = admin ? null : requireRole(req, 'user');
     if (!admin && !user) return unauthorized();
 
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    const q = String(searchParams.get('q') || searchParams.get('search') || '').trim();
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50', 10) || 50));
+    const offset = (page - 1) * limit;
+
     const scope = admin
       ? { sql: 'TRUE', params: [] }
       : {
           sql: `(application.user_id = $1 OR (application.user_id IS NULL AND LOWER(application.email) = LOWER($2)))`,
           params: [user.id, user.email || ''],
         };
+
+    // Detail: full history for one application
+    if (id) {
+      const params = [...scope.params, id];
+      const detail = await getApplicationWithHistory(id);
+      if (!detail) {
+        return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
+      }
+      if (!admin) {
+        const allowed =
+          detail.user_id === user.id ||
+          (detail.user_id == null && String(detail.email || '').toLowerCase() === String(user.email || '').toLowerCase());
+        if (!allowed) return unauthorized();
+      }
+      return NextResponse.json({ success: true, data: detail });
+    }
+
+    const params = [...scope.params];
+    let whereSql = scope.sql;
+    if (q) {
+      params.push(`%${q}%`);
+      whereSql += ` AND (
+        application.name ILIKE $${params.length}
+        OR application.email ILIKE $${params.length}
+        OR application.phone ILIKE $${params.length}
+        OR application.position ILIKE $${params.length}
+        OR COALESCE(application.status,'') ILIKE $${params.length}
+      )`;
+    }
+
+    const countRes = await pool.query(
+      `SELECT COUNT(*)::INT AS total FROM career_enquiries application WHERE ${whereSql}`,
+      params
+    );
+    const total = countRes.rows[0]?.total || 0;
+    params.push(limit, offset);
+
+    // List: no history / no cover letter (loaded on detail)
     const result = await pool.query(
       `SELECT application.id, application.user_id, application.application_reference,
         application.job_id, application.position, application.department, application.job_location,
         application.name, application.email, application.phone, application.alternative_phone,
         application.experience, application.current_company, application.notice_period,
         application.current_salary, application.expected_salary, application.resume_name,
-        application.resume_url, application.cover_letter, application.status, application.status_note,
-        application.interview_at, application.created_at, application.updated_at,
-        COALESCE((
-          SELECT json_agg(json_build_object(
-            'id', event.id, 'status', event.status, 'title', event.title,
-            'note', event.note, 'actor_role', event.actor_role,
-            'actor_name', event.actor_name, 'created_at', event.created_at
-          ) ORDER BY event.created_at ASC, event.id ASC)
-          FROM career_application_events event
-          WHERE event.application_id = application.id
-        ), '[]'::json) AS history
+        application.resume_url, application.status, application.status_note,
+        application.interview_at, application.created_at, application.updated_at
        FROM career_enquiries application
-       WHERE ${scope.sql}
+       WHERE ${whereSql}
        ORDER BY application.created_at DESC
-       LIMIT 100`,
-      scope.params
+       LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
     );
 
     return NextResponse.json({
       success: true,
       data: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
     });
   } catch (error) {
     console.error('Error fetching career enquiries:', error);

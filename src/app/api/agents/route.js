@@ -33,19 +33,58 @@ export async function GET(req) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { searchParams } = new URL(req.url);
+    const q = String(searchParams.get('q') || searchParams.get('search') || '').trim();
+    const status = String(searchParams.get('status') || '').trim();
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50', 10) || 50));
+    const offset = (page - 1) * limit;
+    const includeCounts = searchParams.get('counts') !== '0';
+
+    const vals = [];
+    const where = [];
+    if (status && AGENT_STATUSES.includes(status)) {
+      vals.push(status);
+      where.push(`a.status = $${vals.length}`);
+    }
+    if (q) {
+      vals.push(`%${q}%`);
+      where.push(`(
+        a.name ILIKE $${vals.length}
+        OR a.email ILIKE $${vals.length}
+        OR a.phone ILIKE $${vals.length}
+        OR COALESCE(a.city,'') ILIKE $${vals.length}
+      )`);
+    }
+    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+
+    const countRes = await pool.query(`SELECT COUNT(*)::INT AS total FROM agents a ${whereSql}`, vals);
+    const total = countRes.rows[0]?.total || 0;
+
+    const cols = AGENT_SAFE_COLUMNS.split(',').map((column) => `a.${column.trim()}`).join(', ');
+    const countSelect = includeCounts
+      ? `,
+        (SELECT COUNT(*)::INT FROM agent_leads l WHERE l.agent_id = a.id) AS leads_count,
+        (SELECT COUNT(*)::INT FROM agent_schedule s WHERE s.agent_id = a.id) AS schedule_count`
+      : `,
+        0::INT AS leads_count,
+        0::INT AS schedule_count`;
+
+    vals.push(limit, offset);
     const result = await pool.query(
-      `SELECT
-        ${AGENT_SAFE_COLUMNS.split(',').map((column) => `a.${column.trim()}`).join(', ')},
-        COUNT(DISTINCT l.id)::INT AS leads_count,
-        COUNT(DISTINCT s.id)::INT AS schedule_count
+      `SELECT ${cols}${countSelect}
        FROM agents a
-       LEFT JOIN agent_leads l ON l.agent_id = a.id
-       LEFT JOIN agent_schedule s ON s.agent_id = a.id
-       GROUP BY a.id
-       ORDER BY a.created_at DESC`
+       ${whereSql}
+       ORDER BY a.created_at DESC
+       LIMIT $${vals.length - 1} OFFSET $${vals.length}`,
+      vals
     );
 
-    return NextResponse.json({ success: true, data: result.rows });
+    return NextResponse.json({
+      success: true,
+      data: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
+    });
   } catch (error) {
     console.error('Agents fetch error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });

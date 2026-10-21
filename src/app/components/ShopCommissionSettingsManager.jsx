@@ -137,11 +137,15 @@ export default function ShopCommissionSettingsManager({ isDarkMode = false }) {
     }
   }, [authHeaders, filterStatus, filterVendorId, filterStartDate, filterEndDate, recordPagination.limit]);
 
+  // Settings + rules are stable; do not re-fetch them when record filters change.
   useEffect(() => {
     loadSettings();
     loadRules();
+  }, [loadSettings, loadRules]);
+
+  useEffect(() => {
     loadCommissionRecords(1);
-  }, [loadSettings, loadRules, loadCommissionRecords]);
+  }, [loadCommissionRecords]);
 
   // Mark Commission Row as Paid
   const handleMarkRowAsPaid = async (record, note = '') => {

@@ -42,7 +42,17 @@ export const ensureShippingSchema = createInitializationGuard(async () => {
   await pool.query(`INSERT INTO shipping_free_rule (id, min_order_value, applicable_only_to_same_city) VALUES (1, 50000, TRUE) ON CONFLICT (id) DO NOTHING`);
 });
 
+let shippingSettingsCache = { expiresAt: 0, data: null };
+const SHIPPING_TTL_MS = 60 * 1000;
+
+export function invalidateShippingSettingsCache() {
+  shippingSettingsCache = { expiresAt: 0, data: null };
+}
+
 export async function getShippingSettings() {
+  if (shippingSettingsCache.data && shippingSettingsCache.expiresAt > Date.now()) {
+    return shippingSettingsCache.data;
+  }
   await ensureShippingSchema();
   const [core, distance, free, routes, qtyRulesRes] = await Promise.all([
     pool.query('SELECT city_name, fixed_cost, is_active FROM shipping_core_city_rates ORDER BY city_name'),
@@ -67,11 +77,13 @@ export async function getShippingSettings() {
     quantityRules = DEFAULT_QUANTITY_SHIPPING_RULES;
   }
 
-  return {
+  const data = {
     coreCities: core.rows,
     distanceRule: distance.rows[0],
     freeRule: free.rows[0],
     distances: routes.rows,
     quantityRules,
   };
+  shippingSettingsCache = { expiresAt: Date.now() + SHIPPING_TTL_MS, data };
+  return data;
 }
