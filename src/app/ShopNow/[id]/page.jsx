@@ -126,12 +126,13 @@ export default function ProductDetailPage({ params }) {
     fetch(`/api/shop-material-options?id=${productId}`)
       .then(async (res) => {
         const json = await res.json();
-        if (!res.ok || !json.success) {
+        if (!res.ok || !json.success || !json.data?.product) {
           throw new Error(json.error || "Material not found");
         }
         return json.data.product;
       })
       .then((prod) => {
+        if (!prod) return;
         setProduct(prod);
         setSelectedQuantity(getCartStep(prod) || 1);
 
@@ -401,7 +402,7 @@ export default function ProductDetailPage({ params }) {
         <Link href="/" className="hover:text-[var(--brand-blue)] transition-colors">Home</Link>
         <ChevronRight size={13} />
         <Link href="/ShopNow" className="hover:text-[var(--brand-blue)] transition-colors">Shop Materials</Link>
-        {product.category && (
+        {product?.category && (
           <>
             <ChevronRight size={13} />
             <Link href={`/ShopNow?category=${encodeURIComponent(product.category)}`} className="hover:text-[var(--brand-blue)] transition-colors font-medium">
@@ -411,7 +412,7 @@ export default function ProductDetailPage({ params }) {
         )}
         <ChevronRight size={13} />
         <span className={`font-bold truncate max-w-[200px] sm:max-w-md ${isDarkMode ? "text-white" : "text-slate-800"}`}>
-          {product.name}
+          {product?.name || ""}
         </span>
       </nav>
 
@@ -470,8 +471,8 @@ export default function ProductDetailPage({ params }) {
                 <ProductGalleryCarousel
                   product={product}
                   category={{
-                    image: product.category_image || product.image_url || (Array.isArray(product.images) && product.images[0]),
-                    name: product.category,
+                    image: product?.category_image || product?.image_url || (Array.isArray(product?.images) && product.images[0]),
+                    name: product?.category || "",
                   }}
                 />
               </div>
@@ -878,13 +879,13 @@ export default function ProductDetailPage({ params }) {
                 <span className="text-[10px] font-black uppercase tracking-wider text-[var(--brand-blue)]">
                   EXPLORE MORE
                 </span>
-                <h2 className="text-xl sm:text-2xl font-black">Related Materials in {product.category}</h2>
+                <h2 className="text-xl sm:text-2xl font-black">Related Materials in {product?.category || "Category"}</h2>
               </div>
               <Link
-                href={`/ShopNow?category=${encodeURIComponent(product.category || "")}`}
+                href={`/ShopNow?category=${encodeURIComponent(product?.category || "")}`}
                 className="text-xs font-bold text-[var(--brand-blue)] hover:underline flex items-center gap-1"
               >
-                View all in {product.category} <ArrowRight size={14} />
+                View all in {product?.category || "Category"} <ArrowRight size={14} />
               </Link>
             </div>
 

@@ -57,6 +57,57 @@ export async function GET(req) {
 
         if (idParam) {
             const rawId = String(idParam).replace(/^supplier-/, '');
+
+            if (rawId.startsWith('catalog-')) {
+                const parts = rawId.split('-');
+                const catId = parseInt(parts[1], 10);
+                const typeIdx = parseInt(parts[2], 10);
+
+                if (!isNaN(catId)) {
+                    const catRes = await pool.query(
+                        `SELECT id, name, unit, image, images, types, price_range
+                         FROM shop_categories
+                         WHERE id = $1`, [catId]
+                    );
+
+                    if (catRes.rows.length > 0) {
+                        const cat = catRes.rows[0];
+                        const types = Array.isArray(cat.types) && cat.types.length ? cat.types : [cat.name];
+                        const name = types[typeIdx] || types[0] || cat.name;
+                        const catImg = cat.image || '';
+                        const catImgs = Array.isArray(cat.images) && cat.images.length > 0 ? cat.images : (catImg ? [catImg] : []);
+
+                        const product = {
+                            id: `catalog-${cat.id}-${isNaN(typeIdx) ? 0 : typeIdx}`,
+                            product_id: `catalog-${cat.id}-${isNaN(typeIdx) ? 0 : typeIdx}`,
+                            supplier_id: 0,
+                            vendor_id: null,
+                            name,
+                            description: `Standard ${name} material for construction. Available for quotation and delivery from verified suppliers in your city.`,
+                            quote_price_range: cat.price_range || '',
+                            price: null,
+                            unit: cat.unit || 'unit',
+                            quantity: 10000,
+                            image_url: catImg,
+                            category_image: catImg,
+                            category: cat.name,
+                            subcategory: '',
+                            brand: '',
+                            compare_at_price: null,
+                            is_featured_deal: false,
+                            images: catImgs,
+                            specifications: {},
+                            bulk_pricing: [],
+                            available_cities: [],
+                            created_at: new Date().toISOString(),
+                        };
+
+                        return NextResponse.json({ success: true, data: { product } });
+                    }
+                }
+                return NextResponse.json({ success: false, error: 'Catalog material not found' }, { status: 404 });
+            }
+
             const numId = parseInt(rawId, 10);
             if (!isNaN(numId)) {
                 const singleRes = await pool.query(
