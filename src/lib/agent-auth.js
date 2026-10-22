@@ -151,6 +151,12 @@ export const ensureAgentSchema = createInitializationGuard(async () => {
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS daily_visit_notes TEXT`,
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS client_requirement TEXT`,
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS lead_source VARCHAR(120) DEFAULT 'offline'`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS time_slot VARCHAR(100)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS meeting_date VARCHAR(100)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS address TEXT`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS state VARCHAR(120)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS gps_location VARCHAR(100)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS alternate_phone VARCHAR(50)`,
   ];
   for (const sql of leadAlters) {
     await pool.query(sql);

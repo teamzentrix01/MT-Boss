@@ -724,6 +724,57 @@ export default function LeadDetailView({
                 </div>
               </div>
             </div>
+
+            {/* Site Consultation & Meeting Card */}
+            <div className="ld-card" style={{ borderColor: lead.time_slot ? 'var(--accent, #2563eb)' : border }}>
+              <div style={{ fontWeight: 800, fontSize: '0.85rem', marginBottom: '0.85rem', textTransform: 'uppercase', letterSpacing: '.05em', color: lead.time_slot ? 'var(--accent, #2563eb)' : muted, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>📅</span>
+                <span>Site Consultation & Meeting</span>
+              </div>
+              <div className="ld-kv-grid">
+                <div className="ld-kv">
+                  <small>Preferred Time Slot</small>
+                  <strong style={{ color: lead.time_slot ? 'var(--accent, #2563eb)' : text }}>
+                    {lead.time_slot || '—'}
+                  </strong>
+                </div>
+                <div className="ld-kv">
+                  <small>Meeting Date</small>
+                  <span>{lead.meeting_date ? formatDate(lead.meeting_date) : '—'}</span>
+                </div>
+                <div className="ld-kv" style={{ gridColumn: 'span 2' }}>
+                  <small>Full Site Address</small>
+                  <span>{lead.address || '—'}</span>
+                </div>
+                <div className="ld-kv">
+                  <small>State / UT</small>
+                  <span>{lead.state || '—'}</span>
+                </div>
+                <div className="ld-kv">
+                  <small>Alternate Phone</small>
+                  <span>
+                    {lead.alternate_phone ? (
+                      <a href={`tel:${lead.alternate_phone}`} style={{ color: 'var(--accent, #2563eb)', textDecoration: 'none' }}>
+                        {lead.alternate_phone}
+                      </a>
+                    ) : '—'}
+                  </span>
+                </div>
+                {lead.gps_location && (
+                  <div className="ld-kv" style={{ gridColumn: 'span 2' }}>
+                    <small>GPS Location</small>
+                    <a
+                      href={`https://www.google.com/maps?q=${lead.gps_location}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: 'var(--accent, #2563eb)', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none' }}
+                    >
+                      📍 {lead.gps_location} (Open in Maps ↗)
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Requirements & Notes */}
