@@ -40,6 +40,12 @@ const ensureSchema = createInitializationGuard(async () => {
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS source_ref_table VARCHAR(80)`,
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS source_ref_id INTEGER`,
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS priority VARCHAR(30) DEFAULT 'Normal'`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS time_slot VARCHAR(100)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS meeting_date VARCHAR(100)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS address TEXT`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS state VARCHAR(120)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS gps_location VARCHAR(100)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS alternate_phone VARCHAR(50)`,
   ];
   for (const sql of alters) await pool.query(sql);
 });
@@ -52,9 +58,18 @@ export async function GET(req) {
     await ensureSchema();
 
     const leads = await pool.query(
-        `SELECT l.*, a.name AS agent_name
+        `SELECT l.*,
+                COALESCE(l.time_slot, pse.time_slot, sb.booking_time, NULL) AS time_slot,
+                COALESCE(l.meeting_date::text, pse.meeting_date::text, sb.booking_date::text, NULL) AS meeting_date,
+                COALESCE(l.address, pse.address, sb.service_address, NULL) AS address,
+                COALESCE(l.state, pse.state, NULL) AS state,
+                COALESCE(l.gps_location, pse.gps_location, NULL) AS gps_location,
+                COALESCE(l.alternate_phone, pse.alternate_phone, NULL) AS alternate_phone,
+                a.name AS agent_name
          FROM agent_leads l
          LEFT JOIN agents a ON a.id = l.agent_id
+         LEFT JOIN primary_service_enquiries pse ON (l.source_ref_table = 'primary_service_enquiries' AND pse.id = l.source_ref_id)
+         LEFT JOIN service_bookings sb ON (l.source_ref_table = 'service_bookings' AND sb.id = l.source_ref_id)
          WHERE l.assigned_franchise_id = $1
            AND LOWER(TRIM(COALESCE(l.city, ''))) = LOWER(TRIM($2))
          ORDER BY l.created_at DESC`,
