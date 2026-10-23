@@ -145,9 +145,6 @@ export async function assertAgentAccess(userOrReq, projectId = null, category = 
 }
 
 async function pmSchemaLooksReady() {
-  // One round-trip: if the latest phase-1/3 objects exist, skip the heavy DDL fan-out.
-  // Migrations remain the source of truth; this only avoids re-running dozens of
-  // CREATE IF NOT EXISTS statements on every serverless cold start (~10–15s on Neon).
   const result = await pool.query(`
     SELECT
       to_regclass('public.pm_parties') IS NOT NULL AS has_parties,
@@ -160,7 +157,28 @@ async function pmSchemaLooksReady() {
          WHERE table_schema = 'public'
            AND table_name = 'pm_projects'
            AND column_name = 'source_lead_id'
-      ) AS has_source_lead
+      ) AS has_source_lead,
+      EXISTS (
+        SELECT 1
+          FROM information_schema.columns
+         WHERE table_schema = 'public'
+           AND table_name = 'pm_labor'
+           AND column_name = 'project_vendor_id'
+      ) AS has_labor_pv,
+      EXISTS (
+        SELECT 1
+          FROM information_schema.columns
+         WHERE table_schema = 'public'
+           AND table_name = 'pm_labor_attendance'
+           AND column_name = 'project_vendor_id'
+      ) AS has_att_pv,
+      EXISTS (
+        SELECT 1
+          FROM information_schema.columns
+         WHERE table_schema = 'public'
+           AND table_name = 'pm_vendors'
+           AND column_name = 'external_vendor_id'
+      ) AS has_vendors_ext
   `);
   const row = result.rows[0] || {};
   return Boolean(
@@ -169,6 +187,9 @@ async function pmSchemaLooksReady() {
     && row.has_payments
     && row.has_labor_payments
     && row.has_source_lead
+    && row.has_labor_pv
+    && row.has_att_pv
+    && row.has_vendors_ext
   );
 }
 
@@ -280,6 +301,7 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
   // contractor master record. This allows the same contractor to work on more
   // than one project/work order without mixing their labor teams.
   await pool.query(`ALTER TABLE pm_labor ADD COLUMN IF NOT EXISTS project_vendor_id BIGINT REFERENCES pm_project_vendors(id) ON DELETE SET NULL`);
+  await pool.query(`ALTER TABLE pm_labor ADD COLUMN IF NOT EXISTS contractor_id BIGINT REFERENCES pm_project_vendors(id) ON DELETE SET NULL`);
   await pool.query(`
     CREATE TABLE IF NOT EXISTS pm_labor_attendance (
       id BIGSERIAL PRIMARY KEY,
@@ -293,6 +315,10 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
       UNIQUE(labor_id, attendance_date)
     );
   `);
+  await pool.query(`ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS project_id BIGINT REFERENCES pm_projects(id) ON DELETE CASCADE`);
+  await pool.query(`ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS project_vendor_id BIGINT REFERENCES pm_project_vendors(id) ON DELETE SET NULL`);
+  await pool.query(`ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS contractor_id BIGINT REFERENCES pm_project_vendors(id) ON DELETE SET NULL`);
+  await pool.query(`ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS overtime_hours NUMERIC(6,2) DEFAULT 0`);
   await pool.query(`
     CREATE TABLE IF NOT EXISTS pm_labor_payments (
       id BIGSERIAL PRIMARY KEY,
@@ -314,7 +340,8 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
     `CREATE INDEX IF NOT EXISTS pm_labor_att_labor_idx ON pm_labor_attendance(labor_id)`,
     `CREATE INDEX IF NOT EXISTS pm_labor_att_date_idx ON pm_labor_attendance(attendance_date)`,
     `CREATE INDEX IF NOT EXISTS pm_labor_pay_labor_idx ON pm_labor_payments(labor_id)`,
-    `CREATE INDEX IF NOT EXISTS pm_labor_pay_date_idx ON pm_labor_payments(payment_date)`
+    `CREATE INDEX IF NOT EXISTS pm_labor_pay_date_idx ON pm_labor_payments(payment_date)`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS pm_labor_proj_phone_active_idx ON pm_labor (project_id, phone) WHERE phone IS NOT NULL AND phone <> '' AND is_active = TRUE`
   ]) {
     await pool.query(sql);
   }

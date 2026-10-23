@@ -5,6 +5,10 @@ import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase
 
 const validDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
+function getTodayIST() {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+}
+
 export async function GET(req) {
   try {
     await ensureProjectManagementSchema();
@@ -125,6 +129,20 @@ export async function PUT(req) {
     }
     const auth = await assertAgentAccess(req, firstPv.rows[0].project_id, 'labor');
     if (!auth.allowed) return auth.response;
+
+    const todayIST = getTodayIST();
+    const isSuperAdmin = auth.user?.role === 'admin' || auth.user?.role === 'super_admin';
+    const adminOverride = Boolean(b.admin_override && isSuperAdmin);
+
+    for (const e of entries) {
+      const attDate = String(e.attendance_date || '');
+      if (attDate !== todayIST && !adminOverride) {
+        return NextResponse.json({
+          success: false,
+          error: `Back date ya future date ki attendance allowed nahi hai. Sirf aaj ki date (${todayIST}) ki attendance mark ki ja sakti hai.`
+        }, { status: 400 });
+      }
+    }
 
     const client = await pool.connect();
     const actor = actorFromAdmin(auth.user);
