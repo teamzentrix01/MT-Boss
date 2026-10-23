@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import "./admin-theme.css";
 import { AdminStatusBadge } from "./AdminUI";
@@ -43,71 +43,156 @@ import {
   Wallet,
   LogOut,
   Menu,
+  ChevronDown,
 } from "@/app/components/ui/icons";
 
-const groupForTab = (tab) => {
-  if (["", "agents", "users"].includes(tab)) return "Main";
-  if (["career-enquiries", "jobs", "professionals", "professional-enquiries"].includes(tab)) return "Hiring";
-  if (["office-locations", "cities", "franchises"].includes(tab)) return "Locations";
-  if (["project-management","party-project-management", "pm-dashboard", "pm-reports", "pm-activity-log", "pm-benchmarks"].includes(tab)) return "Project Management";
-  if (["calculator", "calculator-quotes", "lead-management", "submissions", "revenue", "bookings", "orders-history", "quick-services-pricing", "shop-categories", "shop-products", "cashback", "shipping-settings", "shop-commission-settings", "suppliers", "vendors", "product-approvals", "packages"].includes(tab)) return "Sales";
-  if (["Vendor-approvals", "package-approvals", "product-approvals", "package-approvals"].includes(tab)) return "Approvals";
-  return "Operations";
-};
+const menuStructure = [
+  // Standalone top items
+  { id: 'overview', label: 'Overview', icon: LayoutDashboard, tab: '' },
+  { id: 'users', label: 'Users', icon: Users, tab: 'users' },
 
-const menuItems = [
-  { label: 'Overview', icon: LayoutDashboard, tab: '' },
-  // { label: 'Agents', icon: UserCog, tab: 'agents' },
-  { label: 'Users', icon: Users, tab: 'users' },
-  { label: 'Calculator', icon: Calculator, tab: 'calculator' },
-  { label: 'Calculator Quotes', icon: FileText, tab: 'calculator-quotes' },
-  { label: 'Career Enquiry', icon: Briefcase, tab: 'career-enquiries' },
-  { label: 'New Jobs', icon: BriefcaseBusiness, tab: 'jobs' },
-  { label: 'Lead Management', icon: ClipboardList, tab: 'lead-management' },
-  { label: 'Office Locations', icon: MapPin, tab: 'office-locations' },
-  { label: 'Cities', icon: Building, tab: 'cities' },
-  { label: 'Contact Forms', icon: Mail, tab: 'submissions' },
-  { label: 'Franchises', icon: Store, tab: 'franchises' },
-  { label: 'Free Time Slots', icon: CalendarClock, tab: 'free-slots' },
-  { label: 'FAQs Management', icon: HelpCircle, tab: 'faqs' },
-  { label: 'Customer Reviews', icon: Star, tab: 'reviews' },
-  { label: 'Hero Banners', icon: ImageIcon, tab: 'hero-banners' },
-  { label: 'SEO Blogs & Guides', icon: Newspaper, tab: 'blogs' },
+  // Approvals
+  {
+    id: 'approvals',
+    label: 'Approvals',
+    icon: PackageCheck,
+    children: [
+      { label: 'Product Approvals', tab: 'product-approvals' },
+      { label: 'Package Approvals', tab: 'packages' },
+    ],
+  },
 
-  { label: 'Construction Services', icon: Layers, tab: 'primary-services' },
-  { label: 'Construction Enquiry', icon: MessageSquare, tab: 'primary-service-enquiries' },
-  { label: 'Professional Enquiries', icon: MessageSquare, tab: 'professional-enquiries' },
-  { label: 'Professional Services', icon: Users, tab: 'professionals' },
-  { label: 'Project Management', icon: Building2, tab: 'project-management' },
-{ label: 'Project Management · Parties', icon: Building2, tab: 'party-project-management' },
-{ label: 'PM Dashboard', icon: LayoutDashboard, tab: 'pm-dashboard' },
-{ label: 'PM Reports', icon: FileText, tab: 'pm-reports' },
-{ label: 'PM Activity Log', icon: FolderKanban, tab: 'pm-audit' },
-{ label: 'PM Benchmarks · Rates', icon: CircleDollarSign, tab: 'pm-benchmarks' },
-  { label: 'Portfolio Projects', icon: FolderKanban, tab: 'projects' },
-  { label: 'All Properties', icon: House, tab: 'properties' },
-  { label: 'Room Rentals', icon: House, tab: 'room-rentals' },
-  { label: 'Flats', icon: Building, tab: 'flats' },
-  { label: 'Plots', icon: MapPin, tab: 'plots' },
-  { label: 'Create Property', icon: PlusCircle, tab: 'create-property' },
-  { label: 'Property Bookings', icon: CalendarDays, tab: 'property-bookings' },
-  { label: 'Property Enquiries', icon: MessageSquareText, tab: 'property-enquiries' },
-  { label: 'Quick Enquiry', icon: Zap, tab: 'quick-enquiries' },
-  { label: 'Quick Services', icon: Wrench, tab: 'quick-services' },
-  { label: 'Revenue & Earnings', icon: CircleDollarSign, tab: 'revenue' },
-  { label: 'Service Bookings', icon: CalendarDays, tab: 'bookings' },
-  { label: 'Orders History', icon: ClipboardList, tab: 'orders-history' },
-  { label: 'Service Pricing', icon: Tags, tab: 'quick-services-pricing' },
-  { label: 'Shop Now Manager', icon: ShoppingCart, tab: 'shop-categories' },
-  { label: 'Cashback & Wallet', icon: Wallet, tab: 'cashback' },
-  { label: '+ Add Shop Product', icon: PlusCircle, tab: 'shop-products' },
-  { label: 'Shipping Settings', icon: Truck, tab: 'shipping-settings' },
-  { label: 'Vendor Commission', icon: CircleDollarSign, tab: 'shop-commission-settings' },
-  // { label: 'Suppliers', icon: Truck, tab: 'suppliers' },
-  // { label: 'Vendors', icon: HardHat, tab: 'vendors' },
-  { label: 'Product Approvals', icon: PackageCheck, tab: 'product-approvals' },
-  { label: 'Package Approvals', icon: PackageCheck, tab: 'packages' },
+  // Properties & Rentals
+  {
+    id: 'properties',
+    label: 'Properties & Rentals',
+    icon: House,
+    children: [
+      { label: 'All Properties', tab: 'properties' },
+      { label: 'Room Rentals', tab: 'room-rentals' },
+      { label: 'Flats', tab: 'flats' },
+      { label: 'Plots', tab: 'plots' },
+      { label: 'Create Property', tab: 'create-property' },
+      { label: 'Property Bookings', tab: 'property-bookings' },
+      { label: 'Property Enquiries', tab: 'property-enquiries' },
+    ],
+  },
+
+  // Services & Enquiries
+  {
+    id: 'services',
+    label: 'Services & Enquiries',
+    icon: Wrench,
+    children: [
+      { label: 'Construction Services', tab: 'primary-services' },
+      { label: 'Construction Enquiry', tab: 'primary-service-enquiries' },
+      { label: 'Quick Services', tab: 'quick-services' },
+      { label: 'Quick Enquiry', tab: 'quick-enquiries' },
+      { label: 'Professional Services', tab: 'professionals' },
+      { label: 'Professional Enquiries', tab: 'professional-enquiries' },
+      { label: 'Service Bookings', tab: 'bookings' },
+      { label: 'Service Pricing', tab: 'quick-services-pricing' },
+    ],
+  },
+
+  // Shop & E-Commerce
+  {
+    id: 'shop',
+    label: 'Shop & E-Commerce',
+    icon: ShoppingCart,
+    children: [
+      { label: 'Shop Now Manager', tab: 'shop-categories' },
+      { label: '+ Add Shop Product', tab: 'shop-products' },
+      { label: 'Orders History', tab: 'orders-history' },
+      { label: 'Shipping Settings', tab: 'shipping-settings' },
+      { label: 'Vendor Commission', tab: 'shop-commission-settings' },
+      { label: 'Cashback & Wallet', tab: 'cashback' },
+    ],
+  },
+
+  // Project Management
+  {
+    id: 'project-management',
+    label: 'Project Management',
+    icon: Building2,
+    children: [
+      { label: 'PM Dashboard', tab: 'pm-dashboard' },
+      { label: 'Project Management', tab: 'project-management' },
+      { label: 'Project Management · Parties', tab: 'party-project-management' },
+      { label: 'PM Reports', tab: 'pm-reports' },
+      { label: 'PM Activity Log', tab: 'pm-audit' },
+      { label: 'PM Benchmarks · Rates', tab: 'pm-benchmarks' },
+      { label: 'Portfolio Projects', tab: 'projects' },
+    ],
+  },
+
+  // Sales & Leads
+  {
+    id: 'sales',
+    label: 'Sales & Leads',
+    icon: ClipboardList,
+    children: [
+      { label: 'Lead Management', tab: 'lead-management' },
+      { label: 'Calculator', tab: 'calculator' },
+      { label: 'Calculator Quotes', tab: 'calculator-quotes' },
+      { label: 'Revenue & Earnings', tab: 'revenue' },
+    ],
+  },
+
+  // Hiring & Jobs
+  {
+    id: 'hiring',
+    label: 'Hiring & Jobs',
+    icon: Briefcase,
+    children: [
+      { label: 'Career Enquiry', tab: 'career-enquiries' },
+      { label: 'New Jobs', tab: 'jobs' },
+    ],
+  },
+
+  // Locations
+  {
+    id: 'locations',
+    label: 'Locations',
+    icon: MapPin,
+    children: [
+      { label: 'Office Locations', tab: 'office-locations' },
+      { label: 'Cities', tab: 'cities' },
+      { label: 'Franchises', tab: 'franchises' },
+    ],
+  },
+
+  // Website & Content
+  {
+    id: 'website',
+    label: 'Website & Content',
+    icon: Layers,
+    children: [
+      { label: 'Hero Banners', tab: 'hero-banners' },
+      { label: 'SEO Blogs & Guides', tab: 'blogs' },
+      { label: 'Customer Reviews', tab: 'reviews' },
+      { label: 'FAQs Management', tab: 'faqs' },
+      { label: 'Free Time Slots', tab: 'free-slots' },
+      { label: 'Contact Forms', tab: 'submissions' },
+    ],
+  },
 ];
+
+function isTabAllowedForAgent(tab, user) {
+  if (user?.role === "agent") {
+    if (tab === "product-approvals" || tab === "packages") return false;
+    if (
+      tab.includes("project-management") ||
+      tab.startsWith("pm-") ||
+      tab === "projects"
+    ) {
+      return !!user.has_project_management_access;
+    }
+    if (tab === "lead-management") return true;
+    return false;
+  }
+  return true;
+}
 
 function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
   const searchParams = useSearchParams();
@@ -147,52 +232,172 @@ function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
     };
   }, []);
 
-  const visibleItems = menuItems.filter((item) => {
-    if (user?.role === "agent") {
-      const tab = item.tab || "";
-      if (tab === "product-approvals") return false;
-      if (
-        tab.includes("project-management") ||
-        tab.startsWith("pm-") ||
-        tab === "projects"
-      ) {
-        return !!user.has_project_management_access;
+  const [openGroups, setOpenGroups] = useState({});
+
+  // Filter visible items and their children based on user permissions
+  const visibleItems = menuStructure
+    .map((item) => {
+      if (item.children) {
+        const allowedChildren = item.children.filter((child) =>
+          isTabAllowedForAgent(child.tab || "", user)
+        );
+        if (allowedChildren.length === 0) return null;
+        return { ...item, children: allowedChildren };
       }
-      if (tab === "lead-management") return true;
-      return false;
-    }
-    return true;
-  });
+      if (!isTabAllowedForAgent(item.tab || "", user)) return null;
+      return item;
+    })
+    .filter(Boolean);
+
+  // Automatically expand group containing active tab
+  useEffect(() => {
+    visibleItems.forEach((item) => {
+      if (item.children) {
+        const hasActiveChild = item.children.some(
+          (child) => (child.tab || "") === currentTab
+        );
+        if (hasActiveChild) {
+          setOpenGroups((prev) => ({ ...prev, [item.id]: true }));
+        }
+      }
+    });
+  }, [currentTab]);
+
+  const toggleGroup = (groupId) => {
+    setOpenGroups((prev) => ({
+      ...prev,
+      [groupId]: !prev[groupId],
+    }));
+  };
 
   return (
-    <nav className="admin-sidebar__nav flex-1 overflow-y-auto px-3 py-4 space-y-1">
-      {visibleItems.map((item, index) => {
+    <nav className="admin-sidebar__nav flex-1 overflow-y-auto px-3 py-4 space-y-1.5">
+      {visibleItems.map((item) => {
         const IconComponent = item.icon;
-        const isActive = (item.tab || "") === currentTab;
-        const group = groupForTab(item.tab || "");
-        const previousGroup = index > 0 ? groupForTab(visibleItems[index - 1].tab || "") : null;
-        const showGroup = group !== previousGroup;
-        const itemLabel = item.label.charAt(0).toUpperCase() + item.label.slice(1).toLowerCase();
 
+        if (item.children) {
+          const isOpen = !!openGroups[item.id];
+          const isChildActive = item.children.some(
+            (child) => (child.tab || "") === currentTab
+          );
+          const hasApprovalsBadge =
+            item.id === "approvals" && pendingApprovalsCount > 0;
+
+          return (
+            <div key={item.id} className="admin-sidebar__dropdown-group">
+              <button
+                type="button"
+                onClick={() => toggleGroup(item.id)}
+                aria-expanded={isOpen}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-sm font-medium ${
+                  isChildActive
+                    ? "bg-brand-50 text-brand-600 font-semibold"
+                    : "text-ink-700 hover:bg-app"
+                }`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span
+                    className={`flex items-center justify-center shrink-0 w-8 h-8 rounded-lg ${
+                      isChildActive ? "text-brand-600" : "text-current"
+                    }`}
+                  >
+                    {IconComponent ? (
+                      <IconComponent
+                        size={20}
+                        strokeWidth={1.7}
+                        aria-hidden="true"
+                      />
+                    ) : null}
+                  </span>
+                  <span className="truncate select-none text-left">
+                    {item.label}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  {hasApprovalsBadge && (
+                    <AdminStatusBadge tone="danger">
+                      {pendingApprovalsCount}
+                    </AdminStatusBadge>
+                  )}
+                  <ChevronDown
+                    size={16}
+                    className={`text-ink-500 transition-transform duration-200 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </div>
+              </button>
+
+              {isOpen && (
+                <div className="mt-1 ml-4 pl-3 border-l-2 border-zinc-200 space-y-1">
+                  {item.children.map((child) => {
+                    const isChildTabActive =
+                      (child.tab || "") === currentTab;
+                    return (
+                      <Link
+                        key={child.label}
+                        href={
+                          child.tab
+                            ? `/dashboard?tab=${child.tab}`
+                            : "/dashboard"
+                        }
+                        onClick={closeSidebarOnMobile}
+                        title={child.label}
+                        aria-current={isChildTabActive ? "page" : undefined}
+                        className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors ${
+                          isChildTabActive
+                            ? "bg-brand-100 text-brand-600 font-bold"
+                            : "text-ink-700 hover:text-ink-900 hover:bg-app font-medium"
+                        }`}
+                      >
+                        <span className="truncate">{child.label}</span>
+                        {child.tab === "product-approvals" &&
+                          pendingApprovalsCount > 0 && (
+                            <AdminStatusBadge tone="danger" className="ml-2">
+                              {pendingApprovalsCount}
+                            </AdminStatusBadge>
+                          )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        }
+
+        // Standalone Items (e.g. Overview, Users)
+        const isActive = (item.tab || "") === currentTab;
         return (
-          <div key={item.label}>
-            {showGroup && <div className="admin-sidebar__group">{group}</div>}
+          <div key={item.id || item.label}>
             <Link
               href={item.tab ? `/dashboard?tab=${item.tab}` : "/dashboard"}
               onClick={closeSidebarOnMobile}
-              title={itemLabel}
+              title={item.label}
               aria-current={isActive ? "page" : undefined}
               data-active={isActive ? "true" : undefined}
-              className={`admin-sidebar__item relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${isActive ? "bg-brand-100 text-brand-600 font-semibold" : "text-ink-700 hover:bg-app font-medium"}`}
+              className={`admin-sidebar__item relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                isActive
+                  ? "bg-brand-100 text-brand-600 font-semibold"
+                  : "text-ink-700 hover:bg-app font-medium"
+              }`}
             >
-              <span className={`flex items-center justify-center shrink-0 w-8 h-8 rounded-lg ${isActive ? "text-brand-600" : "text-current"}`}>
-                {IconComponent ? <IconComponent size={20} strokeWidth={1.7} aria-hidden="true" /> : null}
+              <span
+                className={`flex items-center justify-center shrink-0 w-8 h-8 rounded-lg ${
+                  isActive ? "text-brand-600" : "text-current"
+                }`}
+              >
+                {IconComponent ? (
+                  <IconComponent
+                    size={20}
+                    strokeWidth={1.7}
+                    aria-hidden="true"
+                  />
+                ) : null}
               </span>
-              <span className="flex-1 flex items-center justify-between text-sm truncate select-none">
-                <span>{itemLabel}</span>
-                {item.tab === "product-approvals" && pendingApprovalsCount > 0 && (
-                  <AdminStatusBadge tone="danger" className="ml-auto">{pendingApprovalsCount}</AdminStatusBadge>
-                )}
+              <span className="flex-1 text-sm truncate select-none">
+                {item.label}
               </span>
             </Link>
           </div>
@@ -205,9 +410,28 @@ function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
   const isDarkMode = false;
   const [user, setUser] = useState({});
   const router = useRouter();
+
+  useEffect(() => {
+    if (!profileOpen) return;
+    const handleOutsideClick = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setProfileOpen(false);
+      }
+    };
+    const handleEscape = (e) => {
+      if (e.key === "Escape") setProfileOpen(false);
+    };
+    document.addEventListener("pointerdown", handleOutsideClick);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("pointerdown", handleOutsideClick);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [profileOpen]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -347,21 +571,47 @@ export default function DashboardLayout({ children }) {
           <div className="flex-1" />
           <div className="relative flex items-center gap-1">
             <DashboardNotifications />
-            <button
-              type="button"
-              onClick={() => setProfileOpen(!profileOpen)}
-              aria-expanded={profileOpen}
-              className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors ${hoverBg}`}
-            >
-              <span className="admin-avatar flex h-8 w-8 items-center justify-center rounded-lg font-bold text-white">
-                {user.name?.charAt(0) || "A"}
-              </span>
-              <span
-                className={`hidden sm:block max-w-40 truncate text-sm font-semibold ${textPrimary}`}
+            <div className="relative" ref={profileRef}>
+              <button
+                type="button"
+                onClick={() => setProfileOpen((prev) => !prev)}
+                aria-expanded={profileOpen}
+                className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors ${hoverBg}`}
               >
-                {user.name || "Admin"}
-              </span>
-            </button>
+                <span className="admin-avatar flex h-8 w-8 items-center justify-center rounded-lg font-bold text-white">
+                  {user.name?.charAt(0) || "A"}
+                </span>
+                <span
+                  className={`hidden sm:block max-w-40 truncate text-sm font-semibold ${textPrimary}`}
+                >
+                  {user.name || "Admin"}
+                </span>
+              </button>
+
+              {profileOpen && (
+                <div
+                  className={`absolute right-0 top-full mt-2 min-w-48 z-50 rounded-lg border ${borderColor} ${bgClass} p-1 shadow-xl`}
+                >
+                  <div
+                    className={`px-3 py-2 text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                  >
+                    {user.email || "Admin account"}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProfileOpen(false);
+                      handleLogout();
+                    }}
+                    className={`flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${isDarkMode ? "text-red-400 hover:bg-red-400/10" : "text-red-600 hover:bg-red-50"}`}
+                  >
+                    <LogOut size={16} strokeWidth={1.75} aria-hidden="true" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+
             <button
               type="button"
               onClick={handleLogout}
@@ -371,25 +621,6 @@ export default function DashboardLayout({ children }) {
             >
               <LogOut size={18} strokeWidth={1.75} aria-hidden="true" />
             </button>
-            {profileOpen && (
-              <div
-                className={`absolute right-0 top-full mt-2 min-w-48 rounded-lg border ${borderColor} ${bgClass} p-1 shadow-xl`}
-              >
-                <div
-                  className={`px-3 py-2 text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                >
-                  {user.email || "Admin account"}
-                </div>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className={`flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${isDarkMode ? "text-red-400 hover:bg-red-400/10" : "text-red-600 hover:bg-red-50"}`}
-                >
-                  <LogOut size={16} strokeWidth={1.75} aria-hidden="true" />
-                  Logout
-                </button>
-              </div>
-            )}
           </div>
         </div>
         {children}
