@@ -524,7 +524,7 @@ export default function DashboardLayout({ children }) {
       >
         {/* Logo / Header */}
         <div className="admin-sidebar__brand flex items-center px-4 border-b">
-          <Link href="/" aria-label="Go to MT Boss website" className="admin-sidebar__brand-link">
+          <Link href="/" aria-label="Go to MTBoss website" className="admin-sidebar__brand-link">
             MTBoss
           </Link>
         </div>

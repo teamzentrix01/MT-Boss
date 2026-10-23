@@ -32,7 +32,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why School Architecture Matters for Learning and Safety
+               School Architecture Matters for Learning and Safety
               </h3>
               <p className="mb-3">
                 Good design directly affects the daily life of students and staff. A well-planned school delivers clear benefits:
@@ -68,7 +68,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss: School Design and Construction Under One Roof
+                School Design and Construction Under One Roof
               </h3>
               <p className="mb-3">
                 Many owners hire an architect first and a builder later, and then discover the design is hard to build or costs more than expected. MTBoss avoids this by keeping both roles together.

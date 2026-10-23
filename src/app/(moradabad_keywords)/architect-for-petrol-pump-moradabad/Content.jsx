@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Petrol Pump in Moradabad: Design and Construction by MTBoss
+            Architect for Petrol Pump in Moradabad:MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -18,23 +18,17 @@ const Content = () => {
                 A petrol pump is one of the most profitable and most regulated commercial
                 businesses you can build. It runs on footfall, vehicle movement, safety
                 and speed. Every decision about layout, canopy height, tank position and
-                traffic flow affects daily sales and long-term risk. That is why choosing
-                the right architect for petrol pump Moradabad is as important as choosing
-                the location itself.
+                traffic flow affects daily sales and long-term risk.
               </p>
               <p className="mt-3">
                 Moradabad sits on a busy trade and transport corridor. Highways, city
                 roads and heavy commercial traffic create strong demand for fuel stations.
-                But a good site alone does not guarantee a good outlet. Poor entry and
-                exit design, weak drainage, cramped dispensing areas or missed safety
-                norms can lead to delays, rejected approvals and costly rework.
+                But a good site alone does not guarantee a good outlet.
               </p>
               <p className="mt-3">
                 MTBoss is a construction company serving Moradabad and Bareilly with
                 commercial, industrial, hospitality, residential and infrastructure
-                projects. We combine architecture, engineering and construction under one
-                team, so your fuel station moves from a plot to a working outlet with
-                clear planning, transparent costs and controlled timelines.
+                projects.
               </p>
               <p className="mt-3">
                 This guide explains what a petrol pump architect does, what a fuel station
@@ -266,7 +260,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBoss as Your Petrol Pump Architect?
+                Choose MTBoss as Your Petrol Pump Architect
               </h3>
               <p className="mb-3">
                 Fuel station projects need clear planning, dependable execution and honest
@@ -371,7 +365,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How Much Does It Cost to Design and Build a Petrol Pump?
+              Cost to Design and Build a Petrol Pump
               </h3>
               <p className="mb-3">
                 Costs vary widely, and no honest firm can quote an exact number without

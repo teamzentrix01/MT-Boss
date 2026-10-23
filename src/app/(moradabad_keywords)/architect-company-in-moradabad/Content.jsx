@@ -44,9 +44,7 @@ const Content = () => {
                 <li>
                   <strong>Multiple skills together.</strong> Design, technical detailing, estimation, procurement and site supervision are handled by one organisation instead of several people you must coordinate yourself.
                 </li>
-                <li>
-                  <strong>Proper billing and records.</strong> A registered company issues invoices, keeps records and can provide documents you may need for loans or approvals.
-                </li>
+               
                 <li>
                   <strong>Long-term presence.</strong> A company with an office and a brand to protect is more likely to be around for repairs, extensions and questions years later.
                 </li>
@@ -112,15 +110,6 @@ const Content = () => {
                 We design showrooms, hotels, schools, clinics and banquet spaces, with separate flows for customers, staff and services.
               </p>
 
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Vastu-Friendly Planning
-              </h4>
-              <p className="mb-3">
-                If you follow Vastu, we place rooms, entrances, the kitchen, pooja room and staircase according to its guidelines, while keeping the layout modern and functional.
-              </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Renovation, Extension and Additional Floors
               </h4>
@@ -157,9 +146,6 @@ const Content = () => {
                 <li>A written scope of work, so you know exactly what is included.</li>
                 <li>Site study and feasibility advice on what your plot can support.</li>
                 <li>Concept layouts and space planning options for your review.</li>
-                <li>3D elevation views that show the finished look before you commit.</li>
-                <li>Detailed working drawings with dimensions, sections and details that workers can follow.</li>
-                <li>Coordination with structural, electrical, plumbing and HVAC design.</li>
                 <li>An itemised estimate, so costs are visible.</li>
                 <li>Material and finish guidance, balancing looks, durability and budget.</li>
                 <li>Approvals guidance, explaining the drawings and documents typically needed.</li>
@@ -316,12 +302,7 @@ const Content = () => {
                 <li>
                   <strong>Drawing compliance.</strong> Site teams work from approved drawings, not verbal instructions.
                 </li>
-                <li>
-                  <strong>Waterproofing discipline.</strong> Terraces, bathrooms and external walls are treated carefully to prevent seepage.
-                </li>
-                <li>
-                  <strong>Services testing.</strong> Electrical and plumbing lines are tested before they are covered.
-                </li>
+               
                 <li>
                   <strong>Clear communication.</strong> You receive regular progress updates and a named contact for questions.
                 </li>

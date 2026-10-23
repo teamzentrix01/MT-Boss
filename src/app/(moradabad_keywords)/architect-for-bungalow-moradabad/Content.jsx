@@ -63,23 +63,6 @@ const Content = () => {
                 Our 3D views show the facade, entrance, balconies, lighting and landscaping before construction begins, so you can adjust the look with confidence.
               </p>
 
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Landscape and Outdoor Planning
-              </h4>
-              <p className="mb-3">
-                We plan lawns, trees, pathways, water features, seating spaces and outdoor lighting, so the garden becomes a real part of daily life.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Vastu-Friendly Layouts
-              </h4>
-              <p className="mb-3">
-                We place the entrance, kitchen, pooja room, bedrooms and staircase according to Vastu guidelines when you want them, without giving up modern comfort.
-              </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Interior Coordination
               </h4>
@@ -180,9 +163,7 @@ const Content = () => {
                 <li>
                   <strong>Drawing room and formal living.</strong> A separate guest space near the entrance, so visitors do not disturb private areas.
                 </li>
-                <li>
-                  <strong>Family living and dining.</strong> A comfortable, well-lit space at the heart of the house, connected to the kitchen and outdoor seating.
-                </li>
+               
                 <li>
                   <strong>Kitchen and pantry.</strong> Proper ventilation, an efficient work layout, generous storage and a utility or wet kitchen if needed.
                 </li>
@@ -378,12 +359,6 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Number of floors and basement:</strong> extra levels need stronger structure and more material.
-                </li>
-                <li>
-                  <strong>Material quality:</strong> flooring, stone, doors, windows, sanitaryware and fittings range from standard to luxury.
-                </li>
-                <li>
-                  <strong>Site work:</strong> boundary wall, gate, driveway, landscaping and outdoor lighting can form a large share of the budget.
                 </li>
                 <li>
                   <strong>Services:</strong> solar panels, backup power, water treatment, home automation and cooling systems add cost.

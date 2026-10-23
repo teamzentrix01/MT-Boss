@@ -24,15 +24,13 @@ const Content = () => {
               <p className="mt-3">
                 MTBoss is a Moradabad-based construction, property and home services company. Our team plans and designs hotels, resorts, guest houses and banquet spaces, and then builds them. Hotel and hospitality construction is a core part of our work, and because design and construction sit in one company, you deal with one accountable team from the first sketch to the opening day.
               </p>
-              <p className="mt-3">
-                This page covers our hotel design services, the planning process, cost factors and practical advice for anyone building or upgrading a hotel in Moradabad.
-              </p>
+             
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Hotel Architecture Matters for Guest Experience and Revenue
+                Hotel Architecture Matters for Guest Experience and Revenue
               </h3>
               <p className="mb-3">
                 A hotel is a business where the building itself is the product. Smart design delivers clear benefits:
@@ -68,7 +66,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss: Hotel Design and Construction Under One Roof
+              Hotel Design and Construction Under One Roof
               </h3>
               <p className="mb-3">
                 Many owners hire an architect first and a builder later, and then discover the design costs more than expected or is difficult to build. MTBoss avoids this by keeping both roles together.
@@ -138,21 +136,6 @@ const Content = () => {
                 For resorts and countryside stays, we plan cottages, villas, gardens, pools and event lawns that make the most of open space and natural surroundings.
               </p>
 
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Guest House and Service Apartment Design
-              </h4>
-              <p className="mb-3">
-                We design compact, efficient guest houses and service apartments with practical layouts, easy maintenance and comfortable interiors.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Guest Room Planning
-              </h4>
-              <p className="mb-3">
-                Rooms are where guests spend most of their time. We plan room sizes, bed placement, workspace, storage, bathrooms, natural light and sound control so that each room feels comfortable and works efficiently.
-              </p>
 
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">

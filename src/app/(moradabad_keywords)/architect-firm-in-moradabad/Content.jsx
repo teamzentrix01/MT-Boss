@@ -462,11 +462,7 @@ const Content = () => {
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
-                <li>
-                  <strong>Q4. Do you make 3D elevation designs?</strong>
-                  <br />
-                  Yes. You see your building in 3D before construction begins.
-                </li>
+               
                 <li>
                   <strong>Q5. What types of projects do you take?</strong>
                   <br />
@@ -477,11 +473,7 @@ const Content = () => {
                   <br />
                   Yes. We plan small and irregular plots to make every square foot useful.
                 </li>
-                <li>
-                  <strong>Q7. Do you help with approval documents?</strong>
-                  <br />
-                  We prepare drawings and guide you on typical requirements. Final approvals depend on the relevant authorities.
-                </li>
+           
                 <li>
                   <strong>Q8. Is the quotation itemised?</strong>
                   <br />

@@ -183,16 +183,6 @@ const Content = () => {
               <p className="mb-3">
                 These critical areas need clean and controlled layouts, quick access and reliable services. We plan their location and connections carefully and coordinate technical requirements with specialists.
               </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Pharmacy, Stores and Support Services
-              </h4>
-              <p className="mb-3">
-                Pharmacy, laundry, kitchen, central stores, biomedical waste area and staff facilities are planned so services run smoothly without disturbing patients.
-              </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Parking, Ambulance Access and Landscaping
               </h4>
@@ -206,14 +196,6 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 A clear, welcoming facade and simple signage help patients find the right entrance and department quickly, especially in stressful moments.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Renovation, Extension and Additional Floors
-              </h4>
-              <p className="mb-3">
-                If your existing hospital needs more beds, a new block or better flow, we assess the structure and plan upgrades in phases, aiming to keep services running.
               </p>
             </section>
 

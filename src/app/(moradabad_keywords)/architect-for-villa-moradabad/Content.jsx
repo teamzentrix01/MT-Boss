@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Villa in Moradabad: Custom Design and Construction by MTBoss
+            Architect for Villa in Moradabad:MTBoss
           </h2>
 
 
@@ -29,7 +29,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose a Professional Architect for Villa in Moradabad?
+                Choose a Professional Architect for Villa in Moradabad
               </h3>
               <p className="mb-3">
                 Many plot owners start with a rough idea and hand it to a local contractor. It seems cheaper at first, but it often leads to wasted space, poor ventilation, structural compromises and expensive changes midway through construction.
@@ -103,21 +103,6 @@ const Content = () => {
                 A villa deserves interiors that match its architecture. We design living rooms, bedrooms, wardrobes, false ceilings, lighting, wall finishes, flooring and furniture layouts. We also design modular kitchens that combine storage, workflow and style.
               </p>
 
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                5. Construction and Project Management
-              </h4>
-              <p>
-                Design is only half the story. MTBoss also constructs residential projects, from affordable homes to luxury villas. Because design and construction sit under one roof, there is no gap between what is drawn and what is built, and no confusion over who is responsible.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                6. Waterproofing and Finishing
-              </h4>
-              <p>
-                Water seepage is one of the most common problems in Indian homes, especially in bathrooms, terraces and basements. Our waterproofing specialists protect your villa at the construction stage, so you avoid dampness and costly repairs later.
-              </p>
             </section>
 
 

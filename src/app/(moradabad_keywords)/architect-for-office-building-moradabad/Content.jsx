@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Office Building in Moradabad: Design, Construction and Materials by MTBoss
+            Architect for Office Building in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -22,9 +22,7 @@ const Content = () => {
                 in Moradabad, MTBoss positions its commercial construction work
                 around engineering excellence and timely delivery, making it a
                 practical option for businesses planning a new office building
-                or corporate workspace in the city. This page explains what
-                MTBoss offers for office building projects, how the process
-                works, and how to get in touch.
+                or corporate workspace in the city.
               </p>
             </section>
 
@@ -42,7 +40,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What MTBoss Offers for Office Building Projects in Moradabad
+               MTBoss Offers for Office Building Projects in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Design coordination for commercial spaces:</strong> MTBoss&apos;s commercial building service covers the planning needed for offices, alongside shops, showrooms and small commercial complexes.</li>
@@ -89,33 +87,18 @@ const Content = () => {
                 <li><strong>Pantry and break areas:</strong> Functional space for staff to take breaks, planned with basic plumbing and electrical provisions.</li>
                 <li><strong>Server or IT room:</strong> A dedicated, ventilated space for networking equipment, increasingly common in modern office builds.</li>
                 <li><strong>Parking provision:</strong> Adequate parking for staff and visiting clients, planned around the plot&apos;s access points.</li>
-                <li><strong>Fire safety and exits:</strong> Clearly planned emergency exits, extinguisher points and staircases as required for commercial occupancy.</li>
-                <li><strong>Electrical load planning:</strong> Sufficient power capacity for computers, air conditioning, lighting and office equipment.</li>
-                <li><strong>Signage and facade:</strong> Frontage design that reflects your company&apos;s branding while meeting local commercial building norms.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why the MTBoss Budget Calculator Helps Office Building Planning
+                MTBoss Budget Calculator Helps Office Building Planning
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>It is a free tool available directly on the MTBoss website, built to help clients form a realistic cost estimate before committing to a design.</li>
                 <li>Office building costs can vary significantly based on floor count, finish quality and the number of cabins or meeting rooms planned, so an early estimate helps you scope the project appropriately.</li>
                 <li>Because MTBoss also supplies materials wholesale, the estimate is grounded in pricing the company itself works with, rather than a generic industry average.</li>
                 <li>Using the calculator before your first detailed conversation with MTBoss helps align your office brief with a realistic budget from the outset.</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBoss&apos;s Material Supply Matters for Office Construction
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBoss supplies cement, TMT steel bars, bricks, tiles and paints directly, on a wholesale basis.</li>
-                <li>For an office building, finish quality — flooring, wall paint, ceiling work — plays a large role in how the finished space looks and feels to employees and visiting clients.</li>
-                <li>Sourcing materials through the same company handling design and construction reduces coordination gaps between architect, contractor and supplier.</li>
-                <li>Direct material control also helps MTBoss manage delivery timing during construction, reducing the risk of material-related delays common in office fit-out projects.</li>
               </ul>
             </section>
 
@@ -134,7 +117,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What to Share with MTBoss Before Your First Office Project Consultation
+              Share with MTBoss Before Your First Office Project Consultation
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Plot or building details:</strong> Size, location and any existing structure on the site.</li>
@@ -153,7 +136,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Property Services: Useful If You Don&apos;t Have an Office Plot Yet
+                MTBoss Property Services:
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>MTBoss offers verified property buying, selling and renting services in and around Moradabad.</li>
@@ -197,7 +180,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBoss as Your Architect for Office Building Construction in Moradabad
+                Choose MTBoss as Your Architect for Office Building Construction in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>One team, one point of contact:</strong> Design coordination, material supply, construction and property services are all handled within the same company.</li>
@@ -211,7 +194,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact MTBoss — Architect for Office Building Construction in Moradabad
+                Contact MTBoss: Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
@@ -263,16 +246,7 @@ const Content = () => {
                 option on the MTBoss website, or contact the team directly by
                 phone or WhatsApp.
               </p>
-              <p className="mt-3">
-                For businesses searching for an architect for office building
-                construction in Moradabad, MTBoss offers a single point of
-                contact for design coordination, material supply, civil
-                construction and even property sourcing. Rather than managing a
-                separate architect, contractor and material supplier for your
-                office project, MTBoss brings design, materials and construction
-                execution together, supported by a free budget calculator and a
-                simple online quote request.
-              </p>
+             
             </section>
 
             <section>

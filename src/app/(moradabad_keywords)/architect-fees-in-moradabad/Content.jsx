@@ -173,27 +173,6 @@ const Content = () => {
                 The architect coordinates with engineers and consultants so all systems work together without conflicts.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 6: Estimates and Tender Support
-              </h4>
-              <p>
-                Cost estimates, quantities and contractor comparisons help you control spending.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 7: Site Supervision
-              </h4>
-              <p>
-                Regular site visits check that construction follows the drawings and meets quality standards. This stage is sometimes charged separately.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 8: Interior Design
-              </h4>
-              <p>
-                Furniture layouts, lighting, modular kitchens, wardrobes, false ceilings and finishes can be added to complete the home.
-              </p>
-
               <p className="mt-3">
                 Always confirm which stages are part of your quote and which are extra.
               </p>
@@ -201,7 +180,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Architect Fees vs Construction Cost: Understanding the Difference
+                Architect Fees vs Construction Cost: 
               </h3>
               <p className="mb-3">
                 Many people confuse the architect&apos;s fee with the cost of building. They are two separate items.
@@ -327,7 +306,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose a Local Architect in Moradabad?
+                Choose a Architect in Moradabad
               </h3>
               <p className="mb-3">
                 Working with a firm that knows the city brings real advantages.

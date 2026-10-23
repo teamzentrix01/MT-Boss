@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Showroom in Moradabad: Design and Build with MTBoss
+            Architect for Showroom in Moradabad:MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -17,18 +17,13 @@ const Content = () => {
               <p>
                 A showroom sells before a salesperson says a word. The façade draws
                 people in, the lighting shapes how products look, and the layout decides
-                whether customers browse for two minutes or twenty. In a busy market like
-                Moradabad, where competition for footfall is strong, the right architect
-                for showroom Moradabad can make the difference between a store that people
-                pass by and a store that people remember.
+                whether customers browse for two minutes or twenty. 
               </p>
               <p className="mt-3">
                 MTBoss is a construction company serving Moradabad and Bareilly with
                 commercial, residential, hospitality and industrial projects. We handle
                 architecture, interior design, construction, modular work and waterproofing
-                under one team. That means your showroom moves from a plot or an empty
-                shell to a finished, branded, ready-to-open space without gaps between
-                designer and builder.
+                under one team. 
               </p>
               <p className="mt-3">
                 This guide explains what a showroom architect does, which showroom types
@@ -340,51 +335,7 @@ const Content = () => {
               </ul>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Should You Consider Before Designing a Showroom?
-              </h3>
-              <p className="mb-3">
-                Planning ahead prevents expensive corrections later. Think through these
-                points before you meet your architect.
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  <strong>Location and visibility.</strong> Study road frontage, traffic
-                  direction, nearby competitors and how far your signage can be seen.
-                </li>
-                <li>
-                  <strong>Target customers.</strong> A premium jewellery showroom and a
-                  family furniture store need very different atmospheres.
-                </li>
-                <li>
-                  <strong>Product range and display needs.</strong> Measure your largest
-                  products, count your categories and decide how much stock you want on
-                  display versus in storage.
-                </li>
-                <li>
-                  <strong>Brand identity.</strong> Decide your colours, style and message
-                  so that the design reflects your brand consistently.
-                </li>
-                <li>
-                  <strong>Budget.</strong> Set a realistic total budget covering
-                  construction, interiors, lighting, furniture, signage and contingency.
-                </li>
-                <li>
-                  <strong>Timeline.</strong> Plan around your target opening date,
-                  festival seasons or brand launch schedule.
-                </li>
-                <li>
-                  <strong>Approvals and rules.</strong> Confirm building norms, signage
-                  regulations, parking requirements and any franchise design guidelines
-                  with the relevant authorities and your brand partner.
-                </li>
-                <li>
-                  <strong>Future growth.</strong> Think about whether you may add
-                  products, floors or branches later.
-                </li>
-              </ul>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -455,7 +406,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss: A Reliable Partner for Showroom Projects
+                 A Reliable Partner for Showroom Projects
               </h3>
               <p className="mb-3">
                 Choosing a partner for a showroom is a serious business decision. These
@@ -545,46 +496,7 @@ const Content = () => {
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Mistakes to Avoid When Building a Showroom
-              </h3>
-              <p className="mb-3">
-                Learning from the mistakes of other owners can save a great deal of money
-                and time.
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  <strong>Choosing a location without checking visibility.</strong> A
-                  showroom hidden behind a divider or a narrow lane loses customers no
-                  matter how good the design is.
-                </li>
-                <li>
-                  <strong>Ignoring parking.</strong> Difficult parking pushes customers to
-                  competitors.
-                </li>
-                <li>
-                  <strong>Poor lighting.</strong> Dull or harsh lighting makes products
-                  look cheap.
-                </li>
-                <li>
-                  <strong>Cluttered layouts.</strong> Too many displays confuse customers
-                  and slow down decisions.
-                </li>
-                <li>
-                  <strong>Skipping the 3D design stage.</strong> Without visualisation,
-                  you may discover problems only after construction.
-                </li>
-                <li>
-                  <strong>Underestimating the budget.</strong> Forgetting signage,
-                  furniture, lighting and air conditioning leads to sudden overspending.
-                </li>
-                <li>
-                  <strong>Hiring unconnected teams.</strong> When designer, contractor and
-                  interior team do not coordinate, errors and delays multiply.
-                </li>
-              </ul>
-            </section>
+          
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">

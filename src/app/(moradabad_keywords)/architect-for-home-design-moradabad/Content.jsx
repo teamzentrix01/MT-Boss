@@ -24,9 +24,7 @@ const Content = () => {
               <p className="mt-3">
                 MTBoss is a Moradabad-based construction, property and home services company. Our team designs independent houses, duplexes, villas and builder floors, and then builds them. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to the day you move in.
               </p>
-              <p className="mt-3">
-                This page covers our home design services, plot-size ideas, room planning, elevation styles, costs and practical advice for choosing the right architect.
-              </p>
+           
             </section>
 
 
@@ -65,14 +63,6 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Once you approve the design, we prepare detailed drawings with dimensions and sections that masons, carpenters and electricians can follow accurately.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Vastu-Friendly Layouts
-              </h4>
-              <p className="mb-3">
-                We place the entrance, kitchen, pooja room, bedrooms and staircase according to Vastu guidelines when you want them, without giving up modern comfort.
               </p>
 
 
@@ -199,12 +189,7 @@ const Content = () => {
                 Room-by-Room Home Planning by MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  <strong>Entrance and living room.</strong> A welcoming entry, comfortable seating and a natural flow to the rest of the house, with a clear view of the front door only where you want it.
-                </li>
-                <li>
-                  <strong>Kitchen.</strong> Proper ventilation, an efficient work triangle, storage and a sensible link to the dining area. We also plan a chimney duct and utility space early.
-                </li>
+                
                 <li>
                   <strong>Dining area.</strong> Close to the kitchen, but not in the path of daily traffic.
                 </li>
@@ -326,15 +311,7 @@ const Content = () => {
                 <li>
                   <strong>Location:</strong> the locality in Moradabad and the width of the approach road.
                 </li>
-                <li>
-                  <strong>Family details:</strong> number of members, elderly people, children and any special needs.
-                </li>
-                <li>
-                  <strong>Rooms required:</strong> bedrooms, bathrooms, kitchen, pooja room, study, guest room and store.
-                </li>
-                <li>
-                  <strong>Floors and future plans:</strong> how many floors now, and whether you may add more later.
-                </li>
+                
                 <li>
                   <strong>Parking and shops:</strong> number of vehicles and any commercial or rental space.
                 </li>
@@ -372,16 +349,7 @@ const Content = () => {
                   <strong>Step 2: Concept layouts.</strong> We prepare floor plan options. You review them and tell us what to change.
                 </li>
                 <li>
-                  <strong>Step 3: 3D elevation and working drawings.</strong> Once the concept is approved, we prepare 3D views and detailed drawings, coordinated with structural, electrical and plumbing design.
-                </li>
-                <li>
-                  <strong>Step 4: Approvals guidance.</strong> We guide you on the drawings and documents typically needed for local approvals. Requirements vary by area, so please confirm final rules with the relevant authorities.
-                </li>
-                <li>
                   <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate with materials, labour and finishes itemised.
-                </li>
-                <li>
-                  <strong>Step 6: Construction and supervision.</strong> If you choose MTBoss to build, our team builds exactly to the approved design with regular site checks.
                 </li>
                 <li>
                   <strong>Step 7: Finishing and handover.</strong> We complete finishing, inspection and cleaning, and hand over a home that is ready to live in.
@@ -459,8 +427,6 @@ const Content = () => {
                 <li>Forgetting parking, storage and future expansion.</li>
                 <li>Skipping structural design and soil checks.</li>
                 <li>Underplanning electrical points, plumbing and drainage.</li>
-                <li>Neglecting waterproofing on terraces, bathrooms and external walls.</li>
-                <li>Choosing an elevation before checking that the layout supports it.</li>
                 <li>Hiring a designer and a builder who do not coordinate.</li>
                 <li>Starting work without a written quotation and schedule.</li>
               </ul>
@@ -483,9 +449,6 @@ const Content = () => {
                 <li>They understand local building rules and approval requirements.</li>
                 <li>They provide 3D elevation views before construction begins.</li>
                 <li>The quotation is itemised and in writing.</li>
-                <li>They coordinate with structural, electrical and plumbing work.</li>
-                <li>A named person supervises the site regularly.</li>
-                <li>The timeline is clear, along with the plan for delays.</li>
                 <li>Their address and contact details match their official website and Google listing.</li>
                 <li>They offer after-service support once the home is complete.</li>
                 <li>Professional details are shown where they apply.</li>

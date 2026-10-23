@@ -24,9 +24,7 @@ const Content = () => {
               <p className="mt-3">
                 MTBoss is a Moradabad-based construction, property and home services company. Our team advises on and designs homes, shops, showrooms, hotels, schools and industrial buildings, and can also build them. Consultancy and construction sit under one roof, so the advice you get is practical, priced realistically and backed by people who build every day.
               </p>
-              <p className="mt-3">
-                This page explains what an architect consultant does, when to hire one, how MTBoss works and what to check before you decide.
-              </p>
+           
             </section>
 
 
@@ -59,12 +57,7 @@ const Content = () => {
                 <li>
                   <strong>Approvals guidance:</strong> understanding the drawings and documents typically needed.
                 </li>
-                <li>
-                  <strong>Site checks and supervision:</strong> confirming that the building matches the drawings.
-                </li>
-                <li>
-                  <strong>Problem solving:</strong> cracks, leakage, dampness, layout mistakes and structural doubts in existing buildings.
-                </li>
+             
               </ul>
               <p className="mt-3">
                 You can hire a consultant for a single decision, for a full project or for a quick review, depending on what you need.
@@ -154,31 +147,6 @@ const Content = () => {
                 Before you buy a plot or finalise a design, we study its size, shape, road access, surroundings and building potential. You get honest advice on what can be built, how many floors are practical and what the budget may look like.
               </p>
 
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Home Design Consultation
-              </h4>
-              <p className="mb-3">
-                We advise on layouts, room sizes, staircase position, parking, elevation and Vastu preferences for independent houses, duplexes, villas and builder floors. If you want full drawings, we prepare them, including 3D elevation views.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Second Opinion and Plan Review
-              </h4>
-              <p className="mb-3">
-                Already have a plan? We review it for wasted space, poor light and ventilation, awkward staircases, missing services and structural coordination, and then suggest practical improvements.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Commercial and Institutional Consultation
-              </h4>
-              <p className="mb-3">
-                We advise on shops, complexes, showrooms, offices, hotels, schools and clinics, covering area efficiency, circulation, parking, facade and safety planning.
-              </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Budget Planning and Cost Estimation
               </h4>
@@ -227,15 +195,6 @@ const Content = () => {
                 We visit your site at key stages, such as foundation, columns, slabs and finishing, and check that the work matches the drawings and specifications.
               </p>
 
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Renovation and Structural Assessment
-              </h4>
-              <p className="mb-3">
-                If your building has cracks, leakage, dampness or needs an extra floor, we assess the situation and advise on practical solutions. Where structural safety is in question, we recommend involving a qualified structural engineer.
-              </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Interior Design Coordination
               </h4>
@@ -265,12 +224,7 @@ const Content = () => {
                 <li>
                   <strong>Save on cosmetics.</strong> Decorative items, fancy fittings and furniture can be upgraded over time.
                 </li>
-                <li>
-                  <strong>Compare quotes on scope, not only total price.</strong> The cheapest quote often leaves out items that appear later as extras.
-                </li>
-                <li>
-                  <strong>Keep standard sizes.</strong> Doors, windows and tiles in standard sizes reduce wastage and cost.
-                </li>
+               
                 <li>
                   <strong>Buy materials smartly.</strong> Buying in planned batches from a reliable supplier improves price and quality control.
                 </li>
@@ -307,9 +261,7 @@ const Content = () => {
                 <li>
                   <strong>When you live far from the site.</strong> Many owners living outside Moradabad need a trusted person watching quality and cost.
                 </li>
-                <li>
-                  <strong>When something looks wrong.</strong> Cracks, leakage, delays or disputes are best handled with expert advice early.
-                </li>
+              
                 <li>
                   <strong>Before renovation or extension.</strong> Assessing the existing structure prevents costly surprises.
                 </li>

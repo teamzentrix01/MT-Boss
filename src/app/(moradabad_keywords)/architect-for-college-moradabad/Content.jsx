@@ -62,9 +62,6 @@ const Content = () => {
                 <li><strong>Step 3 — Site visit:</strong> MTBoss engineers assess the plot, road access, soil condition and surrounding structures, including space for future expansion, which matters for growing institutions.</li>
                 <li><strong>Step 4 — Design and layout planning:</strong> Layouts are prepared based on classroom count, labs, common facilities and floor count needed for your college.</li>
                 <li><strong>Step 5 — Budget estimation:</strong> The MTBoss Budget Calculator, along with current material rates, is used to give a realistic cost outline.</li>
-                <li><strong>Step 6 — Material supply:</strong> Materials are sourced directly through MTBoss&apos;s own wholesale supply of cement, steel, bricks, tiles and paints.</li>
-                <li><strong>Step 7 — Construction and supervision:</strong> Civil work proceeds under MTBoss supervision, with quality and timeline checks along the way.</li>
-                <li><strong>Step 8 — Handover:</strong> Final finishing, inspection and handover of the completed college building.</li>
               </ul>
             </section>
 
@@ -105,7 +102,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBoss&apos;s Material Supply Matters for College Construction
+                 Material Supply Matters for College Construction
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>MTBoss supplies cement, TMT steel bars, bricks, tiles and paints directly, on a wholesale basis.</li>
@@ -149,7 +146,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Property Services: Useful If You Don&apos;t Have a College Plot Yet
+                MTBoss Property Services: 
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>MTBoss offers verified property buying, selling and renting services in and around Moradabad.</li>
@@ -193,7 +190,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBoss as Your Architect for College Construction in Moradabad
+                Choose MTBoss as Your Architect for College Construction in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>One team, one point of contact:</strong> Design coordination, material supply, construction and property services are all handled within the same company.</li>
