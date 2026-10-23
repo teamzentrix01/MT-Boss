@@ -261,6 +261,7 @@ function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
         }
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTab]);
 
   const toggleGroup = (groupId) => {

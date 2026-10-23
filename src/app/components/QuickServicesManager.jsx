@@ -703,10 +703,13 @@ export default function QuickServicesManager({ isDarkMode }) {
                       </div>
                       {formData.iconUrl && (
                         <div style={{ marginTop: '8px' }}>
-                          <img
+                          <Image
                             src={formData.iconUrl}
                             alt=""
-                            style={{ display: 'none' }}
+                            width={1}
+                            height={1}
+                            unoptimized
+                            style={{ display: 'none', width: 1, height: 1 }}
                             onLoad={(e) => {
                               const { naturalWidth, naturalHeight } = e.currentTarget;
                               const ratio = naturalWidth / (naturalHeight || 1);
