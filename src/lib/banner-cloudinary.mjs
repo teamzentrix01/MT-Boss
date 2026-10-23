@@ -6,25 +6,27 @@ export async function uploadBannerImage(file, folder = 'mtboss/hero-banners') {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
   if (!cloudName || !preset) throw new Error('Cloudinary image upload is not configured.');
-  const mimeSignatures = {
-    'image/jpeg': (bytes) => bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff,
-    'image/png': (bytes) => bytes.subarray(0, 8).join(',') === '137,80,78,71,13,10,26,10',
-    'image/webp': (bytes) => String.fromCharCode(...bytes.subarray(0, 4)) === 'RIFF' && String.fromCharCode(...bytes.subarray(8, 12)) === 'WEBP',
-  };
-  if (!file || typeof file.arrayBuffer !== 'function' || !mimeSignatures[file.type]) {
-    throw new Error('Choose a JPG, PNG or WEBP image.');
+
+  if (!file || typeof file.arrayBuffer !== 'function') {
+    throw new Error('Please select a valid image or file.');
   }
-  if (!file.size || file.size > 5 * 1024 * 1024) throw new Error('Choose an image smaller than 5 MB.');
-  const signatureBytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
-  if (!mimeSignatures[file.type](signatureBytes)) throw new Error('The image contents do not match the selected file type.');
+
+  // Allow up to 200MB
+  if (!file.size || file.size > 200 * 1024 * 1024) {
+    throw new Error('Choose a file smaller than 200 MB.');
+  }
+
   const body = new FormData();
   body.append('file', file);
   body.append('upload_preset', preset);
   body.append('folder', String(folder).replace(/[^a-zA-Z0-9/_-]/g, '').replace(/^\/+|\/+$/g, '') || 'mtboss/uploads');
   const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-    method: 'POST', body, signal: AbortSignal.timeout(60000),
+    method: 'POST', body, signal: AbortSignal.timeout(120000),
   });
   const data = await response.json();
-  if (!response.ok || !data.secure_url || !data.public_id) throw new Error(data.error?.message || 'Cloudinary upload failed.');
-  return { url: data.secure_url, public_id: data.public_id, width: data.width, height: data.height };
+  let finalUrl = data.secure_url;
+  if (finalUrl.toLowerCase().endsWith('.pdf')) {
+    finalUrl = finalUrl.replace(/\.pdf$/i, '.webp');
+  }
+  return { url: finalUrl, public_id: data.public_id, width: data.width, height: data.height };
 }
