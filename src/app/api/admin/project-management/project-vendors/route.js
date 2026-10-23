@@ -3,32 +3,31 @@ import pool from '@/lib/db';
 import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 function val(b) {
-  const project = Number(b.project_id);
-  const vendor = Number(b.vendor_id);
-  const type = String(b.pay_type);
-  const daily = Number(b.daily_rate);
-  const contract = Number(b.contract_amount);
+  const project = Number(b.project_id ?? b.projectId);
+  const vendor = Number(b.vendor_id ?? b.vendorId);
+  const type = String(b.pay_type ?? b.payType ?? '');
+  const daily = b.daily_rate !== undefined && b.daily_rate !== null && b.daily_rate !== '' ? Number(b.daily_rate) : null;
+  const contract = b.contract_amount !== undefined && b.contract_amount !== null && b.contract_amount !== '' ? Number(b.contract_amount) : null;
+  const workDesc = String(b.work_description ?? b.workDescription ?? '').trim();
 
-  if (
-    !Number.isInteger(project) ||
-    !Number.isInteger(vendor) ||
-    !String(b.work_description || '').trim() ||
-    !['daily_wage', 'contract'].includes(type) ||
-    (type === 'daily_wage' && (!Number.isFinite(daily) || daily < 0)) ||
-    (type === 'contract' && (!Number.isFinite(contract) || contract < 0))
-  ) {
-    return null;
-  }
+  if (!Number.isInteger(project) || project <= 0) return { error: 'Valid project_id is required' };
+  if (!Number.isInteger(vendor) || vendor <= 0) return { error: 'Please select a contractor' };
+  if (!workDesc) return { error: 'Work description is required' };
+  if (!['daily_wage', 'contract'].includes(type)) return { error: 'Pay type must be daily_wage or contract' };
+  if (type === 'daily_wage' && (!Number.isFinite(daily) || daily < 0)) return { error: 'Valid daily rate is required' };
+  if (type === 'contract' && (!Number.isFinite(contract) || contract < 0)) return { error: 'Valid contract amount is required' };
 
-  return [
-    project,
-    vendor,
-    String(b.work_description).trim(),
-    type,
-    type === 'daily_wage' ? daily : null,
-    type === 'contract' ? contract : null,
-    b.status === 'completed' ? 'completed' : 'active',
-  ];
+  return {
+    values: [
+      project,
+      vendor,
+      workDesc,
+      type,
+      type === 'daily_wage' ? daily : null,
+      type === 'contract' ? contract : null,
+      b.status === 'completed' ? 'completed' : 'active',
+    ],
+  };
 }
 
 export async function GET(req) {
@@ -36,7 +35,7 @@ export async function GET(req) {
     await ensureProjectManagementSchema();
     const s = new URL(req.url).searchParams;
     const { page, pageSize, offset } = pageParams(s);
-    const project = Number(s.get('projectId'));
+    const project = Number(s.get('projectId') || s.get('project_id'));
 
     if (!Number.isInteger(project)) {
       return NextResponse.json({ success: false, error: 'projectId is required' }, { status: 400 });
@@ -54,10 +53,19 @@ export async function GET(req) {
          LIMIT $2 OFFSET $3
        ),
        labour AS (
-         SELECT a.project_vendor_id, SUM(a.wage_amount) amount
-         FROM pm_attendance a
-         JOIN paged p ON p.id = a.project_vendor_id
-         GROUP BY a.project_vendor_id
+         SELECT p.id AS project_vendor_id,
+                COALESCE(SUM(a.wage_amount), 0) + COALESCE(MAX(la_sum.amount), 0) amount
+         FROM paged p
+         LEFT JOIN pm_attendance a ON a.project_vendor_id = p.id
+         LEFT JOIN (
+           SELECT COALESCE(l.project_vendor_id, l.contractor_id) AS project_vendor_id,
+                  COALESCE(SUM(la.wage_amount), 0) AS amount
+           FROM pm_labor_attendance la
+           JOIN pm_labor l ON l.id = la.labor_id
+           WHERE COALESCE(l.project_vendor_id, l.contractor_id) IS NOT NULL
+           GROUP BY COALESCE(l.project_vendor_id, l.contractor_id)
+         ) la_sum ON la_sum.project_vendor_id = p.id
+         GROUP BY p.id
        ),
        materials AS (
          SELECT m.project_vendor_id, SUM(m.amount) amount
@@ -115,6 +123,7 @@ export async function GET(req) {
       pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
     });
   } catch (e) {
+    console.error("PROJECT VENDORS GET ERROR:", e);
     return NextResponse.json({ success: false, error: e.message }, { status: 500 });
   }
 }
@@ -123,12 +132,13 @@ export async function POST(req) {
   try {
     await ensureProjectManagementSchema();
     const body = await req.json();
-    const v = val(body);
-    if (!v) {
-      return NextResponse.json({ success: false, error: 'Invalid vendor assignment' }, { status: 400 });
+    console.log("PROJECT VENDOR ASSIGN POST PAYLOAD:", body);
+    const validation = val(body);
+    if (validation.error) {
+      return NextResponse.json({ success: false, error: validation.error }, { status: 400 });
     }
 
-    const projectId = v[0];
+    const projectId = validation.values[0];
     const auth = await assertAgentAccess(req, projectId, 'vendor');
     if (!auth.allowed) return auth.response;
 
@@ -140,7 +150,7 @@ export async function POST(req) {
         `INSERT INTO pm_project_vendors(project_id, vendor_id, work_description, pay_type, daily_rate, contract_amount, status)
          VALUES($1, $2, $3, $4, $5, $6, $7)
          RETURNING *`,
-        v
+        validation.values
       );
       await writePmPhase2Audit(client, 'pm_project_vendors', r.rows[0].id, 'created', actor, null, r.rows[0]);
       await client.query('COMMIT');
@@ -152,8 +162,9 @@ export async function POST(req) {
       client.release();
     }
   } catch (e) {
+    console.error("CONTRACTOR ASSIGN POST ERROR:", e);
     return NextResponse.json(
-      { success: false, error: e.code === '23505' ? 'This vendor/work assignment already exists' : e.message },
+      { success: false, error: e.code === '23505' ? 'This vendor/work assignment already exists' : (e.message || 'Could not assign contractor') },
       { status: e.code === '23505' ? 409 : 500 }
     );
   }

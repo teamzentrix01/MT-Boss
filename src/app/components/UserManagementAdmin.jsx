@@ -665,19 +665,30 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
     }
   };
 
-  const handleContractorChange = async (vendorId, isContractor) => {
+  const handleContractorChange = async (vendorId, isContractor, trade = null) => {
     setContractorSaving(true);
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const finalTrade = isContractor ? (trade || userDetails?.vendor?.contractor_trade || 'CIVIL') : null;
       const res = await fetch('/api/admin/vendors', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ vendor_id: vendorId, action: 'update_contractor', is_contractor: isContractor }),
+        body: JSON.stringify({
+          vendor_id: vendorId,
+          action: 'update_contractor',
+          is_contractor: isContractor,
+          contractor_trade: finalTrade,
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || 'Could not update contractor status');
       setUserDetails((current) => current ? { ...current, vendor: { ...current.vendor, ...data.data } } : current);
-      setNotice({ type: 'success', message: isContractor ? 'Vendor is now a contractor.' : 'Contractor role removed.' });
+      setNotice({
+        type: 'success',
+        message: isContractor
+          ? `Contractor registered successfully (${data.data?.contractor_trade || finalTrade}).`
+          : 'Contractor role removed.',
+      });
       fetchUsers(page);
     } catch (err) {
       setNotice({ type: 'error', message: err.message || 'Could not update contractor status' });
@@ -2757,19 +2768,65 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                     <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted, #475569)', marginBottom: '12px' }}>
                       PROJECT MANAGEMENT ROLE
                     </div>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', border: '1px solid #86efac', borderRadius: '8px', background: '#f0fdf4', cursor: contractorSaving ? 'wait' : 'pointer', maxWidth: '420px' }}>
-                      <input
-                        type="checkbox"
-                        disabled={contractorSaving}
-                        checked={Boolean(vendorData?.is_contractor || String(vendorData?.business_type || '').toLowerCase().includes('contractor'))}
-                        onChange={(event) => handleContractorChange(vendorData?.id || selectedUser.real_id, event.target.checked)}
-                        style={{ width: '17px', height: '17px', cursor: contractorSaving ? 'wait' : 'pointer' }}
-                      />
-                      <span>
-                        <strong style={{ display: 'block', fontSize: '13px', color: '#166534' }}>Register as Contractor</strong>
-                        <small style={{ color: '#4b5563' }}>Show this vendor in Project Management contractor selection.</small>
-                      </span>
-                    </label>
+                    <div style={{ border: '1px solid #86efac', borderRadius: '8px', background: '#f0fdf4', padding: '14px', maxWidth: '480px' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: contractorSaving ? 'wait' : 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          disabled={contractorSaving}
+                          checked={Boolean(vendorData?.is_contractor || vendorData?.is_project_contractor || String(vendorData?.business_type || '').toLowerCase().includes('contractor'))}
+                          onChange={(event) => {
+                            const isChecked = event.target.checked;
+                            const currentTrade = vendorData?.contractor_trade || 'CIVIL';
+                            handleContractorChange(vendorData?.id || selectedUser.real_id, isChecked, currentTrade);
+                          }}
+                          style={{ width: '18px', height: '18px', cursor: contractorSaving ? 'wait' : 'pointer' }}
+                        />
+                        <span>
+                          <strong style={{ display: 'block', fontSize: '13px', color: '#166534' }}>Register as Contractor</strong>
+                          <small style={{ color: '#4b5563' }}>Show this vendor in Project Management contractor selection.</small>
+                        </span>
+                      </label>
+
+                      {Boolean(vendorData?.is_contractor || vendorData?.is_project_contractor || String(vendorData?.business_type || '').toLowerCase().includes('contractor')) && (
+                        <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed #86efac' }}>
+                          <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#166534', marginBottom: '6px' }}>
+                            Contractor Trade <span style={{ color: '#dc2626' }}>*</span>
+                          </label>
+                          <select
+                            disabled={contractorSaving}
+                            value={vendorData?.contractor_trade || 'CIVIL'}
+                            onChange={(e) => handleContractorChange(vendorData?.id || selectedUser.real_id, true, e.target.value)}
+                            style={{
+                              width: '100%',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              border: '1px solid #86efac',
+                              background: '#fff',
+                              fontSize: '13px',
+                              fontWeight: 600,
+                              color: '#0f172a',
+                              cursor: contractorSaving ? 'wait' : 'pointer',
+                            }}
+                          >
+                            <option value="CIVIL">CIVIL — Civil Contractor</option>
+                            <option value="GENERAL">GENERAL — General Contractor</option>
+                            <option value="PLUMBING">PLUMBING — Plumber / Plumbing</option>
+                            <option value="ELECTRICIAN">ELECTRICIAN — Electrician</option>
+                            <option value="MASON">MASON — Mason</option>
+                            <option value="CARPENTER">CARPENTER — Carpenter</option>
+                            <option value="PAINTER">PAINTER — Painter</option>
+                            <option value="FABRICATOR">FABRICATOR — Fabricator</option>
+                            <option value="TILE_FLOORING">TILE_FLOORING — Tile / Flooring</option>
+                            <option value="WATERPROOFING">WATERPROOFING — Waterproofing</option>
+                            <option value="HVAC">HVAC — HVAC</option>
+                            <option value="OTHER">OTHER — Other Trade</option>
+                          </select>
+                          <small style={{ display: 'block', marginTop: '4px', color: '#64748b', fontSize: '11px' }}>
+                            Selected trade will be used for filtering in Project Management.
+                          </small>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* ASSIGNED SERVICES */}

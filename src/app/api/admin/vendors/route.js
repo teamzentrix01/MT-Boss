@@ -143,13 +143,19 @@ export async function PUT(req) {
       );
     }
 
+    const body = await req.json();
     const {
       vendor_id,
       action, // 'approve', 'reject', 'activate', 'deactivate'
       services, // Array of quick_service_ids to assign
       is_contractor,
+      is_project_contractor,
+      isContractor,
+      contractor_trade,
+      contractorTrade,
+      trade,
       admin_notes
-    } = await req.json();
+    } = body;
 
     if (!vendor_id || !action) {
       return NextResponse.json(
@@ -294,25 +300,55 @@ export async function PUT(req) {
           data: vendorResult.rows[0]
         });
       } else if (action === 'update_contractor') {
-        if (typeof is_contractor !== 'boolean') {
-          await client.query('ROLLBACK');
-          return NextResponse.json({ error: 'is_contractor must be true or false' }, { status: 400 });
-        }
+        const flag = Boolean(is_contractor ?? is_project_contractor ?? isContractor);
+        const resolvedTrade = flag ? String(contractor_trade || contractorTrade || trade || 'CIVIL').trim().toUpperCase() : null;
+
+        await client.query(`
+          ALTER TABLE vendors 
+          ADD COLUMN IF NOT EXISTS is_project_contractor BOOLEAN NOT NULL DEFAULT FALSE,
+          ADD COLUMN IF NOT EXISTS contractor_trade VARCHAR(100)
+        `);
+
         const vendorResult = await client.query(
           `UPDATE vendors
            SET is_contractor = $1,
+               is_project_contractor = $1,
+               contractor_trade = $2,
                business_type = CASE WHEN $1 THEN 'Contractor' ELSE 'Vendor' END,
                updated_at = NOW()
-           WHERE id = $2
-           RETURNING id, vendor_name, is_contractor, business_type`,
-          [is_contractor, vendor_id]
+           WHERE id = $3
+           RETURNING id, vendor_name, email, phone, is_contractor, is_project_contractor, contractor_trade, business_type`,
+          [flag, resolvedTrade, vendor_id]
         );
         if (!vendorResult.rows[0]) {
           await client.query('ROLLBACK');
           return NextResponse.json({ error: 'Vendor not found' }, { status: 404 });
         }
+
+        const vRow = vendorResult.rows[0];
+
+        // Ensure pm_vendors is in sync immediately
+        if (flag) {
+          await client.query(
+            `INSERT INTO pm_vendors (external_vendor_id, name, phone, trade, is_active)
+             VALUES ($1, $2, $3, $4, TRUE)
+             ON CONFLICT (external_vendor_id) WHERE external_vendor_id IS NOT NULL
+             DO UPDATE SET name = EXCLUDED.name, phone = EXCLUDED.phone, trade = EXCLUDED.trade, is_active = TRUE`,
+            [vRow.id, vRow.vendor_name || vRow.email, vRow.phone, vRow.contractor_trade || 'CIVIL']
+          );
+        } else {
+          await client.query(
+            `UPDATE pm_vendors SET is_active = FALSE WHERE external_vendor_id = $1`,
+            [vRow.id]
+          );
+        }
+
         await client.query('COMMIT');
-        return NextResponse.json({ success: true, message: 'Contractor status updated', data: vendorResult.rows[0] });
+        return NextResponse.json({
+          success: true,
+          message: flag ? 'Vendor registered as Contractor successfully' : 'Contractor status removed',
+          data: vRow
+        });
       } else if (action === 'update_services') {
         const serviceIds = [...new Set(
           (Array.isArray(services) ? services : [])
