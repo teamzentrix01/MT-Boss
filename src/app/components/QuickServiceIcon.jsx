@@ -29,15 +29,40 @@ export default function QuickServiceIcon({
 
   const finalImgUrl = iconUrl || (isQuickServiceIconImage(value) ? value : null);
   if (finalImgUrl) {
+    const dim = size || 28;
     return (
-      <span className={className}>
+      <span
+        className={className}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: `${dim}px`,
+          height: `${dim}px`,
+          minWidth: `${dim}px`,
+          minHeight: `${dim}px`,
+          maxWidth: `${dim}px`,
+          maxHeight: `${dim}px`,
+          overflow: 'hidden',
+          flexShrink: 0,
+        }}
+      >
         <Image
           src={finalImgUrl}
           alt={label ? `${label} icon` : 'Service icon'}
-          width={64}
-          height={64}
+          width={dim}
+          height={dim}
           unoptimized
-          className={imageClassName || 'h-full w-full object-contain'}
+          loading="lazy"
+          className={imageClassName || 'object-contain'}
+          style={{
+            width: '100%',
+            height: '100%',
+            maxWidth: `${dim}px`,
+            maxHeight: `${dim}px`,
+            objectFit: 'contain',
+            display: 'block',
+          }}
         />
       </span>
     );

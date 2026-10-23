@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import QuickServiceIcon from './QuickServiceIcon';
+import ServiceCheckboxCard from './ServiceCheckboxCard';
 import { Eye, ShieldCheck, Ban, X, CircleUser, ActionIconButton } from '@/app/components/ui/icons';
 
 export default function VendorManagementAdmin({ isDarkMode }) {
@@ -703,24 +704,22 @@ export default function VendorManagementAdmin({ isDarkMode }) {
               ) : vendorCityServices.length === 0 ? (
                 <div className="modal-value">No services are configured for {selectedVendor.city}.</div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(190px, 100%), 1fr))', gap: '0.5rem', width: '100%' }}>
+                <div className="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2.5 w-full">
                   {vendorCityServices.map((service) => {
                     const serviceId = Number(service.id);
                     const checked = selectedServiceIds.includes(serviceId);
                     return (
-                      <label key={service.id} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', minWidth: 0, overflow: 'hidden', padding: '0.6rem', border: `1px solid ${isDarkMode ? '#333' : '#e2e2e7'}`, borderRadius: 6, cursor: 'pointer' }}>
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() => setSelectedServiceIds((current) =>
-                            checked ? current.filter((id) => id !== serviceId) : [...current, serviceId]
-                          )}
-                        />
-                        <QuickServiceIcon value={service.icon} label={service.label}
-                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded"
-                          imageClassName="h-9 w-9 object-cover" />
-                        <span className="modal-value" style={{ minWidth: 0, overflowWrap: 'anywhere' }}>{service.label}</span>
-                      </label>
+                      <ServiceCheckboxCard
+                        key={service.id}
+                        service={service}
+                        checked={checked}
+                        isDarkMode={isDarkMode}
+                        onChange={(id, nextChecked) =>
+                          setSelectedServiceIds((current) =>
+                            nextChecked ? [...current, id] : current.filter((x) => x !== id)
+                          )
+                        }
+                      />
                     );
                   })}
                 </div>
