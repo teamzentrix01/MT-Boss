@@ -195,6 +195,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
     business_name: '',
     business_type: 'Vendor',
     services: [],
+    is_contractor: false,
     // Supplier
     aadhaar_number: '',
     product_categories: ['Cement', 'Bricks', 'Steel'],
@@ -241,6 +242,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
         business_name: '',
         business_type: 'Vendor',
         services: [],
+        is_contractor: false,
         aadhaar_number: '',
         product_categories: ['Cement', 'Bricks', 'Steel'],
       });
@@ -1287,6 +1289,24 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                       );
                     })}
                   </div>
+                </div>
+              )}
+
+              {/* Register as Contractor checkbox — only shown for Vendor */}
+              {createRole === 'Vendor' && (
+                <div style={{ marginTop: '14px', padding: '12px 16px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', marginBottom: '20px' }}>
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={createForm.is_contractor || false}
+                      onChange={(e) => setCreateForm({ ...createForm, is_contractor: e.target.checked })}
+                      style={{ width: '16px', height: '16px', marginTop: '2px', accentColor: '#16a34a', flexShrink: 0 }}
+                    />
+                    <span>
+                      <span style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#15803d' }}>Register as Contractor</span>
+                      <span style={{ display: 'block', fontSize: '12px', color: '#166534', marginTop: '2px' }}>Show this vendor in Project Management contractor selection.</span>
+                    </span>
+                  </label>
                 </div>
               )}
 

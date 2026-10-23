@@ -254,8 +254,8 @@
           max-width: 1280px; margin: 0 auto;
           padding: 0 1.5rem 4px;
           display: flex; overflow-x: auto;
-          scrollbar-width: thin;
-          scrollbar-color: var(--border) transparent;
+          scrollbar-width: thin; /* Firefox & Chrome 121+ */
+          scrollbar-color: var(--border) transparent; /* Firefox & Chrome 121+ */
         }
         .dash-tabs-inner::-webkit-scrollbar { height: 4px; }
         .dash-tabs-inner::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -479,8 +479,6 @@
             display: block;
             max-width: 100%;
             overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
           }
           .modal-backdrop {
             align-items: flex-end;
