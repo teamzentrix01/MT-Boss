@@ -20,11 +20,12 @@ function readSubcategoryImages(value) {
   return {};
 }
 
-async function uploadQuickServiceImage(file, folder, fitMode = 'icon') {
+async function uploadQuickServiceImage(file, folder, fitMode = 'cover') {
   const body = new FormData();
   body.append('file', file);
   body.append('folder', folder);
   body.append('fit', fitMode);
+  body.append('image_fit', fitMode);
   const token = localStorage.getItem('token');
   const response = await fetch('/api/hero-banners/upload', {
     method: 'POST',
@@ -69,7 +70,7 @@ export default function QuickServicesManager({ isDarkMode }) {
     sub_category: '',
     sub_category_images: {},
     cities: [],
-    image_fit: 'icon',
+    image_fit: 'cover',
     color: 'blue',
   });
 
@@ -192,7 +193,7 @@ export default function QuickServicesManager({ isDarkMode }) {
         icon: formData.iconUrl,
         iconType: 'image',
         iconName: '',
-        image_fit: formData.image_fit || 'icon',
+        image_fit: formData.image_fit || 'cover',
         color: formData.color || 'blue',
       };
       const body = editingId ? { id: editingId, ...payload } : payload;
@@ -210,13 +211,11 @@ export default function QuickServicesManager({ isDarkMode }) {
     } catch { setError('Error saving service'); }
   };
 
-  const handleServiceImageUpload = async (event) => {
-    const file = event.target.files?.[0];
-    event.target.value = '';
+  const processFileUpload = async (file) => {
     if (!file) return;
 
-    if (file.size > 200 * 1024) {
-      setServiceImageError('Image size must be under 200KB.');
+    if (file.size > 200 * 1024 * 1024) {
+      setServiceImageError('File size must be under 200MB.');
       return;
     }
 
@@ -224,13 +223,14 @@ export default function QuickServicesManager({ isDarkMode }) {
     setServiceImageError('');
     setError('');
     try {
-      const uploadedUrl = await uploadQuickServiceImage(file, 'mtboss/quick-services', formData.image_fit || 'icon');
+      const uploadedUrl = await uploadQuickServiceImage(file, 'mtboss/quick-services', formData.image_fit === 'contain' ? 'contain' : 'cover');
       setFormData(current => ({
         ...current,
         iconType: 'image',
         iconUrl: uploadedUrl,
         iconName: '',
         icon: uploadedUrl,
+        image_fit: current.image_fit === 'contain' ? 'contain' : 'cover',
       }));
       setSuccess('Service image uploaded.');
     } catch (uploadError) {
@@ -238,6 +238,12 @@ export default function QuickServicesManager({ isDarkMode }) {
     } finally {
       setIconUploading(false);
     }
+  };
+
+  const handleServiceImageUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    await processFileUpload(file);
   };
 
   const handleSubcategoryImageUpload = async (name, event) => {
@@ -274,6 +280,10 @@ export default function QuickServicesManager({ isDarkMode }) {
 
   const handleEdit = (service) => {
     const resolvedUrl = service.icon_url || service.iconUrl || (/^https?:\/\//i.test(service.icon || '') ? service.icon : '');
+    const isServiceImg = Boolean(resolvedUrl && /^https?:\/\//i.test(resolvedUrl));
+    const defaultFit = isServiceImg
+      ? (service.image_fit === 'contain' || (service.label || '').toLowerCase().includes('dismantling') ? 'contain' : 'cover')
+      : (service.image_fit || 'cover');
 
     setServiceImageError('');
     setFormData({
@@ -290,7 +300,7 @@ export default function QuickServicesManager({ isDarkMode }) {
       sub_category: service.sub_category || '',
       sub_category_images: readSubcategoryImages(service.sub_category_images),
       cities: Array.isArray(service.cities) ? service.cities : [],
-      image_fit: service.image_fit || service.imageFit || 'icon',
+      image_fit: defaultFit,
       color: service.color || 'blue',
     });
     setEditingId(service.id);
@@ -327,7 +337,7 @@ export default function QuickServicesManager({ isDarkMode }) {
       sub_category: '',
       sub_category_images: {},
       cities: [],
-      image_fit: 'icon',
+      image_fit: 'cover',
       color: 'blue',
     });
     setEditingId(null);
@@ -577,7 +587,26 @@ export default function QuickServicesManager({ isDarkMode }) {
           <div className="qs-modal-overlay" role="presentation" onMouseDown={e => {
             if (e.target === e.currentTarget) resetForm();
           }}>
-          <div className="qs-form-panel" role="dialog" aria-modal="true" aria-labelledby="quick-service-form-title">
+          <div
+            className="qs-form-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="quick-service-form-title"
+            onPaste={(e) => {
+              const items = e.clipboardData?.items;
+              if (items) {
+                for (let i = 0; i < items.length; i++) {
+                  if (items[i].type.startsWith('image/') || items[i].type === 'application/pdf') {
+                    const pastedFile = items[i].getAsFile();
+                    if (pastedFile) {
+                      processFileUpload(pastedFile);
+                      break;
+                    }
+                  }
+                }
+              }
+            }}
+          >
             <div className="qs-form-heading">
               <div className="qs-form-title" id="quick-service-form-title">{editingId ? 'Edit Service Details' : 'Add New Quick Service'}</div>
               <button type="button" className="qs-modal-close" onClick={resetForm} aria-label="Close">×</button>
@@ -586,12 +615,12 @@ export default function QuickServicesManager({ isDarkMode }) {
             <form onSubmit={handleSubmit}>
               <div className="qs-form-grid">
                 <div className="qs-form-full">
-                  <label className="qs-label">Service Image * (PNG, WebP, JPG, max 200KB)</label>
-                  <input className="qs-input" type="file" accept="image/jpeg,image/png,image/webp"
+                  <label className="qs-label">Service Image * (PNG, JPG, WebP, SVG, Screenshot, PDF — up to 200MB)</label>
+                  <input className="qs-input" type="file" accept="image/*,application/pdf"
                     disabled={iconUploading}
                     onChange={handleServiceImageUpload} />
                   <small style={{ display: 'block', color: serviceImageError ? 'var(--qs-err-tx)' : 'var(--qs-muted)', marginTop: 4 }}>
-                    {iconUploading ? 'Uploading & optimizing image…' : serviceImageError || 'Cover: 400×300 center-cropped. Contain/Icon: 256×256 transparent.'}
+                    {iconUploading ? 'Uploading & optimizing image…' : serviceImageError || 'Supports any image (PNG, JPG, WebP, SVG, Screenshot) or PDF up to 200MB.'}
                   </small>
                 </div>
 
@@ -599,15 +628,15 @@ export default function QuickServicesManager({ isDarkMode }) {
                   <label className="qs-label">Image Fit *</label>
                   <select
                     className="qs-input"
-                    value={formData.image_fit || 'icon'}
+                    value={formData.image_fit || 'cover'}
                     onChange={(e) => {
                       const nextFit = e.target.value;
                       setFormData((prev) => ({ ...prev, image_fit: nextFit }));
                     }}
                   >
-                    <option value="icon">Icon — 3D Emoji / Transparent Icon (with color tint)</option>
                     <option value="cover">Cover — Photo / Poster (fills whole image area)</option>
                     <option value="contain">Contain — Logo / Badge (no crop, white background)</option>
+                    <option value="icon">Icon — 3D Emoji / Transparent Icon (with color tint)</option>
                   </select>
                 </div>
 
@@ -658,7 +687,7 @@ export default function QuickServicesManager({ isDarkMode }) {
                           id: editingId || 999,
                           label: formData.label || 'Service Preview',
                           icon: formData.iconUrl || '🔧',
-                          image_fit: formData.image_fit || 'icon',
+                          image_fit: formData.image_fit || 'cover',
                           color: formData.color || 'blue',
                         }}
                         checked={true}

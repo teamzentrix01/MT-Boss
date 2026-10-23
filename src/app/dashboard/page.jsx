@@ -1,3 +1,4 @@
+// Updated quick services image upload pipeline (up to 200MB, all image formats, screenshots & PDF)
 'use client';
 
 import { useState, useEffect, Suspense, useCallback, useRef } from 'react';

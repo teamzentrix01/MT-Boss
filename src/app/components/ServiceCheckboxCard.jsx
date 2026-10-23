@@ -44,19 +44,26 @@ export default function ServiceCheckboxCard({
   const serviceName = service?.label || service?.name || service?.title || `Service #${serviceId}`;
   const iconValue = service?.icon || service?.icon_url || service?.iconUrl || '';
 
+  const isUrl = isQuickServiceIconImage(iconValue);
+  const LucideComponent = !isUrl && iconValue && LucideIcons[iconValue] ? LucideIcons[iconValue] : null;
+
   // Determine imageFit: "cover" | "contain" | "icon"
-  const rawFit = service?.image_fit || service?.imageFit || '';
-  const imageFit = rawFit ? rawFit.toLowerCase() : (
-    serviceName.toLowerCase().includes('painter') ? 'cover' :
-    serviceName.toLowerCase().includes('dismantling') ? 'contain' : 'icon'
-  );
+  const rawFit = (service?.image_fit || service?.imageFit || '').toLowerCase();
+  let imageFit = rawFit;
+  if (isUrl) {
+    // When an image is uploaded, it must fill the entire card (cover mode) unless it is explicitly a logo (contain)
+    if (rawFit === 'contain' || serviceName.toLowerCase().includes('dismantling')) {
+      imageFit = 'contain';
+    } else {
+      imageFit = 'cover';
+    }
+  } else {
+    imageFit = 'icon';
+  }
 
   // Determine color tint
   const rawColor = (service?.color || 'blue').toLowerCase();
   const colorTint = SERVICE_COLOR_TINTS[rawColor] || SERVICE_COLOR_TINTS.blue;
-
-  const isUrl = isQuickServiceIconImage(iconValue);
-  const LucideComponent = !isUrl && iconValue && LucideIcons[iconValue] ? LucideIcons[iconValue] : null;
 
   const handleToggle = () => {
     const nextVal = !isChecked;
@@ -178,20 +185,22 @@ export default function ServiceCheckboxCard({
         {isUrl && !imageError ? (
           imageFit === 'cover' ? (
             /* Cover mode: fills entire upper portion */
-            <Image
-              src={iconValue}
-              alt={serviceName}
-              fill
-              sizes="(max-width: 640px) 50vw, 170px"
-              quality={85}
-              loading="lazy"
-              unoptimized
-              onError={() => setImageError(true)}
-              style={{
-                objectFit: 'cover',
-                display: 'block',
-              }}
-            />
+            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+              <Image
+                src={iconValue}
+                alt={serviceName}
+                fill
+                sizes="(max-width: 640px) 50vw, 170px"
+                quality={85}
+                loading="lazy"
+                unoptimized
+                onError={() => setImageError(true)}
+                style={{
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+              />
+            </div>
           ) : imageFit === 'contain' ? (
             /* Contain mode: logo centered without cropping */
             <div style={{ position: 'relative', width: '100%', height: '100%' }}>
