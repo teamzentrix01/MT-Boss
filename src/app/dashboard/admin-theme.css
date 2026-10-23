@@ -866,10 +866,12 @@
 .admin-notifications__header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4); border-bottom: 1px solid var(--line); }
 .admin-notifications__header h2 { margin: 0; color: var(--ink-900); font: 700 16px/24px var(--font-admin-heading); }
 .admin-notifications__header p { margin: var(--space-1) 0 0; color: var(--ink-500); font-size: var(--type-caption); }
-.admin-notifications__header button { display: grid; width: 36px; height: 36px; place-items: center; border: 0; border-radius: var(--radius-control); background: transparent; color: var(--brand-600); }
+.admin-notifications__header button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 30px; padding: 0 8px; border: 0; border-radius: var(--radius-control); background: transparent; color: var(--brand-600); cursor: pointer; font-size: 12px; font-weight: 600; }
 .admin-notifications__header button:hover { background: var(--brand-100); }
+.admin-notifications__header button.danger-btn { color: var(--status-danger, #ef4444); }
+.admin-notifications__header button.danger-btn:hover { background: var(--status-danger-bg, #fee2e2); }
 .admin-notifications__list { max-height: min(440px, 70vh); overflow-y: auto; }
-.admin-notifications__item { display: flex; gap: var(--space-3); padding: var(--space-4); border-bottom: 1px solid var(--line); color: var(--ink-700); text-decoration: none; }
+.admin-notifications__item { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); padding: var(--space-4); border-bottom: 1px solid var(--line); color: var(--ink-700); text-decoration: none; }
 .admin-notifications__item:hover { background: var(--bg-app); }
 .admin-notifications__dot { width: 8px; height: 8px; flex: 0 0 8px; margin-top: 6px; border-radius: 50%; background: var(--brand-600); }
 .admin-notifications__item.is-read .admin-notifications__dot { background: var(--line); }

@@ -56,6 +56,7 @@ import {
   House, Zap, Wrench, CircleDollarSign, CalendarDays, Tags, ShoppingCart,
   PlusCircle, Truck, HardHat, PackageCheck, Eye, Trash2, X,
   Clock, CheckCircle2, ShieldCheck, Ban, ActionIconButton, Pencil, Plus, Wallet,
+  ArrowLeft,
 } from '@/app/components/ui/icons';
 
 function hasResumeFile(resumeUrl) {
@@ -173,6 +174,7 @@ function AdminDashboard() {
   const [pkgSuppliers, setPkgSuppliers] = useState([]);
   const [pkgMsg, setPkgMsg] = useState('');
   const [packageSubTab, setPackageSubTab] = useState('approvals'); // 'approvals' | 'plans'
+  const [selectedPackage, setSelectedPackage] = useState(null);
   const [plansList, setPlansList] = useState([]);
   const [plansLoading, setPlansLoading] = useState(false);
   const [planModalOpen, setPlanModalOpen] = useState(false);
@@ -1368,117 +1370,299 @@ function AdminDashboard() {
               {/* VIEW 1: REQUESTS & ACTIVE SUBSCRIPTIONS */}
               {packageSubTab === 'approvals' && (
                 <>
-                  {/* PENDING REQUESTS PANEL */}
-                  <div className="panel" style={{ marginBottom: '1.5rem' }}>
-                    <div className="panel-header">
-                      <span className="panel-title inline-flex items-center gap-2"><Clock size={20} strokeWidth={1.7} aria-hidden="true" /> Pending package requests</span>
-                    </div>
-                    <div className="panel-body" style={{ padding: 0 }}>
-                      <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
-                          <thead>
-                            <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-                              {['Type', 'Entity Info', 'City', 'Plan Name', 'Price', 'Requested At', 'Actions'].map(col => (
-                                <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {[
-                              ...pkgVendors.filter(v => v.package_status === 'pending').map(v => ({ ...v, type: 'vendor' })),
-                              ...pkgSuppliers.filter(s => s.package_status === 'pending').map(s => ({ ...s, type: 'supplier' }))
-                            ].map((item) => (
-                              <tr key={`${item.type}-${item.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
-                                <td style={{ padding: '0.6rem 0.875rem' }}>
-                                  <span className={`badge ${item.type === 'vendor' ? 'status-contacted' : 'status-pending'}`}>{item.type}</span>
-                                </td>
-                                <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>
-                                  {item.email}
-                                  <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{item.phone || 'No phone'}</div>
-                                </td>
-                                <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.city}</td>
-                                <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700', color: 'var(--accent)' }}>{item.package_name}</td>
-                                <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700' }}>₹{Number(item.package_price).toLocaleString('en-IN')}</td>
-                                <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_purchased_at).toLocaleString('en-IN')}</td>
-                                <td style={{ padding: '0.6rem 0.875rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                  <ActionIconButton
-                                    icon={ShieldCheck}
-                                    variant="success"
-                                    label="Approve package"
-                                    onClick={() => handlePackageAction(item.type, item.id, 'approve')}
-                                  />
-                                  <ActionIconButton
-                                    icon={Ban}
-                                    variant="danger"
-                                    label="Reject package"
-                                    onClick={() => handlePackageAction(item.type, item.id, 'reject')}
-                                  />
-                                </td>
-                              </tr>
-                            ))}
-                            {pkgVendors.filter(v => v.package_status === 'pending').length === 0 && pkgSuppliers.filter(s => s.package_status === 'pending').length === 0 && (
-                              <tr>
-                                <td colSpan={7} className="empty-state" style={{ textAlign: 'center', padding: '2rem' }}>No pending package requests.</td>
-                              </tr>
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
+                  {selectedPackage ? (
+                    <div className="panel" style={{ padding: '1.75rem', borderRadius: '16px', marginBottom: '1.5rem' }}>
+                      {/* Header / Back */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPackage(null)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.5rem 1rem',
+                            borderRadius: '8px',
+                            border: '1px solid var(--border)',
+                            background: 'var(--surface)',
+                            color: 'var(--text)',
+                            fontWeight: 600,
+                            fontSize: '0.875rem',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <ArrowLeft size={16} /> Back to Packages
+                        </button>
 
-                  {/* ACTIVE SUBSCRIPTIONS PANEL */}
-                  <div className="panel">
-                    <div className="panel-header">
-                      <span className="panel-title">✅ Active Packages & Subscriptions</span>
-                    </div>
-                    <div className="panel-body" style={{ padding: 0 }}>
-                      <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
-                          <thead>
-                            <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-                              {['Type', 'Entity Info', 'Plan Name', 'Price', 'Starts At', 'Expires At', 'Days Left'].map(col => (
-                                <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {[
-                              ...pkgVendors.filter(v => v.package_status === 'active').map(v => ({ ...v, type: 'vendor' })),
-                              ...pkgSuppliers.filter(s => s.package_status === 'active').map(s => ({ ...s, type: 'supplier' }))
-                            ].map((item) => {
-                              const daysLeft = Math.max(0, Math.ceil((new Date(item.package_expires_at) - new Date()) / (1000 * 60 * 60 * 24)));
-                              return (
-                                <tr key={`${item.type}-${item.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
-                                  <td style={{ padding: '0.6rem 0.875rem' }}>
-                                    <span className={`badge ${item.type === 'vendor' ? 'status-contacted' : 'status-pending'}`}>{item.type}</span>
-                                  </td>
-                                  <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>
-                                    {item.email}
-                                    <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{item.city} · {item.phone || 'No phone'}</div>
-                                  </td>
-                                  <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700', color: 'var(--accent)' }}>{item.package_name}</td>
-                                  <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700' }}>₹{Number(item.package_price).toLocaleString('en-IN')}</td>
-                                  <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_starts_at).toLocaleDateString('en-IN')}</td>
-                                  <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_expires_at).toLocaleDateString('en-IN')}</td>
-                                  <td style={{ padding: '0.6rem 0.875rem' }}>
-                                    <span className={`badge ${daysLeft > 15 ? 'status-resolved' : 'status-pending'}`} style={{ fontWeight: 700 }}>
-                                      {daysLeft} days
-                                    </span>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                            {pkgVendors.filter(v => v.package_status === 'active').length === 0 && pkgSuppliers.filter(s => s.package_status === 'active').length === 0 && (
-                              <tr>
-                                <td colSpan={7} className="empty-state" style={{ textAlign: 'center', padding: '2rem' }}>No active package subscriptions.</td>
-                              </tr>
-                            )}
-                          </tbody>
-                        </table>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span className={`badge ${selectedPackage.type === 'vendor' ? 'status-contacted' : 'status-pending'}`} style={{ textTransform: 'uppercase', fontWeight: 700 }}>
+                            {selectedPackage.type}
+                          </span>
+                          <span className={`badge ${selectedPackage.package_status === 'active' ? 'status-resolved' : 'status-pending'}`} style={{ fontWeight: 700 }}>
+                            {selectedPackage.package_status === 'active' ? '✓ Active Subscription' : '⏳ Pending Request'}
+                          </span>
+                        </div>
                       </div>
+
+                      {/* Entity & Plan Title */}
+                      <div style={{ marginBottom: '1.5rem' }}>
+                        <h2 style={{ fontSize: '1.35rem', fontWeight: 800, margin: 0, color: 'var(--text)' }}>
+                          {selectedPackage.package_name} Plan Details
+                        </h2>
+                        <p style={{ margin: '0.35rem 0 0', color: 'var(--muted)', fontSize: '0.85rem' }}>
+                          Subscription request for {selectedPackage.type}: <strong>{selectedPackage.email}</strong>
+                        </p>
+                      </div>
+
+                      {/* Details Grid */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+                        <div style={{ padding: '1rem', background: 'var(--bg)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase' }}>Plan Name & Price</div>
+                          <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--accent)', marginTop: '0.25rem' }}>{selectedPackage.package_name}</div>
+                          <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginTop: '0.15rem' }}>
+                            ₹{Number(selectedPackage.package_price).toLocaleString('en-IN')}
+                          </div>
+                        </div>
+
+                        <div style={{ padding: '1rem', background: 'var(--bg)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase' }}>Entity Type & Email</div>
+                          <div style={{ fontSize: '0.95rem', fontWeight: 700, marginTop: '0.25rem' }}>{selectedPackage.email}</div>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.15rem' }}>
+                            Role: <strong style={{ textTransform: 'capitalize' }}>{selectedPackage.type}</strong> (ID: #{selectedPackage.id})
+                          </div>
+                        </div>
+
+                        <div style={{ padding: '1rem', background: 'var(--bg)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase' }}>Phone & Location</div>
+                          <div style={{ fontSize: '0.95rem', fontWeight: 700, marginTop: '0.25rem' }}>{selectedPackage.phone || 'Phone not provided'}</div>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.15rem' }}>
+                            City: <strong>{selectedPackage.city || 'City not specified'}</strong>
+                          </div>
+                        </div>
+
+                        <div style={{ padding: '1rem', background: 'var(--bg)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase' }}>Timeline & Status</div>
+                          <div style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                            Requested: <strong>{selectedPackage.package_purchased_at ? new Date(selectedPackage.package_purchased_at).toLocaleString('en-IN') : '—'}</strong>
+                          </div>
+                          <div style={{ fontSize: '0.85rem', color: 'var(--muted)', marginTop: '0.25rem' }}>
+                            {selectedPackage.package_status === 'active' ? (
+                              <>
+                                Expires: <strong style={{ color: '#059669' }}>{new Date(selectedPackage.package_expires_at).toLocaleDateString('en-IN')}</strong> ({Math.max(0, Math.ceil((new Date(selectedPackage.package_expires_at) - new Date()) / (1000 * 60 * 60 * 24)))} days left)
+                              </>
+                            ) : (
+                              <span style={{ color: '#d97706', fontWeight: 600 }}>Waiting for admin approval</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Additional Business Information */}
+                      {(selectedPackage.shop_name || selectedPackage.business_name || selectedPackage.name || selectedPackage.address) && (
+                        <div style={{ padding: '1rem', background: 'var(--bg)', borderRadius: '10px', border: '1px solid var(--border)', marginBottom: '1.5rem' }}>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+                            Business / Profile Details
+                          </div>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', fontSize: '0.85rem' }}>
+                            {selectedPackage.shop_name && (
+                              <div><span style={{ color: 'var(--muted)' }}>Shop / Business:</span> <strong>{selectedPackage.shop_name}</strong></div>
+                            )}
+                            {selectedPackage.name && (
+                              <div><span style={{ color: 'var(--muted)' }}>Contact Person:</span> <strong>{selectedPackage.name}</strong></div>
+                            )}
+                            {selectedPackage.address && (
+                              <div><span style={{ color: 'var(--muted)' }}>Address:</span> <strong>{selectedPackage.address}</strong></div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Actions for Pending Requests */}
+                      {selectedPackage.package_status === 'pending' && (
+                        <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border)', flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              await handlePackageAction(selectedPackage.type, selectedPackage.id, 'approve');
+                              setSelectedPackage(null);
+                            }}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.5rem',
+                              padding: '0.65rem 1.4rem',
+                              background: '#10b981',
+                              color: '#fff',
+                              border: 'none',
+                              borderRadius: '8px',
+                              fontSize: '0.875rem',
+                              fontWeight: 700,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <ShieldCheck size={18} /> Approve Package Subscription
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (confirm('Are you sure you want to reject this package request?')) {
+                                await handlePackageAction(selectedPackage.type, selectedPackage.id, 'reject');
+                                setSelectedPackage(null);
+                              }
+                            }}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.5rem',
+                              padding: '0.65rem 1.4rem',
+                              background: '#ef4444',
+                              color: '#fff',
+                              border: 'none',
+                              borderRadius: '8px',
+                              fontSize: '0.875rem',
+                              fontWeight: 700,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <Ban size={18} /> Reject Package Request
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  </div>
+                  ) : (
+                    <>
+                      {/* PENDING REQUESTS PANEL */}
+                      <div className="panel" style={{ marginBottom: '1.5rem' }}>
+                        <div className="panel-header">
+                          <span className="panel-title inline-flex items-center gap-2"><Clock size={20} strokeWidth={1.7} aria-hidden="true" /> Pending package requests</span>
+                        </div>
+                        <div className="panel-body" style={{ padding: 0 }}>
+                          <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+                              <thead>
+                                <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+                                  {['Type', 'Entity Info', 'City', 'Plan Name', 'Price', 'Requested At', 'Actions'].map(col => (
+                                    <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {[
+                                  ...pkgVendors.filter(v => v.package_status === 'pending').map(v => ({ ...v, type: 'vendor' })),
+                                  ...pkgSuppliers.filter(s => s.package_status === 'pending').map(s => ({ ...s, type: 'supplier' }))
+                                ].map((item) => (
+                                  <tr
+                                    key={`${item.type}-${item.id}`}
+                                    onClick={() => setSelectedPackage(item)}
+                                    title="Click to view full package details"
+                                    style={{ borderBottom: '1px solid var(--border)', cursor: 'pointer', transition: 'background-color 0.15s ease' }}
+                                    className="hover:bg-slate-50"
+                                  >
+                                    <td style={{ padding: '0.6rem 0.875rem' }}>
+                                      <span className={`badge ${item.type === 'vendor' ? 'status-contacted' : 'status-pending'}`}>{item.type}</span>
+                                    </td>
+                                    <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>
+                                      {item.email}
+                                      <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{item.phone || 'No phone'}</div>
+                                    </td>
+                                    <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{item.city}</td>
+                                    <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700', color: 'var(--accent)' }}>{item.package_name}</td>
+                                    <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700' }}>₹{Number(item.package_price).toLocaleString('en-IN')}</td>
+                                    <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_purchased_at).toLocaleString('en-IN')}</td>
+                                    <td style={{ padding: '0.6rem 0.875rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                      <ActionIconButton
+                                        icon={ShieldCheck}
+                                        variant="success"
+                                        label="Approve package"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handlePackageAction(item.type, item.id, 'approve');
+                                        }}
+                                      />
+                                      <ActionIconButton
+                                        icon={Ban}
+                                        variant="danger"
+                                        label="Reject package"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handlePackageAction(item.type, item.id, 'reject');
+                                        }}
+                                      />
+                                    </td>
+                                  </tr>
+                                ))}
+                                {pkgVendors.filter(v => v.package_status === 'pending').length === 0 && pkgSuppliers.filter(s => s.package_status === 'pending').length === 0 && (
+                                  <tr>
+                                    <td colSpan={7} className="empty-state" style={{ textAlign: 'center', padding: '2rem' }}>No pending package requests.</td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* ACTIVE SUBSCRIPTIONS PANEL */}
+                      <div className="panel">
+                        <div className="panel-header">
+                          <span className="panel-title">✅ Active Packages & Subscriptions</span>
+                        </div>
+                        <div className="panel-body" style={{ padding: 0 }}>
+                          <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+                              <thead>
+                                <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+                                  {['Type', 'Entity Info', 'Plan Name', 'Price', 'Starts At', 'Expires At', 'Days Left'].map(col => (
+                                    <th key={col} style={{ padding: '0.5rem 0.875rem', textAlign: 'left', fontSize: '0.6875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>{col}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {[
+                                  ...pkgVendors.filter(v => v.package_status === 'active').map(v => ({ ...v, type: 'vendor' })),
+                                  ...pkgSuppliers.filter(s => s.package_status === 'active').map(s => ({ ...s, type: 'supplier' }))
+                                ].map((item) => {
+                                  const daysLeft = Math.max(0, Math.ceil((new Date(item.package_expires_at) - new Date()) / (1000 * 60 * 60 * 24)));
+                                  return (
+                                    <tr
+                                      key={`${item.type}-${item.id}`}
+                                      onClick={() => setSelectedPackage(item)}
+                                      title="Click to view full package details"
+                                      style={{ borderBottom: '1px solid var(--border)', cursor: 'pointer', transition: 'background-color 0.15s ease' }}
+                                      className="hover:bg-slate-50"
+                                    >
+                                      <td style={{ padding: '0.6rem 0.875rem' }}>
+                                        <span className={`badge ${item.type === 'vendor' ? 'status-contacted' : 'status-pending'}`}>{item.type}</span>
+                                      </td>
+                                      <td style={{ padding: '0.6rem 0.875rem', fontWeight: '600' }}>
+                                        {item.email}
+                                        <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{item.city} · {item.phone || 'No phone'}</div>
+                                      </td>
+                                      <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700', color: 'var(--accent)' }}>{item.package_name}</td>
+                                      <td style={{ padding: '0.6rem 0.875rem', fontWeight: '700' }}>₹{Number(item.package_price).toLocaleString('en-IN')}</td>
+                                      <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_starts_at).toLocaleDateString('en-IN')}</td>
+                                      <td style={{ padding: '0.6rem 0.875rem', color: 'var(--muted)' }}>{new Date(item.package_expires_at).toLocaleDateString('en-IN')}</td>
+                                      <td style={{ padding: '0.6rem 0.875rem' }}>
+                                        <span className={`badge ${daysLeft > 15 ? 'status-resolved' : 'status-pending'}`} style={{ fontWeight: 700 }}>
+                                          {daysLeft} days
+                                        </span>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                                {pkgVendors.filter(v => v.package_status === 'active').length === 0 && pkgSuppliers.filter(s => s.package_status === 'active').length === 0 && (
+                                  <tr>
+                                    <td colSpan={7} className="empty-state" style={{ textAlign: 'center', padding: '2rem' }}>No active package subscriptions.</td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </>
               )}
 
