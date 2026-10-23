@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import QuickServiceIcon from './QuickServiceIcon';
+import ServiceCheckboxCard from './ServiceCheckboxCard';
 import {
   Users, Eye, Ban, ShieldCheck, Trash2, X, RefreshCw, Search,
   Calendar, MapPin, ShoppingCart, CircleDollarSign, CheckCircle2,
@@ -2834,41 +2835,21 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                     <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted, #475569)', marginBottom: '14px' }}>
                       ASSIGNED SERVICES
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '10px', paddingRight: '4px', marginBottom: '12px' }}>
+                    <div className="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2.5" style={{ paddingRight: '4px', marginBottom: '12px' }}>
                       {(userDetails?.allServices || []).map((service) => {
                         const sId = Number(service.id);
                         const isChecked = selectedServiceIds.includes(sId);
                         return (
-                          <label
+                          <ServiceCheckboxCard
                             key={service.id}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '10px',
-                              padding: '8px 12px',
-                              borderRadius: '8px',
-                              border: `1px solid ${isChecked ? '#3b82f6' : '#e2e8f0'}`,
-                              background: isChecked ? '#eff6ff' : 'var(--bg, #fff)',
-                              cursor: 'pointer',
-                              fontSize: '12px',
+                            service={service}
+                            checked={isChecked}
+                            onChange={(id, nextChecked) => {
+                              setSelectedServiceIds((prev) =>
+                                nextChecked ? [...prev, id] : prev.filter((x) => x !== id)
+                              );
                             }}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={(e) => {
-                                const next = e.target.checked
-                                  ? [...selectedServiceIds, sId]
-                                  : selectedServiceIds.filter((id) => id !== sId);
-                                setSelectedServiceIds(next);
-                              }}
-                              style={{ cursor: 'pointer' }}
-                            />
-                            <QuickServiceIcon value={service.icon} label={service.label} size={24} className="flex-shrink-0" />
-                            <span style={{ fontWeight: 600, color: 'var(--text, #111)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                              {service.label}
-                            </span>
-                          </label>
+                          />
                         );
                       })}
                     </div>

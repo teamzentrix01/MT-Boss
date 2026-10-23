@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import ServiceIcon from './ServiceIcon';
+import ServiceCheckboxCard, { SERVICE_COLOR_TINTS } from './ServiceCheckboxCard';
 import { getQuickServiceTotal } from '@/lib/quick-service-pricing';
 import { Pencil, Trash2, ActionIconButton } from '@/app/components/ui/icons';
 
@@ -19,10 +20,11 @@ function readSubcategoryImages(value) {
   return {};
 }
 
-async function uploadQuickServiceImage(file, folder) {
+async function uploadQuickServiceImage(file, folder, fitMode = 'icon') {
   const body = new FormData();
   body.append('file', file);
   body.append('folder', folder);
+  body.append('fit', fitMode);
   const token = localStorage.getItem('token');
   const response = await fetch('/api/hero-banners/upload', {
     method: 'POST',
@@ -43,6 +45,7 @@ export default function QuickServicesManager({ isDarkMode }) {
   const [success, setSuccess] = useState('');
   const [iconUploading, setIconUploading] = useState(false);
   const [serviceImageError, setServiceImageError] = useState('');
+  const [imageWarning, setImageWarning] = useState('');
   const [subcategoryImageUploading, setSubcategoryImageUploading] = useState('');
   const [configuredCities, setConfiguredCities] = useState([]);
   const [serviceTotal, setServiceTotal] = useState(0);
@@ -66,6 +69,8 @@ export default function QuickServicesManager({ isDarkMode }) {
     sub_category: '',
     sub_category_images: {},
     cities: [],
+    image_fit: 'icon',
+    color: 'blue',
   });
 
   useEffect(() => { fetchServices(); }, []);
@@ -187,6 +192,8 @@ export default function QuickServicesManager({ isDarkMode }) {
         icon: formData.iconUrl,
         iconType: 'image',
         iconName: '',
+        image_fit: formData.image_fit || 'icon',
+        color: formData.color || 'blue',
       };
       const body = editingId ? { id: editingId, ...payload } : payload;
       const res = await fetch('/api/quick-services', {
@@ -208,11 +215,16 @@ export default function QuickServicesManager({ isDarkMode }) {
     event.target.value = '';
     if (!file) return;
 
+    if (file.size > 200 * 1024) {
+      setServiceImageError('Image size must be under 200KB.');
+      return;
+    }
+
     setIconUploading(true);
     setServiceImageError('');
     setError('');
     try {
-      const uploadedUrl = await uploadQuickServiceImage(file, 'mtboss/quick-services');
+      const uploadedUrl = await uploadQuickServiceImage(file, 'mtboss/quick-services', formData.image_fit || 'icon');
       setFormData(current => ({
         ...current,
         iconType: 'image',
@@ -278,6 +290,8 @@ export default function QuickServicesManager({ isDarkMode }) {
       sub_category: service.sub_category || '',
       sub_category_images: readSubcategoryImages(service.sub_category_images),
       cities: Array.isArray(service.cities) ? service.cities : [],
+      image_fit: service.image_fit || service.imageFit || 'icon',
+      color: service.color || 'blue',
     });
     setEditingId(service.id);
     setShowForm(true);
@@ -298,6 +312,7 @@ export default function QuickServicesManager({ isDarkMode }) {
 
   const resetForm = () => {
     setServiceImageError('');
+    setImageWarning('');
     setFormData({
       icon: '',
       iconType: 'image',
@@ -312,6 +327,8 @@ export default function QuickServicesManager({ isDarkMode }) {
       sub_category: '',
       sub_category_images: {},
       cities: [],
+      image_fit: 'icon',
+      color: 'blue',
     });
     setEditingId(null);
     setShowForm(false);
@@ -569,19 +586,127 @@ export default function QuickServicesManager({ isDarkMode }) {
             <form onSubmit={handleSubmit}>
               <div className="qs-form-grid">
                 <div className="qs-form-full">
-                  <label className="qs-label">Service Image *</label>
+                  <label className="qs-label">Service Image * (PNG, WebP, JPG, max 200KB)</label>
                   <input className="qs-input" type="file" accept="image/jpeg,image/png,image/webp"
                     disabled={iconUploading}
                     onChange={handleServiceImageUpload} />
-                  {formData.iconUrl ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 10 }}>
-                      <Image src={formData.iconUrl} alt="Service image preview" width={88} height={72} unoptimized style={{ width: 88, height: 72, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--qs-border)' }} />
-                      <button type="button" className="qs-act" onClick={() => setFormData((current) => ({ ...current, icon: '', iconUrl: '' }))}>Remove image</button>
-                    </div>
-                  ) : null}
-                  <small style={{ display: 'block', color: serviceImageError ? 'var(--qs-err-tx)' : 'var(--qs-muted)', marginTop: 6 }}>
-                    {iconUploading ? 'Uploading image…' : serviceImageError || 'Upload a JPG, PNG, or WebP image up to 5 MB.'}
+                  <small style={{ display: 'block', color: serviceImageError ? 'var(--qs-err-tx)' : 'var(--qs-muted)', marginTop: 4 }}>
+                    {iconUploading ? 'Uploading & optimizing image…' : serviceImageError || 'Cover: 400×300 center-cropped. Contain/Icon: 256×256 transparent.'}
                   </small>
+                </div>
+
+                <div>
+                  <label className="qs-label">Image Fit *</label>
+                  <select
+                    className="qs-input"
+                    value={formData.image_fit || 'icon'}
+                    onChange={(e) => {
+                      const nextFit = e.target.value;
+                      setFormData((prev) => ({ ...prev, image_fit: nextFit }));
+                    }}
+                  >
+                    <option value="icon">Icon — 3D Emoji / Transparent Icon (with color tint)</option>
+                    <option value="cover">Cover — Photo / Poster (fills whole image area)</option>
+                    <option value="contain">Contain — Logo / Badge (no crop, white background)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="qs-label">Icon Background Tint (for Icon mode)</label>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center', marginTop: '6px' }}>
+                    {Object.keys(SERVICE_COLOR_TINTS).map((cKey) => {
+                      const tint = SERVICE_COLOR_TINTS[cKey];
+                      const isSelected = (formData.color || 'blue') === cKey;
+                      return (
+                        <button
+                          key={cKey}
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, color: cKey }))}
+                          disabled={formData.image_fit === 'cover' || formData.image_fit === 'contain'}
+                          style={{
+                            width: '28px',
+                            height: '28px',
+                            borderRadius: '6px',
+                            background: tint.light,
+                            border: isSelected ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                            boxShadow: isSelected ? '0 0 0 2px rgba(37,99,235,0.3)' : 'none',
+                            cursor: formData.image_fit === 'cover' || formData.image_fit === 'contain' ? 'not-allowed' : 'pointer',
+                            opacity: formData.image_fit === 'cover' || formData.image_fit === 'contain' ? 0.4 : 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            color: tint.text,
+                          }}
+                          title={cKey}
+                        >
+                          {isSelected ? '✓' : ''}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Live Card Preview */}
+                <div className="qs-form-full">
+                  <label className="qs-label">Live Card Preview (150px Fixed Height)</label>
+                  <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', flexWrap: 'wrap', padding: '14px', background: 'var(--qs-bg)', border: '1px solid var(--qs-border)', borderRadius: '10px' }}>
+                    <div style={{ width: '170px' }}>
+                      <ServiceCheckboxCard
+                        service={{
+                          id: editingId || 999,
+                          label: formData.label || 'Service Preview',
+                          icon: formData.iconUrl || '🔧',
+                          image_fit: formData.image_fit || 'icon',
+                          color: formData.color || 'blue',
+                        }}
+                        checked={true}
+                        isDarkMode={isDarkMode}
+                      />
+                    </div>
+                    <div style={{ flex: 1, minWidth: '220px' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--qs-text)' }}>
+                        Mode: {formData.image_fit === 'cover' ? '📸 Cover (Full Photo)' : formData.image_fit === 'contain' ? '🏷️ Contain (Company Logo)' : '🎨 Icon (3D Emoji with Tint)'}
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--qs-muted)', marginTop: '4px' }}>
+                        Image card ke upar wale hisse me dikhegi aur naam hamesha neeche 36px solid patti me padha jayega.
+                      </div>
+                      {formData.iconUrl && (
+                        <div style={{ marginTop: '8px' }}>
+                          <img
+                            src={formData.iconUrl}
+                            alt=""
+                            style={{ display: 'none' }}
+                            onLoad={(e) => {
+                              const { naturalWidth, naturalHeight } = e.currentTarget;
+                              const ratio = naturalWidth / (naturalHeight || 1);
+                              if (ratio > 1.8 && formData.image_fit !== 'contain') {
+                                setImageWarning('Wide logo detect hua: "Logo ke liye Contain chuno" taaki image kate nahi.');
+                              } else if (naturalWidth < 128 && formData.image_fit === 'cover') {
+                                setImageWarning('Image chhoti hai (< 128px), cover mode me blur dikhegi. "Icon" mode behtar rahega.');
+                              } else {
+                                setImageWarning('');
+                              }
+                            }}
+                          />
+                          {imageWarning && (
+                            <div style={{ fontSize: '12px', color: '#b45309', background: '#fef3c7', border: '1px solid #fde68a', padding: '6px 10px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span>⚠️</span> <span>{imageWarning}</span>
+                            </div>
+                          )}
+                          <button
+                            type="button"
+                            className="qs-act"
+                            style={{ marginTop: '8px' }}
+                            onClick={() => { setFormData((current) => ({ ...current, icon: '', iconUrl: '' })); setImageWarning(''); }}
+                          >
+                            Remove image
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label className="qs-label">Service Name *</label>
