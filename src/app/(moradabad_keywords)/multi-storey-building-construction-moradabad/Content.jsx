@@ -29,7 +29,7 @@ const Content = () => {
 
               <p className="mt-3">
                 This page explains how multi storey building construction in
-                Moradabad works and how MTBOSS approaches it. MTBOSS
+                Moradabad works and how MTBoss approaches it. MTBoss
                 Construction Private Limited is a Moradabad-based architect,
                 interior designer and construction company that builds
                 residential projects from affordable housing to luxury villas,
@@ -116,13 +116,13 @@ const Content = () => {
 
               <p className="mt-3">
                 The right design depends on your plot, your purpose and your
-                long-term plan. MTBOSS helps you decide what suits your needs.
+                long-term plan. MTBoss helps you decide what suits your needs.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -137,17 +137,17 @@ const Content = () => {
                 </li>
                 <li>
                   Residential projects form a dedicated service category on the
-                  MTBOSS website, from affordable housing to luxury villas.
+                  MTBoss website, from affordable housing to luxury villas.
                 </li>
                 <li>
-                  Project gallery and blog available on the MTBOSS website.
+                  Project gallery and blog available on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Multi Storey Building Construction Services Offered by MTBOSS
+                Multi Storey Building Construction Services Offered by MTBoss
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -193,7 +193,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBOSS wholesale supply.
+                  bricks, tiles and paints through MTBoss wholesale supply.
                 </li>
                 <li>
                   <strong>Renovation and extension:</strong> Strengthening,
@@ -357,13 +357,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Approaches a Multi Storey Building Project
+                How MTBoss Approaches a Multi Storey Building Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Step 1 — Enquiry and discussion:</strong> Contact
-                  MTBOSS with plot, purpose and budget through website, phone or
+                  MTBoss with plot, purpose and budget through website, phone or
                   WhatsApp.
                 </li>
                 <li>
@@ -484,7 +484,7 @@ const Content = () => {
                 such as fire-safety clearance, lift permissions or other
                 approvals may also apply. Requirements vary by location and
                 current regulations, so confirm the latest rules with relevant
-                authorities and your consultants. MTBOSS builds according to
+                authorities and your consultants. MTBoss builds according to
                 approved drawings and specifications, while owners and their
                 consultants handle approvals specific to the property.
               </p>
@@ -532,7 +532,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBOSS Budget Calculator, then request a
+                Start with the free MTBoss Budget Calculator, then request a
                 detailed quote after site visit and design discussion.
               </p>
             </section>
@@ -584,7 +584,7 @@ const Content = () => {
               </h3>
 
               <p>
-                Multi-floor projects depend on tight coordination. MTBOSS
+                Multi-floor projects depend on tight coordination. MTBoss
                 supports a smooth project through stage-wise planning with clear
                 milestones, regular site visits by engineers and single-team
                 coordination of design, materials and construction.
@@ -641,7 +641,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Services for Homeowners and Owners
+                MTBoss Services for Homeowners and Owners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -664,7 +664,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBOSS for Multi Storey Building Construction
+                Why Choose MTBoss for Multi Storey Building Construction
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -694,44 +694,44 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and
-                  blog on the MTBOSS website.
+                  blog on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBOSS: Multi Storey Building Construction in Moradabad
+                Contact MTBoss: Multi Storey Building Construction in Moradabad
               </h3>
 
               <p className="mb-3">
-                If you are planning a multi storey building in Moradabad, MTBOSS
+                If you are planning a multi storey building in Moradabad, MTBoss
                 offers a single point of contact for design coordination,
                 materials, construction and handover.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBOSS Construction Private Limited
+                  <strong>Company:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in
+                    https://www.MTBoss.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -780,10 +780,10 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBOSS build multi storey buildings in Moradabad?
+                    Q2. Does MTBoss build multi storey buildings in Moradabad?
                   </strong>
                   <br />
-                  Yes. MTBOSS builds residential projects, from affordable
+                  Yes. MTBoss builds residential projects, from affordable
                   housing to luxury villas, in Moradabad and Bareilly. Share
                   your plan with the team to confirm the scope for your
                   building.
@@ -826,11 +826,11 @@ const Content = () => {
                   Cost depends on built-up area, number of floors, structural
                   requirements, lift, material and finish level, services scope
                   and site conditions. Use the free Budget Calculator on the
-                  MTBOSS website, or request a detailed quote.
+                  MTBoss website, or request a detailed quote.
                 </li>
 
                 <li>
-                  <strong>Q7. Where is the MTBOSS office located?</strong>
+                  <strong>Q7. Where is the MTBoss office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

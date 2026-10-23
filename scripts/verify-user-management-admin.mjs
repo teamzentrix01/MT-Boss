@@ -4,7 +4,7 @@ async function main() {
   console.log('=== Verifying User Management Admin Backend & Queries ===');
 
   // 1. Insert a temporary test user
-  const testEmail = `test_user_${Date.now()}@mtboss.example`;
+  const testEmail = `test_user_${Date.now()}@MTBoss.example`;
   const insertUser = await pool.query(
     `INSERT INTO users (name, email, password, phone, delivery_city, created_at, last_login_at, is_blocked)
      VALUES ($1, $2, 'dummy_hash', '9876543210', 'Indore', NOW(), NOW(), false)

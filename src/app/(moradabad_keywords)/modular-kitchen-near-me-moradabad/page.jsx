@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Modular Kitchen Near Me Moradabad',
   description:
-    'Looking for a modular kitchen near you in Moradabad? MT Boss, Kanth Road, offers site visits, design, installation and local service. Call +91 94584 10866.',
+    'Looking for a modular kitchen near you in Moradabad? MTBoss, Kanth Road, offers site visits, design, installation and local service. Call +91 94584 10866.',
   keywords:
-    'modular kitchen near me Moradabad, modular kitchen company near me Moradabad, modular kitchen dealer near me Moradabad, modular kitchen shop near me Moradabad, modular kitchen designer near me Moradabad, kitchen interior near me Moradabad, modular kitchen installation near me Moradabad, modular kitchen service near me Moradabad, MT Boss modular kitchen Moradabad, modular kitchen Kanth Road Moradabad',
+    'modular kitchen near me Moradabad, modular kitchen company near me Moradabad, modular kitchen dealer near me Moradabad, modular kitchen shop near me Moradabad, modular kitchen designer near me Moradabad, kitchen interior near me Moradabad, modular kitchen installation near me Moradabad, modular kitchen service near me Moradabad, MTBoss modular kitchen Moradabad, modular kitchen Kanth Road Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/modular-kitchen-near-me-moradabad',
+    canonical: 'https://www.MTBoss.in/modular-kitchen-near-me-moradabad',
   },
   openGraph: {
     title: 'Modular Kitchen Near Me Moradabad',
     description:
-      'Looking for a modular kitchen near you in Moradabad? MT Boss, Kanth Road, offers site visits, design, installation and local service. Call +91 94584 10866.',
-    url: 'https://www.mtboss.in/modular-kitchen-near-me-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Looking for a modular kitchen near you in Moradabad? MTBoss, Kanth Road, offers site visits, design, installation and local service. Call +91 94584 10866.',
+    url: 'https://www.MTBoss.in/modular-kitchen-near-me-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-modular-kitchen-near-me-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-modular-kitchen-near-me-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Modular Kitchen Near Me in Moradabad - MT Boss',
+        alt: 'Modular Kitchen Near Me in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Modular Kitchen Near Me Moradabad',
     description:
-      'Looking for a modular kitchen near you in Moradabad? MT Boss, Kanth Road, offers site visits, design, installation and local service. Call +91 94584 10866.',
-    images: ['https://www.mtboss.in/og-modular-kitchen-near-me-moradabad.jpg'],
+      'Looking for a modular kitchen near you in Moradabad? MTBoss, Kanth Road, offers site visits, design, installation and local service. Call +91 94584 10866.',
+    images: ['https://www.MTBoss.in/og-modular-kitchen-near-me-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/modular-kitchen-near-me-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/modular-kitchen-near-me-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

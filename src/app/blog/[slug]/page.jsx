@@ -9,19 +9,19 @@ export async function generateMetadata({ params }) {
 
   if (!blog) {
     return {
-      title: 'Blog Article | MTBOSS Construction',
-      description: 'Read the latest construction and real estate insights on MTBOSS.',
+      title: 'Blog Article | MTBoss Construction',
+      description: 'Read the latest construction and real estate insights on MTBoss.',
     };
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mtboss.in';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://MTBoss.in';
   const url = `${appUrl}/blog/${blog.slug}`;
   const title = blog.meta_title || blog.title;
   const description = blog.meta_description || blog.excerpt;
   const image = blog.cover_image || `${appUrl}/images/banners/construction.jpg`;
 
   return {
-    title: `${title} | MTBOSS`,
+    title: `${title} | MTBoss`,
     description,
     keywords: blog.meta_keywords ? blog.meta_keywords.split(',').map((k) => k.trim()) : undefined,
     alternates: {
@@ -31,11 +31,11 @@ export async function generateMetadata({ params }) {
       title,
       description,
       url,
-      siteName: 'MTBOSS Construction Private Limited',
+      siteName: 'MTBoss Construction Private Limited',
       images: [{ url: image, width: 1200, height: 630, alt: blog.title }],
       type: 'article',
       publishedTime: blog.created_at,
-      authors: [blog.author_name || 'MTBOSS Editorial'],
+      authors: [blog.author_name || 'MTBoss Editorial'],
     },
     twitter: {
       card: 'summary_large_image',
@@ -136,7 +136,7 @@ export default async function BlogDetailPage({ params }) {
   }
 
   const related = await getRelatedBlogs(slug, blog.category);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mtboss.in';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://MTBoss.in';
   const postUrl = `${appUrl}/blog/${blog.slug}`;
 
   // JSON-LD for Google Rich Results
@@ -150,11 +150,11 @@ export default async function BlogDetailPage({ params }) {
     dateModified: blog.updated_at || blog.created_at,
     author: {
       '@type': 'Person',
-      name: blog.author_name || 'MTBOSS Editorial',
+      name: blog.author_name || 'MTBoss Editorial',
     },
     publisher: {
       '@type': 'Organization',
-      name: 'MTBOSS Construction Private Limited',
+      name: 'MTBoss Construction Private Limited',
       logo: {
         '@type': 'ImageObject',
         url: `${appUrl}/logo.png`,
@@ -286,7 +286,7 @@ export default async function BlogDetailPage({ params }) {
               Written by {blog.author_name}
             </h4>
             <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
-              Published by MTBOSS Construction editorial team. We specialize in precision engineering, turnkey architectural design, raw material supply, and verified real estate across India.
+              Published by MTBoss Construction editorial team. We specialize in precision engineering, turnkey architectural design, raw material supply, and verified real estate across India.
             </p>
           </div>
         </div>

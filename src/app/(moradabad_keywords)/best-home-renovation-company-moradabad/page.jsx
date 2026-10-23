@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Best Home Renovation Company in Moradabad',
   description:
-    'Planning a home makeover? MTBOSS is a home renovation company in Moradabad offering repair, interiors, waterproofing and finishing under one team. Call or WhatsApp.',
+    'Planning a home makeover? MTBoss is a home renovation company in Moradabad offering repair, interiors, waterproofing and finishing under one team. Call or WhatsApp.',
   keywords:
-    'best home renovation company Moradabad, home renovation company Moradabad, home renovation Moradabad, home remodelling Moradabad, renovation contractor Moradabad, home makeover Moradabad, house renovation Moradabad, home repair Moradabad, waterproofing Moradabad, interior renovation Moradabad, home finishing Moradabad, MTBOSS renovation Moradabad',
+    'best home renovation company Moradabad, home renovation company Moradabad, home renovation Moradabad, home remodelling Moradabad, renovation contractor Moradabad, home makeover Moradabad, house renovation Moradabad, home repair Moradabad, waterproofing Moradabad, interior renovation Moradabad, home finishing Moradabad, MTBoss renovation Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/best-home-renovation-company-moradabad',
+    canonical: 'https://www.MTBoss.in/best-home-renovation-company-moradabad',
   },
   openGraph: {
     title: 'Best Home Renovation Company in Moradabad',
     description:
-      'Planning a home makeover? MTBOSS is a home renovation company in Moradabad offering repair, interiors, waterproofing and finishing under one team. Call or WhatsApp.',
-    url: 'https://www.mtboss.in/best-home-renovation-company-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Planning a home makeover? MTBoss is a home renovation company in Moradabad offering repair, interiors, waterproofing and finishing under one team. Call or WhatsApp.',
+    url: 'https://www.MTBoss.in/best-home-renovation-company-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-best-home-renovation-company-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-best-home-renovation-company-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Best Home Renovation Company in Moradabad - MTBOSS',
+        alt: 'Best Home Renovation Company in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -35,9 +35,9 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Best Home Renovation Company in Moradabad',
     description:
-      'Planning a home makeover? MTBOSS is a home renovation company in Moradabad offering repair, interiors, waterproofing and finishing under one team. Call or WhatsApp.',
+      'Planning a home makeover? MTBoss is a home renovation company in Moradabad offering repair, interiors, waterproofing and finishing under one team. Call or WhatsApp.',
     images: [
-      'https://www.mtboss.in/og-best-home-renovation-company-moradabad.jpg',
+      'https://www.MTBoss.in/og-best-home-renovation-company-moradabad.jpg',
     ],
   },
   robots: {
@@ -49,10 +49,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/best-home-renovation-company-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/best-home-renovation-company-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

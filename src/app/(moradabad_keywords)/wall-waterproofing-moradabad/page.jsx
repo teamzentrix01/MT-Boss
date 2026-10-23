@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Wall Waterproofing in Moradabad | MT Boss',
+  title: 'Wall Waterproofing in Moradabad | MTBoss',
   description:
-    'Wall waterproofing in Moradabad by MT Boss. Damp wall, seepage and rising damp treatment, crack sealing and repainting, with inspection and itemised quotes.',
+    'Wall waterproofing in Moradabad by MTBoss. Damp wall, seepage and rising damp treatment, crack sealing and repainting, with inspection and itemised quotes.',
   keywords:
-    'wall waterproofing Moradabad, damp wall treatment Moradabad, wall seepage treatment Moradabad, rising damp treatment Moradabad, external wall waterproofing Moradabad, internal wall waterproofing Moradabad, wall crack sealing Moradabad, damp proofing Moradabad, wall leakage repair Moradabad, MT Boss wall waterproofing Moradabad',
+    'wall waterproofing Moradabad, damp wall treatment Moradabad, wall seepage treatment Moradabad, rising damp treatment Moradabad, external wall waterproofing Moradabad, internal wall waterproofing Moradabad, wall crack sealing Moradabad, damp proofing Moradabad, wall leakage repair Moradabad, MTBoss wall waterproofing Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/wall-waterproofing-moradabad',
+    canonical: 'https://www.MTBoss.in/wall-waterproofing-moradabad',
   },
   openGraph: {
-    title: 'Wall Waterproofing in Moradabad | MT Boss',
+    title: 'Wall Waterproofing in Moradabad | MTBoss',
     description:
-      'Wall waterproofing in Moradabad by MT Boss. Damp wall, seepage and rising damp treatment, crack sealing and repainting, with inspection and itemised quotes.',
-    url: 'https://www.mtboss.in/wall-waterproofing-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Wall waterproofing in Moradabad by MTBoss. Damp wall, seepage and rising damp treatment, crack sealing and repainting, with inspection and itemised quotes.',
+    url: 'https://www.MTBoss.in/wall-waterproofing-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-wall-waterproofing-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-wall-waterproofing-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Wall Waterproofing in Moradabad - MT Boss',
+        alt: 'Wall Waterproofing in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Wall Waterproofing in Moradabad | MT Boss',
+    title: 'Wall Waterproofing in Moradabad | MTBoss',
     description:
-      'Wall waterproofing in Moradabad by MT Boss. Damp wall, seepage and rising damp treatment, crack sealing and repainting, with inspection and itemised quotes.',
-    images: ['https://www.mtboss.in/og-wall-waterproofing-moradabad.jpg'],
+      'Wall waterproofing in Moradabad by MTBoss. Damp wall, seepage and rising damp treatment, crack sealing and repainting, with inspection and itemised quotes.',
+    images: ['https://www.MTBoss.in/og-wall-waterproofing-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/wall-waterproofing-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/wall-waterproofing-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

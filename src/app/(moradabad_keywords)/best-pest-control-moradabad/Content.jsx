@@ -8,18 +8,16 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Best Pest Control in Moradabad: MT Boss
+            Best Pest Control in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The Short Answer
-              </h3>
+             
               <p>
                 The best pest control in Moradabad is the company that identifies
                 your pest correctly, treats the cause, handles chemicals safely,
-                writes its terms down and returns if the problem persists. MT Boss
+                writes its terms down and returns if the problem persists. MTBoss
                 Construction Private Limited, based on Kanth Road, offers pest
                 control for homes, shops and godowns across Moradabad and Bareilly,
                 and invites you to compare it against the criteria below.
@@ -28,7 +26,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Meaning of Best in Pest Control
+               Best Pest Control
               </h3>
               <p className="mb-3">
                 &quot;Best&quot; in pest control does not mean the cheapest call,
@@ -39,7 +37,7 @@ const Content = () => {
               </p>
               <p>
                 Every company claims the title, so this page lists seven criteria
-                you can test. MT Boss Construction Private Limited treats pests in
+                you can test. MTBoss Construction Private Limited treats pests in
                 homes, flats, shops, offices, hotels, warehouses and factories
                 across Moradabad and Bareilly. Our work follows the promise on our
                 website: planning to completion, with quality work, transparent
@@ -76,7 +74,7 @@ const Content = () => {
                 drill-and-inject suit termites. Sealing and traps suit rodents.
                 Water management suits mosquitoes. A strong company chooses from
                 several methods, and does not apply one product to everything
-                [confirm the methods MT Boss actually offers].
+                [confirm the methods MTBoss actually offers].
               </p>
               <p>
                 <strong>Test it:</strong> ask what method will be used for your
@@ -116,7 +114,7 @@ const Content = () => {
               <p>
                 <strong>Test it:</strong> ask for a written quotation showing the
                 scope, visits and exclusions, and check that the company name and
-                contact details match its registration [confirm what MT Boss
+                contact details match its registration [confirm what MTBoss
                 provides in writing].
               </p>
             </section>
@@ -151,7 +149,7 @@ const Content = () => {
                 symptom.
               </p>
               <p className="mb-3">
-                MT Boss is a construction, repair and waterproofing company as
+                MTBoss is a construction, repair and waterproofing company as
                 well as a pest control provider. Our technicians and engineers can
                 spot entry points and damp areas, and our related services
                 (Waterproofing, Building Repair, Plumber, Carpenter, Door &amp;
@@ -172,7 +170,7 @@ const Content = () => {
                 of regular treatment. A strong company provides service reports
                 listing the dates, areas treated, methods used and
                 recommendations, and adjusts the programme as results show
-                [confirm what MT Boss provides].
+                [confirm what MTBoss provides].
               </p>
               <p>
                 <strong>Test it:</strong> ask what documents you will receive
@@ -182,7 +180,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Measured Against Each Criterion
+                MTBoss Measured Against Each Criterion
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -223,11 +221,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
+                MTBoss Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
+                  <strong>Business:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Pest control, alongside construction,
@@ -251,21 +249,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                 </li>
                 <li>
@@ -308,7 +306,7 @@ const Content = () => {
                 <li>A clear statement of follow-up and complaint handling</li>
               </ul>
               <p className="mt-3">
-                MT Boss is happy to share relevant information.
+                MTBoss is happy to share relevant information.
               </p>
             </section>
 
@@ -419,14 +417,14 @@ const Content = () => {
                 <li>One-time service or contract</li>
               </ul>
               <p className="mt-3">
-                You can use the Budget Calculator on mtboss.in for an early idea
+                You can use the Budget Calculator on MTBoss.in for an early idea
                 of overall construction or renovation cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -468,58 +466,7 @@ const Content = () => {
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Put MT Boss to the Test
-              </h3>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Phone / WhatsApp:</strong>{" "}
-                  <a
-                    href="https://wa.me/9458410866"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    +91 94584 10866
-                  </a>
-                </li>
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <strong>Website:</strong>{" "}
-                  <a
-                    href="https://www.mtboss.in/"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    www.mtboss.in
-                  </a>{" "}
-                  (click &quot;Get a Construction Quote&quot;)
-                </li>
-                <li>
-                  <strong>Office:</strong> Harthala, Kanth Road, Moradabad
-                  (behind KR Collection, near Domino&apos;s)
-                </li>
-              </ul>
-              <p className="mt-3">
-                Tell us the pest, the rooms affected and your location, and we
-                will arrange an inspection and send a clear proposal.
-              </p>
-              <p className="mt-3">
-                Choose MT Boss for pest control in Moradabad, with the pest
-                identified, the method matched, the terms written down and
-                prevention advice included.
-              </p>
-            </section>
+         
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -532,7 +479,7 @@ const Content = () => {
                   </strong>
                   <br />
                   Judge on inspection, method, safety, written terms and
-                  follow-up. MT Boss welcomes comparison on all five.
+                  follow-up. MTBoss welcomes comparison on all five.
                 </li>
                 <li>
                   <strong>
@@ -543,7 +490,7 @@ const Content = () => {
                   explain the plan.
                 </li>
                 <li>
-                  <strong>Q3. Is MT Boss licensed for pest control?</strong>
+                  <strong>Q3. Is MTBoss licensed for pest control?</strong>
                   <br />
                   [State actual licence or registration details, or remove this
                   item.]
@@ -580,7 +527,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book an inspection?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

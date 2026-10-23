@@ -771,7 +771,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                   setPrivacyAccepted(event.target.checked);
                   if (event.target.checked) setErrors((current) => ({ ...current, privacy: '' }));
                 }} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--brand-blue)]" />
-                <span className={`text-[10px] leading-relaxed ${muted}`}>I have read and agree to the <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-bold text-[var(--brand-blue)] underline">Privacy Policy</a>. I consent to MTBOSS using my details to process this booking and payment.</span>
+                <span className={`text-[10px] leading-relaxed ${muted}`}>I have read and agree to the <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-bold text-[var(--brand-blue)] underline">Privacy Policy</a>. I consent to MTBoss using my details to process this booking and payment.</span>
               </label>
               {errors.privacy && <p className="text-[10px] font-bold text-red-500">{errors.privacy}</p>}
 

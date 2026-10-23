@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Apartment Construction Company in Moradabad | MTBOSS",
+  title: "Apartment Construction Company in Moradabad | MTBoss",
 
   description:
-    "Looking for an apartment construction company in Moradabad? MTBOSS plans, builds and hands over multi-storey homes. Call +91 94584 10866.",
+    "Looking for an apartment construction company in Moradabad? MTBoss plans, builds and hands over multi-storey homes. Call +91 94584 10866.",
 
   keywords:
-    "apartment construction company Moradabad, apartment building construction Moradabad, flat construction Moradabad, multi-storey residential building Moradabad, apartment builder Moradabad, apartment contractor Moradabad, residential apartment construction Moradabad, builder floor construction Moradabad, apartment construction cost Moradabad, housing project construction Moradabad, residential construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "apartment construction company Moradabad, apartment building construction Moradabad, flat construction Moradabad, multi-storey residential building Moradabad, apartment builder Moradabad, apartment contractor Moradabad, residential apartment construction Moradabad, builder floor construction Moradabad, apartment construction cost Moradabad, housing project construction Moradabad, residential construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/apartment-construction-company-in-moradabad",
+      "https://www.MTBoss.in/apartment-construction-company-in-moradabad",
   },
 
   openGraph: {
-    title: "Apartment Construction Company in Moradabad | MTBOSS",
+    title: "Apartment Construction Company in Moradabad | MTBoss",
 
     description:
-      "Looking for an apartment construction company in Moradabad? MTBOSS plans, builds and hands over multi-storey homes. Call +91 94584 10866.",
+      "Looking for an apartment construction company in Moradabad? MTBoss plans, builds and hands over multi-storey homes. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/apartment-construction-company-in-moradabad",
+    url: "https://www.MTBoss.in/apartment-construction-company-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-apartment-construction-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-apartment-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Apartment Construction Company in Moradabad - MTBOSS",
+        alt: "Apartment Construction Company in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Apartment Construction Company in Moradabad | MTBOSS",
+    title: "Apartment Construction Company in Moradabad | MTBoss",
 
     description:
-      "Looking for an apartment construction company in Moradabad? MTBOSS plans, builds and hands over multi-storey homes. Call +91 94584 10866.",
+      "Looking for an apartment construction company in Moradabad? MTBoss plans, builds and hands over multi-storey homes. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-apartment-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-apartment-construction-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/apartment-construction-company-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/apartment-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-apartment-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-apartment-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -118,14 +118,14 @@ export default function Page() {
     "@type": "Service",
     name: "Apartment Construction Services in Moradabad",
     description:
-      "MTBOSS provides apartment construction in Moradabad for landowners, developers and investors, including unit planning, structure, masonry, services provisions, waterproofing, flooring, finishing, facade, common areas and final handover.",
-    url: "https://www.mtboss.in/apartment-construction-company-in-moradabad",
+      "MTBoss provides apartment construction in Moradabad for landowners, developers and investors, including unit planning, structure, masonry, services provisions, waterproofing, flooring, finishing, facade, common areas and final handover.",
+    url: "https://www.MTBoss.in/apartment-construction-company-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -155,15 +155,15 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS build apartments in Moradabad?",
+        name: "Does MTBoss build apartments in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS builds residential projects, including multi-storey residential buildings, in Moradabad and Bareilly. Share your plan with the team to confirm the scope for your apartment project.",
+          text: "MTBoss builds residential projects, including multi-storey residential buildings, in Moradabad and Bareilly. Share your plan with the team to confirm the scope for your apartment project.",
         },
       },
       {
         "@type": "Question",
-        name: "Can MTBOSS build builder floors or small flat buildings?",
+        name: "Can MTBoss build builder floors or small flat buildings?",
         acceptedAnswer: {
           "@type": "Answer",
           text: "Yes, multi-storey residential buildings and builder-floor style projects can be discussed with the team based on your plot and plan.",
@@ -190,23 +190,23 @@ export default function Page() {
         name: "How much does apartment construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Apartment construction cost depends on built-up area, number of floors, number and size of flats, structural design, lift and common systems, parking, finishing level, facade, common area finish, site conditions and material quality. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Apartment construction cost depends on built-up area, number of floors, number and size of flats, structural design, lift and common systems, parking, finishing level, facade, common area finish, site conditions and material quality. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS supply building materials?",
+        name: "Does MTBoss supply building materials?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during apartment construction.",
+          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during apartment construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -220,19 +220,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Apartment Construction Company in Moradabad",
-        item: "https://www.mtboss.in/apartment-construction-company-in-moradabad",
+        item: "https://www.MTBoss.in/apartment-construction-company-in-moradabad",
       },
     ],
   };

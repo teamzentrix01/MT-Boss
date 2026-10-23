@@ -6,26 +6,26 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Architect for Hostel Moradabad | MTBOSS",
+  title: "Architect for Hostel Moradabad | MTBoss",
   description:
-    "Need an architect for hostel construction in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866 for a quote.",
+    "Need an architect for hostel construction in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866 for a quote.",
   keywords:
-    "architect for hostel Moradabad, hostel construction Moradabad, PG hostel builder Moradabad, student hostel architect Moradabad, hostel building design Moradabad, working women hostel construction Moradabad, hostel contractor Moradabad, MTBOSS Moradabad, hostel building cost Moradabad, MTBOSS budget calculator, hostel construction materials Moradabad, MTBOSS Kanth Road, boys hostel construction Moradabad, hostel construction quote Moradabad, MTBOSS commercial projects",
+    "architect for hostel Moradabad, hostel construction Moradabad, PG hostel builder Moradabad, student hostel architect Moradabad, hostel building design Moradabad, working women hostel construction Moradabad, hostel contractor Moradabad, MTBoss Moradabad, hostel building cost Moradabad, MTBoss budget calculator, hostel construction materials Moradabad, MTBoss Kanth Road, boys hostel construction Moradabad, hostel construction quote Moradabad, MTBoss commercial projects",
   alternates: {
-    canonical: "https://www.mtboss.in/architect-for-hostel-moradabad",
+    canonical: "https://www.MTBoss.in/architect-for-hostel-moradabad",
   },
   openGraph: {
-    title: "Architect for Hostel Moradabad | MTBOSS",
+    title: "Architect for Hostel Moradabad | MTBoss",
     description:
-      "Need an architect for hostel construction in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866 for a quote.",
-    url: "https://www.mtboss.in/architect-for-hostel-moradabad",
-    siteName: "MTBOSS Construction Private Limited",
+      "Need an architect for hostel construction in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866 for a quote.",
+    url: "https://www.MTBoss.in/architect-for-hostel-moradabad",
+    siteName: "MTBoss Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-hostel-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-hostel-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Architect for Hostel in Moradabad - MTBOSS Construction",
+        alt: "Architect for Hostel in Moradabad - MTBoss Construction",
       },
     ],
     locale: "en_IN",
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Architect for Hostel Moradabad | MTBOSS",
+    title: "Architect for Hostel Moradabad | MTBoss",
     description:
-      "Need an architect for hostel construction in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866 for a quote.",
-    images: ["https://www.mtboss.in/og-hostel-moradabad.jpg"],
+      "Need an architect for hostel construction in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866 for a quote.",
+    images: ["https://www.MTBoss.in/og-hostel-moradabad.jpg"],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/architect-for-hostel-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/architect-for-hostel-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",
@@ -85,12 +85,12 @@ export default function Page() {
     "@type": "Service",
     name: "Architect for Hostel Construction in Moradabad",
     description:
-      "MTBOSS provides architectural design coordination, hostel layout planning, civil construction and material supply for hostel and PG accommodation projects in Moradabad.",
+      "MTBoss provides architectural design coordination, hostel layout planning, civil construction and material supply for hostel and PG accommodation projects in Moradabad.",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.mtboss.in",
+      url: "https://www.MTBoss.in",
     },
     areaServed: {
       "@type": "City",

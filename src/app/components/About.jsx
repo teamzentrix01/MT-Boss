@@ -11,12 +11,12 @@ const DEFAULT_IMAGES = [
 
 export default function AboutSection({
   subtitle = "About Us",
-  title = "MTBOSS CONSTRUCTION",
+  title = "MTBoss CONSTRUCTION",
   hashtags = ["#StrongFoundationForStrongNation", "#BuildingNation", "#TransformingLives"],
   years = 20,
   images = DEFAULT_IMAGES,
   bgImage = "https://i.pinimg.com/736x/df/95/db/df95db051ac7c4228bcbaecdc24deb9b.jpg",
-  paragraph = "MTBOSS Construction is a technology-led engineering, procurement, and construction company committed to delivering sustainable infrastructure across India. From bridges and highways to industrial complexes and urban developments, we bring precision, integrity, and innovation to every project we undertake — on time and within budget.",
+  paragraph = "MTBoss Construction is a technology-led engineering, procurement, and construction company committed to delivering sustainable infrastructure across India. From bridges and highways to industrial complexes and urban developments, we bring precision, integrity, and innovation to every project we undertake — on time and within budget.",
   aboutLink = "/About-us",
 }) {
   const sectionRef = useRef(null);

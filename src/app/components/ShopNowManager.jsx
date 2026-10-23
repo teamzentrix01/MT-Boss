@@ -64,9 +64,9 @@ async function readApiJson(response) {
 }
 
 function notifyShopProductsUpdated() {
-  try { localStorage.setItem('mtboss-shop-products-updated', String(Date.now())); }
+  try { localStorage.setItem('MTBoss-shop-products-updated', String(Date.now())); }
   catch { /* Same-tab refresh event still keeps Shop Now in sync. */ }
-  window.dispatchEvent(new Event('mtbossShopProductsUpdated'));
+  window.dispatchEvent(new Event('MTBossShopProductsUpdated'));
 }
 
 async function uploadImage(file) {
@@ -602,7 +602,7 @@ function AppearanceManager() {
       setContent(data.data);
       notifyShopProductsUpdated();
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('mtbossShopProductsUpdated'));
+        window.dispatchEvent(new Event('MTBossShopProductsUpdated'));
       }
       setNotice('Storefront content saved successfully.');
     } catch (error) { setNotice(error.message); }

@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Kitchen Renovation in Moradabad: Remodel Your Old Kitchen with Proper
-            Planning by MTBOSS
+            Kitchen Renovation in Moradabad: 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,17 +22,17 @@ const Content = () => {
                 family cooks today.
               </p>
               <p className="mt-3">
-                MTBOSS is an architect, interior design and construction company
+                MTBoss is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work,
                 transparent pricing and on-time delivery. A kitchen renovation
                 involves civil work, plumbing, electrical work, tiles, carpentry
-                and finishing, and MTBOSS handles all of these under one team.
+                and finishing, and MTBoss handles all of these under one team.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Kitchen Renovation Services at MTBOSS
+                Kitchen Renovation Services at MTBoss
               </h3>
               <p className="mb-3">
                 Our kitchen renovation service covers the full job, from removing
@@ -279,7 +278,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBOSS tile and marble services allow floor, wall and counter
+                MTBoss tile and marble services allow floor, wall and counter
                 finishes to be planned together.
               </p>
             </section>
@@ -312,7 +311,7 @@ const Content = () => {
                 Material choice matters. Water-resistant boards suit sink and base
                 units, while laminate, acrylic or painted finishes suit shutters.
                 We guide you on combinations that match your budget and cooking
-                style. For a complete new cabinet system, MTBOSS also offers
+                style. For a complete new cabinet system, MTBoss also offers
                 modular kitchen services.
               </p>
             </section>
@@ -352,7 +351,7 @@ const Content = () => {
               <p>
                 Cockroaches, ants and termites often live in old kitchen cabinets,
                 wall gaps and drains. Renovation is the best time to deal with
-                them, because hiding places are exposed. MTBOSS offers pest
+                them, because hiding places are exposed. MTBoss offers pest
                 control, so treatment can be coordinated with the project. This
                 helps new cabinets, woodwork and appliances stay free of
                 infestation.
@@ -370,11 +369,6 @@ const Content = () => {
                 <li>Inspection and planning</li>
                 <li>Protection of other areas of the house</li>
                 <li>Demolition of old platform, tiles and fittings</li>
-                <li>Civil repair of walls and floors</li>
-                <li>Waterproofing where needed</li>
-                <li>Plumbing and electrical rough work</li>
-                <li>Plastering and surface preparation</li>
-                <li>Flooring and wall tiles</li>
                 <li>Countertop and platform finishing</li>
                 <li>Cabinets and carpentry</li>
                 <li>Ceiling, lighting and painting</li>
@@ -467,7 +461,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBOSS Kitchen Renovation Process
+                The MTBoss Kitchen Renovation Process
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -517,7 +511,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBOSS for Kitchen Renovation
+                 Choose MTBoss for Kitchen Renovation
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -527,7 +521,7 @@ const Content = () => {
                 <li>
                   <strong>One team for many trades.</strong> Civil work,
                   waterproofing, plumbing, electrical, tiles, carpentry, ceilings,
-                  painting and pest control are available through MTBOSS.
+                  painting and pest control are available through MTBoss.
                 </li>
                 <li>
                   <strong>Inspection-led planning.</strong> Hidden problems are
@@ -553,7 +547,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBOSS provides kitchen renovation across Moradabad, including
+                MTBoss provides kitchen renovation across Moradabad, including
                 residential areas such as Civil Lines, Lajpat Nagar, Delhi Road,
                 Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -564,7 +558,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Kitchen Renovation with MTBOSS
+                Plan Your Kitchen Renovation with MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -581,10 +575,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -595,16 +589,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/quick/modular-kitchen"
+                  href="https://www.MTBoss.in/quick/modular-kitchen"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS Modular Kitchen page
+                  MTBoss Modular Kitchen page
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -614,7 +608,7 @@ const Content = () => {
                 to try the Budget Calculator and view our Portfolio.
               </p>
               <p className="mt-3">
-                Turn a tired kitchen into one that works. Contact MTBOSS today for
+                Turn a tired kitchen into one that works. Contact MTBoss today for
                 kitchen renovation in Moradabad.
               </p>
             </section>
@@ -626,7 +620,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBOSS provide kitchen renovation in Moradabad?
+                    Q1. Does MTBoss provide kitchen renovation in Moradabad?
                   </strong>
                   <br />
                   Yes. We renovate existing kitchens, including civil, plumbing,
@@ -667,7 +661,7 @@ const Content = () => {
                     Q6. Do you handle plumbing and electrical upgrades?
                   </strong>
                   <br />
-                  Yes. MTBOSS offers both, so everything is coordinated in one
+                  Yes. MTBoss offers both, so everything is coordinated in one
                   project.
                 </li>
                 <li>
@@ -692,7 +686,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q10. How do I book MTBOSS for kitchen renovation?
+                    Q10. How do I book MTBoss for kitchen renovation?
                   </strong>
                   <br />
                   Call or WhatsApp{" "}
@@ -704,7 +698,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

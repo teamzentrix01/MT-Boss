@@ -101,7 +101,7 @@ const benefits = [
   { icon: "📈", title: "Structured Revenue Model", desc: "Franchise commercials, revenue share, and territory economics are discussed after profile review." },
   { icon: "🤝", title: "End-to-End Support", desc: "From training to project execution — we support you at every step." },
   { icon: "🌍", title: "Pan India Network", desc: "Join a network of 50+ cities and 500+ skilled professionals." },
-  { icon: "🔧", title: "Technical Expertise", desc: "Access to MTBOSS's engineering and procurement capabilities." },
+  { icon: "🔧", title: "Technical Expertise", desc: "Access to MTBoss's engineering and procurement capabilities." },
   { icon: "📣", title: "Marketing Support", desc: "Co-branded campaigns, digital marketing, and lead generation support." },
   { icon: "⚡", title: "Fast Onboarding", desc: "Get operational in 30 days with our streamlined onboarding process." },
   { icon: "💰", title: "Multiple Revenue Streams", desc: "Earn from referrals, project execution, and sub-franchise fees." },
@@ -118,10 +118,10 @@ const process = [
 
 const faqs = [
   { q: "What is the minimum investment required?", a: "Franchise investment depends on territory, model, local operating setup, and eligibility. Our team shares the detailed commercial proposal after the discovery call." },
-  { q: "Do I need prior construction experience?", a: "No prior construction experience is required. MTBOSS provides complete technical training and ongoing support. Business development and management skills are more important." },
+  { q: "Do I need prior construction experience?", a: "No prior construction experience is required. MTBoss provides complete technical training and ongoing support. Business development and management skills are more important." },
   { q: "What territory will I get?", a: "Territory is allocated based on the franchise model chosen. Associate Partners get city-level rights, Regional Franchises get district-level, and Master Franchises get state-level exclusivity." },
   { q: "How long does onboarding take?", a: "Our streamlined onboarding process typically takes 30 days from agreement signing to being fully operational." },
-  { q: "What kind of support does MTBOSS provide?", a: "We provide training, marketing materials, lead generation, technical support, project management assistance, and a dedicated relationship manager depending on your franchise tier." },
+  { q: "What kind of support does MTBoss provide?", a: "We provide training, marketing materials, lead generation, technical support, project management assistance, and a dedicated relationship manager depending on your franchise tier." },
   { q: "Is there a royalty fee?", a: "Yes, a nominal royalty fee applies based on the franchise model. Full details are shared during the discovery call. Our revenue sharing model ensures mutual profitability." },
 ];
 
@@ -297,7 +297,7 @@ function FranchisePageContent() {
 
       // Send email notification in the background; PayU redirect must not wait on
       // FormSubmit because that external call can be slow/blocked by the browser.
-      void fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
+      void fetch("https://formsubmit.co/ajax/MTBoss2016@gmail.com", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
@@ -409,14 +409,14 @@ function FranchisePageContent() {
           }}
         >
           <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
-            MTBOSS Construction
+            MTBoss Construction
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Franchise
             <span className="block text-[var(--brand-blue)]">Opportunity</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-            Partner with India&apos;s trusted construction brand. Build a profitable business with MTBOSS&apos;s proven model, technical expertise, and 20+ years of legacy.
+            Partner with India&apos;s trusted construction brand. Build a profitable business with MTBoss&apos;s proven model, technical expertise, and 20+ years of legacy.
           </p>
 
           {/* Stats */}
@@ -1208,13 +1208,13 @@ function FranchisePageContent() {
                       <label className="flex items-start gap-3 cursor-pointer">
                         <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
                         <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                          I have read and understood all information available about MTbossConstruction franchise opportunity, including the investment requirements, terms, and fee structure involved.
+                          I have read and understood all information available about MTBossConstruction franchise opportunity, including the investment requirements, terms, and fee structure involved.
                         </span>
                       </label>
                       <label className="flex items-start gap-3 cursor-pointer">
                         <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
                         <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                          I agree that MTbossConstruction may contact me regarding this franchise inquiry. I understand that submitting this form does not guarantee a franchise agreement.
+                          I agree that MTBossConstruction may contact me regarding this franchise inquiry. I understand that submitting this form does not guarantee a franchise agreement.
                         </span>
                       </label>
                     </div>
@@ -1327,7 +1327,7 @@ function FranchisePageContent() {
               Call Now
             </a>
             <a
-              href="mailto:mtboss2016@gmail.com"
+              href="mailto:MTBoss2016@gmail.com"
               className="inline-flex items-center justify-center gap-3 px-8 py-4 border-2 border-white text-white font-black uppercase text-xs tracking-widest hover:bg-white hover:text-zinc-800 transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -8,19 +8,17 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Modular Kitchen Design in Moradabad: MT Boss
+            Modular Kitchen Design in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Modular Kitchen Design in Brief
-              </h3>
+              
               <p>
                 Modular kitchen design in Moradabad is the planning of layout,
                 unit sizes, storage, work zones, lighting, materials and finishes
                 on paper before any cabinet is made, so that the finished kitchen
-                fits your room, your cooking and your budget. MT Boss Construction
+                fits your room, your cooking and your budget. MTBoss Construction
                 Private Limited, based on Kanth Road, offers kitchen design as
                 part of its architecture, interior and modular kitchen services
                 across Moradabad and Bareilly.
@@ -39,7 +37,7 @@ const Content = () => {
                 fixing them costs nothing.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBoss Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -80,36 +78,7 @@ const Content = () => {
               </ul>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Ergonomic Measurements That Keep Cooking Comfortable
-              </h3>
-              <p className="mb-3">
-                Comfort depends on measurements fitted to the people who cook. The
-                figures below are typical starting points, which your designer
-                should adjust to your height and your appliance manuals [confirm
-                MT Boss&apos;s standard dimensions].
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  Counter height: commonly around 850 to 900 mm, adjusted for the
-                  main cook&apos;s height
-                </li>
-                <li>Base unit depth: commonly around 550 to 600 mm</li>
-                <li>
-                  Wall unit depth: commonly around 300 to 350 mm, so the cook does
-                  not hit their head
-                </li>
-                <li>
-                  Gap between counter and wall units: commonly around 450 to 550
-                  mm, enough for appliances and easy cleaning
-                </li>
-                <li>
-                  Chimney height above the hob: as the chimney manufacturer
-                  specifies, often in the range of 650 to 750 mm
-                </li>
-              </ul>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -302,7 +271,7 @@ const Content = () => {
                 <li>
                   <strong>Mobility concerns:</strong> plan wider walkways and
                   reachable storage, and consider seated working space [confirm if
-                  MT Boss offers accessible designs]
+                  MTBoss offers accessible designs]
                 </li>
               </ul>
               <p className="mt-3">
@@ -318,7 +287,7 @@ const Content = () => {
               <p className="mb-3">
                 A proper design process produces documents, not just a verbal
                 idea. Depending on the project, you should receive [adjust to
-                match what MT Boss actually provides]:
+                match what MTBoss actually provides]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -374,7 +343,7 @@ const Content = () => {
                 storage placement within your room&apos;s limits, and will note
                 where a preference conflicts with safety, ventilation or plumbing.
                 We don&apos;t claim any outcome from Vastu, and we suggest you
-                follow guidance you trust [adjust wording to MT Boss&apos;s actual
+                follow guidance you trust [adjust wording to MTBoss&apos;s actual
                 approach].
               </p>
             </section>
@@ -426,7 +395,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> call, WhatsApp or click Get a
-                  Construction Quote on mtboss.in, and share your room details and
+                  Construction Quote on MTBoss.in, and share your room details and
                   brief
                 </li>
                 <li>
@@ -472,73 +441,15 @@ const Content = () => {
                 <li>Timeline and site conditions</li>
               </ul>
               <p className="mt-3">
-                You can use the Budget Calculator on mtboss.in for an early idea
+                You can use the Budget Calculator on MTBoss.in for an early idea
                 of overall construction or renovation cost.
               </p>
             </section>
 
+            
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
-              </h3>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
-                </li>
-                <li>
-                  <strong>Service:</strong> Modular kitchen design and
-                  installation, alongside construction, interiors and home
-                  services
-                </li>
-                <li>
-                  <strong>Office:</strong> Harthala, Kanth Road, Moradabad (behind
-                  KR Collection, near Domino&apos;s), Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Phone / WhatsApp:</strong>{" "}
-                  <a
-                    href="https://wa.me/9458410866"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    +91 94584 10866
-                  </a>
-                </li>
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <strong>Website:</strong>{" "}
-                  <a
-                    href="https://www.mtboss.in/"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    www.mtboss.in
-                  </a>
-                </li>
-                <li>
-                  <strong>Coverage:</strong> Moradabad, Bareilly and nearby areas
-                  of western Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Credentials:</strong> [add registration, GST, designer
-                  qualifications or software tools you can show]
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -587,7 +498,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Kitchen Design With MT Boss
+                Start Your Kitchen Design With MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -604,21 +515,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -632,7 +543,7 @@ const Content = () => {
                 and we will arrange a site visit and send a clear design proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for modular kitchen design in Moradabad, with the
+                Choose MTBoss for modular kitchen design in Moradabad, with the
                 room measured, the plan built around your cooking and every detail
                 agreed before work begins.
               </p>
@@ -646,7 +557,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who designs modular kitchens in Moradabad?</strong>
                   <br />
-                  MT Boss Construction designs and installs modular kitchens across
+                  MTBoss Construction designs and installs modular kitchens across
                   Moradabad and Bareilly.
                 </li>
                 <li>
@@ -698,7 +609,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a site visit?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

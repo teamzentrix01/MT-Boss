@@ -25,7 +25,7 @@ const Content = () => {
                 Moradabad is a practical decision as much as a creative one.
               </p>
               <p className="mt-3">
-                MT Boss is an architecture, interior design and construction
+                MTBoss is an architecture, interior design and construction
                 company working in Moradabad and Bareilly. We design homes from
                 the inside out. We begin with how you use each room, then choose
                 layouts, materials and finishes that support those habits.
@@ -310,7 +310,7 @@ const Content = () => {
               <p className="mt-3">
                 Our website also offers a{" "}
                 <a
-                  href="https://www.mtboss.in/calculator"
+                  href="https://www.MTBoss.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -375,7 +375,7 @@ const Content = () => {
                 follow.
               </p>
               <p className="mb-3">
-                MT Boss handles planning, construction and interiors together.
+                MTBoss handles planning, construction and interiors together.
                 That gives homeowners:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -489,10 +489,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -502,17 +502,17 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                 </li>
               </ul>
               <p className="mt-3">
-                Your home should feel like it belongs to you. Let MT Boss help
+                Your home should feel like it belongs to you. Let MTBoss help
                 you create it.
               </p>
             </section>
@@ -533,7 +533,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q2. Does MT Boss design full homes and single rooms?
+                    Q2. Does MTBoss design full homes and single rooms?
                   </strong>
                   <br />
                   Yes. You can choose a complete home package or just one room,

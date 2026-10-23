@@ -169,7 +169,7 @@ export default function IndustrialPage() {
     if (!phoneRegex.test(enquiryForm.phone)) { alert('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
     setEnquiryLoading(true);
     try {
-      const res = await fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
+      const res = await fetch("https://formsubmit.co/ajax/MTBoss2016@gmail.com", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
@@ -218,7 +218,7 @@ export default function IndustrialPage() {
         <div className="absolute inset-0 bg-black/80" />
         <div ref={heroRef} className="relative z-10 max-w-3xl mx-auto"
           style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "translateY(0)" : "translateY(30px)", transition: "opacity 0.7s ease, transform 0.7s ease" }}>
-          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">MTBOSS Construction</span>
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">MTBoss Construction</span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Industrial
             <span className="block text-[var(--brand-blue)]">Properties</span>

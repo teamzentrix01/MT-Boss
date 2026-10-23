@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Site Engineer Contractor in Moradabad: MT Boss
+            Site Engineer Contractor in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -27,7 +27,7 @@ const Content = () => {
                 whether your building turns out strong or troublesome.
               </p>
               <p className="mt-3">
-                MT Boss Construction Private Limited runs its projects with
+                MTBoss Construction Private Limited runs its projects with
                 qualified site engineers and supervisors who stay close to the
                 work. We serve clients across Moradabad and Bareilly with
                 residential, commercial, hospitality, industrial and
@@ -107,10 +107,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBoss Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home
+                MTBoss is a one-stop destination for construction, home
                 services, materials and property needs, serving Moradabad and
                 Bareilly. Our work spans architecture and interior design,
                 building elevation, modular kitchens, waterproofing, building
@@ -132,7 +132,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Site Engineer Services Offered by MT Boss
+                Site Engineer Services Offered by MTBoss
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -193,14 +193,14 @@ const Content = () => {
                 and aggregates are stacked properly. This reduces waste and
                 protects strength. Owners can also explore materials through the{" "}
                 <a
-                  href="https://www.mtboss.in/ShopNow"
+                  href="https://www.MTBoss.in/ShopNow"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Shop Now
                 </a>{" "}
-                section on mtboss.in.
+                section on MTBoss.in.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -349,14 +349,14 @@ const Content = () => {
                   <strong>3. Planning and estimate.</strong> We prepare an
                   itemised estimate and a work plan. You can also try the{" "}
                   <a
-                    href="https://www.mtboss.in/calculator"
+                    href="https://www.MTBoss.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Budget Calculator
                   </a>{" "}
-                  on mtboss.in for an early idea.
+                  on MTBoss.in for an early idea.
                 </li>
                 <li>
                   <strong>4. Agreement.</strong> Scope, material standards,
@@ -479,7 +479,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Clients Choose MT Boss in Moradabad
+                Why Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -532,7 +532,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Get Engineer-Supervised Construction from MT Boss
+                Get Engineer-Supervised Construction from MTBoss
               </h3>
               <p className="mb-3">
                 Ready to start your project with proper supervision? Speak with
@@ -542,12 +542,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -557,10 +557,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -574,7 +574,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss, your trusted site engineer contractor in
+                Choose MTBoss, your trusted site engineer contractor in
                 Moradabad, for construction that is supervised closely, built
                 correctly and delivered on time.
               </p>
@@ -598,7 +598,7 @@ const Content = () => {
                     Moradabad?
                   </strong>
                   <br />
-                  MT Boss Construction runs engineer-led projects across
+                  MTBoss Construction runs engineer-led projects across
                   Moradabad and Bareilly, with a focus on quality and
                   transparency.
                 </li>
@@ -612,7 +612,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q4. Does MT Boss provide a full-time engineer on site?
+                    Q4. Does MTBoss provide a full-time engineer on site?
                   </strong>
                   <br />
                   For larger projects, yes. Smaller projects get scheduled
@@ -648,7 +648,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or
                   call or WhatsApp +91 94584 10866 for a free site visit.
                 </li>
                 <li>

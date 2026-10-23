@@ -8,14 +8,12 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Waterproofing Contractor in Moradabad: MT Boss
+            Waterproofing Contractor in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                A Contractor Takes Responsibility, Not Just a Brush
-              </h3>
+              
               <p>
                 Anyone can buy a waterproofing coating and spread it on a surface.
                 What separates a waterproofing contractor from a casual applicator
@@ -26,7 +24,7 @@ const Content = () => {
                 for the repair.
               </p>
               <p className="mt-3">
-                MT Boss Construction Private Limited works as a waterproofing
+                MTBoss Construction Private Limited works as a waterproofing
                 contractor in Moradabad and Bareilly, alongside our construction,
                 repair and renovation services. We handle waterproofing for homes,
                 apartment buildings, shops, offices, hotels, warehouses and
@@ -61,10 +59,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBoss Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home services,
+                MTBoss is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -294,7 +292,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Owners who prefer to buy materials can explore the Shop Now
-                section on mtboss.in, and our engineers can advise on quantity and
+                section on MTBoss.in, and our engineers can advise on quantity and
                 quality [confirm delivery coverage].
               </p>
             </section>
@@ -305,7 +303,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Paperwork turns a verbal promise into something you can rely on.
-                Depending on the job size, MT Boss provides [adjust to match what
+                Depending on the job size, MTBoss provides [adjust to match what
                 you actually provide]:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -407,7 +405,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  mtboss.in, or call or WhatsApp us with photos and a short
+                  MTBoss.in, or call or WhatsApp us with photos and a short
                   description.
                 </li>
                 <li>
@@ -519,14 +517,14 @@ const Content = () => {
               <p className="mt-3">
                 We measure the area and prepare an itemised estimate [confirm
                 whether rates are per area or lump sum]. You can also use the
-                Budget Calculator on mtboss.in for an early idea of overall
+                Budget Calculator on MTBoss.in for an early idea of overall
                 construction or renovation cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -567,7 +565,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Engage MT Boss for Your Waterproofing Project
+                Engage MTBoss for Your Waterproofing Project
               </h3>
               <p className="mb-3">
                 Ready to hand the job to a team that takes responsibility from
@@ -577,12 +575,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -600,10 +598,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -617,7 +615,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss as your waterproofing contractor in Moradabad, with
+                Choose MTBoss as your waterproofing contractor in Moradabad, with
                 the scope written down, the work supervised and the result tested.
               </p>
             </section>
@@ -632,7 +630,7 @@ const Content = () => {
                     Q1. Who is a reliable waterproofing contractor in Moradabad?
                   </strong>
                   <br />
-                  MT Boss Construction provides inspection-led, supervised
+                  MTBoss Construction provides inspection-led, supervised
                   waterproofing across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -681,7 +679,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

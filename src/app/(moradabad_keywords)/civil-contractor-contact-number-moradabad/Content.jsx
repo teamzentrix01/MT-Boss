@@ -14,7 +14,7 @@ const Content = () => {
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Once you&apos;ve decided to build, renovate, or expand a property, the next practical step is finding a civil contractor&apos;s contact number in Moradabad so you can start the conversation quickly. Many people search this exact phrase because they don&apos;t want to fill out long forms or wait days for a callback — they want a direct phone number, email, or WhatsApp chat they can use right now. This guide explains what to check before calling a contractor, what information to have ready, and shares the direct contact details of MTBOSS Construction Private Limited a Moradabad-based construction company.
+                Once you&apos;ve decided to build, renovate, or expand a property, the next practical step is finding a civil contractor&apos;s contact number in Moradabad so you can start the conversation quickly. Many people search this exact phrase because they don&apos;t want to fill out long forms or wait days for a callback — they want a direct phone number, email, or WhatsApp chat they can use right now. This guide explains what to check before calling a contractor, what information to have ready, and shares the direct contact details of MTBoss Construction Private Limited a Moradabad-based construction company.
               </p>
             </section>
 
@@ -128,10 +128,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBOSS Is Easy to Contact and Reliable in Moradabad
+                Why MTBoss Is Easy to Contact and Reliable in Moradabad
               </h3>
               <p className="mb-3">
-                Based on their published company profile, MTBOSS Construction Private Limited makes it simple to get in touch through multiple channels, backed by a strong service track record:
+                Based on their published company profile, MTBoss Construction Private Limited makes it simple to get in touch through multiple channels, backed by a strong service track record:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of experience, having started as a small contracting firm in 2002</li>
@@ -245,9 +245,9 @@ const Content = () => {
                 If you&apos;re ready to discuss your construction, renovation, or material requirements, reach out directly:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
+                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
+                <li><strong>Website:</strong> <a href="https://www.MTBoss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBoss.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBoss2016@gmail.com" className="text-blue-600 underline">MTBoss2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
@@ -263,7 +263,7 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. What is the office address of MTBOSS in Moradabad?</strong>
+                  <strong>Q1. What is the office address of MTBoss in Moradabad?</strong>
                   <br />
                   Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.
                 </li>
@@ -273,7 +273,7 @@ const Content = () => {
                   Yes, use their online Construction Budget Calculator for an instant BOQ-based estimate.
                 </li>
                 <li>
-                  <strong>Q3. How quickly does MTBOSS respond to calls or messages?</strong>
+                  <strong>Q3. How quickly does MTBoss respond to calls or messages?</strong>
                   <br />
                   They offer WhatsApp and phone support for fast response to queries.
                 </li>
@@ -283,17 +283,17 @@ const Content = () => {
                   Plot size, number of floors, project type, budget range, and preferred quality package.
                 </li>
                 <li>
-                  <strong>Q5. Does MTBOSS also provide home repair contact support?</strong>
+                  <strong>Q5. Does MTBoss also provide home repair contact support?</strong>
                   <br />
                   Yes, including electrical, plumbing, AC repair, painting, and pest control services.
                 </li>
                 <li>
-                  <strong>Q6. Can I contact MTBOSS for buying or selling property too?</strong>
+                  <strong>Q6. Can I contact MTBoss for buying or selling property too?</strong>
                   <br />
                   Yes, they offer verified property listings for buying, selling, and renting.
                 </li>
                 <li>
-                  <strong>Q7. Is there a franchise contact option for MTBOSS?</strong>
+                  <strong>Q7. Is there a franchise contact option for MTBoss?</strong>
                   <br />
                   Yes, franchise inquiries can be made through their website or the same contact number.
                 </li>

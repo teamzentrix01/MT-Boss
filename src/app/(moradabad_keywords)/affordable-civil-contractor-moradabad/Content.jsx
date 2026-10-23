@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Affordable Civil Contractor in Moradabad: MT Boss
+            Affordable Civil Contractor in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -24,7 +24,7 @@ const Content = () => {
               <p className="mt-3">
                 A truly affordable civil contractor in Moradabad gives you
                 strong work at a fair, clear price, with no hidden extras and
-                no shortcuts that come back to hurt you. MT Boss Construction
+                no shortcuts that come back to hurt you. MTBoss Construction
                 Private Limited helps clients across Moradabad and Bareilly
                 build residential, commercial, hospitality, industrial and
                 infrastructure projects with transparent pricing, practical
@@ -73,10 +73,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBoss Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home
+                MTBoss is a one-stop destination for construction, home
                 services, materials and property needs, serving Moradabad and
                 Bareilly. Our work covers residential, commercial, hotel and
                 hospitality, industrial and warehousing, and infrastructure and
@@ -149,7 +149,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Ways MT Boss Keeps Civil Work Affordable
+                Ways MTBoss Keeps Civil Work Affordable
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -169,7 +169,7 @@ const Content = () => {
                 You receive a quotation with quantities, materials, labour and
                 payment stages, not a single lump figure. This lets you see
                 where your money goes and compare our proposal fairly with
-                others. You can also use the Budget Calculator on mtboss.in for
+                others. You can also use the Budget Calculator on MTBoss.in for
                 an early idea before the site visit.
               </p>
 
@@ -192,7 +192,7 @@ const Content = () => {
                 We guide you on where quality grades matter, such as cement,
                 TMT steel and waterproofing, and where more economical finishing
                 choices are fine. Owners can also explore the Shop Now section
-                on mtboss.in for cement, steel, bricks and more.
+                on MTBoss.in for cement, steel, bricks and more.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -246,7 +246,7 @@ const Content = () => {
                 Residential Construction
               </h4>
               <p className="mb-3">
-                From affordable housing to luxury villas, MT Boss builds homes
+                From affordable housing to luxury villas, MTBoss builds homes
                 that balance comfort, safety and budget. We build independent
                 houses, duplexes, villas, builder floors and multi-storey homes,
                 with clear scope and stage-wise payments.
@@ -470,7 +470,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Use the Get a Construction Quote
-                  button on mtboss.in, or call or WhatsApp us.
+                  button on MTBoss.in, or call or WhatsApp us.
                 </li>
                 <li>
                   <strong>Site visit.</strong> Engineers inspect the plot, soil
@@ -505,7 +505,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -564,12 +564,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -585,10 +585,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -602,7 +602,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss, your trusted affordable civil contractor in
+                Choose MTBoss, your trusted affordable civil contractor in
                 Moradabad, for honest pricing, strong construction and value
                 that lasts.
               </p>
@@ -616,7 +616,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who is an affordable civil contractor in Moradabad?</strong>
                   <br />
-                  MT Boss Construction offers transparent pricing, smart
+                  MTBoss Construction offers transparent pricing, smart
                   planning and quality civil work across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -628,7 +628,7 @@ const Content = () => {
                 <li>
                   <strong>Q3. How can I check my budget before contacting you?</strong>
                   <br />
-                  Use the Budget Calculator on mtboss.in for an early idea, then
+                  Use the Budget Calculator on MTBoss.in for an early idea, then
                   we prepare an itemised estimate.
                 </li>
                 <li>
@@ -664,7 +664,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or
                   call or WhatsApp{" "}
                   <a
                     href="tel:+919458410866"

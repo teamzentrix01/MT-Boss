@@ -117,7 +117,7 @@ export default function ReviewModal({ isOpen, onClose, isDarkMode }) {
             </div>
             <div>
               <h3 className={`text-lg font-black tracking-tight ${textPrimary}`}>
-                Review MTBOSS Experience
+                Review MTBoss Experience
               </h3>
               <p className={`text-xs ${textSecondary}`}>
                 Your ratings and feedback help us build higher standards.
@@ -153,7 +153,7 @@ export default function ReviewModal({ isOpen, onClose, isDarkMode }) {
             </div>
           </div>
           <a
-            href="https://www.google.com/search?q=MTBOSS+CONSTRUCTION+PRIVATE+LIMITED+Moradabad#lrd=0x39a2ce08b8b0e51b:0x5e5a2db39df48259,3,,,"
+            href="https://www.google.com/search?q=MTBoss+CONSTRUCTION+PRIVATE+LIMITED+Moradabad#lrd=0x39a2ce08b8b0e51b:0x5e5a2db39df48259,3,,,"
             target="_blank"
             rel="noopener noreferrer"
             className="px-3 py-1.5 rounded-xl bg-white text-zinc-900 hover:bg-zinc-100 font-bold text-[11px] transition-all shadow shrink-0 flex items-center gap-1 hover:scale-105 active:scale-95"
@@ -186,7 +186,7 @@ export default function ReviewModal({ isOpen, onClose, isDarkMode }) {
                 </div>
               </div>
               <a
-                href="https://www.google.com/search?q=MTBOSS+CONSTRUCTION+PRIVATE+LIMITED+Moradabad#lrd=0x39a2ce08b8b0e51b:0x5e5a2db39df48259,3,,,"
+                href="https://www.google.com/search?q=MTBoss+CONSTRUCTION+PRIVATE+LIMITED+Moradabad#lrd=0x39a2ce08b8b0e51b:0x5e5a2db39df48259,3,,,"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow hover:brightness-110 transition-all"

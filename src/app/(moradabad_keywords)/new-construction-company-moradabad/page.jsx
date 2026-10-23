@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "New Construction Company in Moradabad | MTBOSS",
+  title: "New Construction Company in Moradabad | MTBoss",
 
   description:
-    "Looking for a new construction company in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+    "Looking for a new construction company in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "new construction company Moradabad, new construction Moradabad, new house construction Moradabad, building construction company Moradabad, construction company in Moradabad, residential construction company Moradabad, commercial construction company Moradabad, turnkey construction Moradabad, construction contractor Moradabad, architect and builder Moradabad, construction cost Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "new construction company Moradabad, new construction Moradabad, new house construction Moradabad, building construction company Moradabad, construction company in Moradabad, residential construction company Moradabad, commercial construction company Moradabad, turnkey construction Moradabad, construction contractor Moradabad, architect and builder Moradabad, construction cost Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/new-construction-company-in-moradabad",
+      "https://www.MTBoss.in/new-construction-company-in-moradabad",
   },
 
   openGraph: {
-    title: "New Construction Company in Moradabad | MTBOSS",
+    title: "New Construction Company in Moradabad | MTBoss",
 
     description:
-      "Looking for a new construction company in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Looking for a new construction company in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/new-construction-company-in-moradabad",
+    url: "https://www.MTBoss.in/new-construction-company-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-new-construction-company-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-new-construction-company-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "New Construction Company in Moradabad - MTBOSS",
+        alt: "New Construction Company in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "New Construction Company in Moradabad | MTBOSS",
+    title: "New Construction Company in Moradabad | MTBoss",
 
     description:
-      "Looking for a new construction company in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Looking for a new construction company in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-new-construction-company-moradabad.jpg",
+      "https://www.MTBoss.in/og-new-construction-company-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/new-construction-company-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/new-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-new-construction-company-moradabad.jpg",
+      "https://www.MTBoss.in/og-new-construction-company-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -118,14 +118,14 @@ export default function Page() {
     "@type": "Service",
     name: "New Construction Services in Moradabad",
     description:
-      "MTBOSS provides new construction services in Moradabad for houses, bungalows, duplex homes, farmhouses, multi storey buildings, commercial buildings, institutional buildings and specialist buildings, including design coordination, structure, facade, services provisions, waterproofing, flooring, finishing, modular kitchen and interiors, outdoor works and final handover.",
-    url: "https://www.mtboss.in/new-construction-company-in-moradabad",
+      "MTBoss provides new construction services in Moradabad for houses, bungalows, duplex homes, farmhouses, multi storey buildings, commercial buildings, institutional buildings and specialist buildings, including design coordination, structure, facade, services provisions, waterproofing, flooring, finishing, modular kitchen and interiors, outdoor works and final handover.",
+    url: "https://www.MTBoss.in/new-construction-company-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -155,10 +155,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS handle new construction in Moradabad?",
+        name: "Does MTBoss handle new construction in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes, MTBOSS builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your project.",
+          text: "Yes, MTBoss builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your project.",
         },
       },
       {
@@ -171,10 +171,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Can MTBOSS handle design as well as construction?",
+        name: "Can MTBoss handle design as well as construction?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes, MTBOSS is an architect, interior designer and construction company, so design, interiors and construction can be coordinated by one team.",
+          text: "Yes, MTBoss is an architect, interior designer and construction company, so design, interiors and construction can be coordinated by one team.",
         },
       },
       {
@@ -182,7 +182,7 @@ export default function Page() {
         name: "How do I get an estimate for my project?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Start with the free Budget Calculator on the MTBOSS website, then request a detailed quote after a site visit and design discussion.",
+          text: "Start with the free Budget Calculator on the MTBoss website, then request a detailed quote after a site visit and design discussion.",
         },
       },
       {
@@ -190,15 +190,15 @@ export default function Page() {
         name: "How much does new construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Cost depends on built-up area, number of floors, design complexity, material and finish level, interior scope, services scope and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Cost depends on built-up area, number of floors, design complexity, material and finish level, interior scope, services scope and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -212,19 +212,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "New Construction Company in Moradabad",
-        item: "https://www.mtboss.in/new-construction-company-in-moradabad",
+        item: "https://www.MTBoss.in/new-construction-company-in-moradabad",
       },
     ],
   };

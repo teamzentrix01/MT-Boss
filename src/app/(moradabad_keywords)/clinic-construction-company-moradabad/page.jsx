@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Clinic Construction Company in Moradabad | MTBOSS",
+  title: "Clinic Construction Company in Moradabad | MTBoss",
 
   description:
-    "Looking for a clinic construction company in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+    "Looking for a clinic construction company in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "clinic construction company Moradabad, clinic building construction Moradabad, clinic contractor Moradabad, clinic design Moradabad, doctor clinic construction Moradabad, polyclinic construction Moradabad, dental clinic construction Moradabad, clinic interior Moradabad, clinic construction cost Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "clinic construction company Moradabad, clinic building construction Moradabad, clinic contractor Moradabad, clinic design Moradabad, doctor clinic construction Moradabad, polyclinic construction Moradabad, dental clinic construction Moradabad, clinic interior Moradabad, clinic construction cost Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/clinic-construction-company-in-moradabad",
+      "https://www.MTBoss.in/clinic-construction-company-in-moradabad",
   },
 
   openGraph: {
-    title: "Clinic Construction Company in Moradabad | MTBOSS",
+    title: "Clinic Construction Company in Moradabad | MTBoss",
 
     description:
-      "Looking for a clinic construction company in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Looking for a clinic construction company in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/clinic-construction-company-in-moradabad",
+    url: "https://www.MTBoss.in/clinic-construction-company-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-clinic-construction-company-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-clinic-construction-company-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Clinic Construction Company in Moradabad - MTBOSS",
+        alt: "Clinic Construction Company in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Clinic Construction Company in Moradabad | MTBOSS",
+    title: "Clinic Construction Company in Moradabad | MTBoss",
 
     description:
-      "Looking for a clinic construction company in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Looking for a clinic construction company in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-clinic-construction-company-moradabad.jpg",
+      "https://www.MTBoss.in/og-clinic-construction-company-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/clinic-construction-company-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/clinic-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-clinic-construction-company-moradabad.jpg",
+      "https://www.MTBoss.in/og-clinic-construction-company-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,14 +117,14 @@ export default function Page() {
     "@type": "Service",
     name: "Clinic Construction Services in Moradabad",
     description:
-      "MTBOSS provides clinic construction in Moradabad for single-doctor clinics, dental clinics, polyclinics and clinics with pharmacy or diagnostic space, including design coordination, structure, facade, services provisions, washroom planning, dental and procedure room provisions, waterproofing, flooring, finishing, interiors, outdoor works and final handover.",
-    url: "https://www.mtboss.in/clinic-construction-company-in-moradabad",
+      "MTBoss provides clinic construction in Moradabad for single-doctor clinics, dental clinics, polyclinics and clinics with pharmacy or diagnostic space, including design coordination, structure, facade, services provisions, washroom planning, dental and procedure room provisions, waterproofing, flooring, finishing, interiors, outdoor works and final handover.",
+    url: "https://www.MTBoss.in/clinic-construction-company-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -154,10 +154,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS build clinics in Moradabad?",
+        name: "Does MTBoss build clinics in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your clinic.",
+          text: "MTBoss builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your clinic.",
         },
       },
       {
@@ -189,15 +189,15 @@ export default function Page() {
         name: "How much does clinic construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Clinic construction cost depends on built-up area, number of rooms, services scope, equipment provisions, material and finish level and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Clinic construction cost depends on built-up area, number of rooms, services scope, equipment provisions, material and finish level and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -211,19 +211,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Clinic Construction Company in Moradabad",
-        item: "https://www.mtboss.in/clinic-construction-company-in-moradabad",
+        item: "https://www.MTBoss.in/clinic-construction-company-in-moradabad",
       },
     ],
   };

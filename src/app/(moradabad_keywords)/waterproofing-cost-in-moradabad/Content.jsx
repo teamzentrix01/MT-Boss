@@ -8,14 +8,12 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Waterproofing Cost in Moradabad: MT Boss
+            Waterproofing Cost in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Cost Depends on the Problem, Not Just the Area
-              </h3>
+              
               <p>
                 Ask three waterproofing companies for a price and you may get
                 three very different numbers. The reason is rarely greed or
@@ -27,7 +25,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 This page explains what shapes waterproofing cost in Moradabad, so
-                you can read any quotation with confidence. MT Boss Construction
+                you can read any quotation with confidence. MTBoss Construction
                 Private Limited prepares itemised waterproofing estimates for
                 homes, buildings, shops, hotels and factories across Moradabad and
                 Bareilly. Our approach follows the promise on our website:
@@ -53,10 +51,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBoss Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home services,
+                MTBoss is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -117,7 +115,7 @@ const Content = () => {
                 Cementitious coatings, liquid membranes, sheet membranes,
                 crystalline systems and injection grouting sit at different price
                 levels, and so do economy, standard and premium products within
-                each [confirm the systems and brands MT Boss uses]. A cheaper
+                each [confirm the systems and brands MTBoss uses]. A cheaper
                 system is not wrong if it suits the problem, and an expensive one
                 is wasted if it does not.
               </p>
@@ -236,7 +234,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A clear quotation breaks the price into parts you can check. A
-                typical MT Boss estimate covers [adjust to match your actual
+                typical MTBoss estimate covers [adjust to match your actual
                 format]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -411,7 +409,7 @@ const Content = () => {
                 Fair payment terms protect both sides. A typical arrangement links
                 payment to progress, for example an advance to start, a stage
                 payment after preparation and application, and the balance after
-                testing and handover [confirm MT Boss payment stages]. Avoid
+                testing and handover [confirm MTBoss payment stages]. Avoid
                 arrangements that ask for full payment before work begins or that
                 skip written receipts.
               </p>
@@ -428,7 +426,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  mtboss.in, or call or WhatsApp us with photos and a short
+                  MTBoss.in, or call or WhatsApp us with photos and a short
                   description.
                 </li>
                 <li>
@@ -471,7 +469,7 @@ const Content = () => {
               </h3>
               <p>
                 Waterproofing is often part of a larger project. The Budget
-                Calculator on mtboss.in helps you form an early idea of overall
+                Calculator on MTBoss.in helps you form an early idea of overall
                 construction cost, so you can set aside a sensible amount for
                 waterproofing, restoration and related work. For an exact
                 waterproofing figure, an inspection and measurement are still
@@ -481,7 +479,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -540,12 +538,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -563,10 +561,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -579,7 +577,7 @@ const Content = () => {
                 and we will arrange an inspection and send an itemised proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for waterproofing in Moradabad, with every cost
+                Choose MTBoss for waterproofing in Moradabad, with every cost
                 explained, every inclusion listed and the work tested before
                 handover.
               </p>
@@ -631,19 +629,19 @@ const Content = () => {
                 <li>
                   <strong>Q7. Can I estimate my budget first?</strong>
                   <br />
-                  Yes. Use the Budget Calculator on mtboss.in for an early idea,
+                  Yes. Use the Budget Calculator on MTBoss.in for an early idea,
                   then request an inspection.
                 </li>
                 <li>
                   <strong>Q8. How are payments structured?</strong>
                   <br />
-                  Payments are linked to completed stages [confirm MT Boss payment
+                  Payments are linked to completed stages [confirm MTBoss payment
                   stages].
                 </li>
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const QUICK_ACTIONS = [
-  { label: '🏗️ Construction Services', href: '/Services/all', prompt: 'Tell me about the construction services offered by MT Boss.' },
-  { label: '🤝 Agents', href: '/agent', prompt: 'How can I connect with MT Boss agents or become an agent?' },
+  { label: '🏗️ Construction Services', href: '/Services/all', prompt: 'Tell me about the construction services offered by MTBoss.' },
+  { label: '🤝 Agents', href: '/agent', prompt: 'How can I connect with MTBoss agents or become an agent?' },
   { label: '🧮 Cost Calculator', href: '/calculator', prompt: 'What are the current house construction rates and packages?' },
   { label: '📦 Buy Materials', href: '/ShopNow', prompt: 'What are the wholesale prices for Cement and TMT Steel?' },
   { label: '🏡 Plots & Properties', href: '/buy-sale', prompt: 'Show me verified plots and properties in Bareilly and UP' },
@@ -15,7 +15,7 @@ const QUICK_ACTIONS = [
 
 const INITIAL_MESSAGE = {
   role: 'assistant',
-  content: `Hello & Welcome to **MTBOSS Construction**! 🏗️
+  content: `Hello & Welcome to **MTBoss Construction**! 🏗️
 
 I am your official AI Project Advisor. You can ask me anything in **English** or **Hinglish** regarding construction, materials, properties, or franchise partnerships:
 
@@ -174,7 +174,7 @@ export default function ChatbotWidget({ isDarkMode, hideLauncher = false }) {
         {
           role: 'assistant',
           content:
-            'Network connectivity issue. Please connect directly at [+91 94584 10866](https://wa.me/919458410866) or email mtboss2016@gmail.com.',
+            'Network connectivity issue. Please connect directly at [+91 94584 10866](https://wa.me/919458410866) or email MTBoss2016@gmail.com.',
         },
       ]);
     } finally {
@@ -257,7 +257,7 @@ export default function ChatbotWidget({ isDarkMode, hideLauncher = false }) {
           <button
             onClick={() => setIsOpen(true)}
             className="relative flex items-center gap-2.5 px-4 py-3 bg-gradient-to-r from-sky-500 via-[var(--brand-blue)] to-blue-600 text-black font-black text-xs uppercase tracking-wider rounded-full shadow-[0_10px_30px_rgba(0,180,216,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 border-2 border-white/50 group"
-            aria-label="Open MTBOSS Assistant Chat"
+            aria-label="Open MTBoss Assistant Chat"
           >
             <span className="text-base group-hover:rotate-12 transition-transform">🤖</span>
             <span className="hidden sm:inline font-bold">Ask MTBoss AI</span>
@@ -288,7 +288,7 @@ export default function ChatbotWidget({ isDarkMode, hideLauncher = false }) {
                 <div>
                   <div className="flex items-center gap-1.5">
                     <h3 className="text-xs font-black uppercase tracking-tight text-white">
-                      MTBOSS AI Advisor
+                      MTBoss AI Advisor
                     </h3>
                     <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">
                       Live

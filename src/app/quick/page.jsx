@@ -2,26 +2,26 @@
 import QuickServicesClient from './QuickServicesClient';
 
 export const metadata = {
-  title: 'MTBOSS | Quick Home Services - Electrician, Plumber, AC Repair & More',
+  title: 'MTBoss | Quick Home Services - Electrician, Plumber, AC Repair & More',
   description:
     'Book trusted home service professionals instantly — electrician, plumber, AC repair, pest control, carpenter, and 15+ more services. Verified technicians at your doorstep.',
   keywords:
     'home services near me, electrician near me, plumber near me, AC repair near me, pest control near me, carpenter near me, home repair services, doorstep home services',
   alternates: {
-    canonical: 'https://www.mtboss.in/quick',
+    canonical: 'https://www.MTBoss.in/quick',
   },
   openGraph: {
-    title: 'MTBOSS | Quick Home Services - Book Trusted Professionals Instantly',
+    title: 'MTBoss | Quick Home Services - Book Trusted Professionals Instantly',
     description:
       'Electrician, plumber, AC repair, pest control & 15+ more home services — verified technicians at your doorstep.',
-    url: 'https://www.mtboss.in/quick',
-    siteName: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBoss.in/quick',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/icon.png',
+        url: 'https://www.MTBoss.in/icon.png',
         width: 1200,
         height: 630,
-        alt: 'Quick Home Services - MTBOSS',
+        alt: 'Quick Home Services - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -29,10 +29,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MTBOSS | Quick Home Services - Book Trusted Professionals Instantly',
+    title: 'MTBoss | Quick Home Services - Book Trusted Professionals Instantly',
     description:
       'Electrician, plumber, AC repair, pest control & 15+ more home services — verified technicians at your doorstep.',
-    images: ['https://www.mtboss.in/icon.png'],
+    images: ['https://www.MTBoss.in/icon.png'],
   },
   robots: {
     index: true,
@@ -46,7 +46,7 @@ const quickServicesSchema = {
   serviceType: 'Home & Building Services',
   provider: {
     '@type': 'GeneralContractor',
-    name: 'MTBOSS Construction Private Limited',
+    name: 'MTBoss Construction Private Limited',
   },
   hasOfferCatalog: {
     '@type': 'OfferCatalog',

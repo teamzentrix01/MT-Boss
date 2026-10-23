@@ -45,13 +45,13 @@ function FadeIn({ children, className = "", delay = 0 }) {
 // ── Hardcoded Admin ─────────────────────────────────────────────
 const ADMIN = {
   id: "admin",
-  name: "MTbossAdmin",
+  name: "MTBossAdmin",
   title: "Chairman & Managing Director",
   category: "Executive Leadership",
   profile_picture: null,
   experience: 20,
   description:
-    "Founder of MTBOSS, with a vision to redefine construction and real-estate excellence in India. Under their leadership the company has grown into a trusted platform connecting clients with top-tier professionals, projects, and services nationwide.",
+    "Founder of MTBoss, with a vision to redefine construction and real-estate excellence in India. Under their leadership the company has grown into a trusted platform connecting clients with top-tier professionals, projects, and services nationwide.",
   specializations: ["Strategic Planning", "Business Development", "EPC Management", "Client Relations"],
   city: "India",
   linkedin: null,
@@ -279,13 +279,13 @@ export default function TeamPage({ onBack }) {
       >
         <div className={`absolute inset-0 ${dark ? "bg-black/85" : "bg-[var(--brand-blue-ink)]/82"}`} />
         <div className="relative z-10 px-6">
-          <p className={`text-[9px] uppercase tracking-[0.5em] mb-2 font-black ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-pale)]"}`}>MTBOSS Construction</p>
+          <p className={`text-[9px] uppercase tracking-[0.5em] mb-2 font-black ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-pale)]"}`}>MTBoss Construction</p>
           <h1 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter mb-3 leading-none">
             Our <span className="text-[var(--brand-blue)]">Team</span>
           </h1>
           <div className={`w-8 h-0.5 mx-auto mb-3 ${dark ? "bg-[var(--brand-blue)]" : "bg-white"}`} />
           <p className={`text-xs max-w-md mx-auto leading-relaxed ${dark ? "text-zinc-400" : "text-[var(--brand-blue-pale)]"}`}>
-            The professionals who power every project, service, and relationship at MTBOSS.
+            The professionals who power every project, service, and relationship at MTBoss.
           </p>
         </div>
       </section>

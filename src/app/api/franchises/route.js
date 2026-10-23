@@ -330,7 +330,7 @@ export async function POST(req) {
       const payment = createPayURequest({
         txnid,
         amount: registrationFee,
-        productinfo: `MTBOSS ${model} registration`,
+        productinfo: `MTBoss ${model} registration`,
         firstname: cleanName.split(/\s+/)[0],
         email: cleanEmail,
         phone: cleanPhone,

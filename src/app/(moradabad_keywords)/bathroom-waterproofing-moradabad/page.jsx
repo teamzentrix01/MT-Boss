@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Bathroom Waterproofing in Moradabad | MT Boss',
+  title: 'Bathroom Waterproofing in Moradabad | MTBoss',
   description:
-    'Bathroom waterproofing in Moradabad by MT Boss. Floor, wall and pipe-opening treatment, leak tracing, testing and tile restoration with clear itemised quotes.',
+    'Bathroom waterproofing in Moradabad by MTBoss. Floor, wall and pipe-opening treatment, leak tracing, testing and tile restoration with clear itemised quotes.',
   keywords:
-    'bathroom waterproofing Moradabad, bathroom leakage repair Moradabad, toilet waterproofing Moradabad, bathroom waterproofing contractor Moradabad, bathroom seepage solution Moradabad, bathroom floor waterproofing Moradabad, bathroom wall waterproofing Moradabad, bathroom tile leakage repair Moradabad, waterproofing services Moradabad, MT Boss bathroom waterproofing Moradabad',
+    'bathroom waterproofing Moradabad, bathroom leakage repair Moradabad, toilet waterproofing Moradabad, bathroom waterproofing contractor Moradabad, bathroom seepage solution Moradabad, bathroom floor waterproofing Moradabad, bathroom wall waterproofing Moradabad, bathroom tile leakage repair Moradabad, waterproofing services Moradabad, MTBoss bathroom waterproofing Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/bathroom-waterproofing-moradabad',
+    canonical: 'https://www.MTBoss.in/bathroom-waterproofing-moradabad',
   },
   openGraph: {
-    title: 'Bathroom Waterproofing in Moradabad | MT Boss',
+    title: 'Bathroom Waterproofing in Moradabad | MTBoss',
     description:
-      'Bathroom waterproofing in Moradabad by MT Boss. Floor, wall and pipe-opening treatment, leak tracing, testing and tile restoration with clear itemised quotes.',
-    url: 'https://www.mtboss.in/bathroom-waterproofing-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Bathroom waterproofing in Moradabad by MTBoss. Floor, wall and pipe-opening treatment, leak tracing, testing and tile restoration with clear itemised quotes.',
+    url: 'https://www.MTBoss.in/bathroom-waterproofing-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-bathroom-waterproofing-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-bathroom-waterproofing-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Bathroom Waterproofing in Moradabad - MT Boss',
+        alt: 'Bathroom Waterproofing in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Bathroom Waterproofing in Moradabad | MT Boss',
+    title: 'Bathroom Waterproofing in Moradabad | MTBoss',
     description:
-      'Bathroom waterproofing in Moradabad by MT Boss. Floor, wall and pipe-opening treatment, leak tracing, testing and tile restoration with clear itemised quotes.',
-    images: ['https://www.mtboss.in/og-bathroom-waterproofing-moradabad.jpg'],
+      'Bathroom waterproofing in Moradabad by MTBoss. Floor, wall and pipe-opening treatment, leak tracing, testing and tile restoration with clear itemised quotes.',
+    images: ['https://www.MTBoss.in/og-bathroom-waterproofing-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/bathroom-waterproofing-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/bathroom-waterproofing-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

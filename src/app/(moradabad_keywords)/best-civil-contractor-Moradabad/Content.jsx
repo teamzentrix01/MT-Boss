@@ -14,7 +14,7 @@ const Content = () => {
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Finding the best civil contractor in Moradabad requires more than picking the first name that shows up in a search. It means comparing experience, transparency, service range, and after-project support before committing to what is usually a major financial and long-term decision. Moradabad&apos;s construction sector has grown fast alongside its expanding residential colonies, retail spaces, and industrial units, which means homeowners and businesses now have more choices — but also more risk of hiring an unverified or inexperienced contractor. This guide explains how to identify a genuinely capable civil contractor, what to expect during construction, and why MTBOSS Construction Private Limited is frequently named among the best in the region.
+                Finding the best civil contractor in Moradabad requires more than picking the first name that shows up in a search. It means comparing experience, transparency, service range, and after-project support before committing to what is usually a major financial and long-term decision. Moradabad&apos;s construction sector has grown fast alongside its expanding residential colonies, retail spaces, and industrial units, which means homeowners and businesses now have more choices — but also more risk of hiring an unverified or inexperienced contractor. This guide explains how to identify a genuinely capable civil contractor, what to expect during construction, and why MTBoss Construction Private Limited is frequently named among the best in the region.
               </p>
             </section>
 
@@ -133,10 +133,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBOSS Is Considered One of the Best Civil Contractors in Moradabad
+                Why MTBoss Is Considered One of the Best Civil Contractors in Moradabad
               </h3>
               <p className="mb-3">
-                Based on their published company profile, MTBOSS Construction Private Limited meets nearly every criterion on the &quot;best contractor&quot; checklist:
+                Based on their published company profile, MTBoss Construction Private Limited meets nearly every criterion on the &quot;best contractor&quot; checklist:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
@@ -258,9 +258,9 @@ const Content = () => {
                 If you want to work with one of the most established civil contractors in the region, reach out directly using the details below:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
+                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
+                <li><strong>Website:</strong> <a href="https://www.MTBoss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBoss.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBoss2016@gmail.com" className="text-blue-600 underline">MTBoss2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
@@ -278,10 +278,10 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who is the best civil contractor in Moradabad?</strong>
                   <br />
-                  MTBOSS Construction Private Limited, with 22+ years of experience and 450+ completed projects, is widely regarded as a top choice.
+                  MTBoss Construction Private Limited, with 22+ years of experience and 450+ completed projects, is widely regarded as a top choice.
                 </li>
                 <li>
-                  <strong>Q2. What makes MTBOSS one of the best civil contractors?</strong>
+                  <strong>Q2. What makes MTBoss one of the best civil contractors?</strong>
                   <br />
                   Their scale, free budget calculator, verified materials, multiple quality packages, and strong after-service support.
                 </li>
@@ -291,7 +291,7 @@ const Content = () => {
                   Around ₹700–₹800 per sq. ft. for standard-quality construction.
                 </li>
                 <li>
-                  <strong>Q4. Does MTBOSS provide a free cost estimate?</strong>
+                  <strong>Q4. Does MTBoss provide a free cost estimate?</strong>
                   <br />
                   Yes, their Construction Budget Calculator gives an instant, free BOQ-based estimate.
                 </li>
@@ -301,12 +301,12 @@ const Content = () => {
                   Basic, Standard, Premium, and Luxury — covering a wide range of budgets.
                 </li>
                 <li>
-                  <strong>Q6. Does MTBOSS also handle home repairs?</strong>
+                  <strong>Q6. Does MTBoss also handle home repairs?</strong>
                   <br />
                   Yes, including electrical, plumbing, AC repair, painting, and pest control.
                 </li>
                 <li>
-                  <strong>Q7. Can I buy building materials directly through MTBOSS?</strong>
+                  <strong>Q7. Can I buy building materials directly through MTBoss?</strong>
                   <br />
                   Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale prices.
                 </li>

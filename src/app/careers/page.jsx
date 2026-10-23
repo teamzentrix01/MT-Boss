@@ -94,7 +94,7 @@ export default function CareersPage() {
         <div className="absolute inset-0 bg-black/75" />
         <div className="relative z-10 max-w-3xl mx-auto">
           <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">
-            MTBOSS Construction
+            MTBoss Construction
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Build Your
@@ -287,7 +287,7 @@ export default function CareersPage() {
           <div className="text-center mb-12">
             <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Perks and Benefits</p>
             <h2 className={`text-3xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
-              Why Join MTBOSS?
+              Why Join MTBoss?
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -333,7 +333,7 @@ export default function CareersPage() {
             We are always looking for talented people. Drop your resume and we will reach out when the right opportunity comes up.
           </p>
           <a
-            href="mailto:mtboss2016@gmail.com"
+            href="mailto:MTBoss2016@gmail.com"
             className="inline-flex items-center gap-3 px-10 py-4 bg-[var(--brand-blue)] text-black font-black uppercase text-xs tracking-widest hover:bg-[var(--brand-blue-dark)] transition-all"
           >
             Send Your Resume

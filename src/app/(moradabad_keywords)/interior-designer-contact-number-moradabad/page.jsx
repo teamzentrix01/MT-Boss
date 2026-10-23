@@ -7,26 +7,26 @@ import Services from '../../components/Services';
 
 
 export const metadata = {
-  title: 'Interior Designer Contact Number Moradabad | MT Boss',
+  title: 'Interior Designer Contact Number Moradabad | MTBoss',
   description:
-    'Need an interior designer in Moradabad? Call MT Boss on +91 94584 10866 for home, shop and office interiors. Free site visit, 3D designs and clear pricing.',
+    'Need an interior designer in Moradabad? Call MTBoss on +91 94584 10866 for home, shop and office interiors. Free site visit, 3D designs and clear pricing.',
   keywords:
-    'interior designer contact number Moradabad, interior designer near me Moradabad, best interior designer Moradabad, home interior designer Moradabad, office interior designer Moradabad, shop interior designer Moradabad, modular kitchen designer Moradabad, interior design company Moradabad, MT Boss interior designer Moradabad, interior designer Moradabad contact number',
+    'interior designer contact number Moradabad, interior designer near me Moradabad, best interior designer Moradabad, home interior designer Moradabad, office interior designer Moradabad, shop interior designer Moradabad, modular kitchen designer Moradabad, interior design company Moradabad, MTBoss interior designer Moradabad, interior designer Moradabad contact number',
   alternates: {
-    canonical: 'https://www.mtboss.in/interior-designer-contact-number-moradabad',
+    canonical: 'https://www.MTBoss.in/interior-designer-contact-number-moradabad',
   },
   openGraph: {
-    title: 'Interior Designer Contact Number Moradabad | MT Boss',
+    title: 'Interior Designer Contact Number Moradabad | MTBoss',
     description:
-      'Need an interior designer in Moradabad? Call MT Boss on +91 94584 10866 for home, shop and office interiors. Free site visit, 3D designs and clear pricing.',
-    url: 'https://www.mtboss.in/interior-designer-contact-number-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Need an interior designer in Moradabad? Call MTBoss on +91 94584 10866 for home, shop and office interiors. Free site visit, 3D designs and clear pricing.',
+    url: 'https://www.MTBoss.in/interior-designer-contact-number-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-interior-designer-contact-number-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-interior-designer-contact-number-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Interior Designer Contact Number in Moradabad - MT Boss',
+        alt: 'Interior Designer Contact Number in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -34,10 +34,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Interior Designer Contact Number Moradabad | MT Boss',
+    title: 'Interior Designer Contact Number Moradabad | MTBoss',
     description:
-      'Need an interior designer in Moradabad? Call MT Boss on +91 94584 10866 for home, shop and office interiors. Free site visit, 3D designs and clear pricing.',
-    images: ['https://www.mtboss.in/og-interior-designer-contact-number-moradabad.jpg'],
+      'Need an interior designer in Moradabad? Call MTBoss on +91 94584 10866 for home, shop and office interiors. Free site visit, 3D designs and clear pricing.',
+    images: ['https://www.MTBoss.in/og-interior-designer-contact-number-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -49,10 +49,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/interior-designer-contact-number-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/interior-designer-contact-number-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

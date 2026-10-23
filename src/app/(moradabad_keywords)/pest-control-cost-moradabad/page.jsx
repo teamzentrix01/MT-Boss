@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Pest Control Cost in Moradabad',
   description:
-    'Understand pest control cost in Moradabad for flats, houses, shops and godowns. Learn what affects pricing and get an inspection-based quote from MTBOSS.',
+    'Understand pest control cost in Moradabad for flats, houses, shops and godowns. Learn what affects pricing and get an inspection-based quote from MTBoss.',
   keywords:
-    'pest control cost Moradabad, pest control price Moradabad, pest control charges Moradabad, pest control rates Moradabad, pest control cost per room Moradabad, cockroach control cost Moradabad, termite treatment cost Moradabad, bed bug treatment cost Moradabad, rodent control cost Moradabad, MTBOSS pest control cost Moradabad',
+    'pest control cost Moradabad, pest control price Moradabad, pest control charges Moradabad, pest control rates Moradabad, pest control cost per room Moradabad, cockroach control cost Moradabad, termite treatment cost Moradabad, bed bug treatment cost Moradabad, rodent control cost Moradabad, MTBoss pest control cost Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/pest-control-cost-moradabad',
+    canonical: 'https://www.MTBoss.in/pest-control-cost-moradabad',
   },
   openGraph: {
     title: 'Pest Control Cost in Moradabad',
     description:
-      'Understand pest control cost in Moradabad for flats, houses, shops and godowns. Learn what affects pricing and get an inspection-based quote from MTBOSS.',
-    url: 'https://www.mtboss.in/pest-control-cost-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Understand pest control cost in Moradabad for flats, houses, shops and godowns. Learn what affects pricing and get an inspection-based quote from MTBoss.',
+    url: 'https://www.MTBoss.in/pest-control-cost-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-pest-control-cost-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-pest-control-cost-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Pest Control Cost in Moradabad - MTBOSS',
+        alt: 'Pest Control Cost in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Pest Control Cost in Moradabad',
     description:
-      'Understand pest control cost in Moradabad for flats, houses, shops and godowns. Learn what affects pricing and get an inspection-based quote from MTBOSS.',
-    images: ['https://www.mtboss.in/og-pest-control-cost-moradabad.jpg'],
+      'Understand pest control cost in Moradabad for flats, houses, shops and godowns. Learn what affects pricing and get an inspection-based quote from MTBoss.',
+    images: ['https://www.MTBoss.in/og-pest-control-cost-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/pest-control-cost-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/pest-control-cost-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

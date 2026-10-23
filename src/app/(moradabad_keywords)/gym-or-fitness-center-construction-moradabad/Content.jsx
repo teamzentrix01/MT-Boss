@@ -29,7 +29,7 @@ const Content = () => {
 
               <p className="mt-3">
                 This page explains how gym and fitness center construction in
-                Moradabad works and how MTBOSS approaches it. MTBOSS
+                Moradabad works and how MTBoss approaches it. MTBoss
                 Construction Private Limited is a Moradabad-based architect,
                 interior designer and construction company that builds
                 residential projects from affordable housing to luxury villas,
@@ -126,13 +126,13 @@ const Content = () => {
 
               <p className="mt-3">
                 Your plot, member profile and budget matter more than the label.
-                MTBOSS helps you plan a building that suits your needs.
+                MTBoss helps you plan a building that suits your needs.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -147,17 +147,17 @@ const Content = () => {
                 </li>
                 <li>
                   Residential projects form a dedicated service category on the
-                  MTBOSS website, from affordable housing to luxury villas.
+                  MTBoss website, from affordable housing to luxury villas.
                 </li>
                 <li>
-                  Project gallery and blog available on the MTBOSS website.
+                  Project gallery and blog available on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Gym and Fitness Center Construction Services Offered by MTBOSS
+                Gym and Fitness Center Construction Services Offered by MTBoss
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -228,7 +228,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBOSS wholesale supply.
+                  bricks, tiles and paints through MTBoss wholesale supply.
                 </li>
                 <li>
                   <strong>Renovation and conversion:</strong> Converting a shop,
@@ -239,9 +239,9 @@ const Content = () => {
 
               <p className="mt-3">
                 Final scope for each project is discussed and confirmed with the
-                MTBOSS team before work begins. Gym equipment, specialist
+                MTBoss team before work begins. Gym equipment, specialist
                 flooring, and steam or sauna units are typically supplied and
-                installed by specialist vendors, and MTBOSS coordinates the
+                installed by specialist vendors, and MTBoss coordinates the
                 civil and services work around them.
               </p>
             </section>
@@ -430,13 +430,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Approaches a Gym Construction Project
+                How MTBoss Approaches a Gym Construction Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Step 1 — Enquiry and discussion:</strong> Contact
-                  MTBOSS with plot, plan and budget through website, phone or
+                  MTBoss with plot, plan and budget through website, phone or
                   WhatsApp.
                 </li>
                 <li>
@@ -571,7 +571,7 @@ const Content = () => {
                 apply. If you plan to convert an existing building, confirm that
                 the permitted use allows a gym. Requirements vary by location
                 and current regulations, so confirm the latest rules with the
-                relevant authorities and your consultants. MTBOSS builds
+                relevant authorities and your consultants. MTBoss builds
                 according to approved drawings and specifications, while owners
                 and their consultants handle approvals specific to the property
                 and the business.
@@ -632,7 +632,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBOSS Budget Calculator, then request a
+                Start with the free MTBoss Budget Calculator, then request a
                 detailed quote after site visit and design discussion.
               </p>
             </section>
@@ -693,7 +693,7 @@ const Content = () => {
 
               <p>
                 Gym owners often want to open at a specific time, such as the
-                start of the new year or a local fitness season. MTBOSS supports
+                start of the new year or a local fitness season. MTBoss supports
                 a smooth project through stage-wise planning with clear
                 milestones, regular site visits by engineers and single-team
                 coordination of design, materials and construction.
@@ -754,7 +754,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Services for Property Owners
+                MTBoss Services for Property Owners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -778,7 +778,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBOSS for Gym Construction
+                Why Choose MTBoss for Gym Construction
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -808,44 +808,44 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and
-                  blog on the MTBOSS website.
+                  blog on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBOSS: Gym and Fitness Center Construction
+                Contact MTBoss: Gym and Fitness Center Construction
               </h3>
 
               <p className="mb-3">
-                If you are planning a gym or fitness center in Moradabad, MTBOSS
+                If you are planning a gym or fitness center in Moradabad, MTBoss
                 offers a single point of contact for design coordination,
                 materials, construction and handover.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBOSS Construction Private Limited
+                  <strong>Company:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in
+                    https://www.MTBoss.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -892,10 +892,10 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBOSS build gyms and fitness centers in Moradabad?
+                    Q2. Does MTBoss build gyms and fitness centers in Moradabad?
                   </strong>
                   <br />
-                  MTBOSS builds residential projects, from affordable housing to
+                  MTBoss builds residential projects, from affordable housing to
                   luxury villas, in Moradabad and Bareilly, and offers
                   construction services for other buildings. Share your plan
                   with the team to confirm the scope for your gym.
@@ -928,7 +928,7 @@ const Content = () => {
                   <br />
                   Equipment, specialist gym flooring and steam or sauna units
                   are usually supplied and installed by specialist vendors.
-                  MTBOSS plans and builds the civil and services work, and
+                  MTBoss plans and builds the civil and services work, and
                   coordinates with your vendors so provisions fit together.
                 </li>
 
@@ -940,12 +940,12 @@ const Content = () => {
                   Cost depends on built-up area, floor level, structural needs,
                   air conditioning, flooring system, changing rooms and wellness
                   areas, material and finish level, and site conditions. Use the
-                  free Budget Calculator on the MTBOSS website, or request a
+                  free Budget Calculator on the MTBoss website, or request a
                   detailed quote.
                 </li>
 
                 <li>
-                  <strong>Q7. Where is the MTBOSS office located?</strong>
+                  <strong>Q7. Where is the MTBoss office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

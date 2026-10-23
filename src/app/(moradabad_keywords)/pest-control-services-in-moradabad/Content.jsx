@@ -8,14 +8,12 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Pest Control Services in Moradabad: MT Boss
+            Pest Control Services in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Pests Damage More Than Your Peace of Mind
-              </h3>
+              
               <p>
                 A few cockroaches in the kitchen, ants on the counter or a
                 mosquito problem in the evening may seem like small irritations.
@@ -29,10 +27,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBoss Construction Private Limited
               </h3>
               <p>
-                MT Boss is a one-stop destination for construction, home services,
+                MTBoss is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -56,13 +54,7 @@ const Content = () => {
                 bathrooms and in food stores. They hide by day and come out at
                 night. A visible cockroach usually means many more are hidden.
               </p>
-              <p className="mt-2">
-                Common treatment includes gel baits placed in cracks and crevices,
-                targeted sprays and attention to drains and hiding spots [confirm
-                methods used]. Gel treatment places small amounts of bait where
-                roaches feed, which limits spraying around food areas.
-                Cleanliness, sealed food and dry sinks support the treatment.
-              </p>
+             
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Termites
@@ -110,17 +102,7 @@ const Content = () => {
                 infestations return.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Mosquitoes
-              </h4>
-              <p>
-                Mosquitoes breed in standing water, such as coolers, tanks, tyres,
-                flower pots and blocked drains. Treatment combines removing
-                breeding spots, treating water sources where suitable and spraying
-                or fogging resting areas [confirm methods used]. Outdoor fogging
-                gives short-term relief, so source reduction matters more.
-              </p>
-
+              
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Rodents
               </h4>
@@ -173,7 +155,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Different problems call for different delivery methods [confirm
-                the methods MT Boss actually offers].
+                the methods MTBoss actually offers].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -338,7 +320,7 @@ const Content = () => {
                 than to retrofit later.
               </p>
               <p className="mt-3">
-                Because MT Boss is also a construction company, owners planning a
+                Because MTBoss is also a construction company, owners planning a
                 new house or extension can discuss termite protection together
                 with the building plan [confirm if offered as part of construction
                 or as a separate service]. For existing buildings, inspection and
@@ -442,7 +424,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  mtboss.in, or call or WhatsApp us with a description of the pest
+                  MTBoss.in, or call or WhatsApp us with a description of the pest
                   problem, your location and property type.
                 </li>
                 <li>
@@ -489,16 +471,16 @@ const Content = () => {
               <p>
                 Pests often connect to building condition. Damp walls attract
                 insects, cracks let rodents in and wooden fittings invite
-                termites. MT Boss can help with Waterproofing, Building Repair,
+                termites. MTBoss can help with Waterproofing, Building Repair,
                 Plumber, Carpenter, Painter and Door &amp; Window Install from the
-                same mtboss.in services list, so entry points and damp areas can
+                same MTBoss.in services list, so entry points and damp areas can
                 be fixed alongside the treatment.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -535,7 +517,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book Pest Control with MT Boss
+                Book Pest Control with MTBoss
               </h3>
               <p className="mb-3">
                 Ready to get rid of pests and keep them away? Contact us:
@@ -544,12 +526,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -567,10 +549,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -583,7 +565,7 @@ const Content = () => {
                 and we will arrange an inspection and send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for pest control services in Moradabad, with the
+                Choose MTBoss for pest control services in Moradabad, with the
                 pest identified, the right treatment chosen and your home or
                 business protected afterward.
               </p>
@@ -599,7 +581,7 @@ const Content = () => {
                     Q1. Who provides pest control services in Moradabad?
                   </strong>
                   <br />
-                  MT Boss Construction offers pest control for homes, shops,
+                  MTBoss Construction offers pest control for homes, shops,
                   offices and godowns across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -649,7 +631,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a service?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

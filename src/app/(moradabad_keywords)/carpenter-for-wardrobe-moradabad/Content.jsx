@@ -8,14 +8,12 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Carpenter for Wardrobe in Moradabad: MT Boss
+            Carpenter for Wardrobe in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The Short Answer
-              </h3>
+              
               <p>
                 A carpenter for wardrobe work in Moradabad measures your bedroom,
                 designs the cupboard around what you store, builds it from
@@ -36,7 +34,7 @@ const Content = () => {
                 sagging, stays square for years and makes daily dressing easy.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBoss Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -90,7 +88,7 @@ const Content = () => {
               </p>
               <p>
                 A common practical choice is hinged doors in larger rooms and
-                sliding doors in compact ones [confirm the track systems MT Boss
+                sliding doors in compact ones [confirm the track systems MTBoss
                 uses].
               </p>
             </section>
@@ -122,7 +120,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 These are common starting ranges, which your carpenter should
-                adjust to your room and your habits [confirm MT Boss&apos;s
+                adjust to your room and your habits [confirm MTBoss&apos;s
                 standard dimensions].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -197,7 +195,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Hardware does the daily work, and weak parts fail first [confirm
-                brands and load ratings MT Boss uses].
+                brands and load ratings MTBoss uses].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -325,7 +323,7 @@ const Content = () => {
               <p className="mt-3">
                 Plan wiring before the wardrobe is fixed, since lights and sockets
                 are far harder to add afterward [Electrician service available
-                through MT Boss].
+                through MTBoss].
               </p>
             </section>
 
@@ -411,7 +409,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> call, WhatsApp or click Get a
-                  Construction Quote on mtboss.in, and share your room photos and
+                  Construction Quote on MTBoss.in, and share your room photos and
                   needs
                 </li>
                 <li>
@@ -526,21 +524,21 @@ const Content = () => {
                 Related Services From the Same Team
               </h3>
               <p>
-                A wardrobe often comes with other bedroom work. MT Boss also
+                A wardrobe often comes with other bedroom work. MTBoss also
                 offers Painter, Electrician, False Ceiling, Wallpaper Install,
                 Door &amp; Window Install, Plumber, Tile &amp; Marble and Modular
-                Kitchen services through mtboss.in, so painting, wiring and
+                Kitchen services through MTBoss.in, so painting, wiring and
                 ceiling work can be coordinated with the wardrobe.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
+                MTBoss Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
+                  <strong>Business:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Wardrobe carpentry, alongside
@@ -564,21 +562,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                 </li>
                 <li>
@@ -598,7 +596,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -635,7 +633,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Wardrobe With MT Boss
+                Plan Your Wardrobe With MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -652,21 +650,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -681,7 +679,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for a carpenter for wardrobe work in Moradabad,
+                Choose MTBoss for a carpenter for wardrobe work in Moradabad,
                 with the wall measured, the interior planned around your clothes
                 and the cupboard built to last.
               </p>
@@ -695,7 +693,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who builds wardrobes in Moradabad?</strong>
                   <br />
-                  MT Boss Construction builds hinged, sliding and loft wardrobes
+                  MTBoss Construction builds hinged, sliding and loft wardrobes
                   across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -743,7 +741,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a visit?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

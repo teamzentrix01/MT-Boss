@@ -8,28 +8,26 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Modular Kitchen Near Me in Moradabad: MT Boss
+            Modular Kitchen Near Me Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The Short Answer
-              </h3>
+            
               <p>
                 A modular kitchen company near you in Moradabad can visit your home
                 quickly, measure it accurately, install the units locally and return
-                when adjustments are needed. MT Boss Construction Private Limited is
+                when adjustments are needed. MTBoss Construction Private Limited is
                 based on Harthala, Kanth Road, and offers modular kitchen design and
                 installation across Moradabad and Bareilly, with plumbing,
                 electrical, tiling and waterproofing available from the same team
-                [confirm scope].
+            
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Meaning of a Nearby Modular Kitchen Company
+                Near Modular Kitchen Company
               </h3>
               <p className="mb-3">
                 A nearby modular kitchen company is a business with a real local
@@ -41,7 +39,7 @@ const Content = () => {
                 has a reputation among your neighbours.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBoss Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -93,7 +91,7 @@ const Content = () => {
                 Local Office, Site Visit and Sample Viewing
               </h3>
               <p className="mb-3">
-                You can meet MT Boss at the office, or ask us to come to your home.
+                You can meet MTBoss at the office, or ask us to come to your home.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -161,7 +159,7 @@ const Content = () => {
                 <li>Photograph the room for reference</li>
                 <li>
                   Discuss your brief: cooking style, appliances, storage and budget
-                  [confirm whether MT Boss uses a written brief form]
+                  [confirm whether MTBoss uses a written brief form]
                 </li>
                 <li>
                   Agree the next step: layout options, quotation timing and civil
@@ -244,7 +242,7 @@ const Content = () => {
                 <li>
                   <strong>Pests.</strong> Damp, wooden units attract cockroaches and
                   termites, so sealing gaps and moisture control protect the
-                  kitchen. MT Boss&apos;s Pest Control service can be arranged if
+                  kitchen. MTBoss&apos;s Pest Control service can be arranged if
                   needed [confirm].
                 </li>
               </ul>
@@ -256,7 +254,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Every new kitchen benefits from a short settling period. Typical
-                post-installation needs include [confirm what MT Boss offers and how
+                post-installation needs include [confirm what MTBoss offers and how
                 quickly]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -301,7 +299,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss welcomes these checks. [Add your Google rating and review
+                MTBoss welcomes these checks. [Add your Google rating and review
                 count only if real, current and visible on your Google Business
                 Profile.]
               </p>
@@ -346,7 +344,7 @@ const Content = () => {
                 <li>Ask who will measure, design and install</li>
                 <li>
                   Ask how long measurement, design, production and installation
-                  usually take [compare with MT Boss&apos;s real timelines]
+                  usually take [compare with MTBoss&apos;s real timelines]
                 </li>
                 <li>
                   Ask for a sample quotation, with units, materials, services and
@@ -400,9 +398,9 @@ const Content = () => {
               <p>
                 A kitchen rarely starts with cabinets. The room needs plumbing,
                 electrical points, waterproofing near the sink, level floors,
-                plaster and tiling first. MT Boss&apos;s Plumber, Electrician, Tile
+                plaster and tiling first. MTBoss&apos;s Plumber, Electrician, Tile
                 &amp; Marble, Water Proofing, False Ceiling and Painter services can
-                prepare the room through the same mtboss.in services list, so one
+                prepare the room through the same MTBoss.in services list, so one
                 local team can coordinate the work and be accountable for the
                 result.
               </p>
@@ -418,73 +416,16 @@ const Content = () => {
                 measurement give a clearer figure than a phone guess [confirm
                 whether pricing is per running foot, per square foot or per
                 project]. A written, itemised quotation lets you compare options
-                fairly. You can use the Budget Calculator on mtboss.in for an early
+                fairly. You can use the Budget Calculator on MTBoss.in for an early
                 idea of overall construction or renovation cost.
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
-              </h3>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
-                </li>
-                <li>
-                  <strong>Service:</strong> Modular kitchen design and
-                  installation, alongside construction, interiors and home
-                  services
-                </li>
-                <li>
-                  <strong>Office:</strong> Harthala, Kanth Road, Moradabad (behind
-                  KR Collection, near Domino&apos;s), Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Phone / WhatsApp:</strong>{" "}
-                  <a
-                    href="https://wa.me/9458410866"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    +91 94584 10866
-                  </a>
-                </li>
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <strong>Website:</strong>{" "}
-                  <a
-                    href="https://www.mtboss.in/"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    www.mtboss.in
-                  </a>
-                </li>
-                <li>
-                  <strong>Coverage:</strong> Moradabad, Bareilly and nearby areas
-                  of western Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Credentials:</strong> [add registration, GST and any
-                  brand or manufacturing partnerships you can show]
-                </li>
-              </ul>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -533,7 +474,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book a Local Site Visit With MT Boss
+                Book a Local Site Visit With MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -550,21 +491,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -578,7 +519,7 @@ const Content = () => {
                 range, and we will arrange a visit and send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for a modular kitchen near you in Moradabad, with a
+                Choose MTBoss for a modular kitchen near you in Moradabad, with a
                 local team, an accurate measurement and service you can reach after
                 installation.
               </p>
@@ -594,11 +535,11 @@ const Content = () => {
                     Q1. Is there a modular kitchen company near me in Moradabad?
                   </strong>
                   <br />
-                  Yes. MT Boss is based on Harthala, Kanth Road, and serves
+                  Yes. MTBoss is based on Harthala, Kanth Road, and serves
                   Moradabad and Bareilly.
                 </li>
                 <li>
-                  <strong>Q2. What is the contact number for MT Boss?</strong>
+                  <strong>Q2. What is the contact number for MTBoss?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -612,7 +553,7 @@ const Content = () => {
                   .
                 </li>
                 <li>
-                  <strong>Q3. Where is the MT Boss office?</strong>
+                  <strong>Q3. Where is the MTBoss office?</strong>
                   <br />
                   Harthala, Kanth Road, Moradabad, behind KR Collection and near
                   Domino&apos;s.
@@ -651,7 +592,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

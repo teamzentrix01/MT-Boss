@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Turnkey Home Construction in Moradabad | MTBOSS",
+  title: "Turnkey Home Construction in Moradabad | MTBoss",
 
   description:
-    "Need turnkey home construction in Moradabad? MTBOSS handles design, build, materials and handover in one place.",
+    "Need turnkey home construction in Moradabad? MTBoss handles design, build, materials and handover in one place.",
 
   keywords:
-    "turnkey home construction Moradabad, turnkey construction company Moradabad, turnkey house construction Moradabad, turnkey home builders Moradabad, complete home construction Moradabad, house construction company Moradabad, residential construction Moradabad, turnkey villa construction Moradabad, duplex house construction Moradabad, house construction cost Moradabad, MTBOSS Moradabad, MTBOSS budget calculator, MTBOSS Kanth Road, house construction quote Moradabad, independent house construction Moradabad, Vastu house construction Moradabad",
+    "turnkey home construction Moradabad, turnkey construction company Moradabad, turnkey house construction Moradabad, turnkey home builders Moradabad, complete home construction Moradabad, house construction company Moradabad, residential construction Moradabad, turnkey villa construction Moradabad, duplex house construction Moradabad, house construction cost Moradabad, MTBoss Moradabad, MTBoss budget calculator, MTBoss Kanth Road, house construction quote Moradabad, independent house construction Moradabad, Vastu house construction Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/turnkey-home-construction-in-moradabad",
+      "https://www.MTBoss.in/turnkey-home-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Turnkey Home Construction in Moradabad | MTBOSS",
+    title: "Turnkey Home Construction in Moradabad | MTBoss",
 
     description:
-      "Need turnkey home construction in Moradabad? MTBOSS handles design, build, materials and handover in one place.",
+      "Need turnkey home construction in Moradabad? MTBoss handles design, build, materials and handover in one place.",
 
-    url: "https://www.mtboss.in/turnkey-home-construction-in-moradabad",
+    url: "https://www.MTBoss.in/turnkey-home-construction-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-turnkey-home-construction-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-turnkey-home-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Turnkey Home Construction in Moradabad - MTBOSS Construction",
+        alt: "Turnkey Home Construction in Moradabad - MTBoss Construction",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Turnkey Home Construction in Moradabad | MTBOSS",
+    title: "Turnkey Home Construction in Moradabad | MTBoss",
 
     description:
-      "Need turnkey home construction in Moradabad? MTBOSS handles design, build, materials and handover in one place.",
+      "Need turnkey home construction in Moradabad? MTBoss handles design, build, materials and handover in one place.",
 
     images: [
-      "https://www.mtboss.in/og-turnkey-home-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-turnkey-home-construction-moradabad.jpg",
     ],
   },
 
@@ -67,16 +67,16 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
 
-    name: "MTBOSS Construction Private Limited",
+    name: "MTBoss Construction Private Limited",
 
-    url: "https://www.mtboss.in/turnkey-home-construction-in-moradabad",
+    url: "https://www.MTBoss.in/turnkey-home-construction-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
 
     image:
-      "https://www.mtboss.in/og-turnkey-home-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-turnkey-home-construction-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -132,16 +132,16 @@ export default function Page() {
     name: "Turnkey Home Construction Services in Moradabad",
 
     description:
-      "MTBOSS provides turnkey home construction in Moradabad, including floor planning, elevation design, civil construction, electrical work, plumbing, waterproofing, flooring, finishing, interiors, modular kitchens, material supply and final handover.",
+      "MTBoss provides turnkey home construction in Moradabad, including floor planning, elevation design, civil construction, electrical work, plumbing, waterproofing, flooring, finishing, interiors, modular kitchens, material supply and final handover.",
 
-    url: "https://www.mtboss.in/turnkey-home-construction-in-moradabad",
+    url: "https://www.MTBoss.in/turnkey-home-construction-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
 
     areaServed: [
@@ -174,10 +174,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS offer turnkey home construction in Moradabad?",
+        name: "Does MTBoss offer turnkey home construction in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS offers turnkey home construction that combines design coordination, civil construction, building material supply, electrical work, plumbing, finishing and handover under one company in Moradabad and Bareilly.",
+          text: "Yes. MTBoss offers turnkey home construction that combines design coordination, civil construction, building material supply, electrical work, plumbing, finishing and handover under one company in Moradabad and Bareilly.",
         },
       },
       {
@@ -193,7 +193,7 @@ export default function Page() {
         name: "How much does turnkey home construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Turnkey home construction cost depends on the built-up area, number of floors, material quality, structural requirements, design complexity, finishing level and interior scope. MTBOSS offers a free Budget Calculator and project-specific construction quote.",
+          text: "Turnkey home construction cost depends on the built-up area, number of floors, material quality, structural requirements, design complexity, finishing level and interior scope. MTBoss offers a free Budget Calculator and project-specific construction quote.",
         },
       },
       {
@@ -201,7 +201,7 @@ export default function Page() {
         name: "Can I get a free quote for my turnkey home construction project?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. You can request a free construction quote through the MTBOSS website or contact the team directly through phone or WhatsApp.",
+          text: "Yes. You can request a free construction quote through the MTBoss website or contact the team directly through phone or WhatsApp.",
         },
       },
       {
@@ -209,23 +209,23 @@ export default function Page() {
         name: "Can I customise the design of my turnkey home?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS prepares floor plans and elevation designs based on the family's requirements, plot size, number of floors, preferred architectural style and Vastu requirements where requested.",
+          text: "Yes. MTBoss prepares floor plans and elevation designs based on the family's requirements, plot size, number of floors, preferred architectural style and Vastu requirements where requested.",
         },
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS provide materials for turnkey house construction?",
+        name: "Does MTBoss provide materials for turnkey house construction?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its building material supply network, helping coordinate material delivery during construction.",
+          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its building material supply network, helping coordinate material delivery during construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -240,19 +240,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Turnkey Home Construction in Moradabad",
-        item: "https://www.mtboss.in/turnkey-home-construction-in-moradabad",
+        item: "https://www.MTBoss.in/turnkey-home-construction-in-moradabad",
       },
     ],
   };

@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Home Construction Company in Moradabad | MTBOSS",
+  title: "Home Construction Company in Moradabad | MTBoss",
 
   description:
-    "Looking for a home construction company in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866 for a free quote.",
+    "Looking for a home construction company in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866 for a free quote.",
 
   keywords:
-    "home construction company Moradabad, house construction Moradabad, residential construction company Moradabad, house builder Moradabad, home construction contractor Moradabad, duplex house construction Moradabad, MTBOSS Moradabad, house construction cost Moradabad, MTBOSS budget calculator, home construction materials Moradabad, MTBOSS Kanth Road, independent house construction Moradabad, house construction quote Moradabad, MTBOSS residential projects, Vastu house construction Moradabad",
+    "home construction company Moradabad, house construction Moradabad, residential construction company Moradabad, house builder Moradabad, home construction contractor Moradabad, duplex house construction Moradabad, MTBoss Moradabad, house construction cost Moradabad, MTBoss budget calculator, home construction materials Moradabad, MTBoss Kanth Road, independent house construction Moradabad, house construction quote Moradabad, MTBoss residential projects, Vastu house construction Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/home-construction-company-in-moradabad",
+      "https://www.MTBoss.in/home-construction-company-in-moradabad",
   },
 
   openGraph: {
-    title: "Home Construction Company in Moradabad | MTBOSS",
+    title: "Home Construction Company in Moradabad | MTBoss",
 
     description:
-      "Looking for a home construction company in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866 for a free quote.",
+      "Looking for a home construction company in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866 for a free quote.",
 
-    url: "https://www.mtboss.in/home-construction-company-in-moradabad",
+    url: "https://www.MTBoss.in/home-construction-company-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-home-construction-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-home-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Home Construction Company in Moradabad - MTBOSS Construction",
+        alt: "Home Construction Company in Moradabad - MTBoss Construction",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Home Construction Company in Moradabad | MTBOSS",
+    title: "Home Construction Company in Moradabad | MTBoss",
 
     description:
-      "Looking for a home construction company in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866 for a free quote.",
+      "Looking for a home construction company in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866 for a free quote.",
 
     images: [
-      "https://www.mtboss.in/og-home-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-home-construction-moradabad.jpg",
     ],
   },
 
@@ -67,15 +67,15 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
 
-    name: "MTBOSS Construction Private Limited",
+    name: "MTBoss Construction Private Limited",
 
-    url: "https://www.mtboss.in/home-construction-company-in-moradabad",
+    url: "https://www.MTBoss.in/home-construction-company-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
 
-    image: "https://www.mtboss.in/og-home-construction-moradabad.jpg",
+    image: "https://www.MTBoss.in/og-home-construction-moradabad.jpg",
 
     address: {
       "@type": "PostalAddress",
@@ -125,16 +125,16 @@ export default function Page() {
     name: "Home Construction Services in Moradabad",
 
     description:
-      "MTBOSS provides home design coordination, civil construction, independent house construction, duplex construction, wholesale building materials and cost estimation services in Moradabad.",
+      "MTBoss provides home design coordination, civil construction, independent house construction, duplex construction, wholesale building materials and cost estimation services in Moradabad.",
 
-    url: "https://www.mtboss.in/home-construction-company-in-moradabad",
+    url: "https://www.MTBoss.in/home-construction-company-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
 
     areaServed: {
@@ -153,18 +153,18 @@ export default function Page() {
     mainEntity: [
       {
         "@type": "Question",
-        name: "Does MTBOSS build homes in Moradabad?",
+        name: "Does MTBoss build homes in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Home construction is a specifically listed MTBOSS service category, combining design coordination with full civil construction.",
+          text: "Yes. Home construction is a specifically listed MTBoss service category, combining design coordination with full civil construction.",
         },
       },
       {
         "@type": "Question",
-        name: "What other residential projects does MTBOSS handle?",
+        name: "What other residential projects does MTBoss handle?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS handles independent houses, duplex homes and multi-storey family residences, alongside commercial and institutional construction.",
+          text: "MTBoss handles independent houses, duplex homes and multi-storey family residences, alongside commercial and institutional construction.",
         },
       },
       {
@@ -172,31 +172,31 @@ export default function Page() {
         name: "Can I get a free quote for my home construction project?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. You can request a quote through the Get a Construction Quote option on the MTBOSS website, or by calling or messaging the team on WhatsApp.",
+          text: "Yes. You can request a quote through the Get a Construction Quote option on the MTBoss website, or by calling or messaging the team on WhatsApp.",
         },
       },
       {
         "@type": "Question",
-        name: "How can I estimate my home construction budget before contacting MTBOSS?",
+        name: "How can I estimate my home construction budget before contacting MTBoss?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "You can use the free online MTBOSS Budget Calculator to get an initial estimate before contacting the team for a detailed consultation.",
+          text: "You can use the free online MTBoss Budget Calculator to get an initial estimate before contacting the team for a detailed consultation.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
       {
         "@type": "Question",
-        name: "Can I see examples of MTBOSS completed home construction projects?",
+        name: "Can I see examples of MTBoss completed home construction projects?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. The MTBOSS website includes a project gallery and blog section where prospective clients can review completed work.",
+          text: "Yes. The MTBoss website includes a project gallery and blog section where prospective clients can review completed work.",
         },
       },
     ],
@@ -211,19 +211,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Home Construction Company in Moradabad",
-        item: "https://www.mtboss.in/home-construction-company-in-moradabad",
+        item: "https://www.MTBoss.in/home-construction-company-in-moradabad",
       },
     ],
   };

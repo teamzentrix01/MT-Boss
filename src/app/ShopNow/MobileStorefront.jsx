@@ -112,11 +112,11 @@ function getLowestBulkPrice(product) {
 function MobileTopNavBar({ user, isDark, onToggleTheme, onOpenNavDrawer }) {
   return (
     <div className="mobile-top-nav-bar">
-      {/* Logo (MTboss icon + text) — left side */}
+      {/* Logo (MTBoss icon + text) — left side */}
       <Link href="/" className="mobile-top-logo" aria-label="MTBoss Home">
         <Image
           src="/logo.png"
-          alt="MTboss"
+          alt="MTBoss"
           width={100}
           height={30}
           priority
@@ -1836,7 +1836,7 @@ export default function MobileStorefront({
               >
                 <Image
                   src="/logo.png"
-                  alt="MTboss"
+                  alt="MTBoss"
                   width={100}
                   height={30}
                   className="h-7 w-auto object-contain"

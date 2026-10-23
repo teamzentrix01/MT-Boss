@@ -13,7 +13,7 @@ import {
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
   process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-  'mtboss2016@gmail.com';
+  'MTBoss2016@gmail.com';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
@@ -296,7 +296,7 @@ export async function POST(req) {
         applicationId: result.rows[0].id,
         status: 'New',
         title: 'Application submitted',
-        note: 'Your application has been received by the MTBOSS HR team.',
+        note: 'Your application has been received by the MTBoss HR team.',
         actorRole: 'user',
         actorId: user.id,
         actorName: cleanName,

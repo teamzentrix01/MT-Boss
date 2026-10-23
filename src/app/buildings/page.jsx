@@ -202,7 +202,7 @@ export default function BuildingsPage() {
     if (!phoneRegex.test(enquiryForm.phone)) { alert('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
     setEnquiryLoading(true);
     try {
-      const res = await fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
+      const res = await fetch("https://formsubmit.co/ajax/MTBoss2016@gmail.com", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
@@ -253,13 +253,13 @@ export default function BuildingsPage() {
         <div className="absolute inset-0 bg-black/80" />
         <div ref={heroRef} className="relative z-10 max-w-3xl mx-auto"
           style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "translateY(0)" : "translateY(30px)", transition: "opacity 0.7s ease, transform 0.7s ease" }}>
-          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">MTBOSS Construction</span>
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">MTBoss Construction</span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Government &
             <span className="block text-[var(--brand-blue)]">Private Buildings</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-            Government tenders, private corporate towers, institutional buildings and large infrastructure projects — buy, lease or bid with MTBOSS.
+            Government tenders, private corporate towers, institutional buildings and large infrastructure projects — buy, lease or bid with MTBoss.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-8">
             {[
@@ -422,7 +422,7 @@ export default function BuildingsPage() {
                 We Help You Win Government Tenders
               </h3>
               <p className={`text-xs leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-500"}`}>
-                From bid preparation to project execution — MTBOSS provides end-to-end support for government construction tenders across India.
+                From bid preparation to project execution — MTBoss provides end-to-end support for government construction tenders across India.
               </p>
               <div className="flex flex-wrap gap-2 mt-4">
                 {["Bid Preparation", "Technical Evaluation", "Cost Estimation", "Project Execution"].map((item) => (
@@ -448,7 +448,7 @@ export default function BuildingsPage() {
 
       </div>
 
-      {/* WHY MTBOSS */}
+      {/* WHY MTBoss */}
       <section className={`py-20 px-6 transition-colors duration-500 ${dark ? "bg-zinc-900" : "bg-white"}`}>
         <div
           ref={statsRef}
@@ -458,7 +458,7 @@ export default function BuildingsPage() {
           <div className="text-center mb-14">
             <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Our Track Record</span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
-              Why Choose MTBOSS
+              Why Choose MTBoss
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">

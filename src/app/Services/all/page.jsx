@@ -2,26 +2,26 @@
 import ServicesClient from './ServicesClient';
 
 export const metadata = {
-  title: 'MTBOSS | Construction Services - Commercial, Residential & Hotel Projects',
+  title: 'MTBoss | Construction Services - Commercial, Residential & Hotel Projects',
   description:
-    'Explore MTBOSS construction services — commercial buildings, hotel & hospitality projects, residential construction, and industrial infrastructure. 22+ years of engineering excellence.',
+    'Explore MTBoss construction services — commercial buildings, hotel & hospitality projects, residential construction, and industrial infrastructure. 22+ years of engineering excellence.',
   keywords:
     'construction services, commercial construction, residential construction, hotel construction, industrial construction, construction company, turnkey construction',
   alternates: {
-    canonical: 'https://www.mtboss.in/services/all',
+    canonical: 'https://www.MTBoss.in/services/all',
   },
   openGraph: {
-    title: 'MTBOSS | Construction Services - Commercial, Residential & Hotel Projects',
+    title: 'MTBoss | Construction Services - Commercial, Residential & Hotel Projects',
     description:
       'Commercial buildings, hotel & hospitality projects, residential construction, and industrial infrastructure — built with engineering excellence.',
-    url: 'https://www.mtboss.in/services/all',
-    siteName: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBoss.in/services/all',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/icon.png',
+        url: 'https://www.MTBoss.in/icon.png',
         width: 1200,
         height: 630,
-        alt: 'Construction Services - MTBOSS',
+        alt: 'Construction Services - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -29,10 +29,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MTBOSS | Construction Services - Commercial, Residential & Hotel Projects',
+    title: 'MTBoss | Construction Services - Commercial, Residential & Hotel Projects',
     description:
       'Commercial buildings, hotel & hospitality projects, residential construction, and industrial infrastructure — built with engineering excellence.',
-    images: ['https://www.mtboss.in/icon.png'],
+    images: ['https://www.MTBoss.in/icon.png'],
   },
   robots: {
     index: true,
@@ -46,7 +46,7 @@ const constructionServicesSchema = {
   serviceType: 'Construction Services',
   provider: {
     '@type': 'GeneralContractor',
-    name: 'MTBOSS Construction Private Limited',
+    name: 'MTBoss Construction Private Limited',
   },
   hasOfferCatalog: {
     '@type': 'OfferCatalog',

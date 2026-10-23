@@ -666,7 +666,7 @@ function SupplierDashboardContent() {
                     ))}
                   </div>
                   <div style={{ background: surface, border: `1px solid ${border}`, borderRadius: 12, padding: '1.25rem', fontSize: '0.85rem', color: muted, lineHeight: 1.7 }}>
-                    <strong style={{ color: text }}>Commission:</strong> MTbossdeducts <strong style={{ color: 'var(--brand-blue-dark)' }}>15%</strong> of the amount received on every fulfilled order.
+                    <strong style={{ color: text }}>Commission:</strong> MTBossdeducts <strong style={{ color: 'var(--brand-blue-dark)' }}>15%</strong> of the amount received on every fulfilled order.
                   </div>
                 </>
               ) : <div className="sd-empty">Could not load earnings.</div>}
@@ -866,7 +866,7 @@ function SupplierDashboardContent() {
                   </div>
                 ) : null)}
                 <div style={{ marginTop: '1rem', padding: '0.75rem', background: dark ? '#1a1a1a' : '#f9f9f9', borderRadius: 8, fontSize: '0.78rem', color: muted, lineHeight: 1.6 }}>
-                  🔒 To update contact details or Aadhaar, contact <strong>mtboss2016@gmail.com</strong>
+                  🔒 To update contact details or Aadhaar, contact <strong>MTBoss2016@gmail.com</strong>
                 </div>
               </div>
             </div>

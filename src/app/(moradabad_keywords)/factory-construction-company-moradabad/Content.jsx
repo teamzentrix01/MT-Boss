@@ -9,7 +9,7 @@ const Content = () => {
         <div className="order-1 flex-1 px-4 py-12 sm:px-8 md:px-16 lg:order-1">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 sm:text-3xl md:text-3xl">
             Factory Construction Company in Moradabad: From Plot to Production
-            with MTBOSS
+            with MTBoss
           </h2>
 
           <div className="max-w-4xl space-y-6 leading-relaxed text-gray-700">
@@ -27,7 +27,7 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBOSS Construction Private Limited is a Moradabad-based
+                MTBoss Construction Private Limited is a Moradabad-based
                 architect, interior designer and construction company that
                 builds industrial, commercial, hospitality, institutional and
                 residential projects, serving Moradabad and Bareilly with
@@ -84,7 +84,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                MTBOSS also offers verified property buying, selling and renting
+                MTBoss also offers verified property buying, selling and renting
                 services in and around Moradabad, which can help if you are
                 still looking for a suitable plot. Our engineers can review a
                 plot&apos;s construction implications before you finalise.
@@ -93,7 +93,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -112,14 +112,14 @@ const Content = () => {
                   residential construction.
                 </li>
                 <li>
-                  Project gallery and blog available on the MTBOSS website.
+                  Project gallery and blog available on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Factory Construction Services Offered by MTBOSS in Moradabad
+                Factory Construction Services Offered by MTBoss in Moradabad
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -155,7 +155,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBOSS wholesale supply.
+                  bricks, tiles and paints through MTBoss wholesale supply.
                 </li>
                 <li>
                   <strong>Expansion and renovation:</strong> Extra bays, upgrades
@@ -404,12 +404,12 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Approaches a Factory Construction Project
+                How MTBoss Approaches a Factory Construction Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Step 1 — Enquiry:</strong> Contact MTBOSS with plot
+                  <strong>Step 1 — Enquiry:</strong> Contact MTBoss with plot
                   and business plan through website, phone or WhatsApp.
                 </li>
                 <li>
@@ -479,7 +479,7 @@ const Content = () => {
 
               <p className="mt-3">
                 For this to work, the foundation, plot layout and service routes
-                in Phase 1 must allow for later additions. Tell the MTBOSS team
+                in Phase 1 must allow for later additions. Tell the MTBoss team
                 about your growth plans at the start, so the first phase does
                 not block the next.
               </p>
@@ -533,7 +533,7 @@ const Content = () => {
               <p className="mt-3">
                 Requirements vary by location, activity and current regulations,
                 so confirm the latest rules with relevant authorities and
-                consultants. MTBOSS builds according to approved drawings and
+                consultants. MTBoss builds according to approved drawings and
                 specifications, while owners and their consultants handle
                 business-specific licences.
               </p>
@@ -584,7 +584,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBOSS Budget Calculator, then request a
+                Start with the free MTBoss Budget Calculator, then request a
                 detailed quote after site visit and drawing review.
               </p>
             </section>
@@ -641,7 +641,7 @@ const Content = () => {
               <p>
                 Factories use large quantities of cement, steel and bricks, so a
                 supply gap can stop work and delay your start of production.
-                MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints
+                MTBoss supplies cement, TMT steel bars, bricks, tiles and paints
                 on a wholesale basis through the Shop Now section of our
                 website.
               </p>
@@ -692,7 +692,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Services for Industrial Owners
+                MTBoss Services for Industrial Owners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -717,7 +717,7 @@ const Content = () => {
               </h3>
 
               <p>
-                MTBOSS works across Moradabad city and its growth areas, Kanth
+                MTBoss works across Moradabad city and its growth areas, Kanth
                 Road and surrounding areas, and plots across Moradabad district
                 suitable for industrial use. We also serve Bareilly and work
                 with owners in nearby towns and districts of Uttar Pradesh who
@@ -728,7 +728,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBOSS as Your Factory Construction Company
+                Why Choose MTBoss as Your Factory Construction Company
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -760,18 +760,18 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and
-                  blog on the MTBOSS website.
+                  blog on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBOSS: Factory Construction Company in Moradabad
+                Contact MTBoss: Factory Construction Company in Moradabad
               </h3>
 
               <p className="mb-3">
-                If you are planning to build a factory, MTBOSS can support you
+                If you are planning to build a factory, MTBoss can support you
                 from plot selection to handover, with a free budget calculator,
                 a simple online quote request and a team that plans around your
                 production needs.
@@ -779,26 +779,26 @@ const Content = () => {
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBOSS Construction Private Limited
+                  <strong>Company:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in
+                    https://www.MTBoss.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -845,11 +845,11 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBOSS offer factory construction in Moradabad?
+                    Q2. Does MTBoss offer factory construction in Moradabad?
                   </strong>
                   <br />
                   Yes. Industrial and warehousing construction is part of the
-                  MTBOSS service list, alongside commercial, hotel, school,
+                  MTBoss service list, alongside commercial, hotel, school,
                   college, mall and residential projects.
                 </li>
 
@@ -863,9 +863,9 @@ const Content = () => {
                 </li>
 
                 <li>
-                  <strong>Q4. Can MTBOSS help me find a plot?</strong>
+                  <strong>Q4. Can MTBoss help me find a plot?</strong>
                   <br />
-                  MTBOSS offers verified property buying, selling and renting
+                  MTBoss offers verified property buying, selling and renting
                   services in and around Moradabad, and its engineers can review
                   a plot&apos;s construction implications.
                 </li>
@@ -881,18 +881,18 @@ const Content = () => {
                   <strong>Q6. Can I get a free quote?</strong>
                   <br />
                   Yes, through the &quot;Get a Construction Quote&quot; option
-                  on the MTBOSS website, or by calling or messaging on WhatsApp.
+                  on the MTBoss website, or by calling or messaging on WhatsApp.
                 </li>
 
                 <li>
-                  <strong>Q7. Does MTBOSS supply building materials?</strong>
+                  <strong>Q7. Does MTBoss supply building materials?</strong>
                   <br />
-                  Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and
+                  Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and
                   paints, helping reduce material-related delays.
                 </li>
 
                 <li>
-                  <strong>Q8. Where is the MTBOSS office located?</strong>
+                  <strong>Q8. Where is the MTBoss office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

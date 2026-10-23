@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Architect for Bungalow in Bareilly: Spacious, Well-Planned Kothis and
-            Villas by MTBOSS
+            Villas by MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -28,7 +28,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Bungalow Design Services from MTBOSS
+                Bungalow Design Services from MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -364,7 +364,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBOSS offers interior design with carpenter, false ceiling, PVC
+                MTBoss offers interior design with carpenter, false ceiling, PVC
                 panel-louvers, tile and marble, painter, wallpaper and modular
                 kitchen services, so design and delivery stay connected.
               </p>
@@ -394,7 +394,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Planning these before walls and ceilings are finished avoids opening
-                finished surfaces later. MTBOSS offers plumber and electrician
+                finished surfaces later. MTBoss offers plumber and electrician
                 services, so service planning stays linked with construction.
               </p>
             </section>
@@ -517,7 +517,7 @@ const Content = () => {
                 <li>Interior and exterior refresh</li>
               </ul>
               <p className="mt-3">
-                MTBOSS offers building repair and renovation, waterproofing,
+                MTBoss offers building repair and renovation, waterproofing,
                 plumbing, electrical, pest control and painting services, so
                 recommendations can be carried out by the same team.
               </p>
@@ -573,7 +573,7 @@ const Content = () => {
                 <li>Phasing spreads spending over time</li>
               </ul>
               <p className="mt-3">
-                You can try the Budget Calculator on the MTBOSS website to set
+                You can try the Budget Calculator on the MTBoss website to set
                 realistic expectations. Final pricing and consultation terms are
                 shared after discussing your project.
               </p>
@@ -593,7 +593,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBOSS Process for Bungalows
+                The MTBoss Process for Bungalows
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -635,7 +635,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MTBOSS
+                Reasons to Choose MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -645,7 +645,7 @@ const Content = () => {
                 <li>
                   <strong>One team for design and execution.</strong> Architecture,
                   interior design, civil work, plumbing, electrical, carpentry,
-                  painting and more are available through MTBOSS.
+                  painting and more are available through MTBoss.
                 </li>
                 <li>
                   <strong>Transparent communication.</strong> You know the scope and
@@ -667,7 +667,7 @@ const Content = () => {
                 Service Areas in Bareilly
               </h3>
               <p>
-                MTBOSS serves clients in Bareilly, including areas such as Civil
+                MTBoss serves clients in Bareilly, including areas such as Civil
                 Lines, Rampur Garden, Izzatnagar, Subhash Nagar, DD Puram and
                 Pilibhit Bypass Road. If your plot is elsewhere in or around
                 Bareilly, contact us and we will confirm availability.
@@ -676,7 +676,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Bungalow with MTBOSS
+                Plan Your Bungalow with MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -693,10 +693,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -707,16 +707,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/"
+                  href="https://www.MTBoss.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS website
+                  MTBoss website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -727,7 +727,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 Build a bungalow that uses every bit of its space well. Contact
-                MTBOSS today for bungalow architecture in Bareilly.
+                MTBoss today for bungalow architecture in Bareilly.
               </p>
             </section>
 
@@ -738,7 +738,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBOSS provide an architect for bungalow in Bareilly?
+                    Q1. Does MTBoss provide an architect for bungalow in Bareilly?
                   </strong>
                   <br />
                   Yes. We offer planning, design and construction guidance for
@@ -803,7 +803,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Home Pest Control in Moradabad',
   description:
-    'Home pest control in Moradabad for cockroaches, termites, bed bugs, ants and rodents. MTBOSS offers safe, inspection-led treatment. Call or WhatsApp to book.',
+    'Home pest control in Moradabad for cockroaches, termites, bed bugs, ants and rodents. MTBoss offers safe, inspection-led treatment. Call or WhatsApp to book.',
   keywords:
-    'home pest control Moradabad, residential pest control Moradabad, pest control for homes Moradabad, cockroach control for homes Moradabad, termite control for homes Moradabad, bed bug treatment for homes Moradabad, rodent control for homes Moradabad, ant control Moradabad, home pest control near me Moradabad, MTBOSS home pest control Moradabad',
+    'home pest control Moradabad, residential pest control Moradabad, pest control for homes Moradabad, cockroach control for homes Moradabad, termite control for homes Moradabad, bed bug treatment for homes Moradabad, rodent control for homes Moradabad, ant control Moradabad, home pest control near me Moradabad, MTBoss home pest control Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/home-pest-control-moradabad',
+    canonical: 'https://www.MTBoss.in/home-pest-control-moradabad',
   },
   openGraph: {
     title: 'Home Pest Control in Moradabad',
     description:
-      'Home pest control in Moradabad for cockroaches, termites, bed bugs, ants and rodents. MTBOSS offers safe, inspection-led treatment. Call or WhatsApp to book.',
-    url: 'https://www.mtboss.in/home-pest-control-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Home pest control in Moradabad for cockroaches, termites, bed bugs, ants and rodents. MTBoss offers safe, inspection-led treatment. Call or WhatsApp to book.',
+    url: 'https://www.MTBoss.in/home-pest-control-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-home-pest-control-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-home-pest-control-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Home Pest Control in Moradabad - MTBOSS',
+        alt: 'Home Pest Control in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Home Pest Control in Moradabad',
     description:
-      'Home pest control in Moradabad for cockroaches, termites, bed bugs, ants and rodents. MTBOSS offers safe, inspection-led treatment. Call or WhatsApp to book.',
-    images: ['https://www.mtboss.in/og-home-pest-control-moradabad.jpg'],
+      'Home pest control in Moradabad for cockroaches, termites, bed bugs, ants and rodents. MTBoss offers safe, inspection-led treatment. Call or WhatsApp to book.',
+    images: ['https://www.MTBoss.in/og-home-pest-control-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/home-pest-control-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/home-pest-control-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

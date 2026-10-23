@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Commercial Construction Cost in Moradabad | MTBOSS",
+  title: "Commercial Construction Cost in Moradabad | MTBoss",
 
   description:
-    "Planning a commercial building? Understand commercial construction cost in Moradabad and get a free estimate from MTBOSS. Call +91 94584 10866.",
+    "Planning a commercial building? Understand commercial construction cost in Moradabad and get a free estimate from MTBoss. Call +91 94584 10866.",
 
   keywords:
-    "commercial construction cost Moradabad, commercial building cost Moradabad, cost of building a shop Moradabad, showroom construction cost Moradabad, office building construction cost Moradabad, commercial complex construction cost Moradabad, warehouse construction cost Moradabad, commercial construction budget Moradabad, commercial construction estimate Moradabad, commercial construction cost per sq ft Moradabad, commercial construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "commercial construction cost Moradabad, commercial building cost Moradabad, cost of building a shop Moradabad, showroom construction cost Moradabad, office building construction cost Moradabad, commercial complex construction cost Moradabad, warehouse construction cost Moradabad, commercial construction budget Moradabad, commercial construction estimate Moradabad, commercial construction cost per sq ft Moradabad, commercial construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/commercial-construction-cost-in-moradabad",
+      "https://www.MTBoss.in/commercial-construction-cost-in-moradabad",
   },
 
   openGraph: {
-    title: "Commercial Construction Cost in Moradabad | MTBOSS",
+    title: "Commercial Construction Cost in Moradabad | MTBoss",
 
     description:
-      "Planning a commercial building? Understand commercial construction cost in Moradabad and get a free estimate from MTBOSS. Call +91 94584 10866.",
+      "Planning a commercial building? Understand commercial construction cost in Moradabad and get a free estimate from MTBoss. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/commercial-construction-cost-in-moradabad",
+    url: "https://www.MTBoss.in/commercial-construction-cost-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-commercial-construction-cost-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-commercial-construction-cost-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Commercial Construction Cost in Moradabad - MTBOSS",
+        alt: "Commercial Construction Cost in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Commercial Construction Cost in Moradabad | MTBOSS",
+    title: "Commercial Construction Cost in Moradabad | MTBoss",
 
     description:
-      "Planning a commercial building? Understand commercial construction cost in Moradabad and get a free estimate from MTBOSS. Call +91 94584 10866.",
+      "Planning a commercial building? Understand commercial construction cost in Moradabad and get a free estimate from MTBoss. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-commercial-construction-cost-moradabad.jpg",
+      "https://www.MTBoss.in/og-commercial-construction-cost-moradabad.jpg",
     ],
   },
 
@@ -67,17 +67,17 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
 
-    name: "MTBOSS Construction Private Limited",
+    name: "MTBoss Construction Private Limited",
 
     url:
-      "https://www.mtboss.in/commercial-construction-cost-in-moradabad",
+      "https://www.MTBoss.in/commercial-construction-cost-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
 
     image:
-      "https://www.mtboss.in/og-commercial-construction-cost-moradabad.jpg",
+      "https://www.MTBoss.in/og-commercial-construction-cost-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -134,17 +134,17 @@ export default function Page() {
     name: "Commercial Construction Cost Estimate in Moradabad",
 
     description:
-      "MTBOSS provides commercial construction cost estimation in Moradabad for shops, showrooms, offices, commercial complexes, schools, hotels, warehouses and industrial buildings based on built-up area, floors, structural requirements, material quality, finishing and site conditions.",
+      "MTBoss provides commercial construction cost estimation in Moradabad for shops, showrooms, offices, commercial complexes, schools, hotels, warehouses and industrial buildings based on built-up area, floors, structural requirements, material quality, finishing and site conditions.",
 
     url:
-      "https://www.mtboss.in/commercial-construction-cost-in-moradabad",
+      "https://www.MTBoss.in/commercial-construction-cost-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
 
     areaServed: [
@@ -172,7 +172,7 @@ export default function Page() {
         name: "How much does commercial construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Commercial construction cost depends on built-up area, number of floors, building type, structural requirements, electrical and plumbing scope, finishing level, facade, glazing, material quality and site conditions. MTBOSS provides a free Budget Calculator and detailed quote option.",
+          text: "Commercial construction cost depends on built-up area, number of floors, building type, structural requirements, electrical and plumbing scope, finishing level, facade, glazing, material quality and site conditions. MTBoss provides a free Budget Calculator and detailed quote option.",
         },
       },
       {
@@ -201,10 +201,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS offer commercial construction in Moradabad?",
+        name: "Does MTBoss offer commercial construction in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Commercial construction is part of the MTBOSS service list, alongside hotel, school, college, mall, industrial, infrastructure and residential construction projects in Moradabad and Bareilly.",
+          text: "Yes. Commercial construction is part of the MTBoss service list, alongside hotel, school, college, mall, industrial, infrastructure and residential construction projects in Moradabad and Bareilly.",
         },
       },
       {
@@ -217,18 +217,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS supply building materials?",
+        name: "Does MTBoss supply building materials?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its material supply network, helping coordinate material availability during commercial construction.",
+          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its material supply network, helping coordinate material availability during commercial construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -243,19 +243,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Commercial Construction Cost in Moradabad",
-        item: "https://www.mtboss.in/commercial-construction-cost-in-moradabad",
+        item: "https://www.MTBoss.in/commercial-construction-cost-in-moradabad",
       },
     ],
   };

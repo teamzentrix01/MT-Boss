@@ -9,7 +9,7 @@ const Content = () => {
         <div className="order-1 flex-1 px-4 py-12 sm:px-8 md:px-16 lg:order-1">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 sm:text-3xl md:text-3xl">
             Commercial Construction Cost in Moradabad: How to Plan, Estimate and
-            Control Your Budget with MTBOSS
+            Control Your Budget with MTBoss
           </h2>
 
           <div className="max-w-4xl space-y-6 leading-relaxed text-gray-700">
@@ -26,11 +26,11 @@ const Content = () => {
                 building built too cheaply may need repairs, lose tenants or
                 limit future growth. This guide explains what drives commercial
                 construction cost, how to estimate your budget, how to compare
-                quotations and how MTBOSS helps you plan.
+                quotations and how MTBoss helps you plan.
               </p>
 
               <p className="mt-3">
-                MTBOSS Construction Private Limited is a Moradabad-based
+                MTBoss Construction Private Limited is a Moradabad-based
                 architect, interior designer and construction company serving
                 Moradabad and Bareilly with commercial, hospitality,
                 institutional, industrial and residential projects.
@@ -65,7 +65,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                MTBOSS starts with your requirements, uses the free Budget
+                MTBoss starts with your requirements, uses the free Budget
                 Calculator for an early estimate and then prepares a detailed
                 quotation after site visit and drawing review.
               </p>
@@ -73,7 +73,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -86,7 +86,7 @@ const Content = () => {
                   Domino&apos;s, Moradabad.
                 </li>
                 <li>
-                  MTBOSS service categories include commercial, hotel, school,
+                  MTBoss service categories include commercial, hotel, school,
                   college, mall, industrial, infrastructure and residential
                   construction.
                 </li>
@@ -256,7 +256,7 @@ const Content = () => {
               </div>
 
               <p className="mt-3">
-                Share your building type, area and intended use with MTBOSS so
+                Share your building type, area and intended use with MTBoss so
                 the team can explain which cost factors matter most for your
                 project.
               </p>
@@ -370,7 +370,7 @@ const Content = () => {
                   finishing.
                 </li>
                 <li>
-                  <strong>Step 4:</strong> Use the free MTBOSS Budget Calculator
+                  <strong>Step 4:</strong> Use the free MTBoss Budget Calculator
                   for an initial estimate.
                 </li>
                 <li>
@@ -493,7 +493,7 @@ const Content = () => {
 
               <p>
                 Cement and steel make up a large share of structural cost, and
-                shortages can stop work and add overhead. MTBOSS supplies cement,
+                shortages can stop work and add overhead. MTBoss supplies cement,
                 TMT steel bars, bricks, tiles and paints through the Shop Now
                 section of its website.
               </p>
@@ -508,12 +508,12 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Prepares a Commercial Construction Estimate
+                How MTBoss Prepares a Commercial Construction Estimate
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Step 1 — Enquiry:</strong> Contact MTBOSS through
+                  <strong>Step 1 — Enquiry:</strong> Contact MTBoss through
                   website, phone or WhatsApp.
                 </li>
                 <li>
@@ -579,7 +579,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Other MTBOSS Services for Business Owners
+                Other MTBoss Services for Business Owners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -604,7 +604,7 @@ const Content = () => {
               </h3>
 
               <p>
-                MTBOSS works across Moradabad city, commercial areas, Kanth Road
+                MTBoss works across Moradabad city, commercial areas, Kanth Road
                 and nearby growth zones, as well as roadside plots across
                 Moradabad district. The company also serves Bareilly and nearby
                 Uttar Pradesh towns through remote project coordination.
@@ -613,7 +613,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBOSS for Commercial Construction?
+                Why Choose MTBoss for Commercial Construction?
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -644,45 +644,45 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and blog
-                  on the MTBOSS website.
+                  on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBOSS: Commercial Construction Cost Estimate
+                Contact MTBoss: Commercial Construction Cost Estimate
               </h3>
 
               <p className="mb-3">
                 If you want to understand commercial construction cost in
                 Moradabad before investing, begin with the free Budget
                 Calculator and discuss your plot, building type and budget with
-                MTBOSS.
+                MTBoss.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBOSS Construction Private Limited
+                  <strong>Company:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in
+                    https://www.MTBoss.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -731,7 +731,7 @@ const Content = () => {
                   <br />
                   Cost depends on built-up area, floors, building type,
                   structure, services, finishing and site conditions. Use the
-                  free MTBOSS Budget Calculator or request a detailed quote.
+                  free MTBoss Budget Calculator or request a detailed quote.
                 </li>
 
                 <li>
@@ -765,10 +765,10 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q5. Does MTBOSS offer commercial construction in Moradabad?
+                    Q5. Does MTBoss offer commercial construction in Moradabad?
                   </strong>
                   <br />
-                  Yes. Commercial construction is part of the MTBOSS service
+                  Yes. Commercial construction is part of the MTBoss service
                   list, alongside hotel, school, college, mall, industrial and
                   residential projects.
                 </li>
@@ -782,14 +782,14 @@ const Content = () => {
                 </li>
 
                 <li>
-                  <strong>Q7. Does MTBOSS supply building materials?</strong>
+                  <strong>Q7. Does MTBoss supply building materials?</strong>
                   <br />
-                  Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and
+                  Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and
                   paints, helping reduce delays and material coordination issues.
                 </li>
 
                 <li>
-                  <strong>Q8. Where is the MTBOSS office located?</strong>
+                  <strong>Q8. Where is the MTBoss office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

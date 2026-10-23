@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Residential Architect in Moradabad: MT Boss
+            Residential Architect in Moradabad: MTBoss
           </h2>
 
 
@@ -22,10 +22,10 @@ const Content = () => {
                 A residential architect in Moradabad helps you get the plan right before the first brick is laid.
               </p>
               <p className="mt-3">
-                MT Boss is a Moradabad-based construction, property and home services company. Our team designs independent houses, duplexes, villas, farmhouses and builder floors, and then builds them. Design and construction under one roof means you deal with one accountable team from the first sketch to the day you move in.
+                MTBoss is a Moradabad-based construction, property and home services company. Our team designs independent houses, duplexes, villas, farmhouses and builder floors, and then builds them. Design and construction under one roof means you deal with one accountable team from the first sketch to the day you move in.
               </p>
               <p className="mt-3">
-                This page explains what a residential architect does, what MT Boss offers, how our process works and what to check before you decide.
+                This page explains what a residential architect does, what MTBoss offers, how our process works and what to check before you decide.
               </p>
             </section>
 
@@ -71,10 +71,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss: Residential Design and Construction Under One Roof
+                MTBoss: Residential Design and Construction Under One Roof
               </h3>
               <p className="mb-3">
-                Many owners hire an architect first and a builder later, and then find that the design costs more than expected or is hard to build. MT Boss avoids this by keeping both roles in one company.
+                Many owners hire an architect first and a builder later, and then find that the design costs more than expected or is hard to build. MTBoss avoids this by keeping both roles in one company.
               </p>
               <p className="mb-3">
                 What you get when you work with us:
@@ -93,9 +93,9 @@ const Content = () => {
                   <strong>Local understanding.</strong> We know Moradabad&apos;s climate, plot patterns, material markets and family lifestyles.
                 </li>
                 <li>
-                  <strong>Material access.</strong> Through the MT Boss{" "}
+                  <strong>Material access.</strong> Through the MTBoss{" "}
                   <a
-                    href="https://www.mtboss.in/ShopNow"
+                    href="https://www.MTBoss.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -107,7 +107,7 @@ const Content = () => {
                 <li>
                   <strong>Support after handover.</strong> Our{" "}
                   <a
-                    href="https://www.mtboss.in/quick"
+                    href="https://www.MTBoss.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -122,7 +122,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Home Types Designed by MT Boss in Moradabad
+                Home Types Designed by MTBoss in Moradabad
               </h3>
 
 
@@ -185,7 +185,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Residential Architecture Services by MT Boss
+                Residential Architecture Services by MTBoss
               </h3>
 
 
@@ -233,7 +233,7 @@ const Content = () => {
                 Interior Design Coordination
               </h4>
               <p className="mb-3">
-                Because MT Boss also offers interior design, your architectural and interior plans can be developed together for a seamless result, from the kitchen layout to the lighting.
+                Because MTBoss also offers interior design, your architectural and interior plans can be developed together for a seamless result, from the kitchen layout to the lighting.
               </p>
 
 
@@ -248,7 +248,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Home Design Elements MT Boss Plans Carefully
+                Home Design Elements MTBoss Plans Carefully
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -284,7 +284,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Design and Construction Process, Step by Step
+                MTBoss Design and Construction Process, Step by Step
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -303,9 +303,9 @@ const Content = () => {
                   <strong>Step 4: Approvals guidance.</strong> We guide you on the drawings and documents typically needed for local approvals. Requirements vary by area and project, so please confirm final rules with the relevant authorities.
                 </li>
                 <li>
-                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate. For a quick early figure, try the MT Boss{" "}
+                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate. For a quick early figure, try the MTBoss{" "}
                   <a
-                    href="https://www.mtboss.in/calculator"
+                    href="https://www.MTBoss.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -315,7 +315,7 @@ const Content = () => {
                   .
                 </li>
                 <li>
-                  <strong>Step 6: Construction and supervision.</strong> If you choose MT Boss for construction, our team builds exactly to the approved design with regular site checks.
+                  <strong>Step 6: Construction and supervision.</strong> If you choose MTBoss for construction, our team builds exactly to the approved design with regular site checks.
                 </li>
                 <li>
                   <strong>Step 7: Finishing and handover.</strong> We complete finishing, inspection and cleaning, and hand over a home that is ready to live in.
@@ -413,9 +413,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Architect fees are usually a small share of the total cost, and good planning often saves far more than the fee through less rework and wastage. MT Boss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
+                Architect fees are usually a small share of the total cost, and good planning often saves far more than the fee through less rework and wastage. MTBoss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
                 <a
-                  href="https://www.mtboss.in/CTASection/get-quote"
+                  href="https://www.MTBoss.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -432,7 +432,7 @@ const Content = () => {
                 Climate-Smart Home Design for Moradabad
               </h3>
               <p className="mb-3">
-                Good residential architecture responds to the place you live in. For homes in Moradabad, MT Boss focuses on:
+                Good residential architecture responds to the place you live in. For homes in Moradabad, MTBoss focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -527,14 +527,14 @@ const Content = () => {
                 <li>Professional details are shown where they apply.</li>
               </ul>
               <p className="mt-3">
-                MT Boss welcomes every one of these checks and answers them openly during your free consultation.
+                MTBoss welcomes every one of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MT Boss in Moradabad
+                Areas Served by MTBoss in Moradabad
               </h3>
               <p className="mb-3">
                 We work with families and investors across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies.
@@ -547,21 +547,21 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Residential Architect FAQs
+                MTBoss Residential Architect FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MT Boss design houses in Moradabad?</strong>
+                  <strong>Q1. Does MTBoss design houses in Moradabad?</strong>
                   <br />
                   Yes. We design independent houses, duplexes, villas, farmhouses and builder floors.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MT Boss offers a free consultation and site visit.
+                  Yes. MTBoss offers a free consultation and site visit.
                 </li>
                 <li>
-                  <strong>Q3. Can MT Boss also build my home?</strong>
+                  <strong>Q3. Can MTBoss also build my home?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
@@ -596,7 +596,7 @@ const Content = () => {
                   Yes. You get a written breakup of materials, labour and finishes.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MT Boss?</strong>
+                  <strong>Q10. How do I contact MTBoss?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

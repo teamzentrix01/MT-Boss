@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Bank Building Construction in Moradabad | MTBOSS",
+  title: "Bank Building Construction in Moradabad | MTBoss",
 
   description:
-    "Planning bank building construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+    "Planning bank building construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "bank building construction Moradabad, bank branch construction Moradabad, bank building contractor Moradabad, bank building design Moradabad, commercial building construction Moradabad, bank branch interior Moradabad, ATM and bank building Moradabad, strong room construction provision Moradabad, bank building construction cost Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "bank building construction Moradabad, bank branch construction Moradabad, bank building contractor Moradabad, bank building design Moradabad, commercial building construction Moradabad, bank branch interior Moradabad, ATM and bank building Moradabad, strong room construction provision Moradabad, bank building construction cost Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/bank-building-construction-in-moradabad",
+      "https://www.MTBoss.in/bank-building-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Bank Building Construction in Moradabad | MTBOSS",
+    title: "Bank Building Construction in Moradabad | MTBoss",
 
     description:
-      "Planning bank building construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning bank building construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/bank-building-construction-in-moradabad",
+    url: "https://www.MTBoss.in/bank-building-construction-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-bank-building-construction-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-bank-building-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Bank Building Construction in Moradabad - MTBOSS",
+        alt: "Bank Building Construction in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Bank Building Construction in Moradabad | MTBOSS",
+    title: "Bank Building Construction in Moradabad | MTBoss",
 
     description:
-      "Planning bank building construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning bank building construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-bank-building-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-bank-building-construction-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/bank-building-construction-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/bank-building-construction-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-bank-building-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-bank-building-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,14 +117,14 @@ export default function Page() {
     "@type": "Service",
     name: "Bank Building Construction Services in Moradabad",
     description:
-      "MTBOSS provides bank building construction in Moradabad for new branches, leased bank buildings and ATM units, including design coordination, structure, strong room and vault provisions, facade, services provisions, security-related provisions, waterproofing, flooring, finishing, interiors, parking, outdoor works and final handover.",
-    url: "https://www.mtboss.in/bank-building-construction-in-moradabad",
+      "MTBoss provides bank building construction in Moradabad for new branches, leased bank buildings and ATM units, including design coordination, structure, strong room and vault provisions, facade, services provisions, security-related provisions, waterproofing, flooring, finishing, interiors, parking, outdoor works and final handover.",
+    url: "https://www.MTBoss.in/bank-building-construction-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -154,10 +154,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS build bank buildings in Moradabad?",
+        name: "Does MTBoss build bank buildings in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your bank building.",
+          text: "MTBoss builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your bank building.",
         },
       },
       {
@@ -173,7 +173,7 @@ export default function Page() {
         name: "Who provides the strong room or vault?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Strong rooms and vaults are usually supplied and installed by specialist vendors as per the bank's requirements. MTBOSS plans the civil and structural provisions for these areas in coordination with the bank and the vendor.",
+          text: "Strong rooms and vaults are usually supplied and installed by specialist vendors as per the bank's requirements. MTBoss plans the civil and structural provisions for these areas in coordination with the bank and the vendor.",
         },
       },
       {
@@ -189,15 +189,15 @@ export default function Page() {
         name: "How much does bank building construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Bank building construction cost depends on built-up area, floors, the bank's specifications, strong room provisions, material and finish level, services scope and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Bank building construction cost depends on built-up area, floors, the bank's specifications, strong room provisions, material and finish level, services scope and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -211,19 +211,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Bank Building Construction in Moradabad",
-        item: "https://www.mtboss.in/bank-building-construction-in-moradabad",
+        item: "https://www.MTBoss.in/bank-building-construction-in-moradabad",
       },
     ],
   };

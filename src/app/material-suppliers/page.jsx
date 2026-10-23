@@ -107,7 +107,7 @@ const plans = [
 ];
 
 const benefits = [
-  { icon: "📋", title: "Project RFQs", desc: "Receive direct Request for Quotations from MTBOSS project teams for bulk material requirements." },
+  { icon: "📋", title: "Project RFQs", desc: "Receive direct Request for Quotations from MTBoss project teams for bulk material requirements." },
   { icon: "✅", title: "Verified Status", desc: "Get a verified supplier badge that builds instant trust with contractors and project managers." },
   { icon: "📦", title: "Bulk Orders", desc: "Access large volume orders from our infrastructure and commercial construction projects." },
   { icon: "🌍", title: "Pan India Reach", desc: "Be listed in our national supplier directory visible to project teams across 50+ cities." },
@@ -120,7 +120,7 @@ const faqs = [
   { q: "What documents are required for registration?", a: "GST registration, PAN card, business registration proof, and quality certificates for your materials. Verified and Preferred plans require additional documentation like ISO certificates and bank statements." },
   { q: "How do I receive RFQs (Request for Quotations)?", a: "Verified and Preferred plan suppliers receive RFQs directly via email and SMS when our project teams raise material requirements that match your listed categories." },
   { q: "Can I list multiple material categories?", a: "Free listing allows 1 category. Verified plan allows up to 5 categories. Preferred Partner plan allows unlimited categories across all material types." },
-  { q: "Is there a rate contract option?", a: "Yes, high-volume Preferred Partner suppliers can negotiate annual rate contracts with MTBOSS for specific material categories, ensuring consistent orders throughout the year." },
+  { q: "Is there a rate contract option?", a: "Yes, high-volume Preferred Partner suppliers can negotiate annual rate contracts with MTBoss for specific material categories, ensuring consistent orders throughout the year." },
   { q: "How long does verification take?", a: "Free listings are activated within 24 hours. Verified Supplier verification takes 3-5 business days. Preferred Partner onboarding takes 7-10 days including a quality assessment call." },
 ];
 
@@ -173,7 +173,7 @@ export default function MaterialSuppliersPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
+      const res = await fetch("https://formsubmit.co/ajax/MTBoss2016@gmail.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -275,13 +275,13 @@ export default function MaterialSuppliersPage() {
       >
         <div className="absolute inset-0 bg-black/80" />
         <div className="relative z-10 max-w-3xl mx-auto">
-          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">MTBOSS Construction</span>
+          <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">MTBoss Construction</span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Material
             <span className="block text-[var(--brand-blue)]">Suppliers</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-            Register as an approved material supplier with MTBOSS Construction. Get direct access to project RFQs, bulk orders, and long-term supply contracts across India.
+            Register as an approved material supplier with MTBoss Construction. Get direct access to project RFQs, bulk orders, and long-term supply contracts across India.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-8 mt-6">
             {[
@@ -591,7 +591,7 @@ export default function MaterialSuppliersPage() {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)]" />
                   <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                    I confirm that all information provided is accurate and that my business holds valid legal registrations. I agree to MTBOSS Construction&apos;s supplier terms and quality standards.
+                    I confirm that all information provided is accurate and that my business holds valid legal registrations. I agree to MTBoss Construction&apos;s supplier terms and quality standards.
                   </span>
                 </label>
               </div>
@@ -641,7 +641,7 @@ export default function MaterialSuppliersPage() {
               </svg>
               Call Now
             </a>
-            <a href="mailto:mtboss2016@gmail.com" className="inline-flex items-center justify-center gap-3 px-8 py-4 border-2 border-white text-white font-black uppercase text-xs tracking-widest hover:bg-white hover:text-zinc-800 transition-all">
+            <a href="mailto:MTBoss2016@gmail.com" className="inline-flex items-center justify-center gap-3 px-8 py-4 border-2 border-white text-white font-black uppercase text-xs tracking-widest hover:bg-white hover:text-zinc-800 transition-all">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>

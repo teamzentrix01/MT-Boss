@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Multi Storey Building Construction in Moradabad | MTBOSS",
+  title: "Multi Storey Building Construction in Moradabad | MTBoss",
 
   description:
-    "Planning multi storey building construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+    "Planning multi storey building construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "multi storey building construction Moradabad, multi storey building contractor Moradabad, G+3 building construction Moradabad, apartment building construction Moradabad, commercial building construction Moradabad, residential building construction Moradabad, multi storey building cost Moradabad, high rise construction Moradabad, building with lift Moradabad, RCC building construction Moradabad, construction company in Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "multi storey building construction Moradabad, multi storey building contractor Moradabad, G+3 building construction Moradabad, apartment building construction Moradabad, commercial building construction Moradabad, residential building construction Moradabad, multi storey building cost Moradabad, high rise construction Moradabad, building with lift Moradabad, RCC building construction Moradabad, construction company in Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/multi-storey-building-construction-in-moradabad",
+      "https://www.MTBoss.in/multi-storey-building-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Multi Storey Building Construction in Moradabad | MTBOSS",
+    title: "Multi Storey Building Construction in Moradabad | MTBoss",
 
     description:
-      "Planning multi storey building construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning multi storey building construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/multi-storey-building-construction-in-moradabad",
+    url: "https://www.MTBoss.in/multi-storey-building-construction-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-multi-storey-building-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-multi-storey-building-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Multi Storey Building Construction in Moradabad - MTBOSS",
+        alt: "Multi Storey Building Construction in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Multi Storey Building Construction in Moradabad | MTBOSS",
+    title: "Multi Storey Building Construction in Moradabad | MTBoss",
 
     description:
-      "Planning multi storey building construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning multi storey building construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-multi-storey-building-moradabad.jpg",
+      "https://www.MTBoss.in/og-multi-storey-building-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/multi-storey-building-construction-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/multi-storey-building-construction-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-multi-storey-building-moradabad.jpg",
+      "https://www.MTBoss.in/og-multi-storey-building-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,14 +117,14 @@ export default function Page() {
     "@type": "Service",
     name: "Multi Storey Building Construction Services in Moradabad",
     description:
-      "MTBOSS provides multi storey building construction in Moradabad for residential, commercial and mixed-use buildings, including design coordination, structure, staircase, lift provisions, facade, services provisions, waterproofing, flooring, finishing, interiors, parking, outdoor works and final handover.",
-    url: "https://www.mtboss.in/multi-storey-building-construction-in-moradabad",
+      "MTBoss provides multi storey building construction in Moradabad for residential, commercial and mixed-use buildings, including design coordination, structure, staircase, lift provisions, facade, services provisions, waterproofing, flooring, finishing, interiors, parking, outdoor works and final handover.",
+    url: "https://www.MTBoss.in/multi-storey-building-construction-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -154,10 +154,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS build multi storey buildings in Moradabad?",
+        name: "Does MTBoss build multi storey buildings in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly. Share your plan with the team to confirm the scope for your building.",
+          text: "Yes. MTBoss builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly. Share your plan with the team to confirm the scope for your building.",
         },
       },
       {
@@ -189,15 +189,15 @@ export default function Page() {
         name: "How much does multi storey building construction cost?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Multi storey building construction cost depends on built-up area, number of floors, structural requirements, lift, material and finish level, services scope and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Multi storey building construction cost depends on built-up area, number of floors, structural requirements, lift, material and finish level, services scope and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -211,19 +211,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Multi Storey Building Construction in Moradabad",
-        item: "https://www.mtboss.in/multi-storey-building-construction-in-moradabad",
+        item: "https://www.MTBoss.in/multi-storey-building-construction-in-moradabad",
       },
     ],
   };

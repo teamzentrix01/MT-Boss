@@ -209,7 +209,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Interior Designer for Bedroom in Moradabad: Calm, Comfortable and
-            Beautifully Planned Bedrooms by MT Boss
+            Beautifully Planned Bedrooms by MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -231,7 +231,7 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MT Boss, also known as MTBOSS Construction Private Limited, is
+                MTBoss, also known as MTBoss Construction Private Limited, is
                 a Moradabad-based construction and interiors company. We design
                 bedrooms with an understanding of structure, wiring, ventilation
                 and finishing, not only decoration.
@@ -241,7 +241,7 @@ const Content = () => {
                 Whether you need a master bedroom, kids&apos; room, guest room
                 or a complete bedroom makeover, this guide explains layout,
                 furniture, wardrobes, ceilings, lighting, colours, materials,
-                Vastu and budget planning. You will also see how MT Boss
+                Vastu and budget planning. You will also see how MTBoss
                 handles a bedroom project from the first discussion to handover.
               </p>
             </section>
@@ -857,7 +857,7 @@ const Content = () => {
               <p className="mt-4">
                 Learn more through our{" "}
                 <a
-                  href="https://www.mtboss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
+                  href="https://www.MTBoss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -918,7 +918,7 @@ const Content = () => {
               <p className="mt-4">
                 Estimate early with our{" "}
                 <a
-                  href="https://www.mtboss.in/calculator"
+                  href="https://www.MTBoss.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -927,7 +927,7 @@ const Content = () => {
                 </a>{" "}
                 and read our{" "}
                 <a
-                  href="https://www.mtboss.in/blog/house-construction-cost-estimation-guide-india-2026"
+                  href="https://www.MTBoss.in/blog/house-construction-cost-estimation-guide-india-2026"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -940,7 +940,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                How MT Boss Designs Your Bedroom: Step by Step
+                How MTBoss Designs Your Bedroom: Step by Step
               </SectionTitle>
 
               <div className="space-y-5">
@@ -1055,14 +1055,14 @@ const Content = () => {
                   <p>
                     For small repairs, use our{" "}
                     <a
-                      href="https://www.mtboss.in/quick"
+                      href="https://www.MTBoss.in/quick"
                       className="text-blue-600 underline"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       Quick Home Services
                     </a>{" "}
-                    or contact MT Boss directly.
+                    or contact MTBoss directly.
                   </p>
                 </div>
               </div>
@@ -1070,7 +1070,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                Why Choose MT Boss as Your Bedroom Interior Designer in
+                Why Choose MTBoss as Your Bedroom Interior Designer in
                 Moradabad
               </SectionTitle>
 
@@ -1117,7 +1117,7 @@ const Content = () => {
               <p className="mt-4">
                 Explore materials through{" "}
                 <a
-                  href="https://www.mtboss.in/ShopNow"
+                  href="https://www.MTBoss.in/ShopNow"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1126,7 +1126,7 @@ const Content = () => {
                 </a>
                 , connect with trained tradespeople through our{" "}
                 <a
-                  href="https://www.mtboss.in/Services/professionals"
+                  href="https://www.MTBoss.in/Services/professionals"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1135,7 +1135,7 @@ const Content = () => {
                 </a>
                 , and see completed examples in our{" "}
                 <a
-                  href="https://www.mtboss.in/FeaturedProjects/ProjectGallery"
+                  href="https://www.MTBoss.in/FeaturedProjects/ProjectGallery"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1248,7 +1248,7 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Contact MT Boss for Your Bedroom Project</SectionTitle>
+              <SectionTitle>Contact MTBoss for Your Bedroom Project</SectionTitle>
 
               <p className="mb-3">
                 Share room photos or measurements, your preferred style and
@@ -1258,7 +1258,7 @@ const Content = () => {
 
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Company:</strong> MTBOSS Construction Private Limited
+                  <strong>Company:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Phone / WhatsApp:</strong>{" "}
@@ -1272,10 +1272,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -1285,7 +1285,7 @@ const Content = () => {
                 <li>
                   <strong>Contact Page:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/contact"
+                    href="https://www.MTBoss.in/contact"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"

@@ -6,27 +6,27 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Civil Contractor for Small Work in Moradabad | MT Boss',
+  title: 'Civil Contractor for Small Work in Moradabad | MTBoss',
   description:
-    'Need a civil contractor for small work in Moradabad? MT Boss handles repairs, extensions, walls, waterproofing and small builds with clear quotes.',
+    'Need a civil contractor for small work in Moradabad? MTBoss handles repairs, extensions, walls, waterproofing and small builds with clear quotes.',
   keywords:
-    'civil contractor for small work Moradabad, small civil work contractor Moradabad, home repair contractor Moradabad, wall crack repair Moradabad, waterproofing contractor Moradabad, small extension contractor Moradabad, bathroom renovation contractor Moradabad, boundary wall repair Moradabad, tile repair contractor Moradabad, MT Boss small civil work Moradabad',
+    'civil contractor for small work Moradabad, small civil work contractor Moradabad, home repair contractor Moradabad, wall crack repair Moradabad, waterproofing contractor Moradabad, small extension contractor Moradabad, bathroom renovation contractor Moradabad, boundary wall repair Moradabad, tile repair contractor Moradabad, MTBoss small civil work Moradabad',
   alternates: {
     canonical:
-      'https://www.mtboss.in/civil-contractor-small-work-moradabad',
+      'https://www.MTBoss.in/civil-contractor-small-work-moradabad',
   },
   openGraph: {
-    title: 'Civil Contractor for Small Work in Moradabad | MT Boss',
+    title: 'Civil Contractor for Small Work in Moradabad | MTBoss',
     description:
-      'Need a civil contractor for small work in Moradabad? MT Boss handles repairs, extensions, walls, waterproofing and small builds with clear quotes.',
-    url: 'https://www.mtboss.in/civil-contractor-small-work-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Need a civil contractor for small work in Moradabad? MTBoss handles repairs, extensions, walls, waterproofing and small builds with clear quotes.',
+    url: 'https://www.MTBoss.in/civil-contractor-small-work-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-civil-contractor-small-work-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-civil-contractor-small-work-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Civil Contractor for Small Work in Moradabad - MT Boss',
+        alt: 'Civil Contractor for Small Work in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -34,11 +34,11 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Civil Contractor for Small Work in Moradabad | MT Boss',
+    title: 'Civil Contractor for Small Work in Moradabad | MTBoss',
     description:
-      'Need a civil contractor for small work in Moradabad? MT Boss handles repairs, extensions, walls, waterproofing and small builds with clear quotes.',
+      'Need a civil contractor for small work in Moradabad? MTBoss handles repairs, extensions, walls, waterproofing and small builds with clear quotes.',
     images: [
-      'https://www.mtboss.in/og-civil-contractor-small-work-moradabad.jpg',
+      'https://www.MTBoss.in/og-civil-contractor-small-work-moradabad.jpg',
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/civil-contractor-small-work-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/civil-contractor-small-work-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

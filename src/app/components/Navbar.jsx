@@ -186,7 +186,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           <Link href="/" className="flex items-center flex-shrink-0">
             <Image
               src="/logo.png"
-              alt="MTBOSS"
+              alt="MTBoss"
               width={58}
               height={58}
               sizes="(max-width: 639px) 48px, 58px"

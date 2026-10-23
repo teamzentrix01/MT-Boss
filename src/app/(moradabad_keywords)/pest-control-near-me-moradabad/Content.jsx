@@ -8,14 +8,13 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Pest Control Near Me in Moradabad: Reliable Home and Commercial
-            Service by MTBOSS
+            Pest Control Near Me in Moradabad:
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Pests rarely announce themselves. A few cockroaches in the
+               A few cockroaches in the
                 kitchen, a trail of ants near the sink or a hollow sound in a
                 wooden door can point to a much larger problem. When you search
                 for pest control near me in Moradabad, you want a local team that
@@ -23,7 +22,7 @@ const Content = () => {
                 problem at its source.
               </p>
               <p className="mt-3">
-                MTBOSS is a construction and home-services company serving
+                MTBossis a construction and home-services company serving
                 Moradabad and Bareilly. Pest control is one of our quick home
                 services, backed by the same focus on quality work, transparent
                 pricing and on-time delivery that defines everything we do. Our
@@ -159,7 +158,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Termites feed quietly and cause costly damage to doors, cupboards,
-                flooring and structural wood. Because MTBOSS is also a
+                flooring and structural wood. Because MTBoss is also a
                 construction company, we understand how termites reach buildings
                 through soil, cracks and damp areas.
               </p>
@@ -299,7 +298,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBOSS Pest Control Process
+                The MTBoss Pest Control Process
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -384,7 +383,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Advantages of Choosing MTBOSS
+                Advantages of Choosing MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -394,14 +393,14 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Building expertise.</strong> Many infestations begin
-                  with structural issues like leaks, cracks and damp walls. MTBOSS
+                  with structural issues like leaks, cracks and damp walls. MTBoss
                   can recommend and carry out building repair and waterproofing
                   work alongside treatment.
                 </li>
                 <li>
                   <strong>Several services under one roof.</strong> Pest control
                   sits beside plumbing, electrical work, painting, carpentry and
-                  renovation on the MTBOSS platform, which saves time when a pest
+                  renovation on the MTBoss platform, which saves time when a pest
                   problem leads to repairs.
                 </li>
                 <li>
@@ -464,7 +463,7 @@ const Content = () => {
                 Areas We Serve in Moradabad
               </h3>
               <p>
-                MTBOSS offers pest control across Moradabad, including residential
+                MTBoss offers pest control across Moradabad, including residential
                 colonies, market areas and commercial zones such as Civil Lines,
                 Lajpat Nagar, Delhi Road, Kanth Road, Ramganga Vihar and Buddhi
                 Vihar. Our office is located at Harthala Kanth Road, behind KR
@@ -499,16 +498,16 @@ const Content = () => {
               <p className="mt-3">
                 Visit the{" "}
                 <a
-                  href="https://www.mtboss.in/quick/pest-control"
+                  href="https://www.MTBoss.in/quick/pest-control"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS Pest Control page
+                  MTBoss Pest Control page
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -518,7 +517,7 @@ const Content = () => {
                 to get started.
               </p>
               <p className="mt-3">
-                Protect your home, family and business from pests. Contact MTBOSS
+                Protect your home, family and business from pests. Contact MTBoss
                 today for dependable pest control in Moradabad.
               </p>
             </section>
@@ -533,7 +532,7 @@ const Content = () => {
                     Q1. Do you provide pest control near me in Moradabad?
                   </strong>
                   <br />
-                  Yes. MTBOSS serves homes, shops and offices across Moradabad.
+                  Yes. MTBoss serves homes, shops and offices across Moradabad.
                   Contact us to confirm your locality.
                 </li>
                 <li>
@@ -586,7 +585,7 @@ const Content = () => {
                   keep children and pets away from treatment areas.
                 </li>
                 <li>
-                  <strong>Q10. How do I book MTBOSS pest control?</strong>
+                  <strong>Q10. How do I book MTBoss pest control?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -597,7 +596,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

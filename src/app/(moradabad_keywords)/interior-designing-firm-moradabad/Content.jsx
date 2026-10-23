@@ -66,7 +66,7 @@ const Content = () => {
     {
       title: "Can I see similar completed projects?",
       description:
-        "A firm should show work that resembles your size, style and budget. You can browse the MTBOSS project gallery.",
+        "A firm should show work that resembles your size, style and budget. You can browse the MTBoss project gallery.",
     },
     {
       title: "What exactly is included in the quote?",
@@ -141,7 +141,7 @@ const Content = () => {
     },
   ];
 
-  const mtBossBenefits = [
+  const MTBossBenefits = [
     {
       title: "Construction expertise:",
       description:
@@ -250,7 +250,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Interior Designing Firm in Moradabad: How to Choose the Right One
-            and Why Customers Trust MTBOSS
+            and Why Customers Trust MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -266,13 +266,13 @@ const Content = () => {
                 Prices, promises and portfolios all look different.
               </p>
               <p className="mt-3">
-                MTBOSS Construction Private Limited is a Moradabad-based
+                MTBoss Construction Private Limited is a Moradabad-based
                 company that helps customers plan, build and finish their
                 spaces with clear communication and dependable support.
               </p>
               <p className="mt-3">
                 This guide explains what a good interior designing firm should
-                offer, how to compare firms, and how MTBOSS handles interiors
+                offer, how to compare firms, and how MTBoss handles interiors
                 for homes, shops, showrooms and offices. Whether you are
                 furnishing a new flat, renovating an older house or setting up
                 a business space, this guide helps you decide with confidence.
@@ -333,9 +333,9 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Where MTBOSS Fits</SectionTitle>
+              <SectionTitle>Where MTBoss Fits</SectionTitle>
               <p>
-                MTBOSS works as a construction-backed firm, so we can support
+                MTBoss works as a construction-backed firm, so we can support
                 both design and execution.
               </p>
               <p className="mt-3">
@@ -347,7 +347,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                Interior Design Services Offered by MTBOSS
+                Interior Design Services Offered by MTBoss
               </SectionTitle>
 
               <div className="space-y-5">
@@ -513,12 +513,12 @@ const Content = () => {
               <p className="mt-4">
                 View completed work in the{" "}
                 <a
-                  href="https://www.mtboss.in/FeaturedProjects/ProjectGallery"
+                  href="https://www.MTBoss.in/FeaturedProjects/ProjectGallery"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS project gallery
+                  MTBoss project gallery
                 </a>
                 .
               </p>
@@ -530,7 +530,7 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>How MTBOSS Runs an Interior Project</SectionTitle>
+              <SectionTitle>How MTBoss Runs an Interior Project</SectionTitle>
 
               <div className="space-y-5">
                 <div>
@@ -571,7 +571,7 @@ const Content = () => {
                   <p className="mt-3">
                     Read our guide on{" "}
                     <a
-                      href="https://www.mtboss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
+                      href="https://www.MTBoss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
                       className="text-blue-600 underline"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -607,7 +607,7 @@ const Content = () => {
                   <p className="mt-3">
                     Try our{" "}
                     <a
-                      href="https://www.mtboss.in/calculator"
+                      href="https://www.MTBoss.in/calculator"
                       className="text-blue-600 underline"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -616,7 +616,7 @@ const Content = () => {
                     </a>{" "}
                     for early planning, and read our{" "}
                     <a
-                      href="https://www.mtboss.in/blog/house-construction-cost-estimation-guide-india-2026"
+                      href="https://www.MTBoss.in/blog/house-construction-cost-estimation-guide-india-2026"
                       className="text-blue-600 underline"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -659,7 +659,7 @@ const Content = () => {
                   <p>
                     Small repairs and maintenance can be arranged through our{" "}
                     <a
-                      href="https://www.mtboss.in/quick"
+                      href="https://www.MTBoss.in/quick"
                       className="text-blue-600 underline"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -674,13 +674,13 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                Why Homeowners and Businesses in Moradabad Choose MTBOSS
+                Why Homeowners and Businesses in Moradabad Choose MTBoss
               </SectionTitle>
-              <BulletList items={mtBossBenefits} />
+              <BulletList items={MTBossBenefits} />
               <p className="mt-4">
                 Explore materials through{" "}
                 <a
-                  href="https://www.mtboss.in/ShopNow"
+                  href="https://www.MTBoss.in/ShopNow"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -689,7 +689,7 @@ const Content = () => {
                 </a>{" "}
                 and connect with service professionals through our{" "}
                 <a
-                  href="https://www.mtboss.in/Services/professionals"
+                  href="https://www.MTBoss.in/Services/professionals"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -878,7 +878,7 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Start Your Project with MTBOSS</SectionTitle>
+              <SectionTitle>Start Your Project with MTBoss</SectionTitle>
               <p className="mb-3">
                 Share your floor plan or photos, preferred style and approximate
                 budget. Our team can discuss your requirements, arrange a site
@@ -889,7 +889,7 @@ const Content = () => {
                 items={[
                   {
                     title: "Company:",
-                    description: "MTBOSS Construction Private Limited",
+                    description: "MTBoss Construction Private Limited",
                   },
                 ]}
               />
@@ -907,10 +907,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -920,18 +920,18 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                 </li>
                 <li>
                   <strong>Contact Page:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/contact"
+                    href="https://www.MTBoss.in/contact"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -971,7 +971,7 @@ const Content = () => {
 
                 <div>
                   <h4 className="font-semibold text-gray-900">
-                    Q3. Does MTBOSS handle both design and construction work?
+                    Q3. Does MTBoss handle both design and construction work?
                   </h4>
                   <p className="mt-1">
                     Yes. Our construction background lets us manage design,
@@ -1026,7 +1026,7 @@ const Content = () => {
                   </h4>
                   <p className="mt-1">
                     Use our Budget Calculator and then discuss the project
-                    details with the MTBOSS team.
+                    details with the MTBoss team.
                   </p>
                 </div>
 
@@ -1042,12 +1042,12 @@ const Content = () => {
 
                 <div>
                   <h4 className="font-semibold text-gray-900">
-                    Q10. Can I buy building materials from MTBOSS?
+                    Q10. Can I buy building materials from MTBoss?
                   </h4>
                   <p className="mt-1">
                     Yes. Visit the{" "}
                     <a
-                      href="https://www.mtboss.in/ShopNow"
+                      href="https://www.MTBoss.in/ShopNow"
                       className="text-blue-600 underline"
                       target="_blank"
                       rel="noopener noreferrer"

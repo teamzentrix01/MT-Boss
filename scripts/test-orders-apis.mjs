@@ -68,7 +68,7 @@ async function runTests() {
       type: 'shop_order',
       newStatus: testNewStatus,
       notes: 'Automated integration test status update',
-      adminUser: { id: 1, email: 'admin@mtboss.com', name: 'Super Admin' },
+      adminUser: { id: 1, email: 'admin@MTBoss.com', name: 'Super Admin' },
     });
 
     // Verify pm_audit_log
@@ -84,7 +84,7 @@ async function runTests() {
       type: 'shop_order',
       newStatus: prevStatus,
       notes: 'Reverting test status update',
-      adminUser: { id: 1, email: 'admin@mtboss.com', name: 'Super Admin' },
+      adminUser: { id: 1, email: 'admin@MTBoss.com', name: 'Super Admin' },
     });
     console.log('✓ Reverted status successfully.');
   }

@@ -8,19 +8,17 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Modular Kitchen Cost in Moradabad: MT Boss
+            Modular Kitchen Cost in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The Short Answer
-              </h3>
+              
               <p>
                 Modular kitchen cost in Moradabad depends on kitchen size, layout,
                 board grade, shutter finish, hardware, countertop and the civil
                 work around it. It is usually quoted per running foot or per
-                project. MT Boss Construction Private Limited prepares an itemised
+                project. MTBoss Construction Private Limited prepares an itemised
                 quotation after a site visit and measurement [confirm whether the
                 visit is free].
               </p>
@@ -28,7 +26,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Meaning of Modular Kitchen Cost
+              Modular Kitchen Cost
               </h3>
               <p className="mb-3">
                 Modular kitchen cost is the total price of designing, making,
@@ -43,7 +41,7 @@ const Content = () => {
                 counts is what that rate includes.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBoss Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly, and offers modular kitchens as a quick service. Our work
                 follows the promise on our website: planning to completion, with
@@ -269,47 +267,7 @@ const Content = () => {
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Worked Example of a Quotation
-              </h3>
-              <p className="mb-3">
-                This illustration shows structure, not real prices. Please replace
-                the placeholders with actual rates.
-              </p>
-              <p className="mb-3">
-                Suppose an L-shaped kitchen has 10 running feet of base units, 8
-                running feet of wall units and one tall pantry unit.
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  Base units: 10 ft × ₹[X] per running foot
-                </li>
-                <li>
-                  Wall units: 8 ft × ₹[Y] per running foot
-                </li>
-                <li>Tall unit: 1 unit × ₹[Z]</li>
-                <li>
-                  Countertop: 10 ft × ₹[W] per running foot, with sink and hob
-                  cut-outs
-                </li>
-                <li>Backsplash tiles: area × ₹[V]</li>
-                <li>
-                  Accessories: corner unit, cutlery tray, plate rack and bin, ₹[U]
-                </li>
-                <li>Chimney and lighting, if included: ₹[T]</li>
-                <li>
-                  Civil and service work: plumbing, electrical, waterproofing,
-                  tiling, ₹[S]
-                </li>
-                <li>Installation, delivery and taxes: ₹[R]</li>
-              </ul>
-              <p className="mt-3">
-                The total is the sum of these lines. Seeing the structure matters
-                more than the figures, because a quotation that shows only one
-                number hides what it includes.
-              </p>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -318,7 +276,7 @@ const Content = () => {
               <p className="mb-3">
                 Many owners budget for cabinets and forget the room. Groundwork can
                 add significant cost, especially in older homes or renovations
-                [confirm which services MT Boss provides and how they are quoted].
+                [confirm which services MTBoss provides and how they are quoted].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -355,9 +313,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss&apos;s Plumber, Electrician, Tile &amp; Marble, Water
+                MTBoss&apos;s Plumber, Electrician, Tile &amp; Marble, Water
                 Proofing, False Ceiling and Painter services can handle these
-                through the same mtboss.in services list, so the kitchen is priced
+                through the same MTBoss.in services list, so the kitchen is priced
                 as one project and not as scattered bills.
               </p>
             </section>
@@ -376,7 +334,7 @@ const Content = () => {
                 come out, pipes and wiring may need correction, damp walls may
                 surface and levels may be uneven. These add time and cost, and some
                 are only discovered once walls are opened. A good estimate includes
-                a contingency for such findings [confirm how MT Boss handles
+                a contingency for such findings [confirm how MTBoss handles
                 unforeseen work].
               </p>
             </section>
@@ -477,7 +435,7 @@ const Content = () => {
                 Fair payment terms protect both sides. A typical arrangement links
                 payments to progress, such as an advance on order confirmation, a
                 stage payment when units are delivered, and the balance after
-                installation and handover [confirm MT Boss payment stages]. Ask
+                installation and handover [confirm MTBoss payment stages]. Ask
                 for:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -500,78 +458,21 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Budget Planning With MT Boss
+                Budget Planning With MTBoss
               </h3>
               <p>
-                The Budget Calculator on mtboss.in helps you form an early idea of
+                The Budget Calculator on MTBoss.in helps you form an early idea of
                 overall construction or renovation cost, so you can set aside a
                 sensible amount for the kitchen. For an exact figure, a site visit,
                 measurement and design sign-off are still needed.
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
-              </h3>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
-                </li>
-                <li>
-                  <strong>Service:</strong> Modular kitchen design and
-                  installation, alongside construction, interiors and home
-                  services
-                </li>
-                <li>
-                  <strong>Office:</strong> Harthala, Kanth Road, Moradabad (behind
-                  KR Collection, near Domino&apos;s), Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Phone / WhatsApp:</strong>{" "}
-                  <a
-                    href="https://wa.me/9458410866"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    +91 94584 10866
-                  </a>
-                </li>
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <strong>Website:</strong>{" "}
-                  <a
-                    href="https://www.mtboss.in/"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    www.mtboss.in
-                  </a>
-                </li>
-                <li>
-                  <strong>Coverage:</strong> Moradabad, Bareilly and nearby areas
-                  of western Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Credentials:</strong> [add registration, GST and any
-                  brand or manufacturing partnerships you can show]
-                </li>
-              </ul>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -641,21 +542,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -670,7 +571,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for a modular kitchen in Moradabad, with every cost
+                Choose MTBoss for a modular kitchen in Moradabad, with every cost
                 line explained, every inclusion listed and the work built to the
                 specification you approved.
               </p>
@@ -716,13 +617,13 @@ const Content = () => {
                 <li>
                   <strong>Q6. Can I estimate my budget first?</strong>
                   <br />
-                  Yes. Use the Budget Calculator on mtboss.in for an early idea,
+                  Yes. Use the Budget Calculator on MTBoss.in for an early idea,
                   then request a kitchen quotation.
                 </li>
                 <li>
                   <strong>Q7. How are payments structured?</strong>
                   <br />
-                  Payments are linked to progress stages [confirm MT Boss payment
+                  Payments are linked to progress stages [confirm MTBoss payment
                   stages].
                 </li>
                 <li>
@@ -734,7 +635,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a site visit?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

@@ -14,7 +14,7 @@ export default function HeroBannerSlide({ banner = {}, active = true, preview = 
         <Image
           className={styles.photo}
           src={imageUrl}
-          alt={banner?.image_alt || banner?.service_name || 'MTBOSS Service Banner'}
+          alt={banner?.image_alt || banner?.service_name || 'MTBoss Service Banner'}
           fill
           sizes="100vw"
           quality={75}

@@ -6,26 +6,26 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Hospital Construction Cost in Moradabad | MTBOSS",
+  title: "Hospital Construction Cost in Moradabad | MTBoss",
   description:
-    "Planning a hospital in Moradabad? Understand construction cost factors and get a civil construction estimate from MTBOSS. Call +91 94584 10866.",
+    "Planning a hospital in Moradabad? Understand construction cost factors and get a civil construction estimate from MTBoss. Call +91 94584 10866.",
   keywords:
-    "hospital construction cost Moradabad, hospital building cost per sq ft Moradabad, nursing home construction cost Moradabad, clinic construction cost Moradabad, hospital project cost India, MTBOSS Moradabad, hospital construction budget Moradabad, MTBOSS budget calculator, healthcare building cost Moradabad, MTBOSS Kanth Road, 20 bed hospital cost India, hospital civil construction cost, hospital construction quote Moradabad, MTBOSS construction materials, small hospital investment Moradabad",
+    "hospital construction cost Moradabad, hospital building cost per sq ft Moradabad, nursing home construction cost Moradabad, clinic construction cost Moradabad, hospital project cost India, MTBoss Moradabad, hospital construction budget Moradabad, MTBoss budget calculator, healthcare building cost Moradabad, MTBoss Kanth Road, 20 bed hospital cost India, hospital civil construction cost, hospital construction quote Moradabad, MTBoss construction materials, small hospital investment Moradabad",
   alternates: {
-    canonical: "https://www.mtboss.in/hospital-construction-cost-in-moradabad",
+    canonical: "https://www.MTBoss.in/hospital-construction-cost-in-moradabad",
   },
   openGraph: {
-    title: "Hospital Construction Cost in Moradabad | MTBOSS",
+    title: "Hospital Construction Cost in Moradabad | MTBoss",
     description:
-      "Planning a hospital in Moradabad? Understand construction cost factors and get a civil construction estimate from MTBOSS. Call +91 94584 10866.",
-    url: "https://www.mtboss.in/hospital-construction-cost-in-moradabad",
-    siteName: "MTBOSS Construction Private Limited",
+      "Planning a hospital in Moradabad? Understand construction cost factors and get a civil construction estimate from MTBoss. Call +91 94584 10866.",
+    url: "https://www.MTBoss.in/hospital-construction-cost-in-moradabad",
+    siteName: "MTBoss Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-hospital-cost-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-hospital-cost-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Hospital Construction Cost in Moradabad - MTBOSS Construction",
+        alt: "Hospital Construction Cost in Moradabad - MTBoss Construction",
       },
     ],
     locale: "en_IN",
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hospital Construction Cost in Moradabad | MTBOSS",
+    title: "Hospital Construction Cost in Moradabad | MTBoss",
     description:
-      "Planning a hospital in Moradabad? Understand construction cost factors and get a civil construction estimate from MTBOSS. Call +91 94584 10866.",
-    images: ["https://www.mtboss.in/og-hospital-cost-moradabad.jpg"],
+      "Planning a hospital in Moradabad? Understand construction cost factors and get a civil construction estimate from MTBoss. Call +91 94584 10866.",
+    images: ["https://www.MTBoss.in/og-hospital-cost-moradabad.jpg"],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/hospital-construction-cost-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/hospital-construction-cost-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",
@@ -85,12 +85,12 @@ export default function Page() {
     "@type": "Service",
     name: "Hospital Construction Cost in Moradabad",
     description:
-      "MTBOSS provides civil construction cost estimation, structural build and wholesale material supply for hospital, nursing home, clinic and healthcare facility projects in Moradabad.",
+      "MTBoss provides civil construction cost estimation, structural build and wholesale material supply for hospital, nursing home, clinic and healthcare facility projects in Moradabad.",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.mtboss.in",
+      url: "https://www.MTBoss.in",
     },
     areaServed: {
       "@type": "City",

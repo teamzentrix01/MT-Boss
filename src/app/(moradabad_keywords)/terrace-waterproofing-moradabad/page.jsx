@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Terrace Waterproofing in Moradabad | MT Boss',
+  title: 'Terrace Waterproofing in Moradabad | MTBoss',
   description:
-    'Terrace waterproofing in Moradabad by MT Boss. Leakage treatment for parapets, tanks, outlets and tiled terraces, with testing and clear itemised quotations.',
+    'Terrace waterproofing in Moradabad by MTBoss. Leakage treatment for parapets, tanks, outlets and tiled terraces, with testing and clear itemised quotations.',
   keywords:
-    'terrace waterproofing Moradabad, terrace leakage repair Moradabad, roof terrace waterproofing Moradabad, parapet waterproofing Moradabad, water tank platform waterproofing Moradabad, terrace drain waterproofing Moradabad, tiled terrace waterproofing Moradabad, terrace waterproofing contractor near me, waterproofing services Moradabad, MT Boss terrace waterproofing Moradabad',
+    'terrace waterproofing Moradabad, terrace leakage repair Moradabad, roof terrace waterproofing Moradabad, parapet waterproofing Moradabad, water tank platform waterproofing Moradabad, terrace drain waterproofing Moradabad, tiled terrace waterproofing Moradabad, terrace waterproofing contractor near me, waterproofing services Moradabad, MTBoss terrace waterproofing Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/terrace-waterproofing-moradabad',
+    canonical: 'https://www.MTBoss.in/terrace-waterproofing-moradabad',
   },
   openGraph: {
-    title: 'Terrace Waterproofing in Moradabad | MT Boss',
+    title: 'Terrace Waterproofing in Moradabad | MTBoss',
     description:
-      'Terrace waterproofing in Moradabad by MT Boss. Leakage treatment for parapets, tanks, outlets and tiled terraces, with testing and clear itemised quotations.',
-    url: 'https://www.mtboss.in/terrace-waterproofing-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Terrace waterproofing in Moradabad by MTBoss. Leakage treatment for parapets, tanks, outlets and tiled terraces, with testing and clear itemised quotations.',
+    url: 'https://www.MTBoss.in/terrace-waterproofing-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-terrace-waterproofing-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-terrace-waterproofing-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Terrace Waterproofing in Moradabad - MT Boss',
+        alt: 'Terrace Waterproofing in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Terrace Waterproofing in Moradabad | MT Boss',
+    title: 'Terrace Waterproofing in Moradabad | MTBoss',
     description:
-      'Terrace waterproofing in Moradabad by MT Boss. Leakage treatment for parapets, tanks, outlets and tiled terraces, with testing and clear itemised quotations.',
-    images: ['https://www.mtboss.in/og-terrace-waterproofing-moradabad.jpg'],
+      'Terrace waterproofing in Moradabad by MTBoss. Leakage treatment for parapets, tanks, outlets and tiled terraces, with testing and clear itemised quotations.',
+    images: ['https://www.MTBoss.in/og-terrace-waterproofing-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/terrace-waterproofing-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/terrace-waterproofing-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

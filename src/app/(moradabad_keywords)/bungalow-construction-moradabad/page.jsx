@@ -7,34 +7,34 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Bungalow Construction in Moradabad | MTBOSS",
+  title: "Bungalow Construction in Moradabad | MTBoss",
 
   description:
-    "Planning bungalow construction in Moradabad? MTBOSS offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
+    "Planning bungalow construction in Moradabad? MTBoss offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "bungalow construction Moradabad, bungalow builder Moradabad, kothi construction Moradabad, bungalow design Moradabad, bungalow contractor Moradabad, bungalow construction cost Moradabad, single storey bungalow Moradabad, double storey bungalow Moradabad, independent house construction Moradabad, luxury bungalow Moradabad, residential construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "bungalow construction Moradabad, bungalow builder Moradabad, kothi construction Moradabad, bungalow design Moradabad, bungalow contractor Moradabad, bungalow construction cost Moradabad, single storey bungalow Moradabad, double storey bungalow Moradabad, independent house construction Moradabad, luxury bungalow Moradabad, residential construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
-    canonical: "https://www.mtboss.in/bungalow-construction-in-moradabad",
+    canonical: "https://www.MTBoss.in/bungalow-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Bungalow Construction in Moradabad | MTBOSS",
+    title: "Bungalow Construction in Moradabad | MTBoss",
 
     description:
-      "Planning bungalow construction in Moradabad? MTBOSS offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning bungalow construction in Moradabad? MTBoss offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/bungalow-construction-in-moradabad",
+    url: "https://www.MTBoss.in/bungalow-construction-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-bungalow-construction-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-bungalow-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Bungalow Construction in Moradabad - MTBOSS",
+        alt: "Bungalow Construction in Moradabad - MTBoss",
       },
     ],
 
@@ -45,13 +45,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Bungalow Construction in Moradabad | MTBOSS",
+    title: "Bungalow Construction in Moradabad | MTBoss",
 
     description:
-      "Planning bungalow construction in Moradabad? MTBOSS offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning bungalow construction in Moradabad? MTBoss offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-bungalow-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-bungalow-construction-moradabad.jpg",
     ],
   },
 
@@ -65,11 +65,11 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/bungalow-construction-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/bungalow-construction-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-bungalow-construction-moradabad.jpg",
+    email: "MTBoss2016@gmail.com",
+    image: "https://www.MTBoss.in/og-bungalow-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,14 +116,14 @@ export default function Page() {
     "@type": "Service",
     name: "Bungalow Construction Services in Moradabad",
     description:
-      "MTBOSS provides bungalow construction in Moradabad for single and double-storey family homes, including design coordination, structure, facade, services provisions, waterproofing, flooring, finishing, modular kitchen, interiors, outdoor works and final handover.",
-    url: "https://www.mtboss.in/bungalow-construction-in-moradabad",
+      "MTBoss provides bungalow construction in Moradabad for single and double-storey family homes, including design coordination, structure, facade, services provisions, waterproofing, flooring, finishing, modular kitchen, interiors, outdoor works and final handover.",
+    url: "https://www.MTBoss.in/bungalow-construction-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -153,10 +153,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS build bungalows in Moradabad?",
+        name: "Does MTBoss build bungalows in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS builds residential projects, including independent houses and luxury villas, in Moradabad and Bareilly. Share your plan with the team to confirm the scope for your bungalow.",
+          text: "Yes. MTBoss builds residential projects, including independent houses and luxury villas, in Moradabad and Bareilly. Share your plan with the team to confirm the scope for your bungalow.",
         },
       },
       {
@@ -180,23 +180,23 @@ export default function Page() {
         name: "How much does bungalow construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Bungalow construction cost depends on built-up area, number of floors, design complexity, material and finish level, interior scope, outdoor development and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Bungalow construction cost depends on built-up area, number of floors, design complexity, material and finish level, interior scope, outdoor development and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS supply building materials?",
+        name: "Does MTBoss supply building materials?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during bungalow construction.",
+          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during bungalow construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -210,19 +210,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Bungalow Construction in Moradabad",
-        item: "https://www.mtboss.in/bungalow-construction-in-moradabad",
+        item: "https://www.MTBoss.in/bungalow-construction-in-moradabad",
       },
     ],
   };

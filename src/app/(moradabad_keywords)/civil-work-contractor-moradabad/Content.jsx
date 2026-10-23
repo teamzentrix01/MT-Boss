@@ -14,7 +14,7 @@ const Content = () => {
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Hiring the right civil work contractor in Moradabad determines whether the structural foundation of your building — the part you can&apos;t see once finishing work covers it up — is done correctly. Civil work contractors specialize in the physical, structural side of construction: foundation, masonry, framing, and related structural tasks. This guide explains what a civil work contractor specifically handles, how their role differs from a general builder, what to check before hiring one, and why MTBOSS Construction Private Limited is a trusted option for this kind of work in Moradabad.
+                Hiring the right civil work contractor in Moradabad determines whether the structural foundation of your building — the part you can&apos;t see once finishing work covers it up — is done correctly. Civil work contractors specialize in the physical, structural side of construction: foundation, masonry, framing, and related structural tasks. This guide explains what a civil work contractor specifically handles, how their role differs from a general builder, what to check before hiring one, and why MTBoss Construction Private Limited is a trusted option for this kind of work in Moradabad.
               </p>
             </section>
 
@@ -117,10 +117,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBOSS Is a Dependable Civil Work Contractor in Moradabad
+                Why MTBoss Is a Dependable Civil Work Contractor in Moradabad
               </h3>
               <p className="mb-3">
-                Based on their published company profile, MTBOSS Construction Private Limited brings structured, professionally managed civil work capability to Moradabad:
+                Based on their published company profile, MTBoss Construction Private Limited brings structured, professionally managed civil work capability to Moradabad:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
@@ -139,7 +139,7 @@ const Content = () => {
                 <li>Instant WhatsApp support for quick queries and quotes</li>
               </ul>
               <p className="mt-3">
-                Because MTBOSS manages civil work as part of a broader, coordinated construction service — rather than as an isolated subcontracted task — clients avoid the common problem of gaps between separate civil, electrical, and finishing teams.
+                Because MTBoss manages civil work as part of a broader, coordinated construction service — rather than as an isolated subcontracted task — clients avoid the common problem of gaps between separate civil, electrical, and finishing teams.
               </p>
             </section>
 
@@ -239,9 +239,9 @@ const Content = () => {
                 If you need foundation, structural, or masonry work handled professionally, get in touch directly:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
+                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
+                <li><strong>Website:</strong> <a href="https://www.MTBoss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBoss.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBoss2016@gmail.com" className="text-blue-600 underline">MTBoss2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
@@ -264,7 +264,7 @@ const Content = () => {
                 <li>
                   <strong>Q2. Who is a reliable civil work contractor in Moradabad?</strong>
                   <br />
-                  MTBOSS Construction Private Limited, with 22+ years of experience and 450+ completed projects.
+                  MTBoss Construction Private Limited, with 22+ years of experience and 450+ completed projects.
                 </li>
                 <li>
                   <strong>Q3. What is the difference between a civil work contractor and a builder?</strong>
@@ -277,17 +277,17 @@ const Content = () => {
                   Around ₹700–₹800 per sq. ft. overall, with structural work forming a major share.
                 </li>
                 <li>
-                  <strong>Q5. Does MTBOSS provide a free civil work estimate?</strong>
+                  <strong>Q5. Does MTBoss provide a free civil work estimate?</strong>
                   <br />
                   Yes, their online Budget Calculator gives an instant, free BOQ-based estimate.
                 </li>
                 <li>
-                  <strong>Q7. Does MTBOSS handle industrial civil work too?</strong>
+                  <strong>Q7. Does MTBoss handle industrial civil work too?</strong>
                   <br />
                   Yes, including warehouses, factory sheds, and industrial infrastructure.
                 </li>
                 <li>
-                  <strong>Q8. Can I buy construction materials directly from MTBOSS?</strong>
+                  <strong>Q8. Can I buy construction materials directly from MTBoss?</strong>
                   <br />
                   Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates.
                 </li>

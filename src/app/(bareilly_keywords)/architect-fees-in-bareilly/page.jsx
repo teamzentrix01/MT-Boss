@@ -1,0 +1,83 @@
+// app/(bareilly_keywords)/architect-fees-in-bareilly/page.jsx
+import Banner from './Banner';
+import Content from './Content';
+import QuickServices from '../../components/QuickServices';
+import CalculatorCTA from '../../components/CalculatorCTA';
+import Services from '../../components/Services';
+
+export const metadata = {
+  title: 'Architect Fees in Bareilly',
+  description:
+    'Understand architect fees in Bareilly: fee models, what each stage includes, extra charges and how MTBoss writes clear design proposals. Call +91 94584 10866.',
+  keywords:
+    'architect fees in Bareilly, architect fees Bareilly, architect charges Bareilly, architect cost Bareilly, architect price Bareilly, house design fees Bareilly, architect consultation fees Bareilly, architect fee per square foot Bareilly, architect fee structure Bareilly, architect payment schedule Bareilly, architect design proposal Bareilly, MTBoss Bareilly, architect near me Bareilly',
+  alternates: {
+    canonical: 'https://www.MTBoss.in/architect-fees-in-bareilly',
+  },
+  openGraph: {
+    title: 'Architect Fees in Bareilly',
+    description:
+      'Understand architect fees in Bareilly: fee models, what each stage includes, extra charges and how MTBoss writes clear design proposals. Call +91 94584 10866.',
+    url: 'https://www.MTBoss.in/architect-fees-in-bareilly',
+    siteName: 'MTBoss Construction Private Limited',
+    images: [
+      {
+        url: 'https://www.MTBoss.in/og-architect-fees-in-bareilly.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Architect Fees in Bareilly - MTBoss',
+      },
+    ],
+    locale: 'en_IN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Architect Fees in Bareilly',
+    description:
+      'Understand architect fees in Bareilly: fee models, what each stage includes, extra charges and how MTBoss writes clear design proposals. Call +91 94584 10866.',
+    images: ['https://www.MTBoss.in/og-architect-fees-in-bareilly.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export default function Page() {
+  const localBusinessSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'GeneralContractor',
+    name: 'MTBoss Construction Private Limited',
+    url: 'https://www.MTBoss.in/architect-fees-in-bareilly',
+    telephone: '+91-9458410866',
+    email: 'MTBoss2016@gmail.com',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress:
+        "Harthala Kanth Road, Behind Kr Collection, near Domino's",
+      addressLocality: 'Moradabad',
+      addressRegion: 'Uttar Pradesh',
+      addressCountry: 'IN',
+    },
+    areaServed: {
+      '@type': 'City',
+      name: 'Bareilly',
+    },
+    priceRange: '₹₹',
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
+      <Banner />
+      <Content />
+      <QuickServices />
+      <Services />
+      <CalculatorCTA />
+    </>
+  );
+}

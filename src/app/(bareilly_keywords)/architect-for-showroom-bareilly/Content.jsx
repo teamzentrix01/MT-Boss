@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Showroom in Bareilly: MT Boss
+            Architect for Showroom in Bareilly: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -16,7 +16,7 @@ const Content = () => {
               <p>
                 An architect for a showroom in Bareilly plans the shop front,
                 display zones, lighting, services and customer flow so the space
-                sells, then produces drawings for approval and fit-out. MT Boss
+                sells, then produces drawings for approval and fit-out. MTBoss
                 Construction Private Limited serves Bareilly and Moradabad with
                 commercial design and construction under one team. Please confirm
                 architect registration and showroom experience.
@@ -35,7 +35,7 @@ const Content = () => {
                 product fails at its job.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBoss Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -49,7 +49,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Each category has its own priorities. Please keep only the types
-                MT Boss actually designs.
+                MTBoss actually designs.
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -228,7 +228,7 @@ const Content = () => {
                   <strong>Flooring:</strong> Durable, easy-to-clean tiles, stone or
                   vitrified surfaces with enough slip resistance, and a suitable
                   load capacity for heavy products. Tile &amp; Marble service is
-                  available through MT Boss.
+                  available through MTBoss.
                 </li>
                 <li>
                   <strong>Walls:</strong> Paint, laminates, panels or feature
@@ -320,7 +320,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Many showrooms follow a parent company&apos;s brand manual. Please
-                confirm how MT Boss works with brand guidelines. Typical
+                confirm how MTBoss works with brand guidelines. Typical
                 requirements cover:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -447,7 +447,7 @@ const Content = () => {
               <p className="mb-3">
                 Most showroom owners work backwards from a fixed opening date, such
                 as a festival or a franchise launch. A realistic plan includes the
-                following. Please adjust to MT Boss&apos;s process, and add
+                following. Please adjust to MTBoss&apos;s process, and add
                 timelines only if you can keep to them:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -475,7 +475,7 @@ const Content = () => {
                 Fit-Out Sequence
               </h3>
               <p className="mb-3">
-                A tidy sequence avoids rework. Please adjust to MT Boss&apos;s
+                A tidy sequence avoids rework. Please adjust to MTBoss&apos;s
                 process.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -495,7 +495,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Costs depend on area, finish level and brand rules. Main factors
-                include the following. Please state how MT Boss prepares estimates:
+                include the following. Please state how MTBoss prepares estimates:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -518,7 +518,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A usable set normally includes the following. Please adjust to what
-                MT Boss provides:
+                MTBoss provides:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Measured survey of the premises</li>
@@ -593,11 +593,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
+                MTBoss Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited.
+                  <strong>Business:</strong> MTBoss Construction Private Limited.
                 </li>
                 <li>
                   <strong>Service:</strong> Commercial and showroom design and
@@ -620,17 +620,17 @@ const Content = () => {
                   <strong>Phone / WhatsApp:</strong> +91 94584 10866.
                 </li>
                 <li>
-                  <strong>Email:</strong> mtboss2016@gmail.com.
+                  <strong>Email:</strong> MTBoss2016@gmail.com.
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                   .
                 </li>
@@ -647,7 +647,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Showroom Owners Consider MT Boss
+                Reasons Showroom Owners Consider MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -690,7 +690,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Showroom With MT Boss
+                Plan Your Showroom With MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -707,21 +707,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   — click &quot;Get a Construction Quote&quot;.
                 </li>
@@ -736,7 +736,7 @@ const Content = () => {
                 visit and a written proposal.
               </p>
               <p className="mt-3">
-                Consider MT Boss for your showroom in Bareilly, with the shop front
+                Consider MTBoss for your showroom in Bareilly, with the shop front
                 planned to attract, the layout planned to sell and the fit-out
                 planned to open on time.
               </p>
@@ -750,7 +750,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who designs showrooms in Bareilly?</strong>
                   <br />
-                  MT Boss Construction offers commercial design and fit-out for
+                  MTBoss Construction offers commercial design and fit-out for
                   Bareilly and Moradabad. Please confirm registration.
                 </li>
                 <li>
@@ -801,7 +801,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a site visit?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

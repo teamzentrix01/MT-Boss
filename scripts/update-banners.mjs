@@ -46,7 +46,7 @@ const banners = [
     label: 'BUY, SELL & RENT',
     title: 'Your next chapter.',
     subtitle: 'Your next property.',
-    description: 'Discover verified residential flats, commercial properties and plots, or list your property across India with MTBOSS.',
+    description: 'Discover verified residential flats, commercial properties and plots, or list your property across India with MTBoss.',
     image_url: '/images/banners/property.jpg',
     image_alt: 'Luxury real estate villa and modern residential property',
     image_position: 'center',

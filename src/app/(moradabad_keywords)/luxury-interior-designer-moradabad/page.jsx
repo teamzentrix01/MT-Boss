@@ -7,27 +7,27 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Luxury Interior Designer in Moradabad | MT Boss Interiors",
+  title: "Luxury Interior Designer in Moradabad | MTBoss Interiors",
   description:
-    "Looking for a luxury interior designer in Moradabad? MT Boss creates premium homes, villas and showrooms with custom design, fine finishes and precise execution.",
+    "Looking for a luxury interior designer in Moradabad? MTBoss creates premium homes, villas and showrooms with custom design, fine finishes and precise execution.",
   keywords:
-    "luxury interior designer in Moradabad, luxury interior designer Moradabad, premium interior designer Moradabad, luxury home interior Moradabad, luxury villa interior designer Moradabad, luxury apartment interior Moradabad, luxury interior design Moradabad, high end interior designer Moradabad, luxury interior designer near me, premium home interiors Moradabad, luxury showroom interior designer Moradabad, MT Boss interiors, MT Boss luxury interiors",
+    "luxury interior designer in Moradabad, luxury interior designer Moradabad, premium interior designer Moradabad, luxury home interior Moradabad, luxury villa interior designer Moradabad, luxury apartment interior Moradabad, luxury interior design Moradabad, high end interior designer Moradabad, luxury interior designer near me, premium home interiors Moradabad, luxury showroom interior designer Moradabad, MTBoss interiors, MTBoss luxury interiors",
   alternates: {
     canonical:
-      "https://www.mtboss.in/luxury-interior-designer-in-moradabad",
+      "https://www.MTBoss.in/luxury-interior-designer-in-moradabad",
   },
   openGraph: {
-    title: "Luxury Interior Designer in Moradabad | MT Boss Interiors",
+    title: "Luxury Interior Designer in Moradabad | MTBoss Interiors",
     description:
-      "Looking for a luxury interior designer in Moradabad? MT Boss creates premium homes, villas and showrooms with custom design, fine finishes and precise execution.",
-    url: "https://www.mtboss.in/luxury-interior-designer-in-moradabad",
-    siteName: "MTBOSS Construction Private Limited",
+      "Looking for a luxury interior designer in Moradabad? MTBoss creates premium homes, villas and showrooms with custom design, fine finishes and precise execution.",
+    url: "https://www.MTBoss.in/luxury-interior-designer-in-moradabad",
+    siteName: "MTBoss Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-luxury-interior-designer-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-luxury-interior-designer-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Luxury Interior Designer in Moradabad - MT Boss Interiors",
+        alt: "Luxury Interior Designer in Moradabad - MTBoss Interiors",
       },
     ],
     locale: "en_IN",
@@ -35,11 +35,11 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Luxury Interior Designer in Moradabad | MT Boss Interiors",
+    title: "Luxury Interior Designer in Moradabad | MTBoss Interiors",
     description:
-      "Looking for a luxury interior designer in Moradabad? MT Boss creates premium homes, villas and showrooms with custom design, fine finishes and precise execution.",
+      "Looking for a luxury interior designer in Moradabad? MTBoss creates premium homes, villas and showrooms with custom design, fine finishes and precise execution.",
     images: [
-      "https://www.mtboss.in/og-luxury-interior-designer-moradabad.jpg",
+      "https://www.MTBoss.in/og-luxury-interior-designer-moradabad.jpg",
     ],
   },
   robots: {
@@ -51,10 +51,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBOSS Construction Private Limited",
-  url: "https://www.mtboss.in/luxury-interior-designer-in-moradabad",
+  name: "MTBoss Construction Private Limited",
+  url: "https://www.MTBoss.in/luxury-interior-designer-in-moradabad",
   telephone: "+91-9458410866",
-  email: "mtboss2016@gmail.com",
+  email: "MTBoss2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",

@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Construction Project Management in Moradabad | MTBOSS",
+  title: "Construction Project Management in Moradabad | MTBoss",
 
   description:
-    "Need construction project management in Moradabad? MTBOSS offers planning, quality checks and on-time handover. Call +91 94584 10866.",
+    "Need construction project management in Moradabad? MTBoss offers planning, quality checks and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "construction project management Moradabad, project management services Moradabad, construction supervision Moradabad, site supervision Moradabad, construction planning Moradabad, building project manager Moradabad, construction quality control Moradabad, construction cost control Moradabad, project management for house construction Moradabad, construction company in Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "construction project management Moradabad, project management services Moradabad, construction supervision Moradabad, site supervision Moradabad, construction planning Moradabad, building project manager Moradabad, construction quality control Moradabad, construction cost control Moradabad, project management for house construction Moradabad, construction company in Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/construction-project-management-in-moradabad",
+      "https://www.MTBoss.in/construction-project-management-in-moradabad",
   },
 
   openGraph: {
-    title: "Construction Project Management in Moradabad | MTBOSS",
+    title: "Construction Project Management in Moradabad | MTBoss",
 
     description:
-      "Need construction project management in Moradabad? MTBOSS offers planning, quality checks and on-time handover. Call +91 94584 10866.",
+      "Need construction project management in Moradabad? MTBoss offers planning, quality checks and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/construction-project-management-in-moradabad",
+    url: "https://www.MTBoss.in/construction-project-management-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-construction-project-management-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-construction-project-management-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Construction Project Management in Moradabad - MTBOSS",
+        alt: "Construction Project Management in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Construction Project Management in Moradabad | MTBOSS",
+    title: "Construction Project Management in Moradabad | MTBoss",
 
     description:
-      "Need construction project management in Moradabad? MTBOSS offers planning, quality checks and on-time handover. Call +91 94584 10866.",
+      "Need construction project management in Moradabad? MTBoss offers planning, quality checks and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-construction-project-management-moradabad.jpg",
+      "https://www.MTBoss.in/og-construction-project-management-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/construction-project-management-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/construction-project-management-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-construction-project-management-moradabad.jpg",
+      "https://www.MTBoss.in/og-construction-project-management-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,14 +117,14 @@ export default function Page() {
     "@type": "Service",
     name: "Construction Project Management Services in Moradabad",
     description:
-      "MTBOSS provides construction project management services in Moradabad for houses, bungalows, duplex homes, farmhouses, multi storey buildings, commercial buildings, institutional buildings and specialist buildings, including project planning, scheduling, budget planning and tracking, material planning, site supervision, quality control, coordination of trades, services and waterproofing coordination, progress updates, change management and final inspection and handover.",
-    url: "https://www.mtboss.in/construction-project-management-in-moradabad",
+      "MTBoss provides construction project management services in Moradabad for houses, bungalows, duplex homes, farmhouses, multi storey buildings, commercial buildings, institutional buildings and specialist buildings, including project planning, scheduling, budget planning and tracking, material planning, site supervision, quality control, coordination of trades, services and waterproofing coordination, progress updates, change management and final inspection and handover.",
+    url: "https://www.MTBoss.in/construction-project-management-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -154,10 +154,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS offer construction project management in Moradabad?",
+        name: "Does MTBoss offer construction project management in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, with stage-wise planning, milestones and regular engineer site visits. Share your project with the team to confirm the scope and level of support you need.",
+          text: "MTBoss builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, with stage-wise planning, milestones and regular engineer site visits. Share your project with the team to confirm the scope and level of support you need.",
         },
       },
       {
@@ -194,7 +194,7 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
           text: "The office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
@@ -211,19 +211,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Construction Project Management in Moradabad",
-        item: "https://www.mtboss.in/construction-project-management-in-moradabad",
+        item: "https://www.MTBoss.in/construction-project-management-in-moradabad",
       },
     ],
   };

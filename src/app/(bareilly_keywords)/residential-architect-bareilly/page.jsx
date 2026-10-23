@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Residential Architect in Bareilly',
   description:
-    'Residential architect in Bareilly for house planning, design, drawings and construction guidance. MTBOSS designs homes around your family, plot and budget. Call or WhatsApp.',
+    'Residential architect in Bareilly for house planning, design, drawings and construction guidance. MTBoss designs homes around your family, plot and budget. Call or WhatsApp.',
   keywords:
-    'residential architect in Bareilly, house architect Bareilly, home design Bareilly, house planning Bareilly, house map design Bareilly, residential building design Bareilly, architect for home Bareilly, house construction architect Bareilly, home renovation architect Bareilly, Vastu home design Bareilly, MTBOSS Bareilly, architect near me Bareilly',
+    'residential architect in Bareilly, house architect Bareilly, home design Bareilly, house planning Bareilly, house map design Bareilly, residential building design Bareilly, architect for home Bareilly, house construction architect Bareilly, home renovation architect Bareilly, Vastu home design Bareilly, MTBoss Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.mtboss.in/residential-architect-bareilly',
+    canonical: 'https://www.MTBoss.in/residential-architect-bareilly',
   },
   openGraph: {
     title: 'Residential Architect in Bareilly',
     description:
-      'Residential architect in Bareilly for house planning, design, drawings and construction guidance. MTBOSS designs homes around your family, plot and budget. Call or WhatsApp.',
-    url: 'https://www.mtboss.in/residential-architect-bareilly',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Residential architect in Bareilly for house planning, design, drawings and construction guidance. MTBoss designs homes around your family, plot and budget. Call or WhatsApp.',
+    url: 'https://www.MTBoss.in/residential-architect-bareilly',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-residential-architect-bareilly.jpg',
+        url: 'https://www.MTBoss.in/og-residential-architect-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Residential Architect in Bareilly - MTBOSS',
+        alt: 'Residential Architect in Bareilly - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Residential Architect in Bareilly',
     description:
-      'Residential architect in Bareilly for house planning, design, drawings and construction guidance. MTBOSS designs homes around your family, plot and budget. Call or WhatsApp.',
-    images: ['https://www.mtboss.in/og-residential-architect-bareilly.jpg'],
+      'Residential architect in Bareilly for house planning, design, drawings and construction guidance. MTBoss designs homes around your family, plot and budget. Call or WhatsApp.',
+    images: ['https://www.MTBoss.in/og-residential-architect-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/residential-architect-bareilly',
+    name: 'MTBoss Construction Private Limited',
+    url: 'https://www.MTBoss.in/residential-architect-bareilly',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBoss2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

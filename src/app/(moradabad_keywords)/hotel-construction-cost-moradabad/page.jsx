@@ -7,34 +7,34 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Hotel Construction Cost in Moradabad | MTBOSS",
+  title: "Hotel Construction Cost in Moradabad | MTBoss",
 
   description:
-    "Wondering about hotel construction cost in Moradabad? Learn what affects the budget and get a free quote from MTBOSS. Call +91 94584 10866.",
+    "Wondering about hotel construction cost in Moradabad? Learn what affects the budget and get a free quote from MTBoss. Call +91 94584 10866.",
 
   keywords:
-    "hotel construction cost Moradabad, hotel building cost Moradabad, cost of building a hotel Moradabad, hotel construction budget Moradabad, hotel construction cost per room, hotel construction cost per sq ft Moradabad, budget hotel construction cost, guest house construction cost Moradabad, banquet hall construction cost Moradabad, hotel construction estimate Moradabad, hotel construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "hotel construction cost Moradabad, hotel building cost Moradabad, cost of building a hotel Moradabad, hotel construction budget Moradabad, hotel construction cost per room, hotel construction cost per sq ft Moradabad, budget hotel construction cost, guest house construction cost Moradabad, banquet hall construction cost Moradabad, hotel construction estimate Moradabad, hotel construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
-    canonical: "https://www.mtboss.in/hotel-construction-cost-in-moradabad",
+    canonical: "https://www.MTBoss.in/hotel-construction-cost-in-moradabad",
   },
 
   openGraph: {
-    title: "Hotel Construction Cost in Moradabad | MTBOSS",
+    title: "Hotel Construction Cost in Moradabad | MTBoss",
 
     description:
-      "Wondering about hotel construction cost in Moradabad? Learn what affects the budget and get a free quote from MTBOSS. Call +91 94584 10866.",
+      "Wondering about hotel construction cost in Moradabad? Learn what affects the budget and get a free quote from MTBoss. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/hotel-construction-cost-in-moradabad",
+    url: "https://www.MTBoss.in/hotel-construction-cost-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-hotel-construction-cost-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-hotel-construction-cost-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Hotel Construction Cost in Moradabad - MTBOSS Construction",
+        alt: "Hotel Construction Cost in Moradabad - MTBoss Construction",
       },
     ],
 
@@ -45,13 +45,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Hotel Construction Cost in Moradabad | MTBOSS",
+    title: "Hotel Construction Cost in Moradabad | MTBoss",
 
     description:
-      "Wondering about hotel construction cost in Moradabad? Learn what affects the budget and get a free quote from MTBOSS. Call +91 94584 10866.",
+      "Wondering about hotel construction cost in Moradabad? Learn what affects the budget and get a free quote from MTBoss. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-hotel-construction-cost-moradabad.jpg",
+      "https://www.MTBoss.in/og-hotel-construction-cost-moradabad.jpg",
     ],
   },
 
@@ -66,16 +66,16 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
 
-    name: "MTBOSS Construction Private Limited",
+    name: "MTBoss Construction Private Limited",
 
-    url: "https://www.mtboss.in/hotel-construction-cost-in-moradabad",
+    url: "https://www.MTBoss.in/hotel-construction-cost-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
 
     image:
-      "https://www.mtboss.in/og-hotel-construction-cost-moradabad.jpg",
+      "https://www.MTBoss.in/og-hotel-construction-cost-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -133,16 +133,16 @@ export default function Page() {
     name: "Hotel Construction Cost Estimate in Moradabad",
 
     description:
-      "MTBOSS provides hotel construction cost estimation in Moradabad, including budget planning for hotel buildings, guest houses, resorts, banquet halls and hospitality projects based on built-up area, room count, floors, facilities, finishing level and material requirements.",
+      "MTBoss provides hotel construction cost estimation in Moradabad, including budget planning for hotel buildings, guest houses, resorts, banquet halls and hospitality projects based on built-up area, room count, floors, facilities, finishing level and material requirements.",
 
-    url: "https://www.mtboss.in/hotel-construction-cost-in-moradabad",
+    url: "https://www.MTBoss.in/hotel-construction-cost-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
 
     areaServed: [
@@ -170,7 +170,7 @@ export default function Page() {
         name: "How much does it cost to build a hotel in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Hotel construction cost depends on built-up area, number of rooms, floors, hotel category, facilities, material quality, structural requirements, finishing level and interior scope. Use the MTBOSS Budget Calculator for an early estimate or request a project-specific construction quote.",
+          text: "Hotel construction cost depends on built-up area, number of rooms, floors, hotel category, facilities, material quality, structural requirements, finishing level and interior scope. Use the MTBoss Budget Calculator for an early estimate or request a project-specific construction quote.",
         },
       },
       {
@@ -199,34 +199,34 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS offer hotel construction in Moradabad?",
+        name: "Does MTBoss offer hotel construction in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Hotel construction is included in the MTBOSS service list, alongside residential, commercial, industrial and institutional construction projects in Moradabad and Bareilly.",
+          text: "Yes. Hotel construction is included in the MTBoss service list, alongside residential, commercial, industrial and institutional construction projects in Moradabad and Bareilly.",
         },
       },
       {
         "@type": "Question",
-        name: "How accurate is the MTBOSS Budget Calculator?",
+        name: "How accurate is the MTBoss Budget Calculator?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS Budget Calculator provides a practical early estimate to help with hotel project planning. A site visit, drawing review, facility list and material specification discussion are needed for a more precise project-specific estimate.",
+          text: "The MTBoss Budget Calculator provides a practical early estimate to help with hotel project planning. A site visit, drawing review, facility list and material specification discussion are needed for a more precise project-specific estimate.",
         },
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS supply building materials for hotel construction?",
+        name: "Does MTBoss supply building materials for hotel construction?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its material supply network, helping coordinate material availability during hotel construction.",
+          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its material supply network, helping coordinate material availability during hotel construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -241,19 +241,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Hotel Construction Cost in Moradabad",
-        item: "https://www.mtboss.in/hotel-construction-cost-in-moradabad",
+        item: "https://www.MTBoss.in/hotel-construction-cost-in-moradabad",
       },
     ],
   };

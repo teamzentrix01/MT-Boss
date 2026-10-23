@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Commercial Building Contractor in Moradabad | MTBOSS",
+  title: "Commercial Building Contractor in Moradabad | MTBoss",
 
   description:
-    "Hire a commercial building contractor in Moradabad. MTBOSS delivers shops, offices, showrooms and more with clear scope. Call +91 94584 10866.",
+    "Hire a commercial building contractor in Moradabad. MTBoss delivers shops, offices, showrooms and more with clear scope. Call +91 94584 10866.",
 
   keywords:
-    "commercial building contractor Moradabad, commercial contractor Moradabad, commercial construction contractor Moradabad, building contractor Moradabad, civil contractor Moradabad, shop construction contractor Moradabad, showroom contractor Moradabad, office building contractor Moradabad, commercial complex contractor Moradabad, warehouse contractor Moradabad, school building contractor Moradabad, commercial construction cost Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "commercial building contractor Moradabad, commercial contractor Moradabad, commercial construction contractor Moradabad, building contractor Moradabad, civil contractor Moradabad, shop construction contractor Moradabad, showroom contractor Moradabad, office building contractor Moradabad, commercial complex contractor Moradabad, warehouse contractor Moradabad, school building contractor Moradabad, commercial construction cost Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/commercial-building-contractor-in-moradabad",
+      "https://www.MTBoss.in/commercial-building-contractor-in-moradabad",
   },
 
   openGraph: {
-    title: "Commercial Building Contractor in Moradabad | MTBOSS",
+    title: "Commercial Building Contractor in Moradabad | MTBoss",
 
     description:
-      "Hire a commercial building contractor in Moradabad. MTBOSS delivers shops, offices, showrooms and more with clear scope. Call +91 94584 10866.",
+      "Hire a commercial building contractor in Moradabad. MTBoss delivers shops, offices, showrooms and more with clear scope. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/commercial-building-contractor-in-moradabad",
+    url: "https://www.MTBoss.in/commercial-building-contractor-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-commercial-building-contractor-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-commercial-building-contractor-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Commercial Building Contractor in Moradabad - MTBOSS",
+        alt: "Commercial Building Contractor in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Commercial Building Contractor in Moradabad | MTBOSS",
+    title: "Commercial Building Contractor in Moradabad | MTBoss",
 
     description:
-      "Hire a commercial building contractor in Moradabad. MTBOSS delivers shops, offices, showrooms and more with clear scope. Call +91 94584 10866.",
+      "Hire a commercial building contractor in Moradabad. MTBoss delivers shops, offices, showrooms and more with clear scope. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-commercial-building-contractor-moradabad.jpg",
+      "https://www.MTBoss.in/og-commercial-building-contractor-moradabad.jpg",
     ],
   },
 
@@ -67,17 +67,17 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
 
-    name: "MTBOSS Construction Private Limited",
+    name: "MTBoss Construction Private Limited",
 
     url:
-      "https://www.mtboss.in/commercial-building-contractor-in-moradabad",
+      "https://www.MTBoss.in/commercial-building-contractor-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
 
     image:
-      "https://www.mtboss.in/og-commercial-building-contractor-moradabad.jpg",
+      "https://www.MTBoss.in/og-commercial-building-contractor-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -138,17 +138,17 @@ export default function Page() {
     name: "Commercial Building Contractor Services in Moradabad",
 
     description:
-      "MTBOSS is a commercial building contractor in Moradabad delivering shops, offices, showrooms, commercial complexes, malls, schools, hotels, warehouses and industrial buildings with site preparation, RCC structure, masonry, services coordination, finishing, material supply and handover.",
+      "MTBoss is a commercial building contractor in Moradabad delivering shops, offices, showrooms, commercial complexes, malls, schools, hotels, warehouses and industrial buildings with site preparation, RCC structure, masonry, services coordination, finishing, material supply and handover.",
 
     url:
-      "https://www.mtboss.in/commercial-building-contractor-in-moradabad",
+      "https://www.MTBoss.in/commercial-building-contractor-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
 
     areaServed: [
@@ -181,18 +181,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS work as a commercial building contractor in Moradabad?",
+        name: "Does MTBoss work as a commercial building contractor in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Commercial construction is part of the MTBOSS service list, alongside hotel, school, college, mall, industrial, infrastructure and residential construction projects in Moradabad and Bareilly.",
+          text: "Yes. Commercial construction is part of the MTBoss service list, alongside hotel, school, college, mall, industrial, infrastructure and residential construction projects in Moradabad and Bareilly.",
         },
       },
       {
         "@type": "Question",
-        name: "What types of commercial buildings can MTBOSS build?",
+        name: "What types of commercial buildings can MTBoss build?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS can discuss construction scope for shops, showrooms, offices, commercial complexes, malls, schools, colleges, hotels, guest houses, warehouses, godowns, factory sheds, industrial buildings and mixed-use projects.",
+          text: "MTBoss can discuss construction scope for shops, showrooms, offices, commercial complexes, malls, schools, colleges, hotels, guest houses, warehouses, godowns, factory sheds, industrial buildings and mixed-use projects.",
         },
       },
       {
@@ -216,7 +216,7 @@ export default function Page() {
         name: "How much does commercial building construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Commercial building cost depends on built-up area, building type, floors, structure, electrical and plumbing scope, material quality, finishing level, facade, glazing and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Commercial building cost depends on built-up area, building type, floors, structure, electrical and plumbing scope, material quality, finishing level, facade, glazing and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
@@ -229,10 +229,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -247,19 +247,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Commercial Building Contractor in Moradabad",
-        item: "https://www.mtboss.in/commercial-building-contractor-in-moradabad",
+        item: "https://www.MTBoss.in/commercial-building-contractor-in-moradabad",
       },
     ],
   };

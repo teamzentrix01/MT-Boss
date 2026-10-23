@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Basement Waterproofing in Moradabad: MT Boss
+            Basement Waterproofing in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -27,7 +27,7 @@ const Content = () => {
                 Because a basement sits below the surface, it cannot simply shed
                 water the way a roof does. It has to be sealed, drained or both.
                 Good basement waterproofing in Moradabad begins with understanding
-                where the water is coming from and how hard it is pushing. MT Boss
+                where the water is coming from and how hard it is pushing. MTBoss
                 Construction Private Limited treats basements for homes, shops,
                 offices, hotels, hospitals, warehouses and apartment buildings
                 across Moradabad and Bareilly. Our work follows the promise on our
@@ -38,7 +38,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Meaning of Basement Waterproofing
+                Basement Waterproofing
               </h3>
               <p>
                 Basement waterproofing is the set of measures that keep
@@ -53,10 +53,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBoss Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home services,
+                MTBoss is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -151,7 +151,7 @@ const Content = () => {
                 seepage, but it does not stop water from reaching the structure,
                 so the concrete and steel stay exposed to moisture. Heavy
                 hydrostatic pressure may need drainage in addition [confirm what
-                MT Boss offers].
+                MTBoss offers].
               </p>
               <p>
                 Our engineers explain which approach suits your building and what
@@ -165,7 +165,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 The right method depends on the cause, the pressure and the budget
-                [confirm the systems and products MT Boss actually uses]. Common
+                [confirm the systems and products MTBoss actually uses]. Common
                 approaches include:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -235,7 +235,7 @@ const Content = () => {
                 <li>
                   <strong>Sump pump:</strong> an electric pump that lifts water
                   out, ideally with a backup arrangement for power cuts [confirm
-                  what MT Boss supplies or coordinates]
+                  what MTBoss supplies or coordinates]
                 </li>
               </ul>
               <p className="mt-3">
@@ -380,7 +380,7 @@ const Content = () => {
               <p className="mb-3">
                 After treatment, we check the results through visual inspection,
                 moisture checks and observation of known problem spots, ideally
-                over a wet spell [confirm what testing MT Boss carries out]. For
+                over a wet spell [confirm what testing MTBoss carries out]. For
                 basements with sumps, pump operation and discharge are tested.
                 Because groundwater changes with the season, monitoring after the
                 first heavy rain tells you more than a dry-day check. We advise
@@ -410,7 +410,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Our Electrician and Plumber services on mtboss.in can help with
+                Our Electrician and Plumber services on MTBoss.in can help with
                 safe re-routing and repair around the work.
               </p>
             </section>
@@ -426,7 +426,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  mtboss.in, or call or WhatsApp us with photos of the basement
+                  MTBoss.in, or call or WhatsApp us with photos of the basement
                   and a description of when the dampness appears.
                 </li>
                 <li>
@@ -517,14 +517,14 @@ const Content = () => {
               <p className="mt-3">
                 We measure the basement and prepare an itemised estimate [confirm
                 whether rates are per area or lump sum]. You can also use the
-                Budget Calculator on mtboss.in for an early idea of overall
+                Budget Calculator on MTBoss.in for an early idea of overall
                 construction cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -561,7 +561,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book a Basement Inspection with MT Boss
+                Book a Basement Inspection with MTBoss
               </h3>
               <p className="mb-3">
                 Ready to deal with the dampness at its source? Contact us:
@@ -570,12 +570,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -593,10 +593,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -610,7 +610,7 @@ const Content = () => {
                 send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for basement waterproofing in Moradabad, with the
+                Choose MTBoss for basement waterproofing in Moradabad, with the
                 water source found, the right system chosen and the space made dry
                 and usable again.
               </p>
@@ -626,7 +626,7 @@ const Content = () => {
                     Q1. Who provides basement waterproofing in Moradabad?
                   </strong>
                   <br />
-                  MT Boss Construction treats basement seepage and dampness across
+                  MTBoss Construction treats basement seepage and dampness across
                   Moradabad and Bareilly.
                 </li>
                 <li>
@@ -676,7 +676,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

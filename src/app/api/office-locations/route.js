@@ -16,9 +16,9 @@ const DEFAULT_OFFICES = [
   'Dehradun',
 ].map((city, index) => ({
   city,
-  address: `MTBOSS Office, ${city}, India`,
+  address: `MTBoss Office, ${city}, India`,
   phone: COMPANY_CONTACT.phone,
-  email: `${city.toLowerCase()}@mtboss.com`,
+  email: `${city.toLowerCase()}@MTBoss.com`,
   hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
   map_url: city.toLowerCase() === 'bareilly'
     ? 'https://www.google.com/maps?q=28.3975,79.452806&z=17&output=embed'

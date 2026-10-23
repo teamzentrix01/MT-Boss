@@ -6,27 +6,27 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Carpenter Services in Moradabad | Furniture, Doors & Repair | MTBOSS',
+  title: 'Carpenter Services in Moradabad | Furniture, Doors & Repair | MTBoss',
   description:
-    'Carpenter services in Moradabad for furniture, wardrobes, doors, windows and repairs. MTBOSS offers skilled woodwork for homes and shops. Call or WhatsApp to book.',
+    'Carpenter services in Moradabad for furniture, wardrobes, doors, windows and repairs. MTBoss offers skilled woodwork for homes and shops. Call or WhatsApp to book.',
   keywords:
-    'carpenter services Moradabad, carpenter near me Moradabad, carpenter for furniture Moradabad, carpenter for wardrobe Moradabad, carpenter for door repair Moradabad, carpenter for window repair Moradabad, custom furniture Moradabad, wooden furniture maker Moradabad, carpenter for home repair Moradabad, MTBOSS carpenter services Moradabad',
+    'carpenter services Moradabad, carpenter near me Moradabad, carpenter for furniture Moradabad, carpenter for wardrobe Moradabad, carpenter for door repair Moradabad, carpenter for window repair Moradabad, custom furniture Moradabad, wooden furniture maker Moradabad, carpenter for home repair Moradabad, MTBoss carpenter services Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/carpenter-services-moradabad',
+    canonical: 'https://www.MTBoss.in/carpenter-services-moradabad',
   },
   openGraph: {
     title:
-      'Carpenter Services in Moradabad | Furniture, Doors & Repair | MTBOSS',
+      'Carpenter Services in Moradabad | Furniture, Doors & Repair | MTBoss',
     description:
-      'Carpenter services in Moradabad for furniture, wardrobes, doors, windows and repairs. MTBOSS offers skilled woodwork for homes and shops. Call or WhatsApp to book.',
-    url: 'https://www.mtboss.in/carpenter-services-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Carpenter services in Moradabad for furniture, wardrobes, doors, windows and repairs. MTBoss offers skilled woodwork for homes and shops. Call or WhatsApp to book.',
+    url: 'https://www.MTBoss.in/carpenter-services-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-carpenter-services-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-carpenter-services-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Carpenter Services in Moradabad - MTBOSS',
+        alt: 'Carpenter Services in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -35,10 +35,10 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title:
-      'Carpenter Services in Moradabad | Furniture, Doors & Repair | MTBOSS',
+      'Carpenter Services in Moradabad | Furniture, Doors & Repair | MTBoss',
     description:
-      'Carpenter services in Moradabad for furniture, wardrobes, doors, windows and repairs. MTBOSS offers skilled woodwork for homes and shops. Call or WhatsApp to book.',
-    images: ['https://www.mtboss.in/og-carpenter-services-moradabad.jpg'],
+      'Carpenter services in Moradabad for furniture, wardrobes, doors, windows and repairs. MTBoss offers skilled woodwork for homes and shops. Call or WhatsApp to book.',
+    images: ['https://www.MTBoss.in/og-carpenter-services-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -49,10 +49,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/carpenter-services-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/carpenter-services-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MT Boss: Construction Contractor in Moradabad for Residential,
+            MTBoss: Construction Contractor in Moradabad for Residential,
             Commercial and Industrial Buildings
           </h2>
 
@@ -26,8 +26,8 @@ const Content = () => {
               <p className="mt-3">
                 For anyone looking for a construction contractor in Moradabad,
                 the real task is finding a team with technical skill, clear
-                paperwork and a record of finishing what it starts. MT Boss
-                (MTBOSS Construction Private Limited) is a full-service
+                paperwork and a record of finishing what it starts. MTBoss
+                (MTBoss Construction Private Limited) is a full-service
                 construction contractor serving Moradabad and nearby cities
                 such as Bareilly. The company builds homes, commercial
                 complexes, hotels, institutions and industrial units, and also
@@ -38,10 +38,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss as a Complete Civil and Building Contractor
+                MTBoss as a Complete Civil and Building Contractor
               </h3>
               <p className="mb-3">
-                MT Boss covers the full range of contracting work, from the
+                MTBoss covers the full range of contracting work, from the
                 first excavation to the last coat of paint.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -85,7 +85,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Property Owners in Moradabad Choose MT Boss
+                Why Property Owners in Moradabad Choose MTBoss
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -102,7 +102,7 @@ const Content = () => {
                 Estimates Broken Down Item by Item
               </h4>
               <p className="mb-3">
-                MT Boss prepares itemised estimates that separate structure,
+                MTBoss prepares itemised estimates that separate structure,
                 masonry, finishing, services and external works. Optional
                 upgrades are listed individually, which lets owners adjust the
                 budget without guesswork.
@@ -132,7 +132,7 @@ const Content = () => {
                 Local Base and Quick Response
               </h4>
               <p className="mb-3">
-                The MT Boss office on Harthala Kanth Road, Moradabad, keeps the
+                The MTBoss office on Harthala Kanth Road, Moradabad, keeps the
                 team close to its projects. Site visits, material deliveries
                 and decisions happen faster when the contractor is nearby.
               </p>
@@ -140,14 +140,14 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Types of Buildings Constructed by MT Boss
+                Types of Buildings Constructed by MTBoss
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Houses, Villas and Apartments
               </h4>
               <p className="mb-3">
-                Home construction at MT Boss follows the owner&apos;s lifestyle.
+                Home construction at MTBoss follows the owner&apos;s lifestyle.
                 Layouts consider family size, plot shape, sunlight,
                 ventilation, parking and storage. Terraces, staircases and
                 structural provisions are planned so that extra floors can be
@@ -158,7 +158,7 @@ const Content = () => {
                 Shops, Showrooms and Office Buildings
               </h4>
               <p className="mb-3">
-                Commercial buildings depend on location and usability. MT Boss
+                Commercial buildings depend on location and usability. MTBoss
                 designs frontage, parking, loading access, staircases and
                 utility shafts so that businesses operate smoothly and tenants
                 find the space attractive.
@@ -169,7 +169,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Hospitality projects need coordinated planning of guest areas,
-                kitchens, service routes and safety systems. MT Boss builds
+                kitchens, service routes and safety systems. MTBoss builds
                 these properties with durable finishes that handle heavy daily
                 use.
               </p>
@@ -179,7 +179,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Industrial buildings call for strong floors, wide spans, proper
-                ventilation and truck access. MT Boss constructs industrial
+                ventilation and truck access. MTBoss constructs industrial
                 spaces that support manufacturing, packing and dispatch, which
                 matters for Moradabad&apos;s export-driven economy.
               </p>
@@ -189,7 +189,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Institutional buildings need safe circulation, good light,
-                hygienic finishes and accessible layouts. MT Boss plans these
+                hygienic finishes and accessible layouts. MTBoss plans these
                 projects around the comfort of students, patients and staff.
               </p>
 
@@ -198,14 +198,14 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Older properties can be strengthened, extended or modernised.
-                MT Boss inspects the existing structure first, then proposes
+                MTBoss inspects the existing structure first, then proposes
                 changes that are both safe and economical.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MT Boss Work Sequence: Step by Step
+                The MTBoss Work Sequence: Step by Step
               </h3>
               <p className="mb-3">
                 A defined sequence keeps work orderly and prevents trades from
@@ -264,10 +264,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Quality Systems on MT Boss Projects
+                Quality Systems on MTBoss Projects
               </h3>
               <p className="mb-3">
-                Reliable results depend on repeatable habits. MT Boss uses the
+                Reliable results depend on repeatable habits. MTBoss uses the
                 following controls across its sites.
               </p>
 
@@ -294,7 +294,7 @@ const Content = () => {
                 Curing Discipline
               </h4>
               <p className="mb-3">
-                Concrete gains strength through proper curing. MT Boss follows
+                Concrete gains strength through proper curing. MTBoss follows
                 planned curing periods, with extra attention during hot
                 weather.
               </p>
@@ -357,7 +357,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss gives clear inclusions and exclusions with every
+                MTBoss gives clear inclusions and exclusions with every
                 estimate. The online construction budget calculator on the
                 company website also gives a quick early figure before a
                 detailed quotation is prepared. A contingency of about 10
@@ -367,7 +367,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Site Safety and Workforce Management at MT Boss
+                Site Safety and Workforce Management at MTBoss
               </h3>
               <p className="mb-3">
                 A well-managed site protects people and keeps the project on
@@ -404,7 +404,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Neighbours also matter. MT Boss plans delivery times, noise and
+                Neighbours also matter. MTBoss plans delivery times, noise and
                 debris removal to limit disturbance in residential lanes.
               </p>
             </section>
@@ -414,7 +414,7 @@ const Content = () => {
                 Seasonal Planning for Construction in Moradabad
               </h3>
               <p className="mb-3">
-                Weather shapes the pace and method of building. MT Boss plans
+                Weather shapes the pace and method of building. MTBoss plans
                 work around local conditions.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -444,10 +444,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Documentation and Compliance Handled by MT Boss
+                Documentation and Compliance Handled by MTBoss
               </h3>
               <p className="mb-3">
-                Legal clarity protects the value of a property. MT Boss assists
+                Legal clarity protects the value of a property. MTBoss assists
                 owners with:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -478,7 +478,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Construction is only one part of owning a property. Through the
-                MT Boss platform, owners can also access:
+                MTBoss platform, owners can also access:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -508,7 +508,7 @@ const Content = () => {
                 Practical Advice Before You Appoint a Contractor
               </h3>
               <p className="mb-3">
-                Owners can protect themselves with a few simple steps. MT Boss
+                Owners can protect themselves with a few simple steps. MTBoss
                 supports each of these.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -534,12 +534,12 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Project With MT Boss
+                Start Your Project With MTBoss
               </h3>
               <p className="mb-3">
                 A successful project begins with a clear scope and a contractor
                 who follows through. Share your plot details, requirements and
-                budget with MT Boss, and the team will prepare a practical plan
+                budget with MTBoss, and the team will prepare a practical plan
                 with transparent costing.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -553,21 +553,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                 </li>
               </ul>
@@ -583,18 +583,18 @@ const Content = () => {
                     Q1. Who is a trusted construction contractor in Moradabad?
                   </strong>
                   <br />
-                  MT Boss is a trusted contractor for homes, commercial
+                  MTBoss is a trusted contractor for homes, commercial
                   buildings, hotels and factories, with written agreements and
                   transparent pricing.
                 </li>
                 <li>
-                  <strong>Q2. What work does MT Boss handle as a contractor?</strong>
+                  <strong>Q2. What work does MTBoss handle as a contractor?</strong>
                   <br />
                   We handle civil and structural work, masonry, plastering,
                   finishing, waterproofing, renovation, kitchens and interiors.
                 </li>
                 <li>
-                  <strong>Q3. How does MT Boss prepare cost estimates?</strong>
+                  <strong>Q3. How does MTBoss prepare cost estimates?</strong>
                   <br />
                   We prepare itemised estimates after reviewing drawings,
                   specifications and site conditions, with optional items
@@ -611,17 +611,17 @@ const Content = () => {
                   <br />
                   Yes. Use the construction budget calculator on{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   for an early estimate.
                 </li>
                 <li>
-                  <strong>Q6. Does MT Boss help with approvals?</strong>
+                  <strong>Q6. Does MTBoss help with approvals?</strong>
                   <br />
                   Yes. We prepare drawings and documents required for local
                   authority approvals.
@@ -633,17 +633,17 @@ const Content = () => {
                   checks at every stage.
                 </li>
                 <li>
-                  <strong>Q8. How do I contact MT Boss?</strong>
+                  <strong>Q8. How do I contact MTBoss?</strong>
                   <br />
                   Call or WhatsApp +91 94584 10866, email
-                  mtboss2016@gmail.com, or visit{" "}
+                  MTBoss2016@gmail.com, or visit{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                   .
                 </li>

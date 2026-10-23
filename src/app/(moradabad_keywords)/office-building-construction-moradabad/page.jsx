@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Office Building Construction in Moradabad | MTBOSS",
+  title: "Office Building Construction in Moradabad | MTBoss",
 
   description:
-    "Planning office building construction in Moradabad? MTBOSS offers smart design, quality build and on-time handover. Call +91 94584 10866.",
+    "Planning office building construction in Moradabad? MTBoss offers smart design, quality build and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "office building construction Moradabad, office construction company Moradabad, office building contractor Moradabad, commercial office construction Moradabad, office complex construction Moradabad, corporate office building Moradabad, office building design Moradabad, office building construction cost Moradabad, office space construction Moradabad, commercial construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "office building construction Moradabad, office construction company Moradabad, office building contractor Moradabad, commercial office construction Moradabad, office complex construction Moradabad, corporate office building Moradabad, office building design Moradabad, office building construction cost Moradabad, office space construction Moradabad, commercial construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/office-building-construction-in-moradabad",
+      "https://www.MTBoss.in/office-building-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Office Building Construction in Moradabad | MTBOSS",
+    title: "Office Building Construction in Moradabad | MTBoss",
 
     description:
-      "Planning office building construction in Moradabad? MTBOSS offers smart design, quality build and on-time handover. Call +91 94584 10866.",
+      "Planning office building construction in Moradabad? MTBoss offers smart design, quality build and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/office-building-construction-in-moradabad",
+    url: "https://www.MTBoss.in/office-building-construction-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-office-building-construction-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-office-building-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Office Building Construction in Moradabad - MTBOSS",
+        alt: "Office Building Construction in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Office Building Construction in Moradabad | MTBOSS",
+    title: "Office Building Construction in Moradabad | MTBoss",
 
     description:
-      "Planning office building construction in Moradabad? MTBOSS offers smart design, quality build and on-time handover. Call +91 94584 10866.",
+      "Planning office building construction in Moradabad? MTBoss offers smart design, quality build and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-office-building-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-office-building-construction-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/office-building-construction-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/office-building-construction-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-office-building-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-office-building-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -118,14 +118,14 @@ export default function Page() {
     "@type": "Service",
     name: "Office Building Construction Services in Moradabad",
     description:
-      "MTBOSS provides office building construction in Moradabad for own-use offices, rental office complexes and corporate offices, including planning, structure, facade, services provisions, waterproofing, flooring, finishing, interior coordination and final handover.",
-    url: "https://www.mtboss.in/office-building-construction-in-moradabad",
+      "MTBoss provides office building construction in Moradabad for own-use offices, rental office complexes and corporate offices, including planning, structure, facade, services provisions, waterproofing, flooring, finishing, interior coordination and final handover.",
+    url: "https://www.MTBoss.in/office-building-construction-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -155,18 +155,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS offer office building construction in Moradabad?",
+        name: "Does MTBoss offer office building construction in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Commercial construction is part of the MTBOSS service list, along with hotel, school, college, mall, industrial and residential projects in Moradabad and Bareilly.",
+          text: "Yes. Commercial construction is part of the MTBoss service list, along with hotel, school, college, mall, industrial and residential projects in Moradabad and Bareilly.",
         },
       },
       {
         "@type": "Question",
-        name: "Can MTBOSS design an office building for rental income?",
+        name: "Can MTBoss design an office building for rental income?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS can plan flexible floor plates, adequate parking and neutral, durable finishes suited to multiple tenants. Share your rental or mixed-use plan with the team to confirm the scope.",
+          text: "MTBoss can plan flexible floor plates, adequate parking and neutral, durable finishes suited to multiple tenants. Share your rental or mixed-use plan with the team to confirm the scope.",
         },
       },
       {
@@ -190,23 +190,23 @@ export default function Page() {
         name: "How much does office building construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Office building cost depends on built-up area, number of floors, structural design, lift and special systems, facade and glazing, services scope, finishing level, interior and fit-out, parking, external development and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Office building cost depends on built-up area, number of floors, structural design, lift and special systems, facade and glazing, services scope, finishing level, interior and fit-out, parking, external development and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS supply building materials?",
+        name: "Does MTBoss supply building materials?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during office building construction.",
+          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during office building construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -220,19 +220,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Office Building Construction in Moradabad",
-        item: "https://www.mtboss.in/office-building-construction-in-moradabad",
+        item: "https://www.MTBoss.in/office-building-construction-in-moradabad",
       },
     ],
   };

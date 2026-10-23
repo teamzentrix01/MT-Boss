@@ -9,7 +9,7 @@ const Content = () => {
         <div className="order-1 flex-1 px-4 py-12 sm:px-8 md:px-16 lg:order-1">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 sm:text-3xl md:text-3xl">
             Petrol Pump Civil Work in Moradabad: Site Development, Forecourt,
-            Canopy and Building by MTBOSS
+            Canopy and Building by MTBoss
           </h2>
 
           <div className="max-w-4xl space-y-6 leading-relaxed text-gray-700">
@@ -23,7 +23,7 @@ const Content = () => {
 
               <p className="mt-3">
                 That is why petrol pump civil work in Moradabad needs careful
-                planning, quality materials and close supervision. MTBOSS
+                planning, quality materials and close supervision. MTBoss
                 Construction Private Limited is a Moradabad-based architect,
                 interior designer and construction company serving Moradabad and
                 Bareilly, with commercial, industrial and infrastructure
@@ -72,11 +72,11 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
 
               <p className="mb-3">
-                MTBOSS is a Moradabad-based company offering construction
+                MTBoss is a Moradabad-based company offering construction
                 services, doorstep home services, verified property
                 transactions, and building materials under one company.
               </p>
@@ -91,12 +91,12 @@ const Content = () => {
                   and roadside areas.
                 </li>
                 <li>
-                  MTBOSS positions itself around quality work, transparent
+                  MTBoss positions itself around quality work, transparent
                   pricing and on-time delivery while serving Moradabad and
                   Bareilly.
                 </li>
                 <li>
-                  A project gallery and blog on the MTBOSS website let clients
+                  A project gallery and blog on the MTBoss website let clients
                   review completed work before reaching out.
                 </li>
               </ul>
@@ -104,7 +104,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Petrol Pump Civil Work Services Offered by MTBOSS in Moradabad
+                Petrol Pump Civil Work Services Offered by MTBoss in Moradabad
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -156,7 +156,7 @@ const Content = () => {
 
               <p className="mt-3">
                 The final scope for each project is discussed and confirmed with
-                the MTBOSS team and the client before work begins.
+                the MTBoss team and the client before work begins.
               </p>
             </section>
 
@@ -361,7 +361,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                MTBOSS focuses on delivering civil work according to approved
+                MTBoss focuses on delivering civil work according to approved
                 drawings and specifications, while clients and their consultants
                 handle licences and approvals specific to the outlet.
               </p>
@@ -409,7 +409,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Since these factors vary between outlets, MTBOSS recommends
+                Since these factors vary between outlets, MTBoss recommends
                 starting with the free Budget Calculator and then requesting a
                 detailed quote based on your plot and requirements.
               </p>
@@ -417,12 +417,12 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why the MTBOSS Budget Calculator Helps Before Civil Work Starts
+                Why the MTBoss Budget Calculator Helps Before Civil Work Starts
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-1">
                 <li>
-                  It is a free online tool available directly on the MTBOSS
+                  It is a free online tool available directly on the MTBoss
                   website.
                 </li>
                 <li>
@@ -437,7 +437,7 @@ const Content = () => {
                   It provides a reference range for comparing quotations.
                 </li>
                 <li>
-                  It gives both the client and MTBOSS a reference point for
+                  It gives both the client and MTBoss a reference point for
                   tracking spending as the project proceeds.
                 </li>
               </ul>
@@ -449,8 +449,8 @@ const Content = () => {
               </h3>
 
               <p className="mb-3">
-                MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints
-                through the MTBOSS Shop Now section. Forecourt paving and RCC
+                MTBoss supplies cement, TMT steel bars, bricks, tiles and paints
+                through the MTBoss Shop Now section. Forecourt paving and RCC
                 work need steady cement and steel supply, and material delays
                 can stall the project.
               </p>
@@ -462,7 +462,7 @@ const Content = () => {
                   supplier.
                 </li>
                 <li>
-                  Direct material control helps MTBOSS manage delivery timing.
+                  Direct material control helps MTBoss manage delivery timing.
                 </li>
                 <li>
                   Internal supply coordination can help reduce project delays
@@ -473,12 +473,12 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Keeps Civil Work on Track
+                How MTBoss Keeps Civil Work on Track
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Site visits at each stage:</strong> MTBOSS engineers
+                  <strong>Site visits at each stage:</strong> MTBoss engineers
                   stay involved through site visits and check that work matches
                   approved drawings.
                 </li>
@@ -531,7 +531,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                What to Share With MTBOSS Before Your First Consultation
+                What to Share With MTBoss Before Your First Consultation
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -553,7 +553,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Rough budget range:</strong> An approximate figure
-                  helps MTBOSS plan around your investment.
+                  helps MTBoss plan around your investment.
                 </li>
                 <li>
                   <strong>Timeline expectations:</strong> Target opening or
@@ -564,7 +564,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Support Beyond Civil Work
+                MTBoss Support Beyond Civil Work
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -587,13 +587,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Areas Served by MTBOSS
+                Areas Served by MTBoss
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-1">
                 <li>Moradabad city and main highways and roads around it.</li>
                 <li>
-                  Kanth Road and surrounding growth areas close to the MTBOSS
+                  Kanth Road and surrounding growth areas close to the MTBoss
                   office.
                 </li>
                 <li>
@@ -601,23 +601,23 @@ const Content = () => {
                   roadside construction.
                 </li>
                 <li>
-                  Bareilly, where MTBOSS also provides construction and design
+                  Bareilly, where MTBoss also provides construction and design
                   services.
                 </li>
                 <li>
                   Nearby towns and districts of Uttar Pradesh where clients
-                  coordinate projects remotely with the MTBOSS team.
+                  coordinate projects remotely with the MTBoss team.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Getting a Quote From MTBOSS for Petrol Pump Civil Work
+                Getting a Quote From MTBoss for Petrol Pump Civil Work
               </h3>
 
               <p className="mb-3">
-                MTBOSS offers a Get a Construction Quote option directly on its
+                MTBoss offers a Get a Construction Quote option directly on its
                 website, allowing you to request pricing before an in-person
                 visit.
               </p>
@@ -625,20 +625,20 @@ const Content = () => {
               <p>
                 You can also contact the team directly by phone or WhatsApp.
                 Sharing your plot size, oil company layout, planned facilities
-                and rough budget upfront helps MTBOSS provide a more accurate
+                and rough budget upfront helps MTBoss provide a more accurate
                 initial response.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBOSS for Petrol Pump Civil Work in Moradabad?
+                Why Choose MTBoss for Petrol Pump Civil Work in Moradabad?
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Commercial and infrastructure capability:</strong>{" "}
-                  MTBOSS services include commercial buildings, industrial
+                  MTBoss services include commercial buildings, industrial
                   projects and infrastructure work.
                 </li>
                 <li>
@@ -647,13 +647,13 @@ const Content = () => {
                   company.
                 </li>
                 <li>
-                  <strong>Engineering-led positioning:</strong> MTBOSS frames
+                  <strong>Engineering-led positioning:</strong> MTBoss frames
                   its work around engineering excellence, transparent pricing
                   and on-time delivery.
                 </li>
                 <li>
                   <strong>Direct material control:</strong> Cement, steel,
-                  bricks, tiles and paints are available through MTBOSS supply.
+                  bricks, tiles and paints are available through MTBoss supply.
                 </li>
                 <li>
                   <strong>Transparent estimation tools:</strong> The free Budget
@@ -673,39 +673,39 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBOSS: Petrol Pump Civil Work in Moradabad
+                Contact MTBoss: Petrol Pump Civil Work in Moradabad
               </h3>
 
               <p className="mb-3">
                 For owners searching for petrol pump civil work in Moradabad,
-                MTBOSS offers one point of contact for planning coordination,
+                MTBoss offers one point of contact for planning coordination,
                 material supply, civil construction and finishing.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBOSS Construction Private Limited
+                  <strong>Company:</strong> MTBoss Construction Private Limited
                 </li>
 
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in
+                    https://www.MTBoss.in
                   </a>
                 </li>
 
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
 
@@ -739,7 +739,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Use the quote option on the MTBOSS website, or call or WhatsApp
+                Use the quote option on the MTBoss website, or call or WhatsApp
                 the team with your plot details, approved layout and civil-work
                 requirements.
               </p>
@@ -762,21 +762,21 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBOSS handle petrol pump civil work in Moradabad?
+                    Q2. Does MTBoss handle petrol pump civil work in Moradabad?
                   </strong>
                   <br />
-                  MTBOSS provides commercial, industrial and infrastructure
+                  MTBoss provides commercial, industrial and infrastructure
                   construction in Moradabad and Bareilly. Contact the team to
                   discuss your petrol pump project scope.
                 </li>
 
                 <li>
                   <strong>
-                    Q3. Does MTBOSS install fuel tanks and dispensers?
+                    Q3. Does MTBoss install fuel tanks and dispensers?
                   </strong>
                   <br />
                   Fuel equipment is generally installed according to oil-company
-                  specifications by authorised vendors. MTBOSS focuses on civil
+                  specifications by authorised vendors. MTBoss focuses on civil
                   and building work around it. Confirm the final scope directly
                   with the team.
                 </li>
@@ -812,14 +812,14 @@ const Content = () => {
                   <br />
                   Cost depends on plot size, site conditions, forecourt
                   specification, canopy foundation, building area and material
-                  quality. Use the MTBOSS Budget Calculator or request a
+                  quality. Use the MTBoss Budget Calculator or request a
                   detailed quote.
                 </li>
 
                 <li>
-                  <strong>Q8. Where is the MTBOSS office located?</strong>
+                  <strong>Q8. Where is the MTBoss office located?</strong>
                   <br />
-                  The MTBOSS office is located at Harthala, Kanth Road, Behind
+                  The MTBoss office is located at Harthala, Kanth Road, Behind
                   KR Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.
                 </li>
               </ul>

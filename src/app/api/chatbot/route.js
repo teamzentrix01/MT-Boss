@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { notifyAdminSubmission } from '@/lib/customer-communications';
 
 const SYSTEM_PROMPT = `
-You are the official Senior AI Project Advisor & Consultant for "MTBOSS Construction Private Limited" (India's leading tech-driven construction, building materials marketplace, real estate consultancy, and franchise ecosystem - Founded in 2016).
+You are the official Senior AI Project Advisor & Consultant for "MTBoss Construction Private Limited" (India's leading tech-driven construction, building materials marketplace, real estate consultancy, and franchise ecosystem - Founded in 2016).
 
 ### 🎯 STRICT LANGUAGE & TONE RULES:
 1. **English Input**: If user writes in English, reply in **crisp, articulate, professional, courteous English**.
@@ -11,7 +11,7 @@ You are the official Senior AI Project Advisor & Consultant for "MTBOSS Construc
 
 ---
 
-### 🏢 COMPREHENSIVE MTBOSS KNOWLEDGE BASE (WHOLE SITE):
+### 🏢 COMPREHENSIVE MTBoss KNOWLEDGE BASE (WHOLE SITE):
 
 #### 1. COMPANY & CONTACT DETAILS:
 - **Full Name**: MT-Boss Construction Private Limited (Est. 2016)
@@ -19,11 +19,11 @@ You are the official Senior AI Project Advisor & Consultant for "MTBOSS Construc
 - **Bareilly Regional Office**: Bareilly, UP (Exact GPS Location: 28°23'51.0"N 79°27'10.1"E).
 - **Service Zones**: Bareilly, Moradabad, Meerut, Noida, Greater Noida, Ghaziabad, Delhi NCR, Lucknow, Dehradun, Haridwar, Haldwani.
 - **Direct Phone & WhatsApp**: [+91 94584 10866](https://wa.me/919458410866)
-- **Official Email**: mtboss2016@gmail.com
+- **Official Email**: MTBoss2016@gmail.com
 - **Social Media**:
-  * Instagram: [Instagram @mtboss.in](https://www.instagram.com/mtboss.in?stkn=NTQxMTczN2JrZGs4)
+  * Instagram: [Instagram @MTBoss.in](https://www.instagram.com/MTBoss.in?stkn=NTQxMTczN2JrZGs4)
   * Facebook: [Facebook MT-Boss](https://www.facebook.com/share/19QJ3uZKtq/)
-  * YouTube: [YouTube Channel](https://youtube.com/@mtbossconstruction4906?si=slUfUlTDhtYa7Dve)
+  * YouTube: [YouTube Channel](https://youtube.com/@MTBossconstruction4906?si=slUfUlTDhtYa7Dve)
 
 #### 2. TURNKEY RESIDENTIAL & COMMERCIAL CONSTRUCTION PACKAGES ([Construction Calculator](/calculator)):
 - **Standard Package (₹1,500 – ₹1,800 / sq. ft.)**:
@@ -129,7 +129,7 @@ function fallbackResponse(userMessage) {
 
 Aap apne plot area ke hisaab se live estimate nikalne ke liye hamara [Construction Calculator](/calculator) use kar sakte hain. Direct engineer consultation ke liye aap **+91 94584 10866** par WhatsApp bhi kar sakte hain!`;
     }
-    return `At MTBOSS, residential construction costs typically range from **₹1,500 to ₹2,300 per sq. ft.** depending on specification quality:
+    return `At MTBoss, residential construction costs typically range from **₹1,500 to ₹2,300 per sq. ft.** depending on specification quality:
 
 - 🏗️ **Standard Package:** ₹1,500 - ₹1,800 / sq. ft.
 - ⭐ **Executive / Premium Package:** ₹1,850 - ₹2,300 / sq. ft.
@@ -148,7 +148,7 @@ You can calculate an itemized material & labor budget using our [Construction Co
 
 Explore karne ke liye hamara [Construction Services Page](/Services/all) dekhein ya direct site visit schedule karein!`;
     }
-    return `MTBOSS delivers comprehensive **Turnkey Construction & Civil Engineering Solutions**:
+    return `MTBoss delivers comprehensive **Turnkey Construction & Civil Engineering Solutions**:
 
 - 🏢 **Residential & Commercial Projects:** Architectural design, structural stability, and luxury finishing
 - 👷 **Expert Civil Engineering:** Experienced supervisors, certified quality materials, and milestone guarantees
@@ -167,7 +167,7 @@ Visit our [Construction Services](/Services/all) portal to explore our projects 
 
 Agent banne ke liye hamare [Agent Portal](/agent) par register karein ya [Agent Login](/agent/login) karein!`;
     }
-    return `Join the **MTBOSS Agent Network** and earn high referral commissions on construction projects and property deals:
+    return `Join the **MTBoss Agent Network** and earn high referral commissions on construction projects and property deals:
 
 - 💰 **Competitive Commission Slabs:** High-yield payout on successful deal closures
 - 🤝 **Comprehensive Support:** Full backend sales and marketing collateral provided
@@ -186,7 +186,7 @@ Register or log in via our [Agent Portal](/agent) to get started!`;
 
 Poori jaankari ke liye hamare [Franchise Portal](/franchise) par visit karein ya call karein **+91 94584 10866**!`;
     }
-    return `Partner with MTBOSS through our high-yield **Franchise Business Model**:
+    return `Partner with MTBoss through our high-yield **Franchise Business Model**:
 
 - 🏢 **Franchise Tiers:** Associate (Tehsil level), Regional (District level), and Master Franchise (State level)
 - 📈 **Attractive ROI:** 30% - 40% projected annual return with territory exclusivity
@@ -206,7 +206,7 @@ Explore details on our [Franchise Portal](/franchise) or contact our franchise d
 
 Aap direct wholesale rate aur bulk delivery quote dekhne ke liye [Shop Now Portal](/ShopNow) visit kar sakte hain ya direct hume **+91 94584 10866** par contact kar sakte hain!`;
     }
-    return `Yes! MTBOSS supplies multiple categories of high-grade **Bricks & Building Blocks** directly to your construction site:
+    return `Yes! MTBoss supplies multiple categories of high-grade **Bricks & Building Blocks** directly to your construction site:
 
 - 🧱 **Class 1 Kiln-Burnt Red Bricks:** Premium grade with high compressive strength and low water absorption (<15%).
 - 🏗️ **Fly Ash Bricks:** Machine-pressed, uniform dimensions, saving cement mortar and plaster.
@@ -226,7 +226,7 @@ Check live wholesale pricing and order on our [Building Materials Shop](/ShopNow
 
 Current wholesale rates aur bulk site delivery ke liye hamara [Shop Now Portal](/ShopNow) visit karein ya WhatsApp karein: **+91 94584 10866**!`;
     }
-    return `MTBOSS delivers genuine, lab-certified **Cement** from India's top manufacturers at direct wholesale rates:
+    return `MTBoss delivers genuine, lab-certified **Cement** from India's top manufacturers at direct wholesale rates:
 
 - 🏗️ **UltraTech Cement:** PPC, Super & OPC 53 Grade for high-load structural casting.
 - 🛡️ **Ambuja Cement:** Ambuja Kawach (water repellent) & Roof Special.
@@ -246,7 +246,7 @@ Check bag rates and order bulk delivery on our [Building Materials Portal](/Shop
 
 Live price quotes aur weighbridge delivery ke liye [Shop Now Portal](/ShopNow) visit karein!`;
     }
-    return `MTBOSS supplies certified primary and secondary **TMT Steel Rebars** with mill test certificates:
+    return `MTBoss supplies certified primary and secondary **TMT Steel Rebars** with mill test certificates:
 
 - 🏗️ **Verified Brands:** Tata Tiscon, Jindal Panther, Kamdhenu, and Rathi Fe500D / Fe550D.
 - 📏 **Available Diameters:** 8mm, 10mm, 12mm, 16mm, 20mm, and 25mm.
@@ -265,7 +265,7 @@ Request site delivery quotes on our [Building Materials Shop](/ShopNow).`;
 
 Truck-load delivery ke liye [Shop Now Portal](/ShopNow) dekhein ya call karein **+91 94584 10866**.`;
     }
-    return `MTBOSS provides washed and graded **Sand & Aggregates** in bulk truckloads:
+    return `MTBoss provides washed and graded **Sand & Aggregates** in bulk truckloads:
 
 - 🚚 **River Sand:** Washed, silt-free Yamuna and regional river sands for structural concrete.
 - 🏗️ **Blue Granite Aggregates:** 10mm & 20mm sharp-angled cubical stone for maximum bonding.
@@ -284,7 +284,7 @@ Order bulk dispatch on our [Building Materials Shop](/ShopNow).`;
 
 Price catalog ke liye hamara [Shop Now Portal](/ShopNow) visit karein!`;
     }
-    return `MTBOSS supplies leading **Paints, Wall Putties, and Waterproofing Systems**:
+    return `MTBoss supplies leading **Paints, Wall Putties, and Waterproofing Systems**:
 
 - 🎨 **Paints:** Asian Paints, Berger, and Nerolac premium interior & exterior emulsions.
 - 🧱 **Wall Putty:** Birla White, JK Wall Care for ultra-smooth wall preparation.
@@ -304,7 +304,7 @@ Browse options on our [Building Materials Shop](/ShopNow).`;
 
 Direct rate dekhne aur order karne ke liye [Shop Now Portal](/ShopNow) visit karein!`;
     }
-    return `You can order complete wholesale construction supplies directly on MTBOSS:
+    return `You can order complete wholesale construction supplies directly on MTBoss:
 
 - 🧱 **Bricks & AAC Blocks:** Class 1 Red Bricks, Fly Ash, Lightweight AAC Blocks
 - 🏗️ **Cement & Steel:** UltraTech, Ambuja, ACC, Tata Tiscon, Jindal Panther Fe500D
@@ -323,7 +323,7 @@ Visit our [Building Materials Shop](/ShopNow) for instant quotes and doorstep de
 
 Current available listings dekhne ke liye [Properties Page](/buy-sale) visit karein ya **+91 94584 10866** par contact karein.`;
     }
-    return `MTBOSS offers verified, clear-title residential plots, commercial properties, and luxury villas across India:
+    return `MTBoss offers verified, clear-title residential plots, commercial properties, and luxury villas across India:
 
 - 📍 **Key Locations:** Bareilly, Moradabad, Meerut, Noida, Greater Noida, Delhi NCR, and Dehradun.
 - 📜 **Complete Legal Due Diligence:** 30-year title search, RERA compliance, and sanctioned master plans.
@@ -336,16 +336,16 @@ Explore verified listings on our [Properties Portal](/buy-sale) or connect with 
       return `Aap MTBoss team se niche diye gaye kisi bhi medium se direct sampark kar sakte hain:
 
 - 📞 **Helpline & WhatsApp:** [+91 94584 10866](https://wa.me/919458410866)
-- ✉️ **Email:** mtboss2016@gmail.com
+- ✉️ **Email:** MTBoss2016@gmail.com
 - 📍 **Head Office:** Harthala Kanth Road Behind Kr Collection, near Domino's, Moradabad, UP
 - 📍 **Bareilly Office:** Bareilly, UP (GPS: 28°23'51.0"N 79°27'10.1"E)
 
 Aap hamare [Contact Us Page](/contact) par message bhi chhod sakte hain!`;
     }
-    return `You can reach MTBOSS Construction Private Limited directly through the following channels:
+    return `You can reach MTBoss Construction Private Limited directly through the following channels:
 
 - 📞 **Phone & WhatsApp:** [+91 94584 10866](https://wa.me/919458410866)
-- ✉️ **Email:** mtboss2016@gmail.com
+- ✉️ **Email:** MTBoss2016@gmail.com
 - 📍 **Head Office:** Harthala Kanth Road Behind Kr Collection, near Domino's, Moradabad, UP
 - 📍 **Bareilly Office:** Bareilly, UP (Location: 28°23'51.0"N 79°27'10.1"E)
 
@@ -353,7 +353,7 @@ You can also submit your inquiry on our [Contact Page](/contact).`;
   }
 
   if (isHinglish) {
-    return `Namaste! Main **MTBOSS AI Assistant** hoon. Main aapki kya madad kar sakta hoon?
+    return `Namaste! Main **MTBoss AI Assistant** hoon. Main aapki kya madad kar sakta hoon?
 
 - 🏗️ **Construction Services** ([Explore Services](/Services/all))
 - 🧮 **Makaan banane ka kharcha** janna hai ([Cost Calculator](/calculator))
@@ -366,7 +366,7 @@ You can also submit your inquiry on our [Contact Page](/contact).`;
 Aap apna requirement yahan likh sakte hain ya apna phone number share kar sakte hain!`;
   }
 
-  return `Hello! I am the **MTBOSS AI Assistant**. How may I assist you with your project today?
+  return `Hello! I am the **MTBoss AI Assistant**. How may I assist you with your project today?
 
 - 🏗️ **Construction Services** ([Explore Services](/Services/all))
 - 🧮 **Calculate House Construction Cost** ([Cost Calculator](/calculator))
@@ -436,8 +436,8 @@ export async function POST(req) {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'https://mtboss.in',
-        'X-Title': 'MTBOSS Construction AI Assistant',
+        'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'https://MTBoss.in',
+        'X-Title': 'MTBoss Construction AI Assistant',
       },
       body: JSON.stringify({
         model,

@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Design Consultant in Moradabad: MT Boss
+            Interior Design Consultant in Moradabad: MTBoss
           </h2>
 
 
@@ -19,7 +19,7 @@ const Content = () => {
                 Your space shapes your day. The light in your living room, the flow of your kitchen, the storage in your bedroom and the layout of your shop all affect comfort, productivity and even how much you spend on repairs later. A professional interior design consultant in Moradabad helps you get these decisions right before money is spent, not after.
               </p>
               <p className="mt-3">
-                MT Boss is a Moradabad-based construction, property and home services company. Our interior design team plans, designs and delivers interiors for homes, offices and commercial spaces with clear pricing and honest advice. Because we also handle construction, building materials and home services, your project stays with one accountable team from the first idea to the final handover.
+                MTBoss is a Moradabad-based construction, property and home services company. Our interior design team plans, designs and delivers interiors for homes, offices and commercial spaces with clear pricing and honest advice. Because we also handle construction, building materials and home services, your project stays with one accountable team from the first idea to the final handover.
               </p>
               <p className="mt-3">
                 This page explains our services, our working process, cost factors and practical tips to help you make a confident decision.
@@ -62,13 +62,13 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss: Your Interior Design Partner in Moradabad
+                MTBoss: Your Interior Design Partner in Moradabad
               </h3>
               <p className="mb-3">
-                Interior design is easier when design and construction sit together. MT Boss is a construction company first, so our designs come with real knowledge of walls, ceilings, wiring, plumbing and material behaviour.
+                Interior design is easier when design and construction sit together. MTBoss is a construction company first, so our designs come with real knowledge of walls, ceilings, wiring, plumbing and material behaviour.
               </p>
               <p className="mb-3">
-                What you get with MT Boss:
+                What you get with MTBoss:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -84,9 +84,9 @@ const Content = () => {
                   <strong>Itemised quotations.</strong> You see exactly where your money goes.
                 </li>
                 <li>
-                  <strong>Material access.</strong> Through the MT Boss{" "}
+                  <strong>Material access.</strong> Through the MTBoss{" "}
                   <a
-                    href="https://www.mtboss.in/ShopNow"
+                    href="https://www.MTBoss.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -96,9 +96,9 @@ const Content = () => {
                   , we source reliable products at competitive rates.
                 </li>
                 <li>
-                  <strong>After-handover support.</strong> The MT Boss{" "}
+                  <strong>After-handover support.</strong> The MTBoss{" "}
                   <a
-                    href="https://www.mtboss.in/quick"
+                    href="https://www.MTBoss.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -222,7 +222,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The Interior Design Process at MT Boss
+                The Interior Design Process at MTBoss
               </h3>
               <p className="mb-3">
                 We keep the process simple and transparent.
@@ -238,9 +238,9 @@ const Content = () => {
                   <strong>Step 3: 3D visualisation and drawings.</strong> You see each room before work begins, and we finalise every detail on paper.
                 </li>
                 <li>
-                  <strong>Step 4: Itemised quotation.</strong> You receive a written cost breakdown. For a quick early estimate, try the MT Boss{" "}
+                  <strong>Step 4: Itemised quotation.</strong> You receive a written cost breakdown. For a quick early estimate, try the MTBoss{" "}
                   <a
-                    href="https://www.mtboss.in/calculator"
+                    href="https://www.MTBoss.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -300,9 +300,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss always provides an itemised quote showing materials, labour and finishes room by room, so there are no hidden charges. For a personal estimate, request a{" "}
+                MTBoss always provides an itemised quote showing materials, labour and finishes room by room, so there are no hidden charges. For a personal estimate, request a{" "}
                 <a
-                  href="https://www.mtboss.in/CTASection/get-quote"
+                  href="https://www.MTBoss.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -335,7 +335,7 @@ const Content = () => {
                   <strong>Rustic and earthy:</strong> natural textures, cane, jute and warm colours.
                 </li>
                 <li>
-                  <strong>Brass-inspired accents:</strong> Moradabad is known as the Brass City, and MT Boss can add brass lamps, handles and decorative pieces to give any style a distinctive local character.
+                  <strong>Brass-inspired accents:</strong> Moradabad is known as the Brass City, and MTBoss can add brass lamps, handles and decorative pieces to give any style a distinctive local character.
                 </li>
               </ul>
             </section>
@@ -346,7 +346,7 @@ const Content = () => {
                 Climate-Smart Design for Moradabad
               </h3>
               <p className="mb-3">
-                Good interiors respond to where you live. MT Boss considers the following for every project in the city:
+                Good interiors respond to where you live. MTBoss considers the following for every project in the city:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -370,7 +370,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Practical Interior Design Tips from MT Boss
+                Practical Interior Design Tips from MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -416,7 +416,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MT Boss as Your Interior Design Consultant
+                Why Choose MTBoss as Your Interior Design Consultant
               </h3>
               <p className="mb-3">
                 Homeowners and business owners in Moradabad choose us for reasons that go beyond good-looking designs:
@@ -451,14 +451,14 @@ const Content = () => {
                 <li>Their contact details and address match their official website and Google listing.</li>
               </ul>
               <p className="mt-3">
-                MT Boss welcomes every one of these checks and answers them openly during your free consultation.
+                MTBoss welcomes every one of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MT Boss in Moradabad
+                Areas Served by MTBoss in Moradabad
               </h3>
               <p className="mb-3">
                 We work with clients across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies.
@@ -471,18 +471,18 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Interior Design FAQs
+                MTBoss Interior Design FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MT Boss handle both design and execution?</strong>
+                  <strong>Q1. Does MTBoss handle both design and execution?</strong>
                   <br />
                   Yes. We offer complete turnkey interiors, from concept and 3D design to construction, finishing and handover.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MT Boss offers a free consultation and site visit.
+                  Yes. MTBoss offers a free consultation and site visit.
                 </li>
                 <li>
                   <strong>Q3. Is interior design cost in Moradabad fixed?</strong>
@@ -490,7 +490,7 @@ const Content = () => {
                   No. It depends on property size, scope and material quality. We give a free, itemised quotation based on your requirements.
                 </li>
                 <li>
-                  <strong>Q4. Can MT Boss design a modular kitchen and wardrobes?</strong>
+                  <strong>Q4. Can MTBoss design a modular kitchen and wardrobes?</strong>
                   <br />
                   Yes. We design and install modular kitchens, wardrobes, TV units and custom storage.
                 </li>
@@ -500,14 +500,14 @@ const Content = () => {
                   Yes. You receive 3D designs so you can approve the look in advance.
                 </li>
                 <li>
-                  <strong>Q6. Does MT Boss work on shops and offices?</strong>
+                  <strong>Q6. Does MTBoss work on shops and offices?</strong>
                   <br />
                   Yes. We design interiors for shops, showrooms, offices, clinics, cafes, hotels and banquet halls.
                 </li>
                 <li>
                   <strong>Q7. Can the design follow Vastu?</strong>
                   <br />
-                  Yes. MT Boss plans Vastu-friendly layouts whenever you ask for them.
+                  Yes. MTBoss plans Vastu-friendly layouts whenever you ask for them.
                 </li>
                 <li>
                   <strong>Q8. Is interior design worth it for a small flat?</strong>
@@ -520,7 +520,7 @@ const Content = () => {
                   It depends on size and scope. We share a clear schedule once the design is approved.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MT Boss?</strong>
+                  <strong>Q10. How do I contact MTBoss?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

@@ -150,7 +150,7 @@ export default function JobDetailPage() {
   const openWhatsApp = (enquiry) => {
     const num = COMPANY_CONTACT.phoneDigits;
     const msg = [
-      `💼 *New Job Application – MTBOSS*`,
+      `💼 *New Job Application – MTBoss*`,
       ``,
       `👤 *Name:* ${enquiry.name}`,
       `📧 *Email:* ${enquiry.email}`,
@@ -655,7 +655,7 @@ export default function JobDetailPage() {
               <p className={`text-[10px] font-black uppercase tracking-widest mb-4 pb-2 border-b ${dark ? "text-zinc-500 border-zinc-800" : "text-zinc-400 border-gray-100"}`}>
                 Cover Letter
               </p>
-              <label className={labelClass}>Why do you want to join MTBOSS? *</label>
+              <label className={labelClass}>Why do you want to join MTBoss? *</label>
               <textarea
                 name="coverLetter"
                 required

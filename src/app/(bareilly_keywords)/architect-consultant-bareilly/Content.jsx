@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Consultant in Bareilly: Expert Planning, Design and
-            Construction Guidance from MTBOSS
+            Architect Consultant in Bareilly: 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -24,7 +23,7 @@ const Content = () => {
                 need.
               </p>
               <p className="mt-3">
-                MTBOSS is an architect, interior design and construction company
+                MTBoss is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work, transparent
                 pricing and on-time delivery. Our consultation connects design
                 thinking with construction knowledge, so plans are not only
@@ -34,7 +33,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Architect Consultation Services from MTBOSS
+                Architect Consultation Services from MTBoss
               </h3>
               <p className="mb-3">
                 Our consultation covers the stages where expert advice matters
@@ -351,7 +350,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBOSS offers interior design along with carpenter, false ceiling,
+                MTBoss offers interior design along with carpenter, false ceiling,
                 tile and marble, painter and modular kitchen services, so design
                 and execution stay connected.
               </p>
@@ -397,7 +396,7 @@ const Content = () => {
                 Construction Guidance and Site Support
               </h3>
               <p className="mb-3">
-                A good drawing needs good execution. MTBOSS, as a construction
+                A good drawing needs good execution. MTBoss, as a construction
                 company, can advise on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -420,7 +419,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 This link between design and construction is one of the strengths
-                of MTBOSS.
+                of MTBoss.
               </p>
             </section>
 
@@ -480,7 +479,7 @@ const Content = () => {
                 <li>Interior and exterior upgrades</li>
               </ul>
               <p className="mt-3">
-                MTBOSS offers building repair and renovation, waterproofing,
+                MTBoss offers building repair and renovation, waterproofing,
                 plumbing, electrical and painting services, so recommendations can
                 be carried out by the same team.
               </p>
@@ -550,7 +549,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                You can try the Budget Calculator on the MTBOSS website to set
+                You can try the Budget Calculator on the MTBoss website to set
                 realistic expectations. Final pricing and consultation terms are
                 shared after discussing your project.
               </p>
@@ -581,7 +580,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBOSS Consultation Process
+                The MTBoss Consultation Process
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -630,7 +629,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MTBOSS
+                Reasons to Choose MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -640,7 +639,7 @@ const Content = () => {
                 <li>
                   <strong>One team for design and execution.</strong> Architecture,
                   interior design, civil work, plumbing, electrical, carpentry,
-                  painting and more are available through MTBOSS.
+                  painting and more are available through MTBoss.
                 </li>
                 <li>
                   <strong>Transparent communication.</strong> You know the scope,
@@ -651,7 +650,7 @@ const Content = () => {
                   keep projects moving.
                 </li>
                 <li>
-                  <strong>Service in Bareilly and Moradabad.</strong> MTBOSS serves
+                  <strong>Service in Bareilly and Moradabad.</strong> MTBoss serves
                   both cities. Our office is at Harthala Kanth Road, Moradabad.
                 </li>
                 <li>
@@ -666,7 +665,7 @@ const Content = () => {
                 Service Areas in Bareilly
               </h3>
               <p>
-                MTBOSS serves clients in Bareilly, including residential and
+                MTBoss serves clients in Bareilly, including residential and
                 commercial areas such as Civil Lines, Rampur Garden, Izzatnagar,
                 Subhash Nagar, DD Puram and Pilibhit Bypass Road. If your locality
                 is not listed, contact us and we will confirm availability.
@@ -675,7 +674,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book an Architect Consultation with MTBOSS
+                Book an Architect Consultation with MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -692,10 +691,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -706,16 +705,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/"
+                  href="https://www.MTBoss.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS website
+                  MTBoss website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -725,7 +724,7 @@ const Content = () => {
                 to try the Budget Calculator and view our Portfolio.
               </p>
               <p className="mt-3">
-                Plan it right before you build it. Contact MTBOSS today for
+                Plan it right before you build it. Contact MTBoss today for
                 architect consultation in Bareilly.
               </p>
             </section>
@@ -737,7 +736,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBOSS provide architect consultation in Bareilly?
+                    Q1. Does MTBoss provide architect consultation in Bareilly?
                   </strong>
                   <br />
                   Yes. We serve Bareilly and Moradabad with planning, design and
@@ -782,7 +781,7 @@ const Content = () => {
                   be confirmed with the local authority.
                 </li>
                 <li>
-                  <strong>Q8. Can MTBOSS also construct the building?</strong>
+                  <strong>Q8. Can MTBoss also construct the building?</strong>
                   <br />
                   Yes. We offer construction and finishing services alongside
                   consultation.
@@ -805,7 +804,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

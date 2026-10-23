@@ -2,26 +2,26 @@
 import FranchiseClient from './FranchiseClient';
 
 export const metadata = {
-  title: 'MTBOSS | Construction Franchise Opportunity - Start Your Own Business',
+  title: 'MTBoss | Construction Franchise Opportunity - Start Your Own Business',
   description:
-    'Start a territory-based construction franchise with MTBOSS. Get training, lead support, and operating guidance. Commercial details shared after eligibility review.',
+    'Start a territory-based construction franchise with MTBoss. Get training, lead support, and operating guidance. Commercial details shared after eligibility review.',
   keywords:
     'construction franchise india, construction business opportunity, franchise with training support, low investment franchise, construction franchise cost',
   alternates: {
-    canonical: 'https://www.mtboss.in/franchise',
+    canonical: 'https://www.MTBoss.in/franchise',
   },
   openGraph: {
-    title: 'MTBOSS | Construction Franchise Opportunity',
+    title: 'MTBoss | Construction Franchise Opportunity',
     description:
-      'Start a territory-based construction franchise with MTBOSS — training, lead support, and operating guidance included.',
-    url: 'https://www.mtboss.in/franchise',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Start a territory-based construction franchise with MTBoss — training, lead support, and operating guidance included.',
+    url: 'https://www.MTBoss.in/franchise',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/icon.png',
+        url: 'https://www.MTBoss.in/icon.png',
         width: 1200,
         height: 630,
-        alt: 'MTBOSS Construction Franchise',
+        alt: 'MTBoss Construction Franchise',
       },
     ],
     locale: 'en_IN',
@@ -29,10 +29,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MTBOSS | Construction Franchise Opportunity',
+    title: 'MTBoss | Construction Franchise Opportunity',
     description:
-      'Start a territory-based construction franchise with MTBOSS — training, lead support, and operating guidance included.',
-    images: ['https://www.mtboss.in/icon.png'],
+      'Start a territory-based construction franchise with MTBoss — training, lead support, and operating guidance included.',
+    images: ['https://www.MTBoss.in/icon.png'],
   },
   robots: {
     index: true,
@@ -46,7 +46,7 @@ const franchiseSchema = {
   serviceType: 'Franchise Opportunity',
   provider: {
     '@type': 'GeneralContractor',
-    name: 'MTBOSS Construction Private Limited',
+    name: 'MTBoss Construction Private Limited',
   },
   description:
     'Territory-based construction franchise with training, lead support, and operating guidance. Commercials shared after eligibility review.',

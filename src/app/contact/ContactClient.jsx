@@ -43,9 +43,9 @@ const DEFAULT_OFFICES = [
 ].map((city, index) => ({
   id: `default-${index}`,
   city,
-  address: `MTBOSS Office, ${city}, India`,
+  address: `MTBoss Office, ${city}, India`,
   phone: COMPANY_CONTACT.phone,
-  email: `${city.toLowerCase()}@mtboss.com`,
+  email: `${city.toLowerCase()}@MTBoss.com`,
   hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
   mapUrl: city.toLowerCase() === 'bareilly'
     ? 'https://www.google.com/maps?q=28.3975,79.452806&z=17&output=embed'
@@ -208,7 +208,7 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-black/80" />
         <div className="relative z-10 max-w-2xl mx-auto">
           <span className="text-[var(--brand-blue-light)] text-xs font-bold uppercase tracking-widest block mb-4">
-            MTBOSS
+            MTBoss
           </span>
           <h1 className="text-4xl sm:text-5xl font-black uppercase text-white mb-4 tracking-tight">
             Get In<span className="text-[var(--brand-blue-light)]"> Touch</span>
@@ -226,7 +226,7 @@ export default function ContactPage() {
               📞 Call Us
             </a>
             <a
-              href="mailto:mtboss2016@gmail.com"
+              href="mailto:MTBoss2016@gmail.com"
               className="flex items-center gap-2 px-5 py-2.5 border-2 border-white text-white text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-white hover:text-black transition-all"
             >
               ✉️ Email Us
@@ -507,13 +507,13 @@ export default function ContactPage() {
                       </div>
                     </a>
 
-                    <a href="mailto:mtboss2016@gmail.com" className="flex items-start gap-3 group">
+                    <a href="mailto:MTBoss2016@gmail.com" className="flex items-start gap-3 group">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${dark ? 'bg-[var(--brand-blue)]/20 group-hover:bg-[var(--brand-blue-dark)]' : 'bg-sky-100 group-hover:bg-[var(--brand-blue-dark)]'}`}>
                         <span className="text-lg">✉️</span>
                       </div>
                       <div>
                         <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${dark ? 'text-gray-500' : 'text-gray-600'}`}>Email</p>
-                        <p className={`font-bold transition-colors ${textPrimaryClass}`}>mtboss2016@gmail.com</p>
+                        <p className={`font-bold transition-colors ${textPrimaryClass}`}>MTBoss2016@gmail.com</p>
                       </div>
                     </a>
 

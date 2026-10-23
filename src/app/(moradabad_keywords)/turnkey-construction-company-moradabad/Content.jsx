@@ -9,7 +9,7 @@ const Content = () => {
         <div className="order-1 flex-1 px-4 py-12 sm:px-8 md:px-16 lg:order-1">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 sm:text-3xl md:text-3xl">
             Turnkey Construction Company in Moradabad: Design, Build and
-            Handover by MTBOSS
+            Handover by MTBoss
           </h2>
 
           <div className="max-w-4xl space-y-6 leading-relaxed text-gray-700">
@@ -24,7 +24,7 @@ const Content = () => {
               <p className="mt-3">
                 A turnkey construction company in Moradabad solves this by
                 taking responsibility for the whole project under one agreement.
-                MTBOSS Construction Private Limited works as a turnkey
+                MTBoss Construction Private Limited works as a turnkey
                 construction company serving Moradabad and Bareilly, combining
                 design coordination, civil construction, material supply and
                 finishing across residential, commercial, hospitality and
@@ -33,7 +33,7 @@ const Content = () => {
 
               <p className="mt-3">
                 This page explains what a turnkey construction company does,
-                what MTBOSS offers, how the process works, and how to get in
+                what MTBoss offers, how the process works, and how to get in
                 touch.
               </p>
             </section>
@@ -74,11 +74,11 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
 
               <p className="mb-3">
-                MTBOSS is a Moradabad-based company offering construction
+                MTBoss is a Moradabad-based company offering construction
                 services, doorstep home services, verified property
                 transactions, and building materials under one company.
               </p>
@@ -90,7 +90,7 @@ const Content = () => {
                   of the city&apos;s growing residential and commercial areas.
                 </li>
                 <li>
-                  MTBOSS positions itself as an architect, interior designer and
+                  MTBoss positions itself as an architect, interior designer and
                   construction company serving Moradabad and Bareilly.
                 </li>
                 <li>
@@ -98,7 +98,7 @@ const Content = () => {
                   on-time delivery.
                 </li>
                 <li>
-                  A project gallery and blog on the MTBOSS website let
+                  A project gallery and blog on the MTBoss website let
                   prospective clients review completed work before reaching
                   out.
                 </li>
@@ -107,13 +107,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Turnkey Construction Services Offered by MTBOSS in Moradabad
+                Turnkey Construction Services Offered by MTBoss in Moradabad
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Residential projects:</strong> From affordable housing
-                  to luxury villas, MTBOSS builds independent houses, duplexes
+                  to luxury villas, MTBoss builds independent houses, duplexes
                   and multi-storey family residences focused on comfort and
                   safety.
                 </li>
@@ -155,7 +155,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                What a Turnkey Contract With MTBOSS Typically Covers
+                What a Turnkey Contract With MTBoss Typically Covers
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -165,7 +165,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Estimation:</strong> A cost outline prepared using the
-                  MTBOSS Budget Calculator and current material rates.
+                  MTBoss Budget Calculator and current material rates.
                 </li>
                 <li>
                   <strong>Foundation and structure:</strong> Excavation,
@@ -195,19 +195,19 @@ const Content = () => {
 
               <p className="mt-3">
                 The exact scope, specifications and payment stages are
-                discussed and confirmed with the MTBOSS team before construction
+                discussed and confirmed with the MTBoss team before construction
                 begins.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Runs a Turnkey Construction Project
+                How MTBoss Runs a Turnkey Construction Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Step 1 — Enquiry:</strong> You contact MTBOSS through
+                  <strong>Step 1 — Enquiry:</strong> You contact MTBoss through
                   the website, phone or WhatsApp with your project
                   requirements.
                 </li>
@@ -217,7 +217,7 @@ const Content = () => {
                   usage, timeline and budget.
                 </li>
                 <li>
-                  <strong>Step 3 — Site visit:</strong> MTBOSS engineers assess
+                  <strong>Step 3 — Site visit:</strong> MTBoss engineers assess
                   the plot, orientation, road access, soil condition and
                   surrounding structures.
                 </li>
@@ -227,7 +227,7 @@ const Content = () => {
                   your requirements.
                 </li>
                 <li>
-                  <strong>Step 5 — Budget estimation:</strong> The MTBOSS Budget
+                  <strong>Step 5 — Budget estimation:</strong> The MTBoss Budget
                   Calculator and current material rates are used to provide a
                   realistic cost outline.
                 </li>
@@ -243,7 +243,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Step 8 — Construction and supervision:</strong> Civil
-                  work proceeds under MTBOSS supervision with quality and
+                  work proceeds under MTBoss supervision with quality and
                   timeline checks at each stage.
                 </li>
                 <li>
@@ -377,7 +377,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Whatever the project type, MTBOSS follows the same turnkey
+                Whatever the project type, MTBoss follows the same turnkey
                 approach: one team, one plan and one point of contact.
               </p>
             </section>
@@ -422,7 +422,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Since these factors vary from project to project, MTBOSS
+                Since these factors vary from project to project, MTBoss
                 recommends starting with the free Budget Calculator and then
                 requesting a detailed quote based on your specific
                 requirements.
@@ -431,13 +431,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why the MTBOSS Budget Calculator Helps Before You Sign a Turnkey
+                Why the MTBoss Budget Calculator Helps Before You Sign a Turnkey
                 Contract
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-1">
                 <li>
-                  It is a free tool available directly on the MTBOSS website.
+                  It is a free tool available directly on the MTBoss website.
                 </li>
                 <li>
                   It helps clients form a realistic cost estimate before
@@ -452,7 +452,7 @@ const Content = () => {
                   align your project brief with a realistic spending range.
                 </li>
                 <li>
-                  It gives both the client and MTBOSS a reference point for
+                  It gives both the client and MTBoss a reference point for
                   tracking spending as the project moves forward.
                 </li>
               </ul>
@@ -464,8 +464,8 @@ const Content = () => {
               </h3>
 
               <p className="mb-3">
-                MTBOSS supplies cement, TMT steel bars, bricks, tiles and
-                paints through the MTBOSS Shop Now section. Sourcing materials
+                MTBoss supplies cement, TMT steel bars, bricks, tiles and
+                paints through the MTBoss Shop Now section. Sourcing materials
                 through the same company that handles design and construction
                 reduces coordination gaps between architect, contractor and
                 supplier.
@@ -473,7 +473,7 @@ const Content = () => {
 
               <ul className="ml-4 list-inside list-disc space-y-1">
                 <li>
-                  Direct material control helps MTBOSS manage delivery timing.
+                  Direct material control helps MTBoss manage delivery timing.
                 </li>
                 <li>
                   It reduces the risk of delays caused by material shortages
@@ -492,12 +492,12 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Keeps Turnkey Projects on Track
+                How MTBoss Keeps Turnkey Projects on Track
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Site visits at each stage:</strong> MTBOSS engineers
+                  <strong>Site visits at each stage:</strong> MTBoss engineers
                   stay involved through site visits and check that work matches
                   the approved design.
                 </li>
@@ -554,7 +554,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                What to Share With MTBOSS Before Your First Consultation
+                What to Share With MTBoss Before Your First Consultation
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -573,7 +573,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Rough budget range:</strong> Even an approximate
-                  figure helps MTBOSS shape a design and material plan around
+                  figure helps MTBoss shape a design and material plan around
                   your spending capacity.
                 </li>
                 <li>
@@ -592,7 +592,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Bringing this information to your first enquiry helps MTBOSS
+                Bringing this information to your first enquiry helps MTBoss
                 move from the initial discussion to a site visit and design
                 conversation more quickly.
               </p>
@@ -600,7 +600,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Property and Home Services: Support Beyond Construction
+                MTBoss Property and Home Services: Support Beyond Construction
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -621,7 +621,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                This extends MTBOSS&apos;s role beyond construction into ongoing
+                This extends MTBoss&apos;s role beyond construction into ongoing
                 maintenance, giving clients a familiar provider for future
                 requirements.
               </p>
@@ -629,7 +629,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Areas Served by MTBOSS
+                Areas Served by MTBoss
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-1">
@@ -638,7 +638,7 @@ const Content = () => {
                   residential and commercial areas.
                 </li>
                 <li>
-                  Kanth Road and surrounding growth areas near the MTBOSS
+                  Kanth Road and surrounding growth areas near the MTBoss
                   office.
                 </li>
                 <li>
@@ -646,24 +646,24 @@ const Content = () => {
                   commercial and industrial construction.
                 </li>
                 <li>
-                  Bareilly, where MTBOSS also provides construction and design
+                  Bareilly, where MTBoss also provides construction and design
                   services.
                 </li>
                 <li>
                   Clients in nearby towns and districts of Uttar Pradesh
                   coordinating their projects remotely with the Moradabad-based
-                  MTBOSS team.
+                  MTBoss team.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Getting a Quote From MTBOSS for Your Turnkey Project
+                Getting a Quote From MTBoss for Your Turnkey Project
               </h3>
 
               <p className="mb-3">
-                MTBOSS offers a Get a Construction Quote option directly on its
+                MTBoss offers a Get a Construction Quote option directly on its
                 website, allowing you to request pricing without an in-person
                 visit first.
               </p>
@@ -672,13 +672,13 @@ const Content = () => {
                 You can also reach the team directly by phone or WhatsApp to
                 discuss your project and request a quote. Sharing your plot
                 size, project type, expected floors and rough budget upfront
-                helps MTBOSS provide a more accurate initial response.
+                helps MTBoss provide a more accurate initial response.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBOSS as Your Turnkey Construction Company in
+                Why Choose MTBoss as Your Turnkey Construction Company in
                 Moradabad?
               </h3>
 
@@ -695,10 +695,10 @@ const Content = () => {
                 <li>
                   <strong>Wide project range:</strong> Residential, commercial,
                   hotel, industrial and infrastructure work are part of the
-                  MTBOSS service list.
+                  MTBoss service list.
                 </li>
                 <li>
-                  <strong>Engineering-led positioning:</strong> MTBOSS frames
+                  <strong>Engineering-led positioning:</strong> MTBoss frames
                   its work around engineering excellence, transparent pricing
                   and on-time delivery.
                 </li>
@@ -718,7 +718,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> A project gallery and
-                  blog on the MTBOSS website let prospective clients review
+                  blog on the MTBoss website let prospective clients review
                   completed work before reaching out.
                 </li>
               </ul>
@@ -726,40 +726,40 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBOSS: Turnkey Construction Company in Moradabad
+                Contact MTBoss: Turnkey Construction Company in Moradabad
               </h3>
 
               <p className="mb-3">
                 For clients searching for a turnkey construction company in
-                Moradabad, MTBOSS offers one point of contact for design
+                Moradabad, MTBoss offers one point of contact for design
                 coordination, material supply, civil construction, finishing and
                 handover.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBOSS Construction Private Limited
+                  <strong>Company:</strong> MTBoss Construction Private Limited
                 </li>
 
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in
+                    https://www.MTBoss.in
                   </a>
                 </li>
 
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
 
@@ -794,7 +794,7 @@ const Content = () => {
 
               <p className="mt-3">
                 Use the free Budget Calculator for an early estimate, or use the
-                quote option on the MTBOSS website to request a project-specific
+                quote option on the MTBoss website to request a project-specific
                 construction quote.
               </p>
             </section>
@@ -816,18 +816,18 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Is MTBOSS a turnkey construction company in Moradabad?
+                    Q2. Is MTBoss a turnkey construction company in Moradabad?
                   </strong>
                   <br />
-                  Yes. MTBOSS combines design coordination, civil construction,
+                  Yes. MTBoss combines design coordination, civil construction,
                   material supply and finishing under one company, serving
                   Moradabad and Bareilly.
                 </li>
 
                 <li>
-                  <strong>Q3. What types of projects does MTBOSS handle?</strong>
+                  <strong>Q3. What types of projects does MTBoss handle?</strong>
                   <br />
-                  MTBOSS handles residential homes and villas, commercial
+                  MTBoss handles residential homes and villas, commercial
                   buildings, hotels and hospitality projects, industrial and
                   warehouse buildings, as well as supporting infrastructure
                   work.
@@ -851,7 +851,7 @@ const Content = () => {
                   <br />
                   Cost depends on built-up area, building type, number of
                   floors, material quality, design complexity and finishing
-                  scope. You can use the free MTBOSS Budget Calculator or
+                  scope. You can use the free MTBoss Budget Calculator or
                   request a detailed quote.
                 </li>
 
@@ -870,14 +870,14 @@ const Content = () => {
                   <strong>Q7. Can I get a free quote?</strong>
                   <br />
                   Yes. You can use the Get a Construction Quote option on the
-                  MTBOSS website, call the team directly or message them on
+                  MTBoss website, call the team directly or message them on
                   WhatsApp.
                 </li>
 
                 <li>
-                  <strong>Q8. Where is the MTBOSS office located?</strong>
+                  <strong>Q8. Where is the MTBoss office located?</strong>
                   <br />
-                  The MTBOSS office is located at Harthala, Kanth Road, Behind
+                  The MTBoss office is located at Harthala, Kanth Road, Behind
                   KR Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.
                 </li>
               </ul>

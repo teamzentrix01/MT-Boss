@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Modular Kitchen Cost in Moradabad',
   description:
-    'Understand modular kitchen cost in Moradabad: what makes up the price, where quotes differ and how MT Boss gives itemised estimates after a site visit.',
+    'Understand modular kitchen cost in Moradabad: what makes up the price, where quotes differ and how MTBoss gives itemised estimates after a site visit.',
   keywords:
-    'modular kitchen cost Moradabad, modular kitchen price Moradabad, modular kitchen price per running foot Moradabad, modular kitchen quotation Moradabad, modular kitchen budget Moradabad, modular kitchen rates Moradabad, kitchen cost calculator Moradabad, modular kitchen estimate Moradabad, modular kitchen price near me Moradabad, MT Boss modular kitchen cost Moradabad',
+    'modular kitchen cost Moradabad, modular kitchen price Moradabad, modular kitchen price per running foot Moradabad, modular kitchen quotation Moradabad, modular kitchen budget Moradabad, modular kitchen rates Moradabad, kitchen cost calculator Moradabad, modular kitchen estimate Moradabad, modular kitchen price near me Moradabad, MTBoss modular kitchen cost Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/modular-kitchen-cost-moradabad',
+    canonical: 'https://www.MTBoss.in/modular-kitchen-cost-moradabad',
   },
   openGraph: {
     title: 'Modular Kitchen Cost in Moradabad',
     description:
-      'Understand modular kitchen cost in Moradabad: what makes up the price, where quotes differ and how MT Boss gives itemised estimates after a site visit.',
-    url: 'https://www.mtboss.in/modular-kitchen-cost-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Understand modular kitchen cost in Moradabad: what makes up the price, where quotes differ and how MTBoss gives itemised estimates after a site visit.',
+    url: 'https://www.MTBoss.in/modular-kitchen-cost-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-modular-kitchen-cost-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-modular-kitchen-cost-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Modular Kitchen Cost in Moradabad - MT Boss',
+        alt: 'Modular Kitchen Cost in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Modular Kitchen Cost in Moradabad',
     description:
-      'Understand modular kitchen cost in Moradabad: what makes up the price, where quotes differ and how MT Boss gives itemised estimates after a site visit.',
-    images: ['https://www.mtboss.in/og-modular-kitchen-cost-moradabad.jpg'],
+      'Understand modular kitchen cost in Moradabad: what makes up the price, where quotes differ and how MTBoss gives itemised estimates after a site visit.',
+    images: ['https://www.MTBoss.in/og-modular-kitchen-cost-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/modular-kitchen-cost-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/modular-kitchen-cost-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

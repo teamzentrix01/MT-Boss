@@ -7,27 +7,27 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Interior Designer for Kitchen in Moradabad | MT Boss",
+  title: "Interior Designer for Kitchen in Moradabad | MTBoss",
   description:
-    "Need a kitchen interior designer in Moradabad? MT Boss designs modular kitchens with smart storage, durable materials and on-time delivery. Get a free quote today.",
+    "Need a kitchen interior designer in Moradabad? MTBoss designs modular kitchens with smart storage, durable materials and on-time delivery. Get a free quote today.",
   keywords:
-    "interior designer for kitchen in Moradabad, kitchen interior designer Moradabad, modular kitchen Moradabad, kitchen designer near me, modular kitchen design Moradabad, L shaped kitchen Moradabad, U shaped kitchen Moradabad, kitchen renovation Moradabad, kitchen contractor Moradabad, kitchen interior work Moradabad, kitchen cabinets Moradabad, kitchen wardrobe and cabinet designer Moradabad, MT Boss kitchen interiors",
+    "interior designer for kitchen in Moradabad, kitchen interior designer Moradabad, modular kitchen Moradabad, kitchen designer near me, modular kitchen design Moradabad, L shaped kitchen Moradabad, U shaped kitchen Moradabad, kitchen renovation Moradabad, kitchen contractor Moradabad, kitchen interior work Moradabad, kitchen cabinets Moradabad, kitchen wardrobe and cabinet designer Moradabad, MTBoss kitchen interiors",
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-designer-for-kitchen-in-moradabad",
+      "https://www.MTBoss.in/interior-designer-for-kitchen-in-moradabad",
   },
   openGraph: {
-    title: "Interior Designer for Kitchen in Moradabad | MT Boss",
+    title: "Interior Designer for Kitchen in Moradabad | MTBoss",
     description:
-      "Need a kitchen interior designer in Moradabad? MT Boss designs modular kitchens with smart storage, durable materials and on-time delivery. Get a free quote today.",
-    url: "https://www.mtboss.in/interior-designer-for-kitchen-in-moradabad",
-    siteName: "MTBOSS Construction Private Limited",
+      "Need a kitchen interior designer in Moradabad? MTBoss designs modular kitchens with smart storage, durable materials and on-time delivery. Get a free quote today.",
+    url: "https://www.MTBoss.in/interior-designer-for-kitchen-in-moradabad",
+    siteName: "MTBoss Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designer-kitchen-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-interior-designer-kitchen-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Interior Designer for Kitchen in Moradabad - MT Boss",
+        alt: "Interior Designer for Kitchen in Moradabad - MTBoss",
       },
     ],
     locale: "en_IN",
@@ -35,11 +35,11 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Interior Designer for Kitchen in Moradabad | MT Boss",
+    title: "Interior Designer for Kitchen in Moradabad | MTBoss",
     description:
-      "Need a kitchen interior designer in Moradabad? MT Boss designs modular kitchens with smart storage, durable materials and on-time delivery. Get a free quote today.",
+      "Need a kitchen interior designer in Moradabad? MTBoss designs modular kitchens with smart storage, durable materials and on-time delivery. Get a free quote today.",
     images: [
-      "https://www.mtboss.in/og-interior-designer-kitchen-moradabad.jpg",
+      "https://www.MTBoss.in/og-interior-designer-kitchen-moradabad.jpg",
     ],
   },
   robots: {
@@ -51,10 +51,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBOSS Construction Private Limited",
-  url: "https://www.mtboss.in/interior-designer-for-kitchen-in-moradabad",
+  name: "MTBoss Construction Private Limited",
+  url: "https://www.MTBoss.in/interior-designer-for-kitchen-in-moradabad",
   telephone: "+91-9458410866",
-  email: "mtboss2016@gmail.com",
+  email: "MTBoss2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",

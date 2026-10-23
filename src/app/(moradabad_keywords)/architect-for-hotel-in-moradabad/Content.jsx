@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Hotel in Moradabad: MT Boss
+            Architect for Hotel in Moradabad: MTBoss
           </h2>
 
 
@@ -22,7 +22,7 @@ const Content = () => {
                 That is why choosing the right architect for a hotel in Moradabad is one of the most important steps in any hospitality project.
               </p>
               <p className="mt-3">
-                MT Boss is a Moradabad-based construction, property and home services company. Our team plans and designs hotels, resorts, guest houses and banquet spaces, and then builds them. Hotel and hospitality construction is a core part of our work, and because design and construction sit in one company, you deal with one accountable team from the first sketch to the opening day.
+                MTBoss is a Moradabad-based construction, property and home services company. Our team plans and designs hotels, resorts, guest houses and banquet spaces, and then builds them. Hotel and hospitality construction is a core part of our work, and because design and construction sit in one company, you deal with one accountable team from the first sketch to the opening day.
               </p>
               <p className="mt-3">
                 This page covers our hotel design services, the planning process, cost factors and practical advice for anyone building or upgrading a hotel in Moradabad.
@@ -68,10 +68,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss: Hotel Design and Construction Under One Roof
+                MTBoss: Hotel Design and Construction Under One Roof
               </h3>
               <p className="mb-3">
-                Many owners hire an architect first and a builder later, and then discover the design costs more than expected or is difficult to build. MT Boss avoids this by keeping both roles together.
+                Many owners hire an architect first and a builder later, and then discover the design costs more than expected or is difficult to build. MTBoss avoids this by keeping both roles together.
               </p>
               <p className="mb-3">
                 What you get when you work with us:
@@ -90,9 +90,9 @@ const Content = () => {
                   <strong>Local understanding.</strong> We know Moradabad&apos;s climate, plot patterns, material markets and guest profile.
                 </li>
                 <li>
-                  <strong>Material access.</strong> Through the MT Boss{" "}
+                  <strong>Material access.</strong> Through the MTBoss{" "}
                   <a
-                    href="https://www.mtboss.in/ShopNow"
+                    href="https://www.MTBoss.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -104,7 +104,7 @@ const Content = () => {
                 <li>
                   <strong>Support after handover.</strong> Our{" "}
                   <a
-                    href="https://www.mtboss.in/quick"
+                    href="https://www.MTBoss.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -207,7 +207,7 @@ const Content = () => {
                 Interior Design Coordination
               </h4>
               <p className="mb-3">
-                Because MT Boss also offers interior design, your architectural and interior plans can be developed together for a seamless result, from room finishes to lobby lighting.
+                Because MTBoss also offers interior design, your architectural and interior plans can be developed together for a seamless result, from room finishes to lobby lighting.
               </p>
 
 
@@ -225,7 +225,7 @@ const Content = () => {
                 Safety and Compliance Planning in Hotel Design
               </h3>
               <p className="mb-3">
-                Safety is a central part of hospitality design, and it should be planned from the first drawing. MT Boss considers the following in every hotel project:
+                Safety is a central part of hospitality design, and it should be planned from the first drawing. MTBoss considers the following in every hotel project:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -254,7 +254,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Hotels usually need several permissions and clearances before opening. MT Boss prepares drawings and guides you on typical requirements, but final approvals depend on the relevant authorities, so please confirm current rules with them.
+                Hotels usually need several permissions and clearances before opening. MTBoss prepares drawings and guides you on typical requirements, but final approvals depend on the relevant authorities, so please confirm current rules with them.
               </p>
             </section>
 
@@ -309,7 +309,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Hotel Design Process at MT Boss, Step by Step
+                Hotel Design Process at MTBoss, Step by Step
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -331,9 +331,9 @@ const Content = () => {
                   <strong>Step 5: Approvals guidance.</strong> We help you understand the documents and drawings typically needed for local approvals and clearances.
                 </li>
                 <li>
-                  <strong>Step 6: Budget and quotation.</strong> You receive an itemised written estimate. For a quick early figure, try the MT Boss{" "}
+                  <strong>Step 6: Budget and quotation.</strong> You receive an itemised written estimate. For a quick early figure, try the MTBoss{" "}
                   <a
-                    href="https://www.mtboss.in/calculator"
+                    href="https://www.MTBoss.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -396,9 +396,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
+                MTBoss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
                 <a
-                  href="https://www.mtboss.in/CTASection/get-quote"
+                  href="https://www.MTBoss.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -415,7 +415,7 @@ const Content = () => {
                 Climate-Smart Hotel Design for Moradabad
               </h3>
               <p className="mb-3">
-                Good hospitality architecture responds to local conditions. For hotels in Moradabad, MT Boss focuses on:
+                Good hospitality architecture responds to local conditions. For hotels in Moradabad, MTBoss focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -515,14 +515,14 @@ const Content = () => {
                 <li>They offer after-service support once the hotel is complete.</li>
               </ul>
               <p className="mt-3">
-                MT Boss welcomes every one of these checks and answers them openly during your free consultation.
+                MTBoss welcomes every one of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MT Boss in Moradabad
+                Areas Served by MTBoss in Moradabad
               </h3>
               <p className="mb-3">
                 We work with hotel and hospitality owners across Moradabad and nearby areas, including Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with highway-side and commercial locations.
@@ -535,23 +535,23 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Hotel Architect FAQs
+                MTBoss Hotel Architect FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MT Boss design hotels in Moradabad?</strong>
+                  <strong>Q1. Does MTBoss design hotels in Moradabad?</strong>
                   <br />
                   Yes. We plan and design hotels, resorts, guest houses and banquet spaces.
                 </li>
                 <li>
-                  <strong>Q2. Can MT Boss also construct the hotel?</strong>
+                  <strong>Q2. Can MTBoss also construct the hotel?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
                 <li>
                   <strong>Q3. Is the first consultation free?</strong>
                   <br />
-                  Yes. MT Boss offers a free consultation and site visit.
+                  Yes. MTBoss offers a free consultation and site visit.
                 </li>
                 <li>
                   <strong>Q4. Do you design banquet halls and restaurants?</strong>
@@ -584,7 +584,7 @@ const Content = () => {
                   Yes. We assess the structure and plan upgrades with minimal disruption.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MT Boss?</strong>
+                  <strong>Q10. How do I contact MTBoss?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

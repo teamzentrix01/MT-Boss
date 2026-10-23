@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for School in Moradabad: MT Boss
+            Architect for School in Moradabad: MTBoss
           </h2>
 
 
@@ -22,7 +22,7 @@ const Content = () => {
                 That is why choosing the right architect for a school in Moradabad is one of the most important decisions a school owner, trust or society will make.
               </p>
               <p className="mt-3">
-                MT Boss is a Moradabad-based construction, property and home services company. Our team plans and designs school buildings, coaching institutes and educational campuses, and then builds them. Because design and construction sit in one company, you deal with one accountable team from the first sketch to the day the gates open.
+                MTBoss is a Moradabad-based construction, property and home services company. Our team plans and designs school buildings, coaching institutes and educational campuses, and then builds them. Because design and construction sit in one company, you deal with one accountable team from the first sketch to the day the gates open.
               </p>
               <p className="mt-3">
                 This page covers our school design services, the planning process, cost factors and practical advice for anyone building or expanding a school in Moradabad.
@@ -68,10 +68,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss: School Design and Construction Under One Roof
+                MTBoss: School Design and Construction Under One Roof
               </h3>
               <p className="mb-3">
-                Many owners hire an architect first and a builder later, and then discover the design is hard to build or costs more than expected. MT Boss avoids this by keeping both roles together.
+                Many owners hire an architect first and a builder later, and then discover the design is hard to build or costs more than expected. MTBoss avoids this by keeping both roles together.
               </p>
               <p className="mb-3">
                 What you get when you work with us:
@@ -90,9 +90,9 @@ const Content = () => {
                   <strong>Local understanding.</strong> We know Moradabad&apos;s climate, soil conditions, plot patterns and material markets.
                 </li>
                 <li>
-                  <strong>Material access.</strong> Through the MT Boss{" "}
+                  <strong>Material access.</strong> Through the MTBoss{" "}
                   <a
-                    href="https://www.mtboss.in/ShopNow"
+                    href="https://www.MTBoss.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -104,7 +104,7 @@ const Content = () => {
                 <li>
                   <strong>Support after handover.</strong> Our{" "}
                   <a
-                    href="https://www.mtboss.in/quick"
+                    href="https://www.MTBoss.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -217,7 +217,7 @@ const Content = () => {
                 Safety Features in School Building Design
               </h3>
               <p className="mb-3">
-                Safety must be planned into the building, not added later. MT Boss considers the following in every school project:
+                Safety must be planned into the building, not added later. MTBoss considers the following in every school project:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -301,7 +301,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Planning Your School Project Step by Step with MT Boss
+                Planning Your School Project Step by Step with MTBoss
               </h3>
               <p className="mb-3">
                 We keep the process simple and transparent so you always know what comes next.
@@ -323,9 +323,9 @@ const Content = () => {
                   <strong>Step 5: Approvals guidance.</strong> We help you understand the drawings and documents typically needed for local approvals and clearances, so you can move forward with your consultants and authorities. Please note that approval requirements vary and should be confirmed with the relevant offices.
                 </li>
                 <li>
-                  <strong>Step 6: Budget and quotation.</strong> You receive an itemised written estimate. For a quick early figure, try the MT Boss{" "}
+                  <strong>Step 6: Budget and quotation.</strong> You receive an itemised written estimate. For a quick early figure, try the MTBoss{" "}
                   <a
-                    href="https://www.mtboss.in/calculator"
+                    href="https://www.MTBoss.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -388,9 +388,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
+                MTBoss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
                 <a
-                  href="https://www.mtboss.in/CTASection/get-quote"
+                  href="https://www.MTBoss.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -407,7 +407,7 @@ const Content = () => {
                 Climate-Smart School Design for Moradabad
               </h3>
               <p className="mb-3">
-                Good school architecture responds to local conditions. For projects in Moradabad, MT Boss focuses on:
+                Good school architecture responds to local conditions. For projects in Moradabad, MTBoss focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -506,14 +506,14 @@ const Content = () => {
                 <li>They offer after-service support once the building is complete.</li>
               </ul>
               <p className="mt-3">
-                MT Boss welcomes every one of these checks and answers them openly during your free consultation.
+                MTBoss welcomes every one of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MT Boss in Moradabad
+                Areas Served by MTBoss in Moradabad
               </h3>
               <p className="mb-3">
                 We work with school owners, trusts and educational institutes across Moradabad and nearby areas, including Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar.
@@ -526,23 +526,23 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss School Architect FAQs
+                MTBoss School Architect FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MT Boss design school buildings?</strong>
+                  <strong>Q1. Does MTBoss design school buildings?</strong>
                   <br />
                   Yes. We plan and design schools, coaching institutes and educational campuses.
                 </li>
                 <li>
-                  <strong>Q2. Can MT Boss also construct the school?</strong>
+                  <strong>Q2. Can MTBoss also construct the school?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
                 <li>
                   <strong>Q3. Is the first consultation free?</strong>
                   <br />
-                  Yes. MT Boss offers a free consultation and site visit.
+                  Yes. MTBoss offers a free consultation and site visit.
                 </li>
                 <li>
                   <strong>Q4. Do you prepare a campus master plan?</strong>
@@ -575,7 +575,7 @@ const Content = () => {
                   Yes. We assess the structure and plan additions with minimal disturbance.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MT Boss?</strong>
+                  <strong>Q10. How do I contact MTBoss?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

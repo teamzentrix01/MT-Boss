@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Commercial Architect in Bareilly',
   description:
-    'Commercial architect in Bareilly for shops, showrooms, offices and complexes. MTBOSS plans layouts, drawings and construction around your business. Call or WhatsApp.',
+    'Commercial architect in Bareilly for shops, showrooms, offices and complexes. MTBoss plans layouts, drawings and construction around your business. Call or WhatsApp.',
   keywords:
-    'commercial architect in Bareilly, commercial building design Bareilly, shop architect Bareilly, showroom architect Bareilly, office architect Bareilly, commercial complex design Bareilly, restaurant architect Bareilly, godown architect Bareilly, warehouse design Bareilly, commercial interior design Bareilly, MTBOSS Bareilly, architect near me Bareilly',
+    'commercial architect in Bareilly, commercial building design Bareilly, shop architect Bareilly, showroom architect Bareilly, office architect Bareilly, commercial complex design Bareilly, restaurant architect Bareilly, godown architect Bareilly, warehouse design Bareilly, commercial interior design Bareilly, MTBoss Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.mtboss.in/commercial-architect-bareilly',
+    canonical: 'https://www.MTBoss.in/commercial-architect-bareilly',
   },
   openGraph: {
     title: 'Commercial Architect in Bareilly',
     description:
-      'Commercial architect in Bareilly for shops, showrooms, offices and complexes. MTBOSS plans layouts, drawings and construction around your business. Call or WhatsApp.',
-    url: 'https://www.mtboss.in/commercial-architect-bareilly',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Commercial architect in Bareilly for shops, showrooms, offices and complexes. MTBoss plans layouts, drawings and construction around your business. Call or WhatsApp.',
+    url: 'https://www.MTBoss.in/commercial-architect-bareilly',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-commercial-architect-bareilly.jpg',
+        url: 'https://www.MTBoss.in/og-commercial-architect-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Commercial Architect in Bareilly - MTBOSS',
+        alt: 'Commercial Architect in Bareilly - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Commercial Architect in Bareilly',
     description:
-      'Commercial architect in Bareilly for shops, showrooms, offices and complexes. MTBOSS plans layouts, drawings and construction around your business. Call or WhatsApp.',
-    images: ['https://www.mtboss.in/og-commercial-architect-bareilly.jpg'],
+      'Commercial architect in Bareilly for shops, showrooms, offices and complexes. MTBoss plans layouts, drawings and construction around your business. Call or WhatsApp.',
+    images: ['https://www.MTBoss.in/og-commercial-architect-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/commercial-architect-bareilly',
+    name: 'MTBoss Construction Private Limited',
+    url: 'https://www.MTBoss.in/commercial-architect-bareilly',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBoss2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

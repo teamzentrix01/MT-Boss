@@ -30,7 +30,7 @@ const Content = () => {
 
               <p className="mt-3">
                 This page explains how bank building construction in Moradabad
-                works and how MTBOSS approaches it. MTBOSS Construction Private
+                works and how MTBoss approaches it. MTBoss Construction Private
                 Limited is a Moradabad-based architect, interior designer and
                 construction company that builds residential projects from
                 affordable housing to luxury villas, serving Moradabad and
@@ -116,14 +116,14 @@ const Content = () => {
 
               <p className="mt-3">
                 Your plot, your purpose and the bank&apos;s own requirements
-                matter more than the label. MTBOSS helps you plan a building
+                matter more than the label. MTBoss helps you plan a building
                 that suits your needs.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -138,17 +138,17 @@ const Content = () => {
                 </li>
                 <li>
                   Residential projects form a dedicated service category on the
-                  MTBOSS website, from affordable housing to luxury villas.
+                  MTBoss website, from affordable housing to luxury villas.
                 </li>
                 <li>
-                  Project gallery and blog available on the MTBOSS website.
+                  Project gallery and blog available on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Bank Building Construction Services Offered by MTBOSS
+                Bank Building Construction Services Offered by MTBoss
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -200,7 +200,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBOSS wholesale supply.
+                  bricks, tiles and paints through MTBoss wholesale supply.
                 </li>
                 <li>
                   <strong>Renovation and extension:</strong> Upgrading,
@@ -370,13 +370,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Approaches a Bank Building Construction Project
+                How MTBoss Approaches a Bank Building Construction Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Step 1 — Enquiry and discussion:</strong> Contact
-                  MTBOSS with plot, purpose, the bank&apos;s requirements and
+                  MTBoss with plot, purpose, the bank&apos;s requirements and
                   budget through website, phone or WhatsApp.
                 </li>
                 <li>
@@ -492,7 +492,7 @@ const Content = () => {
                 own technical specifications and security standards for its
                 branches. Requirements vary by location and current regulations,
                 so confirm the latest rules with the relevant authorities, the
-                bank and your consultants. MTBOSS builds according to approved
+                bank and your consultants. MTBoss builds according to approved
                 drawings and specifications, while owners and their consultants
                 handle approvals specific to the property.
               </p>
@@ -543,7 +543,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBOSS Budget Calculator, then request a
+                Start with the free MTBoss Budget Calculator, then request a
                 detailed quote after site visit and design discussion.
               </p>
             </section>
@@ -595,7 +595,7 @@ const Content = () => {
               </h3>
 
               <p>
-                Commercial projects often come with firm handover dates. MTBOSS
+                Commercial projects often come with firm handover dates. MTBoss
                 supports a smooth project through stage-wise planning with clear
                 milestones, regular site visits by engineers and single-team
                 coordination of design, materials and construction.
@@ -652,7 +652,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Services for Property Owners
+                MTBoss Services for Property Owners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -676,7 +676,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBOSS for Bank Building Construction
+                Why Choose MTBoss for Bank Building Construction
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -706,44 +706,44 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and
-                  blog on the MTBOSS website.
+                  blog on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBOSS: Bank Building Construction in Moradabad
+                Contact MTBoss: Bank Building Construction in Moradabad
               </h3>
 
               <p className="mb-3">
-                If you are planning a bank building in Moradabad, MTBOSS offers
+                If you are planning a bank building in Moradabad, MTBoss offers
                 a single point of contact for design coordination, materials,
                 construction and handover.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBOSS Construction Private Limited
+                  <strong>Company:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in
+                    https://www.MTBoss.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -790,10 +790,10 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBOSS build bank buildings in Moradabad?
+                    Q2. Does MTBoss build bank buildings in Moradabad?
                   </strong>
                   <br />
-                  MTBOSS builds residential projects, from affordable housing to
+                  MTBoss builds residential projects, from affordable housing to
                   luxury villas, in Moradabad and Bareilly, and offers
                   construction services for other buildings. Share your plan
                   with the team to confirm the scope for your bank building.
@@ -816,7 +816,7 @@ const Content = () => {
                   </strong>
                   <br />
                   Strong rooms and vaults are usually supplied and installed by
-                  specialist vendors as per the bank&apos;s requirements. MTBOSS
+                  specialist vendors as per the bank&apos;s requirements. MTBoss
                   plans the civil and structural provisions for these areas in
                   coordination with the bank and the vendor.
                 </li>
@@ -840,12 +840,12 @@ const Content = () => {
                   Cost depends on built-up area, floors, the bank&apos;s
                   specifications, strong room provisions, material and finish
                   level, services scope and site conditions. Use the free
-                  Budget Calculator on the MTBOSS website, or request a detailed
+                  Budget Calculator on the MTBoss website, or request a detailed
                   quote.
                 </li>
 
                 <li>
-                  <strong>Q7. Where is the MTBOSS office located?</strong>
+                  <strong>Q7. Where is the MTBoss office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

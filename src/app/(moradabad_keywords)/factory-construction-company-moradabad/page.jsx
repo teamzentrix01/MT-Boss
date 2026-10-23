@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Factory Construction Company in Moradabad | MTBOSS",
+  title: "Factory Construction Company in Moradabad | MTBoss",
 
   description:
-    "Build your factory with MTBOSS, a factory construction company in Moradabad. Plan, build and hand over. Call +91 94584 10866 for a free quote.",
+    "Build your factory with MTBoss, a factory construction company in Moradabad. Plan, build and hand over. Call +91 94584 10866 for a free quote.",
 
   keywords:
-    "factory construction company Moradabad, factory building construction Moradabad, factory builder Moradabad, factory construction contractor Moradabad, manufacturing unit construction Moradabad, industrial plant construction Moradabad, factory construction cost Moradabad, factory plot Moradabad, factory shed construction Moradabad, factory layout planning Moradabad, industrial construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "factory construction company Moradabad, factory building construction Moradabad, factory builder Moradabad, factory construction contractor Moradabad, manufacturing unit construction Moradabad, industrial plant construction Moradabad, factory construction cost Moradabad, factory plot Moradabad, factory shed construction Moradabad, factory layout planning Moradabad, industrial construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/factory-construction-company-in-moradabad",
+      "https://www.MTBoss.in/factory-construction-company-in-moradabad",
   },
 
   openGraph: {
-    title: "Factory Construction Company in Moradabad | MTBOSS",
+    title: "Factory Construction Company in Moradabad | MTBoss",
 
     description:
-      "Build your factory with MTBOSS, a factory construction company in Moradabad. Plan, build and hand over. Call +91 94584 10866 for a free quote.",
+      "Build your factory with MTBoss, a factory construction company in Moradabad. Plan, build and hand over. Call +91 94584 10866 for a free quote.",
 
-    url: "https://www.mtboss.in/factory-construction-company-in-moradabad",
+    url: "https://www.MTBoss.in/factory-construction-company-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-factory-construction-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-factory-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Factory Construction Company in Moradabad - MTBOSS",
+        alt: "Factory Construction Company in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Factory Construction Company in Moradabad | MTBOSS",
+    title: "Factory Construction Company in Moradabad | MTBoss",
 
     description:
-      "Build your factory with MTBOSS, a factory construction company in Moradabad. Plan, build and hand over. Call +91 94584 10866 for a free quote.",
+      "Build your factory with MTBoss, a factory construction company in Moradabad. Plan, build and hand over. Call +91 94584 10866 for a free quote.",
 
     images: [
-      "https://www.mtboss.in/og-factory-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-factory-construction-moradabad.jpg",
     ],
   },
 
@@ -66,11 +66,11 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/factory-construction-company-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/factory-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-factory-construction-moradabad.jpg",
+    email: "MTBoss2016@gmail.com",
+    image: "https://www.MTBoss.in/og-factory-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,14 +117,14 @@ export default function Page() {
     "@type": "Service",
     name: "Factory Construction Services in Moradabad",
     description:
-      "MTBOSS provides factory construction in Moradabad for manufacturing units and industrial plants, including plot review, layout planning, site development, foundations, structural framing, roofing, industrial flooring, drainage, offices, amenities, external works, material supply and final handover.",
-    url: "https://www.mtboss.in/factory-construction-company-in-moradabad",
+      "MTBoss provides factory construction in Moradabad for manufacturing units and industrial plants, including plot review, layout planning, site development, foundations, structural framing, roofing, industrial flooring, drainage, offices, amenities, external works, material supply and final handover.",
+    url: "https://www.MTBoss.in/factory-construction-company-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -154,10 +154,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS offer factory construction in Moradabad?",
+        name: "Does MTBoss offer factory construction in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Industrial and warehousing construction is part of the MTBOSS service list, alongside commercial, hotel, school, college, mall and residential construction projects in Moradabad and Bareilly.",
+          text: "Yes. Industrial and warehousing construction is part of the MTBoss service list, alongside commercial, hotel, school, college, mall and residential construction projects in Moradabad and Bareilly.",
         },
       },
       {
@@ -165,15 +165,15 @@ export default function Page() {
         name: "What should I check before buying a plot for a factory?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Check road access for trucks, permitted land use, power and water availability, soil and ground levels, plot shape for efficient layout and room for future expansion. MTBOSS engineers can review a plot's construction implications before you finalise.",
+          text: "Check road access for trucks, permitted land use, power and water availability, soil and ground levels, plot shape for efficient layout and room for future expansion. MTBoss engineers can review a plot's construction implications before you finalise.",
         },
       },
       {
         "@type": "Question",
-        name: "Can MTBOSS help me find a factory plot?",
+        name: "Can MTBoss help me find a factory plot?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS offers verified property buying, selling and renting services in and around Moradabad. The team can also review construction implications of shortlisted plots to help you choose a suitable site.",
+          text: "MTBoss offers verified property buying, selling and renting services in and around Moradabad. The team can also review construction implications of shortlisted plots to help you choose a suitable site.",
         },
       },
       {
@@ -189,23 +189,23 @@ export default function Page() {
         name: "How much does factory construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Factory construction cost depends on built-up area, span, height, floor specification, roof and wall system, services scope, offices and amenities, external development, site conditions and material quality. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Factory construction cost depends on built-up area, span, height, floor specification, roof and wall system, services scope, offices and amenities, external development, site conditions and material quality. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS supply building materials?",
+        name: "Does MTBoss supply building materials?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during factory construction.",
+          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during factory construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -219,19 +219,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Factory Construction Company in Moradabad",
-        item: "https://www.mtboss.in/factory-construction-company-in-moradabad",
+        item: "https://www.MTBoss.in/factory-construction-company-in-moradabad",
       },
     ],
   };

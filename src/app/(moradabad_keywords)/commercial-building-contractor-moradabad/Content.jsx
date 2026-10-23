@@ -9,7 +9,7 @@ const Content = () => {
         <div className="order-1 flex-1 px-4 py-12 sm:px-8 md:px-16 lg:order-1">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 sm:text-3xl md:text-3xl">
             Commercial Building Contractor in Moradabad: Clear Scope, Strong
-            Structure, On-Time Handover with MTBOSS
+            Structure, On-Time Handover with MTBoss
           </h2>
 
           <div className="max-w-4xl space-y-6 leading-relaxed text-gray-700">
@@ -28,10 +28,10 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBOSS Construction Private Limited is a Moradabad-based
+                MTBoss Construction Private Limited is a Moradabad-based
                 architect, interior designer and construction company that
                 builds commercial, hospitality, institutional, industrial and
-                residential projects. MTBOSS serves Moradabad and Bareilly with
+                residential projects. MTBoss serves Moradabad and Bareilly with
                 quality work, transparent pricing and on-time delivery.
               </p>
             </section>
@@ -79,7 +79,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -97,7 +97,7 @@ const Content = () => {
                   mall, industrial, infrastructure and residential construction.
                 </li>
                 <li>
-                  A project gallery and blog are available on the MTBOSS website
+                  A project gallery and blog are available on the MTBoss website
                   for reviewing completed work.
                 </li>
               </ul>
@@ -105,7 +105,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Commercial Building Contractor Services Offered by MTBOSS
+                Commercial Building Contractor Services Offered by MTBoss
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -141,7 +141,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBOSS wholesale supply.
+                  bricks, tiles and paints through MTBoss wholesale supply.
                 </li>
                 <li>
                   <strong>Renovation and extension:</strong> Extra floors,
@@ -150,7 +150,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Final project scope is discussed and confirmed with the MTBOSS
+                Final project scope is discussed and confirmed with the MTBoss
                 team before construction begins.
               </p>
             </section>
@@ -263,19 +263,19 @@ const Content = () => {
               </div>
 
               <p className="mt-3">
-                MTBOSS discusses and documents these points with clients before
+                MTBoss discusses and documents these points with clients before
                 construction begins so both sides understand the project clearly.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Executes a Commercial Building Project
+                How MTBoss Executes a Commercial Building Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Step 1 — Enquiry:</strong> Contact MTBOSS through the
+                  <strong>Step 1 — Enquiry:</strong> Contact MTBoss through the
                   website, phone or WhatsApp with plot and project details.
                 </li>
                 <li>
@@ -440,7 +440,7 @@ const Content = () => {
 
               <p className="mt-3">
                 Confirm the latest rules with relevant authorities and
-                consultants. MTBOSS builds according to approved drawings and
+                consultants. MTBoss builds according to approved drawings and
                 specifications, while owners and their consultants handle
                 business-specific licences.
               </p>
@@ -483,7 +483,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBOSS Budget Calculator, then request a
+                Start with the free MTBoss Budget Calculator, then request a
                 detailed quote after site visit and drawing review.
               </p>
             </section>
@@ -495,7 +495,7 @@ const Content = () => {
 
               <p>
                 Commercial buildings use large quantities of cement, steel,
-                bricks and tiles, so supply gaps can halt work. MTBOSS supplies
+                bricks and tiles, so supply gaps can halt work. MTBoss supplies
                 cement, TMT steel bars, bricks, tiles and paints on a wholesale
                 basis through the Shop Now section of its website.
               </p>
@@ -509,7 +509,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Keeps Projects on Track
+                How MTBoss Keeps Projects on Track
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -567,7 +567,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Other MTBOSS Services for Business Owners
+                Other MTBoss Services for Business Owners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -592,7 +592,7 @@ const Content = () => {
               </h3>
 
               <p>
-                MTBOSS works across Moradabad city, including commercial areas,
+                MTBoss works across Moradabad city, including commercial areas,
                 Kanth Road and surrounding growth areas, roadside plots across
                 Moradabad district, Bareilly and nearby Uttar Pradesh towns
                 where owners coordinate projects remotely.
@@ -601,7 +601,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBOSS as Your Commercial Building Contractor?
+                Why Choose MTBoss as Your Commercial Building Contractor?
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -631,44 +631,44 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and blog
-                  on the MTBOSS website.
+                  on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBOSS: Commercial Building Contractor in Moradabad
+                Contact MTBoss: Commercial Building Contractor in Moradabad
               </h3>
 
               <p className="mb-3">
                 If you need a commercial building contractor in Moradabad who
                 puts the scope in writing, supplies quality materials and keeps
-                you informed, MTBOSS is ready to help.
+                you informed, MTBoss is ready to help.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBOSS Construction Private Limited
+                  <strong>Company:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in
+                    https://www.MTBoss.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -699,7 +699,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Use the Get a Construction Quote option on the MTBOSS website,
+                Use the Get a Construction Quote option on the MTBoss website,
                 or contact the team directly through phone or WhatsApp.
               </p>
             </section>
@@ -722,18 +722,18 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBOSS work as a commercial building contractor in
+                    Q2. Does MTBoss work as a commercial building contractor in
                     Moradabad?
                   </strong>
                   <br />
-                  Yes. Commercial construction is part of the MTBOSS service
+                  Yes. Commercial construction is part of the MTBoss service
                   list, alongside hotel, school, college, mall, industrial and
                   residential projects in Moradabad and Bareilly.
                 </li>
 
                 <li>
                   <strong>
-                    Q3. What types of commercial buildings can MTBOSS build?
+                    Q3. What types of commercial buildings can MTBoss build?
                   </strong>
                   <br />
                   Shops, showrooms, offices, commercial complexes, malls,
@@ -764,7 +764,7 @@ const Content = () => {
                   </strong>
                   <br />
                   Cost depends on built-up area, building type, structure,
-                  services, finishing and site conditions. Use the free MTBOSS
+                  services, finishing and site conditions. Use the free MTBoss
                   Budget Calculator or request a detailed quote.
                 </li>
 
@@ -779,7 +779,7 @@ const Content = () => {
                 </li>
 
                 <li>
-                  <strong>Q8. Where is the MTBOSS office located?</strong>
+                  <strong>Q8. Where is the MTBoss office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

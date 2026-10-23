@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Contractor for Flooring Work in Moradabad: MT Boss
+            Civil Contractor for Flooring Work in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -28,7 +28,7 @@ const Content = () => {
                 Choosing the right civil contractor for flooring work in Moradabad
                 means choosing a team that treats flooring as civil work, with
                 levels, base preparation, slopes, curing and proper fixing, and
-                not just as decoration. MT Boss Construction Private Limited
+                not just as decoration. MTBoss Construction Private Limited
                 carries out flooring for homes, shops, offices, hotels, warehouses
                 and factories across Moradabad and Bareilly. Our work follows the
                 promise on our website: planning to completion, with quality work,
@@ -59,10 +59,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBoss Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home services,
+                MTBoss is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -85,7 +85,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Flooring Services Offered by MT Boss
+                Flooring Services Offered by MTBoss
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -96,7 +96,7 @@ const Content = () => {
                 homes and shops. We lay floor and wall tiles in living areas,
                 bedrooms, kitchens, bathrooms, balconies and commercial spaces,
                 with attention to level, alignment and joint quality. Our Tile
-                &amp; Marble quick service on mtboss.in covers this work.
+                &amp; Marble quick service on MTBoss.in covers this work.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -228,7 +228,7 @@ const Content = () => {
               <p>
                 A PCC or concrete base provides a firm, even bed. Thickness and
                 grade depend on use, from light residential floors to heavy
-                industrial areas [confirm MT Boss specifications].
+                industrial areas [confirm MTBoss specifications].
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -265,7 +265,7 @@ const Content = () => {
               <p>
                 In bathrooms, kitchen wet zones, balconies and terraces, a
                 waterproofing layer goes under the tile. This is where flooring
-                and waterproofing meet, and MT Boss handles both under one roof
+                and waterproofing meet, and MTBoss handles both under one roof
                 through our Water Proofing service.
               </p>
 
@@ -362,7 +362,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Owners who wish to source materials can explore the Shop Now
-                section on mtboss.in for cement, steel, bricks and more, and our
+                section on MTBoss.in for cement, steel, bricks and more, and our
                 engineers can advise on quantity and quality [confirm delivery
                 coverage].
               </p>
@@ -429,7 +429,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  mtboss.in, or call or WhatsApp us with your location, area and
+                  MTBoss.in, or call or WhatsApp us with your location, area and
                   photos.
                 </li>
                 <li>
@@ -445,7 +445,7 @@ const Content = () => {
                 <li>
                   <strong>Itemised estimate.</strong> You receive a quotation
                   listing areas, materials, labour, timeline and payment stages.
-                  You can also use the Budget Calculator on mtboss.in for an early
+                  You can also use the Budget Calculator on MTBoss.in for an early
                   idea of overall costs.
                 </li>
                 <li>
@@ -507,11 +507,11 @@ const Content = () => {
               </h3>
               <p>
                 Flooring should be planned with other works, not squeezed in at
-                the end. MT Boss coordinates floor levels with doors and windows,
+                the end. MTBoss coordinates floor levels with doors and windows,
                 plumbing outlets, electrical points, false ceilings and painting.
                 Painting is usually best done after floor work, with floors
                 protected, or in an order that avoids damage. Our Painter, Door
-                &amp; Window Install and False Ceiling services on mtboss.in make
+                &amp; Window Install and False Ceiling services on MTBoss.in make
                 this sequence easier to manage.
               </p>
             </section>
@@ -544,7 +544,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -581,7 +581,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book Your Flooring Work with MT Boss
+                Book Your Flooring Work with MTBoss
               </h3>
               <p className="mb-3">
                 Ready for a floor that stays flat, firm and good-looking? Contact
@@ -591,12 +591,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -614,10 +614,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -631,7 +631,7 @@ const Content = () => {
                 and send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss, your trusted civil contractor for flooring work in
+                Choose MTBoss, your trusted civil contractor for flooring work in
                 Moradabad, for floors that are built from the base up and finished
                 with care.
               </p>
@@ -645,7 +645,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who offers flooring work in Moradabad?</strong>
                   <br />
-                  MT Boss Construction provides tile, marble, stone and industrial
+                  MTBoss Construction provides tile, marble, stone and industrial
                   flooring across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -682,7 +682,7 @@ const Content = () => {
                   <strong>Q7. Do you supply tiles and materials?</strong>
                   <br />
                   Yes, or you can source them yourself. Explore Shop Now on
-                  mtboss.in [confirm tile sourcing and delivery].
+                  MTBoss.in [confirm tile sourcing and delivery].
                 </li>
                 <li>
                   <strong>Q8. How is flooring work priced?</strong>
@@ -693,7 +693,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

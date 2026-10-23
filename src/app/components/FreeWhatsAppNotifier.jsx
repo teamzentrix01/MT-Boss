@@ -52,7 +52,7 @@ function readableLabel(key) {
 }
 
 function makeMessage(type, details, responseData) {
-  const lines = [`*New ${type} - MTBOSS*`];
+  const lines = [`*New ${type} - MTBoss*`];
   const merged = { ...details };
   const data = responseData?.data || responseData?.booking || responseData;
   if (data && typeof data === 'object' && !Array.isArray(data)) {
@@ -131,7 +131,7 @@ export default function FreeWhatsAppNotifier() {
     <aside className="fixed bottom-24 right-5 z-[10000] w-[min(360px,calc(100vw-40px))] border border-emerald-500 bg-zinc-950 p-4 text-white shadow-2xl" role="status">
       <button type="button" onClick={() => setPendingShare(null)} className="absolute right-2 top-1 bg-transparent p-1 text-lg text-zinc-400" aria-label="Dismiss WhatsApp reminder">×</button>
       <p className="pr-6 text-xs font-black uppercase tracking-wider text-emerald-400">Submission successful</p>
-      <p className="mt-1 text-xs leading-5 text-zinc-300">Send the pre-filled {pendingShare.type} update to the MTBOSS admin on WhatsApp.</p>
+      <p className="mt-1 text-xs leading-5 text-zinc-300">Send the pre-filled {pendingShare.type} update to the MTBoss admin on WhatsApp.</p>
       <a href={pendingShare.shareUrl} target="_blank" rel="noopener noreferrer" onClick={() => setPendingShare(null)} className="mt-3 inline-block bg-[#25D366] px-4 py-2 text-xs font-black uppercase tracking-wider text-black">
         Send WhatsApp Update
       </a>

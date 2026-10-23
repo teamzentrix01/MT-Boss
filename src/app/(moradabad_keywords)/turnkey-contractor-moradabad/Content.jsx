@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Turnkey Contractor in Moradabad: MT Boss Construction
+            Turnkey Contractor in Moradabad: MTBoss Construction
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,7 +23,7 @@ const Content = () => {
                 the final handover.
               </p>
               <p className="mt-3">
-                MT Boss Construction Private Limited is a full-service turnkey
+                MTBoss Construction Private Limited is a full-service turnkey
                 construction company serving Moradabad, Bareilly and nearby
                 districts of Uttar Pradesh. We handle design, planning, material
                 supply, construction, interiors and finishing under one roof.
@@ -32,7 +32,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 This guide covers the meaning of turnkey construction, its
-                benefits, the services MT Boss offers and the steps to start
+                benefits, the services MTBoss offers and the steps to start
                 your project.
               </p>
             </section>
@@ -118,10 +118,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBoss Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a construction and home-solutions company known for
+                MTBoss is a construction and home-solutions company known for
                 architecture, interior design, modular kitchens, waterproofing,
                 building renovation and complete construction services. We build
                 residential, commercial, hospitality and industrial projects
@@ -234,7 +234,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Benefits of Hiring MT Boss as Your Turnkey Contractor
+                Benefits of Hiring MTBoss as Your Turnkey Contractor
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -378,7 +378,7 @@ const Content = () => {
                 Our Turnkey Process from Plan to Handover
               </h3>
               <p className="mb-3">
-                Every MT Boss turnkey project follows a clear, step-by-step
+                Every MTBoss turnkey project follows a clear, step-by-step
                 process.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -397,7 +397,7 @@ const Content = () => {
                   <strong>3. Detailed estimate and agreement.</strong> You
                   receive an itemised quotation and a written agreement covering
                   scope, timeline, payment stages and material standards. You
-                  can also use the Construction Budget Calculator on mtboss.in
+                  can also use the Construction Budget Calculator on MTBoss.in
                   for a quick starting estimate.
                 </li>
                 <li>
@@ -465,7 +465,7 @@ const Content = () => {
                 <li>Project timeline</li>
               </ul>
               <p className="mt-3">
-                Instead of guessing, MT Boss prepares a project-specific
+                Instead of guessing, MTBoss prepares a project-specific
                 estimate after understanding your plan. This keeps your budget
                 realistic from day one.
               </p>
@@ -473,11 +473,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MT Boss in Moradabad
+                Reasons to Choose MTBoss in Moradabad
               </h3>
               <p>
                 Many companies offer construction services, but a turnkey
-                project demands trust, planning and discipline. MT Boss combines
+                project demands trust, planning and discipline. MTBoss combines
                 design capability, skilled teams, transparent pricing and honest
                 communication. Our clients appreciate that we explain each step
                 clearly, keep sites organised and respect deadlines. We want you
@@ -503,17 +503,17 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Start Your Turnkey Project with a Free Site Visit
               </h3>
-              <p className="mb-3">Contact MT Boss today to discuss your plan:</p>
+              <p className="mb-3">Contact MTBoss today to discuss your plan:</p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -523,10 +523,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -539,7 +539,7 @@ const Content = () => {
                 team will arrange a site visit and send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss, your trusted turnkey contractor in Moradabad,
+                Choose MTBoss, your trusted turnkey contractor in Moradabad,
                 and take possession of a finished building without the stress.
               </p>
             </section>
@@ -563,7 +563,7 @@ const Content = () => {
                   savings and consistent quality from start to finish.
                 </li>
                 <li>
-                  <strong>Q3. Does MT Boss offer turnkey house construction?</strong>
+                  <strong>Q3. Does MTBoss offer turnkey house construction?</strong>
                   <br />
                   Yes. We build independent houses, villas and multi-storey
                   homes with design, structure, finishing and handover included.
@@ -594,7 +594,7 @@ const Content = () => {
                 <li>
                   <strong>Q7. How can I get a turnkey construction quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or
                   call or WhatsApp +91 94584 10866 for a free site visit.
                 </li>
                 <li>

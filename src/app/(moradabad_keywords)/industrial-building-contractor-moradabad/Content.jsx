@@ -29,7 +29,7 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBOSS Construction Private Limited is a Moradabad-based
+                MTBoss Construction Private Limited is a Moradabad-based
                 architect, interior designer and construction company serving
                 Moradabad and Bareilly with industrial, commercial, hospitality,
                 institutional and residential projects.
@@ -79,7 +79,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -98,7 +98,7 @@ const Content = () => {
                   residential construction.
                 </li>
                 <li>
-                  A project gallery and blog on the MTBOSS website let clients
+                  A project gallery and blog on the MTBoss website let clients
                   review completed work before reaching out.
                 </li>
               </ul>
@@ -106,7 +106,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Industrial Building Contractor Services Offered by MTBOSS
+                Industrial Building Contractor Services Offered by MTBoss
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -136,7 +136,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBOSS wholesale supply.
+                  bricks, tiles and paints through MTBoss wholesale supply.
                 </li>
                 <li>
                   <strong>Renovation and extension:</strong> Repairs, extra bays
@@ -245,7 +245,7 @@ const Content = () => {
               </div>
 
               <p className="mt-3">
-                Clear answers prevent many disputes later. MTBOSS discusses and
+                Clear answers prevent many disputes later. MTBoss discusses and
                 documents these points with the client before construction begins.
               </p>
             </section>
@@ -289,12 +289,12 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Executes an Industrial Building Project
+                How MTBoss Executes an Industrial Building Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Step 1 — Enquiry:</strong> Contact MTBOSS through
+                  <strong>Step 1 — Enquiry:</strong> Contact MTBoss through
                   website, phone or WhatsApp with plot and business needs.
                 </li>
                 <li>
@@ -311,7 +311,7 @@ const Content = () => {
                   reviewed and construction stages are planned.
                 </li>
                 <li>
-                  <strong>Step 5 — Estimate:</strong> The MTBOSS Budget
+                  <strong>Step 5 — Estimate:</strong> The MTBoss Budget
                   Calculator and material rates create a realistic cost outline.
                 </li>
                 <li>
@@ -450,7 +450,7 @@ const Content = () => {
 
               <p className="mt-3">
                 Confirm the latest requirements with relevant authorities and
-                consultants. MTBOSS builds according to approved drawings and
+                consultants. MTBoss builds according to approved drawings and
                 specifications, while owners and consultants handle
                 business-specific licences.
               </p>
@@ -497,7 +497,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBOSS Budget Calculator, then request a
+                Start with the free MTBoss Budget Calculator, then request a
                 detailed quote after site visit and drawing review.
               </p>
             </section>
@@ -509,7 +509,7 @@ const Content = () => {
 
               <p>
                 Industrial buildings use large quantities of cement, steel and
-                bricks, so supply gaps can stop work. MTBOSS supplies cement,
+                bricks, so supply gaps can stop work. MTBoss supplies cement,
                 TMT steel bars, bricks, tiles and paints through its wholesale
                 supply and Shop Now section.
               </p>
@@ -523,7 +523,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Keeps Industrial Projects on Track
+                How MTBoss Keeps Industrial Projects on Track
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -585,7 +585,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Services for Industrial Owners
+                MTBoss Services for Industrial Owners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -606,7 +606,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBOSS as Your Industrial Building Contractor?
+                Why Choose MTBoss as Your Industrial Building Contractor?
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -637,44 +637,44 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and blog
-                  on the MTBOSS website.
+                  on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBOSS: Industrial Building Contractor in Moradabad
+                Contact MTBoss: Industrial Building Contractor in Moradabad
               </h3>
 
               <p className="mb-3">
                 If you need an industrial building contractor in Moradabad who
                 puts the scope in writing, coordinates with equipment plans and
-                keeps you informed, MTBOSS is ready to help.
+                keeps you informed, MTBoss is ready to help.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBOSS Construction Private Limited
+                  <strong>Company:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in
+                    https://www.MTBoss.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -705,7 +705,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Use the Get a Construction Quote option on the MTBOSS website,
+                Use the Get a Construction Quote option on the MTBoss website,
                 or contact the team directly by phone or WhatsApp.
               </p>
             </section>
@@ -728,18 +728,18 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBOSS work as an industrial building contractor in
+                    Q2. Does MTBoss work as an industrial building contractor in
                     Moradabad?
                   </strong>
                   <br />
                   Yes. Industrial and warehousing construction is part of the
-                  MTBOSS service list, alongside commercial, hotel, school,
+                  MTBoss service list, alongside commercial, hotel, school,
                   college, mall and residential projects.
                 </li>
 
                 <li>
                   <strong>
-                    Q3. What types of industrial buildings can MTBOSS build?
+                    Q3. What types of industrial buildings can MTBoss build?
                   </strong>
                   <br />
                   Factories, workshops, warehouses, godowns and industrial sheds.
@@ -753,7 +753,7 @@ const Content = () => {
                   <br />
                   This should be agreed in writing before work begins, based on
                   equipment supplier drawings. Discuss machine foundations, pits
-                  and special provisions with MTBOSS at the start.
+                  and special provisions with MTBoss at the start.
                 </li>
 
                 <li>
@@ -763,14 +763,14 @@ const Content = () => {
                   </strong>
                   <br />
                   Cost depends on built-up area, span, height, flooring,
-                  structure, services and site conditions. Use the free MTBOSS
+                  structure, services and site conditions. Use the free MTBoss
                   Budget Calculator or request a detailed quote.
                 </li>
 
                 <li>
-                  <strong>Q6. Does MTBOSS supply building materials?</strong>
+                  <strong>Q6. Does MTBoss supply building materials?</strong>
                   <br />
-                  Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and
+                  Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and
                   paints, helping reduce construction delays.
                 </li>
 
@@ -785,7 +785,7 @@ const Content = () => {
                 </li>
 
                 <li>
-                  <strong>Q8. Where is the MTBOSS office located?</strong>
+                  <strong>Q8. Where is the MTBoss office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

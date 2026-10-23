@@ -2,26 +2,26 @@
 import ContactClient from './ContactClient';
 
 export const metadata = {
-  title: 'MTBOSS | Contact Us - Get a Free Quote in 24 Hours',
+  title: 'MTBoss | Contact Us - Get a Free Quote in 24 Hours',
   description:
-    'Get in touch with MTBOSS for construction projects, property inquiries, franchise opportunities, or agent registration. Response within 24 hours across all our office locations.',
+    'Get in touch with MTBoss for construction projects, property inquiries, franchise opportunities, or agent registration. Response within 24 hours across all our office locations.',
   keywords:
-    'contact construction company, get construction quote, MTBOSS contact, construction company phone number, franchise inquiry contact',
+    'contact construction company, get construction quote, MTBoss contact, construction company phone number, franchise inquiry contact',
   alternates: {
-    canonical: 'https://www.mtboss.in/contact',
+    canonical: 'https://www.MTBoss.in/contact',
   },
   openGraph: {
-    title: 'MTBOSS | Contact Us - Get a Free Quote in 24 Hours',
+    title: 'MTBoss | Contact Us - Get a Free Quote in 24 Hours',
     description:
       'Construction, property, franchise, or agent inquiries — we respond within 24 hours.',
-    url: 'https://www.mtboss.in/contact',
-    siteName: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBoss.in/contact',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/icon.png',
+        url: 'https://www.MTBoss.in/icon.png',
         width: 1200,
         height: 630,
-        alt: 'Contact MTBOSS',
+        alt: 'Contact MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -29,10 +29,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MTBOSS | Contact Us - Get a Free Quote in 24 Hours',
+    title: 'MTBoss | Contact Us - Get a Free Quote in 24 Hours',
     description:
       'Construction, property, franchise, or agent inquiries — we respond within 24 hours.',
-    images: ['https://www.mtboss.in/icon.png'],
+    images: ['https://www.MTBoss.in/icon.png'],
   },
   robots: {
     index: true,
@@ -43,13 +43,13 @@ export const metadata = {
 const contactPageSchema = {
   '@context': 'https://schema.org',
   '@type': 'ContactPage',
-  name: 'Contact MTBOSS',
-  url: 'https://www.mtboss.in/contact',
+  name: 'Contact MTBoss',
+  url: 'https://www.MTBoss.in/contact',
   mainEntity: {
     '@type': 'GeneralContractor',
-    name: 'MTBOSS Construction Private Limited',
+    name: 'MTBoss Construction Private Limited',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBoss2016@gmail.com',
     // Real addresses milne ke baad, har office ke liye ek "location" object daal denge yahan (LocalBusiness array)
   },
 };

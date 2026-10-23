@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Civil Work Contractor in Moradabad | MTBOSS',
+  title: 'Civil Work Contractor in Moradabad | MTBoss',
   description:
-    'Need a civil work contractor in Moradabad for foundation, masonry & structural work? MTBOSS offers expert teams and transparent pricing. Call now!',
+    'Need a civil work contractor in Moradabad for foundation, masonry & structural work? MTBoss offers expert teams and transparent pricing. Call now!',
   keywords:
-    'civil work contractor Moradabad, civil contractor for masonry work, foundation contractor Moradabad, structural work contractor near me, brickwork contractor Moradabad, civil work labour contractor Moradabad, MTBOSS Moradabad, civil contractor near me, masonry contractor near me, civil work rate contractor',
+    'civil work contractor Moradabad, civil contractor for masonry work, foundation contractor Moradabad, structural work contractor near me, brickwork contractor Moradabad, civil work labour contractor Moradabad, MTBoss Moradabad, civil contractor near me, masonry contractor near me, civil work rate contractor',
   alternates: {
-    canonical: 'https://www.mtboss.in/civil-work-contractor-in-moradabad',
+    canonical: 'https://www.MTBoss.in/civil-work-contractor-in-moradabad',
   },
   openGraph: {
-    title: 'Civil Work Contractor in Moradabad | MTBOSS',
+    title: 'Civil Work Contractor in Moradabad | MTBoss',
     description:
-      'Need a civil work contractor in Moradabad for foundation, masonry & structural work? MTBOSS offers expert teams and transparent pricing. Call now!',
-    url: 'https://www.mtboss.in/civil-work-contractor-in-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Need a civil work contractor in Moradabad for foundation, masonry & structural work? MTBoss offers expert teams and transparent pricing. Call now!',
+    url: 'https://www.MTBoss.in/civil-work-contractor-in-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-civil-work-contractor-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-civil-work-contractor-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Civil Work Contractor in Moradabad - MTBOSS',
+        alt: 'Civil Work Contractor in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Civil Work Contractor in Moradabad | MTBOSS',
+    title: 'Civil Work Contractor in Moradabad | MTBoss',
     description:
-      'Need a civil work contractor in Moradabad for foundation, masonry & structural work? MTBOSS offers expert teams and transparent pricing. Call now!',
-    images: ['https://www.mtboss.in/og-civil-work-contractor-moradabad.jpg'],
+      'Need a civil work contractor in Moradabad for foundation, masonry & structural work? MTBoss offers expert teams and transparent pricing. Call now!',
+    images: ['https://www.MTBoss.in/og-civil-work-contractor-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/civil-work-contractor-in-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/civil-work-contractor-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

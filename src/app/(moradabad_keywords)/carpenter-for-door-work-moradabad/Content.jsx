@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Carpenter for Door Work in Moradabad: MT Boss
+            Carpenter for Door Work in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -16,7 +16,7 @@ const Content = () => {
               <p>
                 A carpenter for door work in Moradabad measures the opening, makes
                 or supplies the door and frame, fits hinges and locks, hangs the
-                door level and repairs doors that stick, sag or swell. MT Boss
+                door level and repairs doors that stick, sag or swell. MTBoss
                 Construction Private Limited, based on Kanth Road, offers door
                 carpentry and installation across Moradabad and Bareilly,
                 alongside painting and repair work from the same team [confirm
@@ -37,7 +37,7 @@ const Content = () => {
                 dry summers.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBoss Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -142,7 +142,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 These are common ranges, which your carpenter should adjust to
-                your opening and your needs [confirm MT Boss&apos;s standard
+                your opening and your needs [confirm MTBoss&apos;s standard
                 sizes].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -213,7 +213,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Hardware carries the load and gives the door its feel [confirm
-                brands and ratings MT Boss offers].
+                brands and ratings MTBoss offers].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -371,7 +371,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Seal all edges, including the top and bottom of the door, since
-                unsealed edges are where moisture enters. MT Boss&apos;s Painter
+                unsealed edges are where moisture enters. MTBoss&apos;s Painter
                 service can refinish doors and frames.
               </p>
             </section>
@@ -549,7 +549,7 @@ const Content = () => {
                 <li>Hardware brand and security level</li>
               </ul>
               <p className="mt-3">
-                You can use the Budget Calculator on mtboss.in for an early idea
+                You can use the Budget Calculator on MTBoss.in for an early idea
                 of overall construction or renovation cost.
               </p>
             </section>
@@ -559,21 +559,21 @@ const Content = () => {
                 Related Services From the Same Team
               </h3>
               <p>
-                Door work often comes with other jobs. MT Boss also offers Door
+                Door work often comes with other jobs. MTBoss also offers Door
                 &amp; Window Install, Carpenter, Painter, Building Repair, Water
                 Proofing, Pest Control, Electrician, False Ceiling and Tile &amp;
-                Marble services through mtboss.in, so wall repairs, painting and
+                Marble services through MTBoss.in, so wall repairs, painting and
                 floor finishing can be coordinated with the doors.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
+                MTBoss Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
+                  <strong>Business:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Door carpentry and installation,
@@ -597,21 +597,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                 </li>
                 <li>
@@ -631,7 +631,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -668,7 +668,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book Door Work With MT Boss
+                Book Door Work With MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -685,21 +685,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -714,7 +714,7 @@ const Content = () => {
                 send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for a carpenter for door work in Moradabad, with
+                Choose MTBoss for a carpenter for door work in Moradabad, with
                 the opening measured, the frame checked and the door hung to close
                 smoothly for years.
               </p>
@@ -728,7 +728,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who does door work in Moradabad?</strong>
                   <br />
-                  MT Boss Construction fits new doors and frames and repairs doors
+                  MTBoss Construction fits new doors and frames and repairs doors
                   across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -775,7 +775,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a visit?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

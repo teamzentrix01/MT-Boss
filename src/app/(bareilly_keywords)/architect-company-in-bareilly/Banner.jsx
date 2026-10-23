@@ -9,7 +9,7 @@ export default function Banner() {
       <section className="relative w-full h-[300px] sm:h-[400px] md:h-[450px] overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&q=90&w=2000"
+            src="https://i.pinimg.com/736x/f9/dd/62/f9dd6209e4c0a1a6f381215f7c30b8a3.jpg"
             alt={pageTitle}
             fill
             priority
@@ -17,7 +17,6 @@ export default function Banner() {
             sizes="100vw"
           />
         </div>
-
         <div className="absolute inset-0 bg-black/40 z-10" />
 
         <div className="relative z-20 flex items-center justify-center h-full">

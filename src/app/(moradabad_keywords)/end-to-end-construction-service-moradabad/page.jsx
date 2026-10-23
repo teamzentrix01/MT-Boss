@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "End to End Construction Service in Moradabad | MTBOSS",
+  title: "End to End Construction Service in Moradabad | MTBoss",
 
   description:
-    "Need end to end construction service in Moradabad? MTBOSS offers design, materials, building and handover. Call +91 94584 10866.",
+    "Need end to end construction service in Moradabad? MTBoss offers design, materials, building and handover. Call +91 94584 10866.",
 
   keywords:
-    "end to end construction service Moradabad, turnkey construction Moradabad, turnkey house construction Moradabad, complete construction service Moradabad, design and build Moradabad, architect and builder Moradabad, construction with materials Moradabad, plot to possession construction Moradabad, construction company in Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "end to end construction service Moradabad, turnkey construction Moradabad, turnkey house construction Moradabad, complete construction service Moradabad, design and build Moradabad, architect and builder Moradabad, construction with materials Moradabad, plot to possession construction Moradabad, construction company in Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/end-to-end-construction-service-in-moradabad",
+      "https://www.MTBoss.in/end-to-end-construction-service-in-moradabad",
   },
 
   openGraph: {
-    title: "End to End Construction Service in Moradabad | MTBOSS",
+    title: "End to End Construction Service in Moradabad | MTBoss",
 
     description:
-      "Need end to end construction service in Moradabad? MTBOSS offers design, materials, building and handover. Call +91 94584 10866.",
+      "Need end to end construction service in Moradabad? MTBoss offers design, materials, building and handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/end-to-end-construction-service-in-moradabad",
+    url: "https://www.MTBoss.in/end-to-end-construction-service-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-end-to-end-construction-service-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-end-to-end-construction-service-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "End to End Construction Service in Moradabad - MTBOSS",
+        alt: "End to End Construction Service in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "End to End Construction Service in Moradabad | MTBOSS",
+    title: "End to End Construction Service in Moradabad | MTBoss",
 
     description:
-      "Need end to end construction service in Moradabad? MTBOSS offers design, materials, building and handover. Call +91 94584 10866.",
+      "Need end to end construction service in Moradabad? MTBoss offers design, materials, building and handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-end-to-end-construction-service-moradabad.jpg",
+      "https://www.MTBoss.in/og-end-to-end-construction-service-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/end-to-end-construction-service-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/end-to-end-construction-service-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-end-to-end-construction-service-moradabad.jpg",
+      "https://www.MTBoss.in/og-end-to-end-construction-service-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,14 +116,14 @@ export default function Page() {
     "@type": "Service",
     name: "End to End Construction Service in Moradabad",
     description:
-      "MTBOSS provides end to end construction services in Moradabad for houses, bungalows, duplex homes, farmhouses, multi storey buildings, commercial buildings, institutional buildings and specialist buildings, including plot and property guidance, design and planning, estimate and budgeting, specifications and agreement, material supply, structural construction, services and waterproofing, finishing, interiors, outdoor works, inspection and handover, and after-handover support.",
-    url: "https://www.mtboss.in/end-to-end-construction-service-in-moradabad",
+      "MTBoss provides end to end construction services in Moradabad for houses, bungalows, duplex homes, farmhouses, multi storey buildings, commercial buildings, institutional buildings and specialist buildings, including plot and property guidance, design and planning, estimate and budgeting, specifications and agreement, material supply, structural construction, services and waterproofing, finishing, interiors, outdoor works, inspection and handover, and after-handover support.",
+    url: "https://www.MTBoss.in/end-to-end-construction-service-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -153,10 +153,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS offer end to end construction in Moradabad?",
+        name: "Does MTBoss offer end to end construction in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS is an architect, interior designer and construction company that builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and also supplies materials, property services and home services. Share your plan with the team to confirm the scope for your project.",
+          text: "MTBoss is an architect, interior designer and construction company that builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and also supplies materials, property services and home services. Share your plan with the team to confirm the scope for your project.",
         },
       },
       {
@@ -172,7 +172,7 @@ export default function Page() {
         name: "Are approvals included in the service?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS builds to the approved drawings and specifications. Approvals specific to your property are usually handled by the owner and their consultants, so confirm the details with the team.",
+          text: "MTBoss builds to the approved drawings and specifications. Approvals specific to your property are usually handled by the owner and their consultants, so confirm the details with the team.",
         },
       },
       {
@@ -188,12 +188,12 @@ export default function Page() {
         name: "How much does end to end construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Cost depends on built-up area, floors, design, material and finish level, interior scope, services scope and site conditions. Use the free Budget Calculator on the MTBOSS website, or request a detailed quote.",
+          text: "Cost depends on built-up area, floors, design, material and finish level, interior scope, services scope and site conditions. Use the free Budget Calculator on the MTBoss website, or request a detailed quote.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
           text: "The office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
@@ -210,19 +210,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "End to End Construction Service in Moradabad",
-        item: "https://www.mtboss.in/end-to-end-construction-service-in-moradabad",
+        item: "https://www.MTBoss.in/end-to-end-construction-service-in-moradabad",
       },
     ],
   };

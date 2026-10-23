@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Villa Construction Company in Moradabad | MTBOSS",
+  title: "Villa Construction Company in Moradabad | MTBoss",
 
   description:
-    "Build your dream villa with MTBOSS, a villa construction company in Moradabad. Custom design and quality finish. Call +91 94584 10866.",
+    "Build your dream villa with MTBoss, a villa construction company in Moradabad. Custom design and quality finish. Call +91 94584 10866.",
 
   keywords:
-    "villa construction company Moradabad, villa construction Moradabad, luxury villa construction Moradabad, villa builder Moradabad, villa contractor Moradabad, custom villa design Moradabad, villa construction cost Moradabad, farmhouse construction Moradabad, luxury home construction Moradabad, bungalow construction Moradabad, residential construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "villa construction company Moradabad, villa construction Moradabad, luxury villa construction Moradabad, villa builder Moradabad, villa contractor Moradabad, custom villa design Moradabad, villa construction cost Moradabad, farmhouse construction Moradabad, luxury home construction Moradabad, bungalow construction Moradabad, residential construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/villa-construction-company-in-moradabad",
+      "https://www.MTBoss.in/villa-construction-company-in-moradabad",
   },
 
   openGraph: {
-    title: "Villa Construction Company in Moradabad | MTBOSS",
+    title: "Villa Construction Company in Moradabad | MTBoss",
 
     description:
-      "Build your dream villa with MTBOSS, a villa construction company in Moradabad. Custom design and quality finish. Call +91 94584 10866.",
+      "Build your dream villa with MTBoss, a villa construction company in Moradabad. Custom design and quality finish. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/villa-construction-company-in-moradabad",
+    url: "https://www.MTBoss.in/villa-construction-company-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-villa-construction-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-villa-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Villa Construction Company in Moradabad - MTBOSS",
+        alt: "Villa Construction Company in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Villa Construction Company in Moradabad | MTBOSS",
+    title: "Villa Construction Company in Moradabad | MTBoss",
 
     description:
-      "Build your dream villa with MTBOSS, a villa construction company in Moradabad. Custom design and quality finish. Call +91 94584 10866.",
+      "Build your dream villa with MTBoss, a villa construction company in Moradabad. Custom design and quality finish. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-villa-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-villa-construction-moradabad.jpg",
     ],
   },
 
@@ -66,11 +66,11 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/villa-construction-company-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/villa-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-villa-construction-moradabad.jpg",
+    email: "MTBoss2016@gmail.com",
+    image: "https://www.MTBoss.in/og-villa-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,14 +117,14 @@ export default function Page() {
     "@type": "Service",
     name: "Villa Construction Services in Moradabad",
     description:
-      "MTBOSS provides villa construction in Moradabad for custom homes and luxury villas, including design coordination, structure, facade, services provisions, waterproofing, premium finishing, modular kitchen, interiors, outdoor works and final handover.",
-    url: "https://www.mtboss.in/villa-construction-company-in-moradabad",
+      "MTBoss provides villa construction in Moradabad for custom homes and luxury villas, including design coordination, structure, facade, services provisions, waterproofing, premium finishing, modular kitchen, interiors, outdoor works and final handover.",
+    url: "https://www.MTBoss.in/villa-construction-company-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -154,10 +154,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS build villas in Moradabad?",
+        name: "Does MTBoss build villas in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS builds residential projects from affordable homes to luxury villas in Moradabad and Bareilly.",
+          text: "Yes. MTBoss builds residential projects from affordable homes to luxury villas in Moradabad and Bareilly.",
         },
       },
       {
@@ -170,10 +170,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Can MTBOSS handle interiors and a modular kitchen?",
+        name: "Can MTBoss handle interiors and a modular kitchen?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS works as an architect and interior designer and offers modular kitchen work, so interiors can be coordinated with construction. Confirm the interior scope with the team.",
+          text: "MTBoss works as an architect and interior designer and offers modular kitchen work, so interiors can be coordinated with construction. Confirm the interior scope with the team.",
         },
       },
       {
@@ -181,15 +181,15 @@ export default function Page() {
         name: "How much does villa construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Villa construction cost depends on built-up area, number of floors, design complexity, material and finish level, interior scope, outdoor development and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Villa construction cost depends on built-up area, number of floors, design complexity, material and finish level, interior scope, outdoor development and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS supply building materials?",
+        name: "Does MTBoss supply building materials?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during villa construction.",
+          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during villa construction.",
         },
       },
       {
@@ -202,10 +202,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -219,19 +219,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Villa Construction Company in Moradabad",
-        item: "https://www.mtboss.in/villa-construction-company-in-moradabad",
+        item: "https://www.MTBoss.in/villa-construction-company-in-moradabad",
       },
     ],
   };

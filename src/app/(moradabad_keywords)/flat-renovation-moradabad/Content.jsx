@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Flat Renovation in Moradabad: Smart Planning for Apartments and
-            Compact Homes by MTBOSS
+            Compact Homes by MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,17 +23,17 @@ const Content = () => {
                 coordinates the repair, design and finishing work.
               </p>
               <p className="mt-3">
-                MTBOSS is an architect, interior design and construction company
+                MTBoss is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work,
                 transparent pricing and on-time delivery. This guide covers what
-                is different about renovating a flat, and how MTBOSS plans and
+                is different about renovating a flat, and how MTBoss plans and
                 manages the work.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Flat Renovation Services at MTBOSS
+                Flat Renovation Services at MTBoss
               </h3>
               <p className="mb-3">
                 We handle the full range of work a flat typically needs:
@@ -189,7 +189,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBOSS offers waterproofing as part of renovation, so leaks are
+                MTBoss offers waterproofing as part of renovation, so leaks are
                 fixed and tested before new finishes are installed.
               </p>
             </section>
@@ -348,7 +348,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBOSS tile and marble, painter and wallpaper installation services
+                MTBoss tile and marble, painter and wallpaper installation services
                 help plan floors and walls together.
               </p>
             </section>
@@ -487,7 +487,7 @@ const Content = () => {
                 <li>Keep a reserve for hidden issues</li>
               </ul>
               <p className="mt-3">
-                You can try the Budget Calculator on the MTBOSS website to set
+                You can try the Budget Calculator on the MTBoss website to set
                 realistic expectations. Final pricing is shared after the site
                 visit and scope discussion.
               </p>
@@ -516,7 +516,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBOSS Flat Renovation Process
+                The MTBoss Flat Renovation Process
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -554,7 +554,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBOSS for Flat Renovation
+                Why Choose MTBoss for Flat Renovation
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -564,7 +564,7 @@ const Content = () => {
                 <li>
                   <strong>One team for many trades.</strong> Civil work,
                   waterproofing, plumbing, electrical, tiles, carpentry, ceilings,
-                  painting and pest control are available through MTBOSS.
+                  painting and pest control are available through MTBoss.
                 </li>
                 <li>
                   <strong>Inspection-led planning.</strong> Hidden problems are
@@ -590,7 +590,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBOSS provides flat renovation across Moradabad, including
+                MTBoss provides flat renovation across Moradabad, including
                 residential areas such as Civil Lines, Lajpat Nagar, Delhi Road,
                 Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -601,7 +601,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Flat Renovation with MTBOSS
+                Start Your Flat Renovation with MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -618,10 +618,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -632,16 +632,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/"
+                  href="https://www.MTBoss.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS website
+                  MTBoss website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -652,7 +652,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 Renovate your flat with a team that plans around the building.
-                Contact MTBOSS today for flat renovation in Moradabad.
+                Contact MTBoss today for flat renovation in Moradabad.
               </p>
             </section>
 
@@ -663,7 +663,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBOSS provide flat renovation in Moradabad?
+                    Q1. Does MTBoss provide flat renovation in Moradabad?
                   </strong>
                   <br />
                   Yes. We handle repair, interiors and finishing for flats and
@@ -721,7 +721,7 @@ const Content = () => {
                   pricing follows the site inspection.
                 </li>
                 <li>
-                  <strong>Q10. How do I book MTBOSS for flat renovation?</strong>
+                  <strong>Q10. How do I book MTBoss for flat renovation?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -732,7 +732,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

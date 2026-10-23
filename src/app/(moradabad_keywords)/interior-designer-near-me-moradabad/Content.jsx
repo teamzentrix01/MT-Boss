@@ -26,7 +26,7 @@ const Content = () => {
                 visits your site easily and delivers what was promised.
               </p>
               <p className="mt-3">
-                MT Boss is an architecture, interior design and construction
+                MTBoss is an architecture, interior design and construction
                 company serving Moradabad and Bareilly. Our team plans interiors
                 that look good on day one and still work well years later. We
                 handle apartments, independent houses, villas, shops, showrooms
@@ -74,7 +74,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                At MT Boss, our office sits on Harthala Kanth Road, so clients can
+                At MTBoss, our office sits on Harthala Kanth Road, so clients can
                 visit, see material samples and talk directly with the people who
                 will manage their project.
               </p>
@@ -219,7 +219,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A clear process saves time, money and frustration. Here is how
-                projects typically move at MT Boss.
+                projects typically move at MTBoss.
               </p>
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
@@ -298,7 +298,7 @@ const Content = () => {
               <p className="mt-3">
                 You can also use the{" "}
                 <a
-                  href="https://www.mtboss.in/calculator"
+                  href="https://www.MTBoss.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -326,7 +326,7 @@ const Content = () => {
                 someone else.
               </p>
               <p className="mb-3">
-                A design-and-build company removes that gap. At MT Boss, planning,
+                A design-and-build company removes that gap. At MTBoss, planning,
                 construction and interior execution sit under one roof. That gives
                 you:
               </p>
@@ -445,7 +445,7 @@ const Content = () => {
               </p>
               <p className="mb-3">
                 If you have been looking for a dependable interior designer near
-                you in Moradabad, MT Boss is ready to help you turn your ideas into
+                you in Moradabad, MTBoss is ready to help you turn your ideas into
                 a home or workplace you enjoy every day.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -461,10 +461,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -474,12 +474,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                 </li>
               </ul>
@@ -496,7 +496,7 @@ const Content = () => {
                     Moradabad?
                   </strong>
                   <br />
-                  Yes. MT Boss serves Moradabad and Bareilly with on-site visits,
+                  Yes. MTBoss serves Moradabad and Bareilly with on-site visits,
                   design planning and complete project execution.
                 </li>
                 <li>

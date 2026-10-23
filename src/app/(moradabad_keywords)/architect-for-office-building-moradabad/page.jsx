@@ -6,26 +6,26 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Architect for Office Building Moradabad | MTBOSS",
+  title: "Architect for Office Building Moradabad | MTBoss",
   description:
-    "Need an architect for office building construction in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866.",
+    "Need an architect for office building construction in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866.",
   keywords:
-    "architect for office building Moradabad, office building construction Moradabad, commercial office design Moradabad, office space architect Moradabad, corporate office construction Moradabad, office building contractor Moradabad, MTBOSS Moradabad, office interior planning Moradabad, commercial construction company Moradabad, office building cost Moradabad, MTBOSS budget calculator, office building materials Moradabad, MTBOSS Kanth Road, workspace design Moradabad, office construction quote Moradabad",
+    "architect for office building Moradabad, office building construction Moradabad, commercial office design Moradabad, office space architect Moradabad, corporate office construction Moradabad, office building contractor Moradabad, MTBoss Moradabad, office interior planning Moradabad, commercial construction company Moradabad, office building cost Moradabad, MTBoss budget calculator, office building materials Moradabad, MTBoss Kanth Road, workspace design Moradabad, office construction quote Moradabad",
   alternates: {
-    canonical: "https://www.mtboss.in/architect-for-office-building-moradabad",
+    canonical: "https://www.MTBoss.in/architect-for-office-building-moradabad",
   },
   openGraph: {
-    title: "Architect for Office Building Moradabad | MTBOSS",
+    title: "Architect for Office Building Moradabad | MTBoss",
     description:
-      "Need an architect for office building construction in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866.",
-    url: "https://www.mtboss.in/architect-for-office-building-moradabad",
-    siteName: "MTBOSS Construction Private Limited",
+      "Need an architect for office building construction in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866.",
+    url: "https://www.MTBoss.in/architect-for-office-building-moradabad",
+    siteName: "MTBoss Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-office-building-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-office-building-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Architect for Office Building in Moradabad - MTBOSS Construction",
+        alt: "Architect for Office Building in Moradabad - MTBoss Construction",
       },
     ],
     locale: "en_IN",
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Architect for Office Building Moradabad | MTBOSS",
+    title: "Architect for Office Building Moradabad | MTBoss",
     description:
-      "Need an architect for office building construction in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866.",
-    images: ["https://www.mtboss.in/og-office-building-moradabad.jpg"],
+      "Need an architect for office building construction in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866.",
+    images: ["https://www.MTBoss.in/og-office-building-moradabad.jpg"],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/architect-for-office-building-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/architect-for-office-building-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",
@@ -85,12 +85,12 @@ export default function Page() {
     "@type": "Service",
     name: "Architect for Office Building Construction in Moradabad",
     description:
-      "MTBOSS provides architectural design coordination, office space planning, civil construction and material supply for office building projects in Moradabad.",
+      "MTBoss provides architectural design coordination, office space planning, civil construction and material supply for office building projects in Moradabad.",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.mtboss.in",
+      url: "https://www.MTBoss.in",
     },
     areaServed: {
       "@type": "City",

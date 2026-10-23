@@ -68,7 +68,7 @@ export default function RentBrowsePage() {
 
       {/* Hero */}
       <div className={`relative py-20 px-4 text-center ${dark ? "bg-zinc-900" : "bg-zinc-800"}`}>
-        <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">MTBOSS Property</span>
+        <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">MTBoss Property</span>
         <h1 className="text-white text-3xl md:text-5xl font-black uppercase tracking-widest mt-2 mb-4">
           Rent<span className="block text-[var(--brand-blue)]">Properties</span>
         </h1>

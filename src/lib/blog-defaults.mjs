@@ -8,7 +8,7 @@ export const DEFAULT_BLOGS = [
     author_name: 'Er. Rajesh Verma (Chief Project Engineer)',
     read_time: '6 min read',
     cover_image: 'images/30f393838ef54ac2bcafbe8b1a2246e0.jpg',
-    meta_title: 'House Construction Cost in India 2026 - Per Sq Ft Estimation Guide | MTBOSS',
+    meta_title: 'House Construction Cost in India 2026 - Per Sq Ft Estimation Guide | MTBoss',
     meta_description: 'Learn how to calculate residential house construction cost per sq ft in India. Complete breakdown of cement, steel, bricks, labor, and finishing budget.',
     meta_keywords: 'house construction cost, construction cost per sq ft, building cost calculator india, residential construction budget',
     is_published: true,
@@ -41,14 +41,14 @@ A standard G+1 residential building typically allocates budget across the follow
 
 ### 3. Tips to Prevent Cost Overruns
 1. **Accurate Structural Drawings:** Ensure architectural and structural engineering plans are frozen before laying the foundation to prevent rework.
-2. **Use an Automated Cost Calculator:** Use the [MTBOSS Construction Calculator](/calculator) to calculate exact material quantities for your plot area.
+2. **Use an Automated Cost Calculator:** Use the [MTBoss Construction Calculator](/calculator) to calculate exact material quantities for your plot area.
 3. **Source Quality Materials Direct from Verified Suppliers:** Cut down contractor middlemen margins by ordering TMT bars, cement, and bricks directly from verified suppliers.
 4. **Soil Testing & Foundation Depth:** Don't skip soil bearing capacity tests; foundation stability prevents structural settling cracks.
 
 ---
 
 ### Need an Exact Estimate for Your Plot?
-MTBOSS provides full turnkey architectural planning, 3D structural blueprints, and on-site project execution with guaranteed on-time delivery across 50+ cities in India.
+MTBoss provides full turnkey architectural planning, 3D structural blueprints, and on-site project execution with guaranteed on-time delivery across 50+ cities in India.
     `,
   },
   {
@@ -60,7 +60,7 @@ MTBOSS provides full turnkey architectural planning, 3D structural blueprints, a
     author_name: 'Er. Alok Srivastava (Materials Specialist)',
     read_time: '5 min read',
     cover_image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=80',
-    meta_title: 'Building Materials Checklist & Quality Testing Guide | MTBOSS Materials',
+    meta_title: 'Building Materials Checklist & Quality Testing Guide | MTBoss Materials',
     meta_description: 'Essential guide on choosing top building materials: TMT steel grades (Fe500D vs Fe550D), OPC vs PPC cement, red clay vs fly ash bricks, and sand quality tests.',
     meta_keywords: 'building materials checklist, tmt steel grades, cement selection guide, brick quality testing, construction materials india',
     is_published: true,
@@ -95,7 +95,7 @@ The durability of any building relies heavily on the quality of raw materials us
 ---
 
 ### Order Building Materials with Doorstep Delivery
-Explore wholesale building materials on [MTBOSS Shop Now](/ShopNow) with verified suppliers, instant price quotes, and assured Pan-India delivery.
+Explore wholesale building materials on [MTBoss Shop Now](/ShopNow) with verified suppliers, instant price quotes, and assured Pan-India delivery.
     `,
   },
   {
@@ -107,7 +107,7 @@ Explore wholesale building materials on [MTBOSS Shop Now](/ShopNow) with verifie
     author_name: 'Adv. S. K. Gupta (Legal & Real Estate Advisory)',
     read_time: '7 min read',
     cover_image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
-    meta_title: 'Property Buying Checklist & Legal Verification in UP & NCR | MTBOSS Properties',
+    meta_title: 'Property Buying Checklist & Legal Verification in UP & NCR | MTBoss Properties',
     meta_description: 'Legal checklist for buying plots, commercial buildings, and residential apartments in Uttar Pradesh and NCR. Verify RERA, 30-year search report, registry, and mutations.',
     meta_keywords: 'property buying checklist, buy plot in bareilly moradabad, rera approved properties, land title verification, registry process',
     is_published: true,
@@ -137,7 +137,7 @@ Investing in real estate—whether a commercial plot, residential apartment, or 
 ---
 
 ### Browse Verified Properties with Clean Clear Titles
-Discover authentic, legal-verified residential plots, villas, and commercial real estate on [MTBOSS Buy & Sell Properties](/buy-sale).
+Discover authentic, legal-verified residential plots, villas, and commercial real estate on [MTBoss Buy & Sell Properties](/buy-sale).
     `,
   },
   {
@@ -149,7 +149,7 @@ Discover authentic, legal-verified residential plots, villas, and commercial rea
     author_name: 'Ar. Priya Chawla (Principal Architect)',
     read_time: '5 min read',
     cover_image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-    meta_title: 'Vastu Shastra Tips for Modern House Design & Architecture | MTBOSS',
+    meta_title: 'Vastu Shastra Tips for Modern House Design & Architecture | MTBoss',
     meta_description: 'Scientific and architectural Vastu Shastra guidelines for modern home designs. Best directions for main door, kitchen, puja room, bedrooms, and water tanks.',
     meta_keywords: 'vastu for home, vastu architecture plans, main entrance vastu direction, modern vastu floor plans',
     is_published: true,
@@ -173,7 +173,7 @@ Modern architecture emphasizes natural cross-ventilation, daylight optimization,
 ---
 
 ### Work with Expert Architects & Turnkey Planners
-Get custom 2D floor plans, 3D elevations, and Vastu-optimized blueprints designed by licensed architects at [MTBOSS Construction Services](/Services/all).
+Get custom 2D floor plans, 3D elevations, and Vastu-optimized blueprints designed by licensed architects at [MTBoss Construction Services](/Services/all).
     `,
   },
 ];

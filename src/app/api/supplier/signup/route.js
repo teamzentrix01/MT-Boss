@@ -120,7 +120,7 @@ export async function POST(request) {
       const payment = createPayURequest({
         txnid,
         amount: pkg.price,
-        productinfo: `MTBOSS supplier registration - ${pkg.label}`,
+        productinfo: `MTBoss supplier registration - ${pkg.label}`,
         firstname: String(shop_name).trim().split(/\s+/)[0],
         email,
         phone,

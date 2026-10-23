@@ -8,14 +8,12 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Wall Waterproofing in Moradabad: MT Boss
+            Wall Waterproofing in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                A Damp Wall Is Telling You Something
-              </h3>
+              
               <p>
                 Paint bubbles near the skirting. White powder collects on the
                 plaster. A dark patch spreads after every rain. A wall feels cold
@@ -28,7 +26,7 @@ const Content = () => {
               <p className="mt-3">
                 Repainting the patch fixes none of this. Wall waterproofing in
                 Moradabad works only when the true source is found first and
-                treated directly. MT Boss Construction Private Limited treats damp
+                treated directly. MTBoss Construction Private Limited treats damp
                 and seeping walls in homes, flats, shops, offices, hotels and
                 factories across Moradabad and Bareilly. Our work follows the
                 promise on our website: planning to completion, with quality work,
@@ -99,10 +97,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBoss Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home services,
+                MTBoss is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -220,7 +218,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 The right treatment depends on the cause [confirm the systems and
-                products MT Boss actually uses].
+                products MTBoss actually uses].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -305,8 +303,8 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss offers Building Elevation and Painter services on
-                mtboss.in, so the weather protection and the appearance can be
+                MTBoss offers Building Elevation and Painter services on
+                MTBoss.in, so the weather protection and the appearance can be
                 planned as one job.
               </p>
             </section>
@@ -410,7 +408,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  mtboss.in, or call or WhatsApp us with photos of the wall and a
+                  MTBoss.in, or call or WhatsApp us with photos of the wall and a
                   short description.
                 </li>
                 <li>
@@ -493,10 +491,6 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Total wall area to be treated</li>
                 <li>Inside or outside work, and wall height</li>
-                <li>Cause of dampness and number of sources to correct</li>
-                <li>Amount of plaster removal and repair</li>
-                <li>Treatment method and material quality</li>
-                <li>Crack length and number of junctions</li>
                 <li>Scaffolding or access needs on tall walls</li>
                 <li>Drying period and number of site visits</li>
                 <li>Painting, elevation or finish scope</li>
@@ -505,14 +499,14 @@ const Content = () => {
               <p className="mt-3">
                 We measure the area and prepare an itemised estimate [confirm
                 whether rates are per area or lump sum]. You can also use the
-                Budget Calculator on mtboss.in for an early idea of overall
+                Budget Calculator on MTBoss.in for an early idea of overall
                 construction or renovation cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -558,12 +552,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -581,10 +575,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -598,7 +592,7 @@ const Content = () => {
                 and send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for wall waterproofing in Moradabad, with the
+                Choose MTBoss for wall waterproofing in Moradabad, with the
                 source stopped, the wall dried and the finish applied in the right
                 order.
               </p>
@@ -612,7 +606,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who provides wall waterproofing in Moradabad?</strong>
                   <br />
-                  MT Boss Construction treats damp and seeping walls across
+                  MTBoss Construction treats damp and seeping walls across
                   Moradabad and Bareilly.
                 </li>
                 <li>
@@ -659,7 +653,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

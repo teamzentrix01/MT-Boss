@@ -7,28 +7,28 @@ import Services from '../../components/Services';
 
 export const metadata = {
   title:
-    'Renovation & Repair Services in Moradabad | Home & Shop | MTBOSS',
+    'Renovation & Repair Services in Moradabad | Home & Shop | MTBoss',
   description:
-    'Renovation and repair services in Moradabad for homes, flats and shops. MTBOSS handles civil, plumbing, electrical, tiles, painting and more. Call or WhatsApp.',
+    'Renovation and repair services in Moradabad for homes, flats and shops. MTBoss handles civil, plumbing, electrical, tiles, painting and more. Call or WhatsApp.',
   keywords:
-    'renovation and repair services Moradabad, renovation services Moradabad, repair services Moradabad, home renovation Moradabad, flat renovation Moradabad, shop renovation Moradabad, building repair Moradabad, waterproofing Moradabad, plumber Moradabad, electrician Moradabad, tile and marble Moradabad, painter Moradabad, pest control Moradabad, MTBOSS renovation repair Moradabad',
+    'renovation and repair services Moradabad, renovation services Moradabad, repair services Moradabad, home renovation Moradabad, flat renovation Moradabad, shop renovation Moradabad, building repair Moradabad, waterproofing Moradabad, plumber Moradabad, electrician Moradabad, tile and marble Moradabad, painter Moradabad, pest control Moradabad, MTBoss renovation repair Moradabad',
   alternates: {
     canonical:
-      'https://www.mtboss.in/renovation-and-repair-services-moradabad',
+      'https://www.MTBoss.in/renovation-and-repair-services-moradabad',
   },
   openGraph: {
     title:
-      'Renovation & Repair Services in Moradabad | Home & Shop | MTBOSS',
+      'Renovation & Repair Services in Moradabad | Home & Shop | MTBoss',
     description:
-      'Renovation and repair services in Moradabad for homes, flats and shops. MTBOSS handles civil, plumbing, electrical, tiles, painting and more. Call or WhatsApp.',
-    url: 'https://www.mtboss.in/renovation-and-repair-services-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Renovation and repair services in Moradabad for homes, flats and shops. MTBoss handles civil, plumbing, electrical, tiles, painting and more. Call or WhatsApp.',
+    url: 'https://www.MTBoss.in/renovation-and-repair-services-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-renovation-and-repair-services-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-renovation-and-repair-services-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Renovation and Repair Services in Moradabad - MTBOSS',
+        alt: 'Renovation and Repair Services in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -37,11 +37,11 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title:
-      'Renovation & Repair Services in Moradabad | Home & Shop | MTBOSS',
+      'Renovation & Repair Services in Moradabad | Home & Shop | MTBoss',
     description:
-      'Renovation and repair services in Moradabad for homes, flats and shops. MTBOSS handles civil, plumbing, electrical, tiles, painting and more. Call or WhatsApp.',
+      'Renovation and repair services in Moradabad for homes, flats and shops. MTBoss handles civil, plumbing, electrical, tiles, painting and more. Call or WhatsApp.',
     images: [
-      'https://www.mtboss.in/og-renovation-and-repair-services-moradabad.jpg',
+      'https://www.MTBoss.in/og-renovation-and-repair-services-moradabad.jpg',
     ],
   },
   robots: {
@@ -53,10 +53,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/renovation-and-repair-services-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/renovation-and-repair-services-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

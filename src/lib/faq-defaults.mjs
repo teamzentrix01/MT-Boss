@@ -25,7 +25,7 @@ export const faqPageLabels = {
 export const faqDefaults = {
   general: [
     {
-      q: 'What is MTBOSS Construction & Maintenance Guarantee?',
+      q: 'What is MTBoss Construction & Maintenance Guarantee?',
       a: 'All our construction projects and maintenance services adhere to strict quality standards, transparent pricing, verified materials, milestone-based payments, and dedicated on-time warranty support.',
     },
     {
@@ -43,8 +43,8 @@ export const faqDefaults = {
       a: 'We aim to respond to all inquiries within 24 business hours. For urgent matters, please call us directly on our helpline at +91 94584 10866 or connect on WhatsApp.',
     },
     {
-      q: 'Which cities does MTBOSS operate in?',
-      a: 'MTBOSS operates across major cities in North India including Moradabad, Bareilly, Meerut, Noida, Greater Noida, Ghaziabad, Delhi NCR, Lucknow, Dehradun, and Haridwar.',
+      q: 'Which cities does MTBoss operate in?',
+      a: 'MTBoss operates across major cities in North India including Moradabad, Bareilly, Meerut, Noida, Greater Noida, Ghaziabad, Delhi NCR, Lucknow, Dehradun, and Haridwar.',
     },
     {
       q: 'How can I get a project estimate?',
@@ -58,7 +58,7 @@ export const faqDefaults = {
   construction: [
     {
       q: 'What is the standard cost per square foot for residential house construction?',
-      a: 'At MTBOSS, our turnkey residential packages range from ₹1,500 to ₹1,800/sqft for Standard Quality, ₹1,850 to ₹2,300/sqft for Premium Executive Grade, and ₹2,400 to ₹3,500+/sqft for Luxury Villas.',
+      a: 'At MTBoss, our turnkey residential packages range from ₹1,500 to ₹1,800/sqft for Standard Quality, ₹1,850 to ₹2,300/sqft for Premium Executive Grade, and ₹2,400 to ₹3,500+/sqft for Luxury Villas.',
     },
     {
       q: 'Do you provide 2D floor plans and 3D elevations before starting construction?',
@@ -81,21 +81,21 @@ export const faqDefaults = {
   ],
   properties: [
     {
-      q: 'Are properties and plots listed on MTBOSS legally verified?',
+      q: 'Are properties and plots listed on MTBoss legally verified?',
       a: 'Yes, 100% of our residential plots and commercial listings undergo complete 30-year legal due diligence, title search, Khasra/Khatauni verification, and RERA compliance checks.',
     },
     {
-      q: 'Can MTBOSS assist with bank home loans and property registry?',
+      q: 'Can MTBoss assist with bank home loans and property registry?',
       a: 'Yes, our property advisory team assists buyers end-to-end with leading nationalized/private bank home loans, mutation, and legal registry documentation.',
     },
   ],
   franchise: [
     {
-      q: 'What are the basic eligibility criteria for an MTBOSS franchise?',
+      q: 'What are the basic eligibility criteria for an MTBoss franchise?',
       a: 'We look for entrepreneurs or business entities with a background or interest in construction, real estate, or building materials, along with local market knowledge and required initial investment capability.',
     },
     {
-      q: 'What kind of support does MTBOSS provide to franchise partners?',
+      q: 'What kind of support does MTBoss provide to franchise partners?',
       a: 'We provide end-to-end support including centralized ERP/CRM access, verified customer leads, brand marketing, architectural design support, and technical training.',
     },
     {
@@ -109,12 +109,12 @@ export const faqDefaults = {
   ],
   contractor: [
     {
-      q: 'How do contractors receive work orders through MTBOSS?',
+      q: 'How do contractors receive work orders through MTBoss?',
       a: 'Once verified, contractors receive verified project requests matching their trade (civil, electrical, plumbing, painting, fabrication) in their designated city/pincode.',
     },
     {
       q: 'How and when are payments released to contractors?',
-      a: 'Payments are milestone-based, secured through the MTBOSS platform, and transferred directly to your registered bank account upon site supervisor verification.',
+      a: 'Payments are milestone-based, secured through the MTBoss platform, and transferred directly to your registered bank account upon site supervisor verification.',
     },
     {
       q: 'What documents are needed for contractor onboarding?',
@@ -127,13 +127,13 @@ export const faqDefaults = {
       a: 'Verified suppliers get real-time purchase requests and direct RFQs from builders, contractors, and individual home builders in their delivery radius.',
     },
     {
-      q: 'What categories of materials can be listed on MTBOSS?',
+      q: 'What categories of materials can be listed on MTBoss?',
       a: 'Cement, TMT steel bars, red/fly ash bricks, AAC blocks, sand & aggregates, tiles, paints, electrical wiring, sanitaryware, and hardware items.',
     },
   ],
   agent: [
     {
-      q: 'Who can become an MTBOSS Real Estate & Channel Agent?',
+      q: 'Who can become an MTBoss Real Estate & Channel Agent?',
       a: 'Real estate brokers, property consultants, interior consultants, and freelance agents seeking access to a verified project portfolio and buyer network.',
     },
     {

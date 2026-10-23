@@ -42,7 +42,7 @@ const LandingEnquiry = ({ landingPage = "general" }) => {
 
     try {
       const response = await fetch(
-        "https://formsubmit.co/ajax/seo.mtboss@gmail.com",
+        "https://formsubmit.co/ajax/seo.MTBoss@gmail.com",
         {
           method: "POST",
           headers: {
@@ -56,7 +56,7 @@ const LandingEnquiry = ({ landingPage = "general" }) => {
             service: formData.service,
             message: formData.message,
             landingPage: landingPage,
-            _subject: `New MTBOSS Inquiry from ${formData.name} (${landingPage})`,
+            _subject: `New MTBoss Inquiry from ${formData.name} (${landingPage})`,
           }),
         }
       );

@@ -6,27 +6,27 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Civil Contractor for Flooring Work in Moradabad | MT Boss',
+  title: 'Civil Contractor for Flooring Work in Moradabad | MTBoss',
   description:
-    'Need a civil contractor for flooring work in Moradabad? MT Boss lays tile, marble, stone and industrial floors with proper base work, levels and clear quotations.',
+    'Need a civil contractor for flooring work in Moradabad? MTBoss lays tile, marble, stone and industrial floors with proper base work, levels and clear quotations.',
   keywords:
-    'civil contractor for flooring work Moradabad, flooring contractor Moradabad, tile flooring contractor Moradabad, marble flooring contractor Moradabad, granite flooring Moradabad, kota stone flooring Moradabad, IPS flooring contractor Moradabad, industrial flooring Moradabad, warehouse flooring contractor Moradabad, floor repair Moradabad, MT Boss flooring Moradabad',
+    'civil contractor for flooring work Moradabad, flooring contractor Moradabad, tile flooring contractor Moradabad, marble flooring contractor Moradabad, granite flooring Moradabad, kota stone flooring Moradabad, IPS flooring contractor Moradabad, industrial flooring Moradabad, warehouse flooring contractor Moradabad, floor repair Moradabad, MTBoss flooring Moradabad',
   alternates: {
     canonical:
-      'https://www.mtboss.in/civil-contractor-flooring-work-moradabad',
+      'https://www.MTBoss.in/civil-contractor-flooring-work-moradabad',
   },
   openGraph: {
-    title: 'Civil Contractor for Flooring Work in Moradabad | MT Boss',
+    title: 'Civil Contractor for Flooring Work in Moradabad | MTBoss',
     description:
-      'Need a civil contractor for flooring work in Moradabad? MT Boss lays tile, marble, stone and industrial floors with proper base work, levels and clear quotations.',
-    url: 'https://www.mtboss.in/civil-contractor-flooring-work-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Need a civil contractor for flooring work in Moradabad? MTBoss lays tile, marble, stone and industrial floors with proper base work, levels and clear quotations.',
+    url: 'https://www.MTBoss.in/civil-contractor-flooring-work-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-civil-contractor-flooring-work-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-civil-contractor-flooring-work-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Civil Contractor for Flooring Work in Moradabad - MT Boss',
+        alt: 'Civil Contractor for Flooring Work in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -34,11 +34,11 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Civil Contractor for Flooring Work in Moradabad | MT Boss',
+    title: 'Civil Contractor for Flooring Work in Moradabad | MTBoss',
     description:
-      'Need a civil contractor for flooring work in Moradabad? MT Boss lays tile, marble, stone and industrial floors with proper base work, levels and clear quotations.',
+      'Need a civil contractor for flooring work in Moradabad? MTBoss lays tile, marble, stone and industrial floors with proper base work, levels and clear quotations.',
     images: [
-      'https://www.mtboss.in/og-civil-contractor-flooring-work-moradabad.jpg',
+      'https://www.MTBoss.in/og-civil-contractor-flooring-work-moradabad.jpg',
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/civil-contractor-flooring-work-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/civil-contractor-flooring-work-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

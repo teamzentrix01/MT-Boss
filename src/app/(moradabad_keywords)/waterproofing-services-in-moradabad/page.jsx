@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Waterproofing Services in Moradabad | MT Boss',
+  title: 'Waterproofing Services in Moradabad | MTBoss',
   description:
-    'Need waterproofing services in Moradabad? MT Boss treats terrace, bathroom, basement, tank and wall leakage with proper diagnosis, testing and clear quotations.',
+    'Need waterproofing services in Moradabad? MTBoss treats terrace, bathroom, basement, tank and wall leakage with proper diagnosis, testing and clear quotations.',
   keywords:
-    'waterproofing services Moradabad, waterproofing contractor Moradabad, terrace waterproofing Moradabad, bathroom waterproofing Moradabad, basement waterproofing Moradabad, water tank waterproofing Moradabad, wall leakage repair Moradabad, roof leakage solution Moradabad, waterproofing company near me, MT Boss waterproofing Moradabad',
+    'waterproofing services Moradabad, waterproofing contractor Moradabad, terrace waterproofing Moradabad, bathroom waterproofing Moradabad, basement waterproofing Moradabad, water tank waterproofing Moradabad, wall leakage repair Moradabad, roof leakage solution Moradabad, waterproofing company near me, MTBoss waterproofing Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/waterproofing-services-moradabad',
+    canonical: 'https://www.MTBoss.in/waterproofing-services-moradabad',
   },
   openGraph: {
-    title: 'Waterproofing Services in Moradabad | MT Boss',
+    title: 'Waterproofing Services in Moradabad | MTBoss',
     description:
-      'Need waterproofing services in Moradabad? MT Boss treats terrace, bathroom, basement, tank and wall leakage with proper diagnosis, testing and clear quotations.',
-    url: 'https://www.mtboss.in/waterproofing-services-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Need waterproofing services in Moradabad? MTBoss treats terrace, bathroom, basement, tank and wall leakage with proper diagnosis, testing and clear quotations.',
+    url: 'https://www.MTBoss.in/waterproofing-services-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-waterproofing-services-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-waterproofing-services-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Waterproofing Services in Moradabad - MT Boss',
+        alt: 'Waterproofing Services in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Waterproofing Services in Moradabad | MT Boss',
+    title: 'Waterproofing Services in Moradabad | MTBoss',
     description:
-      'Need waterproofing services in Moradabad? MT Boss treats terrace, bathroom, basement, tank and wall leakage with proper diagnosis, testing and clear quotations.',
-    images: ['https://www.mtboss.in/og-waterproofing-services-moradabad.jpg'],
+      'Need waterproofing services in Moradabad? MTBoss treats terrace, bathroom, basement, tank and wall leakage with proper diagnosis, testing and clear quotations.',
+    images: ['https://www.MTBoss.in/og-waterproofing-services-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/waterproofing-services-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/waterproofing-services-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

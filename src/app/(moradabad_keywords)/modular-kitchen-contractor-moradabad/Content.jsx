@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Modular Kitchen Contractor in Moradabad: End-to-End Project Execution
-            by MTBOSS
+            Modular Kitchen Contractor in Moradabad: 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,7 +22,7 @@ const Content = () => {
                 you are not left coordinating five different workers.
               </p>
               <p>
-                MTBOSS is an architect, interior design and construction company
+                MTBoss is an architect, interior design and construction company
                 serving Moradabad and Bareilly, with a focus on quality work,
                 transparent pricing and on-time delivery. Modular kitchen is one of
                 our quick home services, and our construction background means we
@@ -34,7 +33,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Turnkey Modular Kitchen Contracting at MTBOSS
+                Turnkey Modular Kitchen Contracting at MTBoss
               </h3>
               <p className="mb-3">
                 Turnkey means one team takes responsibility from the first
@@ -45,8 +44,7 @@ const Content = () => {
                 <li>Layout and storage planning</li>
                 <li>Material, finish and hardware selection</li>
                 <li>Civil, plumbing and electrical preparation</li>
-                <li>Tile, countertop and backsplash work</li>
-                <li>Cabinet manufacturing coordination and installation</li>
+                
                 <li>Ceiling, painting and lighting touch-ups</li>
                 <li>Final adjustment, cleaning and handover</li>
               </ul>
@@ -108,14 +106,7 @@ const Content = () => {
                 Scope of Work We Manage
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Measurement and Site Study</strong>
-                  <br />
-                  Accurate measurement is the foundation of a modular kitchen,
-                  because every cabinet is made to fit your room. We record wall
-                  lengths, heights, openings, pipe positions, sockets and any
-                  irregularities in walls or floors.
-                </li>
+                
                 <li>
                   <strong>Civil and Structural Preparation</strong>
                   <br />
@@ -123,13 +114,7 @@ const Content = () => {
                   attention first. Our building repair and renovation services can
                   handle removal, repair and surface preparation before installation.
                 </li>
-                <li>
-                  <strong>Plumbing Preparation</strong>
-                  <br />
-                  Water inlet, drainage, sink position, purifier and gas line
-                  positions are checked and corrected where needed, so the finished
-                  kitchen works properly from day one.
-                </li>
+                
                 <li>
                   <strong>Electrical Preparation</strong>
                   <br />
@@ -175,11 +160,7 @@ const Content = () => {
                 <li>Enquiry and requirement discussion</li>
                 <li>Site visit and measurement</li>
                 <li>Design and material approval</li>
-                <li>Scope of work and quotation</li>
-                <li>Civil, plumbing and electrical preparation</li>
-                <li>Tile and countertop base work</li>
-                <li>Cabinet installation</li>
-                <li>Appliance, hardware and accessory fitting</li>
+                
                 <li>Ceiling, paint and finishing</li>
                 <li>Inspection and handover</li>
               </ul>
@@ -190,39 +171,7 @@ const Content = () => {
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Residential and Commercial Kitchen Contracting
-              </h3>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Homes and apartments.</strong> Compact and mid-size
-                  kitchens in flats, houses and kothis, with an emphasis on storage,
-                  appearance and ease of use.
-                </li>
-                <li>
-                  <strong>Independent houses and villas.</strong> Larger layouts,
-                  island counters, pantry areas and integrated appliance planning.
-                </li>
-                <li>
-                  <strong>Under-construction homes.</strong> Early coordination with
-                  plumbing, electrical and civil teams so kitchen service points are
-                  placed correctly.
-                </li>
-                <li>
-                  <strong>Renovation projects.</strong> Removal of old platforms and
-                  cabinets, repair of walls and floors, and installation of a new
-                  kitchen.
-                </li>
-                <li>
-                  <strong>Small commercial setups.</strong> Cafés, tiffin units,
-                  canteens and pantry areas, where durability and hygiene matter.
-                </li>
-              </ul>
-              <p className="mt-3">
-                We adjust planning, materials and execution to the type of space.
-              </p>
-            </section>
+
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -334,7 +283,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Final pricing depends on kitchen size, layout, materials, hardware
-                and the preparation work needed. You can use the MTBOSS Budget
+                and the preparation work needed. You can use the MTBoss Budget
                 Calculator on our website to plan renovation spending beforehand, and
                 a firm quotation is shared after the site visit.
               </p>
@@ -365,7 +314,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Advantages as Your Kitchen Contractor
+                MTBoss Advantages as Your Kitchen Contractor
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -376,7 +325,7 @@ const Content = () => {
                 <li>
                   <strong>Multiple trades under one brand.</strong> Carpentry,
                   plumbing, electrical, tile and marble, painting, false ceiling and
-                  renovation are available through MTBOSS, which reduces coordination
+                  renovation are available through MTBoss, which reduces coordination
                   problems.
                 </li>
                 <li>
@@ -424,7 +373,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBOSS provides modular kitchen contracting across Moradabad,
+                MTBoss provides modular kitchen contracting across Moradabad,
                 including residential areas such as Civil Lines, Lajpat Nagar, Delhi
                 Road, Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -434,7 +383,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Kitchen Project with MTBOSS
+                Start Your Kitchen Project with MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -451,10 +400,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -465,16 +414,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/quick/modular-kitchen"
+                  href="https://www.MTBoss.in/quick/modular-kitchen"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS Modular Kitchen page
+                  MTBoss Modular Kitchen page
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -485,7 +434,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 Get a kitchen that is planned, built and finished properly. Contact
-                MTBOSS today for modular kitchen contracting in Moradabad.
+                MTBoss today for modular kitchen contracting in Moradabad.
               </p>
             </section>
 
@@ -496,7 +445,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBOSS work as a modular kitchen contractor in
+                    Q1. Does MTBoss work as a modular kitchen contractor in
                     Moradabad?
                   </strong>
                   <br />
@@ -512,7 +461,7 @@ const Content = () => {
                 <li>
                   <strong>Q3. Do you handle plumbing, electrical and tile work?</strong>
                   <br />
-                  Yes. MTBOSS offers these services, so one team manages the whole
+                  Yes. MTBoss offers these services, so one team manages the whole
                   kitchen project.
                 </li>
                 <li>
@@ -556,7 +505,7 @@ const Content = () => {
                   confirm before proceeding.
                 </li>
                 <li>
-                  <strong>Q10. How do I book MTBOSS for my kitchen?</strong>
+                  <strong>Q10. How do I book MTBoss for my kitchen?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -567,7 +516,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

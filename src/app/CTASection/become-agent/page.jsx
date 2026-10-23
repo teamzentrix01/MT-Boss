@@ -29,7 +29,7 @@ export default function BecomeAgentPage() {
           <div>
             <p className="text-[var(--brand-blue)] text-xs font-black uppercase tracking-[0.4em] mb-4">Partnership Program</p>
             <h1 className={`text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-10 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-              Grow With <br /> <span className="text-[var(--brand-blue)]">MTBOSS.</span>
+              Grow With <br /> <span className="text-[var(--brand-blue)]">MTBoss.</span>
             </h1>
 
             <div className="space-y-10">

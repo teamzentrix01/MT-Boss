@@ -8,19 +8,17 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Modular Kitchen Manufacturer in Moradabad: MT Boss
+            Modular Kitchen Manufacturer in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The Short Answer
-              </h3>
+             
               <p>
                 A modular kitchen manufacturer in Moradabad makes cabinet units to
                 measured drawings by cutting boards, sealing edges, finishing
                 shutters, fitting hardware and checking quality before dispatch to
-                the site. MT Boss Construction Private Limited, based on Kanth Road,
+                the site. MTBoss Construction Private Limited, based on Kanth Road,
                 offers modular kitchen design, production and installation across
                 Moradabad and Bareilly [confirm whether production is in-house or
                 through partner factories].
@@ -40,7 +38,7 @@ const Content = () => {
                 each unit follows set dimensions.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBoss Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -85,7 +83,7 @@ const Content = () => {
               <p className="mt-3">
                 None of these is automatically better. What matters is that the
                 company tells you plainly which one it is, and that someone answers
-                for the finished kitchen. [State MT Boss&apos;s actual model here in
+                for the finished kitchen. [State MTBoss&apos;s actual model here in
                 one clear sentence.]
               </p>
             </section>
@@ -126,7 +124,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 The board decides how the cabinet ages, especially in humid weather
-                [confirm the boards and brands MT Boss actually uses].
+                [confirm the boards and brands MTBoss actually uses].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -154,7 +152,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Accurate machines reduce gaps, misalignment and wasted material
-                [confirm the machinery MT Boss or its partners actually use; remove
+                [confirm the machinery MTBoss or its partners actually use; remove
                 anything that does not apply].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -206,7 +204,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Different finishes are made in different ways [confirm the finishes
-                MT Boss offers and how they are produced].
+                MTBoss offers and how they are produced].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -232,7 +230,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Hardware decides the daily feel of the kitchen [confirm the brands
-                and load ratings MT Boss uses].
+                and load ratings MTBoss uses].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -279,7 +277,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Ask which approach your quotation uses and what fillers are included
-                [confirm MT Boss&apos;s approach].
+                [confirm MTBoss&apos;s approach].
               </p>
             </section>
 
@@ -289,7 +287,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A manufacturer&apos;s reputation rests on checks done before dispatch
-                [adjust to MT Boss&apos;s actual checks].
+                [adjust to MTBoss&apos;s actual checks].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -433,78 +431,18 @@ const Content = () => {
               </h3>
               <p>
                 A well-made kitchen still fails in a room with leaking pipes or damp
-                walls. MT Boss&apos;s Plumber, Electrician, Tile &amp; Marble, Water
+                walls. MTBoss&apos;s Plumber, Electrician, Tile &amp; Marble, Water
                 Proofing, False Ceiling and Painter services can prepare the room
-                through the same mtboss.in services list, so the finished units are
+                through the same MTBoss.in services list, so the finished units are
                 fitted into a sound space.
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
-              </h3>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
-                </li>
-                <li>
-                  <strong>Service:</strong> Modular kitchen design, production and
-                  installation, alongside construction, interiors and home services
-                </li>
-                <li>
-                  <strong>Production set-up:</strong> [state clearly: in-house
-                  workshop, partner factories or both]
-                </li>
-                <li>
-                  <strong>Office:</strong> Harthala, Kanth Road, Moradabad (behind
-                  KR Collection, near Domino&apos;s), Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Phone / WhatsApp:</strong>{" "}
-                  <a
-                    href="https://wa.me/9458410866"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    +91 94584 10866
-                  </a>
-                </li>
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <strong>Website:</strong>{" "}
-                  <a
-                    href="https://www.mtboss.in/"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    www.mtboss.in
-                  </a>
-                </li>
-                <li>
-                  <strong>Coverage:</strong> Moradabad, Bareilly and nearby areas
-                  of western Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Credentials:</strong> [add registration, GST and any
-                  manufacturing partnerships or certifications you can show]
-                </li>
-              </ul>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -557,7 +495,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Kitchen With MT Boss
+                Start Your Kitchen With MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -574,21 +512,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -603,7 +541,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for modular kitchens in Moradabad, with the way they
+                Choose MTBoss for modular kitchens in Moradabad, with the way they
                 are made stated plainly, every material written down and the finished
                 work checked before it reaches your home.
               </p>
@@ -617,11 +555,11 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who makes modular kitchens in Moradabad?</strong>
                   <br />
-                  MT Boss Construction designs, produces and installs modular
+                  MTBoss Construction designs, produces and installs modular
                   kitchens across Moradabad and Bareilly [state production model].
                 </li>
                 <li>
-                  <strong>Q2. Does MT Boss have its own workshop?</strong>
+                  <strong>Q2. Does MTBoss have its own workshop?</strong>
                   <br />
                   [State plainly: in-house workshop, partner factories or both.]
                 </li>
@@ -662,7 +600,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

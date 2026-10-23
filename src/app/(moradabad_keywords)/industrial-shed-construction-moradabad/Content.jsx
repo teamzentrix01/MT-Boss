@@ -28,7 +28,7 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBOSS Construction Private Limited is a Moradabad-based
+                MTBoss Construction Private Limited is a Moradabad-based
                 architect, interior designer and construction company serving
                 Moradabad and Bareilly with industrial, commercial,
                 hospitality, institutional and residential projects.
@@ -72,7 +72,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -91,14 +91,14 @@ const Content = () => {
                   residential construction.
                 </li>
                 <li>
-                  Project gallery and blog available on the MTBOSS website.
+                  Project gallery and blog available on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Industrial Shed Construction Services Offered by MTBOSS
+                Industrial Shed Construction Services Offered by MTBoss
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -136,7 +136,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBOSS wholesale supply.
+                  bricks, tiles and paints through MTBoss wholesale supply.
                 </li>
                 <li>
                   <strong>Repair and extension:</strong> Extra bays, roof
@@ -324,19 +324,19 @@ const Content = () => {
 
               <p className="mt-3">
                 Share machinery weights, storage methods and vehicle types with
-                MTBOSS so flooring can be planned for actual operating
+                MTBoss so flooring can be planned for actual operating
                 conditions.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBOSS Approaches an Industrial Shed Project
+                How MTBoss Approaches an Industrial Shed Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Step 1 — Enquiry:</strong> Contact MTBOSS with plot and
+                  <strong>Step 1 — Enquiry:</strong> Contact MTBoss with plot and
                   shed requirements through website, phone or WhatsApp.
                 </li>
                 <li>
@@ -420,7 +420,7 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBOSS builds according to approved drawings and specifications,
+                MTBoss builds according to approved drawings and specifications,
                 while owners and their consultants handle business-specific
                 licences.
               </p>
@@ -470,7 +470,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBOSS Budget Calculator, then request a
+                Start with the free MTBoss Budget Calculator, then request a
                 detailed quote after site visit and drawing review.
               </p>
             </section>
@@ -505,7 +505,7 @@ const Content = () => {
 
               <p>
                 Sheds use large quantities of cement, steel and other materials,
-                so supply gaps can stop work. MTBOSS supplies cement, TMT steel
+                so supply gaps can stop work. MTBoss supplies cement, TMT steel
                 bars, bricks, tiles and paints through its wholesale supply and
                 Shop Now section.
               </p>
@@ -556,7 +556,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBOSS Services for Industrial Owners
+                MTBoss Services for Industrial Owners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -577,7 +577,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBOSS for Industrial Shed Construction?
+                Why Choose MTBoss for Industrial Shed Construction?
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -608,44 +608,44 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and blog
-                  on the MTBOSS website.
+                  on the MTBoss website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBOSS: Industrial Shed Construction in Moradabad
+                Contact MTBoss: Industrial Shed Construction in Moradabad
               </h3>
 
               <p className="mb-3">
                 If you are planning industrial shed construction in Moradabad,
-                MTBOSS offers one point of contact for design coordination,
+                MTBoss offers one point of contact for design coordination,
                 material supply, construction and handover.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBOSS Construction Private Limited
+                  <strong>Company:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in
+                    https://www.MTBoss.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -692,12 +692,12 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBOSS offer industrial shed construction in
+                    Q2. Does MTBoss offer industrial shed construction in
                     Moradabad?
                   </strong>
                   <br />
                   Yes. Industrial and warehousing construction is part of the
-                  MTBOSS service list, alongside commercial, hotel, school,
+                  MTBoss service list, alongside commercial, hotel, school,
                   college, mall and residential projects.
                 </li>
 
@@ -737,19 +737,19 @@ const Content = () => {
                   </strong>
                   <br />
                   Cost depends on covered area, span, height, structure, roofing,
-                  flooring and site conditions. Use the MTBOSS Budget Calculator
+                  flooring and site conditions. Use the MTBoss Budget Calculator
                   or request a detailed quote.
                 </li>
 
                 <li>
-                  <strong>Q8. Does MTBOSS supply building materials?</strong>
+                  <strong>Q8. Does MTBoss supply building materials?</strong>
                   <br />
-                  Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and
+                  Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and
                   paints, helping reduce material-related delays.
                 </li>
 
                 <li>
-                  <strong>Q9. Where is the MTBOSS office located?</strong>
+                  <strong>Q9. Where is the MTBoss office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

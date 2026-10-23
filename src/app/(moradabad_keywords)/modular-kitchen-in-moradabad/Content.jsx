@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Modular Kitchen in Moradabad: MT Boss
+            Modular Kitchen in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -20,7 +20,7 @@ const Content = () => {
                 A modular kitchen in Moradabad is a kitchen built from
                 factory-finished cabinet units, fitted on site to a measured
                 layout, with matching shutters, hardware, countertop and appliance
-                space. MT Boss Construction Private Limited, based on Kanth Road,
+                space. MTBoss Construction Private Limited, based on Kanth Road,
                 offers modular kitchen design and installation as a quick service
                 across Moradabad and Bareilly, alongside the civil, plumbing and
                 finishing work around it [confirm scope].
@@ -40,7 +40,7 @@ const Content = () => {
                 fillers and panels to fit your walls.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBoss Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -164,7 +164,7 @@ const Content = () => {
               <p className="mb-3">
                 The carcass is the box structure of each cabinet. It matters more
                 than the shutter, because it carries weight and meets moisture
-                daily [confirm the boards and brands MT Boss actually uses].
+                daily [confirm the boards and brands MTBoss actually uses].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -396,7 +396,7 @@ const Content = () => {
                   <strong>Termites and pests.</strong> Wooden carcasses and damp
                   walls attract termites and cockroaches. Moisture control, sealed
                   gaps and, where needed, pest treatment protect the investment.
-                  MT Boss&apos;s Pest Control service can be arranged alongside
+                  MTBoss&apos;s Pest Control service can be arranged alongside
                   the work [confirm].
                 </li>
                 <li>
@@ -428,7 +428,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> call, WhatsApp or click Get a
-                  Construction Quote on mtboss.in, and share your room size and
+                  Construction Quote on MTBoss.in, and share your room size and
                   needs
                 </li>
                 <li>
@@ -545,68 +545,11 @@ const Content = () => {
               </ul>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
-              </h3>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
-                </li>
-                <li>
-                  <strong>Service:</strong> Modular kitchen design and
-                  installation, alongside construction, interiors and home
-                  services
-                </li>
-                <li>
-                  <strong>Office:</strong> Harthala, Kanth Road, Moradabad (behind
-                  KR Collection, near Domino&apos;s), Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Phone / WhatsApp:</strong>{" "}
-                  <a
-                    href="https://wa.me/9458410866"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    +91 94584 10866
-                  </a>
-                </li>
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <strong>Website:</strong>{" "}
-                  <a
-                    href="https://www.mtboss.in/"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    www.mtboss.in
-                  </a>
-                </li>
-                <li>
-                  <strong>Coverage:</strong> Moradabad, Bareilly and nearby areas
-                  of western Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Credentials:</strong> [add registration, GST and any
-                  brand or manufacturing partnerships you can show]
-                </li>
-              </ul>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -656,7 +599,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Kitchen With MT Boss
+                Plan Your Kitchen With MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -673,21 +616,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -706,7 +649,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who installs modular kitchens in Moradabad?</strong>
                   <br />
-                  MT Boss Construction designs and installs modular kitchens across
+                  MTBoss Construction designs and installs modular kitchens across
                   Moradabad and Bareilly.
                 </li>
                 <li>
@@ -754,7 +697,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

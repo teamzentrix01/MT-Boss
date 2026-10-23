@@ -8,20 +8,18 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            L Shape Modular Kitchen in Moradabad: MT Boss
+            L Shape Modular Kitchen in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The Short Answer
-              </h3>
+              
               <p>
                 An L shape modular kitchen in Moradabad places cabinets along two
                 adjacent walls that meet at a right angle, leaving the rest of the
                 room open for movement or a dining table. It suits most medium and
                 small kitchens, and its success depends on the corner unit and the
-                position of the sink, hob and refrigerator. MT Boss Construction
+                position of the sink, hob and refrigerator. MTBoss Construction
                 Private Limited designs and installs L-shaped kitchens across
                 Moradabad and Bareilly.
               </p>
@@ -39,7 +37,7 @@ const Content = () => {
                 passage or a utility space.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBoss Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -104,7 +102,7 @@ const Content = () => {
               <p className="mb-3">
                 Leg lengths depend on your room. As a rough guide, many L-shaped
                 kitchens in Indian homes have legs between about 6 and 12 feet each,
-                with the longer leg holding the cooking zone [confirm MT Boss&apos;s
+                with the longer leg holding the cooking zone [confirm MTBoss&apos;s
                 typical ranges].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -165,7 +163,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 The corner decides whether an L feels smart or frustrating [confirm
-                which corner systems MT Boss offers].
+                which corner systems MTBoss offers].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -370,7 +368,7 @@ const Content = () => {
               <p className="mt-3">
                 Plan switch positions and wiring in the drawing stage, so lights do
                 not have to be added awkwardly later [Electrician and False Ceiling
-                services available through MT Boss].
+                services available through MTBoss].
               </p>
             </section>
 
@@ -453,9 +451,9 @@ const Content = () => {
                 <li>Chimney duct route and ventilation</li>
               </ul>
               <p className="mt-3">
-                MT Boss&apos;s Plumber, Electrician, Tile &amp; Marble, Water
+                MTBoss&apos;s Plumber, Electrician, Tile &amp; Marble, Water
                 Proofing and False Ceiling services can prepare the room through the
-                same mtboss.in services list, so the L fits as drawn.
+                same MTBoss.in services list, so the L fits as drawn.
               </p>
             </section>
 
@@ -465,7 +463,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Pricing depends on size and specification, and an L adds a few
-                particular items [confirm how MT Boss prices corners and whether
+                particular items [confirm how MTBoss prices corners and whether
                 pricing is per running foot or per project]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -486,7 +484,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> call, WhatsApp or click Get a
-                  Construction Quote on mtboss.in, and share your room size and needs
+                  Construction Quote on MTBoss.in, and share your room size and needs
                 </li>
                 <li>
                   <strong>Site visit and measurement:</strong> our team measures both
@@ -521,11 +519,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
+                MTBoss Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
+                  <strong>Business:</strong> MTBoss Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> L-shaped and other modular kitchen design
@@ -550,21 +548,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                 </li>
                 <li>
@@ -580,7 +578,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBoss in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -617,7 +615,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your L-Shaped Kitchen With MT Boss
+                Plan Your L-Shaped Kitchen With MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -634,21 +632,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -663,7 +661,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for an L shape modular kitchen in Moradabad, with the
+                Choose MTBoss for an L shape modular kitchen in Moradabad, with the
                 corner planned, the work zones balanced and every detail agreed
                 before work begins.
               </p>
@@ -679,7 +677,7 @@ const Content = () => {
                     Q1. Who designs L shape modular kitchens in Moradabad?
                   </strong>
                   <br />
-                  MT Boss Construction designs and installs L-shaped kitchens across
+                  MTBoss Construction designs and installs L-shaped kitchens across
                   Moradabad and Bareilly.
                 </li>
                 <li>
@@ -726,7 +724,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a site visit?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

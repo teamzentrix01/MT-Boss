@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Hospital Building Contractor in Moradabad: On-Ground Execution by MTBOSS
+            Hospital Building Contractor in Moradabad: On-Ground Execution by MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -21,10 +21,10 @@ const Content = () => {
                 drawings. For smaller-scale healthcare facilities in Moradabad,
                 such as nursing homes, polyclinics and diagnostic centres, this
                 contractor-level execution often makes up the bulk of the
-                project. MTBOSS Construction Private Limited works as this kind
+                project. MTBoss Construction Private Limited works as this kind
                 of on-ground civil contractor, handling construction and
                 material supply for healthcare and other commercial buildings in
-                Moradabad. This page explains what MTBOSS does as a building
+                Moradabad. This page explains what MTBoss does as a building
                 contractor for healthcare projects, where this role fits, and
                 how to get in touch.
               </p>
@@ -32,13 +32,13 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBOSS is a Moradabad-based company offering construction services, doorstep home services, verified property transactions, and wholesale building materials under one company.</li>
+                <li>MTBoss is a Moradabad-based company offering construction services, doorstep home services, verified property transactions, and wholesale building materials under one company.</li>
                 <li>The office is located at Harthala, Kanth Road, Behind KR Collection, near Domino&apos;s, Moradabad, close to the city&apos;s commercial and institutional areas.</li>
-                <li>MTBOSS&apos;s core construction categories include commercial buildings and industrial and infrastructure work, the category smaller healthcare facility construction generally falls under.</li>
-                <li>A project gallery and blog on the MTBOSS website let prospective clients review completed work before reaching out.</li>
+                <li>MTBoss&apos;s core construction categories include commercial buildings and industrial and infrastructure work, the category smaller healthcare facility construction generally falls under.</li>
+                <li>A project gallery and blog on the MTBoss website let prospective clients review completed work before reaching out.</li>
               </ul>
             </section>
 
@@ -59,7 +59,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Where MTBOSS Fits as a Contractor for Healthcare Buildings
+                Where MTBoss Fits as a Contractor for Healthcare Buildings
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Nursing homes and small hospitals:</strong> Civil execution for facilities with a smaller bed count, where the building structure is relatively straightforward compared to a large multi-specialty hospital.</li>
@@ -69,7 +69,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 For larger, multi-specialty hospital projects with complex
-                clinical systems, MTBOSS&apos;s role is best scoped specifically
+                clinical systems, MTBoss&apos;s role is best scoped specifically
                 to civil execution and materials, working under the direction of
                 the project&apos;s healthcare architect and MEP consultants,
                 rather than leading the full project independently.
@@ -78,16 +78,16 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBOSS Works as a Site-Level Contractor
+                How MTBoss Works as a Site-Level Contractor
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Step 1 — Enquiry:</strong> You contact MTBOSS through the website, phone or WhatsApp with your project details and any approved drawings.</li>
+                <li><strong>Step 1 — Enquiry:</strong> You contact MTBoss through the website, phone or WhatsApp with your project details and any approved drawings.</li>
                 <li><strong>Step 2 — Requirement discussion:</strong> The team discusses the facility&apos;s size, scope of civil work needed, and budget.</li>
-                <li><strong>Step 3 — Site visit:</strong> MTBOSS engineers assess the plot or existing structure, access and surrounding conditions.</li>
+                <li><strong>Step 3 — Site visit:</strong> MTBoss engineers assess the plot or existing structure, access and surrounding conditions.</li>
                 <li><strong>Step 4 — Execution planning:</strong> A construction schedule is prepared based on the approved layout, broken into clear stages.</li>
-                <li><strong>Step 5 — Budget estimation:</strong> The MTBOSS Budget Calculator and current material rates are used to estimate the civil execution cost.</li>
-                <li><strong>Step 6 — Material supply:</strong> Cement, steel, bricks, tiles and paints are sourced directly through MTBOSS&apos;s own wholesale supply.</li>
-                <li><strong>Step 7 — On-site execution:</strong> Civil work proceeds under MTBOSS supervision, coordinated with any specialized contractors working on electrical, plumbing or medical systems.</li>
+                <li><strong>Step 5 — Budget estimation:</strong> The MTBoss Budget Calculator and current material rates are used to estimate the civil execution cost.</li>
+                <li><strong>Step 6 — Material supply:</strong> Cement, steel, bricks, tiles and paints are sourced directly through MTBoss&apos;s own wholesale supply.</li>
+                <li><strong>Step 7 — On-site execution:</strong> Civil work proceeds under MTBoss supervision, coordinated with any specialized contractors working on electrical, plumbing or medical systems.</li>
                 <li><strong>Step 8 — Handover:</strong> Final finishing of the civil structure and handover, ready for medical fit-out, equipment installation and licensing inspections.</li>
               </ul>
             </section>
@@ -109,21 +109,21 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why the MTBOSS Budget Calculator Helps Contractor-Level Planning
+                Why the MTBoss Budget Calculator Helps Contractor-Level Planning
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>It is a free tool available directly on the MTBOSS website, useful for estimating the civil execution cost of a nursing home, clinic or diagnostic centre before finalizing the project.</li>
+                <li>It is a free tool available directly on the MTBoss website, useful for estimating the civil execution cost of a nursing home, clinic or diagnostic centre before finalizing the project.</li>
                 <li>Because the scope of a contractor&apos;s work is more defined than a full project (excluding specialized medical systems), the estimate tends to be more directly comparable across different contractors.</li>
-                <li>Because MTBOSS also supplies materials wholesale, the estimate is grounded in pricing the company itself works with.</li>
+                <li>Because MTBoss also supplies materials wholesale, the estimate is grounded in pricing the company itself works with.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBOSS&apos;s Material Supply Matters for Contractor-Level Execution
+                Why MTBoss&apos;s Material Supply Matters for Contractor-Level Execution
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints directly, on a wholesale basis.</li>
+                <li>MTBoss supplies cement, TMT steel bars, bricks, tiles and paints directly, on a wholesale basis.</li>
                 <li>For a contractor executing civil work, having direct control over material delivery timing helps keep the construction schedule on track.</li>
                 <li>Sourcing materials through the same company doing the construction reduces coordination gaps that can otherwise delay a project waiting on a separate supplier.</li>
               </ul>
@@ -131,17 +131,17 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What to Share with MTBOSS Before Starting Contractor Work
+                What to Share with MTBoss Before Starting Contractor Work
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Approved drawings, if available:</strong> Floor plans or layouts from an architect or medical planner, so MTBOSS can execute to the correct specification.</li>
+                <li><strong>Approved drawings, if available:</strong> Floor plans or layouts from an architect or medical planner, so MTBoss can execute to the correct specification.</li>
                 <li><strong>Scope of civil work needed:</strong> New construction, renovation, or expansion of an existing facility.</li>
                 <li><strong>Facility size:</strong> Approximate number of rooms, beds or departments.</li>
                 <li><strong>Rough budget range:</strong> For the civil execution and material portion specifically.</li>
                 <li><strong>Timeline expectations:</strong> Particularly relevant if the facility is working toward a licensing inspection or opening date.</li>
               </ul>
               <p className="mt-3">
-                Sharing this information upfront helps MTBOSS schedule the work
+                Sharing this information upfront helps MTBoss schedule the work
                 accurately and coordinate properly with any other specialized
                 contractors on site.
               </p>
@@ -149,61 +149,61 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Property Services: Useful If You Don&apos;t Have a Site Yet
+                MTBoss Property Services: Useful If You Don&apos;t Have a Site Yet
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBOSS offers verified property buying, selling and renting services in and around Moradabad.</li>
+                <li>MTBoss offers verified property buying, selling and renting services in and around Moradabad.</li>
                 <li>Useful for promoters still searching for a suitable plot or existing building to convert into a nursing home, clinic or diagnostic centre.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Doorstep Services for Non-Clinical Maintenance
+                MTBoss Doorstep Services for Non-Clinical Maintenance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Once the facility is operational, MTBOSS also offers electrician, plumber, AC repair and pest control services for general, non-clinical maintenance needs.</li>
+                <li>Once the facility is operational, MTBoss also offers electrician, plumber, AC repair and pest control services for general, non-clinical maintenance needs.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MTBOSS
+                Areas Served by MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Moradabad city and its residential and institutional localities.</li>
-                <li>Kanth Road and surrounding areas, close to the MTBOSS office itself.</li>
+                <li>Kanth Road and surrounding areas, close to the MTBoss office itself.</li>
                 <li>Plots and existing buildings across Moradabad district suitable for smaller healthcare facility construction.</li>
-                <li>Clients in nearby towns and districts of Uttar Pradesh coordinating their project remotely with the Moradabad-based MTBOSS team.</li>
+                <li>Clients in nearby towns and districts of Uttar Pradesh coordinating their project remotely with the Moradabad-based MTBoss team.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Getting a Quote from MTBOSS as Your Building Contractor
+                Getting a Quote from MTBoss as Your Building Contractor
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBOSS offers a &quot;Get a Construction Quote&quot; option directly on its website, letting you request pricing for civil execution without an in-person visit first.</li>
+                <li>MTBoss offers a &quot;Get a Construction Quote&quot; option directly on its website, letting you request pricing for civil execution without an in-person visit first.</li>
                 <li>You can also reach the team directly by phone or WhatsApp to discuss your project scope.</li>
-                <li>Sharing your facility size, approved drawings (if available) and rough budget upfront helps MTBOSS give a more accurate initial response.</li>
+                <li>Sharing your facility size, approved drawings (if available) and rough budget upfront helps MTBoss give a more accurate initial response.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact MTBOSS — Hospital Building Contractor in Moradabad
+                Contact MTBoss — Hospital Building Contractor in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
+                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                 </li>
                 <li>
@@ -220,16 +220,16 @@ const Content = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Chat with MTBOSS on WhatsApp
+                    Chat with MTBoss on WhatsApp
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -240,18 +240,18 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 <strong>Get a Free Construction Quote:</strong> Use the quote
-                option on the MTBOSS website, or contact the team directly by
+                option on the MTBoss website, or contact the team directly by
                 phone or WhatsApp.
               </p>
               <p className="mt-3">
                 For nursing homes, polyclinics, diagnostic centres and similar
-                smaller healthcare facilities in Moradabad, MTBOSS works as a
+                smaller healthcare facilities in Moradabad, MTBoss works as a
                 hands-on building contractor, executing civil construction
                 according to approved drawings and supplying core materials
                 directly. For larger, multi-specialty hospital projects, this
                 same contractor role fits best alongside specialized healthcare
                 architects and MEP consultants handling the clinical systems.
-                Either way, MTBOSS offers a free budget calculator, direct
+                Either way, MTBoss offers a free budget calculator, direct
                 wholesale material supply and a local Moradabad presence to
                 support the civil execution side of your healthcare building
                 project.
@@ -264,54 +264,54 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>1. What does a hospital building contractor like MTBOSS actually do?</strong>
+                  <strong>1. What does a hospital building contractor like MTBoss actually do?</strong>
                   <br />
-                  MTBOSS executes the civil construction — foundation,
+                  MTBoss executes the civil construction — foundation,
                   structure, walls and finishing — according to approved
                   drawings, and supplies core building materials.
                 </li>
                 <li>
-                  <strong>2. Can MTBOSS build a nursing home or small clinic in Moradabad?</strong>
+                  <strong>2. Can MTBoss build a nursing home or small clinic in Moradabad?</strong>
                   <br />
                   Yes, civil execution for nursing homes, polyclinics and
-                  diagnostic centres falls within MTBOSS&apos;s commercial
+                  diagnostic centres falls within MTBoss&apos;s commercial
                   construction scope.
                 </li>
                 <li>
-                  <strong>3. Does MTBOSS install medical gas lines or biomedical equipment?</strong>
+                  <strong>3. Does MTBoss install medical gas lines or biomedical equipment?</strong>
                   <br />
                   No, these require specialized, licensed installers;
-                  MTBOSS&apos;s role covers civil construction and coordination
+                  MTBoss&apos;s role covers civil construction and coordination
                   with such specialized teams.
                 </li>
                 <li>
-                  <strong>4. Can I get a free quote for contractor-level execution from MTBOSS?</strong>
+                  <strong>4. Can I get a free quote for contractor-level execution from MTBoss?</strong>
                   <br />
                   Yes, through the &quot;Get a Construction Quote&quot; option
-                  on the MTBOSS website, or by calling or messaging on WhatsApp.
+                  on the MTBoss website, or by calling or messaging on WhatsApp.
                 </li>
                 <li>
-                  <strong>5. Does MTBOSS supply materials for the project as well?</strong>
+                  <strong>5. Does MTBoss supply materials for the project as well?</strong>
                   <br />
-                  Yes, MTBOSS supplies cement, TMT steel bars, bricks, tiles and
+                  Yes, MTBoss supplies cement, TMT steel bars, bricks, tiles and
                   paints on a wholesale basis.
                 </li>
                 <li>
-                  <strong>6. How can I estimate the contractor cost before contacting MTBOSS?</strong>
+                  <strong>6. How can I estimate the contractor cost before contacting MTBoss?</strong>
                   <br />
-                  Use the free online Budget Calculator available on the MTBOSS
+                  Use the free online Budget Calculator available on the MTBoss
                   website.
                 </li>
                 <li>
-                  <strong>7. Where is the MTBOSS office located?</strong>
+                  <strong>7. Where is the MTBoss office located?</strong>
                   <br />
                   Harthala, Kanth Road, Behind KR Collection, near
                   Domino&apos;s, Moradabad, Uttar Pradesh.
                 </li>
                 <li>
-                  <strong>8. Does MTBOSS help if we don&apos;t have a site yet?</strong>
+                  <strong>8. Does MTBoss help if we don&apos;t have a site yet?</strong>
                   <br />
-                  Yes, MTBOSS offers verified property buying, selling and
+                  Yes, MTBoss offers verified property buying, selling and
                   renting services.
                 </li>
               </ul>

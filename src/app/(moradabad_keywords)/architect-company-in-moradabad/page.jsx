@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect Company in Moradabad | Design & Build',
   description:
-    'Looking for an architect company in Moradabad? Learn what a design company offers, how to evaluate one, and how MTBOSS supports design-to-build execution.',
+    'Looking for an architect company in Moradabad? Learn what a design company offers, how to evaluate one, and how MTBoss supports design-to-build execution.',
   keywords:
-    'architect company Moradabad, architecture company near me, design company Moradabad, best architect company near me, architectural company contact number, design and build company Moradabad, house design company Moradabad, MTBOSS Moradabad, commercial design company Moradabad, architect company services',
+    'architect company Moradabad, architecture company near me, design company Moradabad, best architect company near me, architectural company contact number, design and build company Moradabad, house design company Moradabad, MTBoss Moradabad, commercial design company Moradabad, architect company services',
   alternates: {
-    canonical: 'https://www.mtboss.in/architect-company-in-moradabad',
+    canonical: 'https://www.MTBoss.in/architect-company-in-moradabad',
   },
   openGraph: {
     title: 'Architect Company in Moradabad | Design & Build',
     description:
-      'Looking for an architect company in Moradabad? Learn what a design company offers, how to evaluate one, and how MTBOSS supports design-to-build execution.',
-    url: 'https://www.mtboss.in/architect-company-in-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Looking for an architect company in Moradabad? Learn what a design company offers, how to evaluate one, and how MTBoss supports design-to-build execution.',
+    url: 'https://www.MTBoss.in/architect-company-in-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-architect-company-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-architect-company-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect Company in Moradabad - MTBOSS',
+        alt: 'Architect Company in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect Company in Moradabad | Design & Build',
     description:
-      'Looking for an architect company in Moradabad? Learn what a design company offers, how to evaluate one, and how MTBOSS supports design-to-build execution.',
-    images: ['https://www.mtboss.in/og-architect-company-moradabad.jpg'],
+      'Looking for an architect company in Moradabad? Learn what a design company offers, how to evaluate one, and how MTBoss supports design-to-build execution.',
+    images: ['https://www.MTBoss.in/og-architect-company-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/architect-company-in-moradabad',
+    name: 'MTBoss Construction Private Limited',
+    url: 'https://www.MTBoss.in/architect-company-in-moradabad',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBoss2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

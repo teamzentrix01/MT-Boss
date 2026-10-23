@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Complete Home Makeover in Moradabad: Transform Your Whole Home,
-            Inside and Out, with MTBOSS
+            Inside and Out, with MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -21,7 +21,7 @@ const Content = () => {
                 family living in it, patching one room at a time rarely works.
               </p>
               <p className="mt-3">
-                MTBOSS is an architect, interior design and construction company
+                MTBoss is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work,
                 transparent pricing and on-time delivery.
               </p>
@@ -29,10 +29,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Complete Makeover Services from MTBOSS
+                Complete Makeover Services from MTBoss
               </h3>
               <p className="mb-3">
-                A full makeover brings many trades together. MTBOSS offers:
+                A full makeover brings many trades together. MTBoss offers:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -60,7 +60,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What a Complete Makeover Means
+                Complete Makeover
               </h3>
               <p className="mb-3">
                 A makeover is more than a coat of paint. It is a planned upgrade
@@ -368,7 +368,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBOSS offers tile and marble, painter and wallpaper installation
+                MTBoss offers tile and marble, painter and wallpaper installation
                 services, so floors and walls are planned as one design.
               </p>
             </section>
@@ -520,7 +520,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBOSS Makeover Process
+                The MTBoss Makeover Process
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -552,7 +552,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MTBOSS
+                Reasons to Choose MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -591,7 +591,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBOSS provides complete home makeover services across Moradabad,
+                MTBoss provides complete home makeover services across Moradabad,
                 including residential areas such as Civil Lines, Lajpat Nagar,
                 Delhi Road, Kanth Road, Ramganga Vihar and Buddhi Vihar. Our
                 office is at Harthala Kanth Road, behind KR Collection, near
@@ -602,7 +602,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Home Makeover with MTBOSS
+                Start Your Home Makeover with MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -619,10 +619,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -633,16 +633,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/"
+                  href="https://www.MTBoss.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS website
+                  MTBoss website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -652,7 +652,7 @@ const Content = () => {
                 to try the Budget Calculator and view our Portfolio.
               </p>
               <p className="mt-3">
-                Turn your whole house into the home you imagined. Contact MTBOSS
+                Turn your whole house into the home you imagined. Contact MTBoss
                 today for a complete home makeover in Moradabad.
               </p>
             </section>
@@ -664,7 +664,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBOSS provide complete home makeover in Moradabad?
+                    Q1. Does MTBoss provide complete home makeover in Moradabad?
                   </strong>
                   <br />
                   Yes. We plan and manage full makeovers, covering repair,
@@ -728,7 +728,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q10. How do I book MTBOSS for a home makeover?
+                    Q10. How do I book MTBoss for a home makeover?
                   </strong>
                   <br />
                   Call or WhatsApp{" "}
@@ -740,7 +740,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

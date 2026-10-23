@@ -1,7 +1,7 @@
 import pool from '../src/lib/db.js';
 
 async function reconcile() {
-  console.log('--- MT BOSS WALLET LEDGER RECONCILIATION ---');
+  console.log('--- MTBoss WALLET LEDGER RECONCILIATION ---');
   try {
     const res = await pool.query(`
       SELECT 

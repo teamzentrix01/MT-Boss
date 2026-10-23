@@ -7,26 +7,26 @@ import Services from '../../components/Services';
 
 
 export const metadata = {
-  title: 'Interior Decorator in Moradabad | MT Boss Home & Office Interiors',
+  title: 'Interior Decorator in Moradabad | MTBoss Home & Office Interiors',
   description:
-    'Need an interior decorator in Moradabad? MT Boss creates stylish, practical homes, offices and shops with modular kitchens, wardrobes, false ceilings and more.',
+    'Need an interior decorator in Moradabad? MTBoss creates stylish, practical homes, offices and shops with modular kitchens, wardrobes, false ceilings and more.',
   keywords:
-    'interior decorator Moradabad, interior decorator in Moradabad, home interior decorator Moradabad, office interior decorator Moradabad, shop interior decorator Moradabad, modular kitchen Moradabad, false ceiling Moradabad, wardrobe designer Moradabad, interior design company Moradabad, MT Boss Moradabad',
+    'interior decorator Moradabad, interior decorator in Moradabad, home interior decorator Moradabad, office interior decorator Moradabad, shop interior decorator Moradabad, modular kitchen Moradabad, false ceiling Moradabad, wardrobe designer Moradabad, interior design company Moradabad, MTBoss Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/interior-decorator-in-moradabad',
+    canonical: 'https://www.MTBoss.in/interior-decorator-in-moradabad',
   },
   openGraph: {
-    title: 'Interior Decorator in Moradabad | MT Boss Home & Office Interiors',
+    title: 'Interior Decorator in Moradabad | MTBoss Home & Office Interiors',
     description:
-      'Need an interior decorator in Moradabad? MT Boss creates stylish, practical homes, offices and shops with modular kitchens, wardrobes, false ceilings and more.',
-    url: 'https://www.mtboss.in/interior-decorator-in-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Need an interior decorator in Moradabad? MTBoss creates stylish, practical homes, offices and shops with modular kitchens, wardrobes, false ceilings and more.',
+    url: 'https://www.MTBoss.in/interior-decorator-in-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-interior-decorator-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-interior-decorator-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Interior Decorator in Moradabad - MT Boss',
+        alt: 'Interior Decorator in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -34,10 +34,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Interior Decorator in Moradabad | MT Boss Home & Office Interiors',
+    title: 'Interior Decorator in Moradabad | MTBoss Home & Office Interiors',
     description:
-      'Need an interior decorator in Moradabad? MT Boss creates stylish, practical homes, offices and shops with modular kitchens, wardrobes, false ceilings and more.',
-    images: ['https://www.mtboss.in/og-interior-decorator-moradabad.jpg'],
+      'Need an interior decorator in Moradabad? MTBoss creates stylish, practical homes, offices and shops with modular kitchens, wardrobes, false ceilings and more.',
+    images: ['https://www.MTBoss.in/og-interior-decorator-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -49,10 +49,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/interior-decorator-in-moradabad',
+  name: 'MTBoss Construction Private Limited',
+  url: 'https://www.MTBoss.in/interior-decorator-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBoss2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Petrol Pump in Moradabad: Design and Construction by MT Boss
+            Architect for Petrol Pump in Moradabad: Design and Construction by MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -30,7 +30,7 @@ const Content = () => {
                 norms can lead to delays, rejected approvals and costly rework.
               </p>
               <p className="mt-3">
-                MT Boss is a construction company serving Moradabad and Bareilly with
+                MTBoss is a construction company serving Moradabad and Bareilly with
                 commercial, industrial, hospitality, residential and infrastructure
                 projects. We combine architecture, engineering and construction under one
                 team, so your fuel station moves from a plot to a working outlet with
@@ -266,7 +266,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MT Boss as Your Petrol Pump Architect?
+                Why Choose MTBoss as Your Petrol Pump Architect?
               </h3>
               <p className="mb-3">
                 Fuel station projects need clear planning, dependable execution and honest
@@ -311,7 +311,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 If you are searching for an architect for petrol pump Moradabad who can
-                plan, design and build with care, MT Boss is ready to help.
+                plan, design and build with care, MTBoss is ready to help.
               </p>
             </section>
 
@@ -352,7 +352,7 @@ const Content = () => {
                   <strong>Step 6: Budget estimation.</strong> We share a transparent
                   estimate covering materials, labour and finishing. You can also use the{" "}
                   <a href="/calculator" className="text-blue-600 underline">
-                    MT Boss construction cost calculator
+                    MTBoss construction cost calculator
                   </a>{" "}
                   for an early idea.
                 </li>
@@ -513,7 +513,7 @@ const Content = () => {
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Contact MT Boss
+                Contact MTBoss
               </h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -530,21 +530,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in/
+                    https://www.MTBoss.in/
                   </a>
                 </li>
                 <li>
@@ -586,9 +586,9 @@ const Content = () => {
                   layout or approval requirements.
                 </li>
                 <li>
-                  <strong>Q3. Does MT Boss handle both design and construction?</strong>
+                  <strong>Q3. Does MTBoss handle both design and construction?</strong>
                   <br />
-                  Yes. MT Boss manages architecture, construction, finishing and
+                  Yes. MTBoss manages architecture, construction, finishing and
                   waterproofing under one team.
                 </li>
                 <li>
@@ -632,7 +632,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q10. How can I contact MT Boss for a petrol pump project?
+                    Q10. How can I contact MTBoss for a petrol pump project?
                   </strong>
                   <br />
                   Call or WhatsApp{" "}
@@ -646,19 +646,19 @@ const Content = () => {
                   </a>
                   , email{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                   , or request a quote at{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    mtboss.in
+                    MTBoss.in
                   </a>
                   .
                 </li>

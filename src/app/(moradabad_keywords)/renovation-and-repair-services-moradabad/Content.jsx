@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Renovation and Repair Services in Moradabad: One Team for Every Fix
-            and Upgrade at MTBOSS
+            and Upgrade at MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -19,11 +19,11 @@ const Content = () => {
                 flickering switch is a small job today and a bigger one if ignored.
                 At the other end, an old kitchen, a tired bathroom or a worn-out
                 interior needs a full renovation. Renovation and repair services in
-                Moradabad from MTBOSS cover both ends, so you do not have to find a
+                Moradabad from MTBoss cover both ends, so you do not have to find a
                 new worker for every problem.
               </p>
               <p className="mt-3">
-                MTBOSS is an architect, interior design and construction company
+                MTBoss is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work,
                 transparent pricing and on-time delivery. Our quick services let
                 you book skilled trades by phone or WhatsApp, and our renovation
@@ -33,7 +33,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Services Available at MTBOSS
+                Services Available at MTBoss
               </h3>
               <p className="mb-3">
                 Our range covers the trades most homes and shops need:
@@ -204,7 +204,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                A single team solves this. MTBOSS plans the sequence, supervises
+                A single team solves this. MTBoss plans the sequence, supervises
                 quality and gives you one point of contact. A leak repair that also
                 needs tile work, repainting and pest treatment becomes one
                 coordinated job, not four separate searches.
@@ -400,7 +400,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBOSS offers pest control as part of the same team, so treatment
+                MTBoss offers pest control as part of the same team, so treatment
                 can be scheduled with other work.
               </p>
             </section>
@@ -484,7 +484,7 @@ const Content = () => {
                 <li>Service fixtures and fittings</li>
               </ul>
               <p className="mt-3">
-                MTBOSS can help with inspections and repairs at each stage.
+                MTBoss can help with inspections and repairs at each stage.
               </p>
             </section>
 
@@ -544,7 +544,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How to Book Services with MTBOSS
+                How to Book Services with MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -578,7 +578,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Strengths of MTBOSS
+                Strengths of MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -618,7 +618,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBOSS provides renovation and repair services across Moradabad,
+                MTBoss provides renovation and repair services across Moradabad,
                 including residential areas such as Civil Lines, Lajpat Nagar,
                 Delhi Road, Kanth Road, Ramganga Vihar and Buddhi Vihar. Our
                 office is at Harthala Kanth Road, behind KR Collection, near
@@ -629,7 +629,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact MTBOSS
+                Contact MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -646,10 +646,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -660,16 +660,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/"
+                  href="https://www.MTBoss.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS website
+                  MTBoss website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -680,7 +680,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 From a small repair to a full renovation, get it done by one
-                reliable team. Contact MTBOSS today in Moradabad.
+                reliable team. Contact MTBoss today in Moradabad.
               </p>
             </section>
 
@@ -691,7 +691,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBOSS provide renovation and repair services in
+                    Q1. Does MTBoss provide renovation and repair services in
                     Moradabad?
                   </strong>
                   <br />
@@ -728,7 +728,7 @@ const Content = () => {
                 <li>
                   <strong>Q6. Can one team handle several trades?</strong>
                   <br />
-                  Yes. MTBOSS offers civil, plumbing, electrical, tiles, carpentry,
+                  Yes. MTBoss offers civil, plumbing, electrical, tiles, carpentry,
                   painting, ceilings and pest control.
                 </li>
                 <li>
@@ -751,7 +751,7 @@ const Content = () => {
                   follows the site inspection.
                 </li>
                 <li>
-                  <strong>Q10. How do I book MTBOSS?</strong>
+                  <strong>Q10. How do I book MTBoss?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -762,7 +762,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

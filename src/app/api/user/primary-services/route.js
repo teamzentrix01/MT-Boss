@@ -81,7 +81,7 @@ async function saveSiteImage(file) {
   const uploadData = new FormData();
   uploadData.append('file', file);
   uploadData.append('upload_preset', uploadPreset);
-  uploadData.append('folder', 'mtboss/primary-service-reviews');
+  uploadData.append('folder', 'MTBoss/primary-service-reviews');
   const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
     method: 'POST',
     body: uploadData,

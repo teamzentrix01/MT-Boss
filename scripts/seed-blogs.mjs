@@ -19,7 +19,7 @@ async function seedBlogs() {
       cover_image TEXT,
       category VARCHAR(100) DEFAULT 'Construction Guide',
       tags TEXT[] DEFAULT ARRAY[]::TEXT[],
-      author_name VARCHAR(150) DEFAULT 'MTBOSS Editorial',
+      author_name VARCHAR(150) DEFAULT 'MTBoss Editorial',
       read_time VARCHAR(50) DEFAULT '5 min read',
       meta_title VARCHAR(255),
       meta_description TEXT,

@@ -61,7 +61,7 @@ export const defaultHeroBanners = [
     label: 'BUY, SELL & RENT',
     title: 'Your next chapter.',
     subtitle: 'Your next property.',
-    description: 'Discover verified residential flats, commercial properties and plots, or list your property across India with MTBOSS.',
+    description: 'Discover verified residential flats, commercial properties and plots, or list your property across India with MTBoss.',
     image_url: '/images/banners/property.jpg',
     cloudinary_public_id: '',
     image_alt: 'Contemporary luxury villa with illuminated architecture and landscaping',

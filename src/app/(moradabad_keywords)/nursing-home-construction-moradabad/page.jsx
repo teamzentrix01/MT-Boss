@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Nursing Home Construction in Moradabad | MTBOSS",
+  title: "Nursing Home Construction in Moradabad | MTBoss",
 
   description:
-    "Planning nursing home construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+    "Planning nursing home construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "nursing home construction Moradabad, nursing home building construction Moradabad, nursing home contractor Moradabad, nursing home design Moradabad, small hospital construction Moradabad, healthcare building construction Moradabad, maternity home construction Moradabad, nursing home construction cost Moradabad, nursing home builder Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "nursing home construction Moradabad, nursing home building construction Moradabad, nursing home contractor Moradabad, nursing home design Moradabad, small hospital construction Moradabad, healthcare building construction Moradabad, maternity home construction Moradabad, nursing home construction cost Moradabad, nursing home builder Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/nursing-home-construction-in-moradabad",
+      "https://www.MTBoss.in/nursing-home-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Nursing Home Construction in Moradabad | MTBOSS",
+    title: "Nursing Home Construction in Moradabad | MTBoss",
 
     description:
-      "Planning nursing home construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning nursing home construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/nursing-home-construction-in-moradabad",
+    url: "https://www.MTBoss.in/nursing-home-construction-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-nursing-home-construction-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-nursing-home-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Nursing Home Construction in Moradabad - MTBOSS",
+        alt: "Nursing Home Construction in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Nursing Home Construction in Moradabad | MTBOSS",
+    title: "Nursing Home Construction in Moradabad | MTBoss",
 
     description:
-      "Planning nursing home construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning nursing home construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-nursing-home-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-nursing-home-construction-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/nursing-home-construction-in-moradabad",
+    name: "MTBoss Construction Private Limited",
+    url: "https://www.MTBoss.in/nursing-home-construction-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-nursing-home-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-nursing-home-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,14 +117,14 @@ export default function Page() {
     "@type": "Service",
     name: "Nursing Home Construction Services in Moradabad",
     description:
-      "MTBOSS provides nursing home construction in Moradabad for small private hospitals, maternity homes, speciality nursing homes and elder care homes, including design coordination, structure, lift and ramp provisions, facade, services provisions, specialist room provisions for OT, ICU and labour room, washroom planning, waterproofing, flooring, finishing, interiors, outdoor works and final handover.",
-    url: "https://www.mtboss.in/nursing-home-construction-in-moradabad",
+      "MTBoss provides nursing home construction in Moradabad for small private hospitals, maternity homes, speciality nursing homes and elder care homes, including design coordination, structure, lift and ramp provisions, facade, services provisions, specialist room provisions for OT, ICU and labour room, washroom planning, waterproofing, flooring, finishing, interiors, outdoor works and final handover.",
+    url: "https://www.MTBoss.in/nursing-home-construction-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
     areaServed: [
       {
@@ -154,10 +154,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS build nursing homes in Moradabad?",
+        name: "Does MTBoss build nursing homes in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your nursing home.",
+          text: "MTBoss builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your nursing home.",
         },
       },
       {
@@ -189,15 +189,15 @@ export default function Page() {
         name: "How much does nursing home construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Nursing home construction cost depends on built-up area, number of beds and departments, specialist rooms, services scope, material and finish level and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Nursing home construction cost depends on built-up area, number of beds and departments, specialist rooms, services scope, material and finish level and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -211,19 +211,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Nursing Home Construction in Moradabad",
-        item: "https://www.mtboss.in/nursing-home-construction-in-moradabad",
+        item: "https://www.MTBoss.in/nursing-home-construction-in-moradabad",
       },
     ],
   };

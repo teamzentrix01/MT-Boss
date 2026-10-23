@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Bathroom Renovation in Moradabad: Leak-Free, Safe and Well-Planned
-            Upgrades by MTBOSS
+            Bathroom Renovation in Moradabad.
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -24,18 +23,18 @@ const Content = () => {
                 finishes go in.
               </p>
               <p className="mt-3">
-                MTBOSS is an architect, interior design and construction company
+                MTBoss is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work,
                 transparent pricing and on-time delivery. A bathroom renovation
                 involves civil work, waterproofing, plumbing, electrical work,
-                tiles and fittings, and MTBOSS handles these trades under one
+                tiles and fittings, and MTBoss handles these trades under one
                 team.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Bathroom Renovation Services at MTBOSS
+                Bathroom Renovation Services at MTBoss
               </h3>
               <p className="mb-3">
                 Our service covers the complete job, from inspection to handover:
@@ -113,7 +112,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Skipping the test or rushing the curing time can lead to leaks
-                months later. MTBOSS offers waterproofing as part of the
+                months later. MTBoss offers waterproofing as part of the
                 renovation, so it is planned and checked before any tile is laid.
               </p>
             </section>
@@ -213,7 +212,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBOSS tile and marble services can plan floor and wall finishes
+                MTBoss tile and marble services can plan floor and wall finishes
                 together.
               </p>
             </section>
@@ -419,7 +418,7 @@ const Content = () => {
                 <li>Floor traps and covers</li>
               </ul>
               <p className="mt-3">
-                MTBOSS also offers pest control, so treatment can be combined with
+                MTBoss also offers pest control, so treatment can be combined with
                 the renovation if needed.
               </p>
             </section>
@@ -461,7 +460,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                You can try the Budget Calculator on the MTBOSS website to set
+                You can try the Budget Calculator on the MTBoss website to set
                 realistic expectations. Final pricing is shared after the site
                 visit and scope discussion.
               </p>
@@ -487,7 +486,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBOSS Bathroom Renovation Process
+                The MTBoss Bathroom Renovation Process
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -513,7 +512,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBOSS for Bathroom Renovation
+                Why Choose MTBoss for Bathroom Renovation
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -524,7 +523,7 @@ const Content = () => {
                 <li>
                   <strong>One team for many trades.</strong> Civil work,
                   waterproofing, plumbing, electrical, tiles, carpentry, painting
-                  and pest control are available through MTBOSS.
+                  and pest control are available through MTBoss.
                 </li>
                 <li>
                   <strong>Inspection-led planning.</strong> Hidden problems are
@@ -550,7 +549,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBOSS provides bathroom renovation across Moradabad, including
+                MTBoss provides bathroom renovation across Moradabad, including
                 residential areas such as Civil Lines, Lajpat Nagar, Delhi Road,
                 Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -561,7 +560,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Bathroom Renovation with MTBOSS
+                Plan Your Bathroom Renovation with MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -578,10 +577,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -592,16 +591,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/"
+                  href="https://www.MTBoss.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS website
+                  MTBoss website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -611,7 +610,7 @@ const Content = () => {
                 to try the Budget Calculator and view our Portfolio.
               </p>
               <p className="mt-3">
-                Build a bathroom that stays dry, safe and fresh. Contact MTBOSS
+                Build a bathroom that stays dry, safe and fresh. Contact MTBoss
                 today for bathroom renovation in Moradabad.
               </p>
             </section>
@@ -623,7 +622,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBOSS provide bathroom renovation in Moradabad?
+                    Q1. Does MTBoss provide bathroom renovation in Moradabad?
                   </strong>
                   <br />
                   Yes. We handle waterproofing, plumbing, tiles, fixtures and
@@ -662,7 +661,7 @@ const Content = () => {
                     Q6. Do you handle plumbing and electrical work too?
                   </strong>
                   <br />
-                  Yes. MTBOSS offers both, so everything is coordinated in one
+                  Yes. MTBoss offers both, so everything is coordinated in one
                   project.
                 </li>
                 <li>
@@ -691,7 +690,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q10. How do I book MTBOSS for bathroom renovation?
+                    Q10. How do I book MTBoss for bathroom renovation?
                   </strong>
                   <br />
                   Call or WhatsApp{" "}
@@ -703,7 +702,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

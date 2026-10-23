@@ -166,7 +166,7 @@ export default function JobApplicationsPanel() {
                       </p>
                       <h3 className="mt-1 text-lg font-black text-zinc-900">{application.position}</h3>
                       <p className="mt-1 text-sm text-zinc-500">
-                        {[application.department, application.job_location].filter(Boolean).join(' · ') || 'MTBOSS'}
+                        {[application.department, application.job_location].filter(Boolean).join(' · ') || 'MTBoss'}
                       </p>
                     </div>
                     <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase ${STATUS_STYLES[application.status] || 'bg-zinc-100 text-zinc-700'}`}>

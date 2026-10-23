@@ -85,7 +85,7 @@ export async function POST(req) {
     // Email the ADMIN (admin acts as middleman — client never contacts professional directly)
     try {
       const { sendMail } = await import('@/lib/email');
-      const adminEmail = process.env.SMTP_USER || 'mtboss2016@gmail.com';
+      const adminEmail = process.env.SMTP_USER || 'MTBoss2016@gmail.com';
       await sendMail({
         to: adminEmail,
         subject: `Professional Enquiry: ${enquirer_name} → ${professional.name} — MTBoss`,
@@ -136,7 +136,7 @@ export async function POST(req) {
 
             <p style="margin-top:20px;font-size:12px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:16px;">
               Action required: Review this enquiry in the
-              <strong>MTbossAdmin Dashboard → Professional Enquiries</strong> tab and
+              <strong>MTBossAdmin Dashboard → Professional Enquiries</strong> tab and
               facilitate the connection between the user and professional.
             </p>
           </div>

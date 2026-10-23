@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Industrial Construction Company in Moradabad | MTBOSS",
+  title: "Industrial Construction Company in Moradabad | MTBoss",
 
   description:
-    "Need an industrial construction company in Moradabad? MTBOSS builds factories, sheds and warehouses. Call +91 94584 10866 for a free quote.",
+    "Need an industrial construction company in Moradabad? MTBoss builds factories, sheds and warehouses. Call +91 94584 10866 for a free quote.",
 
   keywords:
-    "industrial construction company Moradabad, industrial building construction Moradabad, factory construction Moradabad, warehouse construction Moradabad, industrial shed construction Moradabad, godown construction Moradabad, industrial contractor Moradabad, factory building contractor Moradabad, industrial construction cost Moradabad, manufacturing unit construction Moradabad, commercial construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
+    "industrial construction company Moradabad, industrial building construction Moradabad, factory construction Moradabad, warehouse construction Moradabad, industrial shed construction Moradabad, godown construction Moradabad, industrial contractor Moradabad, factory building contractor Moradabad, industrial construction cost Moradabad, manufacturing unit construction Moradabad, commercial construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/industrial-construction-company-in-moradabad",
+      "https://www.MTBoss.in/industrial-construction-company-in-moradabad",
   },
 
   openGraph: {
-    title: "Industrial Construction Company in Moradabad | MTBOSS",
+    title: "Industrial Construction Company in Moradabad | MTBoss",
 
     description:
-      "Need an industrial construction company in Moradabad? MTBOSS builds factories, sheds and warehouses. Call +91 94584 10866 for a free quote.",
+      "Need an industrial construction company in Moradabad? MTBoss builds factories, sheds and warehouses. Call +91 94584 10866 for a free quote.",
 
-    url: "https://www.mtboss.in/industrial-construction-company-in-moradabad",
+    url: "https://www.MTBoss.in/industrial-construction-company-in-moradabad",
 
-    siteName: "MTBOSS Construction Private Limited",
+    siteName: "MTBoss Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-industrial-construction-moradabad.jpg",
+        url: "https://www.MTBoss.in/og-industrial-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Industrial Construction Company in Moradabad - MTBOSS",
+        alt: "Industrial Construction Company in Moradabad - MTBoss",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Industrial Construction Company in Moradabad | MTBOSS",
+    title: "Industrial Construction Company in Moradabad | MTBoss",
 
     description:
-      "Need an industrial construction company in Moradabad? MTBOSS builds factories, sheds and warehouses. Call +91 94584 10866 for a free quote.",
+      "Need an industrial construction company in Moradabad? MTBoss builds factories, sheds and warehouses. Call +91 94584 10866 for a free quote.",
 
     images: [
-      "https://www.mtboss.in/og-industrial-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-industrial-construction-moradabad.jpg",
     ],
   },
 
@@ -67,17 +67,17 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
 
-    name: "MTBOSS Construction Private Limited",
+    name: "MTBoss Construction Private Limited",
 
     url:
-      "https://www.mtboss.in/industrial-construction-company-in-moradabad",
+      "https://www.MTBoss.in/industrial-construction-company-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBoss2016@gmail.com",
 
     image:
-      "https://www.mtboss.in/og-industrial-construction-moradabad.jpg",
+      "https://www.MTBoss.in/og-industrial-construction-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -136,17 +136,17 @@ export default function Page() {
     name: "Industrial Construction Services in Moradabad",
 
     description:
-      "MTBOSS provides industrial construction in Moradabad for factories, manufacturing units, workshops, warehouses, godowns and industrial sheds, including site development, foundations, structure, industrial flooring, roofing, drainage, offices, material supply and handover.",
+      "MTBoss provides industrial construction in Moradabad for factories, manufacturing units, workshops, warehouses, godowns and industrial sheds, including site development, foundations, structure, industrial flooring, roofing, drainage, offices, material supply and handover.",
 
     url:
-      "https://www.mtboss.in/industrial-construction-company-in-moradabad",
+      "https://www.MTBoss.in/industrial-construction-company-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBOSS Construction Private Limited",
+      name: "MTBoss Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBoss2016@gmail.com",
+      url: "https://www.MTBoss.in",
     },
 
     areaServed: [
@@ -179,18 +179,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS offer industrial construction in Moradabad?",
+        name: "Does MTBoss offer industrial construction in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Industrial and warehousing construction is part of the MTBOSS service list, alongside commercial, hotel, school, college, mall, infrastructure and residential construction projects in Moradabad and Bareilly.",
+          text: "Yes. Industrial and warehousing construction is part of the MTBoss service list, alongside commercial, hotel, school, college, mall, infrastructure and residential construction projects in Moradabad and Bareilly.",
         },
       },
       {
         "@type": "Question",
-        name: "What types of industrial buildings can MTBOSS build?",
+        name: "What types of industrial buildings can MTBoss build?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBOSS can discuss construction scope for factories, manufacturing units, workshops, warehouses, godowns, industrial sheds, storage buildings and mixed industrial units with office and staff areas.",
+          text: "MTBoss can discuss construction scope for factories, manufacturing units, workshops, warehouses, godowns, industrial sheds, storage buildings and mixed industrial units with office and staff areas.",
         },
       },
       {
@@ -214,23 +214,23 @@ export default function Page() {
         name: "How much does industrial construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Industrial construction cost depends on built-up area, span, height, structural system, flooring specification, roofing, services, office areas, external development, material quality and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
+          text: "Industrial construction cost depends on built-up area, span, height, structural system, flooring specification, roofing, services, office areas, external development, material quality and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Does MTBOSS supply building materials?",
+        name: "Does MTBoss supply building materials?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate material delivery during industrial construction.",
+          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate material delivery during industrial construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBOSS office located?",
+        name: "Where is the MTBoss office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -245,19 +245,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBoss.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBoss.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Industrial Construction Company in Moradabad",
-        item: "https://www.mtboss.in/industrial-construction-company-in-moradabad",
+        item: "https://www.MTBoss.in/industrial-construction-company-in-moradabad",
       },
     ],
   };

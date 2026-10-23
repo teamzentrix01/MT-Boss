@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Firm in Bareilly: MT Boss
+            Architect Firm in Bareilly: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -20,7 +20,7 @@ const Content = () => {
                 An architect firm in Bareilly is an organised design practice with
                 registered architects, supporting designers and set processes for
                 drawings, checking and handover, so your project does not depend on
-                one person&apos;s availability. MT Boss Construction Private Limited
+                one person&apos;s availability. MTBoss Construction Private Limited
                 serves Bareilly and Moradabad with architecture, interior and
                 building design, backed by an in-house construction team [confirm
                 architect registration and team details].
@@ -45,7 +45,7 @@ const Content = () => {
                 reputation sits behind every sheet it issues.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBoss Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -58,7 +58,7 @@ const Content = () => {
                 Roles Inside a Design Team
               </h3>
               <p className="mb-3">
-                A firm works best when each role is clear [state MT Boss&apos;s
+                A firm works best when each role is clear [state MTBoss&apos;s
                 actual team structure].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -204,7 +204,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A firm should check its own work before you or a builder see it
-                [state MT Boss&apos;s actual checks].
+                [state MTBoss&apos;s actual checks].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -240,7 +240,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 At the end, you should hold a complete set, not a bundle of loose
-                prints [confirm what MT Boss provides]:
+                prints [confirm what MTBoss provides]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -291,14 +291,12 @@ const Content = () => {
                 <li>Houses, villas and builder floors on city and colony plots</li>
                 <li>Apartments and small housing groups</li>
                 <li>Shops, showrooms and offices</li>
-                <li>Clinics, schools and coaching centres</li>
-                <li>Hotels, guest houses and banquet halls</li>
                 <li>Warehouses, sheds and light industrial units</li>
                 <li>Renovation, extension and elevation redesign</li>
                 <li>Interior fit-outs</li>
               </ul>
               <p className="mt-3">
-                [State the project types MT Boss actually designs and delivers, and
+                [State the project types MTBoss actually designs and delivers, and
                 delete the rest.]
               </p>
             </section>
@@ -324,7 +322,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Design-and-build firm.</strong> Design and construction
-                  under one roof, as MT Boss offers, which gives single
+                  under one roof, as MTBoss offers, which gives single
                   responsibility and early cost checking.
                 </li>
               </ul>
@@ -361,7 +359,7 @@ const Content = () => {
                 <li>Clear records of changes and the reason for each</li>
               </ul>
               <p className="mt-3">
-                MT Boss offers design only or design and build [confirm policy and
+                MTBoss offers design only or design and build [confirm policy and
                 drawing-ownership terms]. Whichever route you take, ask for the same
                 written scope.
               </p>
@@ -372,7 +370,7 @@ const Content = () => {
                 Fee Structure and Billing Rhythm
               </h3>
               <p className="mb-3">
-                Firms bill in different ways [state MT Boss&apos;s actual model]:
+                Firms bill in different ways [state MTBoss&apos;s actual model]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -398,7 +396,7 @@ const Content = () => {
               <p>
                 Professional responsibility means the firm answers for its design
                 advice. Some firms hold professional indemnity insurance, which can
-                cover claims arising from design errors [state whether MT Boss holds
+                cover claims arising from design errors [state whether MTBoss holds
                 it and the cover amount, or delete this section]. Cover does not
                 replace good checking, but it shows seriousness. Ask whether the firm
                 has it, and what its written terms say about responsibility, limits
@@ -409,12 +407,12 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Onboarding Steps With MT Boss
+                Onboarding Steps With MTBoss
               </h3>
               <ol className="list-decimal list-inside space-y-1 ml-4">
                 <li>
                   <strong>Enquiry:</strong> call, WhatsApp or click Get a
-                  Construction Quote on mtboss.in, and share your location pin, plot
+                  Construction Quote on MTBoss.in, and share your location pin, plot
                   photos and brief
                 </li>
                 <li>
@@ -459,71 +457,22 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Related Services From MT Boss
+                Related Services From MTBoss
               </h3>
               <p>
-                Through mtboss.in, MT Boss also offers Architecture &amp; Interior,
+                Through MTBoss.in, MTBoss also offers Architecture &amp; Interior,
                 Building Elevation, Building Contractor, Building Renovation,
                 Modular Kitchen, False Ceiling, Water Proofing, Painter, Electrician
-                and Plumber. Use the Budget Calculator on mtboss.in for an early
+                and Plumber. Use the Budget Calculator on MTBoss.in for an early
                 idea of construction cost.
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
-                </li>
-                <li>
-                  <strong>Service:</strong> Architecture, interior and building
-                  design, alongside construction and home services
-                </li>
-                <li>
-                  <strong>Registered office:</strong> Harthala, Kanth Road,
-                  Moradabad (behind KR Collection, near Domino&apos;s), Uttar
-                  Pradesh
-                </li>
-                <li>
-                  <strong>Service area:</strong> Bareilly, Moradabad and nearby
-                  areas of western Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Bareilly presence:</strong> [state truthfully: visiting
-                  team, site office or branch, with address if one exists]
-                </li>
-                <li>
-                  <strong>Phone / WhatsApp:</strong> +91 94584 10866
-                </li>
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <strong>Website:</strong>{" "}
-                  <a
-                    href="https://www.mtboss.in"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    www.mtboss.in
-                  </a>
-                </li>
-              </ul>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Engage MT Boss
+                Reasons Clients Engage MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -573,7 +522,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Request a Proposal From MT Boss
+                Request a Proposal From MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -590,21 +539,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -632,7 +581,7 @@ const Content = () => {
                   set processes for drawings and checking.
                 </li>
                 <li>
-                  <strong>Q2. Does MT Boss have registered architects?</strong>
+                  <strong>Q2. Does MTBoss have registered architects?</strong>
                   <br />
                   [State names and COA registration numbers, or say how design is
                   led.]
@@ -673,7 +622,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I request a proposal?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

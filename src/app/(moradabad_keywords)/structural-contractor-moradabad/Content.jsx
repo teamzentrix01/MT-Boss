@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MT Boss: Structural Contractor in Moradabad for Safe, Load-Bearing
+            MTBoss: Structural Contractor in Moradabad for Safe, Load-Bearing
             and Long-Lasting Buildings
           </h2>
 
@@ -25,11 +25,11 @@ const Content = () => {
               <p className="mt-3">
                 A structural contractor in Moradabad is the person responsible
                 for building this load path correctly, and for fixing it when it
-                has been damaged or changed. MT Boss (MTBOSS Construction
+                has been damaged or changed. MTBoss (MTBoss Construction
                 Private Limited) provides structural and civil contracting for
                 homes, commercial buildings, hotels, institutions and industrial
                 units in Moradabad and Bareilly. This page explains what
-                structural contracting covers, how MT Boss approaches structural
+                structural contracting covers, how MTBoss approaches structural
                 work, and what property owners should know before building,
                 adding floors or repairing an older building.
               </p>
@@ -59,7 +59,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss works as a civil contractor and building contractor, so
+                MTBoss works as a civil contractor and building contractor, so
                 these responsibilities sit within one team.
               </p>
             </section>
@@ -122,18 +122,18 @@ const Content = () => {
                 what a neighbour used.
               </p>
               <p className="mt-3">
-                MT Boss builds to the system selected in the approved structural
+                MTBoss builds to the system selected in the approved structural
                 drawings, and flags practical concerns early.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MT Boss Works With Structural Drawings
+                How MTBoss Works With Structural Drawings
               </h3>
               <p className="mb-3">
                 Structural drawings are the contract between the engineer&apos;s
-                calculations and the builder&apos;s work. MT Boss treats them
+                calculations and the builder&apos;s work. MTBoss treats them
                 with care.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -150,7 +150,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Clarifications.</strong> If something is unclear or
-                  impractical on site, MT Boss raises it before concrete is
+                  impractical on site, MTBoss raises it before concrete is
                   ordered, rather than improvising during construction.
                 </li>
                 <li>
@@ -164,7 +164,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Owners who do not yet have structural drawings can discuss
-                design support with the MT Boss team, which also offers
+                design support with the MTBoss team, which also offers
                 architectural services for houses, commercial buildings and
                 hotels.
               </p>
@@ -172,7 +172,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Structural Contracting Services Offered by MT Boss
+                Structural Contracting Services Offered by MTBoss
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -191,7 +191,7 @@ const Content = () => {
                 Many owners in Moradabad want to add a floor as families grow or
                 rental income becomes attractive. This is a structural decision,
                 not a cosmetic one. The existing foundation, columns and slab
-                must be able to carry the extra load. MT Boss inspects the
+                must be able to carry the extra load. MTBoss inspects the
                 existing structure and discusses feasibility before any work
                 begins.
               </p>
@@ -201,7 +201,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Older buildings may show cracks, rusted reinforcement, sagging
-                slabs or damaged columns. MT Boss assesses the problem,
+                slabs or damaged columns. MTBoss assesses the problem,
                 recommends a repair approach and carries out the work, which may
                 include crack sealing, concrete patching and strengthening of
                 weak members.
@@ -212,7 +212,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Removing walls, adding openings, shifting staircases or
-                enlarging rooms can alter how loads travel. MT Boss reviews each
+                enlarging rooms can alter how loads travel. MTBoss reviews each
                 change, so renovation does not weaken the building.
               </p>
 
@@ -222,7 +222,7 @@ const Content = () => {
               <p className="mb-3">
                 Compound walls, retaining walls and gate pillars need proper
                 foundations and reinforcement to resist soil pressure and wind.
-                MT Boss builds these structures with stability in mind.
+                MTBoss builds these structures with stability in mind.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -239,7 +239,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Factories and godowns need wide spans, strong floors and robust
-                frames for heavy daily use. MT Boss builds industrial structures
+                frames for heavy daily use. MTBoss builds industrial structures
                 for production, storage and dispatch, which suits the needs of
                 Moradabad&apos;s export-driven businesses.
               </p>
@@ -264,14 +264,14 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Hairline plaster cracks are common and often harmless, but wider
-                or growing cracks deserve inspection. MT Boss recommends an
+                or growing cracks deserve inspection. MTBoss recommends an
                 engineer&apos;s assessment before deciding on repair.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Planning an Additional Floor With MT Boss
+                Planning an Additional Floor With MTBoss
               </h3>
               <p className="mb-3">
                 Adding a floor can increase usable area without buying new land,
@@ -305,7 +305,7 @@ const Content = () => {
                 Materials Quality in Structural Work
               </h3>
               <p className="mb-3">
-                Load-bearing members depend on dependable materials. MT Boss
+                Load-bearing members depend on dependable materials. MTBoss
                 pays attention to:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -335,7 +335,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Customers can also source cement, steel and bricks through the
-                MT Boss online shop.
+                MTBoss online shop.
               </p>
             </section>
 
@@ -441,12 +441,12 @@ const Content = () => {
                 Contract Options for Structural Work
               </h3>
               <p className="mb-3">
-                MT Boss can organise structural contracting in different ways.
+                MTBoss can organise structural contracting in different ways.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>Structure-only contract.</strong> The owner supplies
-                  drawings, and MT Boss builds the frame.
+                  drawings, and MTBoss builds the frame.
                 </li>
                 <li>
                   <strong>Structure with masonry.</strong> The frame plus
@@ -491,7 +491,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss provides itemised quotations and an online budget
+                MTBoss provides itemised quotations and an online budget
                 calculator for early estimates. A reserve of about 10 percent
                 helps cover changes and unexpected needs.
               </p>
@@ -502,7 +502,7 @@ const Content = () => {
                 Documentation That Protects Your Building
               </h3>
               <p className="mb-3">
-                Good records help in the future. MT Boss supports owners with:
+                Good records help in the future. MTBoss supports owners with:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Approved drawings and any revisions</li>
@@ -525,10 +525,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Work With MT Boss for Structural Contracting
+                Work With MTBoss for Structural Contracting
               </h3>
               <p className="mb-3">
-                Tell the MT Boss team whether you are building new, adding a
+                Tell the MTBoss team whether you are building new, adding a
                 floor, repairing cracks or planning an industrial structure. We
                 will review your drawings or inspect your building, and prepare
                 a clear, itemised quotation.
@@ -544,21 +544,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                 </li>
               </ul>
@@ -574,19 +574,19 @@ const Content = () => {
                     Q1. Who is a reliable structural contractor in Moradabad?
                   </strong>
                   <br />
-                  MT Boss provides structural and civil contracting for homes,
+                  MTBoss provides structural and civil contracting for homes,
                   commercial buildings, hotels and industrial units, with
                   engineer supervision.
                 </li>
                 <li>
-                  <strong>Q2. What structural work does MT Boss handle?</strong>
+                  <strong>Q2. What structural work does MTBoss handle?</strong>
                   <br />
                   We handle foundations, columns, beams, slabs, staircases,
                   tanks, boundary structures, additional floors and structural
                   repair.
                 </li>
                 <li>
-                  <strong>Q3. Can MT Boss add another floor to my building?</strong>
+                  <strong>Q3. Can MTBoss add another floor to my building?</strong>
                   <br />
                   Yes, subject to approvals and structural feasibility. We
                   inspect the existing structure before recommending the work.
@@ -594,13 +594,13 @@ const Content = () => {
                 <li>
                   <strong>Q4. Do you repair cracks and damaged structures?</strong>
                   <br />
-                  Yes. MT Boss assesses the problem and carries out repair and
+                  Yes. MTBoss assesses the problem and carries out repair and
                   strengthening as recommended.
                 </li>
                 <li>
                   <strong>Q5. Do I need structural drawings before hiring you?</strong>
                   <br />
-                  Drawings are best, and MT Boss can build to yours or discuss
+                  Drawings are best, and MTBoss can build to yours or discuss
                   design support through its architectural services.
                 </li>
                 <li>
@@ -611,24 +611,24 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q7. Does MT Boss also handle finishing and waterproofing?
+                    Q7. Does MTBoss also handle finishing and waterproofing?
                   </strong>
                   <br />
                   Yes. We offer plastering, painting, waterproofing, windows,
                   plumbing and electrical services.
                 </li>
                 <li>
-                  <strong>Q8. How can I contact MT Boss?</strong>
+                  <strong>Q8. How can I contact MTBoss?</strong>
                   <br />
                   Call or WhatsApp +91 94584 10866, email
-                  mtboss2016@gmail.com, or visit{" "}
+                  MTBoss2016@gmail.com, or visit{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                   .
                 </li>

@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Commercial Architect in Moradabad | Design & Build',
   description:
-    'Looking for a commercial architect in Moradabad? Learn what office, retail & business space design involves, costs, and how MTBOSS supports design-to-build.',
+    'Looking for a commercial architect in Moradabad? Learn what office, retail & business space design involves, costs, and how MTBoss supports design-to-build.',
   keywords:
-    'commercial architect Moradabad, office design architect Moradabad, retail architect near me, showroom design Moradabad, commercial building design company, business space architect Moradabad, commercial design and build Moradabad, MTBOSS Moradabad, office interior architect near me, commercial construction design Moradabad',
+    'commercial architect Moradabad, office design architect Moradabad, retail architect near me, showroom design Moradabad, commercial building design company, business space architect Moradabad, commercial design and build Moradabad, MTBoss Moradabad, office interior architect near me, commercial construction design Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/commercial-architect-in-moradabad',
+    canonical: 'https://www.MTBoss.in/commercial-architect-in-moradabad',
   },
   openGraph: {
     title: 'Commercial Architect in Moradabad | Design & Build',
     description:
-      'Looking for a commercial architect in Moradabad? Learn what office, retail & business space design involves, costs, and how MTBOSS supports design-to-build.',
-    url: 'https://www.mtboss.in/commercial-architect-in-moradabad',
-    siteName: 'MTBOSS Construction Private Limited',
+      'Looking for a commercial architect in Moradabad? Learn what office, retail & business space design involves, costs, and how MTBoss supports design-to-build.',
+    url: 'https://www.MTBoss.in/commercial-architect-in-moradabad',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-commercial-architect-moradabad.jpg',
+        url: 'https://www.MTBoss.in/og-commercial-architect-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Commercial Architect in Moradabad - MTBOSS',
+        alt: 'Commercial Architect in Moradabad - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Commercial Architect in Moradabad | Design & Build',
     description:
-      'Looking for a commercial architect in Moradabad? Learn what office, retail & business space design involves, costs, and how MTBOSS supports design-to-build.',
-    images: ['https://www.mtboss.in/og-commercial-architect-moradabad.jpg'],
+      'Looking for a commercial architect in Moradabad? Learn what office, retail & business space design involves, costs, and how MTBoss supports design-to-build.',
+    images: ['https://www.MTBoss.in/og-commercial-architect-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/commercial-architect-in-moradabad',
+    name: 'MTBoss Construction Private Limited',
+    url: 'https://www.MTBoss.in/commercial-architect-in-moradabad',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBoss2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

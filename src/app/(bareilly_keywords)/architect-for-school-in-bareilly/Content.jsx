@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Architect for School in Bareilly: Safe, Practical and Future-Ready
-            School Design by MTBOSS
+            School Design by MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -25,7 +25,7 @@ const Content = () => {
                 begins.
               </p>
               <p className="mt-3">
-                MTBOSS is an architect, interior design and construction company
+                MTBoss is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work, transparent
                 pricing and on-time delivery. Our approach connects design with
                 construction knowledge, so a school plan is not only well organised
@@ -35,7 +35,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                School Architecture Services from MTBOSS
+                School Architecture Services from MTBoss
               </h3>
               <p className="mb-3">
                 Our services cover the stages where expert planning matters most:
@@ -439,7 +439,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBOSS offers interior design with carpenter, false ceiling, tile
+                MTBoss offers interior design with carpenter, false ceiling, tile
                 and marble, painter and electrician services, so interiors can be
                 planned and delivered together.
               </p>
@@ -497,7 +497,7 @@ const Content = () => {
                 <li>Electrical upgrade for modern needs</li>
               </ul>
               <p className="mt-3">
-                MTBOSS offers building repair and renovation, waterproofing,
+                MTBoss offers building repair and renovation, waterproofing,
                 plumbing, electrical and painting services, so recommendations can
                 be carried out by the same team.
               </p>
@@ -563,7 +563,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                You can try the Budget Calculator on the MTBOSS website to set
+                You can try the Budget Calculator on the MTBoss website to set
                 realistic expectations. Final pricing and consultation terms are
                 shared after discussing your project.
               </p>
@@ -592,7 +592,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBOSS Process for Schools
+                The MTBoss Process for Schools
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -642,7 +642,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MTBOSS
+                Reasons to Choose MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -652,7 +652,7 @@ const Content = () => {
                 <li>
                   <strong>One team for design and execution.</strong> Architecture,
                   interior design, civil work, plumbing, electrical, carpentry,
-                  painting and more are available through MTBOSS.
+                  painting and more are available through MTBoss.
                 </li>
                 <li>
                   <strong>Transparent communication.</strong> You know the scope,
@@ -663,7 +663,7 @@ const Content = () => {
                   keep projects moving.
                 </li>
                 <li>
-                  <strong>Service in Bareilly and Moradabad.</strong> MTBOSS serves
+                  <strong>Service in Bareilly and Moradabad.</strong> MTBoss serves
                   both cities. Our office is at Harthala Kanth Road, Moradabad.
                 </li>
                 <li>
@@ -678,7 +678,7 @@ const Content = () => {
                 Service Areas in Bareilly
               </h3>
               <p>
-                MTBOSS serves clients in Bareilly, including areas such as Civil
+                MTBoss serves clients in Bareilly, including areas such as Civil
                 Lines, Rampur Garden, Izzatnagar, Subhash Nagar, DD Puram and
                 Pilibhit Bypass Road. If your plot or school is elsewhere in or
                 around Bareilly, contact us and we will confirm availability.
@@ -687,7 +687,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your School with MTBOSS
+                Plan Your School with MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -704,10 +704,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -718,16 +718,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/"
+                  href="https://www.MTBoss.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS website
+                  MTBoss website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -738,7 +738,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 Build a school that is safe, bright and ready to grow. Contact
-                MTBOSS today for school architecture in Bareilly.
+                MTBoss today for school architecture in Bareilly.
               </p>
             </section>
 
@@ -749,7 +749,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBOSS provide an architect for school in Bareilly?
+                    Q1. Does MTBoss provide an architect for school in Bareilly?
                   </strong>
                   <br />
                   Yes. We offer planning, design and construction guidance for
@@ -818,7 +818,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

@@ -2,26 +2,26 @@ import ConstructionCalculator from '../components/ConstructionCalculator';
 import { cookies } from 'next/headers';
 
 export const metadata = {
-  title: 'MTBOSS | Free Construction Cost Calculator - Instant Estimate',
+  title: 'MTBoss | Free Construction Cost Calculator - Instant Estimate',
   description:
     'Calculate your construction cost instantly. Select city, plot size, floors, and finish quality to get a live BOQ breakdown of cement, steel, bricks, and labor costs.',
   keywords:
     'construction cost calculator, building cost estimator, house construction budget calculator, BOQ calculator, construction cost per sqft calculator india',
   alternates: {
-    canonical: 'https://www.mtboss.in/calculator',
+    canonical: 'https://www.MTBoss.in/calculator',
   },
   openGraph: {
-    title: 'MTBOSS | Free Construction Cost Calculator',
+    title: 'MTBoss | Free Construction Cost Calculator',
     description:
       'Get an instant BOQ estimate for your home or project. Select city, size, floors and finish — live cost breakdown in seconds.',
-    url: 'https://www.mtboss.in/calculator',
-    siteName: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBoss.in/calculator',
+    siteName: 'MTBoss Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/icon.png',
+        url: 'https://www.MTBoss.in/icon.png',
         width: 1200,
         height: 630,
-        alt: 'Free Construction Cost Calculator - MTBOSS',
+        alt: 'Free Construction Cost Calculator - MTBoss',
       },
     ],
     locale: 'en_IN',
@@ -29,10 +29,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MTBOSS | Free Construction Cost Calculator',
+    title: 'MTBoss | Free Construction Cost Calculator',
     description:
       'Get an instant BOQ estimate for your home or project. Select city, size, floors and finish — live cost breakdown in seconds.',
-    images: ['https://www.mtboss.in/icon.png'],
+    images: ['https://www.MTBoss.in/icon.png'],
   },
   robots: {
     index: true,
@@ -43,8 +43,8 @@ export const metadata = {
 const calculatorSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
-  name: 'MTBOSS Construction Cost Calculator',
-  url: 'https://www.mtboss.in/calculator',
+  name: 'MTBoss Construction Cost Calculator',
+  url: 'https://www.MTBoss.in/calculator',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
   offers: {
@@ -54,7 +54,7 @@ const calculatorSchema = {
   },
   provider: {
     '@type': 'GeneralContractor',
-    name: 'MTBOSS Construction Private Limited',
+    name: 'MTBoss Construction Private Limited',
   },
 };
 

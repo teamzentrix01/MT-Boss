@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            School Building Contractor in Moradabad: On-Ground Execution by MTBOSS
+            School Building Contractor in Moradabad: On-Ground Execution by MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -21,10 +21,10 @@ const Content = () => {
                 especially relevant for schools that already have an
                 architect&apos;s plan and need reliable execution, as well as for
                 existing schools adding a new block, renovating old classrooms,
-                or expanding to accommodate more students. MTBOSS Construction
+                or expanding to accommodate more students. MTBoss Construction
                 Private Limited works as this kind of on-ground civil contractor
                 for school buildings in Moradabad, handling construction and
-                material supply. This page explains what MTBOSS does as a school
+                material supply. This page explains what MTBoss does as a school
                 building contractor, where this role fits, and how to get in
                 touch.
               </p>
@@ -32,13 +32,13 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Construction Private Limited
+                MTBoss Construction Private Limited
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBOSS is a Moradabad-based company offering construction services, doorstep home services, verified property transactions, and wholesale building materials under one company.</li>
+                <li>MTBoss is a Moradabad-based company offering construction services, doorstep home services, verified property transactions, and wholesale building materials under one company.</li>
                 <li>The office is located at Harthala, Kanth Road, Behind KR Collection, near Domino&apos;s, Moradabad, close to the city&apos;s residential and institutional areas.</li>
-                <li>School construction is a specifically listed MTBOSS service category, alongside home, hotel, college and mall construction services.</li>
-                <li>A project gallery and blog on the MTBOSS website let prospective clients review completed work before reaching out.</li>
+                <li>School construction is a specifically listed MTBoss service category, alongside home, hotel, college and mall construction services.</li>
+                <li>A project gallery and blog on the MTBoss website let prospective clients review completed work before reaching out.</li>
               </ul>
             </section>
 
@@ -59,7 +59,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Where MTBOSS Fits as a School Building Contractor
+                Where MTBoss Fits as a School Building Contractor
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>New classroom block construction:</strong> Civil execution for an additional building or wing as a school expands its student capacity.</li>
@@ -70,7 +70,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 For a completely new, large-format school campus with multiple
-                blocks and detailed layout planning, MTBOSS can support this
+                blocks and detailed layout planning, MTBoss can support this
                 from the design coordination stage as well, as covered under its
                 broader school construction service — this page focuses
                 specifically on the contractor-level execution role.
@@ -79,16 +79,16 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBOSS Works as a Site-Level School Contractor
+                How MTBoss Works as a Site-Level School Contractor
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Step 1 — Enquiry:</strong> You contact MTBOSS through the website, phone or WhatsApp with your project details and any approved drawings.</li>
+                <li><strong>Step 1 — Enquiry:</strong> You contact MTBoss through the website, phone or WhatsApp with your project details and any approved drawings.</li>
                 <li><strong>Step 2 — Requirement discussion:</strong> The team discusses the scope of civil work needed — new construction, renovation, or expansion — and your budget.</li>
-                <li><strong>Step 3 — Site visit:</strong> MTBOSS engineers assess the plot or existing structure, access and surrounding conditions.</li>
+                <li><strong>Step 3 — Site visit:</strong> MTBoss engineers assess the plot or existing structure, access and surrounding conditions.</li>
                 <li><strong>Step 4 — Execution planning:</strong> A construction schedule is prepared based on the approved layout, ideally aligned with the school&apos;s academic calendar.</li>
-                <li><strong>Step 5 — Budget estimation:</strong> The MTBOSS Budget Calculator and current material rates are used to estimate the civil execution cost.</li>
-                <li><strong>Step 6 — Material supply:</strong> Cement, steel, bricks, tiles and paints are sourced directly through MTBOSS&apos;s own wholesale supply.</li>
-                <li><strong>Step 7 — On-site execution:</strong> Civil work proceeds under MTBOSS supervision, with quality and timeline checks along the way.</li>
+                <li><strong>Step 5 — Budget estimation:</strong> The MTBoss Budget Calculator and current material rates are used to estimate the civil execution cost.</li>
+                <li><strong>Step 6 — Material supply:</strong> Cement, steel, bricks, tiles and paints are sourced directly through MTBoss&apos;s own wholesale supply.</li>
+                <li><strong>Step 7 — On-site execution:</strong> Civil work proceeds under MTBoss supervision, with quality and timeline checks along the way.</li>
                 <li><strong>Step 8 — Handover:</strong> Final finishing of the civil structure and handover, ready for the next academic session.</li>
               </ul>
             </section>
@@ -110,21 +110,21 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why the MTBOSS Budget Calculator Helps Contractor-Level Planning
+                Why the MTBoss Budget Calculator Helps Contractor-Level Planning
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>It is a free tool available directly on the MTBOSS website, useful for estimating the civil execution cost of a new classroom block, renovation or expansion project.</li>
+                <li>It is a free tool available directly on the MTBoss website, useful for estimating the civil execution cost of a new classroom block, renovation or expansion project.</li>
                 <li>Because contractor-level scope is more defined than a full design-and-build project, the estimate tends to be more directly comparable across different contractors.</li>
-                <li>Because MTBOSS also supplies materials wholesale, the estimate is grounded in pricing the company itself works with.</li>
+                <li>Because MTBoss also supplies materials wholesale, the estimate is grounded in pricing the company itself works with.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBOSS&apos;s Material Supply Matters for School Contractor Work
+                Why MTBoss&apos;s Material Supply Matters for School Contractor Work
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints directly, on a wholesale basis.</li>
+                <li>MTBoss supplies cement, TMT steel bars, bricks, tiles and paints directly, on a wholesale basis.</li>
                 <li>For a contractor executing civil work, having direct control over material delivery timing helps keep the construction schedule on track, especially important when work needs to finish before a new academic session begins.</li>
                 <li>Sourcing materials through the same company doing the construction reduces coordination gaps that can otherwise delay a project waiting on a separate supplier.</li>
               </ul>
@@ -132,78 +132,78 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What to Share with MTBOSS Before Starting Contractor Work
+                What to Share with MTBoss Before Starting Contractor Work
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Approved drawings, if available:</strong> Floor plans or layouts from an architect, so MTBOSS can execute to the correct specification.</li>
+                <li><strong>Approved drawings, if available:</strong> Floor plans or layouts from an architect, so MTBoss can execute to the correct specification.</li>
                 <li><strong>Scope of civil work needed:</strong> New classroom block, renovation of existing structure, or vertical expansion.</li>
                 <li><strong>Facility size:</strong> Approximate number of classrooms or additional built-up area planned.</li>
                 <li><strong>Rough budget range:</strong> For the civil execution and material portion specifically.</li>
                 <li><strong>Timeline expectations:</strong> Particularly relevant if the work needs to be completed before a new academic session or during a specific vacation period.</li>
               </ul>
               <p className="mt-3">
-                Sharing this information upfront helps MTBOSS schedule the work
+                Sharing this information upfront helps MTBoss schedule the work
                 accurately, especially around academic calendar constraints.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Property Services: Useful If You Don&apos;t Have a Site Yet
+                MTBoss Property Services: Useful If You Don&apos;t Have a Site Yet
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBOSS offers verified property buying, selling and renting services in and around Moradabad.</li>
+                <li>MTBoss offers verified property buying, selling and renting services in and around Moradabad.</li>
                 <li>Useful for education providers still searching for a suitable plot or existing building to convert into or expand as a school.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Doorstep Services for Ongoing School Maintenance
+                MTBoss Doorstep Services for Ongoing School Maintenance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Once the facility is operational, MTBOSS also offers electrician, plumber, AC repair and pest control services for ongoing maintenance needs.</li>
+                <li>Once the facility is operational, MTBoss also offers electrician, plumber, AC repair and pest control services for ongoing maintenance needs.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MTBOSS
+                Areas Served by MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Moradabad city and its residential and institutional localities.</li>
-                <li>Kanth Road and surrounding areas, close to the MTBOSS office itself.</li>
+                <li>Kanth Road and surrounding areas, close to the MTBoss office itself.</li>
                 <li>Plots and existing school buildings across Moradabad district suitable for expansion or renovation.</li>
-                <li>Clients in nearby towns and districts of Uttar Pradesh coordinating their project remotely with the Moradabad-based MTBOSS team.</li>
+                <li>Clients in nearby towns and districts of Uttar Pradesh coordinating their project remotely with the Moradabad-based MTBoss team.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Getting a Quote from MTBOSS as Your School Building Contractor
+                Getting a Quote from MTBoss as Your School Building Contractor
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBOSS offers a &quot;Get a Construction Quote&quot; option directly on its website, letting you request pricing for civil execution without an in-person visit first.</li>
+                <li>MTBoss offers a &quot;Get a Construction Quote&quot; option directly on its website, letting you request pricing for civil execution without an in-person visit first.</li>
                 <li>You can also reach the team directly by phone or WhatsApp to discuss your project scope.</li>
-                <li>Sharing your facility size, approved drawings (if available) and rough budget upfront helps MTBOSS give a more accurate initial response.</li>
+                <li>Sharing your facility size, approved drawings (if available) and rough budget upfront helps MTBoss give a more accurate initial response.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact MTBOSS — School Building Contractor in Moradabad
+                Contact MTBoss — School Building Contractor in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
+                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBoss.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBoss.in
                   </a>
                 </li>
                 <li>
@@ -220,16 +220,16 @@ const Content = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Chat with MTBOSS on WhatsApp
+                    Chat with MTBoss on WhatsApp
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -240,17 +240,17 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 <strong>Get a Free Construction Quote:</strong> Use the quote
-                option on the MTBOSS website, or contact the team directly by
+                option on the MTBoss website, or contact the team directly by
                 phone or WhatsApp.
               </p>
               <p className="mt-3">
                 For new classroom blocks, playschool construction, renovation of
                 ageing school buildings, or vertical expansion of an existing
-                campus, MTBOSS works as a hands-on building contractor in
+                campus, MTBoss works as a hands-on building contractor in
                 Moradabad, executing civil construction according to approved
                 drawings and supplying core materials directly. With scheduling
                 sensitivity to academic calendars, a free budget calculator and
-                a local Moradabad presence, MTBOSS supports the civil execution
+                a local Moradabad presence, MTBoss supports the civil execution
                 side of school building projects of various sizes.
               </p>
             </section>
@@ -261,39 +261,39 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>1. What does a school building contractor like MTBOSS actually do?</strong>
+                  <strong>1. What does a school building contractor like MTBoss actually do?</strong>
                   <br />
-                  MTBOSS executes the civil construction — foundation,
+                  MTBoss executes the civil construction — foundation,
                   structure, walls and finishing — according to approved
                   drawings, and supplies core building materials.
                 </li>
                 <li>
-                  <strong>2. Can MTBOSS handle renovation of an existing school building?</strong>
+                  <strong>2. Can MTBoss handle renovation of an existing school building?</strong>
                   <br />
                   Yes, renovation and upgrading of existing school structures
-                  falls within MTBOSS&apos;s contractor-level scope.
+                  falls within MTBoss&apos;s contractor-level scope.
                 </li>
                 <li>
-                  <strong>3. Can MTBOSS build a new classroom block for an existing school?</strong>
+                  <strong>3. Can MTBoss build a new classroom block for an existing school?</strong>
                   <br />
                   Yes, civil execution for new blocks, floors or wings is part
-                  of MTBOSS&apos;s school construction service.
+                  of MTBoss&apos;s school construction service.
                 </li>
                 <li>
-                  <strong>4. Does MTBOSS supply materials for the project as well?</strong>
+                  <strong>4. Does MTBoss supply materials for the project as well?</strong>
                   <br />
-                  Yes, MTBOSS supplies cement, TMT steel bars, bricks, tiles and
+                  Yes, MTBoss supplies cement, TMT steel bars, bricks, tiles and
                   paints on a wholesale basis.
                 </li>
                 <li>
                   <strong>5. Can work be scheduled around our school&apos;s academic calendar?</strong>
                   <br />
-                  Yes, MTBOSS aims to coordinate construction and renovation
+                  Yes, MTBoss aims to coordinate construction and renovation
                   scheduling to minimize disruption to ongoing classes where
                   possible.
                 </li>
                 <li>
-                  <strong>6. Where is the MTBOSS office located?</strong>
+                  <strong>6. Where is the MTBoss office located?</strong>
                   <br />
                   Harthala, Kanth Road, Behind KR Collection, near
                   Domino&apos;s, Moradabad, Uttar Pradesh.

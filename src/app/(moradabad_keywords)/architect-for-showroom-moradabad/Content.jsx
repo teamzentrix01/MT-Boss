@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Showroom in Moradabad: Design and Build with MT Boss
+            Architect for Showroom in Moradabad: Design and Build with MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,7 +23,7 @@ const Content = () => {
                 pass by and a store that people remember.
               </p>
               <p className="mt-3">
-                MT Boss is a construction company serving Moradabad and Bareilly with
+                MTBoss is a construction company serving Moradabad and Bareilly with
                 commercial, residential, hospitality and industrial projects. We handle
                 architecture, interior design, construction, modular work and waterproofing
                 under one team. That means your showroom moves from a plot or an empty
@@ -148,7 +148,7 @@ const Content = () => {
                 Showroom Architecture Services We Provide
               </h3>
               <p className="mb-3">
-                You can hire MT Boss for a single stage or for the complete journey from
+                You can hire MTBoss for a single stage or for the complete journey from
                 concept to opening day.
               </p>
 
@@ -203,7 +203,7 @@ const Content = () => {
                 Construction and Project Management
               </h4>
               <p>
-                MT Boss builds what we design. Our engineers and site supervisors manage
+                MTBoss builds what we design. Our engineers and site supervisors manage
                 materials, labour, schedules and quality checks, and keep you updated at
                 each stage.
               </p>
@@ -303,7 +303,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Our Showroom Design Process at MT Boss
+                Our Showroom Design Process at MTBoss
               </h3>
               <p className="mb-3">
                 A clear process saves time and money. Here is how we handle a showroom
@@ -333,7 +333,7 @@ const Content = () => {
                   itemised estimate covering materials, labour and finishing. You can also
                   try the{" "}
                   <a href="/calculator" className="text-blue-600 underline">
-                    MT Boss construction cost calculator
+                    MTBoss construction cost calculator
                   </a>{" "}
                   for an early idea.
                 </li>
@@ -455,7 +455,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss: A Reliable Partner for Showroom Projects
+                MTBoss: A Reliable Partner for Showroom Projects
               </h3>
               <p className="mb-3">
                 Choosing a partner for a showroom is a serious business decision. These
@@ -497,7 +497,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 If you are searching for an architect for showroom Moradabad who can take
-                you from idea to grand opening, MT Boss offers both the design skill and
+                you from idea to grand opening, MTBoss offers both the design skill and
                 the construction capability to deliver.
               </p>
             </section>
@@ -638,7 +638,7 @@ const Content = () => {
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Contact MT Boss
+                Contact MTBoss
               </h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -655,21 +655,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in/
+                    https://www.MTBoss.in/
                   </a>
                 </li>
                 <li>
@@ -703,9 +703,9 @@ const Content = () => {
                   and prepares drawings for construction.
                 </li>
                 <li>
-                  <strong>Q2. Does MT Boss handle both design and construction?</strong>
+                  <strong>Q2. Does MTBoss handle both design and construction?</strong>
                   <br />
-                  Yes. MT Boss manages architecture, interiors, construction and
+                  Yes. MTBoss manages architecture, interiors, construction and
                   waterproofing under one team.
                 </li>
                 <li>
@@ -755,7 +755,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q10. How can I contact MT Boss for a showroom project?
+                    Q10. How can I contact MTBoss for a showroom project?
                   </strong>
                   <br />
                   Call or WhatsApp{" "}
@@ -769,19 +769,19 @@ const Content = () => {
                   </a>
                   , email{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                   , or request a quote at{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBoss.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    mtboss.in
+                    MTBoss.in
                   </a>
                   .
                 </li>

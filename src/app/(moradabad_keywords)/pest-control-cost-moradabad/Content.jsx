@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Pest Control Cost in Moradabad: Pricing Factors, Service Plans and
-            Quote Support from MTBOSS
+            Pest Control Cost in Moradabad:
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,7 +22,7 @@ const Content = () => {
                 the work needed to stop it from returning.
               </p>
               <p className="mt-3">
-                MTBOSS is a construction and home-services company serving
+                MTBoss is a construction and home-services company serving
                 Moradabad and Bareilly, with a focus on quality work, transparent
                 pricing and on-time delivery. Pest control is part of our quick
                 home services, and our approach to cost is straightforward:
@@ -34,7 +33,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Overview of Pest Control Pricing in Moradabad
+               Pest Control Pricing in Moradabad
               </h3>
               <p className="mb-3">
                 Pest control providers usually price their work in one of three
@@ -282,7 +281,7 @@ const Content = () => {
                 the infestation has spread.
               </p>
               <p className="mt-3">
-                Because MTBOSS is also a construction company, we can look beyond
+                Because MTBoss is also a construction company, we can look beyond
                 the visible mud tubes. Moisture, cracks and soil conditions around
                 the foundation often explain why termites arrived, and fixing them
                 helps protect your investment. For homes under construction or
@@ -333,7 +332,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Quotation Process at MTBOSS
+                Quotation Process at MTBoss
               </h3>
               <p className="mb-3">
                 Our process keeps pricing clear from the first call.
@@ -446,10 +445,10 @@ const Content = () => {
               <p>
                 Pest problems and building problems often come together. A leaking
                 pipe attracts cockroaches, damp walls support termites, and gaps
-                near drains let rodents in. MTBOSS offers pest control alongside
+                near drains let rodents in. MTBoss offers pest control alongside
                 plumbing, building repair, waterproofing, painting and renovation,
                 so you can solve the cause and the pest through one provider. You
-                can also use the MTBOSS Budget Calculator to plan any repair or
+                can also use the MTBoss Budget Calculator to plan any repair or
                 renovation work that comes out of the inspection.
               </p>
             </section>
@@ -504,7 +503,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBOSS provides pest control across Moradabad, including
+                MTBoss provides pest control across Moradabad, including
                 residential colonies, market areas and commercial zones such as
                 Civil Lines, Lajpat Nagar, Delhi Road, Kanth Road, Ramganga Vihar
                 and Buddhi Vihar. If your locality is not listed, contact us and
@@ -538,26 +537,26 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
               </ul>
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/quick/pest-control"
+                  href="https://www.MTBoss.in/quick/pest-control"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS Pest Control page
+                  MTBoss Pest Control page
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -567,7 +566,7 @@ const Content = () => {
                 .
               </p>
               <p className="mt-3">
-                Contact MTBOSS today for inspection-based, transparent pest
+                Contact MTBoss today for inspection-based, transparent pest
                 control pricing in Moradabad.
               </p>
             </section>
@@ -633,14 +632,14 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q9. Does MTBOSS charge for the inspection visit?
+                    Q9. Does MTBoss charge for the inspection visit?
                   </strong>
                   <br />
                   Please confirm current inspection terms by calling or messaging
                   us on WhatsApp.
                 </li>
                 <li>
-                  <strong>Q10. How do I request a quote from MTBOSS?</strong>
+                  <strong>Q10. How do I request a quote from MTBoss?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -651,7 +650,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

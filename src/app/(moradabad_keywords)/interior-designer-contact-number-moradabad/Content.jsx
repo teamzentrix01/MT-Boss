@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer Contact Number in Moradabad: Call MT Boss Today
+            Interior Designer Contact Number in Moradabad: Call MTBoss Today
           </h2>
 
 
@@ -19,7 +19,7 @@ const Content = () => {
                 Searching for an interior designer contact number in Moradabad usually means you are ready to start. Maybe you have a new flat waiting to be furnished, a shop that needs a fresh look, or an old house that no longer works for your family. You want to speak to a real person, get honest advice and know what to expect before you commit.
               </p>
               <p className="mt-3">
-                You can reach the MT Boss interior design team directly on <strong>+91 94584 10866</strong>, by call or WhatsApp. MT Boss is a Moradabad-based construction, property and home services company, and our designers plan, design and deliver interiors for homes, offices and commercial spaces. This page lists every way to contact us, explains what to prepare before calling, outlines our services and shows you how to verify any designer before you hire.
+                You can reach the MTBoss interior design team directly on <strong>+91 94584 10866</strong>, by call or WhatsApp. MTBoss is a Moradabad-based construction, property and home services company, and our designers plan, design and deliver interiors for homes, offices and commercial spaces. This page lists every way to contact us, explains what to prepare before calling, outlines our services and shows you how to verify any designer before you hire.
               </p>
             </section>
 
@@ -41,7 +41,7 @@ const Content = () => {
                 <li>
                   <strong>Online quote form.</strong> Fill in the{" "}
                   <a
-                    href="https://www.mtboss.in/CTASection/get-quote"
+                    href="https://www.MTBoss.in/CTASection/get-quote"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -53,10 +53,10 @@ const Content = () => {
                 <li>
                   <strong>Email.</strong> Write to{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>{" "}
                   with your project details and drawings.
                 </li>
@@ -66,12 +66,12 @@ const Content = () => {
                 <li>
                   <strong>Budget calculator.</strong> Not ready to call yet? Try the{" "}
                   <a
-                    href="https://www.mtboss.in/calculator"
+                    href="https://www.MTBoss.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    MT Boss Construction Budget Calculator
+                    MTBoss Construction Budget Calculator
                   </a>{" "}
                   to get a rough idea of costs first.
                 </li>
@@ -120,7 +120,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Interior Design Services Offered by MT Boss
+                Interior Design Services Offered by MTBoss
               </h3>
 
 
@@ -191,14 +191,14 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MT Boss as Your Interior Designer in Moradabad
+                Why Choose MTBoss as Your Interior Designer in Moradabad
               </h3>
               <p className="mb-3">
                 Many people call several designers before deciding. Here is what tends to make the difference.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Construction knowledge behind every design.</strong> MT Boss is a construction company first. We know what walls, ceilings, wiring and plumbing can handle, so our designs are practical to build, not just attractive on screen.
+                  <strong>Construction knowledge behind every design.</strong> MTBoss is a construction company first. We know what walls, ceilings, wiring and plumbing can handle, so our designs are practical to build, not just attractive on screen.
                 </li>
                 <li>
                   <strong>One accountable team.</strong> Design, materials, carpentry, electrical work, painting and finishing are coordinated by us. You deal with one point of contact instead of chasing several contractors.
@@ -210,9 +210,9 @@ const Content = () => {
                   <strong>Transparent, itemised pricing.</strong> You receive a written quotation showing materials, labour and finishes room by room, with no hidden charges.
                 </li>
                 <li>
-                  <strong>Quality materials at fair rates.</strong> Through the MT Boss{" "}
+                  <strong>Quality materials at fair rates.</strong> Through the MTBoss{" "}
                   <a
-                    href="https://www.mtboss.in/ShopNow"
+                    href="https://www.MTBoss.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -224,7 +224,7 @@ const Content = () => {
                 <li>
                   <strong>Support after handover.</strong> Our{" "}
                   <a
-                    href="https://www.mtboss.in/quick"
+                    href="https://www.MTBoss.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -239,7 +239,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Process After Your First Call
+                MTBoss Process After Your First Call
               </h3>
               <p className="mb-3">
                 We keep the process simple so you always know the next step.
@@ -298,9 +298,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss suggests spending more on items used every day, such as the kitchen, wardrobes, hardware, waterproofing, wiring and lighting, and saving on decor and movable furniture that you can upgrade later. For a personal estimate, call <strong>+91 94584 10866</strong> or request a{" "}
+                MTBoss suggests spending more on items used every day, such as the kitchen, wardrobes, hardware, waterproofing, wiring and lighting, and saving on decor and movable furniture that you can upgrade later. For a personal estimate, call <strong>+91 94584 10866</strong> or request a{" "}
                 <a
-                  href="https://www.mtboss.in/CTASection/get-quote"
+                  href="https://www.MTBoss.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -314,7 +314,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Covered by MT Boss in Moradabad
+                Areas Covered by MTBoss in Moradabad
               </h3>
               <p className="mb-3">
                 We work with clients across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies.
@@ -330,7 +330,7 @@ const Content = () => {
                 Tips to Verify an Interior Designer Before You Hire
               </h3>
               <p className="mb-3">
-                Whether you choose MT Boss or another firm, protect yourself with these checks:
+                Whether you choose MTBoss or another firm, protect yourself with these checks:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Ask to see completed projects, not just online images or stock photos.</li>
@@ -365,7 +365,7 @@ const Content = () => {
                 <li>What warranty or after-service do you provide?</li>
               </ul>
               <p className="mt-3">
-                MT Boss welcomes all of these questions and answers them openly, so you can decide without pressure.
+                MTBoss welcomes all of these questions and answers them openly, so you can decide without pressure.
               </p>
             </section>
 
@@ -422,14 +422,14 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. What is the MT Boss contact number?</strong>
+                  <strong>Q1. What is the MTBoss contact number?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MT Boss offers a free consultation and site visit.
+                  Yes. MTBoss offers a free consultation and site visit.
                 </li>
                 <li>
                   <strong>Q3. Can I get a quote without visiting the office?</strong>
@@ -437,12 +437,12 @@ const Content = () => {
                   Yes. Share your details by WhatsApp or the online quote form, and our team will respond.
                 </li>
                 <li>
-                  <strong>Q4. Does MT Boss handle execution too?</strong>
+                  <strong>Q4. Does MTBoss handle execution too?</strong>
                   <br />
                   Yes. We offer complete turnkey interiors, from design to handover.
                 </li>
                 <li>
-                  <strong>Q5. Does MT Boss design shops and offices?</strong>
+                  <strong>Q5. Does MTBoss design shops and offices?</strong>
                   <br />
                   Yes. We handle both residential and commercial interiors.
                 </li>
@@ -452,14 +452,14 @@ const Content = () => {
                   Yes. You receive 3D designs so you can approve the look in advance.
                 </li>
                 <li>
-                  <strong>Q7. Can MT Boss design a modular kitchen and wardrobes?</strong>
+                  <strong>Q7. Can MTBoss design a modular kitchen and wardrobes?</strong>
                   <br />
                   Yes. We design and install modular kitchens, wardrobes, TV units and custom storage.
                 </li>
                 <li>
                   <strong>Q8. Does the design follow Vastu?</strong>
                   <br />
-                  Yes. MT Boss plans Vastu-friendly layouts whenever you ask for them.
+                  Yes. MTBoss plans Vastu-friendly layouts whenever you ask for them.
                 </li>
                 <li>
                   <strong>Q9. Is the quotation itemised?</strong>
@@ -467,7 +467,7 @@ const Content = () => {
                   Yes. You get a written breakup of materials, labour and finishes.
                 </li>
                 <li>
-                  <strong>Q10. Does MT Boss offer service after handover?</strong>
+                  <strong>Q10. Does MTBoss offer service after handover?</strong>
                   <br />
                   Yes. Our home services team can handle electrical, plumbing, painting and AC needs.
                 </li>

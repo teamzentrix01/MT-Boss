@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Best Home Renovation Company in Moradabad: A Smarter Way to Renovate
-            with MTBOSS
+            with MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,10 +23,10 @@ const Content = () => {
                 every trade in the right order.
               </p>
               <p className="mt-3">
-                MTBOSS is an architect, interior design and construction company
+                MTBoss is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work,
                 transparent pricing and on-time delivery. This page is a practical
-                guide to renovating well, and shows how MTBOSS handles each stage.
+                guide to renovating well, and shows how MTBoss handles each stage.
               </p>
             </section>
 
@@ -35,7 +35,7 @@ const Content = () => {
                 Renovation Support Under One Roof
               </h3>
               <p className="mb-3">
-                Renovation touches many parts of a building. MTBOSS offers the
+                Renovation touches many parts of a building. MTBoss offers the
                 following services through one team, so the work stays connected:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -290,7 +290,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                The MTBOSS Budget Calculator on our website helps you set
+                The MTBoss Budget Calculator on our website helps you set
                 realistic expectations, and final pricing is shared after the site
                 inspection.
               </p>
@@ -415,7 +415,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBOSS Renovation Journey
+                The MTBoss Renovation Journey
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -452,7 +452,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MTBOSS
+                Reasons to Choose MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -487,7 +487,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBOSS provides home renovation across Moradabad, including
+                MTBoss provides home renovation across Moradabad, including
                 residential areas such as Civil Lines, Lajpat Nagar, Delhi Road,
                 Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -498,7 +498,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Begin Your Renovation with MTBOSS
+                Begin Your Renovation with MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -515,10 +515,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -529,16 +529,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/"
+                  href="https://www.MTBoss.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS website
+                  MTBoss website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -548,7 +548,7 @@ const Content = () => {
                 , and view our Portfolio to see our work.
               </p>
               <p className="mt-3">
-                Renovate in the right order, with the right team. Contact MTBOSS
+                Renovate in the right order, with the right team. Contact MTBoss
                 today for home renovation in Moradabad.
               </p>
             </section>
@@ -560,7 +560,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBOSS offer home renovation in Moradabad?
+                    Q1. Does MTBoss offer home renovation in Moradabad?
                   </strong>
                   <br />
                   Yes. We handle repair, renovation, interiors and finishing for
@@ -607,7 +607,7 @@ const Content = () => {
                 <li>
                   <strong>Q8. Can I plan my budget online first?</strong>
                   <br />
-                  Yes. The Budget Calculator on mtboss.in gives an idea before the
+                  Yes. The Budget Calculator on MTBoss.in gives an idea before the
                   site visit.
                 </li>
                 <li>
@@ -619,7 +619,7 @@ const Content = () => {
                   the project.
                 </li>
                 <li>
-                  <strong>Q10. How do I book MTBOSS for renovation?</strong>
+                  <strong>Q10. How do I book MTBoss for renovation?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -630,7 +630,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>

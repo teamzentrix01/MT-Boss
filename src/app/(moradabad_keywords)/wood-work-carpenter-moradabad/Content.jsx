@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Wood Work Carpenter in Moradabad: Interior, Door and Building Woodwork
-            by MTBOSS
+            Wood Work Carpenter in Moradabad: 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,7 +22,7 @@ const Content = () => {
                 fits and lasts.
               </p>
               <p>
-                MTBOSS is an architect, interior design and construction company
+                MTBoss is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work, transparent
                 pricing and on-time delivery. Carpenter is one of our quick home
                 services. Because we also handle construction, renovation, painting
@@ -34,7 +33,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Wood Work Services at MTBOSS
+                Wood Work Services at MTBoss
               </h3>
               <p className="mb-3">
                 Our woodwork service covers fixed and built-in elements of a
@@ -43,17 +42,6 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   Doors: main doors, room doors, bathroom doors and sliding doors
-                </li>
-                <li>
-                  Windows and frames: wooden windows, shutters and door frames
-                </li>
-                <li>
-                  Wall panelling: decorative panels, accent walls and feature units
-                </li>
-                <li>Partitions: room dividers, office partitions and screens</li>
-                <li>
-                  Built-in storage: wall units, niches, lofts and under-stair
-                  storage
                 </li>
                 <li>
                   Ceiling woodwork: wooden details, beams and lighting borders
@@ -106,7 +94,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBOSS also offers a dedicated Door and Window Install service, so
+                MTBoss also offers a dedicated Door and Window Install service, so
                 fitting and carpentry can be coordinated together.
               </p>
             </section>
@@ -157,7 +145,7 @@ const Content = () => {
                 Panels need a straight, dry wall to hold properly. We check wall
                 condition first, and if dampness is present, our waterproofing and
                 building repair services can fix the source before woodwork is
-                fitted. MTBOSS also offers PVC panel and louvers as an alternative
+                fitted. MTBoss also offers PVC panel and louvers as an alternative
                 where moisture is a concern.
               </p>
             </section>
@@ -324,7 +312,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Woodwork succeeds when it is planned with the rest of the building.
-                MTBOSS coordinates:
+                MTBoss coordinates:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -380,7 +368,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBOSS Woodwork Process
+                The MTBoss Woodwork Process
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -424,7 +412,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBOSS for Wood Work
+                Why MTBoss for Wood Work
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -473,7 +461,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBOSS provides woodwork carpentry across Moradabad, including
+                MTBoss provides woodwork carpentry across Moradabad, including
                 residential areas such as Civil Lines, Lajpat Nagar, Delhi Road,
                 Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -483,7 +471,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Woodwork with MTBOSS
+                Plan Your Woodwork with MTBoss
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -500,10 +488,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBoss2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBoss2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -514,16 +502,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/quick/carpenter"
+                  href="https://www.MTBoss.in/quick/carpenter"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBOSS Carpenter page
+                  MTBoss Carpenter page
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBoss.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -534,7 +522,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 Get woodwork that is planned, fitted and finished properly. Contact
-                MTBOSS today for a wood work carpenter in Moradabad.
+                MTBoss today for a wood work carpenter in Moradabad.
               </p>
             </section>
 
@@ -545,7 +533,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBOSS provide wood work carpenter services in
+                    Q1. Does MTBoss provide wood work carpenter services in
                     Moradabad?
                   </strong>
                   <br />
@@ -604,7 +592,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q10. How do I book a wood work carpenter from MTBOSS?
+                    Q10. How do I book a wood work carpenter from MTBoss?
                   </strong>
                   <br />
                   Call or WhatsApp{" "}
@@ -616,7 +604,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBoss.in.
                 </li>
               </ul>
             </section>
