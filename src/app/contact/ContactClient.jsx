@@ -615,7 +615,7 @@ export default function ContactPage() {
                 rel="noopener noreferrer"
                 className="mt-6 flex items-center gap-2 px-5 py-2.5 bg-[var(--brand-blue)] text-black text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-[var(--brand-blue-light)] transition-all"
               >
-                📍 Get Directions
+                Get Directions
               </a>
             </div>
 

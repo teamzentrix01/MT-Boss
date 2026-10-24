@@ -306,6 +306,9 @@ export default function ProjectsManager() {
           border-radius: 8px; overflow: hidden;
           cursor: pointer;
           transition: border-color .15s, transform .15s, box-shadow .15s;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
         }
         .pm-card:hover {
           border-color: var(--accent);
@@ -343,7 +346,12 @@ export default function ProjectsManager() {
           display: flex; align-items: center; justify-content: center;
           font-size: 2rem; color: var(--muted);
         }
-        .pm-card-body { padding: 0.875rem; }
+        .pm-card-body {
+          padding: 0.875rem;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+        }
         .pm-card-top {
           display: flex; align-items: flex-start;
           justify-content: space-between; gap: 0.5rem;
@@ -357,7 +365,10 @@ export default function ProjectsManager() {
           background: var(--accent-lt); color: var(--accent);
           white-space: nowrap;
         }
-        .pm-card-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; }
+        .pm-card-meta {
+          font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem;
+          min-height: 1.125rem;
+        }
         .pm-card-desc {
           font-size: 0.75rem; color: var(--muted);
           line-height: 1.5;
@@ -370,6 +381,8 @@ export default function ProjectsManager() {
           justify-content: space-between;
           padding-top: 0.625rem;
           border-top: 1px solid var(--border);
+          margin-top: auto;
+          min-height: 2.25rem;
         }
         .pm-badge {
           display: inline-block; padding: 0.15rem 0.55rem;
@@ -611,9 +624,12 @@ export default function ProjectsManager() {
                       <span className="pm-card-title">{project.title}</span>
                       <span className="pm-card-cat">{project.category}</span>
                     </div>
-                    {project.location && (
-                      <div className="pm-card-meta">📍 {project.location} · {project.size}</div>
-                    )}
+                    <div className="pm-card-meta">
+                      {project.location
+                        ? `${project.location}${project.size ? ` · ${project.size}` : ''}`
+                        : (project.size ? project.size : <span style={{ opacity: 0.4 }}>—</span>)
+                      }
+                    </div>
                     {(project.client_name || project.source_lead_id) && (
                       <div className="pm-card-meta">
                         {project.client_name ? `Client: ${project.client_name}` : ''}

@@ -330,14 +330,14 @@ function SupplierDashboardContent() {
 
         {/* Address (truncated unless expanded) */}
         {e.delivery_address && !isExpanded && (
-          <div className="sd-order-meta">📍 {e.delivery_address.slice(0, 70)}{e.delivery_address.length > 70 ? '…' : ''}</div>
+          <div className="sd-order-meta">{e.delivery_address.slice(0, 70)}{e.delivery_address.length > 70 ? '…' : ''}</div>
         )}
 
         {/* Expanded details */}
         {isExpanded && (
           <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: `1px solid ${border}`, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
             {e.user_email && <div className="sd-order-meta">✉️ {e.user_email}</div>}
-            {e.delivery_address && <div className="sd-order-meta">📍 {e.delivery_address}</div>}
+            {e.delivery_address && <div className="sd-order-meta">{e.delivery_address}</div>}
             {mapsUrl && (
               <div>
                 <a href={mapsUrl} target="_blank" rel="noopener noreferrer"
@@ -521,7 +521,7 @@ function SupplierDashboardContent() {
                     Customer: <strong style={{ color: text }}>{fulfillModal.user_name}</strong> · {fulfillModal.user_phone}
                   </div>
                   {fulfillModal.delivery_address && (
-                    <div style={{ color: muted, fontSize: '0.75rem', marginTop: '0.2rem' }}>📍 {fulfillModal.delivery_address}</div>
+                    <div style={{ color: muted, fontSize: '0.75rem', marginTop: '0.2rem' }}>{fulfillModal.delivery_address}</div>
                   )}
                 </div>
 

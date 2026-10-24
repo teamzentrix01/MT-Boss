@@ -516,7 +516,7 @@ export default function ServiceDetailPage() {
                         ? "bg-zinc-800 text-zinc-300 border-zinc-600 hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
                         : "bg-white text-zinc-700 border-zinc-300 hover:border-black"
                   } disabled:opacity-60 disabled:cursor-not-allowed`}>
-                  {fetchingGps ? "📡 Fetching location…" : gpsCoords ? `✓ Location Fetched (${gpsCoords.lat.toFixed(4)}, ${gpsCoords.lng.toFixed(4)})` : "📍 Use My Live Location"}
+                  {fetchingGps ? "📡 Fetching location…" : gpsCoords ? `✓ Location Fetched (${gpsCoords.lat.toFixed(4)}, ${gpsCoords.lng.toFixed(4)})` : "Use My Live Location"}
                 </button>
                 {gpsError && <p className="mt-1.5 text-[10px] font-bold text-red-500">{gpsError}</p>}
               </div>

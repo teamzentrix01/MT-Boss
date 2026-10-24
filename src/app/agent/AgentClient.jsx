@@ -134,7 +134,7 @@ export default function AgentPage() {
       `📧 *Email:* ${f.email}`,
       `📱 *Phone:* ${f.phone}`,
       `💼 *Occupation:* ${f.occupation}`,
-      `📍 *Location:* ${f.city}, ${f.state}`,
+      `*Location:* ${f.city}, ${f.state}`,
       `🏷️ *Agent Type:* ${f.agentType}`,
       `🎯 *Experience:* ${f.experience || 'Not provided'}`,
       `👥 *Network Size:* ${f.network || 'Not provided'}`,

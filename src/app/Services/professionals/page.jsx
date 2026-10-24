@@ -360,7 +360,7 @@ function ProfileModal({ pro, isDark, onEnquire, onClose }) {
               <h2 style={{ color:'#fff',margin:'0 0 4px',fontSize:'22px',fontWeight:800 }}>{pro.name}</h2>
               <p style={{ color:'rgba(255,255,255,0.6)',margin:'0 0 12px',fontSize:'14px' }}>{pro.title}</p>
               <div style={{ display:'flex',gap:'8px',flexWrap:'wrap' }}>
-                <span style={{ background:'rgba(255,255,255,0.08)',color:'rgba(255,255,255,0.75)',padding:'3px 10px',border:'1px solid rgba(255,255,255,0.12)',fontSize:'11px',fontWeight:600 }}>📍 {pro.city}</span>
+                <span style={{ background:'rgba(255,255,255,0.08)',color:'rgba(255,255,255,0.75)',padding:'3px 10px',border:'1px solid rgba(255,255,255,0.12)',fontSize:'11px',fontWeight:600 }}>{pro.city}</span>
                 <span style={{ background:'rgba(255,255,255,0.08)',color:'rgba(255,255,255,0.75)',padding:'3px 10px',border:'1px solid rgba(255,255,255,0.12)',fontSize:'11px',fontWeight:600 }}>⏱ {pro.experience} yrs exp</span>
               </div>
             </div>
@@ -450,7 +450,7 @@ function ProCard({ pro, isDark, onClick }) {
         <p style={{ color:t.accent,margin:'0 0 10px',fontSize:'12px',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.04em' }}>{pro.title}</p>
         <div style={{ display:'flex',gap:'12px',fontSize:'11px',color:t.sub,fontWeight:600 }}>
           <span>⏱ {pro.experience} yr{pro.experience!==1?'s':''}</span>
-          <span>📍 {pro.city}</span>
+          <span>{pro.city}</span>
         </div>
       </div>
     </div>

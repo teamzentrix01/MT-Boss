@@ -108,7 +108,7 @@ function AdminCard({ dark }) {
               <div>
                 <h2 className={`text-xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-900"}`}>{ADMIN.name}</h2>
                 <p className={`text-[10px] font-black uppercase tracking-widest mt-0.5 ${accent}`}>{ADMIN.title}</p>
-                <p className={`text-[10px] mt-1 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>📍 {ADMIN.city} &nbsp;·&nbsp; {ADMIN.experience}+ Years</p>
+                <p className={`text-[10px] mt-1 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>{ADMIN.city} &nbsp;·&nbsp; {ADMIN.experience}+ Years</p>
               </div>
               <span className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest shrink-0 self-start ${accentBg}`}>
                 {ADMIN.category}
@@ -192,7 +192,7 @@ function ProfCardInner({ member, dark, idx }) {
         <div className="flex flex-col flex-1 p-4">
           {/* Location */}
           {member.city && (
-            <p className={`text-[9px] mb-3 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>📍 {member.city}</p>
+            <p className={`text-[9px] mb-3 ${dark ? "text-zinc-500" : "text-zinc-400"}`}>{member.city}</p>
           )}
 
           {/* Bio */}

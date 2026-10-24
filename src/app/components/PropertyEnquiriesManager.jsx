@@ -346,7 +346,7 @@ const EnquiryCard = memo(function EnquiryCard({ item, cardClass, subCardClass, u
             </Link>
           </h3>
           <p className="text-xs text-zinc-500 flex flex-wrap items-center gap-2">
-            <span>📍 {item.property_location || 'Location not specified'}</span>
+            <span>{item.property_location || 'Location not specified'}</span>
             {item.property_price && (
               <>
                 <span>•</span>
