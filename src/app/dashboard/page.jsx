@@ -1112,10 +1112,10 @@ function AdminDashboard() {
                               </td>
                               <td style={{ padding: '0.6rem 0.875rem', minWidth: '160px' }}>
                                 <div style={{ fontWeight: 600 }}>{item.service_title}</div>
-                                {(item.city || item.state) && <div style={{ color: 'var(--muted)', fontSize: '0.72rem' }}>📍 {[item.city, item.state].filter(Boolean).join(', ')}</div>}
+                                {(item.city || item.state) && <div style={{ color: 'var(--muted)', fontSize: '0.72rem' }}>{[item.city, item.state].filter(Boolean).join(', ')}</div>}
                                 {item.address && (
                                   <div style={{ color: 'var(--muted)', fontSize: '0.7rem', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                    📍 {item.address}
+                                    {item.address}
                                   </div>
                                 )}
                               </td>
@@ -2331,7 +2331,7 @@ function AdminDashboard() {
                       <div className="modal-field-label">GPS Location</div>
                       <a href={`https://maps.google.com/?q=${enq.gps_location}`} target="_blank" rel="noreferrer"
                         style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--accent)', fontSize: '0.8rem', fontWeight: 700, textDecoration: 'none', marginTop: 4 }}>
-                        📍 {enq.gps_location} — Open in Google Maps ↗
+                        {enq.gps_location} — Open in Google Maps ↗
                       </a>
                     </div>
                   )}

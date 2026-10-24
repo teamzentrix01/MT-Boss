@@ -1647,7 +1647,7 @@ export default function ShopPage() {
                 </div>
 
                 {/* ── SECTION 4 — GPS Location ────────────────────────── */}
-                <SectionLabel isDark={isDarkMode}>📍 Live Location (Optional)</SectionLabel>
+                <SectionLabel isDark={isDarkMode}>Live Location (Optional)</SectionLabel>
 
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-1.5">
