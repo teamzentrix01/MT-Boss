@@ -124,7 +124,14 @@ export async function GET(req) {
         WHERE project_kind = 'portfolio' AND status = 'published'
         ORDER BY COALESCE(sort_order, 0) ASC, created_at DESC`
     );
-    return NextResponse.json({ success: true, data: result.rows });
+    return NextResponse.json(
+      { success: true, data: result.rows },
+      {
+        headers: {
+          'Cache-Control': 'public, max-age=60, s-maxage=300, stale-while-revalidate=600',
+        },
+      }
+    );
   } catch (error) {
     console.error('GET projects error:', error.message);
     if (isDatabaseConnectionError(error)) {

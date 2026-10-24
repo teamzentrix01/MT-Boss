@@ -1627,7 +1627,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               &larr; Back
             </button>
           )}
-          <h2 style={{ margin: 0, fontSize: 20 }}>Project Management</h2>
+          <h2 style={{ margin: 0, fontSize: 20 }}>Project Management Party</h2>
           {!isAgent && (
             <span style={{ fontSize: 12, background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
               {role.toUpperCase()}

@@ -39,6 +39,8 @@ const ensureTable = createInitializationGuard(async () => {
 
   await pool.query(`ALTER TABLE jobs ADD COLUMN IF NOT EXISTS status VARCHAR(30) DEFAULT 'active'`);
   await pool.query(`ALTER TABLE jobs ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW()`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_jobs_status_created ON jobs (status, created_at DESC)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_jobs_created_at ON jobs (created_at DESC)`);
 });
 
 const seedDefaultJobs = createInitializationGuard(async () => {

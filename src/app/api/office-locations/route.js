@@ -56,28 +56,57 @@ const ensureTable = createInitializationGuard(async () => {
   }
 });
 
+let officesCache = { active: null, all: null, expiresAt: 0 };
+const OFFICE_CACHE_TTL = 120_000; // 2 minutes
+
+function invalidateOfficesCache() {
+  officesCache = { active: null, all: null, expiresAt: 0 };
+}
+
 function hasToken(req) {
   return Boolean(requireRole(req, 'admin'));
 }
 
 export async function GET(req) {
   try {
-    await ensureTable();
-
     const { searchParams } = new URL(req.url);
     const includeAll = searchParams.get('all') === '1';
     if (includeAll && !hasToken(req)) {
       return unauthorized();
     }
 
+    const now = Date.now();
+    if (officesCache.expiresAt > now) {
+      const hit = includeAll ? officesCache.all : officesCache.active;
+      if (hit) {
+        return NextResponse.json({ success: true, data: hit }, {
+          headers: { 'Cache-Control': 'public, max-age=60, s-maxage=120, stale-while-revalidate=300' },
+        });
+      }
+    }
+
+    await ensureTable();
+
     const result = await pool.query(
       `SELECT id, city, address, phone, email, hours, map_url, sort_order, is_active, created_at, updated_at
        FROM office_locations
-       ${includeAll ? '' : 'WHERE is_active = true'}
        ORDER BY sort_order ASC, city ASC`
     );
 
-    return NextResponse.json({ success: true, data: result.rows });
+    const all = result.rows;
+    const active = all.filter((r) => r.is_active);
+
+    officesCache = {
+      all,
+      active,
+      expiresAt: now + OFFICE_CACHE_TTL,
+    };
+
+    const data = includeAll ? all : active;
+
+    return NextResponse.json({ success: true, data }, {
+      headers: { 'Cache-Control': 'public, max-age=60, s-maxage=120, stale-while-revalidate=300' },
+    });
   } catch (error) {
     console.error('GET office-locations error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
@@ -114,6 +143,7 @@ export async function POST(req) {
       ]
     );
 
+    invalidateOfficesCache();
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
     console.error('POST office-locations error:', error);
@@ -163,6 +193,7 @@ export async function PATCH(req) {
       return NextResponse.json({ success: false, error: 'Office not found' }, { status: 404 });
     }
 
+    invalidateOfficesCache();
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
     console.error('PATCH office-locations error:', error);
@@ -183,6 +214,7 @@ export async function DELETE(req) {
 
     await ensureTable();
     await pool.query('DELETE FROM office_locations WHERE id=$1', [id]);
+    invalidateOfficesCache();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('DELETE office-locations error:', error);
