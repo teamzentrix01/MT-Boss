@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Contractor for Boundary Wall Work in Moradabad: MTBoss
+            Civil Contractor For Boundary Wall Work In Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -31,9 +31,7 @@ const Content = () => {
                 someone accountable at each step. MTBoss Construction Private
                 Limited carries out boundary wall work for homes, shops,
                 farmhouses, warehouses and industrial plots across Moradabad and
-                Bareilly. Our approach follows the promise on our website:
-                planning to completion, with quality work, transparent pricing and
-                on-time delivery.
+                Bareilly. 
               </p>
             </section>
 
@@ -76,10 +74,7 @@ const Content = () => {
                 boundary wall gets the same basic discipline as a building:
                 drawings, specifications, supervision and stage-wise checks.
               </p>
-              <p>
-                Credentials: [add registration, GST and other verifiable details
-                you can show].
-              </p>
+             
             </section>
 
             <section>
@@ -134,47 +129,7 @@ const Content = () => {
                 pillars.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 6: Masonry or Panel Installation
-              </h4>
-              <p>
-                Bricks or blocks are laid in proper bond with level, plumb and
-                uniform joints. For readymade walls, panels are fitted into posts
-                with correct alignment [confirm readymade panel types and sizes].
-              </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 7: Tie Beams and Coping
-              </h4>
-              <p>
-                Where designed, tie beams and coping add stiffness and protect the
-                wall top from water entry.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 8: Plaster and Finishing
-              </h4>
-              <p>
-                Plaster is applied with controlled thickness and cured properly.
-                Painting or textured finishes follow after the plaster has dried.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 9: Drainage and Slope
-              </h4>
-              <p>
-                Weep holes and ground slope are checked, so water does not collect
-                along the wall base.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 10: Gate Coordination and Handover
-              </h4>
-              <p>
-                Gate pillars and entry paving are aligned with gate fabrication.
-                The site is cleaned, defects are corrected and the work is handed
-                over.
-              </p>
             </section>
 
             <section>

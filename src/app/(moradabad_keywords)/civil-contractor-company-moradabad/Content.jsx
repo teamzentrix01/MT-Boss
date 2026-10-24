@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Contractor Company in Moradabad: MTBoss Construction
+            Civil Contractor Company in Moradabad: MTBoss 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -62,7 +62,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Meaning and Scope of a Civil Contractor Company
+               Scope of a Civil Contractor Company
               </h3>
               <p className="mb-3">
                 A civil contractor company carries out the physical construction
@@ -156,16 +156,7 @@ const Content = () => {
                 designed around your workflow.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Roads, Drains and Site Development
-              </h4>
-              <p className="mb-3">
-                Good ground infrastructure supports every building. We carry out
-                CC roads, interlocking paver blocks, internal roads, storm
-                drains, culverts, retaining walls and boundary walls. Correct
-                slope, base preparation and drainage are our priorities, because
-                standing water shortens the life of any pavement.
-              </p>
+              
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Institutional and Hospitality Buildings
@@ -177,15 +168,7 @@ const Content = () => {
                 for safety and accessibility.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Structural Repair, Extension and Renovation
-              </h4>
-              <p className="mb-3">
-                Older buildings often need strengthening, crack treatment,
-                plaster restoration, floor additions or layout changes. Before
-                any modification, our engineers assess the existing structure,
-                so the new work is safe and compatible.
-              </p>
+            
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Waterproofing and Protective Treatment
@@ -200,7 +183,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                From Enquiry to Handover: Our Working Method
+                From Enquiry to Handover: 
               </h3>
               <p className="mb-3">
                 A clear method keeps projects on track. Every MTBoss civil
@@ -234,26 +217,7 @@ const Content = () => {
                   material standards and payment milestones are put on paper, so
                   both sides know what to expect.
                 </li>
-                <li>
-                  <strong>6. Mobilisation and procurement.</strong> We arrange
-                  labour, equipment and materials, and schedule deliveries to
-                  match site progress.
-                </li>
-                <li>
-                  <strong>7. Supervised execution.</strong> Engineers and
-                  supervisors monitor daily work against drawings and
-                  specifications.
-                </li>
-                <li>
-                  <strong>8. Stage-wise inspection.</strong> Critical stages
-                  such as reinforcement, shuttering, concreting and
-                  waterproofing are checked before they are covered.
-                </li>
-                <li>
-                  <strong>9. Handover.</strong> After final inspection, snag
-                  correction and cleaning, we hand over the project with
-                  documentation.
-                </li>
+               
               </ul>
             </section>
 

@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Construction Services in Moradabad — Complete Service Guide
+            Civil Construction Services in Moradabad 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -107,13 +107,7 @@ const Content = () => {
                 <li>Bathroom and kitchen fittings</li>
               </ul>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">6. Property-Related Services</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Verified property buying and selling</li>
-                <li>Rental listings with zero brokerage</li>
-                <li>Free property listing for owners</li>
-                <li>Site visits and property verification</li>
-              </ul>
+            
             </section>
 
             <section>
@@ -134,10 +128,7 @@ const Content = () => {
                 <li>Verified property marketplace for buying, selling, and renting with zero rental brokerage</li>
                 <li>Direct wholesale material supply for cement, steel, bricks, tiles, and paints</li>
                 <li>Franchise opportunities for entrepreneurs entering the construction business</li>
-                <li>Agent commission program with earnings on referrals</li>
-                <li>Technology-integrated construction process, using AI and BIM since 2018</li>
-                <li>Industry recognition — &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024</li>
-                <li>Instant WhatsApp support for quick queries and quotes</li>
+                
               </ul>
               <p className="mt-3">
                 This combination means a client can get new construction, renovation, home repairs, material supply, and even property assistance from a single accountable company, rather than piecing together separate vendors.
@@ -203,7 +194,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Benefits of Choosing a Locally Established Full-Service Provider
+                Choosing a Locally Established Full-Service Provider
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Better understanding of Moradabad&apos;s soil type and climate-related needs</li>
