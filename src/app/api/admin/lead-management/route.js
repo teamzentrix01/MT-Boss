@@ -29,6 +29,10 @@ const ensureLeadManagementSchema = createInitializationGuard(async () => {
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS priority VARCHAR(30) DEFAULT 'Normal'`,
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS assigned_agent_ids JSONB DEFAULT '[]'::jsonb`,
     `ALTER TABLE agents ADD COLUMN IF NOT EXISTS specializations JSONB NOT NULL DEFAULT '[]'::jsonb`,
+    `CREATE INDEX IF NOT EXISTS idx_agent_leads_source_ref ON agent_leads (source_ref_table, source_ref_id)`,
+    `CREATE INDEX IF NOT EXISTS idx_agent_leads_created_at ON agent_leads (created_at DESC)`,
+    `CREATE INDEX IF NOT EXISTS idx_agent_leads_status ON agent_leads (status)`,
+    `CREATE INDEX IF NOT EXISTS idx_agent_leads_agent_id ON agent_leads (agent_id)`,
   ];
   for (const sql of alters) await pool.query(sql);
 });

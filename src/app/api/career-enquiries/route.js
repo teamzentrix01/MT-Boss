@@ -58,6 +58,9 @@ const ensureTable = createInitializationGuard(async () => {
     ALTER TABLE career_enquiries
     ADD COLUMN IF NOT EXISTS alternative_phone VARCHAR(50)
   `);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_career_created ON career_enquiries (created_at DESC)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_career_status ON career_enquiries (status)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_career_user_id ON career_enquiries (user_id)`);
   await ensureCareerTrackingSchema();
 });
 

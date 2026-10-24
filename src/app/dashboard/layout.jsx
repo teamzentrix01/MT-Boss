@@ -78,20 +78,32 @@ const menuStructure = [
     ],
   },
 
-  // Services & Enquiries
+  // Services
   {
     id: 'services',
-    label: 'Services & Enquiries',
+    label: 'Services',
     icon: Wrench,
     children: [
       { label: 'Construction Services', tab: 'primary-services' },
-      { label: 'Construction Enquiry', tab: 'primary-service-enquiries' },
+      // { label: 'Construction Enquiry', tab: 'primary-service-enquiries' },
       { label: 'Quick Services', tab: 'quick-services' },
-      { label: 'Quick Enquiry', tab: 'quick-enquiries' },
+      // { label: 'Quick Enquiry', tab: 'quick-enquiries' },
       { label: 'Professional Services', tab: 'professionals' },
-      { label: 'Professional Enquiries', tab: 'professional-enquiries' },
+      // { label: 'Professional Enquiries', tab: 'professional-enquiries' },
       { label: 'Service Bookings', tab: 'bookings' },
       { label: 'Service Pricing', tab: 'quick-services-pricing' },
+    ],
+  },
+
+  // Enquiries
+  {
+    id: 'enquiries',
+    label: 'Enquiries',
+    icon: MessageSquareText,
+    children: [
+      { label: 'Professional Enquiries', tab: 'professional-enquiries' },
+      { label: 'Quick Enquiry', tab: 'quick-enquiries' },
+      { label: 'Construction Enquiry', tab: 'primary-service-enquiries' },
     ],
   },
 
@@ -107,6 +119,7 @@ const menuStructure = [
       { label: 'Shipping Settings', tab: 'shipping-settings' },
       { label: 'Vendor Commission', tab: 'shop-commission-settings' },
       { label: 'Cashback & Wallet', tab: 'cashback' },
+      { label: 'Franchises', tab: 'franchises' },
     ],
   },
 
@@ -118,7 +131,7 @@ const menuStructure = [
     children: [
       { label: 'PM Dashboard', tab: 'pm-dashboard' },
       { label: 'Project Management', tab: 'project-management' },
-      { label: 'Project Management · Parties', tab: 'party-project-management' },
+      { label: 'Party Project Management', tab: 'party-project-management' },
       { label: 'PM Reports', tab: 'pm-reports' },
       { label: 'PM Activity Log', tab: 'pm-audit' },
       { label: 'PM Benchmarks · Rates', tab: 'pm-benchmarks' },
@@ -126,16 +139,27 @@ const menuStructure = [
     ],
   },
 
-  // Sales & Leads
+  // Leads
   {
     id: 'sales',
     label: 'Sales & Leads',
     icon: ClipboardList,
     children: [
       { label: 'Lead Management', tab: 'lead-management' },
+      // { label: 'Calculator', tab: 'calculator' },
+      // { label: 'Calculator Quotes', tab: 'calculator-quotes' },
+      { label: 'Revenue & Earnings', tab: 'revenue' },
+    ],
+  },
+
+  // calculator
+  {
+    id: 'calculator',
+    label: 'Calculator',
+    icon: Calculator,
+    children: [
       { label: 'Calculator', tab: 'calculator' },
       { label: 'Calculator Quotes', tab: 'calculator-quotes' },
-      { label: 'Revenue & Earnings', tab: 'revenue' },
     ],
   },
 
@@ -158,7 +182,7 @@ const menuStructure = [
     children: [
       { label: 'Office Locations', tab: 'office-locations' },
       { label: 'Cities', tab: 'cities' },
-      { label: 'Franchises', tab: 'franchises' },
+      // { label: 'Franchises', tab: 'franchises' },
     ],
   },
 

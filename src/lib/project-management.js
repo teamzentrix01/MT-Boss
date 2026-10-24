@@ -203,6 +203,8 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_party_payments (id BIGSERIAL PRIMARY KEY, project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT, amount NUMERIC(14,2) NOT NULL CHECK (amount > 0), payment_date DATE NOT NULL DEFAULT CURRENT_DATE, mode VARCHAR(50), note TEXT, created_by TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_by TEXT, updated_at TIMESTAMPTZ, is_deleted BOOLEAN NOT NULL DEFAULT FALSE, deleted_by TEXT, deleted_at TIMESTAMPTZ)`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_audit_logs (id BIGSERIAL PRIMARY KEY, entity_type VARCHAR(40) NOT NULL, entity_id BIGINT NOT NULL, action VARCHAR(30) NOT NULL, changed_by TEXT NOT NULL, before_data JSONB, after_data JSONB, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
   await pool.query(`CREATE INDEX IF NOT EXISTS pm_projects_party_id_idx ON pm_projects(party_id)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS pm_projects_created_at_idx ON pm_projects(created_at DESC)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS pm_projects_status_created_at_idx ON pm_projects(status, created_at DESC)`);
   await pool.query(`CREATE INDEX IF NOT EXISTS pm_parties_created_at_idx ON pm_parties(created_at DESC)`);
   await pool.query(`CREATE INDEX IF NOT EXISTS pm_party_payments_project_id_idx ON pm_party_payments(project_id)`);
   await pool.query(`CREATE INDEX IF NOT EXISTS pm_party_payments_active_project_date_idx ON pm_party_payments(project_id, payment_date DESC) WHERE NOT is_deleted`);

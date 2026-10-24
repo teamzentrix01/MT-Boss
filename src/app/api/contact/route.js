@@ -2,19 +2,19 @@ import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
-import { handleApiError } from '@/lib/api-utils';
+import { createInitializationGuard, handleApiError } from '@/lib/api-utils';
 import { resolveManagedCity } from '@/lib/cities';
 import { notifyAdminSubmission, deliverContactAcknowledgement } from '@/lib/customer-communications';
 
-
-
-async function ensureContactCityColumn() {
+const ensureContactSchema = createInitializationGuard(async () => {
   await pool.query(`ALTER TABLE contact_submissions ADD COLUMN IF NOT EXISTS city VARCHAR(120)`);
-}
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_contact_created_at ON contact_submissions (created_at DESC)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_contact_status ON contact_submissions (status)`);
+});
 
 export async function POST(req) {
   try {
-    await ensureContactCityColumn();
+    await ensureContactSchema();
     const { name, email, phone, city, department, subject, message } = await req.json();
     const cleanName = cleanText(name);
     const cleanEmail = cleanText(email).toLowerCase();
@@ -52,11 +52,11 @@ export async function POST(req) {
     );
     const ref = `CONTACT-${result.rows[0].id}`;
 
-    await Promise.allSettled([
+    // Fire and forget / background notifications so user gets instant response
+    Promise.allSettled([
       notifyAdminSubmission({ type: 'contact form', name: cleanName, phone: cleanPhone, email: cleanEmail, reference: ref, details: { City: canonicalCity, Department: department, Subject: subject } }),
       deliverContactAcknowledgement({ email: cleanEmail, name: cleanName, subject, reference: ref }),
-    ]);
-
+    ]).catch((err) => console.warn('Contact email delivery warning:', err.message));
 
     return NextResponse.json(
       {
@@ -76,18 +76,33 @@ export async function POST(req) {
 export async function GET(req) {
   try {
     if (!requireRole(req, 'admin')) return unauthorized();
-    await ensureContactCityColumn();
+    await ensureContactSchema();
+
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '25', 10) || 25));
+    const offset = (page - 1) * limit;
+
+    const countRes = await pool.query(`SELECT COUNT(*)::int AS total FROM contact_submissions`);
+    const total = countRes.rows[0]?.total || 0;
 
     const result = await pool.query(
       `SELECT id, name, email, phone, city, department, subject, message, status, created_at
        FROM contact_submissions
        ORDER BY created_at DESC
-       LIMIT 100`
+       LIMIT $1 OFFSET $2`,
+      [limit, offset]
     );
 
     return NextResponse.json({
       success: true,
-      data: result.rows
+      data: result.rows,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
     });
   } catch (error) {
     console.error('Error fetching submissions:', error);

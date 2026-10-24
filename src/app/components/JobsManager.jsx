@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const EMPTY_JOB = {
   title: '',
@@ -56,26 +56,26 @@ export default function JobsManager({ isDarkMode }) {
   const [cities, setCities] = useState([]);
   const adminHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}` });
 
-  const loadJobs = async () => {
+  const loadJobs = useCallback(async () => {
     setLoading(true);
     try {
       const [res, cityRes] = await Promise.all([
         fetch('/api/jobs?status=all', { headers: adminHeaders() }),
-        fetch('/api/cities?fields=lite', { cache: 'no-store' }),
+        fetch('/api/cities?fields=lite'),
       ]);
       const [data, cityData] = await Promise.all([res.json(), cityRes.json()]);
       if (data.success) setJobs(data.data);
-      if (cityData.success) setCities(cityData.cities || []);
+      if (cityData.success) setCities(cityData.cities || (cityData.data || []).map(c => c.name || c));
     } catch (error) {
       console.error('Jobs load failed:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadJobs();
-  }, []);
+  }, [loadJobs]);
 
   const stats = useMemo(() => ([
     { label: 'Total Jobs', value: jobs.length },
