@@ -183,6 +183,56 @@ export async function GET(req) {
     const isAdmin = Boolean(requireRole(req, 'admin'));
     if (status === 'all' && !isAdmin) return unauthorized();
 
+    const statusCountsOnly = searchParams.get('status_counts') === '1' || searchParams.get('status_counts') === 'true';
+    if (statusCountsOnly) {
+      if (!isAdmin) return unauthorized();
+      const countVals = [];
+      const countWhere = [];
+      if (listing_type === 'buy' || listing_type === 'rent') {
+        countVals.push(listing_type);
+        countWhere.push(`listing_type = $${countVals.length}`);
+      }
+      if (category) {
+        countVals.push(category);
+        countWhere.push(`property_category = $${countVals.length}`);
+      }
+      if (city) {
+        countVals.push(`%${city}%`);
+        countWhere.push(`(location ILIKE $${countVals.length} OR locality ILIKE $${countVals.length} OR address ILIKE $${countVals.length})`);
+      }
+      if (q) {
+        countVals.push(`%${q}%`);
+        countWhere.push(`(
+          title ILIKE $${countVals.length}
+          OR CAST(id AS TEXT) ILIKE $${countVals.length}
+          OR location ILIKE $${countVals.length}
+          OR locality ILIKE $${countVals.length}
+          OR COALESCE(seller_name,'') ILIKE $${countVals.length}
+          OR COALESCE(address,'') ILIKE $${countVals.length}
+        )`);
+      }
+      const countWhereSql = countWhere.length ? `WHERE ${countWhere.join(' AND ')}` : '';
+      const statusRes = await pool.query(`
+        SELECT
+          COUNT(*)::INT AS all,
+          COUNT(*) FILTER (WHERE status = 'pending')::INT AS pending,
+          COUNT(*) FILTER (WHERE status = 'verified')::INT AS verified,
+          COUNT(*) FILTER (WHERE status = 'rejected')::INT AS rejected
+        FROM properties
+        ${countWhereSql}
+      `, countVals);
+      const row = statusRes.rows[0] || {};
+      return NextResponse.json({
+        success: true,
+        data: {
+          all: Number(row.all || 0),
+          pending: Number(row.pending || 0),
+          verified: Number(row.verified || 0),
+          rejected: Number(row.rejected || 0),
+        },
+      });
+    }
+
     const vals = [];
     const where = [];
 

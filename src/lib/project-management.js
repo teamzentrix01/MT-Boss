@@ -277,7 +277,17 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
     `CREATE INDEX IF NOT EXISTS pm_material_adj_to_proj_idx ON pm_material_adjustments(to_project_id)`,
     `CREATE INDEX IF NOT EXISTS pm_material_adj_proj_mat_date_idx ON pm_material_adjustments(project_id, material_id, adjustment_date)`,
     `CREATE INDEX IF NOT EXISTS pm_other_expenses_proj_idx ON pm_other_expenses(project_id)`,
-    `CREATE INDEX IF NOT EXISTS pm_other_expenses_proj_date_idx ON pm_other_expenses(project_id, expense_date)`
+    `CREATE INDEX IF NOT EXISTS pm_other_expenses_proj_date_idx ON pm_other_expenses(project_id, expense_date)`,
+    `CREATE INDEX IF NOT EXISTS pm_party_pay_proj_del_idx ON pm_party_payments(project_id, is_deleted)`,
+    `CREATE INDEX IF NOT EXISTS pm_party_pay_date_idx ON pm_party_payments(payment_date) WHERE NOT is_deleted`,
+    `CREATE INDEX IF NOT EXISTS pm_project_vendors_proj_idx ON pm_project_vendors(project_id)`,
+    `CREATE INDEX IF NOT EXISTS pm_attendance_pv_idx ON pm_attendance(project_vendor_id)`,
+    `CREATE INDEX IF NOT EXISTS pm_attendance_date_idx ON pm_attendance(attendance_date)`,
+    `CREATE INDEX IF NOT EXISTS pm_vmat_pv_del_idx ON pm_vendor_material_supply(project_vendor_id, is_deleted)`,
+    `CREATE INDEX IF NOT EXISTS pm_vmat_date_idx ON pm_vendor_material_supply(supply_date) WHERE NOT is_deleted`,
+    `CREATE INDEX IF NOT EXISTS pm_mrcv_proj_del_idx ON pm_material_received(project_id, is_deleted)`,
+    `CREATE INDEX IF NOT EXISTS pm_mrcv_date_idx ON pm_material_received(received_date) WHERE NOT is_deleted`,
+    `CREATE INDEX IF NOT EXISTS pm_other_exp_proj_del_idx ON pm_other_expenses(project_id, is_deleted)`
   ]) {
     await pool.query(sql);
   }

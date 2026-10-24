@@ -273,6 +273,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
         pageSize: String(pageSize),
       });
 
+      if (targetPage > 1) params.set('skip_meta', '1');
       if (search.trim()) params.set('search', search.trim());
       if (statusFilter && statusFilter !== 'all') params.set('status', statusFilter);
       if (roleFilter && roleFilter !== 'all') params.set('role', roleFilter);
@@ -292,7 +293,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
       }
 
       setUsers(data.data || []);
-      setCities(data.cities || []);
+      if (data.cities && data.cities.length) setCities(data.cities);
       if (data.stats) setStats(data.stats);
       if (data.pagination) {
         setPagination(data.pagination);
@@ -2738,6 +2739,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: '46px', height: '46px', borderRadius: '50%', background: '#e0e7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4338ca', fontWeight: 800, fontSize: '16px', overflow: 'hidden' }}>
                         {vendorData?.profile_photo ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={`/api/vendor/image/${vendorData.id || selectedUser.real_id}?type=profile`} alt="Profile" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                         ) : (
                           (vendorData?.vendor_name || selectedUser.name || 'V').slice(0, 2).toUpperCase()
@@ -2928,6 +2930,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                     {vendorData?.has_aadhar_image || vendorData?.aadhar_image ? (
                       <div style={{ marginTop: '8px' }}>
                         <a href={`/api/vendor/image/${vendorData.id || selectedUser.real_id}?type=aadhaar`} target="_blank" rel="noopener noreferrer">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={`/api/vendor/image/${vendorData.id || selectedUser.real_id}?type=aadhaar`}
                             alt="Aadhaar Card"

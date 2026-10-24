@@ -3,5 +3,6 @@
   "mssql.intelliSense.enableIntelliSense": false,
   "files.associations": {
     "*.sql": "plaintext"
-  }
+  },
+  "css.lint.browserCompatibility": "ignore"
 }

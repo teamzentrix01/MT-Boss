@@ -161,18 +161,18 @@ async function savePropertyImages(files) {
     throw new Error('You can upload a maximum of 10 property images.');
   }
 
-  const urls = [];
-  const names = [];
+  const uploads = await Promise.all(
+    files.map(async (file) => {
+      const url = await savePropertyImage(file);
+      return url ? { name: file.name, url } : null;
+    })
+  );
 
-  for (const file of files) {
-    const url = await savePropertyImage(file);
-    if (url) {
-      urls.push(url);
-      names.push(file.name);
-    }
-  }
-
-  return { names, urls };
+  const valid = uploads.filter(Boolean);
+  return {
+    names: valid.map((v) => v.name),
+    urls: valid.map((v) => v.url),
+  };
 }
 
 async function sendAdminNotification(enquiry) {
@@ -357,6 +357,27 @@ export async function GET(req) {
 
     await ensureTable();
 
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50', 10) || 50));
+    const offset = (page - 1) * limit;
+    const status = (searchParams.get('status') || '').trim();
+
+    const where = [];
+    const vals = [];
+    if (status && status !== 'all') {
+      vals.push(status);
+      where.push(`status = $${vals.length}`);
+    }
+    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+
+    const countRes = await pool.query(
+      `SELECT COUNT(*)::int AS total FROM primary_service_enquiries ${whereSql}`,
+      vals
+    );
+    const total = countRes.rows[0]?.total || 0;
+
+    const dataVals = [...vals, limit, offset];
     const result = await pool.query(
       `SELECT id, service_slug, service_title, user_id, name, phone, alternate_phone, email, message,
               budget, carpet_area, time_slot, meeting_date, gps_location, address, state, city,
@@ -364,8 +385,10 @@ export async function GET(req) {
               rating_stars, review_text, site_image_names, site_image_urls, reviewed_at,
               status, created_at
        FROM primary_service_enquiries
+       ${whereSql}
        ORDER BY created_at DESC
-       LIMIT 100`
+       LIMIT $${dataVals.length - 1} OFFSET $${dataVals.length}`,
+      dataVals
     );
 
     const data = result.rows.map((row) => {
@@ -387,6 +410,12 @@ export async function GET(req) {
     return NextResponse.json({
       success: true,
       data,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
     });
   } catch (error) {
     console.error('Error fetching primary services enquiries:', error);

@@ -41,7 +41,10 @@ const PropertyTableRow = memo(function PropertyTableRow({
       <td>
         <div className="pm-thumb">
           {thumb
-            ? <img src={thumb} alt="" loading="lazy" onError={(e) => { e.target.style.display = 'none'; }} />
+            ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={thumb} alt="" loading="lazy" onError={(e) => { e.target.style.display = 'none'; }} />
+            )
             : <div className="pm-thumb-placeholder"><House size={16} strokeWidth={1.75} /></div>}
           <span className="pm-prop-name">#{p.id} · {p.title}</span>
         </div>
@@ -101,41 +104,26 @@ export default function PropertiesManager({ isDarkMode, categoryFilter = null, c
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { setPage(1); }, [filter, listFilter, categoryTab, debouncedSearch, categoryFilter]);
-
-  useEffect(() => { fetchProperties(); }, [filter, listFilter, categoryTab, debouncedSearch, page, categoryFilter]);
-  useEffect(() => { fetchStatusCounts(); }, [listFilter, categoryTab, debouncedSearch, categoryFilter]);
-
-  const buildFilterParams = (statusValue) => {
-    const params = new URLSearchParams({
-      limit: '1',
-      fields: 'list',
-      status: statusValue,
-    });
-    if (listFilter !== 'all') params.set('listing_type', listFilter);
-    const cat = categoryFilter || (categoryTab !== 'all' ? categoryTab : '');
-    if (cat) params.set('category', cat);
-    if (debouncedSearch) params.set('q', debouncedSearch);
-    return params;
-  };
-
-  const fetchStatusCounts = async () => {
+  const fetchStatusCounts = useCallback(async () => {
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
-      const [all, pending, verified, rejected] = await Promise.all(
-        ['all', 'pending', 'verified', 'rejected'].map(async (s) => {
-          const cr = await fetch(`/api/properties?${buildFilterParams(s)}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const cd = await cr.json();
-          return cd.pagination?.total || 0;
-        })
-      );
-      setStatusCounts({ all, pending, verified, rejected });
-    } catch { /* ignore */ }
-  };
+      const params = new URLSearchParams({ status_counts: '1' });
+      if (listFilter !== 'all') params.set('listing_type', listFilter);
+      const cat = categoryFilter || (categoryTab !== 'all' ? categoryTab : '');
+      if (cat) params.set('category', cat);
+      if (debouncedSearch) params.set('q', debouncedSearch);
 
-  const fetchProperties = async () => {
+      const res = await fetch(`/api/properties?${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        setStatusCounts(data.data);
+      }
+    } catch { /* ignore */ }
+  }, [listFilter, categoryFilter, categoryTab, debouncedSearch]);
+
+  const fetchProperties = useCallback(async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
@@ -162,7 +150,12 @@ export default function PropertiesManager({ isDarkMode, categoryFilter = null, c
       }
     } catch { setError('Error fetching properties'); }
     finally { setLoading(false); }
-  };
+  }, [page, filter, listFilter, categoryFilter, categoryTab, debouncedSearch]);
+
+  useEffect(() => { setPage(1); }, [filter, listFilter, categoryTab, debouncedSearch, categoryFilter]);
+
+  useEffect(() => { fetchProperties(); }, [fetchProperties]);
+  useEffect(() => { fetchStatusCounts(); }, [fetchStatusCounts]);
 
   const openDetail = useCallback(async (row) => {
     setSelected(row);
@@ -205,7 +198,7 @@ export default function PropertiesManager({ isDarkMode, categoryFilter = null, c
         fetchProperties();
       } else setError(data.error || 'Action failed');
     } catch { setError('Network error'); }
-  }, [page, filter, listFilter, categoryTab, debouncedSearch, categoryFilter]);
+  }, [fetchProperties]);
 
   const handleDelete = useCallback(async (id) => {
     if (!confirm('Delete this property listing permanently?')) return;
@@ -216,7 +209,7 @@ export default function PropertiesManager({ isDarkMode, categoryFilter = null, c
       if (data.success) { setSuccess('Deleted'); setSelected(null); fetchProperties(); }
       else setError(data.error || 'Delete failed');
     } catch { setError('Network error'); }
-  }, [page, filter, listFilter, categoryTab, debouncedSearch, categoryFilter]);
+  }, [fetchProperties]);
 
   const displayed = properties;
   const counts = statusCounts;
@@ -577,6 +570,7 @@ export default function PropertiesManager({ isDarkMode, categoryFilter = null, c
                 {Array.isArray(selected.images) && selected.images.length > 0 && (
                   <div className="pm-imgs">
                     {selected.images.map((url, i) => (
+                      /* eslint-disable-next-line @next/next/no-img-element */
                       <img key={i} src={url} alt="" onError={e => { e.target.src = '/images/property-placeholder.jpg'; }} />
                     ))}
                   </div>
