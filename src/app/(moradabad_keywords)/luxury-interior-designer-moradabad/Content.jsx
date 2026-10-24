@@ -170,8 +170,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Luxury Interior Designer in Moradabad: Refined Spaces, Crafted with
-            Precision by MTBoss
+            Luxury Interior Designer in Moradabad:MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -946,43 +945,18 @@ const Content = () => {
                   />
                 </div>
 
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 9: Styling and Final Touches
-                  </h4>
-                  <BulletList
-                    items={[
-                      "Lighting is tuned, hardware is adjusted and surfaces are inspected up close.",
-                      "Curtains, rugs, artwork and accessories are placed to complete the design.",
-                    ]}
-                  />
-                </div>
+             
 
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 10: Handover and Support
-                  </h4>
-                  <p>
-                    We complete a detailed inspection, snag correction and
-                    thorough cleaning before handover. For repairs and
-                    maintenance, use our{" "}
-                    <a
-                      href="https://www.MTBoss.in/quick"
-                      className="text-blue-600 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Quick Home Services
-                    </a>
-                    .
-                  </p>
+               
+                 
                 </div>
               </div>
             </section>
 
             <section>
               <SectionTitle>
-                Why Choose MTBoss as Your Luxury Interior Designer in Moradabad
+                 Choose MTBoss as Your Luxury Interior Designer in Moradabad
               </SectionTitle>
               <BulletList
                 items={[
@@ -1111,7 +1085,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                Luxury Interior Trends in Moradabad for 2026
+                Luxury Interior Trends in Moradabad 
               </SectionTitle>
               <BulletList
                 items={[

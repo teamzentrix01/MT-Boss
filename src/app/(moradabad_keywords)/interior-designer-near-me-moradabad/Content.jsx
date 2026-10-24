@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer Near Me in Moradabad: Spaces Planned Around Your
-            Life
+            Interior Designer Near Me in Moradabad:
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -25,14 +24,7 @@ const Content = () => {
                 Moradabad, you probably want a professional who knows the city,
                 visits your site easily and delivers what was promised.
               </p>
-              <p className="mt-3">
-                MTBoss is an architecture, interior design and construction
-                company serving Moradabad and Bareilly. Our team plans interiors
-                that look good on day one and still work well years later. We
-                handle apartments, independent houses, villas, shops, showrooms
-                and offices, and we keep pricing and timelines clear from the
-                first meeting.
-              </p>
+             
               <p className="mt-3">
                 This guide explains what a local interior designer does, which
                 services are worth investing in, how budgets work and how to pick

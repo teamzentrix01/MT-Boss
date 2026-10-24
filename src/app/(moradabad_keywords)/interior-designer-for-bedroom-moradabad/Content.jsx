@@ -208,8 +208,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Bedroom in Moradabad: Calm, Comfortable and
-            Beautifully Planned Bedrooms by MTBoss
+            Interior Designer for Bedroom in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -220,15 +219,8 @@ const Content = () => {
                 at home.
               </p>
 
-              <p className="mt-3">
-                A poorly planned bedroom leads to clutter, bad lighting,
-                cramped movement, overflowing wardrobes and restless sleep.
-              </p>
 
-              <p className="mt-3">
-                A well-designed bedroom balances comfort, storage, lighting,
-                privacy and style without making the room feel crowded.
-              </p>
+              
 
               <p className="mt-3">
                 MTBoss, also known as MTBoss Construction Private Limited, is
@@ -940,7 +932,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                How MTBoss Designs Your Bedroom: Step by Step
+                MTBoss Designs Your Bedroom: Step by Step
               </SectionTitle>
 
               <div className="space-y-5">
@@ -1014,57 +1006,9 @@ const Content = () => {
                   />
                 </div>
 
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 7: Preparation Work
-                  </h4>
-                  <p>
-                    Wall repair, electrical changes, ceiling framework and paint
-                    preparation are completed before finishing work begins.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 8: Carpentry and Finishing
-                  </h4>
-                  <BulletList
-                    items={[
-                      "Wardrobes, beds, headboards and other furniture are fitted.",
-                      "Painting, lighting and final touches follow.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 9: Inspection and Handover
-                  </h4>
-                  <BulletList
-                    items={[
-                      "We check alignment, finish, lighting, hardware and cleanliness.",
-                      "Any snags are corrected before handover.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 10: After-Service Support
-                  </h4>
-                  <p>
-                    For small repairs, use our{" "}
-                    <a
-                      href="https://www.MTBoss.in/quick"
-                      className="text-blue-600 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Quick Home Services
-                    </a>{" "}
-                    or contact MTBoss directly.
-                  </p>
-                </div>
+               
+                
+                
               </div>
             </section>
 

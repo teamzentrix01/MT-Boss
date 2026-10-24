@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Design Cost in Moradabad: Complete 2026 Pricing Guide by MTBoss
+            Interior Design Cost in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -32,14 +32,7 @@ const Content = () => {
                 pricing, material choices, and practical ways to save.
               </p>
 
-              <p className="mt-3">
-                MTBoss, also known as MTBoss Construction Private Limited,
-                handles construction, interiors, home services, and material
-                supply. We plan the work with a clear scope and deliver it on
-                time. Use the numbers below as a starting point because your
-                exact quote depends on your layout, materials, and design
-                style.
-              </p>
+             
             </section>
 
             <section>
@@ -62,12 +55,7 @@ const Content = () => {
                   hardware, a modular kitchen, wardrobes in bedrooms, and
                   decorative lighting.
                 </li>
-                <li>
-                  <strong>Premium package:</strong> ₹2,000 to ₹3,000 per sq
-                  ft. It can include branded fittings, veneer or acrylic
-                  finishes, designer false ceilings, TV-unit paneling, study or
-                  puja units, and wall decor.
-                </li>
+              
                 <li>
                   <strong>Luxury package:</strong> ₹3,000+ per sq ft. This
                   typically covers fully custom furniture, imported finishes,

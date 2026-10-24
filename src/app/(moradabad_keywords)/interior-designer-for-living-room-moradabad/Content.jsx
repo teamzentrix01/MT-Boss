@@ -251,8 +251,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Living Room in Moradabad: Stylish,
-            Comfortable and Practical Spaces by MTBoss
+            Interior Designer for Living Room in Moradabad:MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -263,10 +262,7 @@ const Content = () => {
                 and daily life comes together.
               </p>
 
-              <p className="mt-3">
-                It is also the first room visitors see, so it shapes the
-                impression of your entire home.
-              </p>
+             
 
               <p className="mt-3">
                 A poorly planned living room feels crowded, dark or
@@ -276,12 +272,6 @@ const Content = () => {
                 gatherings.
               </p>
 
-              <p className="mt-3">
-                MTBoss, also known as MTBoss Construction Private Limited, is
-                a Moradabad-based construction and interiors company. We design
-                living rooms with an understanding of structure, wiring,
-                ventilation and finishing, not just decoration.
-              </p>
 
               <p className="mt-3">
                 This guide covers layout, seating, TV units, ceilings, lighting,
@@ -909,61 +899,16 @@ const Content = () => {
                   />
                 </div>
 
+            
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 7: Preparation Work
-                  </h4>
-                  <p>
-                    Wall repairs, electrical changes, ceiling framework and
-                    paint preparation come first.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 8: Carpentry, Ceiling and Finishing
-                  </h4>
-                  <p>
-                    TV units, storage, paneling, ceilings, painting and lighting
-                    are installed in the correct order.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 9: Inspection and Handover
-                  </h4>
-                  <BulletList
-                    items={[
-                      "We check alignment, finish, lighting, hardware and cleanliness.",
-                      "Any snags are corrected before handover.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 10: After-Service Support
-                  </h4>
-                  <p>
-                    For small repairs, you can use our{" "}
-                    <a
-                      href="https://www.MTBoss.in/quick"
-                      className="text-blue-600 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Quick Home Services
-                    </a>{" "}
-                    or contact MTBoss directly.
-                  </p>
+               
                 </div>
               </div>
             </section>
 
             <section>
               <SectionTitle>
-                Why Choose MTBoss as Your Living Room Interior Designer in
+              Choose MTBoss as Your Living Room Interior Designer in
                 Moradabad
               </SectionTitle>
 

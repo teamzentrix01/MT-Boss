@@ -29,7 +29,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Qualities That Define a Top Architect in Moradabad
+              Define a Top Architect in Moradabad
               </h3>
               <p className="mb-3">
                 Rankings and advertisements say little. These practical qualities say a lot.
@@ -49,9 +49,6 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Climate-smart thinking.</strong> The design should keep the building cooler in summer, dry in the monsoon and comfortable in winter.
-                </li>
-                <li>
-                  <strong>Clear, regular communication.</strong> You should always know what is being designed, what it costs and what happens next.
                 </li>
                 <li>
                   <strong>Responsibility after the drawing.</strong> What is built on site matters more than what is drawn on paper.
@@ -116,15 +113,6 @@ const Content = () => {
                 Architectural Services by MTBoss
               </h3>
 
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                House Design and Floor Planning
-              </h4>
-              <p className="mb-3">
-                We design independent houses, duplexes, villas, farmhouses and builder floors. Every plan starts with your family size, lifestyle and budget, and is shaped for light, airflow, privacy and storage. We are used to the small and irregular plots common in older localities and newer colonies.
-              </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 3D Elevation and Exterior Design
               </h4>
@@ -139,24 +127,12 @@ const Content = () => {
               <p className="mb-3">
                 We design shops, showrooms, offices, clinics and restaurants with attention to visibility, customer flow, parking and fire safety.
               </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Hotels, Resorts and Banquet Spaces
-              </h4>
-              <p className="mb-3">
-                We plan room mix, lobby flow, dining, banquet halls and back-of-house areas so that hospitality buildings work well for guests and staff.
-              </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Schools and Educational Buildings
               </h4>
               <p className="mb-3">
                 We design classrooms, labs, playgrounds and circulation with safety, supervision and future expansion in mind.
               </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Industrial and Warehouse Buildings
               </h4>
@@ -172,13 +148,6 @@ const Content = () => {
                 If you follow Vastu, we place rooms, entrances, the kitchen, pooja room and staircase according to its guidelines, while keeping the layout modern and functional.
               </p>
 
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Renovation, Extension and Additional Floors
-              </h4>
-              <p className="mb-3">
-                We assess your existing structure and redesign it to add space, improve light and refresh the look, without unnecessary demolition.
-              </p>
 
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -203,15 +172,11 @@ const Content = () => {
                 <li>3D views that show the finished look before you commit.</li>
                 <li>Working drawings with dimensions, sections and details that workers can follow.</li>
                 <li>Coordination with engineers for structure, electrical and plumbing design.</li>
-                <li>A bill of quantities or itemised estimate, so costs are visible.</li>
-                <li>Material and finish guidance, balancing looks, durability and budget.</li>
-                <li>Approvals guidance, helping you understand the documents typically needed.</li>
+                
                 <li>Site visits and supervision, so the building matches the drawings.</li>
                 <li>Honest advice, including telling you when an idea is too costly or unsafe.</li>
               </ul>
-              <p className="mt-3">
-                MTBoss delivers all of these as part of a complete project, not as extras.
-              </p>
+             
             </section>
 
 
@@ -287,21 +252,7 @@ const Content = () => {
                   <strong>Scope of service:</strong> design only, or design with construction and interiors.
                 </li>
               </ul>
-              <p className="mt-3">
-                Architect fees are usually a small share of the total project cost, and good planning often saves far more than the fee through less rework and wastage. Be cautious of fees or quotes that look unrealistically low, since they often lead to missing details or extra charges later.
-              </p>
-              <p className="mt-3">
-                MTBoss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
-                <a
-                  href="https://www.MTBoss.in/CTASection/get-quote"
-                  className="text-blue-600 underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  free quote
-                </a>
-                .
-              </p>
+
             </section>
 
 

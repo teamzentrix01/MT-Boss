@@ -298,8 +298,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Kitchen in Moradabad: Smart, Durable and
-            Beautiful Kitchens by MTBoss
+            Interior Designer for Kitchen in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -323,20 +322,7 @@ const Content = () => {
                 mind.
               </p>
 
-              <p className="mt-3">
-                Because we understand plumbing lines, electrical loads,
-                ventilation and wall structure, our kitchen designs are
-                practical as well as attractive.
-              </p>
-
-              <p className="mt-3">
-                Whether you are building a new home, renovating an old kitchen
-                or setting up a commercial kitchen, this guide explains what
-                you should know before hiring a kitchen interior designer in
-                Moradabad. You will learn about layouts, materials, storage,
-                appliances, lighting, Vastu, budget planning and how MTBoss
-                handles the process from start to finish.
-              </p>
+              
             </section>
 
             <section>
@@ -532,7 +518,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                Kitchen Materials: What Works Best in Moradabad Homes
+                Kitchen Materials:
               </SectionTitle>
 
               <div className="space-y-5">
@@ -975,39 +961,7 @@ const Content = () => {
                   />
                 </div>
 
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 8: Carpentry and Installation
-                  </h4>
-                  <BulletList
-                    items={[
-                      "Cabinets, shutters, countertop and accessories are fitted by skilled workers.",
-                      "Supervisors check alignment, levels and finish.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 9: Final Inspection and Handover
-                  </h4>
-                  <BulletList
-                    items={[
-                      "We test drawers, hinges, lights, water flow and drainage.",
-                      "Any snags are corrected and the kitchen is cleaned before handover.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 10: After-Service Support
-                  </h4>
-                  <p>
-                    For small repairs and adjustments, you can reach us by
-                    phone or WhatsApp.
-                  </p>
-                </div>
+                
               </div>
             </section>
 
@@ -1104,7 +1058,7 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Kitchen Design Trends in Moradabad for 2026</SectionTitle>
+              <SectionTitle>Kitchen Design Trends in Moradabad </SectionTitle>
               <BulletList
                 items={[
                   {

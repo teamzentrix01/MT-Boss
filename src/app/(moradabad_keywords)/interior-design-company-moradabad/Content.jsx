@@ -9,8 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Design Company in Moradabad: Design, Build and Deliver
-            with MTBoss
+            Interior Design Company in Moradabad:with MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -34,29 +33,12 @@ const Content = () => {
                 projects, we look at interiors from both the design side and
                 the building side. This helps avoid mistakes in wiring,
                 plumbing, load, and finishing.
-              </p>
-
-              <p className="mt-3">
-                As an interior design company in Moradabad, we serve apartment
-                owners, villa builders, shop owners, showroom operators,
-                clinics, offices, and hospitality spaces.
-              </p>
-
-              <p className="mt-3">
-                Our approach follows a simple principle: clear scope,
-                responsible coordination, quality-conscious execution, and
-                timely support.
-              </p>
-
-              <p className="mt-3">
-                This page explains who we are, what we offer, how we work, and
-                why customers in Moradabad trust MTBoss for interiors.
-              </p>
+              </p>  
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss: Your Local Interior and Construction Partner
+                 Your Local Interior and Construction Partner:MTBoss
               </h3>
 
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -112,11 +94,7 @@ const Content = () => {
                   Apartments and flats with space-efficient designs for 1BHK,
                   2BHK, and 3BHK homes, smart storage, and clear layouts.
                 </li>
-                <li>
-                  Independent houses and kothis with full-home planning that
-                  connects every floor, staircase, balcony, and terrace into
-                  one design story.
-                </li>
+                
                 <li>
                   Villas with premium finishes, larger custom furniture, and
                   detailed ceiling and lighting plans.
@@ -125,10 +103,7 @@ const Content = () => {
                   Builder floors with practical, budget-friendly designs that
                   provide a complete finish before moving in.
                 </li>
-                <li>
-                  Room-wise design for living rooms, bedrooms, kids&apos; rooms,
-                  pooja rooms, study corners, balconies, and entrance foyers.
-                </li>
+                
                 <li>
                   Renovation of old homes while respecting the existing
                   structure and the available budget.
@@ -148,14 +123,7 @@ const Content = () => {
                   Waterproof plywood, HDHMR boards, laminate, acrylic, and PU
                   finishes for different budgets.
                 </li>
-                <li>
-                  Smart storage such as tall units, corner carousels, pull-out
-                  baskets, cutlery trays, and soft-close drawers.
-                </li>
-                <li>
-                  Work triangle planning for convenient movement between the
-                  sink, hob, and refrigerator.
-                </li>
+                
                 <li>
                   Advance planning for chimney, hob, oven, dishwasher, and
                   water purifier integration.
@@ -175,10 +143,7 @@ const Content = () => {
                   Living-room TV units, display shelves, crockery cabinets, and
                   console tables.
                 </li>
-                <li>
-                  Bedroom furniture including hydraulic-storage beds,
-                  headboards, dressing tables, and side tables.
-                </li>
+                
                 <li>
                   Compact work-from-home desks, bookshelves, and cable-managed
                   study setups.
@@ -221,10 +186,7 @@ const Content = () => {
                   Fluted panels, WPC, veneer, louvers, and 3D wall features for
                   TV walls and bedrooms.
                 </li>
-                <li>
-                  Wallpaper and murals for feature walls, kids&apos; rooms,
-                  cafes, and creative spaces.
-                </li>
+                
                 <li>
                   Damp-proofing, waterproofing, and crack treatment before
                   finishes are applied.
@@ -245,18 +207,7 @@ const Content = () => {
                   Retail shop interiors with counters, shelving, storage,
                   signage areas, and smooth customer movement.
                 </li>
-                <li>
-                  Offices with workstations, cabins, conference rooms,
-                  reception areas, pantries, and cable management.
-                </li>
-                <li>
-                  Clinics and salons with clean, calming, hygienic, and
-                  easy-to-maintain designs.
-                </li>
-                <li>
-                  Restaurants and cafes with seating plans, ambience lighting,
-                  service flow, and durable finishes.
-                </li>
+           
                 <li>
                   Hotel and hospitality interiors, including guest rooms,
                   lobbies, and dining spaces.
@@ -266,7 +217,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Our Interior Design Process: From Idea to Handover
+                Our Interior Design Process: 
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -674,7 +625,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Interior Design Trends in Moradabad for 2026
+                Interior Design Trends in Moradabad
               </h3>
 
               <ul className="list-disc list-inside space-y-2 ml-4">

@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Hotel Moradabad: Hospitality Interiors by MT
+            Interior Designer for Hotel Moradabad:  MT
             Boss
           </h2>
 
@@ -32,15 +32,12 @@ const Content = () => {
                 staff work efficiently and stay attractive after years of heavy
                 use.
               </p>
-              <p className="mt-3">
-                This page explains how we approach hotel interiors, what each area
-                needs and how to plan your investment.
-              </p>
+              
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Hotel Interiors Need Specialist Planning
+                Hotel Interiors Need Specialist Planning
               </h3>
               <p className="mb-3">
                 A hotel is not a large house. It is a busy operation where guest
@@ -174,24 +171,6 @@ const Content = () => {
                 Standard rooms, deluxe rooms and suites each receive their own
                 brief, while a shared visual language keeps the whole property
                 consistent.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Washrooms That Feel Clean and Premium
-              </h3>
-              <p className="mb-3">
-                Guests judge hotel washrooms harshly, and a poor bathroom can undo
-                an excellent room. We plan non-slip flooring, proper ventilation,
-                bright but flattering lighting and sturdy fittings. Vanity units,
-                mirrors and shower zones are laid out to feel spacious even in
-                compact rooms.
-              </p>
-              <p className="mb-3">
-                Because MTBoss also coordinates waterproofing and plumbing, wet
-                areas are planned together with the construction team. This helps
-                prevent leaks, damp walls and expensive repairs later.
               </p>
             </section>
 

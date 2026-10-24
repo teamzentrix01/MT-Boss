@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Office Moradabad: Workspace Design by MTBoss
+            Interior Designer for Office Moradabad:MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -17,8 +17,7 @@ const Content = () => {
                 An office does more than hold desks. It shapes how your team
                 works, how clients see your business and how easily your company
                 can grow. A cramped, poorly lit workplace slows people down and
-                leaves visitors unimpressed. A well-planned one keeps staff
-                focused and builds trust before a single word is spoken.
+                leaves visitors unimpressed. 
               </p>
               <p className="mt-3">
                 MTBoss is an architecture, interior design and construction
@@ -88,10 +87,6 @@ const Content = () => {
                 <li>Manager and director cabins.</li>
                 <li>Conference and meeting rooms.</li>
                 <li>Pantry, cafeteria and break zones.</li>
-                <li>Server and storage rooms.</li>
-                <li>False ceilings, lighting and electrical planning.</li>
-                <li>Flooring, wall treatments and partitions.</li>
-                <li>Branding elements, signage and graphics.</li>
                 <li>Renovation and reconfiguration of existing offices.</li>
               </ul>
               <p className="mt-3">
@@ -110,12 +105,7 @@ const Content = () => {
                 Before choosing colours or furniture, we study how your team
                 actually works.
               </p>
-              <p className="mb-3">
-                We ask practical questions. How many people sit in the office
-                today, and how many in three years? Which teams talk to each other
-                all day? Who needs privacy, and who needs open collaboration? How
-                many client visits do you host? The answers shape the layout.
-              </p>
+           
               <p className="mb-3">
                 A well-planned floor usually separates four kinds of zones:
               </p>

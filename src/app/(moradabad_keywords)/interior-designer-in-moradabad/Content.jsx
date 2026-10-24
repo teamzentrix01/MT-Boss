@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer in Moradabad: Home and Commercial Interiors by MTBoss
+            Interior Designer in Moradabad:MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,8 +23,7 @@ const Content = () => {
                 identity of architect, engineer and interior designer, and has
                 been noted by local reviewers for cost-efficient, timely
                 interior work, including modular kitchen design and bungalow
-                interiors. This page explains what MTBoss offers for interior
-                design projects, how the process works, and how to get in touch.
+                interiors.
               </p>
             </section>
 
@@ -43,15 +42,13 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What MTBoss Offers as an Interior Designer in Moradabad
+                MTBoss Offers as an Interior Designer in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Home interior design:</strong> Planning and execution for living rooms, bedrooms, kitchens and bathrooms, tailored to the homeowner&apos;s space and preferences.</li>
                 <li><strong>Modular kitchen design:</strong> A specifically noted area of MTBoss&apos;s interior work, covering layout, storage and finish planning for modern kitchens.</li>
                 <li><strong>Bungalow interior design:</strong> Specialized interior planning for independent houses and larger homes, where MTBoss has been specifically recognised in local reviews.</li>
-                <li><strong>Office interior design:</strong> Workstation layout, cabins, meeting rooms and reception area design for commercial office spaces.</li>
-                <li><strong>False ceiling and lighting design:</strong> Coordinated ceiling and lighting plans that work with the room&apos;s structure and electrical layout.</li>
-                <li><strong>Wardrobe and storage solutions:</strong> Built-in storage planning that makes efficient use of available space.</li>
+                
                 <li><strong>Flooring and finish selection:</strong> Guidance on tiles, flooring materials and wall finishes suited to each space.</li>
                 <li><strong>Combined structural and interior planning:</strong> Since MTBoss also handles construction, interior design can be planned alongside structural work rather than as an afterthought once construction is already complete.</li>
               </ul>
@@ -65,8 +62,7 @@ const Content = () => {
                 <li><strong>Step 1 — Enquiry:</strong> You contact MTBoss through the website, phone or WhatsApp with your interior design requirements.</li>
                 <li><strong>Step 2 — Requirement discussion:</strong> The team discusses the space (home, office, kitchen, or full bungalow interior), your style preferences and budget.</li>
                 <li><strong>Step 3 — Site visit and measurement:</strong> MTBoss assesses the actual space, existing structure and any construction or renovation work needed alongside the interior design.</li>
-                <li><strong>Step 4 — Design and layout planning:</strong> Interior layouts, material choices and finish options are prepared based on your requirements.</li>
-                <li><strong>Step 5 — Budget estimation:</strong> The MTBoss Budget Calculator and current material rates are used to give a realistic cost outline for the interior work.</li>
+                
                 <li><strong>Step 6 — Material and fixture sourcing:</strong> Since MTBoss also supplies core building materials wholesale, sourcing for tiles, paints and related items can be coordinated directly.</li>
                 <li><strong>Step 7 — Execution and supervision:</strong> Interior work is carried out under MTBoss supervision, with quality and timeline checks along the way.</li>
                 <li><strong>Step 8 — Handover:</strong> Final walkthrough, finishing touches and handover of the completed interior.</li>
@@ -101,22 +97,9 @@ const Content = () => {
                 <li><strong>Flooring selection:</strong> Durable, professional-looking flooring suited to daily office footfall.</li>
               </ul>
             </section>
-
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Combining Interior Design with Construction Makes Sense
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Single point of coordination:</strong> Since MTBoss handles both construction and interior design, structural elements like electrical points, plumbing and ceiling height can be planned with the final interior look in mind from the start.</li>
-                <li><strong>Fewer handover gaps:</strong> Projects that involve both new construction and interior fit-out avoid the common friction of separate construction and interior teams working without full coordination.</li>
-                <li><strong>More accurate budgeting:</strong> A combined team can give a more realistic overall cost picture, since structural and interior costs are estimated together rather than separately.</li>
-                <li><strong>Faster project completion:</strong> Overlapping planning between construction and interior stages can reduce total project time compared to hiring two separate firms sequentially.</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why the MTBoss Budget Calculator Helps Interior Design Planning
+              MTBoss Budget Calculator Helps Interior Design Planning
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>It is a free tool available directly on the MTBoss website, useful for estimating costs before committing to a full interior design plan.</li>
@@ -127,7 +110,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What to Share with MTBoss Before Your First Interior Design Consultation
+              Share with MTBoss Before Your First Interior Design Consultation
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Space details:</strong> Whether it&apos;s a full home, a single room, a kitchen, or an office space, along with approximate dimensions.</li>
@@ -141,16 +124,6 @@ const Content = () => {
                 from initial discussion to a site visit and design proposal more
                 efficiently.
               </p>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Property and Home Services That Complement Interior Design
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Property services:</strong> Verified property buying, selling and renting, useful if you are purchasing a new home or office space that will also need interior work.</li>
-                <li><strong>Doorstep home services:</strong> Electrician, plumber, AC repair and pest control services, useful for maintaining your interior fittings and fixtures after the design work is complete.</li>
-              </ul>
             </section>
 
             <section>

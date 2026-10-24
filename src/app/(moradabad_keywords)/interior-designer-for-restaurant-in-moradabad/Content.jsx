@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Restaurant in Moradabad: Spaces That Fill
-            Tables and Keep Guests Returning
+            Interior Designer for Restaurant in Moradabad:
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -17,9 +16,7 @@ const Content = () => {
               <p>
                 A diner decides within seconds whether a restaurant feels right.
                 The entrance, lighting, seating and noise level all shape that
-                first impression, long before anyone reads the menu. Once guests
-                sit down, the layout decides how smoothly service runs, how
-                comfortable people feel and how long they stay.
+                first impression, long before anyone reads the menu.
               </p>
               <p className="mt-3">
                 That is why hiring an interior designer for a restaurant in
@@ -32,10 +29,7 @@ const Content = () => {
                 interiors as working systems, where kitchen, service floor,
                 seating and branding support each other.
               </p>
-              <p className="mt-3">
-                This page explains what goes into a successful restaurant design,
-                how to plan your budget and what to look for in a design partner.
-              </p>
+           
             </section>
 
             <section>
@@ -65,13 +59,7 @@ const Content = () => {
                   quick bites or premium.
                 </li>
               </ul>
-              <p className="mt-3">
-                A poorly planned space can lose money even with excellent food.
-                Narrow walkways slow staff, cramped tables put guests off, and a
-                badly placed kitchen creates noise and smell in the dining area.
-                Good design prevents these problems before the first brick is
-                laid.
-              </p>
+        
             </section>
 
             <section>

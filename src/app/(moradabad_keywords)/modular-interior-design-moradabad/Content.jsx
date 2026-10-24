@@ -383,10 +383,7 @@ const Content = () => {
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Smart, Stylish and Ready-to-Fit Interiors
-              </h3>
-
+            
               <p className="mb-3">
                 Modular interior design is now the preferred choice for
                 homeowners in Moradabad who want clean looks, smart storage and
@@ -406,20 +403,7 @@ const Content = () => {
                 at your home.
               </p>
 
-              <p className="mb-3">
-                The result is a tidy, precise finish with less mess, less noise
-                and shorter installation time than traditional carpentry.
-              </p>
-
-              <p className="mb-3">
-                Our team plans the layout, selects materials, coordinates the
-                work and delivers a finished space that suits your lifestyle.
-              </p>
-
-              <p>
-                Our office is at Harthala Kanth Road, Moradabad, so site visits
-                and support are quick and convenient.
-              </p>
+              
             </section>
 
             <section>
@@ -458,7 +442,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose Modular Interiors for Your Moradabad Home
+                Choose Modular Interiors for Your Moradabad Home
               </h3>
 
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -535,7 +519,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Modular vs Traditional Carpentry: Which Is Better?
+                Modular vs Traditional Carpentry:
               </h3>
 
               {comparisonSections.map((comparison) => (
@@ -591,7 +575,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBoss for Modular Interiors in Moradabad
+               Choose MTBoss for Modular Interiors in Moradabad
               </h3>
 
               <ul className="list-disc list-inside space-y-1 ml-4">

@@ -128,12 +128,7 @@ const Content = () => {
               </p>
 
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Clothing, Boutique and Jewellery Showrooms
-              </h4>
-              <p className="mb-3">
-                These spaces need warm lighting, secure display units, trial rooms, mirrors and a premium feel. We design display walls, counters and lighting that make fabrics, jewellery and accessories look their best.
-              </p>
+             
 
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -152,12 +147,7 @@ const Content = () => {
               </p>
 
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Export and Trade Showrooms
-              </h4>
-              <p className="mb-3">
-                Moradabad&apos;s export businesses often host overseas and domestic buyers. We design sample display areas, meeting zones and storage that present your range clearly and professionally.
-              </p>
+             
 
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -176,35 +166,12 @@ const Content = () => {
               </p>
 
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                False Ceiling, Flooring and Wall Finishes
-              </h4>
-              <p className="mb-3">
-                We select ceilings, flooring and wall treatments that suit heavy footfall, are easy to clean and support your brand look.
-              </p>
-
-
+             
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Billing Counter, Reception and Storage
               </h4>
               <p className="mb-3">
                 Well-planned counters, cash areas, back-office space and concealed storage keep the showroom neat and efficient.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Showroom Renovation and Makeover
-              </h4>
-              <p className="mb-3">
-                If your existing showroom looks dated, we refresh layouts, displays, lighting and finishes, often with limited downtime so your business keeps running.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Turnkey Showroom Execution
-              </h4>
-              <p className="mb-3">
-                Prefer to hand over everything? Our turnkey service covers design, civil changes, carpentry, ceilings, electrical points, flooring, painting, signage coordination and final cleaning.
               </p>
             </section>
 
@@ -232,12 +199,7 @@ const Content = () => {
                 <li>
                   <strong>Lighting plan:</strong> layered lighting with spotlights on key products.
                 </li>
-                <li>
-                  <strong>Brand elements:</strong> logo walls, colour palette, materials and signage.
-                </li>
-                <li>
-                  <strong>Seating and consultation area:</strong> comfortable space for serious buyers to discuss orders.
-                </li>
+              
                 <li>
                   <strong>Billing and packing zone:</strong> placed for smooth checkout without blocking movement.
                 </li>
@@ -398,12 +360,7 @@ const Content = () => {
                 <li>
                   <strong>Avoid clutter.</strong> Fewer items with more space around them look more valuable.
                 </li>
-                <li>
-                  <strong>Use colour with purpose.</strong> A neutral base with one or two brand colours keeps the space clean and memorable.
-                </li>
-                <li>
-                  <strong>Plan for changing stock.</strong> Modular shelves and flexible units make seasonal updates easy.
-                </li>
+                
                 <li>
                   <strong>Keep walkways wide.</strong> Cramped aisles make customers leave sooner.
                 </li>

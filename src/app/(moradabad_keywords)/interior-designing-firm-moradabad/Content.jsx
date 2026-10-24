@@ -249,17 +249,12 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designing Firm in Moradabad: How to Choose the Right One
-            and Why Customers Trust MTBoss
+            Interior Designing Firm in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <p>
-                Your home or business says a lot about you. The right interiors
-                make daily life easier, impress guests and customers, and add
-                long-term value to your property.
-              </p>
+          
               <p className="mt-3">
                 Moradabad has many interior designers, decorators and
                 contractors, so choosing the right one can feel confusing.
@@ -281,15 +276,14 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                What an Interior Designing Firm Actually Does
+                Interior Designing Firm 
               </SectionTitle>
               <BulletList items={firmRoles} />
             </section>
 
             <section>
               <SectionTitle>
-                Interior Designer, Decorator or Design-and-Build Firm: Know the
-                Difference
+                Interior Designer, Decorator or Design-and-Build Firm:
               </SectionTitle>
 
               <div className="space-y-5">
@@ -527,179 +521,7 @@ const Content = () => {
             <section>
               <SectionTitle>Red Flags to Avoid</SectionTitle>
               <BulletList items={redFlags} />
-            </section>
-
-            <section>
-              <SectionTitle>How MTBoss Runs an Interior Project</SectionTitle>
-
-              <div className="space-y-5">
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Stage 1: Enquiry and Discussion
-                  </h4>
-                  <BulletList
-                    items={[
-                      "Contact us by phone, WhatsApp, email or the website form.",
-                      "We discuss your space, budget, timeline and style preferences.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Stage 2: Site Visit and Measurement
-                  </h4>
-                  <BulletList
-                    items={[
-                      "Our team visits your property to measure rooms and study the site.",
-                      "We note electrical points, plumbing lines, windows, beams and access routes.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Stage 3: Design Planning
-                  </h4>
-                  <BulletList
-                    items={[
-                      "We prepare layouts showing furniture positions, storage and movement paths.",
-                      "We suggest colour and material combinations at different price levels.",
-                      "Vastu preferences can be included in the planning process.",
-                    ]}
-                  />
-                  <p className="mt-3">
-                    Read our guide on{" "}
-                    <a
-                      href="https://www.MTBoss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
-                      className="text-blue-600 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Vastu principles for modern home architecture
-                    </a>
-                    .
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Stage 4: 3D Visuals and Approval
-                  </h4>
-                  <BulletList
-                    items={[
-                      "3D views help you see the result before work starts.",
-                      "Once you approve the design and materials, the plan is locked to avoid confusion.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Stage 5: Quotation and Agreement
-                  </h4>
-                  <BulletList
-                    items={[
-                      "You receive an itemised quotation with a clear scope.",
-                      "Payment stages and timelines are written into the agreement.",
-                    ]}
-                  />
-                  <p className="mt-3">
-                    Try our{" "}
-                    <a
-                      href="https://www.MTBoss.in/calculator"
-                      className="text-blue-600 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Budget Calculator
-                    </a>{" "}
-                    for early planning, and read our{" "}
-                    <a
-                      href="https://www.MTBoss.in/blog/house-construction-cost-estimation-guide-india-2026"
-                      className="text-blue-600 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      construction cost estimation guide
-                    </a>
-                    .
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Stage 6: Execution
-                  </h4>
-                  <BulletList
-                    items={[
-                      "Work follows the right order: civil and electrical work, then carpentry, ceiling, painting and final fittings.",
-                      "Supervisors coordinate trades and check quality at each stage.",
-                      "You receive progress updates so you stay informed.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Stage 7: Inspection and Handover
-                  </h4>
-                  <BulletList
-                    items={[
-                      "We check alignment, finishes, hardware, lighting and cleanliness.",
-                      "Any snags are corrected before we hand over the project.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Stage 8: Ongoing Support
-                  </h4>
-                  <p>
-                    Small repairs and maintenance can be arranged through our{" "}
-                    <a
-                      href="https://www.MTBoss.in/quick"
-                      className="text-blue-600 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Quick Home Services
-                    </a>
-                    .
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            <section>
-              <SectionTitle>
-                Why Homeowners and Businesses in Moradabad Choose MTBoss
-              </SectionTitle>
-              <BulletList items={MTBossBenefits} />
-              <p className="mt-4">
-                Explore materials through{" "}
-                <a
-                  href="https://www.MTBoss.in/ShopNow"
-                  className="text-blue-600 underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Shop Now
-                </a>{" "}
-                and connect with service professionals through our{" "}
-                <a
-                  href="https://www.MTBoss.in/Services/professionals"
-                  className="text-blue-600 underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  professionals network
-                </a>
-                .
-              </p>
-            </section>
-
+            </section>          
             <section>
               <SectionTitle>
                 Interior Design for Different Property Types
@@ -830,7 +652,7 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Interior Trends in Moradabad for 2026</SectionTitle>
+              <SectionTitle>Interior Trends in Moradabad </SectionTitle>
               <BulletList
                 items={[
                   {

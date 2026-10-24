@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MTBoss: Top Interior Designer in Moradabad for Smart, Stylish and Practical Spaces
+             Top Interior Designer in Moradabad : MTBoss
           </h2>
 
 
@@ -59,7 +59,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Moradabad Clients Choose MTBoss for Interior Design
+               Moradabad Clients Choose MTBoss for Interior Design
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -111,12 +111,7 @@ const Content = () => {
                 Many apartments in Moradabad have limited space. Our designers specialise in making small areas feel larger, using multi-purpose furniture, built-in storage, light colours and careful circulation planning.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Kitchen and Wardrobe Design
-              </h4>
-              <p className="mb-3">
-                These two areas decide how organised your home feels. We design kitchens around your cooking habits and wardrobes around your actual clothing and storage needs, with proper internal fittings, drawers and accessories.
-              </p>
+              
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Living and Dining Area Design
@@ -125,12 +120,7 @@ const Content = () => {
                 We create layouts that support conversation, entertainment and everyday comfort, with feature walls, ceiling designs, lighting layers and furniture placement that suit the room&apos;s proportions.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Bedroom and Kids&apos; Room Design
-              </h4>
-              <p className="mb-3">
-                Bedrooms need calm, and children&apos;s rooms need safety and flexibility. We design sleep-friendly spaces and kids&apos; rooms with study areas, play zones and furniture that adapts as children grow.
-              </p>
+              
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Corporate Office Interiors
@@ -153,18 +143,12 @@ const Content = () => {
                 Restaurants, cafés and hotels depend on atmosphere. MTBoss designs seating, lighting, service flow and decor that match your concept and help guests feel comfortable.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Turnkey Interior Execution
-              </h4>
-              <p>
-                Design alone is not enough. MTBoss offers full turnkey execution, so the plan you approve on paper is the one you actually get on site.
-              </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBoss Plans an Interior Design Project
+                MTBoss Plans an Interior Design Project
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -194,7 +178,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Interior Design Trends Worth Considering in 2026
+                Interior Design Trends Worth Considering 
               </h3>
               <p className="mb-3">
                 Good design should feel current without chasing fads. These ideas are well suited to Indian homes today.

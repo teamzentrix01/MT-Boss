@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Home in Moradabad: Design That Fits Your
-            Family, Not a Catalogue
+            Interior Designer for Home in Moradabad: 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -41,7 +40,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What a Home Interior Designer Actually Does
+                 Home Interior Designer 
               </h3>
               <p className="mb-3">
                 Many people think a designer only picks colours and furniture. In

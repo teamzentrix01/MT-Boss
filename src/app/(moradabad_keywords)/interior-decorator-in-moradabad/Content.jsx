@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MTBoss: Your Trusted Interior Decorator in Moradabad for Homes, Offices and Shops
+          Interior Decorator in Moradabad : MTBoss
           </h2>
 
 
@@ -21,9 +21,7 @@ const Content = () => {
               <p className="mt-3">
                 If you are searching for an interior decorator in Moradabad, you want someone who understands your taste, respects your budget and finishes the work on time. MTBoss offers complete interior decoration for homes, offices, showrooms and restaurants, backed by in-house architecture and construction expertise.
               </p>
-              <p className="mt-3">
-                This guide explains what an interior decorator does, which services you can expect, how much planning matters, and how MTBoss turns ordinary rooms into spaces you enjoy every day.
-              </p>
+             
             </section>
 
 
@@ -31,9 +29,6 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Understanding the Role of an Interior Decorator
               </h3>
-              <p className="mb-3">
-                People often use &quot;interior designer&quot; and &quot;interior decorator&quot; as if they mean the same thing. In practice, the focus is slightly different.
-              </p>
               <p className="mb-3">
                 An interior decorator concentrates on how a space looks and feels. That includes wall colours, furniture selection, curtains, lighting, flooring finishes, wall decor, textures and accessories. An interior designer may also work on structural changes, such as moving walls or redoing the layout.
               </p>
@@ -45,7 +40,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Makes MTBoss Different From a Regular Decorator in Moradabad
+                MTBoss Different From a Regular Decorator in Moradabad
               </h3>
               <p className="mb-3">
                 Plenty of decorators can suggest paint shades and curtains. Fewer can also handle the electrical points, plumbing, carpentry, false ceilings and waterproofing that make an interior last.
@@ -75,28 +70,6 @@ const Content = () => {
               <p className="mb-3">
                 The living room is where guests form their first impression and where the family spends its evenings. MTBoss plans seating arrangements, TV units, wall panels, lighting and decor so the room feels welcoming without looking crowded.
               </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Bedroom Interiors
-              </h4>
-              <p className="mb-3">
-                A bedroom should help you relax. We design calm colour schemes, comfortable layouts, wardrobes with smart storage, bedside lighting, headboard walls and soft furnishings that suit your personality.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Modular Kitchen Design
-              </h4>
-              <p className="mb-3">
-                The kitchen is the busiest room in most Indian homes. MTBoss designs modular kitchens with practical layouts, durable cabinets, easy-to-clean surfaces, good ventilation and enough storage for daily cooking needs. The goal is a kitchen that looks good and is convenient to use.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Wardrobes and Custom Furniture
-              </h4>
-              <p className="mb-3">
-                Ready-made furniture rarely fits perfectly. MTBoss builds custom wardrobes, shoe racks, study tables, TV units, storage beds and display units sized to your room and your needs, which saves space and looks cleaner.
-              </p>
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 False Ceiling and Lighting Design
               </h4>
@@ -104,12 +77,6 @@ const Content = () => {
                 A good false ceiling hides wiring, adds depth and improves the look of a room. Combined with the right lighting, such as cove lights, spotlights and warm ambient fixtures, it can change the mood of a space completely.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Wall Finishes and Paint
-              </h4>
-              <p className="mb-3">
-                Colour has a strong effect on how a room feels. MTBoss helps you choose paints, textures, wallpapers and wall panels that match your furniture, natural light and the size of the room.
-              </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Flooring and Tile Selection
@@ -117,21 +84,6 @@ const Content = () => {
               <p className="mb-3">
                 From vitrified tiles and marble to wooden finishes, we help you pick flooring that fits your budget, looks good and handles daily wear.
               </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Pooja Room and Prayer Space Design
-              </h4>
-              <p className="mb-3">
-                A pooja room needs peace and simplicity. MTBoss designs compact, elegant prayer spaces with suitable materials, soft lighting and storage for pooja items.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Office Interior Decoration
-              </h4>
-              <p className="mb-3">
-                A good office improves focus and impresses clients. We plan reception areas, workstations, cabins, meeting rooms and break areas that look professional and make good use of space.
-              </p>
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Shop and Showroom Interiors
               </h4>
@@ -139,12 +91,7 @@ const Content = () => {
                 In retail, presentation drives sales. MTBoss designs shop interiors with attractive displays, brand-friendly colours, smart lighting and a layout that guides customers naturally through your products.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Restaurant, Café and Hotel Interiors
-              </h4>
-              <p className="mb-3">
-                Atmosphere is part of what you serve. We design dining spaces with comfortable seating, suitable lighting and decor that matches your theme and keeps guests coming back.
-              </p>
+             
             </section>
 
 
@@ -161,16 +108,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Contemporary Indian.</strong> A mix of modern furniture with traditional touches, such as brass accents, carved panels or ethnic fabrics. Given Moradabad&apos;s brass heritage, this style feels especially fitting for local homes.
-                </li>
-                <li>
-                  <strong>Luxury and classic.</strong> Rich colours, elegant moulding, statement lighting and premium finishes for larger homes and bungalows.
-                </li>
-                <li>
-                  <strong>Scandinavian and light themes.</strong> Soft whites, light wood and plenty of natural light for a bright, airy feel.
-                </li>
-                <li>
-                  <strong>Industrial and urban.</strong> Exposed textures, darker tones and metal finishes, often used in cafés, offices and young professionals&apos; homes.
-                </li>
+                </li> 
               </ul>
               <p className="mt-3">
                 If you aren&apos;t sure which style fits you, the MTBoss team can show you examples and help you narrow down your choice.

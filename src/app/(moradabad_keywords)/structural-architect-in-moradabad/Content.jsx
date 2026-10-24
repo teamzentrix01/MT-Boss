@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Structural Architect in Moradabad — Complete Guide to Structural Design & Safety
+            Structural Architect in Moradabad: MTBoss
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -39,45 +39,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                When Do You Specifically Need Structural Design Expertise?
-              </h3>
-              <p className="mb-3">
-                While every building technically requires structural design, certain situations make this expertise especially critical:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Multi-storey buildings (G+2 and above), where load calculations become more complex</li>
-                <li>Buildings on plots with unusual or challenging soil conditions</li>
-                <li>Structures with large open spans, such as halls, warehouses, or showrooms</li>
-                <li>Additional floor construction on an existing building, requiring load-bearing capacity verification</li>
-                <li>Renovation projects involving structural changes, like removing load-bearing walls</li>
-                <li>Any project in a seismic-sensitive zone requiring specific structural detailing</li>
-                <li>Buildings requiring formal structural safety certification for insurance, approval, or resale purposes</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Is a Structural Safety Audit?
-              </h3>
-              <p className="mb-3">
-                A structural safety audit is a technical assessment of an existing building&apos;s structural condition, often needed for:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Older buildings being considered for renovation or additional floor construction</li>
-                <li>Properties showing visible signs of distress — cracks, sagging, or dampness affecting structure</li>
-                <li>Pre-purchase due diligence before buying a property with an existing structure</li>
-                <li>Periodic safety verification for commercial or institutional buildings</li>
-                <li>Post-disaster (flood, earthquake) structural assessment</li>
-                <li>Certification requirements for insurance or regulatory compliance</li>
-              </ul>
-              <p className="mt-3">
-                A thorough audit typically includes visual inspection, material testing where needed, and a written report outlining the structure&apos;s condition and any recommended remedial measures.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Structural Architect vs. General Architect — Key Differences
+                Structural Architect vs. General Architect 
               </h3>
               <p className="mb-3">
                 Understanding this distinction helps you know who to engage for what:
@@ -131,15 +93,14 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBoss Supports Structural Design Coordination in Moradabad
+                MTBoss Supports Structural Design in Moradabad
               </h3>
               <p className="mb-3">
                 MTBoss Construction Private Limited is a construction and civil engineering company that integrates structural design coordination into its overall project delivery. Based on their published company profile:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
-                <li>450+ completed projects across residential, commercial, and industrial categories, including multi-storey structures</li>
-                <li>12 million+ square feet built, reflecting substantial exposure to varied structural conditions</li>
+                
                 <li>150+ trained professionals, including engineers, supervisors, and technicians</li>
                 <li>Technology-integrated process, using AI and BIM (Building Information Modeling) since 2018 for structural planning and clash detection</li>
                 <li>Free Construction Budget Calculator for instant, project-based cost estimates</li>
@@ -149,9 +110,7 @@ const Content = () => {
                 <li>Industry recognition — &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024</li>
                 <li>Instant WhatsApp support for quick queries and quotes</li>
               </ul>
-              <p className="mt-3">
-                For structural design coordinated closely with actual construction execution — reducing the risk of gaps between structural drawings and what&apos;s built on-site — a company with integrated engineering and construction capability offers a practical advantage.
-              </p>
+            
             </section>
 
             <section>
@@ -190,9 +149,7 @@ const Content = () => {
                 <li>Quality package selected — Basic, Standard, Premium, or Luxury</li>
                 <li>Whether structural audits or retrofitting are needed for existing structures</li>
               </ul>
-              <p className="mt-3">
-                For reference, overall construction costs for standard-quality homes in Moradabad typically fall around ₹700–₹800 per sq. ft., with structural work forming a significant share of that total.
-              </p>
+            
             </section>
 
             <section>
