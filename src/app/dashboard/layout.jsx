@@ -134,7 +134,6 @@ const menuStructure = [
       { label: 'Party Project Management', tab: 'party-project-management' },
       { label: 'PM Reports', tab: 'pm-reports' },
       { label: 'PM Activity Log', tab: 'pm-audit' },
-      { label: 'PM Benchmarks · Rates', tab: 'pm-benchmarks' },
       { label: 'Portfolio Projects', tab: 'projects' },
     ],
   },
