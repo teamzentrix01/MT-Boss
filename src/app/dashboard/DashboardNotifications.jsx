@@ -175,7 +175,14 @@ export default function DashboardNotifications() {
         onClick={() => setOpen((value) => !value)}
       >
         <Bell size={20} strokeWidth={1.8} aria-hidden="true" />
-        {unreadCount > 0 && <span className="admin-notifications__count">{unreadCount > 99 ? "99+" : unreadCount}</span>}
+        {unreadCount > 0 && (
+          <span
+            className="admin-notifications__count text-red-600"
+            style={{ color: '#dc2626', backgroundColor: '#ffffff' }}
+          >
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </span>
+        )}
       </button>
 
       {open && (
