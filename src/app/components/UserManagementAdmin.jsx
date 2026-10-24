@@ -1876,17 +1876,13 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                 <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)' }}>Phone / City</th>
                 <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)', textAlign: 'center' }}>Role</th>
                 <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)' }}>Registered</th>
-                <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)' }}>Last Login</th>
-                <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)', textAlign: 'center' }}>Orders</th>
-                <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)', textAlign: 'right' }}>Lifetime Spent</th>
-                <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)', textAlign: 'center' }}>Status</th>
                 <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={9} style={{ padding: '40px', textAlign: 'center', color: 'var(--muted, #64748b)' }}>
+                  <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: 'var(--muted, #64748b)' }}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                       <RefreshCw size={16} className="animate-spin" />
                       Loading customer records...
@@ -1895,7 +1891,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={9} style={{ padding: '40px', textAlign: 'center', color: 'var(--muted, #64748b)' }}>
+                  <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: 'var(--muted, #64748b)' }}>
                     No registered customers match the selected filter criteria.
                   </td>
                 </tr>
@@ -2002,63 +1998,6 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                         <div style={{ fontSize: '10px', color: 'var(--muted, #94a3b8)' }}>
                           {new Date(u.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                         </div>
-                      </td>
-
-                      {/* Last Login */}
-                      <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
-                        {u.last_login_at ? (
-                          <>
-                            <div style={{ fontWeight: 600 }}>{formatDateOnly(u.last_login_at)}</div>
-                            <div style={{ fontSize: '10px', color: 'var(--muted, #94a3b8)' }}>
-                              {new Date(u.last_login_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
-                            </div>
-                          </>
-                        ) : (
-                          <span style={{ color: 'var(--muted, #94a3b8)', fontStyle: 'italic', fontSize: '11px' }}>
-                            Never logged in
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Orders Count */}
-                      <td style={{ padding: '12px 14px', textAlign: 'center' }}>
-                        <span
-                          style={{
-                            display: 'inline-block',
-                            padding: '2px 8px',
-                            borderRadius: '999px',
-                            fontWeight: 700,
-                            fontSize: '11px',
-                            background: Number(u.total_orders) > 0 ? '#e0f2fe' : '#f1f5f9',
-                            color: Number(u.total_orders) > 0 ? '#0369a1' : '#64748b',
-                          }}
-                        >
-                          {u.total_orders} {Number(u.total_orders) === 1 ? 'order' : 'orders'}
-                        </span>
-                      </td>
-
-                      {/* Lifetime Spend */}
-                      <td style={{ padding: '12px 14px', textAlign: 'right', fontWeight: 800, fontSize: '13px' }}>
-                        <span style={{ color: Number(u.total_spent) > 0 ? '#059669' : 'var(--muted, #94a3b8)' }}>
-                          {formatCurrency(u.total_spent)}
-                        </span>
-                      </td>
-
-                      {/* Status */}
-                      <td style={{ padding: '12px 14px', textAlign: 'center' }}>
-                        <span
-                          style={{
-                            display: 'inline-block',
-                            padding: '3px 9px',
-                            borderRadius: '999px',
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            background: u.is_blocked ? '#fee2e2' : '#dcfce7',
-                            color: u.is_blocked ? '#dc2626' : '#15803d',
-                          }}
-                        >
-                          {u.is_blocked ? '● Blocked' : '● Active'}
-                        </span>
                       </td>
 
                       {/* Actions */}
@@ -3348,7 +3287,13 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                 </div>
 
                 {/* CONTACT & LIFETIME STATS */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginBottom: '24px', padding: '16px', borderRadius: '10px', background: '#f8fafc', border: '1px solid var(--border, #e2e8f0)', fontSize: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '24px', padding: '16px', borderRadius: '10px', background: '#f8fafc', border: '1px solid var(--border, #e2e8f0)', fontSize: '12px' }}>
+                  <div>
+                    <span style={{ color: 'var(--muted, #64748b)', display: 'block', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700 }}>Status</span>
+                    <strong style={{ fontSize: '13px', color: selectedUser.is_blocked ? '#dc2626' : '#15803d' }}>
+                      {selectedUser.is_blocked ? 'Blocked' : 'Active'}
+                    </strong>
+                  </div>
                   <div>
                     <span style={{ color: 'var(--muted, #64748b)', display: 'block', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700 }}>Phone</span>
                     <strong style={{ fontSize: '13px' }}>{selectedUser.phone || '—'}</strong>
@@ -3356,6 +3301,10 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                   <div>
                     <span style={{ color: 'var(--muted, #64748b)', display: 'block', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700 }}>Delivery City</span>
                     <strong style={{ fontSize: '13px' }}>{selectedUser.delivery_city || 'Not set'}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--muted, #64748b)', display: 'block', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700 }}>Last Login</span>
+                    <strong style={{ fontSize: '13px' }}>{selectedUser.last_login_at ? formatDateTime(selectedUser.last_login_at) : 'Never logged in'}</strong>
                   </div>
                   <div>
                     <span style={{ color: 'var(--muted, #64748b)', display: 'block', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700 }}>Total Orders</span>
