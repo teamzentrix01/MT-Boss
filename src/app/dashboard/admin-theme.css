@@ -18,8 +18,8 @@
   --status-warning-bg: #FFF3E0;
   --status-info: #1D4ED8;
   --status-info-bg: #E8EFFF;
-  --status-danger: #B91C1C;
-  --status-danger-bg: #FEE2E2;
+  --status-danger: #dc2626;
+  --status-danger-bg: #ffffff;
   --status-accent: #6D28D9;
   --status-accent-bg: #EFE9FD;
 
@@ -833,6 +833,7 @@
   color: var(--ink-700);
 }
 .admin-notifications__trigger:hover { border-color: var(--brand-600); color: var(--brand-600); }
+.admin-dashboard-root .admin-notifications__count,
 .admin-notifications__count {
   position: absolute;
   top: -5px;
@@ -842,13 +843,14 @@
   height: 18px;
   place-items: center;
   padding-inline: 4px;
-  border: 2px solid var(--bg-surface);
+  border: 2px solid #ffffff;
   border-radius: var(--radius-pill);
-  background: var(--status-danger);
-  color: var(--bg-surface);
+  background: #ffffff !important;
+  color: #dc2626 !important;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
 }
 .admin-notifications__panel {
   position: absolute;
