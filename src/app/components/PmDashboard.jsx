@@ -224,26 +224,22 @@ export default function PmDashboard({ isDarkMode }) {
     }
   }, []);
 
+  // Initial load for static data: alerts, parties, settings
   useEffect(() => {
     let ignore = false;
     (async () => {
       await Promise.resolve();
       if (!ignore) {
-        loadDashboard();
         loadAlerts();
         loadParties();
         loadSettings();
       }
     })();
     return () => { ignore = true; };
-  }, [loadDashboard, loadAlerts, loadParties, loadSettings]);
+  }, [loadAlerts, loadParties, loadSettings]);
 
-  const hasMounted = useRef(false);
+  // Load dashboard when filters change or on initial mount
   useEffect(() => {
-    if (!hasMounted.current) {
-      hasMounted.current = true;
-      return;
-    }
     let ignore = false;
     (async () => {
       await Promise.resolve();
@@ -252,7 +248,7 @@ export default function PmDashboard({ isDarkMode }) {
       }
     })();
     return () => { ignore = true; };
-  }, [filters.partyId, filters.status, filters.dateFrom, filters.dateTo, loadDashboard]);
+  }, [loadDashboard]);
 
   async function dismissAlert(alertKey, snooze) {
     if (dismissing.current.has(alertKey)) return;

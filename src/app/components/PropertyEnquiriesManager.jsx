@@ -75,6 +75,7 @@ export default function PropertyEnquiriesManager({ isDarkMode }) {
       if (!res.ok || !data.success) throw new Error(data.error || 'Unable to load enquiries');
       setItems(data.data || []);
       setPagination(data.pagination || { page: 1, limit: 25, total: 0, pages: 1 });
+      if (data.metrics) setMetrics(data.metrics);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -83,7 +84,6 @@ export default function PropertyEnquiriesManager({ isDarkMode }) {
   }, [page, statusFilter, typeFilter, debouncedQ]);
 
   useEffect(() => { load(); }, [load]);
-  useEffect(() => { loadMetrics(); }, [loadMetrics]);
 
   const updateStatus = useCallback(async (id, status) => {
     setUpdatingId(id);

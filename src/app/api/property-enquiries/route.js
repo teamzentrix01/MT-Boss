@@ -21,6 +21,9 @@ const ensureTable = createInitializationGuard(async () => {
   await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS owner_email VARCHAR(200)`);
   await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS owner_user_id INTEGER`);
   await pool.query(`ALTER TABLE property_enquiries ADD COLUMN IF NOT EXISTS admin_notes TEXT`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_pe_status_created ON property_enquiries (status, created_at DESC)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_pe_user_id ON property_enquiries (user_id)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_pe_owner_user_id ON property_enquiries (owner_user_id)`);
 });
 
 export async function POST(req) {
@@ -204,11 +207,35 @@ export async function GET(req) {
        LIMIT $${vals.length - 1} OFFSET $${vals.length}`,
       vals
     );
+    let metrics = null;
+    if (page === 1 || searchParams.get('include_metrics') === '1') {
+      const metricsRes = await pool.query(`
+        SELECT
+          COUNT(*)::INT AS total,
+          COUNT(*) FILTER (WHERE status = 'new')::INT AS new_count,
+          COUNT(*) FILTER (WHERE status = 'contacted')::INT AS contacted_count,
+          COUNT(*) FILTER (WHERE status = 'converted')::INT AS converted_count,
+          COUNT(*) FILTER (WHERE COALESCE(listing_type, 'buy') = 'buy')::INT AS buy_count,
+          COUNT(*) FILTER (WHERE COALESCE(listing_type, 'buy') = 'rent')::INT AS rent_count
+        FROM property_enquiries
+      `);
+      const m = metricsRes.rows[0] || {};
+      metrics = {
+        total: m.total || 0,
+        newCount: m.new_count || 0,
+        contactedCount: m.contacted_count || 0,
+        convertedCount: m.converted_count || 0,
+        buyCount: m.buy_count || 0,
+        rentCount: m.rent_count || 0,
+      };
+    }
+
     return NextResponse.json({
       success: true,
       data: result.rows,
       pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
       sort: { field: sort, order: order.toLowerCase() },
+      ...(metrics ? { metrics } : {}),
     });
   } catch (error) {
     console.error('GET property enquiries error:', error);

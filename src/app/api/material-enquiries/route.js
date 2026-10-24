@@ -70,6 +70,9 @@ const ensureTable = createInitializationGuard(async () => {
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS cashback_status VARCHAR(30) DEFAULT 'NONE'`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS wallet_used NUMERIC(12,2) NOT NULL DEFAULT 0.00`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS wallet_redeem_status VARCHAR(30) NOT NULL DEFAULT 'NONE'`,
+    `CREATE INDEX IF NOT EXISTS idx_me_status_created ON material_enquiries (status, created_at DESC)`,
+    `CREATE INDEX IF NOT EXISTS idx_me_created_at ON material_enquiries (created_at DESC)`,
+    `CREATE INDEX IF NOT EXISTS idx_me_user_id ON material_enquiries (user_id)`,
   ];
   for (const sql of migrations) {
     try { await pool.query(sql); } catch { /* already correct type or column exists */ }
@@ -570,7 +573,7 @@ export async function GET(req) {
     }
     const { searchParams } = new URL(req.url);
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50', 10) || 50));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '25', 10) || 25));
     const offset = (page - 1) * limit;
     const status = String(searchParams.get('status') || '').trim();
     const vals = [];
