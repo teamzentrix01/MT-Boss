@@ -1186,7 +1186,7 @@ function VendorDashboardContent() {
                     >
                       <div className="flex items-start justify-between">
                         <div>
-                          <p className="font-black text-[var(--brand-blue)]">{notif.label} 📍 {notif.service_city}</p>
+                          <p className="font-black text-[var(--brand-blue)]">{notif.label} {notif.service_city}</p>
                           <p className={`text-sm ${muted} mt-1`}>
                             {notif.contact_locked ? 'Contact locked - package required' : `Phone: ${notif.user_phone}`}
                           </p>
@@ -1225,7 +1225,7 @@ function VendorDashboardContent() {
                   </p>
                   {selectedNotification.location_map_url && (
                     <a href={selectedNotification.location_map_url} target="_blank" className="text-[10px] text-[var(--brand-blue)] hover:underline mt-1 inline-block">
-                      📍 View on Map
+                      View on Map
                     </a>
                   )}
                 </div>
@@ -1301,7 +1301,7 @@ function VendorDashboardContent() {
                   <p className="text-sm">{activeBooking.service_address}</p>
                   {activeBooking.location_map_url && (
                     <a href={activeBooking.location_map_url} target="_blank" rel="noreferrer" className="text-[10px] text-[var(--brand-blue)] hover:underline mt-1 inline-block">
-                      📍 Open in Maps
+                      Open in Maps
                     </a>
                   )}
                 </div>
@@ -1408,7 +1408,7 @@ function VendorDashboardContent() {
                       onClick={() => updateLocation()}
                       className="w-full py-2.5 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase hover:bg-[var(--brand-blue)]/10 transition-all"
                     >
-                      📍 Update My Location
+                      Update My Location
                     </button>
                   </>
                 ) : null}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -82,7 +83,7 @@ async function uploadImage(file) {
   return data.secure_url;
 }
 
-function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
+function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', initialShowForm = false }) {
   const isVendor = ownerRole === 'vendor';
   const productEndpoint = isVendor ? '/api/vendor/shop-products' : '/api/admin/shop-products';
   const [products, setProducts] = useState([]);
@@ -95,7 +96,11 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form' }) {
   const [specsText, setSpecsText] = useState('');
   const [bulkText, setBulkText] = useState('');
   const [editingId, setEditingId] = useState(null);
-  const [showProductForm, setShowProductForm] = useState(false);
+  const [showProductForm, setShowProductForm] = useState(initialShowForm);
+
+  useEffect(() => {
+    if (initialShowForm) setShowProductForm(true);
+  }, [initialShowForm]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -819,15 +824,20 @@ function OfferManager() {
 
 export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }) {
   const [tab, setTab] = useState(initialTab);
+  const router = useRouter();
+
   const openAddProduct = () => {
-    setTab('products');
-    requestAnimationFrame(() => document.getElementById('shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    if (router) {
+      router.push('/dashboard?tab=shop-products&action=add');
+    } else if (typeof window !== 'undefined') {
+      window.location.href = '/dashboard?tab=shop-products&action=add';
+    }
   };
+
   return <div className="shop-admin-root">
     <div className="shop-admin-toolbar"><div><h2>Shop Now Manager</h2><p>Add products and manage what customers see on Shop Now.</p></div><button type="button" onClick={openAddProduct}>+ Add Product</button></div>
     <div className="shop-admin-tabs" role="tablist" aria-label="Shop Now management">
       <button type="button" role="tab" aria-selected={tab === 'categories'} className={tab === 'categories' ? 'active' : ''} onClick={() => setTab('categories')}>Categories</button>
-      <button type="button" role="tab" aria-selected={tab === 'products'} className={tab === 'products' ? 'active' : ''} onClick={() => setTab('products')}>Products</button>
       <button type="button" role="tab" aria-selected={tab === 'content'} className={tab === 'content' ? 'active' : ''} onClick={() => setTab('content')}>Storefront Content</button>
       <button type="button" role="tab" aria-selected={tab === 'coupons'} className={tab === 'coupons' ? 'active' : ''} onClick={() => setTab('coupons')}>Promotions & Coupons</button>
     </div>
@@ -909,4 +919,15 @@ export function VendorShopProductsManager({ isDarkMode = false }) {
     <div className="shop-admin-toolbar"><div><h2>Shop Products</h2><p>Add and manage the products customers can order from your shop.</p></div><button type="button" onClick={openAddProduct}>+ Add Product</button></div>
     <ProductManager ownerRole="vendor" formId="vendor-shop-product-form" />
   </div>;
+}
+
+export function ShopProductsManager({ isDarkMode = false }) {
+  const searchParams = useSearchParams();
+  const showForm = searchParams ? searchParams.get('action') === 'add' : false;
+
+  return (
+    <div className="shop-admin-root">
+      <ProductManager ownerRole="admin" formId="shop-product-form" initialShowForm={showForm} />
+    </div>
+  );
 }

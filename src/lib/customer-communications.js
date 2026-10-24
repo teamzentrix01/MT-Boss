@@ -279,7 +279,7 @@ export async function deliverPropertyEnquiryNotification({ enquiry, property, ow
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #2196f3;padding:16px;border-radius:8px;margin:18px 0">
             <h3 style="margin:0 0 6px;font-size:16px;color:#0f172a">${escapeHtml(property.title)}</h3>
             <p style="margin:0;font-size:13px;color:#64748b">
-              📍 ${escapeHtml(property.location || '-')}${property.price ? ` &nbsp;•&nbsp; 💰 <strong>₹${escapeHtml(property.price)}</strong>` : ''}
+              ${escapeHtml(property.location || '-')}${property.price ? ` &nbsp;•&nbsp; 💰 <strong>₹${escapeHtml(property.price)}</strong>` : ''}
             </p>
           </div>
 
@@ -341,7 +341,7 @@ export async function deliverPropertyEnquiryNotification({ enquiry, property, ow
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #2196f3;padding:16px;border-radius:8px;margin:18px 0">
             <h3 style="margin:0 0 6px;font-size:16px;color:#0f172a">${escapeHtml(property.title)}</h3>
             <p style="margin:0;font-size:13px;color:#64748b">
-              📍 ${escapeHtml(property.location || '-')}${property.price ? ` &nbsp;•&nbsp; 💰 <strong>₹${escapeHtml(property.price)}</strong>` : ''} &nbsp;•&nbsp; ${escapeHtml(listingLabel)}
+              ${escapeHtml(property.location || '-')}${property.price ? ` &nbsp;•&nbsp; 💰 <strong>₹${escapeHtml(property.price)}</strong>` : ''} &nbsp;•&nbsp; ${escapeHtml(listingLabel)}
             </p>
           </div>
 

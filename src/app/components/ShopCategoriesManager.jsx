@@ -1254,7 +1254,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                       {Object.entries(cityPrices).map(([city, vals]) => (
                         <div key={city} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: '8px', alignItems: 'center', background: t.tagBg, border: `1px solid ${t.border}`, borderRadius: '4px', padding: '10px 12px' }}>
                           <div style={{ fontWeight: 700, fontSize: '12px', color: t.text }}>
-                            📍 {city}
+                            {city}
                           </div>
                           <div>
                             <label style={{ ...lbl, marginBottom: '3px' }}>Price Range</label>

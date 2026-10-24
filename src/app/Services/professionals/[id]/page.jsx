@@ -189,7 +189,7 @@ export default function ProfessionalProfilePage() {
             <p style={{ color: 'rgba(255,255,255,0.55)', margin: '0 0 20px', fontSize: '15px', fontWeight: 500 }}>{pro.title}</p>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <span style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', padding: '5px 14px', fontSize: '11px', fontWeight: 600 }}>
-                📍 {pro.city}
+                {pro.city}
               </span>
               <span style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', padding: '5px 14px', fontSize: '11px', fontWeight: 600 }}>
                 ⏱ {pro.experience} yr{pro.experience !== 1 ? 's' : ''} experience

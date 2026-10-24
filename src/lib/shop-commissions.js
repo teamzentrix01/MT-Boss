@@ -528,6 +528,8 @@ export async function getShopVendorCommissionRecords({
       me.order_reference,
       COALESCE(NULLIF(TRIM(v.shop_name), ''), NULLIF(TRIM(v.business_name), ''), 'Vendor #' || svc.vendor_id) AS vendor_name,
       v.phone AS vendor_phone,
+      v.email AS vendor_email,
+      v.city AS vendor_city,
       COALESCE(NULLIF(TRIM(sm.name), ''), 'Shop Product #' || COALESCE(svc.product_id::text, svc.order_id::text)) AS product_name,
       sm.category AS product_category
     FROM shop_vendor_commissions svc
@@ -559,6 +561,8 @@ export async function getShopVendorCommissionRecords({
       vendor_id: Number(r.vendor_id),
       vendor_name: r.vendor_name,
       vendor_phone: r.vendor_phone,
+      vendor_email: r.vendor_email || '',
+      vendor_city: r.vendor_city || '',
       product_id: r.product_id ? Number(r.product_id) : null,
       product_name: r.product_name,
       product_category: r.product_category,

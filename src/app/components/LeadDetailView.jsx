@@ -493,7 +493,7 @@ export default function LeadDetailView({
                 </div>
                 <h2 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 900 }}>{lead.client_name}</h2>
                 <div style={{ color: muted, fontSize: '0.82rem', marginTop: '0.25rem' }}>
-                  {lead.city ? <span>📍 {lead.city}</span> : null}
+                  {lead.city ? <span>{lead.city}</span> : null}
                   {lead.service_type ? <span style={{ marginLeft: '0.75rem' }}>💼 {lead.service_type}</span> : null}
                   {lead.final_amount ? <span style={{ marginLeft: '0.75rem', fontWeight: 800, color: 'var(--accent, #2563eb)' }}>💵 {formatINR(lead.final_amount)}</span> : null}
                 </div>
@@ -861,7 +861,7 @@ export default function LeadDetailView({
                           )}
                         </div>
                         <div style={{ fontSize: '0.74rem', color: muted, marginTop: '2px' }}>
-                          {agent.city ? <span>📍 {agent.city}</span> : null}
+                          {agent.city ? <span>{agent.city}</span> : null}
                           {agent.phone ? <span style={{ marginLeft: '0.5rem' }}>📞 {agent.phone}</span> : null}
                           {agent.email ? <span style={{ marginLeft: '0.5rem' }}>✉️ {agent.email}</span> : null}
                         </div>

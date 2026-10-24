@@ -805,7 +805,7 @@ export default function QuickServiceSlugPage() {
                         : 'border-zinc-900 text-zinc-900 hover:bg-zinc-100'
                     }`}
                   >
-                    {locationLoading ? '📡 Getting Location...' : form.latitude ? '✓ GPS Coordinates Captured' : '📍 Get Live Location'}
+                    {locationLoading ? '📡 Getting Location...' : form.latitude ? '✓ GPS Coordinates Captured' : 'Get Live Location'}
                   </button>
                 </Field>
 
