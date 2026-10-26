@@ -3,7 +3,7 @@ import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
-const VALID_CATEGORIES = ['transport', 'machine_rent', 'electricity_water', 'permit', 'misc'];
+const VALID_CATEGORIES = ['transport', 'machine_rent', 'electricity_water', 'permit', 'misc', 'tools', 'rent'];
 
 export async function PATCH(req, { params }) {
   try {

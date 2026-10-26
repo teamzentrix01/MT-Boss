@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo, useId, useRef } from 'react';
+import { useSubmitAction } from '../../hooks/useSubmitAction';
+import SubmitToast from './SubmitToast';
 
 function today() {
   try {
@@ -120,7 +122,7 @@ const projectBlank = {
 };
 
 const materialBlank = { name: '', unit: 'kg', category: 'Civil', min_stock_level: 0, is_active: true };
-const receivedBlank = { material_id: '', quantity: '', rate: '', received_date: today(), supplier_name: '', challan_no: '', note: '', bill_url: '', bill_filename: '' };
+const receivedBlank = { material_id: '', material_name: '', supplier_id: '', quantity: '', rate: '', received_date: today(), supplier_name: '', challan_no: '', note: '', bill_url: '', bill_filename: '' };
 const contractorTrades = ['General Vendor', 'Civil Contractor', 'Plumber / Plumbing', 'Electrician', 'Mason', 'Carpenter', 'Painter', 'Fabricator', 'Tile / Flooring', 'Waterproofing', 'HVAC', 'Other'];
 const matchesContractorType = (trade, filter) => {
   if (!filter || filter === 'all') return true;
@@ -140,11 +142,12 @@ const matchesContractorType = (trade, filter) => {
   if (f === 'general vendor' || f === 'general') return v.includes('general') || v.includes('vendor');
   return v.includes(f) || f.includes(v);
 };
-const usedBlank = { material_id: '', quantity: '', used_date: today(), used_for: '', note: '' };
-const adjustmentBlank = { material_id: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', note: '', bill_url: '', bill_filename: '' };
+const usedBlank = { material_id: '', material_name: '', quantity: '', used_date: today(), used_for: '', note: '' };
+const adjustmentBlank = { material_id: '', material_name: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', note: '', bill_url: '', bill_filename: '' };
 const expenseBlank = { category: 'transport', amount: '', expense_date: today(), note: '' };
 
 export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
+  const submitAction = useSubmitAction();
   if (isAgent) {
     _globalIsAgent = true;
   }
@@ -216,6 +219,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     if (!isAgent || agentSpecs.includes('construction')) {
       tabs.push('construction');
     }
+    if (!isAgent || agentSpecs.includes('construction') || agentSpecs.includes('payments')) {
+      tabs.push('suppliers');
+    }
     return tabs;
   }, [isAgent, isSupervisor, agentSpecs]);
 
@@ -241,6 +247,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     if (s === 'attendance') return 'attendance';
     if (s === 'payments' || s === 'payment') return 'payments';
     if (s === 'construction' || s === 'materials' || s === 'expenses') return 'construction';
+    if (s === 'suppliers' || s === 'supplier') return 'suppliers';
     return null;
   };
 
@@ -258,17 +265,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     if (s === 'labor' || s === 'labor-payment' || s === 'labor_payment') return 'labor';
     if (s === 'party' || s === 'party-payment' || s === 'party_payment') return 'party';
     if (s === 'vendor' || s === 'vendor-payment' || s === 'vendor_payment') return 'vendor';
+    if (s === 'supplier' || s === 'supplier-payment' || s === 'supplier_payment') return 'supplier';
     return null;
   };
 
   const normalizeConstructionSub = (sub) => {
     if (!sub) return null;
     const s = sub.toLowerCase().trim();
-    if (s === 'received' || s === 'received-history' || s === 'received_history') return 'received';
-    if (s === 'used' || s === 'usage-history' || s === 'usage_history') return 'used';
     if (s === 'adjustments' || s === 'adjustment' || s === 'wastage') return 'adjustments';
     if (s === 'expenses' || s === 'other-expenses' || s === 'other_expenses') return 'expenses';
-    if (s === 'stock' || s === 'stock-summary' || s === 'stock_summary') return 'stock';
     return null;
   };
 
@@ -312,7 +317,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     const rawSub = getUrlParam('sub');
     const norm = normalizeConstructionSub(rawSub);
     if (norm) return norm;
-    return 'stock';
+    return 'adjustments';
   });
 
   useEffect(() => {
@@ -420,6 +425,23 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [contractorSearch, setContractorSearch] = useState('');
   const [contractorsLoading, setContractorsLoading] = useState(false);
   const [suppliersMaster, setSuppliersMaster] = useState([]);
+  const [projectSuppliers, setProjectSuppliers] = useState([]);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [supplierLedgerData, setSupplierLedgerData] = useState({ deliveries: [], payments: [], summary: {} });
+  const [loadingSupplierLedger, setLoadingSupplierLedger] = useState(false);
+  const [supplierLedgerTab, setSupplierLedgerTab] = useState('deliveries');
+  const [supplierPaymentsList, setSupplierPaymentsList] = useState([]);
+  const [supplierSearch, setSupplierSearch] = useState('');
+  const [supplierPaymentModal, setSupplierPaymentModal] = useState(false);
+  const [supplierPaymentForm, setSupplierPaymentForm] = useState({
+    supplier_id: '',
+    supplier_name: '',
+    amount: '',
+    payment_date: today(),
+    mode: 'bank',
+    transaction_reference: '',
+    note: '',
+  });
   const [vendorTypeFilter, setVendorTypeFilter] = useState('all');
   const [contractorMenuOpen, setContractorMenuOpen] = useState(false);
   const [supplierView, setSupplierView] = useState(false);
@@ -527,6 +549,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [laborTypeFilter, setLaborTypeFilter] = useState('all'); // 'all' | 'independent' | 'contractor' | string(id)
   const [laborAttendanceSection, setLaborAttendanceSection] = useState('all'); // 'all' | 'direct' | 'contractor'
   const [attendanceContractorFilter, setAttendanceContractorFilter] = useState('');
+  // Retained only for compatibility with the existing bulk-selection code; the
+  // checkbox UI is intentionally hidden in favor of per-worker marking.
   const [selectedLaborIds, setSelectedLaborIds] = useState([]);
   const [modalError, setModalError] = useState('');
 
@@ -733,6 +757,54 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     }
   }, [project?.id]);
 
+  const loadProjectSuppliers = useCallback(async (projId) => {
+    const pid = projId || project?.id;
+    if (!pid) return;
+    try {
+      const res = await api(`/api/admin/project-management/suppliers?projectId=${pid}`);
+      setProjectSuppliers(res.projectSuppliers || []);
+      if (res.allSuppliers && res.allSuppliers.length > 0) {
+        setSuppliersMaster(res.allSuppliers);
+      }
+    } catch (err) {
+      console.error('Error loading project suppliers:', err);
+    }
+  }, [project?.id]);
+
+  const loadSupplierLedger = useCallback(async (projId, supplierId, supplierName) => {
+    const pid = projId || project?.id;
+    if (!pid) return;
+    setLoadingSupplierLedger(true);
+    try {
+      let url = `/api/admin/project-management/supplier-ledger?projectId=${pid}`;
+      if (supplierId) url += `&supplierId=${supplierId}`;
+      if (supplierName) url += `&supplierName=${encodeURIComponent(supplierName)}`;
+      const res = await api(url);
+      setSupplierLedgerData(res || { deliveries: [], payments: [], summary: {} });
+    } catch (err) {
+      console.error('Error loading supplier ledger:', err);
+    } finally {
+      setLoadingSupplierLedger(false);
+    }
+  }, [project?.id]);
+
+  const loadSupplierPayments = useCallback(async (projId) => {
+    const pid = projId || project?.id;
+    if (!pid) return;
+    try {
+      const res = await api(`/api/admin/project-management/supplier-payments?projectId=${pid}&pageSize=200`);
+      setSupplierPaymentsList(res.data || []);
+    } catch (err) {
+      console.error('Error loading supplier payments:', err);
+    }
+  }, [project?.id]);
+
+  const openSupplierLedger = (supplier) => {
+    setSelectedSupplier(supplier);
+    setSupplierLedgerTab('deliveries');
+    loadSupplierLedger(project?.id, supplier.supplier_id, supplier.raw_supplier_name || supplier.supplier_name);
+  };
+
   const loadLaborAttendance = useCallback(async (date, projId) => {
     const pid = projId || project?.id;
     const d = date || laborAttendanceDate;
@@ -751,8 +823,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           ...row,
           name: row.name || row.labor_name || '',
           is_marked: Boolean(row.attendance_id),
-          status: row.attendance_id ? (row.attendance_status || row.status || 'present') : (row.status || 'present'),
-          wage_amount: row.attendance_id ? Number(row.wage_amount) : Number(row.daily_rate || 0),
+          // A loaded record is informational until the user explicitly changes it.
+          // Untouched workers deliberately have no default attendance status.
+          status: row.attendance_id ? (row.attendance_status || row.status || 'present') : '',
+          wage_amount: row.attendance_id ? Number(row.wage_amount) : 0,
+          dirty: false,
         }));
       setLaborAttendanceRows(rows);
       setSelectedLaborIds([]);
@@ -806,13 +881,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         api(`/api/admin/project-management/labor?projectId=${id}&pageSize=200`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/projects/${id}/agents`).catch(() => ({ data: [] })),
         api(`/api/admin/lead-management?assigneesOnly=1`).catch(() => ({ agents: [] })),
-        api('/api/admin/suppliers?status=approved&limit=200').catch(() => ({ data: [] })),
+        api(`/api/admin/project-management/suppliers?projectId=${id}`).catch(() => ({ projectSuppliers: [], allSuppliers: [] })),
+        api(`/api/admin/project-management/supplier-payments?projectId=${id}&pageSize=200`).catch(() => ({ data: [] })),
       ]);
+      const supPayRes = arguments[0] || {};
       setProject(projRes.data);
       setPartyPayments(ppRes.data || []);
       setProjectVendors(pvRes.data || []);
       setAllVendorsMaster(vListRes.data || []);
-      setSuppliersMaster((suppliersRes.data || []).filter((supplier) => supplier.is_active !== false));
+      setProjectSuppliers(suppliersRes.projectSuppliers || []);
+      setSuppliersMaster(suppliersRes.allSuppliers || []);
+      loadSupplierPayments(id);
       setProjectLabors(laborRes.data || []);
       setProjectAgents(assignedAgentsRes.data || []);
       setAllAgentsList(allAgentsRes.agents || []);
@@ -866,6 +945,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       }
     } catch (e) {
       setMessage(e.message);
+      throw e;
     }
   };
 
@@ -902,6 +982,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       loadProjectVendorAttendanceHistory(pid);
       loadProjectLaborAttendanceHistory(pid);
       loadContractorsList('all');
+      loadProjectSuppliers(pid);
+      loadSupplierPayments(pid);
+      if (selectedSupplier) {
+        loadSupplierLedger(pid, selectedSupplier.supplier_id, selectedSupplier.raw_supplier_name || selectedSupplier.supplier_name);
+      }
     } catch (e) {
       setMessage(e.message);
     }
@@ -953,6 +1038,22 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   };
 
   // ── Save Master Material ────────────────────────────────────────────────────
+  // Material endpoints retain their material_id contract. The simplified UI uses
+  // a name, resolving an existing master record or creating one invisibly.
+  const resolveMaterialId = async (materialName, fallbackId = '') => {
+    const name = String(materialName || '').trim();
+    if (!name) throw new Error('Material name is required');
+    const matching = materialsMaster.find((material) => String(material.name || '').trim().toLowerCase() === name.toLowerCase());
+    if (matching) return matching.id;
+    if (fallbackId) return fallbackId;
+    const created = await api('/api/admin/project-management/materials', {
+      method: 'POST',
+      body: JSON.stringify({ ...materialBlank, name }),
+    });
+    if (created.data) setMaterialsMaster((previous) => [...previous, created.data]);
+    return created.data?.id;
+  };
+
   const saveMaterialMaster = async (e) => {
     e.preventDefault();
     try {
@@ -967,6 +1068,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       if (project?.id) loadPhase3ProjectData(project.id);
     } catch (err) {
       setMessage(err.message);
+      throw err;
     }
   };
 
@@ -984,7 +1086,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         bill_filename = uploadData.filename;
       }
       
-      const payload = { ...receivedForm, project_id: project.id, bill_url, bill_filename };
+      const material_id = await resolveMaterialId(receivedForm.material_name, receivedForm.material_id);
+      const payload = { ...receivedForm, material_id, project_id: project.id, bill_url, bill_filename };
       
       if (editingReceivedId) {
         await api(`/api/admin/project-management/material-received/${editingReceivedId}`, {
@@ -1004,8 +1107,49 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       setReceivedForm(receivedBlank);
       setBillFile(null);
       refreshProjectData(project.id);
+      loadProjectSuppliers(project.id);
+      if (selectedSupplier) {
+        loadSupplierLedger(project.id, selectedSupplier.supplier_id, selectedSupplier.raw_supplier_name || selectedSupplier.supplier_name);
+      }
     } catch (err) {
       setMessage(err.message);
+      throw err;
+    }
+  };
+
+  // ── Save Supplier Payment ──────────────────────────────────────────────────
+  const saveSupplierPayment = async (e) => {
+    e.preventDefault();
+    if (!project?.id) return;
+    try {
+      const payload = {
+        ...supplierPaymentForm,
+        project_id: project.id,
+      };
+      const res = await api('/api/admin/project-management/supplier-payments', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      setMessage(res.is_advance ? `Supplier payment recorded as advance of ${INR(res.advance_amount)}` : 'Supplier payment recorded successfully');
+      setSupplierPaymentModal(false);
+      setSupplierPaymentForm({
+        supplier_id: '',
+        supplier_name: '',
+        amount: '',
+        payment_date: today(),
+        mode: 'bank',
+        transaction_reference: '',
+        note: '',
+      });
+      refreshProjectData(project.id);
+      loadProjectSuppliers(project.id);
+      loadSupplierPayments(project.id);
+      if (selectedSupplier) {
+        loadSupplierLedger(project.id, selectedSupplier.supplier_id, selectedSupplier.raw_supplier_name || selectedSupplier.supplier_name);
+      }
+    } catch (err) {
+      setModalError(err.message);
+      throw err;
     }
   };
 
@@ -1014,20 +1158,21 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     e.preventDefault();
     if (!project?.id) return;
     try {
+      const material_id = await resolveMaterialId(usedForm.material_name, usedForm.material_id);
       let res;
       if (editingUsedId) {
         res = await api(`/api/admin/project-management/material-used/${editingUsedId}`, {
           method: 'PATCH',
-          body: JSON.stringify(usedForm),
+          body: JSON.stringify({ ...usedForm, material_id }),
         });
       } else {
         res = await api('/api/admin/project-management/material-used', {
           method: 'POST',
-          body: JSON.stringify({ ...usedForm, project_id: project.id }),
+          body: JSON.stringify({ ...usedForm, material_id, project_id: project.id }),
         });
       }
       if (res.warning) {
-        alert(res.warning);
+        setMessage(`${res.warning} The wastage entry was saved.`);
       }
       setMessage('Material usage recorded');
       setUsedModal(false);
@@ -1036,6 +1181,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       refreshProjectData(project.id);
     } catch (err) {
       setMessage(err.message);
+      throw err;
     }
   };
 
@@ -1053,7 +1199,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         bill_filename = uploadData.filename;
       }
       
-      const payload = { ...adjustmentForm, project_id: project.id, bill_url, bill_filename };
+      const material_id = await resolveMaterialId(adjustmentForm.material_name, adjustmentForm.material_id);
+      const payload = { ...adjustmentForm, material_id, project_id: project.id, bill_url, bill_filename };
 
       let res;
       if (editingAdjId) {
@@ -1067,10 +1214,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           body: JSON.stringify(payload),
         });
       }
-      if (res.warning) {
-        alert(res.warning);
-      }
-      setMessage('Material adjustment recorded');
+      setMessage(res.warning ? `${res.warning} The adjustment entry was saved.` : 'Material adjustment recorded');
+      if (res.data) setAdjustmentRows((previous) => [res.data, ...previous.filter((row) => Number(row.id) !== Number(res.data.id))]);
       setAdjustmentModal(false);
       setEditingAdjId(null);
       setAdjustmentForm(adjustmentBlank);
@@ -1078,6 +1223,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       refreshProjectData(project.id);
     } catch (err) {
       setMessage(err.message);
+      throw err;
     }
   };
 
@@ -1087,24 +1233,39 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     if (!project?.id) return;
     try {
       if (editingExpenseId) {
-        await api(`/api/admin/project-management/other-expenses/${editingExpenseId}`, {
+        const previousExpense = expenseRows.find((row) => Number(row.id) === Number(editingExpenseId));
+        const result = await api(`/api/admin/project-management/other-expenses/${editingExpenseId}`, {
           method: 'PATCH',
           body: JSON.stringify(expenseForm),
         });
+        if (result.data) {
+          setExpenseRows((previous) => previous.map((row) => Number(row.id) === Number(editingExpenseId) ? result.data : row));
+          setExpenseSummary((previous) => ({
+            ...previous,
+            totalAmount: Number(previous.totalAmount || 0) + Number(result.data.amount || 0) - Number(previousExpense?.amount || 0),
+          }));
+        }
         setMessage('Expense updated successfully');
       } else {
-        await api('/api/admin/project-management/other-expenses', {
+        const result = await api('/api/admin/project-management/other-expenses', {
           method: 'POST',
           body: JSON.stringify({ ...expenseForm, project_id: project.id }),
         });
+        if (result.data) {
+          setExpenseRows((previous) => [result.data, ...previous.filter((row) => Number(row.id) !== Number(result.data.id))]);
+          setExpenseSummary((previous) => ({ ...previous, totalAmount: Number(previous.totalAmount || 0) + Number(result.data.amount || 0) }));
+        }
         setMessage('Expense recorded successfully');
       }
       setExpenseModal(false);
       setEditingExpenseId(null);
       setExpenseForm(expenseBlank);
+      // Refresh related project cards in the background. The expense list above
+      // is updated immediately from the authoritative save response.
       refreshProjectData(project.id);
     } catch (err) {
       setMessage(err.message);
+      throw err;
     }
   };
 
@@ -1127,6 +1288,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       }
     } catch (e) {
       setMessage(e.message);
+      throw e;
     }
   };
 
@@ -1149,6 +1311,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       }
     } catch (e) {
       setMessage(e.message);
+      throw e;
     }
   };
 
@@ -1161,6 +1324,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         loadParties();
       } else if (kind === 'partyPayment') {
         await api(`/api/admin/project-management/payments/${id}`, { method: 'DELETE' });
+        refreshProjectData();
+      } else if (kind === 'supplierPayment') {
+        await api(`/api/admin/project-management/supplier-payments?id=${id}`, { method: 'DELETE' });
+        loadSupplierPayments(project?.id);
+        loadProjectSuppliers(project?.id);
+        if (selectedSupplier) {
+          loadSupplierLedger(project?.id, selectedSupplier.supplier_id, selectedSupplier.raw_supplier_name || selectedSupplier.supplier_name);
+        }
         refreshProjectData();
       } else if (kind === 'vendorPayment') {
         await api(`/api/admin/project-management/vendor-payments/${id}`, { method: 'DELETE' });
@@ -1206,6 +1377,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       refreshProjectData();
     } catch (e) {
       setMessage(e.message);
+      throw e;
     }
   };
 
@@ -1257,6 +1429,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       refreshProjectData();
     } catch (e) {
       console.error('Error assigning contractor:', e);
+      throw e;
       setModalError(e.message || 'Could not assign contractor');
       setMessage(`❌ ${e.message || 'Could not assign contractor'}`);
     }
@@ -1315,9 +1488,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         const ex = existingMap.get(Number(pv.id));
         const hasLinkedLabor = Boolean(ex?.has_linked_labor);
         const isMarked = Boolean(ex && ex.attendance_id);
-        const initialStatus = isMarked
-          ? (ex.attendance_status || 'present')
-          : (hasLinkedLabor ? 'absent' : 'present');
+        const initialStatus = isMarked ? (ex.attendance_status || 'present') : '';
         const workers = isMarked ? Number(ex.workers_count || 1) : 1;
         const rate = isMarked ? Number(ex.rate_per_worker || pv.daily_rate || 0) : Number(pv.daily_rate || 0);
         const mult = initialStatus === 'present' ? 1 : initialStatus === 'half_day' ? 0.5 : 0;
@@ -1334,6 +1505,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           note: ex ? ex.note || '' : '',
           has_linked_labor: hasLinkedLabor,
           is_marked: isMarked,
+          dirty: false,
           created_by: ex?.created_by || null,
           created_at: ex?.created_at || null,
         };
@@ -1360,7 +1532,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     setSavingAttendance(true);
     try {
       const payloadEntries = attendanceRows
-        .filter((r) => !r.has_linked_labor)
+        .filter((r) => !r.has_linked_labor && r.dirty)
         .map((r) => ({
           project_vendor_id: r.project_vendor_id,
           attendance_date: attendanceDate,
@@ -1370,6 +1542,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           note: r.note,
         }));
 
+      if (!payloadEntries.length) return;
       await api('/api/admin/project-management/attendance', {
         method: 'POST',
         body: JSON.stringify({
@@ -1442,6 +1615,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       loadVendorPayments();
     } catch (e) {
       setMessage(e.message);
+      throw e;
     }
   };
 
@@ -1454,6 +1628,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         method: 'POST',
         body: JSON.stringify({
           ...supplyForm,
+          material_id: supplyForm.item_name ? await resolveMaterialId(supplyForm.item_name, supplyForm.material_id) : null,
           project_vendor_id: selectedVendor.id,
         }),
       });
@@ -1464,6 +1639,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       refreshProjectData();
     } catch (e) {
       setMessage(e.message);
+      throw e;
     }
   };
 
@@ -1511,11 +1687,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       refreshProjectData(project.id);
     } catch (err) {
       console.error('Error saving labor:', err);
+      throw err;
       setModalError(err.message || 'Could not save laborer');
       setMessage(`❌ ${err.message || 'Could not save laborer'}`);
     }
   };
 
+  /* Bulk checkbox controls intentionally removed; attendance is per worker. */
   const applyBulkStatus = (status) => {
     if (laborAttendanceDate !== today()) {
       setMessage(`❌ Purani date par attendance edit nahi kar sakte.`);
@@ -1534,7 +1712,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           return {
             ...r,
             status,
-            is_marked: true,
+            dirty: true,
             wage_amount: Math.round(mult * Number(r.daily_rate || 0) * 100) / 100,
           };
         }
@@ -1545,15 +1723,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     setMessage(`✓ Marked ${selectedSet.size} worker(s) as ${label}. Click "Save Attendance" to finalize.`);
   };
 
-  const saveAllLaborAttendance = async (customRows) => {
+  const saveAllLaborAttendance = async (customRows, includeUntouched = false) => {
     if (!project?.id) return;
     if (laborAttendanceDate !== today()) {
       setMessage(`❌ Sirf aaj ki date (${today()}) ki attendance save ki ja sakti hai.`);
       return;
     }
-    const rowsToSave = customRows || laborAttendanceRows;
+    const rowsToSave = (customRows || laborAttendanceRows).filter((row) =>
+      includeUntouched ? (!row.is_marked || row.dirty) : row.dirty
+    );
     if (!rowsToSave.length) {
-      setMessage('No workers available to save attendance.');
+      setMessage('Mark at least one worker before saving attendance.');
       return;
     }
     setSavingLaborAttendance(true);
@@ -1629,11 +1809,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       refreshProjectData(project.id);
     } catch (e) {
       setMessage(e.message);
+      throw e;
     }
   };
 
   return (
     <section className={`pm-container${isDarkMode ? ' dark-mode' : ''}`}>
+      <SubmitToast toast={submitAction.toast} onDismiss={submitAction.dismissToast} />
       {/* ── TOP NAV BAR ───────────────────────────────────────────────────── */}
       <div className="bar" style={{ justifyContent: 'space-between', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
@@ -1880,7 +2062,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
       {/* ── 2. ADD/EDIT PARTY FORM ────────────────────────────────────────── */}
       {screen === 'partyForm' && (
-        <form onSubmit={saveParty}>
+        <form onSubmit={(e) => submitAction.submit('party', () => saveParty(e), { successMessage: partyForm.id ? 'Party updated successfully' : 'Party added successfully', onError: setMessage })}>
           <h3>{partyForm.id ? 'Edit' : 'Add'} Party</h3>
           <div className="grid">
             <Input label="Name" name="name" value={partyForm.name} set={setPartyForm} required />
@@ -1897,7 +2079,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             </label>
           </div>
           <p style={{ marginTop: 14 }}>
-            <button type="submit">Save Party</button>
+            <button type="submit" disabled={submitAction.isSubmitting('party')}>{submitAction.isSubmitting('party') ? 'Saving…' : (partyForm.id ? 'Save Party' : 'Add Party')}</button>
           </p>
         </form>
       )}
@@ -2052,7 +2234,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
       {/* ── 4. ADD/EDIT PROJECT FORM ───────────────────────────────────────── */}
       {screen === 'projectForm' && (
-        <form onSubmit={saveProject}>
+        <form onSubmit={(e) => submitAction.submit('project', () => saveProject(e), { successMessage: projectForm.id ? 'Project updated successfully' : 'Project added successfully', onError: setMessage })}>
           <h3>{projectForm.id ? 'Edit' : 'Add'} Project</h3>
           <div className="grid">
             <Input label="Project Name" name="name" value={projectForm.name} set={setProjectForm} required />
@@ -2074,7 +2256,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             </label>
           </div>
           <p style={{ marginTop: 14 }}>
-            <button type="submit">Save Project</button>
+            <button type="submit" disabled={submitAction.isSubmitting('project')}>{submitAction.isSubmitting('project') ? 'Saving…' : (projectForm.id ? 'Save Edit Project' : 'Add Project')}</button>
           </p>
         </form>
       )}
@@ -2158,8 +2340,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           ))}
                       </select>
                       <div style={{ display: 'flex', gap: 8 }}>
-                        <button onClick={assignAgent} disabled={!assigningAgentId}>Assign</button>
-                        <button className="muted" onClick={() => { setAssignAgentModal(false); setAssigningAgentId(''); }}>Cancel</button>
+                        <button onClick={() => submitAction.submit('agent', assignAgent, { successMessage: 'Agent assigned successfully', onError: setModalError })} disabled={!assigningAgentId || submitAction.isSubmitting('agent')}>{submitAction.isSubmitting('agent') ? 'Adding…' : 'Assign Agent'}</button>
+                        <button className="muted" disabled={submitAction.isSubmitting('agent')} onClick={() => { setAssignAgentModal(false); setAssigningAgentId(''); }}>Cancel</button>
                       </div>
                     </div>
                   </div>
@@ -2219,6 +2401,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             <small>Paid to Vendors</small>
                             <b style={{ color: '#ea580c' }}>{INR(project.total_paid_to_vendors)}</b>
                           </div>
+                          <div className="stat">
+                            <small>Paid to Suppliers</small>
+                            <b style={{ color: '#0284c7' }}>{INR(project.total_paid_to_suppliers ?? projectSuppliers.reduce((sum, s) => sum + (Number(s.total_paid) || 0), 0))}</b>
+                          </div>
                           <div className="stat" style={{ background: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#f0fdf4' : '#fef2f2', border: `1px solid ${Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#bbf7d0' : '#fecaca'}` }}>
                             <small style={{ color: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#166534' : '#991b1b' }}>Profit So Far</small>
                             <b style={{ color: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#16a34a' : '#dc2626' }}>
@@ -2240,7 +2426,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {allowedMainTabs.includes('vendors') && (
                       <button
                         className={projectTab === 'vendors' ? 'active' : ''}
-                        onClick={() => { setSupplierView(false); handleSectionChange('vendors'); setContractorMenuOpen((open) => !open); }}
+                        onClick={() => { setSelectedSupplier(null); handleSectionChange('vendors'); setContractorMenuOpen((open) => !open); }}
                       >
                         👷 Contractors ({projectVendors.length}) ▾
                       </button>
@@ -2248,7 +2434,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {allowedMainTabs.includes('labor') && (
                       <button
                         className={projectTab === 'labor' ? 'active' : ''}
-                        onClick={() => { setSupplierView(false); setContractorMenuOpen(false); handleSectionChange('labor'); }}
+                        onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('labor'); }}
                       >
                         🦺 Labor ({projectLabors.length})
                       </button>
@@ -2256,7 +2442,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {allowedMainTabs.includes('attendance') && (
                       <button
                         className={projectTab === 'attendance' ? 'active' : ''}
-                        onClick={() => { setSupplierView(false); setContractorMenuOpen(false); handleSectionChange('attendance'); }}
+                        onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('attendance'); }}
                       >
                         📅 Attendance
                       </button>
@@ -2264,25 +2450,25 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {allowedMainTabs.includes('payments') && (
                       <button
                         className={projectTab === 'payments' ? 'active' : ''}
-                        onClick={() => { setSupplierView(false); setContractorMenuOpen(false); handleSectionChange('payments'); }}
+                        onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('payments'); }}
                       >
                         💳 Payments
                       </button>
                     )}
                     {allowedMainTabs.includes('construction') && (
                       <button
-                        className={projectTab === 'construction' && !supplierView ? 'active' : ''}
-                        onClick={() => { setSupplierView(false); setContractorMenuOpen(false); handleSectionChange('construction'); }}
+                        className={projectTab === 'construction' ? 'active' : ''}
+                        onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('construction'); }}
                       >
                         🏗️ Construction
                       </button>
                     )}
-                    {allowedMainTabs.includes('construction') && (
+                    {allowedMainTabs.includes('suppliers') && (
                       <button
-                        className={supplierView ? 'active' : ''}
-                        onClick={() => { setContractorMenuOpen(false); setSupplierView(true); setProjectTab('construction'); handleConstructionSubChange('received'); }}
+                        className={projectTab === 'suppliers' ? 'active' : ''}
+                        onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('suppliers'); }}
                       >
-                        🚚 Suppliers
+                        🚚 Suppliers ({projectSuppliers.length})
                       </button>
                     )}
                   </div>
@@ -2688,8 +2874,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               }}
                               style={{ maxWidth: 170 }}
                             />
-                            <button onClick={saveAllAttendance} disabled={savingAttendance}>
-                              {savingAttendance ? 'Saving...' : '💾 Save Attendance for All'}
+                            <button onClick={saveAllAttendance} disabled={savingAttendance || !attendanceRows.some((row) => row.dirty && !row.has_linked_labor)}>
+                              {savingAttendance ? 'Saving...' : `💾 Save Attendance (${attendanceRows.filter((row) => row.dirty && !row.has_linked_labor).length} marked)`}
                             </button>
                             {attendanceRows.some((r) => r.is_marked) ? (
                               <span style={{ fontSize: 12, padding: '4px 8px', borderRadius: 4, background: '#dcfce7', color: '#166534', fontWeight: 600 }}>
@@ -2808,6 +2994,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     onClick={() => {
                                       const next = [...attendanceRows];
                                       next[idx].status = st;
+                                      next[idx].dirty = true;
                                       const mult = st === 'present' ? 1 : st === 'half_day' ? 0.5 : 0;
                                       next[idx].wage_amount = mult * Number(next[idx].workers_count) * Number(next[idx].rate_per_worker);
                                       setAttendanceRows(next);
@@ -3103,7 +3290,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             return (
                               <div>
                                 {/* Bulk Action Bar */}
-                                {isLaborDateToday && (
+                                {false && isLaborDateToday && (
                                   <div
                                     style={{
                                       display: 'flex',
@@ -3251,7 +3438,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     <table>
                                       <thead>
                                         <tr>
-                                          <th style={{ width: 40, textAlign: 'center' }}>
+                                          <th style={{ width: 40, textAlign: 'center', display: 'none' }}>
                                             <input
                                               type="checkbox"
                                               disabled={!isLaborDateToday}
@@ -3293,7 +3480,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                                 transition: 'background 0.15s ease',
                                               }}
                                             >
-                                              <td style={{ textAlign: 'center' }}>
+                                              <td style={{ textAlign: 'center', display: 'none' }}>
                                                 <input
                                                   type="checkbox"
                                                   disabled={!isLaborDateToday}
@@ -3350,7 +3537,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                                       onClick={() => {
                                                         const next = [...laborAttendanceRows];
                                                         next[idx].status = st;
-                                                        next[idx].is_marked = true;
+                                                        next[idx].dirty = true;
                                                         const mult = st === 'present' ? 1 : st === 'half_day' ? 0.5 : 0;
                                                         next[idx].wage_amount = Math.round(mult * Number(row.daily_rate || 0) * 100) / 100;
                                                         setLaborAttendanceRows(next);
@@ -3415,10 +3602,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
                                       <span style={{ fontSize: 13, color: '#334155', fontWeight: 600 }}>
-                                        Ready to Save: <b>{laborAttendanceRows.filter((r) => r.is_marked || r.status).length}</b> of <b>{laborAttendanceRows.length}</b> workers
+                                        Ready to Save: <b>{laborAttendanceRows.filter((r) => r.dirty).length}</b> of <b>{laborAttendanceRows.length}</b> workers (marked)
                                       </span>
                                       <span style={{ fontSize: 13, color: '#16a34a', fontWeight: 700 }}>
-                                        Total Wages: {INR(laborAttendanceRows.reduce((acc, r) => acc + (Number(r.wage_amount) || 0), 0))}
+                                        Total Wages: {INR(laborAttendanceRows.filter((r) => r.dirty).reduce((acc, r) => acc + (Number(r.wage_amount) || 0), 0))}
                                       </span>
                                       {selectedFromVisible.length > 0 && (
                                         <span style={{ fontSize: 12, color: '#4338ca', background: '#e0e7ff', padding: '2px 8px', borderRadius: 4, fontWeight: 700 }}>
@@ -3433,14 +3620,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                         className="muted"
                                         disabled={savingLaborAttendance}
                                         onClick={() => {
+                                          if (!window.confirm('Mark every untouched worker absent and save attendance?')) return;
                                           const next = laborAttendanceRows.map((r) => {
-                                            if (!r.status || !r.is_marked) {
-                                              return { ...r, status: 'absent', wage_amount: 0, is_marked: true };
+                                            if (!r.is_marked && !r.dirty) {
+                                              return { ...r, status: 'absent', wage_amount: 0, dirty: true };
                                             }
                                             return r;
                                           });
                                           setLaborAttendanceRows(next);
-                                          saveAllLaborAttendance(next);
+                                          saveAllLaborAttendance(next, true);
                                         }}
                                         style={{ padding: '8px 14px', fontSize: 12 }}
                                       >
@@ -3449,7 +3637,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       <button
                                         type="button"
                                         className="active-btn"
-                                        disabled={savingLaborAttendance}
+                                        disabled={savingLaborAttendance || laborAttendanceRows.filter((r) => r.dirty).length === 0}
                                         onClick={() => saveAllLaborAttendance()}
                                         style={{
                                           padding: '8px 18px',
@@ -3582,6 +3770,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           >
                             Party Payment ({partyPayments.length})
                           </button>
+                          <button
+                            className={paymentsSubTab === 'supplier' ? 'active-btn' : 'muted'}
+                            onClick={() => handlePaymentsSubChange('supplier')}
+                          >
+                            Supplier Payment ({supplierPaymentsList.length})
+                          </button>
                         </div>
 
                         {paymentsSubTab === 'labor' && !isSupervisor && (
@@ -3601,11 +3795,30 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             + Record Labor Payment
                           </button>
                         )}
+                        {paymentsSubTab === 'supplier' && !isSupervisor && (
+                          <button
+                            onClick={() => {
+                              setSupplierPaymentForm({
+                                supplier_id: projectSuppliers[0]?.supplier_id || '',
+                                supplier_name: projectSuppliers[0]?.supplier_name || '',
+                                amount: '',
+                                payment_date: today(),
+                                mode: 'bank',
+                                transaction_reference: '',
+                                note: '',
+                              });
+                              setModalError('');
+                              setSupplierPaymentModal(true);
+                            }}
+                          >
+                            + Record Supplier Payment
+                          </button>
+                        )}
                       </div>
 
                       {paymentsSubTab === 'vendor' && (
                         <div>
-                          <form onSubmit={saveVendorPayment} className="card" style={{ marginBottom: 16 }}>
+                          <form onSubmit={(e) => submitAction.submit('vendorPayment', () => saveVendorPayment(e), { successMessage: 'Vendor payment recorded successfully', onError: setMessage })} className="card" style={{ marginBottom: 16 }}>
                     <h4 style={{ margin: '0 0 12px', fontSize: 15 }}>Record Vendor Payment</h4>
                     <div className="grid">
                       <label>
@@ -3655,7 +3868,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       <Input label="Note / Transaction Ref" name="note" value={vendorPaymentForm.note} set={setVendorPaymentForm} />
                     </div>
                     <p style={{ marginTop: 12, textAlign: 'right' }}>
-                      <button type="submit">Record Payment</button>
+                      <button type="submit" disabled={submitAction.isSubmitting('vendorPayment')}>{submitAction.isSubmitting('vendorPayment') ? 'Saving…' : 'Record Payment'}</button>
                     </p>
                   </form>
 
@@ -3869,7 +4082,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
                       {paymentsSubTab === 'party' && (
                         <div>
-                          <form onSubmit={savePartyPayment} className="card" style={{ marginBottom: 16 }}>
+                          <form onSubmit={(e) => submitAction.submit('partyPayment', () => savePartyPayment(e), { successMessage: 'Party payment recorded successfully', onError: setMessage })} className="card" style={{ marginBottom: 16 }}>
                     <h4 style={{ margin: '0 0 12px', fontSize: 15 }}>Record Party Payment (Client Receipts)</h4>
                     <div className="grid">
                       <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={partyPaymentForm.amount} set={setPartyPaymentForm} required />
@@ -3892,7 +4105,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       <Input label="Note / Reference" name="note" value={partyPaymentForm.note} set={setPartyPaymentForm} />
                     </div>
                     <p style={{ marginTop: 12, textAlign: 'right' }}>
-                      <button type="submit">Record Payment</button>
+                      <button type="submit" disabled={submitAction.isSubmitting('partyPayment')}>{submitAction.isSubmitting('partyPayment') ? 'Saving…' : 'Record Payment'}</button>
                     </p>
                   </form>
 
@@ -3939,68 +4152,431 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     </div>
                   )}
 
+                  {/* ── SUPPLIERS TAB: SUPPLIER LEDGER ─────────────────────── */}
+                  {projectTab === 'suppliers' && (
+                    <div>
+                      {!selectedSupplier ? (
+                        /* ── 1. SUPPLIERS LIST VIEW ────────────────────────── */
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                              <h4 style={{ margin: 0, fontSize: 16 }}>Project Suppliers ({projectSuppliers.length})</h4>
+                              <input
+                                type="text"
+                                placeholder="Search supplier by name or phone..."
+                                value={supplierSearch}
+                                onChange={(e) => setSupplierSearch(e.target.value)}
+                                style={{ minWidth: 240, padding: '6px 12px', fontSize: 13 }}
+                              />
+                            </div>
+                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                              {hasAgentConstruction && (
+                                <button
+                                  onClick={() => {
+                                    setReceivedForm({
+                                      ...receivedBlank,
+                                      received_date: today(),
+                                    });
+                                    setEditingReceivedId(null);
+                                    setBillFile(null);
+                                    setModalError('');
+                                    setReceivedModal(true);
+                                  }}
+                                >
+                                  + Record Material Delivered to Site
+                                </button>
+                              )}
+                              {hasAgentPayment && (
+                                <button
+                                  className="btn-secondary"
+                                  onClick={() => {
+                                    setSupplierPaymentForm({
+                                      supplier_id: projectSuppliers[0]?.supplier_id || '',
+                                      supplier_name: projectSuppliers[0]?.supplier_name || '',
+                                      amount: '',
+                                      payment_date: today(),
+                                      mode: 'bank',
+                                      transaction_reference: '',
+                                      note: '',
+                                    });
+                                    setModalError('');
+                                    setSupplierPaymentModal(true);
+                                  }}
+                                >
+                                  + Record Supplier Payment
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Supplier</th>
+                                <th>Total Supplied</th>
+                                <th>Total Paid</th>
+                                <th>Balance</th>
+                                <th>Last Delivery</th>
+                                <th style={{ textAlign: 'right' }}>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {projectSuppliers
+                                .filter((s) => {
+                                  if (!supplierSearch.trim()) return true;
+                                  const q = supplierSearch.toLowerCase();
+                                  return (
+                                    (s.supplier_name && s.supplier_name.toLowerCase().includes(q)) ||
+                                    (s.phone && s.phone.includes(q)) ||
+                                    (s.city && s.city.toLowerCase().includes(q))
+                                  );
+                                })
+                                .map((s) => (
+                                  <tr
+                                    key={s.key}
+                                    className="clickable-row"
+                                    onClick={() => openSupplierLedger(s)}
+                                    title="Click to open supplier ledger"
+                                  >
+                                    <td>
+                                      <b>{s.supplier_name}</b>
+                                      {s.is_registered ? (
+                                        <span className="badge badge-active" style={{ marginLeft: 6, fontSize: 10 }}>Registered</span>
+                                      ) : (
+                                        <span className="badge" style={{ marginLeft: 6, fontSize: 10, background: '#f1f5f9', color: '#64748b' }}>Unregistered</span>
+                                      )}
+                                      {s.phone && (
+                                        <span style={{ fontSize: 11, color: '#64748b', display: 'block', marginTop: 2 }}>
+                                          📞 {s.phone} {s.city ? `• ${s.city}` : ''}
+                                        </span>
+                                      )}
+                                    </td>
+                                    <td style={{ fontWeight: 600 }}>
+                                      {INR(s.total_supplied)}
+                                      <span style={{ fontSize: 11, color: '#64748b', display: 'block' }}>
+                                        {s.delivery_count} {s.delivery_count === 1 ? 'delivery' : 'deliveries'}
+                                      </span>
+                                    </td>
+                                    <td style={{ fontWeight: 600, color: '#16a34a' }}>
+                                      {INR(s.total_paid)}
+                                      <span style={{ fontSize: 11, color: '#64748b', display: 'block' }}>
+                                        {s.payment_count} {s.payment_count === 1 ? 'payment' : 'payments'}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      {s.balance > 0 ? (
+                                        <span style={{ fontWeight: 700, color: '#ea580c' }}>
+                                          Due: {INR(s.balance)}
+                                        </span>
+                                      ) : s.balance < 0 ? (
+                                        <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700 }}>
+                                          Advance: {INR(Math.abs(s.balance))}
+                                        </span>
+                                      ) : (
+                                        <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
+                                      )}
+                                    </td>
+                                    <td>{s.last_delivery || '—'}</td>
+                                    <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
+                                      <button
+                                        className="muted"
+                                        onClick={() => openSupplierLedger(s)}
+                                        title="Open full ledger"
+                                      >
+                                        📒 View Ledger
+                                      </button>
+                                      {hasAgentPayment && (
+                                        <button
+                                          onClick={() => {
+                                            setSupplierPaymentForm({
+                                              supplier_id: s.supplier_id || '',
+                                              supplier_name: s.supplier_name || '',
+                                              amount: '',
+                                              payment_date: today(),
+                                              mode: 'bank',
+                                              transaction_reference: '',
+                                              note: '',
+                                            });
+                                            setModalError('');
+                                            setSupplierPaymentModal(true);
+                                          }}
+                                          title="Record payment to this supplier"
+                                        >
+                                          + Pay
+                                        </button>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                              {projectSuppliers.length === 0 && (
+                                <tr>
+                                  <td colSpan={6} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                                    No suppliers recorded for this project yet.<br />
+                                    Click <b>&ldquo;+ Record Material Delivered to Site&rdquo;</b> to record initial supplier deliveries.
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : (
+                        /* ── 2. SUPPLIER LEDGER VIEW ───────────────────────── */
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <button
+                                className="muted"
+                                onClick={() => setSelectedSupplier(null)}
+                                style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+                              >
+                                ← Back to Suppliers
+                              </button>
+                              <div>
+                                <h4 style={{ margin: 0, fontSize: 18 }}>
+                                  {selectedSupplier.supplier_name}
+                                  {selectedSupplier.is_registered ? (
+                                    <span className="badge badge-active" style={{ marginLeft: 8, fontSize: 11 }}>Registered</span>
+                                  ) : (
+                                    <span className="badge" style={{ marginLeft: 8, fontSize: 11, background: '#f1f5f9', color: '#64748b' }}>Unregistered</span>
+                                  )}
+                                </h4>
+                                {selectedSupplier.phone && (
+                                  <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                                    📞 {selectedSupplier.phone} {selectedSupplier.city ? `• ${selectedSupplier.city}` : ''}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                              {hasAgentConstruction && (
+                                <button
+                                  onClick={() => {
+                                    setReceivedForm({
+                                      ...receivedBlank,
+                                      supplier_id: selectedSupplier.supplier_id || '',
+                                      supplier_name: selectedSupplier.supplier_name || '',
+                                      received_date: today(),
+                                    });
+                                    setEditingReceivedId(null);
+                                    setBillFile(null);
+                                    setModalError('');
+                                    setReceivedModal(true);
+                                  }}
+                                >
+                                  + Record Delivery
+                                </button>
+                              )}
+                              {hasAgentPayment && (
+                                <button
+                                  className="btn-secondary"
+                                  onClick={() => {
+                                    setSupplierPaymentForm({
+                                      supplier_id: selectedSupplier.supplier_id || '',
+                                      supplier_name: selectedSupplier.supplier_name || '',
+                                      amount: '',
+                                      payment_date: today(),
+                                      mode: 'bank',
+                                      transaction_reference: '',
+                                      note: '',
+                                    });
+                                    setModalError('');
+                                    setSupplierPaymentModal(true);
+                                  }}
+                                >
+                                  + Record Payment
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Summary Cards */}
+                          <div className="stat-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 16 }}>
+                            <div className="card" style={{ padding: '12px 16px', borderLeft: '4px solid #0369a1' }}>
+                              <small style={{ color: '#64748b', fontWeight: 600, textTransform: 'uppercase', fontSize: 11 }}>Total Supplied</small>
+                              <div style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', marginTop: 4 }}>
+                                {INR(supplierLedgerData.summary?.total_supplied ?? selectedSupplier.total_supplied)}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+                                {supplierLedgerData.deliveries?.length || 0} deliveries
+                              </div>
+                            </div>
+                            <div className="card" style={{ padding: '12px 16px', borderLeft: '4px solid #16a34a' }}>
+                              <small style={{ color: '#64748b', fontWeight: 600, textTransform: 'uppercase', fontSize: 11 }}>Total Paid</small>
+                              <div style={{ fontSize: 20, fontWeight: 800, color: '#16a34a', marginTop: 4 }}>
+                                {INR(supplierLedgerData.summary?.total_paid ?? selectedSupplier.total_paid)}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+                                {supplierLedgerData.payments?.length || 0} payments
+                              </div>
+                            </div>
+                            <div
+                              className="card"
+                              style={{
+                                padding: '12px 16px',
+                                borderLeft: `4px solid ${(supplierLedgerData.summary?.balance ?? selectedSupplier.balance) < 0 ? '#10b981' : '#f97316'}`,
+                                background: (supplierLedgerData.summary?.balance ?? selectedSupplier.balance) < 0 ? '#f0fdf4' : '#fff'
+                              }}
+                            >
+                              <small style={{ color: '#64748b', fontWeight: 600, textTransform: 'uppercase', fontSize: 11 }}>
+                                {(supplierLedgerData.summary?.balance ?? selectedSupplier.balance) < 0 ? 'Advance Paid' : 'Balance Due'}
+                              </small>
+                              <div
+                                style={{
+                                  fontSize: 20,
+                                  fontWeight: 800,
+                                  color: (supplierLedgerData.summary?.balance ?? selectedSupplier.balance) < 0 ? '#15803d' : '#ea580c',
+                                  marginTop: 4
+                                }}
+                              >
+                                {INR(Math.abs(supplierLedgerData.summary?.balance ?? selectedSupplier.balance))}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+                                {(supplierLedgerData.summary?.balance ?? selectedSupplier.balance) < 0
+                                  ? 'Overpayment / Advance available'
+                                  : (supplierLedgerData.summary?.balance ?? selectedSupplier.balance) === 0
+                                  ? 'All cleared'
+                                  : 'Payment pending to supplier'}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Ledger Sub-tabs */}
+                          <div style={{ display: 'flex', gap: 8, marginBottom: 12, borderBottom: '1px solid #e2e8f0', paddingBottom: 8 }}>
+                            <button
+                              className={supplierLedgerTab === 'deliveries' ? 'active-btn' : 'muted'}
+                              onClick={() => setSupplierLedgerTab('deliveries')}
+                            >
+                              📦 Deliveries ({supplierLedgerData.deliveries?.length || 0})
+                            </button>
+                            <button
+                              className={supplierLedgerTab === 'payments' ? 'active-btn' : 'muted'}
+                              onClick={() => setSupplierLedgerTab('payments')}
+                            >
+                              💳 Payments ({supplierLedgerData.payments?.length || 0})
+                            </button>
+                          </div>
+
+                          {loadingSupplierLedger ? (
+                            <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>Loading ledger entries...</div>
+                          ) : supplierLedgerTab === 'deliveries' ? (
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Date</th>
+                                  <th>Material Name</th>
+                                  <th>Quantity</th>
+                                  <th>Unit</th>
+                                  {!isSupervisor && <th>Rate</th>}
+                                  {!isSupervisor && <th>Amount</th>}
+                                  <th>Challan No</th>
+                                  <th>Bill</th>
+                                  <th>Note</th>
+                                  <th style={{ textAlign: 'right' }}>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {(supplierLedgerData.deliveries || []).map((d) => (
+                                  <tr key={d.id}>
+                                    <td>{d.received_date}</td>
+                                    <td><b>{d.material_name}</b></td>
+                                    <td>{Number(d.quantity).toFixed(2)}</td>
+                                    <td>{d.material_unit || 'units'}</td>
+                                    {!isSupervisor && <td>{INR(d.rate)}</td>}
+                                    {!isSupervisor && <td style={{ fontWeight: 600 }}>{INR(d.amount)}</td>}
+                                    <td>{d.challan_no || '—'}</td>
+                                    <td>
+                                      {d.bill_url ? (
+                                        <a href={d.bill_url} target="_blank" rel="noreferrer" title={d.bill_filename || 'View Bill'} style={{ textDecoration: 'none', fontSize: 16 }}>
+                                          📄
+                                        </a>
+                                      ) : '—'}
+                                    </td>
+                                    <td>{d.note || '—'}</td>
+                                    <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                                      {!isAgent && (
+                                        <button className="danger" onClick={() => del('received', d.id)}>
+                                          Delete
+                                        </button>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                                {(supplierLedgerData.deliveries || []).length === 0 && (
+                                  <tr>
+                                    <td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                      No material deliveries recorded for this supplier.
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          ) : (
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Date</th>
+                                  <th>Amount</th>
+                                  <th>Payment Mode</th>
+                                  <th>Reference / Cheque</th>
+                                  <th>Note</th>
+                                  <th>Recorded By</th>
+                                  <th style={{ textAlign: 'right' }}>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {(supplierLedgerData.payments || []).map((p) => (
+                                  <tr key={p.id}>
+                                    <td>{p.payment_date}</td>
+                                    <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
+                                    <td><span className="badge" style={{ textTransform: 'capitalize' }}>{p.mode || 'bank'}</span></td>
+                                    <td>{p.transaction_reference || '—'}</td>
+                                    <td>{p.note || '—'}</td>
+                                    <td style={{ fontSize: 12, color: '#64748b' }}>{p.created_by || '—'}</td>
+                                    <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                                      {!isAgent && (
+                                        <button className="danger" onClick={() => del('supplierPayment', p.id)}>
+                                          Delete
+                                        </button>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                                {(supplierLedgerData.payments || []).length === 0 && (
+                                  <tr>
+                                    <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                      No payments recorded for this supplier.
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* ── 5. CONSTRUCTION TAB ───────────────────────────────────── */}
                   {projectTab === 'construction' && (
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                          {!supplierView && <button
-                            className={constructionSubTab === 'stock' ? 'active-btn' : 'muted'}
-                            onClick={() => handleConstructionSubChange('stock')}
-                          >
-                            Stock Summary ({stockRows.length})
-                          </button>}
                           <button
-                            className={constructionSubTab === 'received' ? 'active-btn' : 'muted'}
-                            onClick={() => handleConstructionSubChange('received')}
-                          >
-                            Supplier Material Received ({receivedRows.length})
-                          </button>
-                          {!supplierView && <button
-                            className={constructionSubTab === 'used' ? 'active-btn' : 'muted'}
-                            onClick={() => handleConstructionSubChange('used')}
-                          >
-                            Site Material Used ({usedRows.length})
-                          </button>}
-                          {!supplierView && <button
                             className={constructionSubTab === 'adjustments' ? 'active-btn' : 'muted'}
                             onClick={() => handleConstructionSubChange('adjustments')}
                           >
                             Wastage / Adjustments ({adjustmentRows.length})
-                          </button>}
-                          {!supplierView && <button
+                          </button>
+                          <button
                             className={constructionSubTab === 'expenses' ? 'active-btn' : 'muted'}
                             onClick={() => handleConstructionSubChange('expenses')}
                           >
                             Other Expenses ({expenseRows.length})
-                          </button>}
+                          </button>
                         </div>
 
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                          {supplierView ? (
-                            <button onClick={() => { setReceivedForm(receivedBlank); setEditingReceivedId(null); setReceivedModal(true); }}>
-                              + Record Material Delivered to Site
-                            </button>
-                          ) : constructionSubTab !== 'expenses' ? (
-                            <>
-                              <button
-                                onClick={() => {
-                                  setReceivedForm(receivedBlank);
-                                  setEditingReceivedId(null);
-                                  setReceivedModal(true);
-                                }}
-                              >
-                                + Supplier Material Entry
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setUsedForm(usedBlank);
-                                  setEditingUsedId(null);
-                                  setUsedModal(true);
-                                }}
-                              >
-                                - Material Used
-                              </button>
+                          {constructionSubTab !== 'expenses' ? (
                               <button
                                 className="muted"
                                 onClick={() => {
@@ -4011,16 +4587,6 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               >
                                 ⚡ Adjustment / Wastage
                               </button>
-                              <button
-                                className="muted"
-                                onClick={() => {
-                                  setMaterialForm(materialBlank);
-                                  setAddMaterialModal(true);
-                                }}
-                              >
-                                + Master Material
-                              </button>
-                            </>
                           ) : (
                             <button
                               onClick={() => {
@@ -4197,6 +4763,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       setEditingReceivedId(r.id);
                                       setReceivedForm({
                                         material_id: String(r.material_id),
+                                        material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
                                         quantity: r.quantity,
                                         rate: r.rate,
                                         received_date: r.received_date,
@@ -4298,6 +4865,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       setEditingUsedId(r.id);
                                       setUsedForm({
                                         material_id: String(r.material_id),
+                                        material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
                                         quantity: r.quantity,
                                         used_date: r.used_date,
                                         used_for: r.used_for || '',
@@ -4381,6 +4949,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   setEditingAdjId(r.id);
                                   setAdjustmentForm({
                                     material_id: String(r.material_id),
+                                    material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
                                     adjustment_type: r.adjustment_type,
                                     quantity: r.quantity,
                                     adjustment_date: r.adjustment_date,
@@ -4426,6 +4995,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         <option value="electricity_water">Electricity &amp; Water</option>
                         <option value="permit">Permits &amp; Approvals</option>
                         <option value="misc">Miscellaneous</option>
+                        <option value="tools">Tools</option>
+                        <option value="rent">Rent</option>
                       </select>
                       <span style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>
                         Total: {INR(expenseSummary.totalAmount)}
@@ -5051,7 +5622,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {/* ── MODAL: ADD / EDIT LABOR ─────────────────────────────────────── */}
           {addLaborModal && (
             <div className="modal-overlay">
-              <form onSubmit={saveLabor} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('labor', () => saveLabor(e), { successMessage: editingLaborId ? 'Laborer updated successfully' : 'Laborer added successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 12px', fontSize: 17, color: '#0f172a' }}>
                   {editingLaborId ? 'Edit Labor Worker' : 'Add Labor Worker to Project'}
                 </h3>
@@ -5136,6 +5707,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <button
                     type="button"
                     className="muted"
+                    disabled={submitAction.isSubmitting('labor')}
                     onClick={() => {
                       setAddLaborModal(false);
                       setEditingLaborId(null);
@@ -5145,8 +5717,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   >
                     Cancel
                   </button>
-                  <button type="submit">
-                    {editingLaborId ? 'Update Laborer' : 'Add Laborer'}
+                  <button type="submit" disabled={submitAction.isSubmitting('labor')}>
+                    {submitAction.isSubmitting('labor') ? 'Saving…' : (editingLaborId ? 'Update Laborer' : 'Add Laborer')}
                   </button>
                 </div>
               </form>
@@ -5156,7 +5728,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {/* ── MODAL: RECORD LABOR PAYMENT ─────────────────────────────────── */}
           {laborPaymentModal && !isSupervisor && (
             <div className="modal-overlay">
-              <form onSubmit={saveLaborPayment} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('laborPayment', () => saveLaborPayment(e), { successMessage: 'Labor payment recorded successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 12px', fontSize: 17, color: '#0f172a' }}>
                   {editingLaborPaymentId ? 'Edit Labor Payment' : 'Record Labor Payment'}
                 </h3>
@@ -5242,8 +5814,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   >
                     Cancel
                   </button>
-                  <button type="submit">
-                    {editingLaborPaymentId ? 'Update Payment' : 'Save Payment'}
+                  <button type="submit" disabled={submitAction.isSubmitting('laborPayment')}>
+                    {submitAction.isSubmitting('laborPayment') ? 'Saving…' : (editingLaborPaymentId ? 'Update Payment' : 'Save Payment')}
                   </button>
                 </div>
               </form>
@@ -5253,7 +5825,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {/* ── MODAL: ASSIGN VENDOR ────────────────────────────────────────── */}
           {addVendorModal && (
             <div className="modal-overlay">
-              <form onSubmit={assignVendorToProject} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('contractor', () => assignVendorToProject(e), { successMessage: vendorMode === 'new' ? 'Contractor created and assigned successfully' : 'Contractor assigned successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 12px', fontSize: 17, color: '#0f172a' }}>
                   Add Contractor to Project
                 </h3>
@@ -5374,10 +5946,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </div>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button type="button" className="muted" onClick={() => { setAddVendorModal(false); setModalError(''); }}>
+                  <button type="button" className="muted" disabled={submitAction.isSubmitting('contractor')} onClick={() => { setAddVendorModal(false); setModalError(''); }}>
                     Cancel
                   </button>
-                  <button type="submit">Assign Contractor</button>
+                  <button type="submit" disabled={submitAction.isSubmitting('contractor')}>{submitAction.isSubmitting('contractor') ? 'Adding…' : 'Assign Contractor'}</button>
                 </div>
               </form>
             </div>
@@ -5386,7 +5958,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {/* ── MODAL: RECORD VENDOR MATERIAL SUPPLY ────────────────────────── */}
           {supplyModal && selectedVendor && (
             <div className="modal-overlay">
-              <form onSubmit={saveMaterialSupply} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('supply', () => saveMaterialSupply(e), { successMessage: 'Supplier delivery saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
                   Record Vendor Material Supply
                 </h3>
@@ -5401,22 +5973,6 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <Input label="Rate (₹)" name="rate" type="number" step="any" min="0" value={supplyForm.rate} set={setSupplyForm} required />
                   <Input label="Supply Date" name="supply_date" type="date" value={supplyForm.supply_date} set={setSupplyForm} required />
 
-                  <label>
-                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-                      Link to Master Material (Optional)
-                    </small>
-                    <select
-                      value={supplyForm.material_id}
-                      onChange={(e) => setSupplyForm({ ...supplyForm, material_id: e.target.value })}
-                    >
-                      <option value="">None (Vendor Supply Only)</option>
-                      {materialsMaster.map((m) => (
-                        <option value={m.id} key={m.id}>
-                          {m.name} ({m.unit})
-                        </option>
-                      ))}
-                    </select>
-                  </label>
                   <Input label="Note" name="note" value={supplyForm.note} set={setSupplyForm} />
                 </div>
 
@@ -5425,10 +5981,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </div>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button type="button" className="muted" onClick={() => setSupplyModal(false)}>
+                  <button type="button" className="muted" disabled={submitAction.isSubmitting('supply')} onClick={() => setSupplyModal(false)}>
                     Cancel
                   </button>
-                  <button type="submit">Save Supply</button>
+                  <button type="submit" disabled={submitAction.isSubmitting('supply')}>{submitAction.isSubmitting('supply') ? 'Saving…' : 'Save Supply'}</button>
                 </div>
               </form>
             </div>
@@ -5437,7 +5993,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {/* ── MODAL: CREATE MASTER MATERIAL ───────────────────────────────── */}
           {addMaterialModal && (
             <div className="modal-overlay">
-              <form onSubmit={saveMaterialMaster} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('material', () => saveMaterialMaster(e), { successMessage: 'Material created successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
                   Add Master Material
                 </h3>
@@ -5448,10 +6004,216 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <Input label="Min Stock Alert Level" name="min_stock_level" type="number" step="any" min="0" value={materialForm.min_stock_level} set={setMaterialForm} />
                 </div>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button type="button" className="muted" onClick={() => setAddMaterialModal(false)}>
+                  <button type="button" className="muted" disabled={submitAction.isSubmitting('material')} onClick={() => setAddMaterialModal(false)}>
                     Cancel
                   </button>
-                  <button type="submit">Create Material</button>
+                  <button type="submit" disabled={submitAction.isSubmitting('material')}>{submitAction.isSubmitting('material') ? 'Adding…' : 'Create Material'}</button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* ── MODAL: RECORD SUPPLIER PAYMENT ─────────────────────────────── */}
+          {supplierPaymentModal && (
+            <div className="modal-overlay">
+              <form
+                onSubmit={(e) =>
+                  submitAction.submit('supplierPayment', () => saveSupplierPayment(e), {
+                    successMessage: 'Supplier payment recorded successfully',
+                    onError: setModalError,
+                  })
+                }
+                className="modal-card"
+              >
+                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                  Record Payment to Supplier
+                </h3>
+                {modalError && (
+                  <div
+                    role="alert"
+                    style={{
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      color: '#b91c1c',
+                      padding: '8px 12px',
+                      borderRadius: 6,
+                      marginBottom: 12,
+                      fontSize: 13,
+                    }}
+                  >
+                    {modalError}
+                  </div>
+                )}
+
+                <div className="grid">
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
+                      Supplier *
+                    </small>
+                    <select
+                      required
+                      value={supplierPaymentForm.supplier_id ? `reg_${supplierPaymentForm.supplier_id}` : (supplierPaymentForm.supplier_name ? `unreg_${supplierPaymentForm.supplier_name.toLowerCase().trim()}` : '')}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val.startsWith('reg_')) {
+                          const sId = Number(val.replace('reg_', ''));
+                          const sup = suppliersMaster.find((s) => Number(s.id) === sId) || projectSuppliers.find((s) => Number(s.supplier_id) === sId);
+                          setSupplierPaymentForm({
+                            ...supplierPaymentForm,
+                            supplier_id: sId,
+                            supplier_name: sup?.shop_name || sup?.business_name || '',
+                          });
+                        } else if (val.startsWith('unreg_')) {
+                          const sup = projectSuppliers.find((s) => s.key === val);
+                          setSupplierPaymentForm({
+                            ...supplierPaymentForm,
+                            supplier_id: '',
+                            supplier_name: sup?.supplier_name || val.replace('unreg_', ''),
+                          });
+                        } else {
+                          setSupplierPaymentForm({
+                            ...supplierPaymentForm,
+                            supplier_id: '',
+                            supplier_name: '',
+                          });
+                        }
+                      }}
+                    >
+                      <option value="">Select Supplier</option>
+                      {projectSuppliers.length > 0 && (
+                        <optgroup label="Suppliers Used in Project">
+                          {projectSuppliers.map((s) => (
+                            <option key={s.key} value={s.key}>
+                              {s.supplier_name} • Balance: {s.balance > 0 ? `Due ${INR(s.balance)}` : s.balance < 0 ? `Advance ${INR(Math.abs(s.balance))}` : '₹0'}
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
+                      <optgroup label="All Registered Suppliers">
+                        {suppliersMaster.filter((m) => m.is_registered).map((s) => (
+                          <option key={`reg_${s.id}`} value={`reg_${s.id}`}>
+                            {s.shop_name || s.business_name || `Supplier #${s.id}`} {s.phone ? `(${s.phone})` : ''} {s.city ? `• ${s.city}` : ''}
+                          </option>
+                        ))}
+                      </optgroup>
+                    </select>
+                  </label>
+
+                  {!supplierPaymentForm.supplier_id && (
+                    <Input
+                      label="Supplier Name (if not registered)"
+                      name="supplier_name"
+                      value={supplierPaymentForm.supplier_name}
+                      set={setSupplierPaymentForm}
+                      required={!supplierPaymentForm.supplier_id}
+                      placeholder="e.g. Ultratech Distributor"
+                    />
+                  )}
+
+                  <Input
+                    label="Amount (₹) *"
+                    name="amount"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    value={supplierPaymentForm.amount}
+                    set={setSupplierPaymentForm}
+                    required
+                  />
+
+                  <Input
+                    label="Payment Date *"
+                    name="payment_date"
+                    type="date"
+                    value={supplierPaymentForm.payment_date}
+                    set={setSupplierPaymentForm}
+                    required
+                  />
+
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
+                      Payment Mode *
+                    </small>
+                    <select
+                      value={supplierPaymentForm.mode}
+                      onChange={(e) => setSupplierPaymentForm({ ...supplierPaymentForm, mode: e.target.value })}
+                    >
+                      <option value="bank">Bank Transfer / NEFT / RTGS</option>
+                      <option value="upi">UPI / GPay / PhonePe</option>
+                      <option value="cash">Cash</option>
+                      <option value="cheque">Cheque</option>
+                    </select>
+                  </label>
+
+                  <Input
+                    label="Transaction Ref / Cheque No."
+                    name="transaction_reference"
+                    value={supplierPaymentForm.transaction_reference}
+                    set={setSupplierPaymentForm}
+                    placeholder="e.g. UTR12345678 or Chq #000123"
+                  />
+
+                  <Input
+                    label="Note / Purpose"
+                    name="note"
+                    value={supplierPaymentForm.note}
+                    set={setSupplierPaymentForm}
+                    placeholder="e.g. 50 bags cement payment"
+                  />
+                </div>
+
+                {/* Advance / Balance warning */}
+                {(() => {
+                  const selSup = projectSuppliers.find((s) =>
+                    supplierPaymentForm.supplier_id
+                      ? Number(s.supplier_id) === Number(supplierPaymentForm.supplier_id)
+                      : (s.supplier_name && supplierPaymentForm.supplier_name && s.supplier_name.toLowerCase().trim() === supplierPaymentForm.supplier_name.toLowerCase().trim())
+                  );
+                  const curBalance = selSup ? selSup.balance : 0;
+                  const enteredAmt = Number(supplierPaymentForm.amount || 0);
+
+                  if (enteredAmt > 0 && selSup) {
+                    if (enteredAmt > curBalance) {
+                      const excess = enteredAmt - Math.max(0, curBalance);
+                      return (
+                        <div
+                          style={{
+                            background: '#fef3c7',
+                            border: '1px solid #f59e0b',
+                            color: '#92400e',
+                            padding: '10px 14px',
+                            borderRadius: 6,
+                            marginTop: 12,
+                            fontSize: 13,
+                          }}
+                        >
+                          ⚠️ <b>Notice: Advance Payment</b>
+                          <div style={{ marginTop: 2 }}>
+                            Payment of <b>{INR(enteredAmt)}</b> exceeds the current balance due ({INR(Math.max(0, curBalance))}).
+                            The excess <b>{INR(excess)}</b> will be recorded as an <b>Advance Payment</b> to this supplier.
+                          </div>
+                        </div>
+                      );
+                    }
+                  }
+                  return null;
+                })()}
+
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
+                  <button
+                    type="button"
+                    className="muted"
+                    disabled={submitAction.isSubmitting('supplierPayment')}
+                    onClick={() => {
+                      setSupplierPaymentModal(false);
+                      setModalError('');
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={submitAction.isSubmitting('supplierPayment')}>
+                    {submitAction.isSubmitting('supplierPayment') ? 'Saving…' : 'Record Payment'}
+                  </button>
                 </div>
               </form>
             </div>
@@ -5460,26 +6222,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {/* ── MODAL: MATERIAL RECEIVED ────────────────────────────────────── */}
           {receivedModal && (
             <div className="modal-overlay">
-              <form onSubmit={saveReceivedEntry} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('delivery', () => saveReceivedEntry(e), { successMessage: 'Supplier delivery saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
                   {editingReceivedId ? 'Edit' : 'Record'} Supplier Material Delivery
                 </h3>
+                {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
                 <div className="grid">
-                  <label>
-                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-                      Material <span style={{ color: '#ef4444' }}>*</span>
-                    </small>
-                    <select
-                      required
-                      value={receivedForm.material_id}
-                      onChange={(e) => setReceivedForm({ ...receivedForm, material_id: e.target.value })}
-                    >
-                      <option value="">Select Material</option>
-                      {materialsMaster.map((m) => (
-                        <option value={m.id} key={m.id}>{m.name} ({m.unit})</option>
-                      ))}
-                    </select>
-                  </label>
+                  <Input label="Material Name" name="material_name" value={receivedForm.material_name} set={setReceivedForm} required placeholder="e.g. Cement 53 Grade" />
                   <Input label="Quantity" name="quantity" type="number" step="any" min="0.001" value={receivedForm.quantity} set={setReceivedForm} required />
                   {!isSupervisor && (
                     <Input label="Rate (₹ per unit)" name="rate" type="number" step="any" min="0" value={receivedForm.rate} set={setReceivedForm} required />
@@ -5487,10 +6236,23 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <Input label="Received Date" name="received_date" type="date" value={receivedForm.received_date} set={setReceivedForm} required />
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Supplier</small>
-                    <select value={receivedForm.supplier_name} onChange={(e) => setReceivedForm({ ...receivedForm, supplier_name: e.target.value })}>
-                      <option value="">Select registered supplier (or enter below)</option>
-                      {suppliersMaster.map((supplier) => (
-                        <option key={supplier.id} value={supplier.shop_name || supplier.email}>{supplier.shop_name || supplier.email}{supplier.product_categories?.length ? ` — ${supplier.product_categories.join(', ')}` : ''}</option>
+                    <select
+                      value={receivedForm.supplier_id || ''}
+                      onChange={(e) => {
+                        const sId = e.target.value;
+                        const supplier = suppliersMaster.find((item) => String(item.id) === String(sId));
+                        setReceivedForm({
+                          ...receivedForm,
+                          supplier_id: sId,
+                          supplier_name: supplier ? (supplier.shop_name || supplier.business_name || '') : receivedForm.supplier_name,
+                        });
+                      }}
+                    >
+                      <option value="">Select registered supplier (or type name below)</option>
+                      {suppliersMaster.filter((s) => s.is_registered).map((supplier) => (
+                        <option key={supplier.id} value={supplier.id}>
+                          {supplier.shop_name || supplier.business_name || `Supplier #${supplier.id}`} {supplier.phone ? `(${supplier.phone})` : ''} {supplier.city ? `• ${supplier.city}` : ''}
+                        </option>
                       ))}
                     </select>
                   </label>
@@ -5508,10 +6270,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button type="button" className="muted" onClick={() => setReceivedModal(false)}>
+                  <button type="button" className="muted" disabled={submitAction.isSubmitting('delivery')} onClick={() => setReceivedModal(false)}>
                     Cancel
                   </button>
-                  <button type="submit">Save Supplier Delivery</button>
+                  <button type="submit" disabled={submitAction.isSubmitting('delivery')}>{submitAction.isSubmitting('delivery') ? 'Saving…' : 'Save Supplier Delivery'}</button>
                 </div>
               </form>
             </div>
@@ -5520,36 +6282,22 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {/* ── MODAL: MATERIAL USED ────────────────────────────────────────── */}
           {usedModal && (
             <div className="modal-overlay">
-              <form onSubmit={saveUsedEntry} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('usage', () => saveUsedEntry(e), { successMessage: 'Material usage saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
                   {editingUsedId ? 'Edit' : 'Record'} Material Usage
                 </h3>
                 <div className="grid">
-                  <label>
-                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-                      Material <span style={{ color: '#ef4444' }}>*</span>
-                    </small>
-                    <select
-                      required
-                      value={usedForm.material_id}
-                      onChange={(e) => setUsedForm({ ...usedForm, material_id: e.target.value })}
-                    >
-                      <option value="">Select Material</option>
-                      {materialsMaster.map((m) => (
-                        <option value={m.id} key={m.id}>{m.name} ({m.unit})</option>
-                      ))}
-                    </select>
-                  </label>
+                  <Input label="Material Name" name="material_name" value={usedForm.material_name} set={setUsedForm} required placeholder="e.g. Cement 53 Grade" />
                   <Input label="Quantity Used" name="quantity" type="number" step="any" min="0.001" value={usedForm.quantity} set={setUsedForm} required />
                   <Input label="Usage Date" name="used_date" type="date" value={usedForm.used_date} set={setUsedForm} required />
                   <Input label="Used For (e.g. Foundation, Slab, Plaster)" name="used_for" value={usedForm.used_for} set={setUsedForm} placeholder="e.g. 1st Floor Slab casting" />
                   <Input label="Note" name="note" value={usedForm.note} set={setUsedForm} />
                 </div>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button type="button" className="muted" onClick={() => setUsedModal(false)}>
+                  <button type="button" className="muted" disabled={submitAction.isSubmitting('usage')} onClick={() => setUsedModal(false)}>
                     Cancel
                   </button>
-                  <button type="submit">Record Usage</button>
+                  <button type="submit" disabled={submitAction.isSubmitting('usage')}>{submitAction.isSubmitting('usage') ? 'Saving…' : 'Record Usage'}</button>
                 </div>
               </form>
             </div>
@@ -5558,26 +6306,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {/* ── MODAL: ADJUSTMENT / WASTAGE ─────────────────────────────────── */}
           {adjustmentModal && (
             <div className="modal-overlay">
-              <form onSubmit={saveAdjustmentEntry} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('adjustment', () => saveAdjustmentEntry(e), { successMessage: 'Material adjustment saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
                   {editingAdjId ? 'Edit' : 'Record'} Material Adjustment / Wastage
                 </h3>
                 <div className="grid">
-                  <label>
-                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-                      Material <span style={{ color: '#ef4444' }}>*</span>
-                    </small>
-                    <select
-                      required
-                      value={adjustmentForm.material_id}
-                      onChange={(e) => setAdjustmentForm({ ...adjustmentForm, material_id: e.target.value })}
-                    >
-                      <option value="">Select Material</option>
-                      {materialsMaster.map((m) => (
-                        <option value={m.id} key={m.id}>{m.name} ({m.unit})</option>
-                      ))}
-                    </select>
-                  </label>
+                  <Input label="Material Name" name="material_name" value={adjustmentForm.material_name} set={setAdjustmentForm} required placeholder="e.g. Cement 53 Grade" />
 
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
@@ -5628,10 +6362,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </div>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button type="button" className="muted" onClick={() => setAdjustmentModal(false)}>
+                  <button type="button" className="muted" disabled={submitAction.isSubmitting('adjustment')} onClick={() => setAdjustmentModal(false)}>
                     Cancel
                   </button>
-                  <button type="submit">Record Adjustment</button>
+                  <button type="submit" disabled={submitAction.isSubmitting('adjustment')}>{submitAction.isSubmitting('adjustment') ? 'Saving…' : 'Record Adjustment'}</button>
                 </div>
               </form>
             </div>
@@ -5640,10 +6374,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {/* ── MODAL: OTHER EXPENSE ────────────────────────────────────────── */}
           {expenseModal && (
             <div className="modal-overlay">
-              <form onSubmit={saveExpenseEntry} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('expense', () => saveExpenseEntry(e), { successMessage: 'Expense saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
                   {editingExpenseId ? 'Edit' : 'Record'} Other Expense
                 </h3>
+                {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
                 <div className="grid">
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
@@ -5658,6 +6393,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       <option value="electricity_water">Electricity &amp; Water</option>
                       <option value="permit">Permits &amp; Approvals</option>
                       <option value="misc">Miscellaneous</option>
+                      <option value="tools">Tools</option>
+                      <option value="rent">Rent</option>
                     </select>
                   </label>
                   <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={expenseForm.amount} set={setExpenseForm} required />
@@ -5665,10 +6402,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <Input label="Note / Details" name="note" value={expenseForm.note} set={setExpenseForm} placeholder="e.g. Generator diesel 50L" />
                 </div>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button type="button" className="muted" onClick={() => setExpenseModal(false)}>
+                  <button type="button" className="muted" disabled={submitAction.isSubmitting('expense')} onClick={() => setExpenseModal(false)}>
                     Cancel
                   </button>
-                  <button type="submit">Save Expense</button>
+                  <button type="submit" disabled={submitAction.isSubmitting('expense')}>{submitAction.isSubmitting('expense') ? 'Saving…' : 'Save Expense'}</button>
                 </div>
               </form>
             </div>

@@ -39,9 +39,11 @@ export async function GET(req) {
     params.push(pageSize, offset);
 
     const r = await pool.query(
-      `SELECT r.*, m.name AS material_name, m.unit AS material_unit, COUNT(*) OVER()::int AS total_count
+      `SELECT r.*, m.name AS material_name, m.unit AS material_unit,
+              COALESCE(s.shop_name, r.supplier_name) AS supplier_display, COUNT(*) OVER()::int AS total_count
        FROM pm_material_received r
        JOIN pm_materials m ON m.id = r.material_id
+       LEFT JOIN suppliers s ON s.id = r.supplier_id
        WHERE ${where}
        ORDER BY r.received_date DESC, r.created_at DESC
        LIMIT $${params.length - 1} OFFSET $${params.length}`,
@@ -72,8 +74,9 @@ export async function POST(req) {
     await ensureProjectManagementSchema();
     const b = await req.json();
     const p = Number(b.project_id);
-    const m = Number(b.material_id);
+    let m = b.material_id ? Number(b.material_id) : null;
     const q = Number(b.quantity);
+    const manualMatName = String(b.material_name || '').trim();
 
     const auth = await assertAgentAccess(req, p, 'construction');
     if (!auth.allowed) return auth.response;
@@ -83,7 +86,7 @@ export async function POST(req) {
 
     if (
       !Number.isInteger(p) ||
-      !Number.isInteger(m) ||
+      (!Number.isInteger(m) && !manualMatName) ||
       !Number.isFinite(q) ||
       q <= 0 ||
       (!isSupervisor && (!Number.isFinite(rate) || rate < 0)) ||
@@ -95,16 +98,42 @@ export async function POST(req) {
     const c = await pool.connect();
     try {
       await c.query('BEGIN');
-      const actor = actorFromAdmin(auth.user);
+      const actor = actorFromAdmin(auth.user || auth.agent);
+
+      // If material_id is not provided, resolve or create in pm_materials by manualMatName
+      if (!Number.isInteger(m) || m <= 0) {
+        const findMat = await c.query('SELECT id FROM pm_materials WHERE LOWER(TRIM(name)) = LOWER(TRIM($1))', [manualMatName]);
+        if (findMat.rows[0]) {
+          m = Number(findMat.rows[0].id);
+        } else {
+          const unit = String(b.unit || b.material_unit || 'units').trim();
+          const createMat = await c.query(
+            'INSERT INTO pm_materials (name, unit, category) VALUES ($1, $2, $3) ON CONFLICT (name) DO UPDATE SET is_active = TRUE RETURNING id',
+            [manualMatName, unit, 'General']
+          );
+          m = Number(createMat.rows[0].id);
+        }
+      }
+
+      // Resolve supplier name if supplier_id passed but supplier_name blank
+      let resolvedSupplierName = String(b.supplier_name || '').trim() || null;
+      const supplierId = b.supplier_id ? Number(b.supplier_id) : null;
+      if (supplierId && !resolvedSupplierName) {
+        const sRes = await c.query('SELECT shop_name, business_name FROM suppliers WHERE id = $1', [supplierId]);
+        if (sRes.rows[0]) {
+          resolvedSupplierName = sRes.rows[0].shop_name || sRes.rows[0].business_name || `Supplier #${supplierId}`;
+        }
+      }
+
       const amount = q * rate;
       const r = await c.query(
         `INSERT INTO pm_material_received(
-           project_id, material_id, supplier_name, supplier_vendor_id, vendor_supply_id,
+           project_id, material_id, supplier_name, supplier_id, supplier_vendor_id, vendor_supply_id,
            quantity, rate, amount, received_date, challan_no, note, bill_url, bill_filename, created_by
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
          RETURNING *`,
         [
-          p, m, b.supplier_name || null, b.supplier_vendor_id || null, b.vendor_supply_id || null,
+          p, m, resolvedSupplierName, supplierId, b.supplier_vendor_id || null, b.vendor_supply_id || null,
           q, rate, amount, b.received_date, b.challan_no || null, b.note || null,
           b.bill_url || null, b.bill_filename || null, actor
         ]

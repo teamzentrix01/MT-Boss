@@ -220,7 +220,20 @@ async function pmSchemaLooksReady() {
          WHERE table_schema = 'public'
            AND table_name = 'pm_vendors'
            AND column_name = 'external_vendor_id'
-      ) AS has_vendors_ext
+      ) AS has_vendors_ext,
+      EXISTS (
+        SELECT 1
+          FROM information_schema.tables
+         WHERE table_schema = 'public'
+           AND table_name = 'pm_supplier_payments'
+      ) AS has_supplier_payments,
+      EXISTS (
+        SELECT 1
+          FROM information_schema.columns
+         WHERE table_schema = 'public'
+           AND table_name = 'pm_material_received'
+           AND column_name = 'supplier_id'
+      ) AS has_mr_supplier_id
   `);
   const row = result.rows[0] || {};
   return Boolean(
@@ -232,6 +245,8 @@ async function pmSchemaLooksReady() {
     && row.has_labor_pv
     && row.has_att_pv
     && row.has_vendors_ext
+    && row.has_supplier_payments
+    && row.has_mr_supplier_id
   );
 }
 
@@ -264,6 +279,8 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
   await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS pm_vendors_external_vendor_id_key ON pm_vendors(external_vendor_id) WHERE external_vendor_id IS NOT NULL`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_materials(id BIGSERIAL PRIMARY KEY,name VARCHAR(200) NOT NULL UNIQUE,unit VARCHAR(40),category VARCHAR(100),min_stock_level NUMERIC(14,3) NOT NULL DEFAULT 0,is_active BOOLEAN NOT NULL DEFAULT TRUE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_material_received(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,material_id BIGINT NOT NULL REFERENCES pm_materials(id) ON DELETE RESTRICT,supplier_name TEXT,supplier_vendor_id BIGINT REFERENCES pm_vendors(id) ON DELETE SET NULL,vendor_supply_id BIGINT REFERENCES pm_vendor_material_supply(id) ON DELETE SET NULL,quantity NUMERIC(14,3) NOT NULL CHECK(quantity>0),rate NUMERIC(14,2) NOT NULL CHECK(rate>=0),amount NUMERIC(14,2) NOT NULL,received_date DATE NOT NULL,challan_no VARCHAR(100),note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ,transfer_in BOOLEAN NOT NULL DEFAULT FALSE)`);
+  await pool.query(`ALTER TABLE pm_material_received ADD COLUMN IF NOT EXISTS supplier_id BIGINT REFERENCES suppliers(id) ON DELETE SET NULL`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS pm_supplier_payments(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,supplier_id BIGINT NULL REFERENCES suppliers(id) ON DELETE SET NULL,supplier_name TEXT,amount NUMERIC(14,2) NOT NULL CHECK(amount>0),payment_date DATE NOT NULL,mode VARCHAR(50),transaction_reference TEXT,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ)`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_material_used(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,material_id BIGINT NOT NULL REFERENCES pm_materials(id) ON DELETE RESTRICT,quantity NUMERIC(14,3) NOT NULL CHECK(quantity>0),used_date DATE NOT NULL,used_for TEXT,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ,over_used BOOLEAN NOT NULL DEFAULT FALSE)`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_material_adjustments(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,material_id BIGINT NOT NULL REFERENCES pm_materials(id) ON DELETE RESTRICT,adjustment_type VARCHAR(30) NOT NULL CHECK(adjustment_type IN ('wastage','damage','return_to_supplier','transfer_out')),quantity NUMERIC(14,3) NOT NULL CHECK(quantity>0),adjustment_date DATE NOT NULL,to_project_id BIGINT REFERENCES pm_projects(id) ON DELETE RESTRICT,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),over_used BOOLEAN NOT NULL DEFAULT FALSE)`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_other_expenses(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,category VARCHAR(30) NOT NULL CHECK(category IN ('transport','machine_rent','electricity_water','permit','misc')),amount NUMERIC(14,2) NOT NULL CHECK(amount>0),expense_date DATE NOT NULL,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);

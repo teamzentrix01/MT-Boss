@@ -109,6 +109,12 @@ export async function GET(req, { params }) {
          JOIN pm_labor_attendance la ON la.labor_id = l.id
          WHERE l.project_id = $1
          GROUP BY l.project_id
+       ),
+       supplier_paid AS (
+         SELECT project_id, SUM(amount) amount
+         FROM pm_supplier_payments
+         WHERE project_id = $1 AND NOT is_deleted
+         GROUP BY project_id
        )
        SELECT p.*, pa.name party_name,
          COALESCE(pt.received, 0) received,
@@ -125,6 +131,7 @@ export async function GET(req, { params }) {
          COALESCE(oe.amount, 0) total_other_expenses,
          (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) total_expense,
          COALESCE(vp.amount, 0) total_paid_to_vendors,
+          COALESCE(sp.amount, 0) total_paid_to_suppliers,
          (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(m.amount, 0)) - COALESCE(vp.amount, 0) total_vendor_balance_pending,
          COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_or_loss,
          COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_so_far
@@ -138,6 +145,7 @@ export async function GET(req, { params }) {
        LEFT JOIN direct_mat dm ON dm.project_id = p.id
        LEFT JOIN other_exp oe ON oe.project_id = p.id
        LEFT JOIN ind_labour il ON il.project_id = p.id
+        LEFT JOIN supplier_paid sp ON sp.project_id = p.id
        WHERE p.id = $1`, [id]
         );
 
@@ -157,6 +165,7 @@ export async function GET(req, { params }) {
                 row.profit_or_loss = null;
                 row.profit_so_far = null;
                 row.total_paid_to_vendors = null;
+                row.total_paid_to_suppliers = null;
                 row.total_vendor_balance_pending = null;
 
                 if (!hasLabor) {
