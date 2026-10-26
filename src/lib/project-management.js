@@ -1,16 +1,58 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { createInitializationGuard } from '@/lib/api-utils';
-import { verifyBearer } from '@/lib/auth';
+import { verifyBearer, getJwtSecret } from '@/lib/auth';
+import jwt from 'jsonwebtoken';
 
 export async function requirePmAccess(req, projectId = null) {
-  // Check if they have an admin or site_supervisor token
+  // 1. If explicit Authorization header is passed, prioritize its verified identity
+  const auth = req.headers.get('authorization') || '';
+  if (auth.startsWith('Bearer ')) {
+    const headerToken = auth.slice(7).trim();
+    if (headerToken && headerToken !== 'null' && headerToken !== 'undefined') {
+      try {
+        const decoded = jwt.verify(headerToken, getJwtSecret());
+        if (decoded?.role === 'agent') {
+          const res = await pool.query(
+            `SELECT id, name, email, phone, city, status, login_enabled,
+                    has_project_management_access, specializations
+               FROM agents
+              WHERE id = $1 AND login_enabled = TRUE AND status = 'Approved'`,
+            [decoded.id]
+          );
+          const dbAgent = res.rows[0];
+          if (dbAgent?.has_project_management_access) {
+            if (projectId) {
+              const assignmentRes = await pool.query(
+                'SELECT 1 FROM pm_project_agents WHERE project_id = $1 AND agent_id = $2',
+                [projectId, decoded.id]
+              );
+              if (assignmentRes.rows.length === 0) return null; // Not assigned to this project
+            }
+            const rawSpecs = dbAgent.specializations;
+            const specializations = Array.isArray(rawSpecs)
+              ? rawSpecs
+              : (typeof rawSpecs === 'string' ? JSON.parse(rawSpecs || '[]') : []);
+            return { ...decoded, ...dbAgent, specializations, role: 'agent' };
+          }
+          return null; // Agent does not have PM access
+        }
+        if (decoded?.role === 'admin' || decoded?.role === 'site_supervisor') {
+          return decoded;
+        }
+      } catch {
+        // Invalid header token, fall through to cookie checks
+      }
+    }
+  }
+
+  // 2. If no header or header was invalid, fallback to cookie checks
   const adminOrSupervisor = verifyBearer(req, 'admin') || verifyBearer(req, 'site_supervisor');
   if (adminOrSupervisor && (adminOrSupervisor.role === 'admin' || adminOrSupervisor.role === 'site_supervisor')) {
     return adminOrSupervisor;
   }
   
-  // Check if they have an agent token
+  // Check if they have an agent token in cookie
   const agent = verifyBearer(req, 'agent');
   if (agent && agent.role === 'agent') {
     const res = await pool.query(

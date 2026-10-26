@@ -40,8 +40,19 @@ export default function AdminProjectManagementPage() {
     assigned_agent_id: '',
   });
   const [message, setMessage] = useState('');
+  const [isAgent, setIsAgent] = useState(false);
 
-  const token = () => localStorage.getItem('admin-token') || localStorage.getItem('token');
+  useEffect(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('user') || 'null');
+      const ag = JSON.parse(localStorage.getItem('agent') || 'null');
+      if (ag || u?.role === 'agent') {
+        setIsAgent(true);
+      }
+    } catch {}
+  }, []);
+
+  const token = () => localStorage.getItem('admin-token') || localStorage.getItem('agent-token') || localStorage.getItem('token');
 
   async function authFetch(url, options = {}) {
     const t = token();
@@ -164,10 +175,14 @@ export default function AdminProjectManagementPage() {
     setSaving(true);
     setMessage('');
     try {
+      const payload = { ...form };
+      if (isAgent) {
+        delete payload.assigned_agent_id;
+      }
       const res = await authFetch(`/api/projects/${projectId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       if (!res) return;
       const data = await res.json();
@@ -289,13 +304,15 @@ export default function AdminProjectManagementPage() {
                 <span>Deal Amount</span>
                 <input className={input} type="number" value={form.deal_amount} onChange={(e) => setForm((f) => ({ ...f, deal_amount: e.target.value }))} />
               </label>
-              <label className="wide">
-                <span>Assign Project To</span>
-                <select className={input} value={form.assigned_agent_id} onChange={(e) => setForm((f) => ({ ...f, assigned_agent_id: e.target.value }))}>
-                  <option value="">Unassigned</option>
-                  {agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name}{agent.city ? ` - ${agent.city}` : ''}</option>)}
-                </select>
-              </label>
+              {!isAgent && (
+                <label className="wide">
+                  <span>Assign Project To</span>
+                  <select className={input} value={form.assigned_agent_id} onChange={(e) => setForm((f) => ({ ...f, assigned_agent_id: e.target.value }))}>
+                    <option value="">Unassigned</option>
+                    {agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name}{agent.city ? ` - ${agent.city}` : ''}</option>)}
+                  </select>
+                </label>
+              )}
               <label>
                 <span>Client Name</span>
                 <input className={input} value={form.client_name} onChange={(e) => setForm((f) => ({ ...f, client_name: e.target.value }))} />

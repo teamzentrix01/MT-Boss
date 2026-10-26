@@ -41,8 +41,10 @@ export default function OperationalProjectViewModal({
     setLoading(true);
     setError('');
     try {
+      const t = localStorage.getItem('admin-token') || localStorage.getItem('agent-token') || localStorage.getItem('token');
       const res = await fetch(`/api/projects/${projectId}?details=1&operational=1`, {
         cache: 'no-store',
+        headers: t ? { Authorization: `Bearer ${t}` } : {},
       });
       const json = await res.json();
       if (!res.ok || !json.success) {

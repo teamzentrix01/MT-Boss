@@ -30,12 +30,27 @@ export default function OperationalProjectsManager({ isDarkMode }) {
 
   const isConvertingRef = useRef(false);
   const [convertingId, setConvertingId] = useState(null);
+  const [isAgent, setIsAgent] = useState(false);
+
+  useEffect(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('user') || 'null');
+      const ag = JSON.parse(localStorage.getItem('agent') || 'null');
+      if (ag || u?.role === 'agent') {
+        setIsAgent(true);
+      }
+    } catch {}
+  }, []);
 
   const loadProjects = useCallback(async () => {
     setLoading(true);
     setMessage('');
     try {
-      const response = await fetch('/api/projects?kind=operational', { cache: 'no-store' });
+      const t = localStorage.getItem('admin-token') || localStorage.getItem('agent-token') || localStorage.getItem('token');
+      const response = await fetch('/api/projects?kind=operational', {
+        cache: 'no-store',
+        headers: t ? { Authorization: `Bearer ${t}` } : {},
+      });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.error || 'Unable to load projects');
       const loadedProjects = data.data || [];
@@ -109,9 +124,13 @@ export default function OperationalProjectsManager({ isDarkMode }) {
     setSavingId(project.id);
     setMessage('');
     try {
+      const t = localStorage.getItem('admin-token') || localStorage.getItem('agent-token') || localStorage.getItem('token');
       const response = await fetch(`/api/projects/${project.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(t ? { Authorization: `Bearer ${t}` } : {}),
+        },
         body: JSON.stringify({ assigned_agent_id: assignments[project.id] ?? '' }),
       });
       const data = await response.json();
@@ -655,27 +674,31 @@ export default function OperationalProjectsManager({ isDarkMode }) {
                               </button>
                             ) : (
                               <>
-                                <select
-                                  className="op-select"
-                                  value={assignments[project.id] ?? ''}
-                                  onChange={(e) =>
-                                    setAssignments((vals) => ({ ...vals, [project.id]: e.target.value }))
-                                  }
-                                >
-                                  <option value="">Unassigned</option>
-                                  {cityAgents.map((agent) => (
-                                    <option value={String(agent.id)} key={agent.id}>
-                                      {agent.name} {agent.city ? `(${agent.city})` : ''}
-                                    </option>
-                                  ))}
-                                </select>
-                                <button
-                                  className="op-assign"
-                                  disabled={isSaving}
-                                  onClick={() => assignProject(project)}
-                                >
-                                  {isSaving ? 'Saving...' : 'Assign'}
-                                </button>
+                                {!isAgent && (
+                                  <>
+                                    <select
+                                      className="op-select"
+                                      value={assignments[project.id] ?? ''}
+                                      onChange={(e) =>
+                                        setAssignments((vals) => ({ ...vals, [project.id]: e.target.value }))
+                                      }
+                                    >
+                                      <option value="">Unassigned</option>
+                                      {cityAgents.map((agent) => (
+                                        <option value={String(agent.id)} key={agent.id}>
+                                          {agent.name} {agent.city ? `(${agent.city})` : ''}
+                                        </option>
+                                      ))}
+                                    </select>
+                                    <button
+                                      className="op-assign"
+                                      disabled={isSaving}
+                                      onClick={() => assignProject(project)}
+                                    >
+                                      {isSaving ? 'Saving...' : 'Assign'}
+                                    </button>
+                                  </>
+                                )}
                               </>
                             )}
                             <button

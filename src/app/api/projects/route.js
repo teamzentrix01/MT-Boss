@@ -14,13 +14,25 @@ export async function GET(req) {
     const kind = searchParams.get('kind');
     const isAdminView = status === 'all' || kind === 'operational';
 
+    let pmAccessResult = null;
     if (isAdminView) {
-      const pmAccessResult = await requirePmAccess(req);
+      pmAccessResult = await requirePmAccess(req);
       if (!pmAccessResult) return unauthorized();
     }
 
     if (kind === 'operational') {
       await ensureAgentSchema();
+
+      const isAgent = pmAccessResult?.role === 'agent';
+      const agentId = isAgent ? Number(pmAccessResult.id) : null;
+      const agentFilterSql = isAgent
+        ? `AND (
+            paa.primary_agent_id = $1
+            OR EXISTS (SELECT 1 FROM pm_project_agents pa WHERE pa.project_id = p.id AND pa.agent_id = $1)
+            OR al.agent_id = $1
+          )`
+        : '';
+      const queryParams = isAgent ? [agentId] : [];
       
       const query = `
         WITH project_payments AS (
@@ -91,14 +103,17 @@ export async function GET(req) {
           LEFT JOIN project_payments pp ON pp.project_id = p.id
           LEFT JOIN project_agent_agg paa ON paa.project_id = p.id
           WHERE (p.source_lead_id IS NOT NULL OR al.id IS NOT NULL)
+          ${agentFilterSql}
         )
         SELECT * FROM combined_pm_projects
         ORDER BY created_at DESC;
       `;
 
       const [dataRes, agentsRes] = await Promise.all([
-        pool.query(query),
-        pool.query(`SELECT id, name, city FROM agents WHERE status = 'Approved' AND login_enabled = TRUE AND must_change_password = FALSE ORDER BY name ASC`),
+        pool.query(query, queryParams),
+        isAgent
+          ? Promise.resolve({ rows: [{ id: pmAccessResult.id, name: pmAccessResult.name, city: pmAccessResult.city }] })
+          : pool.query(`SELECT id, name, city FROM agents WHERE status = 'Approved' AND login_enabled = TRUE AND must_change_password = FALSE ORDER BY name ASC`),
       ]);
 
       return NextResponse.json({ success: true, data: dataRes.rows, agents: agentsRes.rows });

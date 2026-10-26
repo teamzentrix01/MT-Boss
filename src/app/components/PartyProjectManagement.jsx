@@ -38,10 +38,22 @@ function Input({ label, name, type = 'text', value, set, required, placeholder, 
   );
 }
 
+let _globalIsAgent = false;
+
 async function api(path, opts = {}) {
-  const token = typeof window !== 'undefined'
-    ? localStorage.getItem('admin-token') || localStorage.getItem('token') || localStorage.getItem('agent-token') || ''
-    : '';
+  const isAgentContext =
+    opts.isAgent ||
+    _globalIsAgent ||
+    (typeof window !== 'undefined' && window.location.pathname.startsWith('/agent'));
+
+  let token = '';
+  if (typeof window !== 'undefined') {
+    if (isAgentContext) {
+      token = localStorage.getItem('agent-token') || localStorage.getItem('token') || '';
+    } else {
+      token = localStorage.getItem('admin-token') || localStorage.getItem('token') || localStorage.getItem('agent-token') || '';
+    }
+  }
 
   const res = await fetch(path, {
     ...opts,
@@ -66,9 +78,17 @@ async function api(path, opts = {}) {
 }
 
 async function uploadFile(file) {
-  const token = typeof window !== 'undefined'
-    ? localStorage.getItem('admin-token') || localStorage.getItem('token') || ''
-    : '';
+  const isAgentContext =
+    _globalIsAgent ||
+    (typeof window !== 'undefined' && window.location.pathname.startsWith('/agent'));
+  let token = '';
+  if (typeof window !== 'undefined') {
+    if (isAgentContext) {
+      token = localStorage.getItem('agent-token') || localStorage.getItem('token') || '';
+    } else {
+      token = localStorage.getItem('admin-token') || localStorage.getItem('token') || '';
+    }
+  }
   const fd = new FormData();
   fd.append('file', file);
   const res = await fetch('/api/upload', {
@@ -125,8 +145,11 @@ const adjustmentBlank = { material_id: '', adjustment_type: 'wastage', quantity:
 const expenseBlank = { category: 'transport', amount: '', expense_date: today(), note: '' };
 
 export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
+  if (isAgent) {
+    _globalIsAgent = true;
+  }
   // Navigation: 'parties' | 'party' | 'partyForm' | 'project' | 'projectForm' | 'reports'
-  const [screen, setScreen] = useState(initialProjectId ? 'project' : initialScreen);
+  const [screen, setScreen] = useState(initialProjectId ? 'project' : (isAgent ? 'projects' : initialScreen));
   const [role, setRole] = useState(isAgent ? 'agent' : 'admin');
 
   // Check supervisor role
@@ -1614,13 +1637,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       {/* ── TOP NAV BAR ───────────────────────────────────────────────────── */}
       <div className="bar" style={{ justifyContent: 'space-between', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          {screen !== 'parties' && (
+          {screen !== (isAgent ? 'projects' : 'parties') && (
             <button
               className="muted"
               onClick={() => {
-                if (screen === 'project' && party) setScreen('party');
-                else if (screen === 'projectForm' && party) setScreen('party');
-                else setScreen('parties');
+                if (screen === 'project' && party && !isAgent) setScreen('party');
+                else if (screen === 'projectForm' && party && !isAgent) setScreen('party');
+                else setScreen(isAgent ? 'projects' : 'parties');
                 updateProjectUrl(null);
               }}
             >
@@ -1704,15 +1727,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <td style={{ color: '#dc2626', fontWeight: 600 }}>{INR(p.total_pending)}</td>
                   <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
                     <button onClick={() => showParty(p.id)}>View Party</button>
-                    <button
-                      className="muted"
-                      onClick={() => {
-                        setPartyForm(p);
-                        setScreen('partyForm');
-                      }}
-                    >
-                      Edit
-                    </button>
+                    {!isAgent && (
+                      <button
+                        className="muted"
+                        onClick={() => {
+                          setPartyForm(p);
+                          setScreen('partyForm');
+                        }}
+                      >
+                        Edit
+                      </button>
+                    )}
                     {!isAgent && (
                       <button className="danger" onClick={() => del('party', p.id)}>
                         Delete
@@ -1991,15 +2016,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </td>
                   <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
                     <button onClick={() => showProject(p.id)}>Overview</button>
-                    <button
-                      className="muted"
-                      onClick={() => {
-                        setProjectForm(p);
-                        setScreen('projectForm');
-                      }}
-                    >
-                      Edit
-                    </button>
+                    {!isAgent && (
+                      <button
+                        className="muted"
+                        onClick={() => {
+                          setProjectForm(p);
+                          setScreen('projectForm');
+                        }}
+                      >
+                        Edit
+                      </button>
+                    )}
                     {!isAgent && !isSupervisor && (
                       <button
                         className="danger"
