@@ -112,7 +112,7 @@ function getStatusIcon(status) {
   }
 }
 
-function getStatusBadge(status, isDark) {
+function getStatusBadge(status, isDark, size = 'sm') {
   const norm = String(status || 'open').toLowerCase();
   const cfg = STATUS_CONFIG[norm] || {
     label: norm.replace(/_/g, ' '),
@@ -122,16 +122,19 @@ function getStatusBadge(status, isDark) {
     darkColor: '#94a3b8',
   };
   const StatusIcon = getStatusIcon(norm);
+  const isHeader = size === 'header' || size === 'lg';
 
   return (
     <span
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: '5px',
-        padding: '3px 10px',
-        borderRadius: '9999px',
-        fontSize: '0.75rem',
+        gap: isHeader ? '6px' : '5px',
+        height: isHeader ? '36px' : 'auto',
+        boxSizing: 'border-box',
+        padding: isHeader ? '0 12px' : '3px 10px',
+        borderRadius: isHeader ? '8px' : '9999px',
+        fontSize: isHeader ? '0.85rem' : '0.75rem',
         fontWeight: '700',
         textTransform: 'capitalize',
         backgroundColor: isDark ? cfg.darkBg : cfg.bg,
@@ -140,7 +143,7 @@ function getStatusBadge(status, isDark) {
         whiteSpace: 'nowrap',
       }}
     >
-      <StatusIcon size={13} strokeWidth={2} aria-hidden="true" style={{ flexShrink: 0 }} />
+      <StatusIcon size={isHeader ? 15 : 13} strokeWidth={2} aria-hidden="true" style={{ flexShrink: 0 }} />
       <span>{cfg.label}</span>
     </span>
   );
@@ -1340,12 +1343,16 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                 orders.map((o) => (
                   <tr
                     key={`${o.type}-${o.id}`}
+                    onClick={() => handleViewBill(o.order_id || o.id)}
+                    className="orders-table-row"
                     style={{
                       borderBottom: `1px solid ${cardBorder}`,
                       transition: 'background-color 0.15s ease',
+                      cursor: 'pointer',
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = rowHover)}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                    title="Click row to view full order / booking details"
                   >
                     {/* Order ID */}
                     <td style={{ padding: '12px 16px', fontFamily: 'monospace', fontWeight: 700, minWidth: '220px', whiteSpace: 'nowrap' }}>
@@ -1377,11 +1384,14 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                       </span>
                     </td>
 
-                    {/* Customer Name (Clickable) */}
+                    {/* Customer Name (Clickable independently to open customer drawer) */}
                     <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
                       <button
                         type="button"
-                        onClick={() => handleOpenCustomer(o)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenCustomer(o);
+                        }}
                         className="orders-customer-name-btn"
                         style={{
                           background: 'none',
@@ -1414,6 +1424,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                       {toIndianPhoneTel(o.customer_phone) ? (
                         <a
                           href={toIndianPhoneTel(o.customer_phone)}
+                          onClick={(e) => e.stopPropagation()}
                           style={{
                             color: 'inherit',
                             textDecoration: 'none',
@@ -1480,7 +1491,10 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                       <ActionIconButton
                         icon={Receipt}
                         label="View Bill"
-                        onClick={() => handleViewBill(o.order_id || o.id)}
+                        onClick={(e) => {
+                          e?.stopPropagation?.();
+                          handleViewBill(o.order_id || o.id);
+                        }}
                       />
                     </td>
                   </tr>
@@ -1561,6 +1575,31 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
         </div>
       </div>
 
+      {/* ── Bill Loading Indicator Overlay ── */}
+      {loadingBill && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.45)',
+            backdropFilter: 'blur(2px)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 2000,
+            gap: '12px',
+            color: '#ffffff',
+          }}
+        >
+          <RefreshCw size={36} className="animate-spin" aria-hidden="true" />
+          <span style={{ fontSize: '0.95rem', fontWeight: 700, letterSpacing: '0.3px' }}>Loading order details...</span>
+        </div>
+      )}
+
       {/* ── Bill / Invoice Modal ── */}
       {selectedOrder && (
         <div
@@ -1588,7 +1627,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
               backgroundColor: cardBg,
               color: textPrimary,
               width: '100%',
-              maxWidth: '820px',
+              maxWidth: '880px',
               maxHeight: '92vh',
               overflowY: 'auto',
               borderRadius: '16px',
@@ -1601,7 +1640,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
             {/* Modal Header */}
             <div
               style={{
-                padding: '1.25rem 1.5rem',
+                padding: '1rem 1.5rem',
                 borderBottom: `1px solid ${cardBorder}`,
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -1610,29 +1649,38 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                 position: 'sticky',
                 top: 0,
                 zIndex: 10,
+                gap: '16px',
               }}
             >
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>
-                    Invoice / Bill #{selectedOrder.order_id}
-                  </h2>
-                  {getStatusBadge(selectedOrder.status, isDarkMode)}
-                </div>
-                <div style={{ fontSize: '0.8rem', color: textMuted, marginTop: '2px' }}>
-                  Placed on {formatDateTime(selectedOrder.created_at)} · Delivery City: {selectedOrder.delivery_city}
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <h2
+                  style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 800,
+                    margin: 0,
+                    color: textPrimary,
+                    letterSpacing: '-0.01em',
+                  }}
+                >
+                  Invoice / Bill <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '1.1rem', opacity: 0.9 }}>#{selectedOrder.order_id}</span>
+                </h2>
+                <div style={{ fontSize: '0.8rem', color: textMuted, marginTop: '3px' }}>
+                  Placed on {formatDateTime(selectedOrder.created_at)} · Delivery City: {selectedOrder.delivery_city || 'N/A'}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+                {getStatusBadge(selectedOrder.status, isDarkMode, 'header')}
+
                 <button
                   type="button"
                   onClick={() => window.print()}
                   style={{
-                    backgroundColor: isDarkMode ? '#334155' : '#e2e8f0',
+                    backgroundColor: isDarkMode ? '#334155' : '#f1f5f9',
                     color: textPrimary,
-                    border: 'none',
-                    padding: '8px 14px',
+                    border: `1px solid ${isDarkMode ? '#475569' : '#cbd5e1'}`,
+                    height: '36px',
+                    padding: '0 14px',
                     borderRadius: '8px',
                     fontSize: '0.85rem',
                     fontWeight: 700,
@@ -1640,9 +1688,19 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '6px',
+                    whiteSpace: 'nowrap',
+                    boxSizing: 'border-box',
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#475569' : '#e2e8f0';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#334155' : '#f1f5f9';
                   }}
                 >
-                  <Printer size={15} strokeWidth={2} aria-hidden="true" /> Print
+                  <Printer size={15} strokeWidth={2} aria-hidden="true" />
+                  <span>Print</span>
                 </button>
 
                 <a
@@ -1651,10 +1709,11 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                   target="_blank"
                   rel="noreferrer"
                   style={{
-                    backgroundColor: isDarkMode ? '#334155' : '#0f172a',
+                    backgroundColor: isDarkMode ? '#2563eb' : '#0f172a',
                     color: '#ffffff',
-                    border: 'none',
-                    padding: '8px 14px',
+                    border: `1px solid ${isDarkMode ? '#3b82f6' : '#1e293b'}`,
+                    height: '36px',
+                    padding: '0 14px',
                     borderRadius: '8px',
                     fontSize: '0.85rem',
                     fontWeight: 700,
@@ -1663,29 +1722,52 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                     alignItems: 'center',
                     gap: '6px',
                     textDecoration: 'none',
+                    whiteSpace: 'nowrap',
+                    boxSizing: 'border-box',
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#1d4ed8' : '#1e293b';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#2563eb' : '#0f172a';
                   }}
                 >
-                  <Download size={15} strokeWidth={2} aria-hidden="true" /> Download PDF
+                  <Download size={15} strokeWidth={2} aria-hidden="true" />
+                  <span>Download PDF</span>
                 </a>
 
                 <button
                   type="button"
                   onClick={() => setSelectedOrder(null)}
                   style={{
-                    background: 'none',
-                    border: 'none',
+                    backgroundColor: isDarkMode ? '#1e293b' : '#f8fafc',
+                    border: `1px solid ${isDarkMode ? '#334155' : '#e2e8f0'}`,
                     cursor: 'pointer',
                     color: textMuted,
-                    padding: '6px',
-                    borderRadius: '6px',
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '8px',
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    boxSizing: 'border-box',
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#334155' : '#fee2e2';
+                    e.currentTarget.style.color = isDarkMode ? '#f87171' : '#dc2626';
+                    e.currentTarget.style.borderColor = isDarkMode ? '#dc2626' : '#fca5a5';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#1e293b' : '#f8fafc';
+                    e.currentTarget.style.color = textMuted;
+                    e.currentTarget.style.borderColor = isDarkMode ? '#334155' : '#e2e8f0';
                   }}
                   aria-label="Close invoice modal"
                   title="Close"
                 >
-                  <X size={20} strokeWidth={2} aria-hidden="true" />
+                  <X size={18} strokeWidth={2.2} aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -2536,6 +2618,21 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
           .orders-filter-spacer {
             display: none !important;
           }
+        }
+
+        /* Clickable Table Rows */
+        .orders-table-row {
+          cursor: pointer !important;
+          transition: background-color 0.15s ease !important;
+        }
+
+        .orders-table-row:hover {
+          background-color: #f1f5f9 !important;
+        }
+
+        .orders-history-manager.is-dark .orders-table-row:hover,
+        .is-dark .orders-table-row:hover {
+          background-color: #33415555 !important;
         }
 
         @media print {
