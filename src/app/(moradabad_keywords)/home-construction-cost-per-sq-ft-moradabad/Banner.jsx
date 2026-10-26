@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Banner() {
-  const pageTitle = "home construction cost per sq ft in Moradabad";
+  const pageTitle = "Home Construction Cost Per Sq Ft In Moradabad";
 
   return (
     <>

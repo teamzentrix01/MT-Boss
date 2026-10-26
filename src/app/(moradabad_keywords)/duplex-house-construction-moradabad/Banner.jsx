@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Banner() {
-  const pageTitle = "duplex house construction in Moradabad";
+  const pageTitle = "Duplex House Construction In Moradabad";
 
   return (
     <>

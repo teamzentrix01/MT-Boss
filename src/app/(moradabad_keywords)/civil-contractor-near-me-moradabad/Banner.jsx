@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Banner() {
-  const pageTitle = "civil contractor near me Moradabad";
+  const pageTitle = "Civil Contractor Near Me Moradabad";
 
   return (
     <>

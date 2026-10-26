@@ -8,8 +8,8 @@ const Content = () => {
         {/* Content Section */}
         <div className="order-1 flex-1 px-4 py-12 sm:px-8 md:px-16 lg:order-1">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 sm:text-3xl md:text-3xl">
-            College Building Construction in Moradabad: Safe, Spacious and
-            Future-Ready Campuses
+            College Building Construction in Moradabad:
+
           </h2>
 
           <div className="max-w-4xl space-y-6 leading-relaxed text-gray-700">
