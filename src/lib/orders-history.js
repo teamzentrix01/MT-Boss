@@ -1320,3 +1320,25 @@ export async function generateOrderInvoicePdf(order) {
     }
   });
 }
+
+/**
+ * Get distinct delivery cities from shop orders and service bookings
+ */
+export async function getDistinctDeliveryCities() {
+  try {
+    const query = `
+      SELECT DISTINCT TRIM(city) AS city FROM (
+        SELECT selected_city AS city FROM material_enquiries WHERE selected_city IS NOT NULL AND TRIM(selected_city) != ''
+        UNION
+        SELECT service_city AS city FROM service_bookings WHERE service_city IS NOT NULL AND TRIM(service_city) != ''
+      ) sub
+      WHERE city IS NOT NULL AND TRIM(city) != '' AND LOWER(TRIM(city)) != 'n/a'
+      ORDER BY city ASC
+    `;
+    const res = await pool.query(query);
+    return res.rows.map((r) => r.city).filter(Boolean);
+  } catch (err) {
+    console.error('getDistinctDeliveryCities error:', err);
+    return [];
+  }
+}
