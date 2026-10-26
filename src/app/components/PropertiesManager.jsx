@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, memo, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { Eye, ShieldCheck, Ban, Trash2, X, ActionIconButton, House, RotateCcw } from '@/app/components/ui/icons';
+import PropertyFilterBar from '@/app/components/PropertyFilterBar';
 
 const PropertyEditor = dynamic(() => import('@/app/components/PropertyEditor'), {
   ssr: false,
@@ -475,34 +476,34 @@ export default function PropertiesManager({ isDarkMode, categoryFilter = null, c
             Properties Management
             {categoryFilter ? ` · ${CATEGORY_LABELS[categoryFilter] || categoryFilter}` : ''}
           </span>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search title, ID, owner, location…"
-              style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid var(--pm-border)', background: 'var(--pm-surface)', color: 'var(--pm-text)', fontSize: 12, minWidth: 220 }}
-            />
-            <button type="button" className="pm-toggle active" onClick={() => setShowCreate(true)}>+ Create</button>
-            <div className="pm-toggles">
-              {['all','buy','rent'].map(t => (
-                <button key={t} className={`pm-toggle${listFilter===t?' active':''}`} onClick={() => setListFilter(t)}>
-                  {t === 'all' ? 'All' : t === 'buy' ? 'Buy' : 'Rent'}
-                </button>
-              ))}
-            </div>
-          </div>
+          <button type="button" className="pm-toggle active" onClick={() => setShowCreate(true)}>
+            + Create
+          </button>
         </div>
+
+        {/* Filter Bar Component */}
+        <PropertyFilterBar
+          search={search}
+          onSearchChange={setSearch}
+          status={filter}
+          onStatusChange={setFilter}
+          listingType={listFilter}
+          onListingTypeChange={setListFilter}
+          category={categoryTab}
+          onCategoryChange={setCategoryTab}
+          categoryFilter={categoryFilter}
+          statusCounts={counts}
+          onClear={() => {
+            setSearch('');
+            setFilter('all');
+            setListFilter('all');
+            setCategoryTab('all');
+          }}
+          isDarkMode={isDarkMode}
+        />
 
         {error   && <div className="pm-alert pm-alert-err">{error}</div>}
         {success && <div className="pm-alert pm-alert-ok">{success}</div>}
-
-        {!categoryFilter && (
-          <div className="pm-toggles" style={{ marginBottom: 10 }}>
-            {[['all','All'],['room_rent','Room Rent'],['flat','Flats'],['plot','Plots'],['general','General']].map(([id, label]) => (
-              <button key={id} className={`pm-toggle${categoryTab===id?' active':''}`} onClick={() => setCategoryTab(id)}>{label}</button>
-            ))}
-          </div>
-        )}
 
         <div className="pm-panel">
           {/* Status tabs */}
