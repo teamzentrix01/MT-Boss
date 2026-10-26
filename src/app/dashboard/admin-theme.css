@@ -254,7 +254,6 @@
           max-width: 1280px; margin: 0 auto;
           padding: 0 1.5rem 4px;
           display: flex; overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
           scrollbar-width: thin; /* Firefox & Chrome 121+ */
           scrollbar-color: var(--border) transparent; /* Firefox & Chrome 121+ */
         }

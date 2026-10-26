@@ -559,6 +559,7 @@ export default function ShopPage() {
       });
 
     return () => { active = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalOpen, modalMode, cart, selectedProduct, formData.quantity, activeCoupon, selectedCity, useWallet]);
 
   const fillAddressFromCoords = async (latitude, longitude) => {

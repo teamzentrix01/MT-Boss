@@ -51,7 +51,6 @@
 @media (max-width: 1360px) { .bottom { margin: 0 48px; } }
 @media (max-width: 1024px) {
   .tabs {
-    -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     scrollbar-width: none;
   }

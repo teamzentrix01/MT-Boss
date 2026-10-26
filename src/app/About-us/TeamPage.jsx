@@ -25,7 +25,7 @@ function useInView(threshold = 0.08) {
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
-  }, []);
+  }, [threshold]);
   return [ref, inView];
 }
 
@@ -161,6 +161,7 @@ function ProfCardInner({ member, dark, idx }) {
         {/* Photo / Avatar */}
         <div className="relative overflow-hidden" style={{ height: 200 }}>
           {member.profile_picture ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={member.profile_picture}
               alt={member.name}
