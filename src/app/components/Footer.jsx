@@ -57,7 +57,7 @@ export default function Footer() {
     },
     {
       label: "Instagram",
-      href: "https://www.instagram.com/MTBoss.in?stkn=NTQxMTczN2JrZGs4",
+      href: "https://www.instagram.com/MTBOSS.in?stkn=NTQxMTczN2JrZGs4",
       icon: (
         <>
           <path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7z" />
@@ -68,17 +68,17 @@ export default function Footer() {
     },
     {
       label: "LinkedIn",
-      href: "https://in.linkedin.com/company/MTBoss-construction-company",
+      href: "https://in.linkedin.com/company/MTBOSS-construction-company",
       icon: <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />,
     },
     {
       label: "Twitter",
-      href: "https://x.com/MTBoss",
+      href: "https://x.com/MTBOSS",
       icon: <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />,
     },
     {
       label: "YouTube",
-      href: "https://youtube.com/@MTBossconstruction4906?si=slUfUlTDhtYa7Dve",
+      href: "https://youtube.com/@MTBOSSconstruction4906?si=slUfUlTDhtYa7Dve",
       icon: <path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.508a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.871.508 9.388.508 9.388.508s7.517 0 9.388-.508a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />,
     },
   ];
@@ -93,7 +93,7 @@ export default function Footer() {
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <span className={`text-xl font-black tracking-wider uppercase ${isDark ? "text-white" : "text-zinc-900"}`}>
-                MTBoss
+                MTBOSS
               </span>
             </div>
 
@@ -205,7 +205,7 @@ export default function Footer() {
       <div className={`py-6 px-6 border-t ${isDark ? "border-zinc-900 bg-zinc-950" : "border-zinc-100 bg-zinc-50"}`}>
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
-            (c) {new Date().getFullYear()} MTBoss construction private limited - built with precision
+            (c) {new Date().getFullYear()} MTBOSS construction private limited - built with precision
           </p>
           <div className="flex items-center gap-6">
             <button

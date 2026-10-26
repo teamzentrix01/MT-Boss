@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect for Showroom in Bareilly',
   description:
-    'Opening a showroom in Bareilly? MTBoss designs shop fronts, display zones, lighting and services, then builds the fit-out. Call +91 94584 10866 for a site visit.',
+    'Opening a showroom in Bareilly? MTBOSS designs shop fronts, display zones, lighting and services, then builds the fit-out. Call +91 94584 10866 for a site visit.',
   keywords:
-    'architect for showroom in Bareilly, showroom architect Bareilly, showroom design Bareilly, retail architect Bareilly, shop front design Bareilly, showroom interior design Bareilly, showroom fit-out Bareilly, commercial architect Bareilly, retail shop design Bareilly, showroom construction Bareilly, MTBoss Bareilly, architect near me Bareilly',
+    'architect for showroom in Bareilly, showroom architect Bareilly, showroom design Bareilly, retail architect Bareilly, shop front design Bareilly, showroom interior design Bareilly, showroom fit-out Bareilly, commercial architect Bareilly, retail shop design Bareilly, showroom construction Bareilly, MTBOSS Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/architect-for-showroom-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-for-showroom-bareilly',
   },
   openGraph: {
     title: 'Architect for Showroom in Bareilly',
     description:
-      'Opening a showroom in Bareilly? MTBoss designs shop fronts, display zones, lighting and services, then builds the fit-out. Call +91 94584 10866 for a site visit.',
-    url: 'https://www.MTBoss.in/architect-for-showroom-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Opening a showroom in Bareilly? MTBOSS designs shop fronts, display zones, lighting and services, then builds the fit-out. Call +91 94584 10866 for a site visit.',
+    url: 'https://www.MTBOSS.in/architect-for-showroom-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-for-showroom-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-showroom-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect for Showroom in Bareilly - MTBoss',
+        alt: 'Architect for Showroom in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect for Showroom in Bareilly',
     description:
-      'Opening a showroom in Bareilly? MTBoss designs shop fronts, display zones, lighting and services, then builds the fit-out. Call +91 94584 10866 for a site visit.',
-    images: ['https://www.MTBoss.in/og-architect-for-showroom-bareilly.jpg'],
+      'Opening a showroom in Bareilly? MTBOSS designs shop fronts, display zones, lighting and services, then builds the fit-out. Call +91 94584 10866 for a site visit.',
+    images: ['https://www.MTBOSS.in/og-architect-for-showroom-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-for-showroom-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-for-showroom-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

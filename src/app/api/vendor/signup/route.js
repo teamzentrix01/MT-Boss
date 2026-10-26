@@ -428,7 +428,7 @@ export async function POST(req) {
       payment = createPayURequest({
         txnid,
         amount: pkg.price,
-        productinfo: `MTBoss vendor registration - ${pkg.label}`,
+        productinfo: `MTBOSS vendor registration - ${pkg.label}`,
         firstname: String(vendor_name || fields.shop_name || fields.business_name || email).trim().split(/\s+/)[0],
         email,
         phone,

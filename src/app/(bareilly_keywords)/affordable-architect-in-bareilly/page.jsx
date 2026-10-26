@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Affordable Architect in Bareilly',
   description:
-    'Looking for an affordable architect in Bareilly? MTBoss offers stage-wise, clearly priced design for houses, shops and buildings, without cutting safety.',
+    'Looking for an affordable architect in Bareilly? MTBOSS offers stage-wise, clearly priced design for houses, shops and buildings, without cutting safety.',
   keywords:
-    'affordable architect in Bareilly, affordable architect Bareilly, cheap architect Bareilly, low cost architect Bareilly, budget architect Bareilly, architect price Bareilly, architect fees Bareilly, house design cost Bareilly, architect near me Bareilly, affordable house design Bareilly, budget home design Bareilly, MTBoss Bareilly, architect Bareilly',
+    'affordable architect in Bareilly, affordable architect Bareilly, cheap architect Bareilly, low cost architect Bareilly, budget architect Bareilly, architect price Bareilly, architect fees Bareilly, house design cost Bareilly, architect near me Bareilly, affordable house design Bareilly, budget home design Bareilly, MTBOSS Bareilly, architect Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/affordable-architect-in-bareilly',
+    canonical: 'https://www.MTBOSS.in/affordable-architect-in-bareilly',
   },
   openGraph: {
     title: 'Affordable Architect in Bareilly',
     description:
-      'Looking for an affordable architect in Bareilly? MTBoss offers stage-wise, clearly priced design for houses, shops and buildings, without cutting safety.',
-    url: 'https://www.MTBoss.in/affordable-architect-in-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Looking for an affordable architect in Bareilly? MTBOSS offers stage-wise, clearly priced design for houses, shops and buildings, without cutting safety.',
+    url: 'https://www.MTBOSS.in/affordable-architect-in-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-affordable-architect-in-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-affordable-architect-in-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Affordable Architect in Bareilly - MTBoss',
+        alt: 'Affordable Architect in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,9 +35,9 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Affordable Architect in Bareilly',
     description:
-      'Looking for an affordable architect in Bareilly? MTBoss offers stage-wise, clearly priced design for houses, shops and buildings, without cutting safety.',
+      'Looking for an affordable architect in Bareilly? MTBOSS offers stage-wise, clearly priced design for houses, shops and buildings, without cutting safety.',
     images: [
-      'https://www.MTBoss.in/og-affordable-architect-in-bareilly.jpg',
+      'https://www.MTBOSS.in/og-affordable-architect-in-bareilly.jpg',
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/affordable-architect-in-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/affordable-architect-in-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

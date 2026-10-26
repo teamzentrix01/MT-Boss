@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Factory in Bareilly: MTBoss
+            Architect for Factory in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -17,7 +17,7 @@ const Content = () => {
                 An architect for a factory in Bareilly plans the building around
                 your production process, with room for raw material, machines,
                 workers, trucks, services and safety, then produces drawings for
-                approval and construction. MTBoss Construction Private Limited
+                approval and construction. MTBOSS Construction Private Limited
                 serves Bareilly and Moradabad with industrial design and
                 construction support. Please confirm architect registration and
                 industrial experience.
@@ -34,7 +34,7 @@ const Content = () => {
                 A factory is judged by flow, not by looks.
               </p>
               <p>
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial and industrial properties across
                 Moradabad and Bareilly. Our work follows the promise on our
                 website: planning to completion, with quality work, transparent
@@ -77,7 +77,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 The best factory designs begin with a process sketch. Our brief
-                covers the following. Please adjust to MTBoss&apos;s method:
+                covers the following. Please adjust to MTBOSS&apos;s method:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -101,7 +101,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Before design, our team checks the plot for the following. Please
-                confirm what MTBoss checks itself:
+                confirm what MTBOSS checks itself:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -154,7 +154,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 The structural system affects cost, speed and flexibility. Please
-                confirm which systems MTBoss designs or builds, and which go
+                confirm which systems MTBOSS designs or builds, and which go
                 through specialist partners.
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -254,7 +254,7 @@ const Content = () => {
                   <strong>Power:</strong> Load calculation, transformer or
                   sub-station needs, panel rooms, cable routes and earthing, with
                   backup supply where required. Electrician service is available
-                  through MTBoss.
+                  through MTBOSS.
                 </li>
                 <li>
                   <strong>Water:</strong> Supply, storage, fire water and process
@@ -313,7 +313,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A factory may involve several authorities. Please confirm each with
-                the relevant department and state clearly what MTBoss handles and
+                the relevant department and state clearly what MTBOSS handles and
                 what you or a consultant must do:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -401,7 +401,7 @@ const Content = () => {
                 <li>Contingency for site surprises</li>
               </ul>
               <p className="mt-3">
-                Use the Budget Calculator on MTBoss.in for an early idea of overall
+                Use the Budget Calculator on MTBOSS.in for an early idea of overall
                 construction cost, then ask for an itemised estimate once the
                 design is firm.
               </p>
@@ -413,7 +413,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A usable set normally includes the following. Please adjust to what
-                MTBoss provides:
+                MTBOSS provides:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -437,7 +437,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> Call, WhatsApp or click Get a
-                  Construction Quote on MTBoss.in, with your location pin and a
+                  Construction Quote on MTBOSS.in, with your location pin and a
                   short brief.
                 </li>
                 <li>
@@ -460,10 +460,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Construction Support Through MTBoss
+                Construction Support Through MTBOSS
               </h3>
               <p>
-                MTBoss lists Industrial &amp; Warehousing among its construction
+                MTBOSS lists Industrial &amp; Warehousing among its construction
                 categories, covering sheds, workshops, godowns and similar
                 buildings. If you choose design and build, one team carries the
                 project from layout to handover. You may also take the design only
@@ -525,18 +525,18 @@ const Content = () => {
               <p>
                 Fees depend on the building size, process complexity, level of
                 detail, approvals scope, structural and services coordination, site
-                visits and whether MTBoss also builds. Please state your fee model
+                visits and whether MTBOSS also builds. Please state your fee model
                 and what each stage includes.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited.
+                  <strong>Business:</strong> MTBOSS Construction Private Limited.
                 </li>
                 <li>
                   <strong>Service:</strong> Architecture and building design,
@@ -559,17 +559,17 @@ const Content = () => {
                   <strong>Phone / WhatsApp:</strong> +91 94584 10866.
                 </li>
                 <li>
-                  <strong>Email:</strong> MTBoss2016@gmail.com.
+                  <strong>Email:</strong> MTBOSS2016@gmail.com.
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                   .
                 </li>
@@ -586,7 +586,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Factory Owners Engage MTBoss
+                Reasons Factory Owners Engage MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -627,7 +627,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Discuss Your Factory With MTBoss
+                Discuss Your Factory With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -644,21 +644,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   — click &quot;Get a Construction Quote&quot;.
                 </li>
@@ -672,7 +672,7 @@ const Content = () => {
                 range, and we will arrange a site study and a written proposal.
               </p>
               <p className="mt-3">
-                Consider MTBoss for your factory in Bareilly, with the process
+                Consider MTBOSS for your factory in Bareilly, with the process
                 understood first, the layout planned around it and the building
                 ready to grow.
               </p>
@@ -686,7 +686,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who designs factories in Bareilly?</strong>
                   <br />
-                  MTBoss Construction offers industrial design and construction
+                  MTBOSS Construction offers industrial design and construction
                   support for Bareilly and Moradabad. Please confirm registration.
                 </li>
                 <li>
@@ -734,7 +734,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a site study?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

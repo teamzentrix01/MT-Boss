@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Fees in Bareilly: MTBoss
+            Architect Fees in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -33,7 +33,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 <span className="text-gray-500">
-                  [Fill this block only with terms MTBoss will honour. Suggested
+                  [Fill this block only with terms MTBOSS will honour. Suggested
                   format:]
                 </span>
               </p>
@@ -78,7 +78,7 @@ const Content = () => {
                 separately to the builder.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -92,7 +92,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Architects charge in several ways{" "}
-                <span className="text-gray-500">[state which MTBoss uses]</span>.
+                <span className="text-gray-500">[state which MTBOSS uses]</span>.
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -137,7 +137,7 @@ const Content = () => {
               <p className="mb-3">
                 Each stage has its own output, and the fee should follow it{" "}
                 <span className="text-gray-500">
-                  [adjust to MTBoss&apos;s stages]
+                  [adjust to MTBOSS&apos;s stages]
                 </span>
                 .
               </p>
@@ -200,7 +200,7 @@ const Content = () => {
               <p className="mb-3">
                 Many disputes begin here. Ask the architect to list it in writing{" "}
                 <span className="text-gray-500">
-                  [state MTBoss&apos;s inclusions and exclusions]
+                  [state MTBOSS&apos;s inclusions and exclusions]
                 </span>
                 .
               </p>
@@ -261,7 +261,7 @@ const Content = () => {
                 Payments should follow delivered work. A typical structure uses stage
                 payments{" "}
                 <span className="text-gray-500">
-                  [state MTBoss&apos;s actual schedule]
+                  [state MTBOSS&apos;s actual schedule]
                 </span>
                 :
               </p>
@@ -342,7 +342,7 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Design-Only and Design-and-Build Fees
               </h3>
-              <p className="mb-3">MTBoss offers both routes.</p>
+              <p className="mb-3">MTBOSS offers both routes.</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Design only:</strong> You pay a design fee, then choose any
@@ -582,12 +582,12 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBoss Prepares a Fee Proposal
+                How MTBOSS Prepares a Fee Proposal
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> Call, WhatsApp or click Get a
-                  Construction Quote on MTBoss.in, with your location pin, plot
+                  Construction Quote on MTBOSS.in, with your location pin, plot
                   papers and a short brief
                 </li>
                 <li>
@@ -609,10 +609,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Related Services From MTBoss
+                Related Services From MTBOSS
               </h3>
               <p>
-                Through MTBoss.in, MTBoss also offers Architecture &amp; Interior,
+                Through MTBOSS.in, MTBOSS also offers Architecture &amp; Interior,
                 Building Elevation, Building Contractor, Building Renovation,
                 Modular Kitchen, False Ceiling, Water Proofing, Painter, Electrician
                 and Plumber, so design, construction and finishing can be
@@ -622,11 +622,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Architecture, interior and building
@@ -661,21 +661,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -699,7 +699,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Consider MTBoss
+                Reasons Clients Consider MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -761,21 +761,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &ldquo;Get a Construction Quote&rdquo;)
                 </li>
@@ -789,7 +789,7 @@ const Content = () => {
                 and we will arrange a site study and send a stage-wise proposal.
               </p>
               <p className="mt-3">
-                Ask MTBoss for a written fee proposal in Bareilly, with every stage
+                Ask MTBOSS for a written fee proposal in Bareilly, with every stage
                 priced, every extra named and the terms agreed before work begins.
               </p>
             </section>
@@ -813,7 +813,7 @@ const Content = () => {
                   charges or stages.
                 </li>
                 <li>
-                  <strong>Q3. Which model does MTBoss use?</strong>
+                  <strong>Q3. Which model does MTBOSS use?</strong>
                   <br />
                   <span className="text-gray-500">[State your actual fee model.]</span>
                 </li>
@@ -855,7 +855,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a fee proposal?</strong>
                   <br />
-                  Click &ldquo;Get a Construction Quote&rdquo; on MTBoss.in, or call
+                  Click &ldquo;Get a Construction Quote&rdquo; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

@@ -61,7 +61,7 @@ export default function Hero({ initialBanners }) {
   const index = Math.min(current, slides.length - 1);
   const goTo = next => setCurrent((next + slides.length) % slides.length);
   return (
-    <section className={styles.hero} aria-label="Explore MTBoss services" aria-roledescription="carousel">
+    <section className={styles.hero} aria-label="Explore MTBOSS services" aria-roledescription="carousel">
       <div className={styles.stage} aria-live={playing ? 'off' : 'polite'}>
         {slides.map((banner, slideIndex) => <HeroBannerSlide key={banner.id} banner={banner} active={slideIndex === index} />)}
       </div>

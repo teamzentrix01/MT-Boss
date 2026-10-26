@@ -8,36 +8,17 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Best Building Contractor in Moradabad — How to Choose the Right One
+            Best Building Contractor in Moradabad
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Finding the best building contractor in Moradabad takes more than a quick search and a phone call — it means comparing experience, transparency, service range, and after-project support before committing to what is often a major financial decision. Moradabad&apos;s fast-growing residential and commercial landscape means there&apos;s no shortage of contractors to choose from, but not all of them bring the same level of reliability. This guide explains what genuinely separates a top-tier building contractor from an average one, what to check before hiring, and why MTBoss Construction Private Limited is frequently mentioned among the best in the region.
+                Finding the best building contractor in Moradabad takes more than a quick search and a phone call — it means comparing experience, transparency, service range, and after-project support before committing to what is often a major financial decision. Moradabad&apos;s fast-growing residential and commercial landscape means there&apos;s no shortage of contractors to choose from, but not all of them bring the same level of reliability. This guide explains what genuinely separates a top-tier building contractor from an average one, what to check before hiring, and why MTBOSS Construction Private Limited is frequently mentioned among the best in the region.
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Makes a Building Contractor the &quot;Best&quot; in a City Like Moradabad?
-              </h3>
-              <p className="mb-3">
-                Genuine top-tier contractors consistently share certain traits:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>A long-standing, verifiable track record with numerous completed projects</li>
-                <li>Transparent, itemized cost estimates instead of vague lump-sum quotes</li>
-                <li>Well-coordinated teams of engineers, masons, and technicians</li>
-                <li>Ability to handle residential, commercial, and industrial projects alike</li>
-                <li>Access to verified, quality-checked building materials</li>
-                <li>Strong after-project support and structural warranty coverage</li>
-                <li>Positive client reviews and a visible, verifiable project portfolio</li>
-                <li>Fast, reliable communication via call, email, or WhatsApp</li>
-                <li>Use of modern technology like BIM (Building Information Modeling) for planning</li>
-                <li>Proper licensing and compliance with municipal construction regulations</li>
-              </ul>
-            </section>
+          
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -61,7 +42,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Moradabad Residents Need the Best Contractor — Not Just Any Contractor
+                Why Moradabad Residents Need the Best Contractor 
               </h3>
               <p className="mb-3">
                 Choosing an inexperienced or unverified building contractor in a fast-growing city like Moradabad carries real risks:
@@ -133,10 +114,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBoss Is Considered Among the Best Building Contractors in Moradabad
+                Why MTBOSS Is Considered Among the Best Building Contractors in Moradabad
               </h3>
               <p className="mb-3">
-                Based on their published company profile, MTBoss Construction Private Limited checks nearly every box on the &quot;best contractor&quot; checklist:
+                Based on their published company profile, MTBOSS Construction Private Limited checks nearly every box on the &quot;best contractor&quot; checklist:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
@@ -199,9 +180,7 @@ const Content = () => {
                 <li>Prevailing market rates for materials and skilled labour</li>
                 <li>Design complexity — custom architecture versus standard layouts</li>
               </ul>
-              <p className="mt-3">
-                For reference, sample budget-calculator estimates for a 1,000 sq. ft. G+1 standard-quality home typically fall around ₹700–₹800 per sq. ft., though actual costs vary by contractor and material choices.
-              </p>
+             
             </section>
 
             <section>
@@ -258,9 +237,9 @@ const Content = () => {
                 If you want to work with one of the most established building contractors in the region, reach out directly using the details below:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.MTBoss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBoss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:MTBoss2016@gmail.com" className="text-blue-600 underline">MTBoss2016@gmail.com</a></li>
+                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
@@ -278,10 +257,10 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who is the best building contractor in Moradabad?</strong>
                   <br />
-                  MTBoss Construction Private Limited, with 22+ years of experience and 450+ completed projects, is widely regarded as a top choice.
+                  MTBOSS Construction Private Limited, with 22+ years of experience and 450+ completed projects, is widely regarded as a top choice.
                 </li>
                 <li>
-                  <strong>Q2. What makes MTBoss one of the best building contractors?</strong>
+                  <strong>Q2. What makes MTBOSS one of the best building contractors?</strong>
                   <br />
                   Their scale, free budget calculator, verified materials, multiple quality packages, and strong after-service support.
                 </li>
@@ -291,7 +270,7 @@ const Content = () => {
                   Around ₹700–₹800 per sq. ft. for standard-quality construction in Moradabad.
                 </li>
                 <li>
-                  <strong>Q4. Does MTBoss provide a free cost estimate?</strong>
+                  <strong>Q4. Does MTBOSS provide a free cost estimate?</strong>
                   <br />
                   Yes, their Construction Budget Calculator gives an instant, free BOQ-based estimate.
                 </li>
@@ -301,12 +280,12 @@ const Content = () => {
                   Basic, Standard, Premium, and Luxury — covering a wide range of budgets.
                 </li>
                 <li>
-                  <strong>Q7. Does MTBoss also handle home repairs?</strong>
+                  <strong>Q7. Does MTBOSS also handle home repairs?</strong>
                   <br />
                   Yes, including electrical, plumbing, AC repair, painting, and pest control.
                 </li>
                 <li>
-                  <strong>Q8. Can I buy building materials directly through MTBoss?</strong>
+                  <strong>Q8. Can I buy building materials directly through MTBOSS?</strong>
                   <br />
                   Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale prices.
                 </li>

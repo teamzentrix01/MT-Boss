@@ -86,7 +86,7 @@ export default function ProductDetailPage({ params }) {
   // Sync cart from localStorage
   const loadCartFromStorage = () => {
     try {
-      const saved = JSON.parse(localStorage.getItem("mtboss-shop-cart") || "[]");
+      const saved = JSON.parse(localStorage.getItem("MTBOSS-shop-cart") || "[]");
       if (Array.isArray(saved)) {
         setCart(saved);
         const count = saved.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
@@ -206,7 +206,7 @@ export default function ProductDetailPage({ params }) {
       triggerFlyToCart(e, product);
     }
     try {
-      const raw = localStorage.getItem("mtboss-shop-cart") || "[]";
+      const raw = localStorage.getItem("MTBOSS-shop-cart") || "[]";
       const currentCart = JSON.parse(raw);
       const step = getCartStep(product);
       const limit = product.fromSupplier ? Math.max(0, Number(product.quantity) || 0) : 10000;
@@ -230,7 +230,7 @@ export default function ProductDetailPage({ params }) {
         });
       }
 
-      localStorage.setItem("mtboss-shop-cart", JSON.stringify(updatedCart));
+      localStorage.setItem("MTBOSS-shop-cart", JSON.stringify(updatedCart));
       window.dispatchEvent(new Event("storage"));
       loadCartFromStorage();
 

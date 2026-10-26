@@ -7,27 +7,27 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Interior Designer for Hotel Moradabad | MTBoss Hospitality Interiors",
+  title: "Interior Designer for Hotel Moradabad | MTBOSS Hospitality Interiors",
   description:
-    "MTBoss is an interior designer for hotels in Moradabad. We plan and build lobbies, guest rooms, restaurants and banquet halls with clear pricing and on-time delivery.",
+    "MTBOSS is an interior designer for hotels in Moradabad. We plan and build lobbies, guest rooms, restaurants and banquet halls with clear pricing and on-time delivery.",
   keywords:
-    "interior designer for hotel Moradabad, hotel interior designer Moradabad, hospitality interior design Moradabad, hotel renovation Moradabad, hotel room interior designer Moradabad, hotel lobby interior design Moradabad, banquet hall interior designer Moradabad, hotel restaurant interior designer Moradabad, guest house interior designer Moradabad, MTBoss hotel interiors Moradabad",
+    "interior designer for hotel Moradabad, hotel interior designer Moradabad, hospitality interior design Moradabad, hotel renovation Moradabad, hotel room interior designer Moradabad, hotel lobby interior design Moradabad, banquet hall interior designer Moradabad, hotel restaurant interior designer Moradabad, guest house interior designer Moradabad, MTBOSS hotel interiors Moradabad",
   alternates: {
-    canonical: "https://www.MTBoss.in/interior-designer-for-hotel-moradabad",
+    canonical: "https://www.MTBOSS.in/interior-designer-for-hotel-moradabad",
   },
   openGraph: {
     title:
-      "Interior Designer for Hotel Moradabad | MTBoss Hospitality Interiors",
+      "Interior Designer for Hotel Moradabad | MTBOSS Hospitality Interiors",
     description:
-      "MTBoss is an interior designer for hotels in Moradabad. We plan and build lobbies, guest rooms, restaurants and banquet halls with clear pricing and on-time delivery.",
-    url: "https://www.MTBoss.in/interior-designer-for-hotel-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "MTBOSS is an interior designer for hotels in Moradabad. We plan and build lobbies, guest rooms, restaurants and banquet halls with clear pricing and on-time delivery.",
+    url: "https://www.MTBOSS.in/interior-designer-for-hotel-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-interior-designer-for-hotel-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-for-hotel-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Interior Designer for Hotel in Moradabad - MTBoss",
+        alt: "Interior Designer for Hotel in Moradabad - MTBOSS",
       },
     ],
     locale: "en_IN",
@@ -36,11 +36,11 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Interior Designer for Hotel Moradabad | MTBoss Hospitality Interiors",
+      "Interior Designer for Hotel Moradabad | MTBOSS Hospitality Interiors",
     description:
-      "MTBoss is an interior designer for hotels in Moradabad. We plan and build lobbies, guest rooms, restaurants and banquet halls with clear pricing and on-time delivery.",
+      "MTBOSS is an interior designer for hotels in Moradabad. We plan and build lobbies, guest rooms, restaurants and banquet halls with clear pricing and on-time delivery.",
     images: [
-      "https://www.MTBoss.in/og-interior-designer-for-hotel-moradabad.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-for-hotel-moradabad.jpg",
     ],
   },
   robots: {
@@ -52,10 +52,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBoss Construction Private Limited",
-  url: "https://www.MTBoss.in/interior-designer-for-hotel-moradabad",
+  name: "MTBOSS Construction Private Limited",
+  url: "https://www.MTBOSS.in/interior-designer-for-hotel-moradabad",
   telephone: "+91-9458410866",
-  email: "MTBoss2016@gmail.com",
+  email: "MTBOSS2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

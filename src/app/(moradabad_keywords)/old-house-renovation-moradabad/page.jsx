@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Old House Renovation in Moradabad',
   description:
-    'Old house renovation in Moradabad: fix seepage, cracks, old wiring and pipes, then upgrade interiors. MTBoss inspects first and manages every trade. Call or WhatsApp.',
+    'Old house renovation in Moradabad: fix seepage, cracks, old wiring and pipes, then upgrade interiors. MTBOSS inspects first and manages every trade. Call or WhatsApp.',
   keywords:
-    'old house renovation Moradabad, old home renovation Moradabad, house renovation Moradabad, old house repair Moradabad, seepage repair Moradabad, damp wall repair Moradabad, old wiring replacement Moradabad, old pipe replacement Moradabad, house renovation contractor Moradabad, home renovation Moradabad, MTBoss old house renovation Moradabad',
+    'old house renovation Moradabad, old home renovation Moradabad, house renovation Moradabad, old house repair Moradabad, seepage repair Moradabad, damp wall repair Moradabad, old wiring replacement Moradabad, old pipe replacement Moradabad, house renovation contractor Moradabad, home renovation Moradabad, MTBOSS old house renovation Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/old-house-renovation-moradabad',
+    canonical: 'https://www.MTBOSS.in/old-house-renovation-moradabad',
   },
   openGraph: {
     title: 'Old House Renovation in Moradabad',
     description:
-      'Old house renovation in Moradabad: fix seepage, cracks, old wiring and pipes, then upgrade interiors. MTBoss inspects first and manages every trade. Call or WhatsApp.',
-    url: 'https://www.MTBoss.in/old-house-renovation-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Old house renovation in Moradabad: fix seepage, cracks, old wiring and pipes, then upgrade interiors. MTBOSS inspects first and manages every trade. Call or WhatsApp.',
+    url: 'https://www.MTBOSS.in/old-house-renovation-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-old-house-renovation-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-old-house-renovation-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Old House Renovation in Moradabad - MTBoss',
+        alt: 'Old House Renovation in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Old House Renovation in Moradabad',
     description:
-      'Old house renovation in Moradabad: fix seepage, cracks, old wiring and pipes, then upgrade interiors. MTBoss inspects first and manages every trade. Call or WhatsApp.',
-    images: ['https://www.MTBoss.in/og-old-house-renovation-moradabad.jpg'],
+      'Old house renovation in Moradabad: fix seepage, cracks, old wiring and pipes, then upgrade interiors. MTBOSS inspects first and manages every trade. Call or WhatsApp.',
+    images: ['https://www.MTBOSS.in/og-old-house-renovation-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/old-house-renovation-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/old-house-renovation-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

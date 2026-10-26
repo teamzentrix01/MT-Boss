@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Waterproofing Services in Moradabad: MTBoss
+            Waterproofing Services in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -26,7 +26,7 @@ const Content = () => {
                 Many owners respond with a quick surface coating, and the leak
                 returns after the next monsoon. Lasting results come from finding
                 the real cause and treating it properly. That is the approach of
-                MTBoss Construction Private Limited, which provides waterproofing
+                MTBOSS Construction Private Limited, which provides waterproofing
                 services in Moradabad and Bareilly for homes, shops, offices,
                 hotels, warehouses and factories. Our work follows the promise on
                 our website: planning to completion, with quality work,
@@ -66,10 +66,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -91,7 +91,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Waterproofing Services Offered by MTBoss
+                Waterproofing Services Offered by MTBOSS
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -258,7 +258,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 The right method depends on the area, the surface and the budget
-                [confirm the systems and products MTBoss actually uses]. Common
+                [confirm the systems and products MTBOSS actually uses]. Common
                 approaches include:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -341,7 +341,7 @@ const Content = () => {
                   <strong>Ponding test:</strong> flat areas such as terraces,
                   bathrooms and balconies are filled with water for a period,
                   commonly 24 to 72 hours, while the area below is checked for
-                  damp patches [confirm the test duration MTBoss follows]
+                  damp patches [confirm the test duration MTBOSS follows]
                 </li>
                 <li>
                   <strong>Visual checks:</strong> for cracks, bubbles, lifted
@@ -367,10 +367,10 @@ const Content = () => {
                 Restoration After Waterproofing
               </h3>
               <p>
-                Waterproofing often disturbs finishes. MTBoss can restore the
+                Waterproofing often disturbs finishes. MTBOSS can restore the
                 area afterward through plaster repair, tile and marble work,
                 flooring and painting. Our Building Repair, Tile &amp; Marble and
-                Painter services on MTBoss.in make this a single flow, so you do
+                Painter services on MTBOSS.in make this a single flow, so you do
                 not have to coordinate separate vendors.
               </p>
             </section>
@@ -398,7 +398,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  MTBoss.in, or call or WhatsApp us with photos of the damp area
+                  MTBOSS.in, or call or WhatsApp us with photos of the damp area
                   and a short description.
                 </li>
                 <li>
@@ -430,7 +430,7 @@ const Content = () => {
                 <li>
                   <strong>Restoration and handover.</strong> Finishing work is
                   completed, the site is cleaned and the work is handed over [add
-                  warranty terms only if MTBoss offers them in writing].
+                  warranty terms only if MTBOSS offers them in writing].
                 </li>
               </ol>
             </section>
@@ -524,14 +524,14 @@ const Content = () => {
               <p className="mt-3">
                 We measure the area and prepare an itemised estimate instead of
                 guessing [confirm whether rates are per area or lump sum]. You can
-                also use the Budget Calculator on MTBoss.in for an early idea of
+                also use the Budget Calculator on MTBOSS.in for an early idea of
                 overall construction cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -572,19 +572,19 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book a Waterproofing Inspection with MTBoss
+                Book a Waterproofing Inspection with MTBOSS
               </h3>
               <p className="mb-3">Ready to fix the leak properly? Contact us:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -602,10 +602,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -619,7 +619,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss for waterproofing services in Moradabad, with the
+                Choose MTBOSS for waterproofing services in Moradabad, with the
                 leak traced, the area treated properly and the work tested before
                 handover.
               </p>
@@ -635,7 +635,7 @@ const Content = () => {
                     Q1. Who provides waterproofing services in Moradabad?
                   </strong>
                   <br />
-                  MTBoss Construction treats terrace, bathroom, basement, tank
+                  MTBOSS Construction treats terrace, bathroom, basement, tank
                   and wall leakage across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -687,7 +687,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

@@ -9,7 +9,7 @@ const Content = () => {
         <div className="order-1 flex-1 px-4 py-12 sm:px-8 md:px-16 lg:order-1">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 sm:text-3xl md:text-3xl">
             Home Construction Contractor in Moradabad: On-Ground Execution by
-            MTBoss
+            MTBOSS
           </h2>
 
           <div className="max-w-4xl space-y-6 leading-relaxed text-gray-700">
@@ -26,21 +26,21 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBoss Construction Private Limited works as this kind of
+                MTBOSS Construction Private Limited works as this kind of
                 on-ground civil contractor for homes in Moradabad, handling
                 construction execution and material supply. This page explains
-                what MTBoss does as a home construction contractor, where this
+                what MTBOSS does as a home construction contractor, where this
                 role fits, and how to get in touch.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Construction Private Limited
+                MTBOSS Construction Private Limited
               </h3>
 
               <p className="mb-3">
-                MTBoss is a Moradabad-based company offering construction
+                MTBOSS is a Moradabad-based company offering construction
                 services, doorstep home services, verified property
                 transactions, and wholesale building materials under one
                 company.
@@ -53,12 +53,12 @@ const Content = () => {
                   city&apos;s residential localities.
                 </li>
                 <li>
-                  Home construction is a specifically listed MTBoss service
+                  Home construction is a specifically listed MTBOSS service
                   category, alongside hotel, school, college and mall
                   construction services.
                 </li>
                 <li>
-                  A project gallery and blog on the MTBoss website let
+                  A project gallery and blog on the MTBOSS website let
                   prospective clients review completed work before reaching
                   out.
                 </li>
@@ -112,7 +112,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Where MTBoss Fits as a Home Construction Contractor
+                Where MTBOSS Fits as a Home Construction Contractor
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -144,7 +144,7 @@ const Content = () => {
 
               <p className="mt-3">
                 For homeowners who also need design and layout planning from
-                scratch, MTBoss supports this through its broader home
+                scratch, MTBOSS supports this through its broader home
                 construction service. That service covers design coordination
                 alongside execution, while this page focuses specifically on
                 contractor-level civil execution for clients who already have a
@@ -154,12 +154,12 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBoss Works as a Site-Level Home Contractor
+                How MTBOSS Works as a Site-Level Home Contractor
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Step 1 — Enquiry:</strong> You contact MTBoss through
+                  <strong>Step 1 — Enquiry:</strong> You contact MTBOSS through
                   the website, phone or WhatsApp with your project details and
                   approved drawings, if available.
                 </li>
@@ -170,7 +170,7 @@ const Content = () => {
                   budget.
                 </li>
                 <li>
-                  <strong>Step 3 — Site visit:</strong> MTBoss engineers assess
+                  <strong>Step 3 — Site visit:</strong> MTBOSS engineers assess
                   the plot or existing structure, including a structural check
                   if a floor addition is planned.
                 </li>
@@ -180,18 +180,18 @@ const Content = () => {
                   work and your preferred timeline.
                 </li>
                 <li>
-                  <strong>Step 5 — Budget estimation:</strong> The MTBoss
+                  <strong>Step 5 — Budget estimation:</strong> The MTBOSS
                   Budget Calculator and current material rates are used to
                   estimate the civil execution cost.
                 </li>
                 <li>
                   <strong>Step 6 — Material supply:</strong> Cement, steel,
                   bricks, tiles and paints are sourced directly through
-                  MTBoss&apos;s wholesale material supply.
+                  MTBOSS&apos;s wholesale material supply.
                 </li>
                 <li>
                   <strong>Step 7 — On-site execution:</strong> Civil work
-                  proceeds under MTBoss supervision, with quality and timeline
+                  proceeds under MTBOSS supervision, with quality and timeline
                   checks through the construction process.
                 </li>
                 <li>
@@ -245,13 +245,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why the MTBoss Budget Calculator Helps Contractor-Level
+                Why the MTBOSS Budget Calculator Helps Contractor-Level
                 Planning
               </h3>
 
               <p className="mb-3">
-                The MTBoss Budget Calculator is a free tool available directly
-                on the MTBoss website. It can help homeowners estimate the
+                The MTBOSS Budget Calculator is a free tool available directly
+                on the MTBOSS website. It can help homeowners estimate the
                 civil execution cost of new construction, a floor addition, a
                 room extension or a renovation project.
               </p>
@@ -267,7 +267,7 @@ const Content = () => {
                   before a detailed site inspection and final quote.
                 </li>
                 <li>
-                  Because MTBoss supplies materials wholesale, cost discussions
+                  Because MTBOSS supplies materials wholesale, cost discussions
                   can be based on the type of material rates the company works
                   with directly.
                 </li>
@@ -280,11 +280,11 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why MTBoss Material Supply Matters for Contractor Work
+                Why MTBOSS Material Supply Matters for Contractor Work
               </h3>
 
               <p className="mb-3">
-                MTBoss supplies cement, TMT steel bars, bricks, tiles and
+                MTBOSS supplies cement, TMT steel bars, bricks, tiles and
                 paints directly on a wholesale basis. For a contractor
                 executing civil work, direct control over material delivery
                 timing can help keep the construction schedule on track.
@@ -312,11 +312,11 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                What to Share With MTBoss Before Starting Contractor Work
+                What to Share With MTBOSS Before Starting Contractor Work
               </h3>
 
               <p className="mb-3">
-                Sharing key details upfront helps MTBoss understand the scope,
+                Sharing key details upfront helps MTBOSS understand the scope,
                 schedule the work accurately and plan around your home&apos;s
                 specific situation.
               </p>
@@ -324,7 +324,7 @@ const Content = () => {
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Approved drawings, if available:</strong> Floor plans
-                  or layouts from an architect, allowing MTBoss to execute work
+                  or layouts from an architect, allowing MTBOSS to execute work
                   according to the correct specification.
                 </li>
                 <li>
@@ -351,12 +351,12 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Property Services: Useful If You Don&apos;t Have a Plot
+                MTBOSS Property Services: Useful If You Don&apos;t Have a Plot
                 Yet
               </h3>
 
               <p>
-                MTBoss offers verified property buying, selling and renting
+                MTBOSS offers verified property buying, selling and renting
                 services in and around Moradabad. These services can be useful
                 for families still searching for a suitable plot or an existing
                 house to renovate, extend or expand.
@@ -365,11 +365,11 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Doorstep Services for Ongoing Home Maintenance
+                MTBOSS Doorstep Services for Ongoing Home Maintenance
               </h3>
 
               <p>
-                Once construction or renovation is complete, MTBoss also offers
+                Once construction or renovation is complete, MTBOSS also offers
                 electrician, plumber, AC repair and pest-control services for
                 ongoing home maintenance needs.
               </p>
@@ -377,7 +377,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Areas Served by MTBoss
+                Areas Served by MTBOSS
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-1">
@@ -386,7 +386,7 @@ const Content = () => {
                   residential colonies.
                 </li>
                 <li>
-                  Kanth Road and surrounding areas, close to the MTBoss office.
+                  Kanth Road and surrounding areas, close to the MTBOSS office.
                 </li>
                 <li>
                   Plots and existing homes across Moradabad district suitable
@@ -395,18 +395,18 @@ const Content = () => {
                 <li>
                   Families in nearby towns and districts of Uttar Pradesh
                   coordinating their project remotely with the Moradabad-based
-                  MTBoss team.
+                  MTBOSS team.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Getting a Quote From MTBoss as Your Home Construction Contractor
+                Getting a Quote From MTBOSS as Your Home Construction Contractor
               </h3>
 
               <p className="mb-3">
-                MTBoss offers a Get a Construction Quote option directly on its
+                MTBOSS offers a Get a Construction Quote option directly on its
                 website, allowing you to request pricing for civil execution
                 before arranging an in-person visit.
               </p>
@@ -415,46 +415,46 @@ const Content = () => {
                 You can also reach the team directly by phone or WhatsApp to
                 discuss your project scope. Sharing your home&apos;s current
                 details, the scope of work and your rough budget upfront helps
-                MTBoss give a more accurate initial response.
+                MTBOSS give a more accurate initial response.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBoss — Home Construction Contractor in Moradabad
+                Contact MTBOSS — Home Construction Contractor in Moradabad
               </h3>
 
               <p className="mb-3">
                 Whether you need a new house built from the ground up, an extra
                 floor added, a room extended, or an older home renovated,
-                MTBoss works as a hands-on construction contractor in Moradabad
+                MTBOSS works as a hands-on construction contractor in Moradabad
                 for civil execution and material supply.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
 
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.MTBoss.in
+                    https://www.MTBOSS.in
                   </a>
                 </li>
 
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
 
@@ -489,7 +489,7 @@ const Content = () => {
 
               <p className="mt-3">
                 Use the free online Construction Budget Calculator for an
-                initial cost reference, then call or WhatsApp MTBoss to discuss
+                initial cost reference, then call or WhatsApp MTBOSS to discuss
                 your approved drawings, renovation needs, floor-addition plans
                 or new house construction requirements.
               </p>
@@ -503,50 +503,50 @@ const Content = () => {
               <ul className="ml-4 list-inside list-disc space-y-3">
                 <li>
                   <strong>
-                    Q1. What does a home construction contractor like MTBoss
+                    Q1. What does a home construction contractor like MTBOSS
                     actually do?
                   </strong>
                   <br />
-                  MTBoss executes civil construction work including foundation,
+                  MTBOSS executes civil construction work including foundation,
                   structure, walls and finishing according to approved drawings,
                   and also supplies core building materials.
                 </li>
 
                 <li>
                   <strong>
-                    Q2. Can MTBoss handle renovation of an existing home?
+                    Q2. Can MTBOSS handle renovation of an existing home?
                   </strong>
                   <br />
                   Yes. Renovation and upgrading of existing home structures
-                  falls within MTBoss&apos;s contractor-level scope.
+                  falls within MTBOSS&apos;s contractor-level scope.
                 </li>
 
                 <li>
                   <strong>
-                    Q3. Can MTBoss add a floor to my existing house?
+                    Q3. Can MTBOSS add a floor to my existing house?
                   </strong>
                   <br />
                   Yes. Floor addition and vertical expansion is part of
-                  MTBoss&apos;s contractor service, including a structural
+                  MTBOSS&apos;s contractor service, including a structural
                   assessment of the existing foundation and structure.
                 </li>
 
                 <li>
                   <strong>
                     Q4. Can I get a free quote for contractor-level execution
-                    from MTBoss?
+                    from MTBOSS?
                   </strong>
                   <br />
                   Yes. You can use the Get a Construction Quote option on the
-                  MTBoss website, or contact the team by phone or WhatsApp.
+                  MTBOSS website, or contact the team by phone or WhatsApp.
                 </li>
 
                 <li>
                   <strong>
-                    Q5. Does MTBoss supply materials for the project as well?
+                    Q5. Does MTBOSS supply materials for the project as well?
                   </strong>
                   <br />
-                  Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles
+                  Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles
                   and paints on a wholesale basis.
                 </li>
 
@@ -556,7 +556,7 @@ const Content = () => {
                     living in the house?
                   </strong>
                   <br />
-                  MTBoss aims to sequence renovation and extension work to
+                  MTBOSS aims to sequence renovation and extension work to
                   minimise disruption where possible, though this depends on
                   the specific scope of the work.
                 </li>
@@ -564,15 +564,15 @@ const Content = () => {
                 <li>
                   <strong>
                     Q7. How can I estimate the contractor cost before
-                    contacting MTBoss?
+                    contacting MTBOSS?
                   </strong>
                   <br />
-                  Use the free online Budget Calculator available on the MTBoss
+                  Use the free online Budget Calculator available on the MTBOSS
                   website for an initial estimate.
                 </li>
 
                 <li>
-                  <strong>Q8. Where is the MTBoss office located?</strong>
+                  <strong>Q8. Where is the MTBOSS office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

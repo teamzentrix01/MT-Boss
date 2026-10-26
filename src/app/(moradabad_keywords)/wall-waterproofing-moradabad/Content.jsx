@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Wall Waterproofing in Moradabad: MTBoss
+            Wall Waterproofing in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -26,7 +26,7 @@ const Content = () => {
               <p className="mt-3">
                 Repainting the patch fixes none of this. Wall waterproofing in
                 Moradabad works only when the true source is found first and
-                treated directly. MTBoss Construction Private Limited treats damp
+                treated directly. MTBOSS Construction Private Limited treats damp
                 and seeping walls in homes, flats, shops, offices, hotels and
                 factories across Moradabad and Bareilly. Our work follows the
                 promise on our website: planning to completion, with quality work,
@@ -97,10 +97,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -218,7 +218,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 The right treatment depends on the cause [confirm the systems and
-                products MTBoss actually uses].
+                products MTBOSS actually uses].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -303,8 +303,8 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss offers Building Elevation and Painter services on
-                MTBoss.in, so the weather protection and the appearance can be
+                MTBOSS offers Building Elevation and Painter services on
+                MTBOSS.in, so the weather protection and the appearance can be
                 planned as one job.
               </p>
             </section>
@@ -408,7 +408,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  MTBoss.in, or call or WhatsApp us with photos of the wall and a
+                  MTBOSS.in, or call or WhatsApp us with photos of the wall and a
                   short description.
                 </li>
                 <li>
@@ -499,14 +499,14 @@ const Content = () => {
               <p className="mt-3">
                 We measure the area and prepare an itemised estimate [confirm
                 whether rates are per area or lump sum]. You can also use the
-                Budget Calculator on MTBoss.in for an early idea of overall
+                Budget Calculator on MTBOSS.in for an early idea of overall
                 construction or renovation cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -552,12 +552,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -575,10 +575,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -592,7 +592,7 @@ const Content = () => {
                 and send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss for wall waterproofing in Moradabad, with the
+                Choose MTBOSS for wall waterproofing in Moradabad, with the
                 source stopped, the wall dried and the finish applied in the right
                 order.
               </p>
@@ -606,7 +606,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who provides wall waterproofing in Moradabad?</strong>
                   <br />
-                  MTBoss Construction treats damp and seeping walls across
+                  MTBOSS Construction treats damp and seeping walls across
                   Moradabad and Bareilly.
                 </li>
                 <li>
@@ -653,7 +653,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

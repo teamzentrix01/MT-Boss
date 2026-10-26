@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Contractor Company in Moradabad: MTBoss 
+            Civil Contractor Company in Moradabad: MTBOSS 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -22,7 +22,7 @@ const Content = () => {
                 most important decisions you will make for any project.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited is a civil contractor
+                MTBOSS Construction Private Limited is a civil contractor
                 company serving Moradabad, Bareilly and nearby districts of
                 Uttar Pradesh. We execute civil work for homes, shops, offices,
                 factories, warehouses, hotels, institutions and infrastructure
@@ -93,11 +93,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss: A Civil Contractor Company Built on Engineering
+                MTBOSS: A Civil Contractor Company Built on Engineering
                 Discipline
               </h3>
               <p className="mb-3">
-                MTBoss is a construction and home-solutions company known for
+                MTBOSS is a construction and home-solutions company known for
                 architecture, interior design, modular kitchens, waterproofing,
                 building renovation and complete construction services. Civil
                 work forms the base of everything we deliver.
@@ -186,7 +186,7 @@ const Content = () => {
                 From Enquiry to Handover: 
               </h3>
               <p className="mb-3">
-                A clear method keeps projects on track. Every MTBoss civil
+                A clear method keeps projects on track. Every MTBOSS civil
                 project follows these stages.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -210,7 +210,7 @@ const Content = () => {
                   <strong>4. Itemised estimate.</strong> You receive a quotation
                   with quantities, rates, labour, materials and payment stages.
                   You can also use the Construction Budget Calculator on
-                  MTBoss.in for a preliminary figure.
+                  MTBOSS.in for a preliminary figure.
                 </li>
                 <li>
                   <strong>5. Written agreement.</strong> Scope, timeline,
@@ -253,7 +253,7 @@ const Content = () => {
                 Material Sourcing and Storage Practices
               </h3>
               <p>
-                Even good materials lose quality if stored badly. MTBoss buys
+                Even good materials lose quality if stored badly. MTBOSS buys
                 from reliable suppliers, checks deliveries on arrival and stores
                 cement, steel and finishing items properly. Cement is kept dry
                 and off the ground. Steel is kept clear of mud and moisture.
@@ -309,7 +309,7 @@ const Content = () => {
                 Contract Models We Offer
               </h3>
               <p className="mb-3">
-                Different projects need different working arrangements. MTBoss
+                Different projects need different working arrangements. MTBOSS
                 offers the following.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -353,7 +353,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Clients in Moradabad Choose MTBoss
+                Why Clients in Moradabad Choose MTBOSS
               </h3>
               <p className="mb-3">Clients come to us for the following reasons:</p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -409,17 +409,17 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Request a Free Site Visit
               </h3>
-              <p className="mb-3">Ready to discuss your project? Speak with the MTBoss team:</p>
+              <p className="mb-3">Ready to discuss your project? Speak with the MTBOSS team:</p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -429,10 +429,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -446,7 +446,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss, your trusted civil contractor company in
+                Choose MTBOSS, your trusted civil contractor company in
                 Moradabad, for construction that is planned well, built strong
                 and delivered on time.
               </p>
@@ -469,12 +469,12 @@ const Content = () => {
                     Moradabad?
                   </strong>
                   <br />
-                  MTBoss Construction is a trusted civil contractor company in
+                  MTBOSS Construction is a trusted civil contractor company in
                   Moradabad, known for quality, transparent pricing and timely
                   delivery.
                 </li>
                 <li>
-                  <strong>Q3. What civil works does MTBoss handle?</strong>
+                  <strong>Q3. What civil works does MTBOSS handle?</strong>
                   <br />
                   Foundations, RCC work, masonry, plaster, flooring, roads,
                   drains, boundary walls, industrial floors, renovation and
@@ -489,7 +489,7 @@ const Content = () => {
                 <li>
                   <strong>Q5. How can I get a quotation?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or
                   call or WhatsApp +91 94584 10866 for a free site visit.
                 </li>
                 <li>

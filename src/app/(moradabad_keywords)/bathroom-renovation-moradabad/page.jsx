@@ -6,27 +6,27 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Bathroom Renovation in Moradabad | Waterproofing & Remodel | MTBoss',
+  title: 'Bathroom Renovation in Moradabad | Waterproofing & Remodel | MTBOSS',
   description:
-    'Bathroom renovation in Moradabad: fix leaks, redo waterproofing, plumbing, tiles and fittings. MTBoss manages every trade for a safe, lasting bathroom. Call or WhatsApp.',
+    'Bathroom renovation in Moradabad: fix leaks, redo waterproofing, plumbing, tiles and fittings. MTBOSS manages every trade for a safe, lasting bathroom. Call or WhatsApp.',
   keywords:
-    'bathroom renovation Moradabad, bathroom remodelling Moradabad, bathroom renovation contractor Moradabad, bathroom waterproofing Moradabad, bathroom leak repair Moradabad, bathroom plumbing Moradabad, bathroom tiles Moradabad, bathroom fittings Moradabad, small bathroom renovation Moradabad, bathroom renovation cost Moradabad, MTBoss bathroom renovation Moradabad',
+    'bathroom renovation Moradabad, bathroom remodelling Moradabad, bathroom renovation contractor Moradabad, bathroom waterproofing Moradabad, bathroom leak repair Moradabad, bathroom plumbing Moradabad, bathroom tiles Moradabad, bathroom fittings Moradabad, small bathroom renovation Moradabad, bathroom renovation cost Moradabad, MTBOSS bathroom renovation Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/bathroom-renovation-moradabad',
+    canonical: 'https://www.MTBOSS.in/bathroom-renovation-moradabad',
   },
   openGraph: {
     title:
-      'Bathroom Renovation in Moradabad | Waterproofing & Remodel | MTBoss',
+      'Bathroom Renovation in Moradabad | Waterproofing & Remodel | MTBOSS',
     description:
-      'Bathroom renovation in Moradabad: fix leaks, redo waterproofing, plumbing, tiles and fittings. MTBoss manages every trade for a safe, lasting bathroom. Call or WhatsApp.',
-    url: 'https://www.MTBoss.in/bathroom-renovation-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Bathroom renovation in Moradabad: fix leaks, redo waterproofing, plumbing, tiles and fittings. MTBOSS manages every trade for a safe, lasting bathroom. Call or WhatsApp.',
+    url: 'https://www.MTBOSS.in/bathroom-renovation-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-bathroom-renovation-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-bathroom-renovation-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Bathroom Renovation in Moradabad - MTBoss',
+        alt: 'Bathroom Renovation in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,10 +35,10 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title:
-      'Bathroom Renovation in Moradabad | Waterproofing & Remodel | MTBoss',
+      'Bathroom Renovation in Moradabad | Waterproofing & Remodel | MTBOSS',
     description:
-      'Bathroom renovation in Moradabad: fix leaks, redo waterproofing, plumbing, tiles and fittings. MTBoss manages every trade for a safe, lasting bathroom. Call or WhatsApp.',
-    images: ['https://www.MTBoss.in/og-bathroom-renovation-moradabad.jpg'],
+      'Bathroom renovation in Moradabad: fix leaks, redo waterproofing, plumbing, tiles and fittings. MTBOSS manages every trade for a safe, lasting bathroom. Call or WhatsApp.',
+    images: ['https://www.MTBOSS.in/og-bathroom-renovation-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -49,10 +49,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/bathroom-renovation-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/bathroom-renovation-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

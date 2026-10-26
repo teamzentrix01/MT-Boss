@@ -30,7 +30,7 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBoss Construction Private Limited is a Moradabad-based
+                MTBOSS Construction Private Limited is a Moradabad-based
                 architect, interior designer and construction company that
                 builds commercial, hospitality, institutional, industrial and
                 residential projects, serving Moradabad and Bareilly with
@@ -79,7 +79,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Construction Private Limited
+                MTBOSS Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -93,19 +93,19 @@ const Content = () => {
                   Domino&apos;s, Moradabad.
                 </li>
                 <li>
-                  MTBoss positions itself as an architect, interior designer and
+                  MTBOSS positions itself as an architect, interior designer and
                   construction company, so building and interior planning can be
                   coordinated.
                 </li>
                 <li>
-                  Project gallery and blog available on the MTBoss website.
+                  Project gallery and blog available on the MTBOSS website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Showroom Construction Services Offered by MTBoss in Moradabad
+                Showroom Construction Services Offered by MTBOSS in Moradabad
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -146,7 +146,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBoss wholesale supply.
+                  bricks, tiles and paints through MTBOSS wholesale supply.
                 </li>
                 <li>
                   <strong>Renovation and upgrade:</strong> Facade makeovers,
@@ -327,12 +327,12 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBoss Approaches a Showroom Construction Project
+                How MTBOSS Approaches a Showroom Construction Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Step 1 — Enquiry:</strong> Contact MTBoss with plot
+                  <strong>Step 1 — Enquiry:</strong> Contact MTBOSS with plot
                   and showroom plans through website, phone or WhatsApp.
                 </li>
                 <li>
@@ -424,7 +424,7 @@ const Content = () => {
               <p className="mt-3">
                 Requirements vary by location, building size and current
                 regulations, so confirm the latest rules with relevant
-                authorities and consultants. MTBoss builds according to approved
+                authorities and consultants. MTBOSS builds according to approved
                 drawings and specifications, while owners and their consultants
                 handle business-specific licences.
               </p>
@@ -471,7 +471,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBoss Budget Calculator, then request a
+                Start with the free MTBOSS Budget Calculator, then request a
                 detailed quote after site visit and drawing review.
               </p>
             </section>
@@ -516,7 +516,7 @@ const Content = () => {
 
               <p>
                 A missed launch date can mean lost sales and wasted marketing.
-                MTBoss supports on-time delivery through stage-wise planning
+                MTBOSS supports on-time delivery through stage-wise planning
                 with clear milestones, regular site visits by engineers and
                 single-team coordination of design, materials and construction.
               </p>
@@ -564,7 +564,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Services for Business Owners
+                MTBOSS Services for Business Owners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -591,7 +591,7 @@ const Content = () => {
               </h3>
 
               <p>
-                MTBoss works across Moradabad city, including established and
+                MTBOSS works across Moradabad city, including established and
                 newly developing commercial areas, Kanth Road and surrounding
                 growth areas, and roadside plots across Moradabad district. We
                 also serve Bareilly and work with owners in nearby towns and
@@ -602,7 +602,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBoss as Your Showroom Construction Company
+                Why Choose MTBOSS as Your Showroom Construction Company
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -633,44 +633,44 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and
-                  blog on the MTBoss website.
+                  blog on the MTBOSS website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBoss: Showroom Construction Company in Moradabad
+                Contact MTBOSS: Showroom Construction Company in Moradabad
               </h3>
 
               <p className="mb-3">
-                If you are planning a showroom in Moradabad, MTBoss offers a
+                If you are planning a showroom in Moradabad, MTBOSS offers a
                 single point of contact for design coordination, materials,
                 construction and handover.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.MTBoss.in
+                    https://www.MTBOSS.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -719,18 +719,18 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBoss offer showroom construction in Moradabad?
+                    Q2. Does MTBOSS offer showroom construction in Moradabad?
                   </strong>
                   <br />
-                  Yes. Commercial construction is part of the MTBoss service
-                  list, and MTBoss also works as an architect and interior
+                  Yes. Commercial construction is part of the MTBOSS service
+                  list, and MTBOSS also works as an architect and interior
                   designer, so showroom building and interiors can be
                   coordinated.
                 </li>
 
                 <li>
                   <strong>
-                    Q3. What types of showrooms can MTBoss build?
+                    Q3. What types of showrooms can MTBOSS build?
                   </strong>
                   <br />
                   Vehicle, furniture, electronics, clothing, jewellery, building
@@ -745,29 +745,29 @@ const Content = () => {
                   <br />
                   Cost depends on area, floors, facade, structure, finishing,
                   services and site conditions. Use the free Budget Calculator
-                  on the MTBoss website, or request a detailed quote.
+                  on the MTBOSS website, or request a detailed quote.
                 </li>
 
                 <li>
-                  <strong>Q5. Does MTBoss supply building materials?</strong>
+                  <strong>Q5. Does MTBOSS supply building materials?</strong>
                   <br />
-                  Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and
+                  Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and
                   paints, helping reduce material-related delays.
                 </li>
 
                 <li>
                   <strong>
-                    Q6. Can MTBoss renovate an existing showroom or change its
+                    Q6. Can MTBOSS renovate an existing showroom or change its
                     facade?
                   </strong>
                   <br />
-                  Yes. MTBoss offers renovation, repair, waterproofing and
+                  Yes. MTBOSS offers renovation, repair, waterproofing and
                   extension work for existing buildings. Share your requirements
                   for a site assessment.
                 </li>
 
                 <li>
-                  <strong>Q7. Where is the MTBoss office located?</strong>
+                  <strong>Q7. Where is the MTBOSS office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

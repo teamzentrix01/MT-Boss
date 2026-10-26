@@ -7,34 +7,34 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Petrol Pump Construction in Moradabad | MTBoss",
+  title: "Petrol Pump Construction in Moradabad | MTBOSS",
 
   description:
-    "Need petrol pump construction in Moradabad? MTBoss handles civil work, canopy, forecourt, building and finishing. Call +91 94584 10866 for a free quote.",
+    "Need petrol pump construction in Moradabad? MTBOSS handles civil work, canopy, forecourt, building and finishing. Call +91 94584 10866 for a free quote.",
 
   keywords:
-    "petrol pump construction Moradabad, petrol pump construction company Moradabad, petrol pump contractor Moradabad, fuel station construction Moradabad, petrol pump civil work Moradabad, petrol pump canopy construction, petrol pump building construction, petrol pump forecourt construction, retail outlet construction Moradabad, petrol pump cost Moradabad, commercial construction Moradabad, turnkey construction Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
+    "petrol pump construction Moradabad, petrol pump construction company Moradabad, petrol pump contractor Moradabad, fuel station construction Moradabad, petrol pump civil work Moradabad, petrol pump canopy construction, petrol pump building construction, petrol pump forecourt construction, retail outlet construction Moradabad, petrol pump cost Moradabad, commercial construction Moradabad, turnkey construction Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
-    canonical: "https://www.MTBoss.in/petrol-pump-construction-in-moradabad",
+    canonical: "https://www.MTBOSS.in/petrol-pump-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Petrol Pump Construction in Moradabad | MTBoss",
+    title: "Petrol Pump Construction in Moradabad | MTBOSS",
 
     description:
-      "Need petrol pump construction in Moradabad? MTBoss handles civil work, canopy, forecourt, building and finishing. Call +91 94584 10866 for a free quote.",
+      "Need petrol pump construction in Moradabad? MTBOSS handles civil work, canopy, forecourt, building and finishing. Call +91 94584 10866 for a free quote.",
 
-    url: "https://www.MTBoss.in/petrol-pump-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/petrol-pump-construction-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-petrol-pump-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-petrol-pump-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Petrol Pump Construction in Moradabad - MTBoss Construction",
+        alt: "Petrol Pump Construction in Moradabad - MTBOSS Construction",
       },
     ],
 
@@ -45,13 +45,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Petrol Pump Construction in Moradabad | MTBoss",
+    title: "Petrol Pump Construction in Moradabad | MTBOSS",
 
     description:
-      "Need petrol pump construction in Moradabad? MTBoss handles civil work, canopy, forecourt, building and finishing. Call +91 94584 10866 for a free quote.",
+      "Need petrol pump construction in Moradabad? MTBOSS handles civil work, canopy, forecourt, building and finishing. Call +91 94584 10866 for a free quote.",
 
     images: [
-      "https://www.MTBoss.in/og-petrol-pump-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-petrol-pump-construction-moradabad.jpg",
     ],
   },
 
@@ -66,16 +66,16 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
 
-    name: "MTBoss Construction Private Limited",
+    name: "MTBOSS Construction Private Limited",
 
-    url: "https://www.MTBoss.in/petrol-pump-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/petrol-pump-construction-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
 
     image:
-      "https://www.MTBoss.in/og-petrol-pump-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-petrol-pump-construction-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -135,16 +135,16 @@ export default function Page() {
     name: "Petrol Pump Construction Services in Moradabad",
 
     description:
-      "MTBoss provides petrol pump construction services in Moradabad, including site development, forecourt paving, canopy civil work, dispenser island platforms, office and shop buildings, drainage, boundary wall construction, finishing and building material supply.",
+      "MTBOSS provides petrol pump construction services in Moradabad, including site development, forecourt paving, canopy civil work, dispenser island platforms, office and shop buildings, drainage, boundary wall construction, finishing and building material supply.",
 
-    url: "https://www.MTBoss.in/petrol-pump-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/petrol-pump-construction-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
 
     areaServed: [
@@ -177,18 +177,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss offer petrol pump construction in Moradabad?",
+        name: "Does MTBOSS offer petrol pump construction in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBoss provides commercial, industrial and infrastructure construction services in Moradabad and Bareilly. Contact the team to discuss the scope, layout and civil requirements of your petrol pump project.",
+          text: "MTBOSS provides commercial, industrial and infrastructure construction services in Moradabad and Bareilly. Contact the team to discuss the scope, layout and civil requirements of your petrol pump project.",
         },
       },
       {
         "@type": "Question",
-        name: "Does MTBoss install fuel tanks and fuel dispensers?",
+        name: "Does MTBOSS install fuel tanks and fuel dispensers?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Fuel tanks, dispensers and fuel pipelines are generally installed according to the oil company's specifications by authorised vendors. MTBoss focuses on civil and building work around the approved equipment layout. Confirm the final project scope directly with the team.",
+          text: "Fuel tanks, dispensers and fuel pipelines are generally installed according to the oil company's specifications by authorised vendors. MTBOSS focuses on civil and building work around the approved equipment layout. Confirm the final project scope directly with the team.",
         },
       },
       {
@@ -204,31 +204,31 @@ export default function Page() {
         name: "How much does petrol pump construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Petrol pump construction cost depends on plot size, forecourt area, canopy design, pavement specification, building area, drainage requirements, site conditions, material quality and oil company specifications. MTBoss offers a free Budget Calculator and construction quote option for project-specific planning.",
+          text: "Petrol pump construction cost depends on plot size, forecourt area, canopy design, pavement specification, building area, drainage requirements, site conditions, material quality and oil company specifications. MTBOSS offers a free Budget Calculator and construction quote option for project-specific planning.",
         },
       },
       {
         "@type": "Question",
-        name: "Can MTBoss construct petrol pump forecourts and canopy foundations?",
+        name: "Can MTBOSS construct petrol pump forecourts and canopy foundations?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBoss can discuss civil construction scope for forecourt paving, RCC work, dispenser island platforms, canopy foundations, office buildings, drainage, boundary walls and site development based on approved project drawings.",
+          text: "MTBOSS can discuss civil construction scope for forecourt paving, RCC work, dispenser island platforms, canopy foundations, office buildings, drainage, boundary walls and site development based on approved project drawings.",
         },
       },
       {
         "@type": "Question",
-        name: "Can I get a free petrol pump construction quote from MTBoss?",
+        name: "Can I get a free petrol pump construction quote from MTBOSS?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. You can request a quote through the Get a Construction Quote option on the MTBoss website or contact the team directly by phone or WhatsApp with your plot, approved layout and planned facilities.",
+          text: "Yes. You can request a quote through the Get a Construction Quote option on the MTBOSS website or contact the team directly by phone or WhatsApp with your plot, approved layout and planned facilities.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -243,19 +243,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Petrol Pump Construction in Moradabad",
-        item: "https://www.MTBoss.in/petrol-pump-construction-in-moradabad",
+        item: "https://www.MTBOSS.in/petrol-pump-construction-in-moradabad",
       },
     ],
   };

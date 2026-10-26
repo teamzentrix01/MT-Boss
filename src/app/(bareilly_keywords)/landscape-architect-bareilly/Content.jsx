@@ -11,7 +11,7 @@ export default function Content() {
             </h2>
             <p>
               A well-planned landscape connects a building with its outdoor
-              spaces. MTBoss helps homeowners and businesses in Bareilly plan
+              spaces. MTBOSS helps homeowners and businesses in Bareilly plan
               gardens, pathways, seating areas and practical planting around the
               site, taking access, drainage, sunlight and maintenance into
               account.

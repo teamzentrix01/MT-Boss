@@ -6,26 +6,26 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Architect for Factory Moradabad | MTBoss",
+  title: "Architect for Factory Moradabad | MTBOSS",
   description:
-    "Need an architect for factory construction in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866 for a quote.",
+    "Need an architect for factory construction in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866 for a quote.",
   keywords:
-    "architect for factory Moradabad, factory construction Moradabad, industrial building architect Moradabad, factory shed construction Moradabad, warehouse construction Moradabad, industrial construction company Moradabad, MTBoss Moradabad, factory building cost Moradabad, MTBoss budget calculator, factory building materials Moradabad, MTBoss Kanth Road, manufacturing unit construction Moradabad, industrial architect UP, factory construction quote Moradabad, MTBoss industrial projects",
+    "architect for factory Moradabad, factory construction Moradabad, industrial building architect Moradabad, factory shed construction Moradabad, warehouse construction Moradabad, industrial construction company Moradabad, MTBOSS Moradabad, factory building cost Moradabad, MTBOSS budget calculator, factory building materials Moradabad, MTBOSS Kanth Road, manufacturing unit construction Moradabad, industrial architect UP, factory construction quote Moradabad, MTBOSS industrial projects",
   alternates: {
-    canonical: "https://www.MTBoss.in/architect-for-factory-moradabad",
+    canonical: "https://www.MTBOSS.in/architect-for-factory-moradabad",
   },
   openGraph: {
-    title: "Architect for Factory Moradabad | MTBoss",
+    title: "Architect for Factory Moradabad | MTBOSS",
     description:
-      "Need an architect for factory construction in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866 for a quote.",
-    url: "https://www.MTBoss.in/architect-for-factory-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "Need an architect for factory construction in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866 for a quote.",
+    url: "https://www.MTBOSS.in/architect-for-factory-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-factory-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-factory-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Architect for Factory in Moradabad - MTBoss Construction",
+        alt: "Architect for Factory in Moradabad - MTBOSS Construction",
       },
     ],
     locale: "en_IN",
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Architect for Factory Moradabad | MTBoss",
+    title: "Architect for Factory Moradabad | MTBOSS",
     description:
-      "Need an architect for factory construction in Moradabad? MTBoss offers design, build and material supply together. Call +91 94584 10866 for a quote.",
-    images: ["https://www.MTBoss.in/og-factory-moradabad.jpg"],
+      "Need an architect for factory construction in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866 for a quote.",
+    images: ["https://www.MTBOSS.in/og-factory-moradabad.jpg"],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBoss Construction Private Limited",
-    url: "https://www.MTBoss.in/architect-for-factory-moradabad",
+    name: "MTBOSS Construction Private Limited",
+    url: "https://www.MTBOSS.in/architect-for-factory-moradabad",
     telephone: "+91-9458410866",
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",
@@ -85,12 +85,12 @@ export default function Page() {
     "@type": "Service",
     name: "Architect for Factory Construction in Moradabad",
     description:
-      "MTBoss provides architectural design coordination, factory layout planning, civil construction and material supply for factory and industrial building projects in Moradabad.",
+      "MTBOSS provides architectural design coordination, factory layout planning, civil construction and material supply for factory and industrial building projects in Moradabad.",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.MTBoss.in",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: {
       "@type": "City",

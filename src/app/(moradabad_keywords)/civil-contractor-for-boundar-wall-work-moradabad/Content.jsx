@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Contractor For Boundary Wall Work In Moradabad: MTBoss
+            Civil Contractor For Boundary Wall Work In Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -28,7 +28,7 @@ const Content = () => {
                 only on a smaller scale. A good civil contractor for boundary wall
                 work in Moradabad handles marking, excavation, foundation,
                 structure, masonry, finishing and cleanup in the right order, with
-                someone accountable at each step. MTBoss Construction Private
+                someone accountable at each step. MTBOSS Construction Private
                 Limited carries out boundary wall work for homes, shops,
                 farmhouses, warehouses and industrial plots across Moradabad and
                 Bareilly. 
@@ -58,10 +58,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -220,7 +220,7 @@ const Content = () => {
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Turnkey:</strong> MTBoss manages materials, labour,
+                  <strong>Turnkey:</strong> MTBOSS manages materials, labour,
                   supervision and finishing for a complete wall
                 </li>
                 <li>
@@ -238,7 +238,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Owners who prefer to buy materials can explore the Shop Now
-                section on MTBoss.in for cement, steel, bricks and more, and our
+                section on MTBOSS.in for cement, steel, bricks and more, and our
                 engineers can advise on quantity and quality [confirm delivery
                 coverage].
               </p>
@@ -257,7 +257,7 @@ const Content = () => {
                 <li>RCC walls for industrial and high-security sites</li>
                 <li>
                   Readymade boundary walls using precast panels and posts, listed
-                  on MTBoss.in under Readymade Boundary for quick installation
+                  on MTBOSS.in under Readymade Boundary for quick installation
                 </li>
                 <li>
                   Retaining walls engineered for level differences and earth
@@ -431,7 +431,7 @@ const Content = () => {
                 Repair and Raising of Existing Walls
               </h3>
               <p>
-                MTBoss also handles older boundary walls, including crack repair,
+                MTBOSS also handles older boundary walls, including crack repair,
                 rebuilding collapsed sections, raising height after foundation
                 inspection, damp treatment, waterproofing and repainting. Before
                 raising a wall, our engineers check the existing foundation, since
@@ -461,14 +461,14 @@ const Content = () => {
               <p className="mt-3">
                 Instead of quoting a rough rate per foot, we prepare an itemised
                 estimate after the site visit. You can also use the Budget
-                Calculator on MTBoss.in for an early idea of overall construction
+                Calculator on MTBOSS.in for an early idea of overall construction
                 cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -524,18 +524,18 @@ const Content = () => {
                 Request a Free Site Visit
               </h3>
               <p className="mb-3">
-                Contact MTBoss to plan your boundary wall work:
+                Contact MTBOSS to plan your boundary wall work:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -553,10 +553,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -570,7 +570,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss, your trusted civil contractor for boundary wall
+                Choose MTBOSS, your trusted civil contractor for boundary wall
                 work in Moradabad, for a wall that is marked correctly, built
                 strong and handed over clean.
               </p>
@@ -584,7 +584,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who handles boundary wall work in Moradabad?</strong>
                   <br />
-                  MTBoss Construction carries out boundary wall work for homes,
+                  MTBOSS Construction carries out boundary wall work for homes,
                   shops, farmhouses and industrial plots across Moradabad and
                   Bareilly.
                 </li>
@@ -632,7 +632,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

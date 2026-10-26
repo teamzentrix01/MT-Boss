@@ -167,7 +167,7 @@ export default function RentPage() {
 
       {/* Hero */}
       <div className={`py-16 px-4 text-center ${dark ? "bg-zinc-950" : "bg-zinc-800"}`}>
-        <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">MTBoss Property</span>
+        <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">MTBOSS Property</span>
         <h1 className="text-white text-3xl md:text-5xl font-black uppercase tracking-widest mt-2 mb-3">
           List Your<span className="block text-[var(--brand-blue)]">Property for Rent</span>
         </h1>
@@ -234,7 +234,7 @@ export default function RentPage() {
                   <option value="">{loadingCities ? 'Loading cities...' : 'Select city'}</option>
                   {availableCities.map(l => <option key={l} value={l}>{l}</option>)}
                 </select>
-                <p className={`mt-1 text-[10px] ${muted}`}>Only cities enabled by MTBoss are available.</p>
+                <p className={`mt-1 text-[10px] ${muted}`}>Only cities enabled by MTBOSS are available.</p>
                 {cityError && <p className="mt-1 text-[10px] text-red-500">{cityError}</p>}
               </div>
             </div>

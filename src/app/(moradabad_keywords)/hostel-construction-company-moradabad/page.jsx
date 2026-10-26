@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Hostel Construction Company in Moradabad | MTBoss",
+  title: "Hostel Construction Company in Moradabad | MTBOSS",
 
   description:
-    "Looking for a hostel construction company in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
+    "Looking for a hostel construction company in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "hostel construction company Moradabad, hostel building construction Moradabad, hostel contractor Moradabad, hostel building design Moradabad, student hostel construction Moradabad, PG building construction Moradabad, boys hostel construction Moradabad, girls hostel construction Moradabad, hostel construction cost Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
+    "hostel construction company Moradabad, hostel building construction Moradabad, hostel contractor Moradabad, hostel building design Moradabad, student hostel construction Moradabad, PG building construction Moradabad, boys hostel construction Moradabad, girls hostel construction Moradabad, hostel construction cost Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.MTBoss.in/hostel-construction-company-in-moradabad",
+      "https://www.MTBOSS.in/hostel-construction-company-in-moradabad",
   },
 
   openGraph: {
-    title: "Hostel Construction Company in Moradabad | MTBoss",
+    title: "Hostel Construction Company in Moradabad | MTBOSS",
 
     description:
-      "Looking for a hostel construction company in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Looking for a hostel construction company in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.MTBoss.in/hostel-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/hostel-construction-company-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-hostel-construction-company-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-hostel-construction-company-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Hostel Construction Company in Moradabad - MTBoss",
+        alt: "Hostel Construction Company in Moradabad - MTBOSS",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Hostel Construction Company in Moradabad | MTBoss",
+    title: "Hostel Construction Company in Moradabad | MTBOSS",
 
     description:
-      "Looking for a hostel construction company in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Looking for a hostel construction company in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.MTBoss.in/og-hostel-construction-company-moradabad.jpg",
+      "https://www.MTBOSS.in/og-hostel-construction-company-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBoss Construction Private Limited",
-    url: "https://www.MTBoss.in/hostel-construction-company-in-moradabad",
+    name: "MTBOSS Construction Private Limited",
+    url: "https://www.MTBOSS.in/hostel-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.MTBoss.in/og-hostel-construction-company-moradabad.jpg",
+      "https://www.MTBOSS.in/og-hostel-construction-company-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,14 +117,14 @@ export default function Page() {
     "@type": "Service",
     name: "Hostel Construction Services in Moradabad",
     description:
-      "MTBoss provides hostel construction in Moradabad for boys hostels, girls hostels, PG buildings and institutional hostels, including design coordination, structure, staircase and lift provisions, facade, services provisions, washroom planning, mess and kitchen provisions, waterproofing, flooring, finishing, interiors, security-related provisions, outdoor works and final handover.",
-    url: "https://www.MTBoss.in/hostel-construction-company-in-moradabad",
+      "MTBOSS provides hostel construction in Moradabad for boys hostels, girls hostels, PG buildings and institutional hostels, including design coordination, structure, staircase and lift provisions, facade, services provisions, washroom planning, mess and kitchen provisions, waterproofing, flooring, finishing, interiors, security-related provisions, outdoor works and final handover.",
+    url: "https://www.MTBOSS.in/hostel-construction-company-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -154,10 +154,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss build hostels in Moradabad?",
+        name: "Does MTBOSS build hostels in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBoss builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your hostel.",
+          text: "MTBOSS builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your hostel.",
         },
       },
       {
@@ -189,15 +189,15 @@ export default function Page() {
         name: "How much does hostel construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Hostel construction cost depends on built-up area, number of floors, room types, washrooms, material and finish level, services scope and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
+          text: "Hostel construction cost depends on built-up area, number of floors, room types, washrooms, material and finish level, services scope and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -211,19 +211,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Hostel Construction Company in Moradabad",
-        item: "https://www.MTBoss.in/hostel-construction-company-in-moradabad",
+        item: "https://www.MTBOSS.in/hostel-construction-company-in-moradabad",
       },
     ],
   };

@@ -654,7 +654,7 @@ function SupplierDashboardContent() {
                       { label: "Today's Net",       value: fmt(earnings.today_net),       color: '#22c55e', sub: 'After 15% commission'    },
                       { label: 'Total Revenue',     value: fmt(earnings.total_earned),    color: '#3b82f6', sub: 'All-time gross'          },
                       { label: 'Total Net Earning', value: fmt(earnings.total_net),       color: '#10b981', sub: 'After all commissions'   },
-                      { label: 'Commission Paid',   value: fmt(earnings.total_commission),color: '#f97316', sub: '15% to MTBoss'         },
+                      { label: 'Commission Paid',   value: fmt(earnings.total_commission),color: '#f97316', sub: '15% to MTBOSS'         },
                       { label: 'Orders Fulfilled',  value: earnings.total_fulfilled,      color: text,      sub: 'Total completed'        },
                       { label: 'Active Orders',     value: earnings.active_orders,        color: '#3b82f6', sub: 'In progress'            },
                     ].map(c => (
@@ -666,7 +666,7 @@ function SupplierDashboardContent() {
                     ))}
                   </div>
                   <div style={{ background: surface, border: `1px solid ${border}`, borderRadius: 12, padding: '1.25rem', fontSize: '0.85rem', color: muted, lineHeight: 1.7 }}>
-                    <strong style={{ color: text }}>Commission:</strong> MTBossdeducts <strong style={{ color: 'var(--brand-blue-dark)' }}>15%</strong> of the amount received on every fulfilled order.
+                    <strong style={{ color: text }}>Commission:</strong> MTBOSSdeducts <strong style={{ color: 'var(--brand-blue-dark)' }}>15%</strong> of the amount received on every fulfilled order.
                   </div>
                 </>
               ) : <div className="sd-empty">Could not load earnings.</div>}
@@ -866,7 +866,7 @@ function SupplierDashboardContent() {
                   </div>
                 ) : null)}
                 <div style={{ marginTop: '1rem', padding: '0.75rem', background: dark ? '#1a1a1a' : '#f9f9f9', borderRadius: 8, fontSize: '0.78rem', color: muted, lineHeight: 1.6 }}>
-                  🔒 To update contact details or Aadhaar, contact <strong>MTBoss2016@gmail.com</strong>
+                  🔒 To update contact details or Aadhaar, contact <strong>MTBOSS2016@gmail.com</strong>
                 </div>
               </div>
             </div>

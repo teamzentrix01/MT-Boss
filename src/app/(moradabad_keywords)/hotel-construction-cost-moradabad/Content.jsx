@@ -9,7 +9,7 @@ const Content = () => {
         <div className="order-1 flex-1 px-4 py-12 sm:px-8 md:px-16 lg:order-1">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 sm:text-3xl md:text-3xl">
             Hotel Construction Cost in Moradabad: What Affects Your Budget and
-            How to Plan It with MTBoss
+            How to Plan It with MTBOSS
           </h2>
 
           <div className="max-w-4xl space-y-6 leading-relaxed text-gray-700">
@@ -29,7 +29,7 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBoss Construction Private Limited is a Moradabad-based
+                MTBOSS Construction Private Limited is a Moradabad-based
                 architect, interior designer and construction company serving
                 Moradabad and Bareilly, with hotel and hospitality construction
                 in its service list.
@@ -67,11 +67,11 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Construction Private Limited
+                MTBOSS Construction Private Limited
               </h3>
 
               <p className="mb-3">
-                MTBoss is a Moradabad-based company offering construction
+                MTBOSS is a Moradabad-based company offering construction
                 services, doorstep home services, verified property
                 transactions, and building materials under one company.
               </p>
@@ -82,11 +82,11 @@ const Content = () => {
                   Domino&apos;s, Moradabad.
                 </li>
                 <li>
-                  MTBoss serves Moradabad and Bareilly with a focus on quality
+                  MTBOSS serves Moradabad and Bareilly with a focus on quality
                   work, transparent pricing and on-time delivery.
                 </li>
                 <li>
-                  A project gallery and blog are available on the MTBoss website
+                  A project gallery and blog are available on the MTBOSS website
                   for clients who want to review completed work.
                 </li>
               </ul>
@@ -232,7 +232,7 @@ const Content = () => {
                   finishing level.
                 </li>
                 <li>
-                  <strong>Step 5:</strong> Use the free MTBoss Budget Calculator
+                  <strong>Step 5:</strong> Use the free MTBOSS Budget Calculator
                   for an initial estimate.
                 </li>
                 <li>
@@ -252,12 +252,12 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why the MTBoss Budget Calculator Helps
+                Why the MTBOSS Budget Calculator Helps
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-1">
                 <li>
-                  It is a free tool available directly on the MTBoss website.
+                  It is a free tool available directly on the MTBOSS website.
                 </li>
                 <li>
                   It helps form a realistic early estimate before committing to
@@ -272,7 +272,7 @@ const Content = () => {
                   quotations.
                 </li>
                 <li>
-                  It gives the client and MTBoss a reference point for tracking
+                  It gives the client and MTBOSS a reference point for tracking
                   spending during construction.
                 </li>
               </ul>
@@ -372,7 +372,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBoss Prepares a Hotel Construction Estimate
+                How MTBOSS Prepares a Hotel Construction Estimate
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -413,8 +413,8 @@ const Content = () => {
               </h3>
 
               <p className="mb-3">
-                MTBoss supplies cement, TMT steel bars, bricks, tiles and paints
-                through the MTBoss Shop Now section. Cement and steel are major
+                MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints
+                through the MTBOSS Shop Now section. Cement and steel are major
                 structural cost components, so reliable supply helps control
                 schedule and cost planning.
               </p>
@@ -425,7 +425,7 @@ const Content = () => {
                   contractor and supplier.
                 </li>
                 <li>
-                  It helps MTBoss manage delivery timing during construction.
+                  It helps MTBOSS manage delivery timing during construction.
                 </li>
                 <li>
                   It can reduce delay-related costs caused by material
@@ -463,7 +463,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                What to Share With MTBoss for an Accurate Quote
+                What to Share With MTBOSS for an Accurate Quote
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -489,14 +489,14 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Budget and timeline:</strong> Approximate figures help
-                  MTBoss shape a realistic plan.
+                  MTBOSS shape a realistic plan.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Support Beyond Construction
+                MTBOSS Support Beyond Construction
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -517,7 +517,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Areas Served by MTBoss
+                Areas Served by MTBOSS
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-1">
@@ -528,7 +528,7 @@ const Content = () => {
                   for hotel and resort development.
                 </li>
                 <li>
-                  Bareilly, where MTBoss also provides construction and design
+                  Bareilly, where MTBOSS also provides construction and design
                   services.
                 </li>
                 <li>
@@ -540,13 +540,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBoss for Hotel Construction in Moradabad?
+                Why Choose MTBOSS for Hotel Construction in Moradabad?
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Hospitality construction:</strong> Hotel construction
-                  is included within MTBoss commercial and institutional services.
+                  is included within MTBOSS commercial and institutional services.
                 </li>
                 <li>
                   <strong>Transparent estimation:</strong> Free Budget Calculator
@@ -557,13 +557,13 @@ const Content = () => {
                   materials and construction are handled within one company.
                 </li>
                 <li>
-                  <strong>Engineering-led approach:</strong> MTBoss focuses on
+                  <strong>Engineering-led approach:</strong> MTBOSS focuses on
                   engineering excellence, transparent pricing and on-time
                   delivery.
                 </li>
                 <li>
                   <strong>Direct material supply:</strong> Cement, steel, bricks,
-                  tiles and paints available through MTBoss.
+                  tiles and paints available through MTBOSS.
                 </li>
                 <li>
                   <strong>Local presence:</strong> Kanth Road office close to
@@ -578,38 +578,38 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBoss: Hotel Construction Cost Estimate in Moradabad
+                Contact MTBOSS: Hotel Construction Cost Estimate in Moradabad
               </h3>
 
               <p className="mb-3">
                 For investors and owners wondering about hotel construction cost
-                in Moradabad, MTBoss offers a clear starting point through its
+                in Moradabad, MTBOSS offers a clear starting point through its
                 free Budget Calculator, online quote request and local
                 construction team.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.MTBoss.in
+                    https://www.MTBOSS.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -641,7 +641,7 @@ const Content = () => {
 
               <p className="mt-3">
                 Share your plot, hotel concept, planned rooms and rough budget
-                with MTBoss to receive a practical estimate aligned with your
+                with MTBOSS to receive a practical estimate aligned with your
                 investment plan.
               </p>
             </section>
@@ -657,7 +657,7 @@ const Content = () => {
                   <br />
                   Cost depends on built-up area, room count, floors, hotel
                   category, facilities, material quality and interior scope. Use
-                  the free MTBoss Budget Calculator or request a detailed quote.
+                  the free MTBOSS Budget Calculator or request a detailed quote.
                 </li>
 
                 <li>
@@ -688,17 +688,17 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q5. Does MTBoss offer hotel construction in Moradabad?
+                    Q5. Does MTBOSS offer hotel construction in Moradabad?
                   </strong>
                   <br />
-                  Yes. Hotel construction is part of the MTBoss service list,
+                  Yes. Hotel construction is part of the MTBOSS service list,
                   along with residential, commercial, industrial and
                   institutional projects.
                 </li>
 
                 <li>
                   <strong>
-                    Q6. How accurate is the MTBoss Budget Calculator?
+                    Q6. How accurate is the MTBOSS Budget Calculator?
                   </strong>
                   <br />
                   It gives a practical early estimate for planning. A site visit
@@ -708,15 +708,15 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q7. Does MTBoss supply building materials too?
+                    Q7. Does MTBOSS supply building materials too?
                   </strong>
                   <br />
-                  Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and
+                  Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and
                   paints, helping reduce coordination issues during construction.
                 </li>
 
                 <li>
-                  <strong>Q8. Where is the MTBoss office located?</strong>
+                  <strong>Q8. Where is the MTBOSS office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

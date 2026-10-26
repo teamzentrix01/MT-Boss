@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Architect for Villa in Bareilly | MTBoss',
+  title: 'Architect for Villa in Bareilly | MTBOSS',
   description:
-    'Planning a villa in Bareilly? MTBoss designs villas and bungalows with climate-smart planning, approval-ready drawings and build support. Call +91 94584 10866.',
+    'Planning a villa in Bareilly? MTBOSS designs villas and bungalows with climate-smart planning, approval-ready drawings and build support. Call +91 94584 10866.',
   keywords:
-    'architect for villa in Bareilly, villa architect Bareilly, bungalow architect Bareilly, villa design Bareilly, luxury villa architect Bareilly, villa planning Bareilly, villa construction Bareilly, bungalow design Bareilly, villa renovation Bareilly, MTBoss Bareilly, architect near me Bareilly',
+    'architect for villa in Bareilly, villa architect Bareilly, bungalow architect Bareilly, villa design Bareilly, luxury villa architect Bareilly, villa planning Bareilly, villa construction Bareilly, bungalow design Bareilly, villa renovation Bareilly, MTBOSS Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/architect-for-villa-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-for-villa-bareilly',
   },
   openGraph: {
-    title: 'Architect for Villa in Bareilly | MTBoss',
+    title: 'Architect for Villa in Bareilly | MTBOSS',
     description:
-      'Planning a villa in Bareilly? MTBoss designs villas and bungalows with climate-smart planning, approval-ready drawings and build support. Call +91 94584 10866.',
-    url: 'https://www.MTBoss.in/architect-for-villa-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Planning a villa in Bareilly? MTBOSS designs villas and bungalows with climate-smart planning, approval-ready drawings and build support. Call +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/architect-for-villa-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-for-villa-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-villa-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect for Villa in Bareilly - MTBoss',
+        alt: 'Architect for Villa in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Architect for Villa in Bareilly | MTBoss',
+    title: 'Architect for Villa in Bareilly | MTBOSS',
     description:
-      'Planning a villa in Bareilly? MTBoss designs villas and bungalows with climate-smart planning, approval-ready drawings and build support. Call +91 94584 10866.',
-    images: ['https://www.MTBoss.in/og-architect-for-villa-bareilly.jpg'],
+      'Planning a villa in Bareilly? MTBOSS designs villas and bungalows with climate-smart planning, approval-ready drawings and build support. Call +91 94584 10866.',
+    images: ['https://www.MTBOSS.in/og-architect-for-villa-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-for-villa-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-for-villa-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

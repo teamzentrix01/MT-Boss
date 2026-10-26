@@ -46,10 +46,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -170,7 +170,7 @@ const Content = () => {
               <p className="mt-3">
                 If the source is a leaking pipe, the plumber fixes the line first.
                 Waterproofing over an active pipe leak is wasted effort. Our
-                Plumber service on MTBoss.in handles this alongside the
+                Plumber service on MTBOSS.in handles this alongside the
                 waterproofing.
               </p>
             </section>
@@ -182,7 +182,7 @@ const Content = () => {
               <p className="mb-3">
                 The right method depends on the bathroom&apos;s condition, whether
                 it is new or existing, and how much breaking you accept [confirm
-                systems and products MTBoss actually uses]. Common approaches
+                systems and products MTBOSS actually uses]. Common approaches
                 include:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -253,7 +253,7 @@ const Content = () => {
                 <li>
                   <strong>Ponding test.</strong> The floor is flooded for a set
                   period while the area below is watched [confirm the test
-                  duration MTBoss follows].
+                  duration MTBOSS follows].
                 </li>
                 <li>
                   <strong>Protective screed.</strong> A thin screed protects the
@@ -351,7 +351,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 For ownership or liability questions, please consult a qualified
-                legal professional. MTBoss can prepare a clear inspection note,
+                legal professional. MTBOSS can prepare a clear inspection note,
                 scope and estimate that both parties can review.
               </p>
             </section>
@@ -367,7 +367,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  MTBoss.in, or call or WhatsApp us with photos of the bathroom
+                  MTBOSS.in, or call or WhatsApp us with photos of the bathroom
                   and any damp areas.
                 </li>
                 <li>
@@ -484,7 +484,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -537,19 +537,19 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book a Bathroom Inspection with MTBoss
+                Book a Bathroom Inspection with MTBOSS
               </h3>
               <p className="mb-3">Ready to stop the seepage for good? Contact us:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -567,10 +567,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -584,7 +584,7 @@ const Content = () => {
                 clear proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss for bathroom waterproofing in Moradabad, with every
+                Choose MTBOSS for bathroom waterproofing in Moradabad, with every
                 zone sealed, the layer tested before tiling and the room restored
                 properly.
               </p>
@@ -600,7 +600,7 @@ const Content = () => {
                     Q1. Who provides bathroom waterproofing in Moradabad?
                   </strong>
                   <br />
-                  MTBoss Construction treats bathroom and toilet leakage across
+                  MTBOSS Construction treats bathroom and toilet leakage across
                   Moradabad and Bareilly.
                 </li>
                 <li>
@@ -651,7 +651,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

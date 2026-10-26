@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Construction Consultant in Moradabad',
   description:
-    'Need a construction consultant in Moradabad? MTBoss offers planning, budgeting, design review and site monitoring for homes, shops and industrial projects.',
+    'Need a construction consultant in Moradabad? MTBOSS offers planning, budgeting, design review and site monitoring for homes, shops and industrial projects.',
   keywords:
-    'construction consultant Moradabad, construction consultancy Moradabad, building consultant Moradabad, construction planning Moradabad, construction budget consultant Moradabad, design review consultant Moradabad, site monitoring Moradabad, construction project consultant Moradabad, MTBoss Moradabad, construction advisor Moradabad',
+    'construction consultant Moradabad, construction consultancy Moradabad, building consultant Moradabad, construction planning Moradabad, construction budget consultant Moradabad, design review consultant Moradabad, site monitoring Moradabad, construction project consultant Moradabad, MTBOSS Moradabad, construction advisor Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/construction-consultant-moradabad',
+    canonical: 'https://www.MTBOSS.in/construction-consultant-moradabad',
   },
   openGraph: {
     title: 'Construction Consultant in Moradabad',
     description:
-      'Need a construction consultant in Moradabad? MTBoss offers planning, budgeting, design review and site monitoring for homes, shops and industrial projects.',
-    url: 'https://www.MTBoss.in/construction-consultant-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Need a construction consultant in Moradabad? MTBOSS offers planning, budgeting, design review and site monitoring for homes, shops and industrial projects.',
+    url: 'https://www.MTBOSS.in/construction-consultant-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-construction-consultant-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-construction-consultant-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Construction Consultant in Moradabad - MTBoss',
+        alt: 'Construction Consultant in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Construction Consultant in Moradabad',
     description:
-      'Need a construction consultant in Moradabad? MTBoss offers planning, budgeting, design review and site monitoring for homes, shops and industrial projects.',
-    images: ['https://www.MTBoss.in/og-construction-consultant-moradabad.jpg'],
+      'Need a construction consultant in Moradabad? MTBOSS offers planning, budgeting, design review and site monitoring for homes, shops and industrial projects.',
+    images: ['https://www.MTBOSS.in/og-construction-consultant-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/construction-consultant-moradabad',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/construction-consultant-moradabad',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

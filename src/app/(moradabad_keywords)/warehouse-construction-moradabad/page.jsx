@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Warehouse Construction in Moradabad | MTBoss",
+  title: "Warehouse Construction in Moradabad | MTBOSS",
 
   description:
-    "Planning warehouse construction in Moradabad? MTBoss builds godowns and storage facilities with clear scope. Call +91 94584 10866 for a quote.",
+    "Planning warehouse construction in Moradabad? MTBOSS builds godowns and storage facilities with clear scope. Call +91 94584 10866 for a quote.",
 
   keywords:
-    "warehouse construction Moradabad, warehouse construction company Moradabad, godown construction Moradabad, warehouse builder Moradabad, storage facility construction Moradabad, warehouse contractor Moradabad, warehouse construction cost Moradabad, warehouse design Moradabad, distribution warehouse construction, warehouse shed construction Moradabad, industrial construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
+    "warehouse construction Moradabad, warehouse construction company Moradabad, godown construction Moradabad, warehouse builder Moradabad, storage facility construction Moradabad, warehouse contractor Moradabad, warehouse construction cost Moradabad, warehouse design Moradabad, distribution warehouse construction, warehouse shed construction Moradabad, industrial construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.MTBoss.in/warehouse-construction-in-moradabad",
+      "https://www.MTBOSS.in/warehouse-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Warehouse Construction in Moradabad | MTBoss",
+    title: "Warehouse Construction in Moradabad | MTBOSS",
 
     description:
-      "Planning warehouse construction in Moradabad? MTBoss builds godowns and storage facilities with clear scope. Call +91 94584 10866 for a quote.",
+      "Planning warehouse construction in Moradabad? MTBOSS builds godowns and storage facilities with clear scope. Call +91 94584 10866 for a quote.",
 
-    url: "https://www.MTBoss.in/warehouse-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/warehouse-construction-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-warehouse-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-warehouse-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Warehouse Construction in Moradabad - MTBoss",
+        alt: "Warehouse Construction in Moradabad - MTBOSS",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Warehouse Construction in Moradabad | MTBoss",
+    title: "Warehouse Construction in Moradabad | MTBOSS",
 
     description:
-      "Planning warehouse construction in Moradabad? MTBoss builds godowns and storage facilities with clear scope. Call +91 94584 10866 for a quote.",
+      "Planning warehouse construction in Moradabad? MTBOSS builds godowns and storage facilities with clear scope. Call +91 94584 10866 for a quote.",
 
     images: [
-      "https://www.MTBoss.in/og-warehouse-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-warehouse-construction-moradabad.jpg",
     ],
   },
 
@@ -66,11 +66,11 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBoss Construction Private Limited",
-    url: "https://www.MTBoss.in/warehouse-construction-in-moradabad",
+    name: "MTBOSS Construction Private Limited",
+    url: "https://www.MTBOSS.in/warehouse-construction-in-moradabad",
     telephone: "+91-9458410866",
-    email: "MTBoss2016@gmail.com",
-    image: "https://www.MTBoss.in/og-warehouse-construction-moradabad.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-warehouse-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -118,14 +118,14 @@ export default function Page() {
     "@type": "Service",
     name: "Warehouse Construction Services in Moradabad",
     description:
-      "MTBoss provides warehouse construction in Moradabad for godowns, distribution centres and storage facilities, including site development, foundations, structural framing, roofing, warehouse flooring, loading areas, drainage, offices, amenities, external works, material supply and final handover.",
-    url: "https://www.MTBoss.in/warehouse-construction-in-moradabad",
+      "MTBOSS provides warehouse construction in Moradabad for godowns, distribution centres and storage facilities, including site development, foundations, structural framing, roofing, warehouse flooring, loading areas, drainage, offices, amenities, external works, material supply and final handover.",
+    url: "https://www.MTBOSS.in/warehouse-construction-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -155,10 +155,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss offer warehouse construction in Moradabad?",
+        name: "Does MTBOSS offer warehouse construction in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Industrial and warehousing construction is part of the MTBoss service list, alongside commercial, hotel, school, college, mall and residential construction projects in Moradabad and Bareilly.",
+          text: "Yes. Industrial and warehousing construction is part of the MTBOSS service list, alongside commercial, hotel, school, college, mall and residential construction projects in Moradabad and Bareilly.",
         },
       },
       {
@@ -174,7 +174,7 @@ export default function Page() {
         name: "How high should a warehouse be?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Clear height depends on stacking or racking plans and the handling equipment you will use. Share your stacking height and racking layout with MTBoss to decide the right clear height for your warehouse.",
+          text: "Clear height depends on stacking or racking plans and the handling equipment you will use. Share your stacking height and racking layout with MTBOSS to decide the right clear height for your warehouse.",
         },
       },
       {
@@ -190,23 +190,23 @@ export default function Page() {
         name: "How much does warehouse construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Warehouse construction cost depends on covered area, clear height, span, floor specification, roof and wall system, loading provisions, ventilation, lighting, fire provisions, office areas, external development and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
+          text: "Warehouse construction cost depends on covered area, clear height, span, floor specification, roof and wall system, loading provisions, ventilation, lighting, fire provisions, office areas, external development and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Does MTBoss supply building materials?",
+        name: "Does MTBOSS supply building materials?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during warehouse construction.",
+          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during warehouse construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -220,19 +220,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Warehouse Construction in Moradabad",
-        item: "https://www.MTBoss.in/warehouse-construction-in-moradabad",
+        item: "https://www.MTBOSS.in/warehouse-construction-in-moradabad",
       },
     ],
   };

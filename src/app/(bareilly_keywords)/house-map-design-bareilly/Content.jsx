@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            House Map Design in Bareilly: MTBoss
+            House Map Design in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -32,7 +32,7 @@ const Content = () => {
                 room to grow.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -109,7 +109,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A map starts from the plot, not from a catalogue. Gather{" "}
-                <span className="text-gray-500">[adjust to MTBoss&apos;s method]</span>
+                <span className="text-gray-500">[adjust to MTBOSS&apos;s method]</span>
                 :
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -215,7 +215,7 @@ const Content = () => {
                 These are common starting ranges, which your designer should adjust to
                 your plot, furniture and habits{" "}
                 <span className="text-gray-500">
-                  [confirm MTBoss&apos;s standard sizes]
+                  [confirm MTBOSS&apos;s standard sizes]
                 </span>
                 .
               </p>
@@ -288,7 +288,7 @@ const Content = () => {
                 say where a preference conflicts with light, ventilation, plumbing or
                 approvals. We don&apos;t promise any outcome{" "}
                 <span className="text-gray-500">
-                  [adjust wording to MTBoss&apos;s actual approach]
+                  [adjust wording to MTBOSS&apos;s actual approach]
                 </span>
                 . Where a plot cannot satisfy every preference, we help you weigh the
                 trade-offs.
@@ -385,7 +385,7 @@ const Content = () => {
               <p className="mb-3">
                 A usable set normally includes{" "}
                 <span className="text-gray-500">
-                  [adjust to what MTBoss provides]
+                  [adjust to what MTBOSS provides]
                 </span>
                 :
               </p>
@@ -471,7 +471,7 @@ const Content = () => {
               <p className="mt-3">
                 A middle path is adapting a good base plan to your plot, with a
                 professional checking structure, rules and orientation. Ask whether
-                MTBoss offers adaptation and what it includes{" "}
+                MTBOSS offers adaptation and what it includes{" "}
                 <span className="text-gray-500">[confirm]</span>.
               </p>
             </section>
@@ -495,7 +495,7 @@ const Content = () => {
               <p className="mb-3">
                 House map design cost depends on{" "}
                 <span className="text-gray-500">
-                  [state how MTBoss prices map design]
+                  [state how MTBOSS prices map design]
                 </span>
                 :
               </p>
@@ -523,12 +523,12 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Process With MTBoss
+                Process With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> Call, WhatsApp or click Get a Construction
-                  Quote on MTBoss.in, with your location pin, plot papers and a short
+                  Quote on MTBOSS.in, with your location pin, plot papers and a short
                   brief
                 </li>
                 <li>
@@ -553,10 +553,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Related Services From MTBoss
+                Related Services From MTBOSS
               </h3>
               <p>
-                Through MTBoss.in, MTBoss also offers Architecture &amp; Interior,
+                Through MTBOSS.in, MTBOSS also offers Architecture &amp; Interior,
                 Building Elevation, Building Contractor, Building Renovation, Modular
                 Kitchen, False Ceiling, Water Proofing, Painter, Electrician and
                 Plumber, so the map can be carried through to a finished home.
@@ -565,11 +565,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> House plans, building design and
@@ -604,21 +604,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -638,7 +638,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Owners Consider MTBoss
+                Reasons Owners Consider MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -682,7 +682,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your House Map With MTBoss
+                Start Your House Map With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -699,21 +699,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &ldquo;Get a Construction Quote&rdquo;)
                 </li>
@@ -727,7 +727,7 @@ const Content = () => {
                 budget range, and we will arrange a site study and a written proposal.
               </p>
               <p className="mt-3">
-                Consider MTBoss for house map design in Bareilly, with the plan drawn
+                Consider MTBOSS for house map design in Bareilly, with the plan drawn
                 from your plot, the rules checked and the drawings ready to build
                 from.
               </p>
@@ -741,7 +741,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who designs house maps in Bareilly?</strong>
                   <br />
-                  MTBoss Construction prepares house plans for Bareilly and Moradabad{" "}
+                  MTBOSS Construction prepares house plans for Bareilly and Moradabad{" "}
                   <span className="text-gray-500">[confirm registration]</span>.
                 </li>
                 <li>
@@ -794,7 +794,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I start?</strong>
                   <br />
-                  Click &ldquo;Get a Construction Quote&rdquo; on MTBoss.in, or call
+                  Click &ldquo;Get a Construction Quote&rdquo; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

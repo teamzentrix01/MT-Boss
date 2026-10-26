@@ -16,7 +16,7 @@ export const metadata = {
     "TV unit design interior Bareilly, TV unit design Bareilly, TV unit for living room Bareilly, TV panel design Bareilly, wall mounted TV unit Bareilly, modern TV unit Bareilly, bedroom TV unit Bareilly, TV unit with storage Bareilly, TV unit cost Bareilly, living room interior Bareilly, home interior Bareilly, MTBOSS Bareilly, MTBOSS Moradabad, MTBOSS budget calculator, TV unit quote Bareilly",
 
   alternates: {
-    canonical: "https://www.mtboss.in/tv-unit-design-interior-in-bareilly",
+    canonical: "https://www.MTBOSS.in/tv-unit-design-interior-in-bareilly",
   },
 
   openGraph: {
@@ -25,13 +25,13 @@ export const metadata = {
     description:
       "Planning TV unit design interior Bareilly? MTBOSS builds storage-smart, wire-free TV units with clear costs. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/tv-unit-design-interior-in-bareilly",
+    url: "https://www.MTBOSS.in/tv-unit-design-interior-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-tv-unit-design-interior-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-tv-unit-design-interior-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "TV Unit Design Interior in Bareilly - MTBOSS",
@@ -50,7 +50,7 @@ export const metadata = {
     description:
       "Planning TV unit design interior Bareilly? MTBOSS builds storage-smart, wire-free TV units with clear costs. Call +91 94584 10866.",
 
-    images: ["https://www.mtboss.in/og-tv-unit-design-interior-bareilly.jpg"],
+    images: ["https://www.MTBOSS.in/og-tv-unit-design-interior-bareilly.jpg"],
   },
 
   robots: {
@@ -64,10 +64,10 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/tv-unit-design-interior-in-bareilly",
+    url: "https://www.MTBOSS.in/tv-unit-design-interior-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-tv-unit-design-interior-bareilly.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-tv-unit-design-interior-bareilly.jpg",
     priceRange: "₹₹₹",
     address: {
       "@type": "PostalAddress",
@@ -113,13 +113,13 @@ export default function Page() {
     name: "TV Unit Design Interior Services in Bareilly",
     description:
       "MTBOSS provides TV unit design interior services in Bareilly. Services include site visit and measurement, TV wall planning, concept and 3D views, custom carpentry, wall panelling, texture, wallpaper and paint, concealed wiring and conduits, lighting design, false ceiling coordination, wall repair and waterproofing, living room and bedroom interiors, renovation of existing TV walls, material supply and home services.",
-    url: "https://www.mtboss.in/tv-unit-design-interior-in-bareilly",
+    url: "https://www.MTBOSS.in/tv-unit-design-interior-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -214,19 +214,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "TV Unit Design Interior in Bareilly",
-        item: "https://www.mtboss.in/tv-unit-design-interior-in-bareilly",
+        item: "https://www.MTBOSS.in/tv-unit-design-interior-in-bareilly",
       },
     ],
   };

@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Bungalow in Moradabad: MTBoss
+            Architect for Bungalow in Moradabad: MTBOSS
           </h2>
 
 
@@ -20,7 +20,7 @@ const Content = () => {
               </p>
             
               <p className="mt-3">
-                MTBoss is a Moradabad-based construction, property and home services company. Our team designs bungalows, villas, duplexes and independent houses, and then builds them. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to the day you move in.
+                MTBOSS is a Moradabad-based construction, property and home services company. Our team designs bungalows, villas, duplexes and independent houses, and then builds them. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to the day you move in.
               </p>
            
             </section>
@@ -28,7 +28,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Bungalow Design Services by MTBoss in Moradabad
+                Bungalow Design Services by MTBOSS in Moradabad
               </h3>
 
 
@@ -67,7 +67,7 @@ const Content = () => {
                 Interior Coordination
               </h4>
               <p className="mb-3">
-                Because MTBoss also offers interior design, your architectural and interior plans can be developed together, from staircase details to false ceilings and lighting.
+                Because MTBOSS also offers interior design, your architectural and interior plans can be developed together, from staircase details to false ceilings and lighting.
               </p>
 
 
@@ -147,14 +147,14 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss studies your actual plot papers and site before recommending a layout.
+                MTBOSS studies your actual plot papers and site before recommending a layout.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Room-by-Room Bungalow Planning by MTBoss
+                Room-by-Room Bungalow Planning by MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -194,7 +194,7 @@ const Content = () => {
                 Bungalow Elevation and Style Options
               </h3>
               <p className="mb-3">
-                The front of a bungalow is its signature. MTBoss designs elevations in several popular styles:
+                The front of a bungalow is its signature. MTBOSS designs elevations in several popular styles:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -227,7 +227,7 @@ const Content = () => {
                 Vastu-Friendly Bungalow Design
               </h3>
               <p className="mb-3">
-                Many families in Moradabad want their bungalow to follow Vastu principles, especially for a home they plan to live in for decades. MTBoss plans the main entrance, kitchen, pooja room, bedrooms, staircase, water tank and toilets according to the guidance you follow, while keeping the layout practical.
+                Many families in Moradabad want their bungalow to follow Vastu principles, especially for a home they plan to live in for decades. MTBOSS plans the main entrance, kitchen, pooja room, bedrooms, staircase, water tank and toilets according to the guidance you follow, while keeping the layout practical.
               </p>
               <p className="mt-3">
                 If your family works with a particular Vastu consultant, we can follow their recommendations. If Vastu is not a priority, we design for light, ventilation and comfort instead. In either case, we explain trade-offs honestly, so you can decide with full information.
@@ -240,7 +240,7 @@ const Content = () => {
                 Climate-Smart Bungalow Design for Moradabad
               </h3>
               <p className="mb-3">
-                Large houses feel the climate more strongly, so smart design pays back every month. For bungalows in Moradabad, MTBoss focuses on:
+                Large houses feel the climate more strongly, so smart design pays back every month. For bungalows in Moradabad, MTBOSS focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -303,7 +303,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Bungalow Design Process, Step by Step
+                MTBOSS Bungalow Design Process, Step by Step
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -322,9 +322,9 @@ const Content = () => {
                   <strong>Step 4: Approvals guidance.</strong> We guide you on the drawings and documents typically needed for local approvals. Requirements vary by area, so please confirm final rules with the relevant authorities.
                 </li>
                 <li>
-                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate with materials, labour and finishes itemised. For a quick early figure, try the MTBoss{" "}
+                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate with materials, labour and finishes itemised. For a quick early figure, try the MTBOSS{" "}
                   <a
-                    href="https://www.MTBoss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -334,7 +334,7 @@ const Content = () => {
                   .
                 </li>
                 <li>
-                  <strong>Step 6: Construction and supervision.</strong> If you choose MTBoss to build, our team builds exactly to the approved design with regular site checks.
+                  <strong>Step 6: Construction and supervision.</strong> If you choose MTBOSS to build, our team builds exactly to the approved design with regular site checks.
                 </li>
                 <li>
                   <strong>Step 7: Finishing, landscaping and handover.</strong> We complete finishing, garden work, inspection and cleaning, and hand over a bungalow that is ready to live in.
@@ -373,7 +373,7 @@ const Content = () => {
 
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Smart Spending Advice from MTBoss
+                Smart Spending Advice from MTBOSS
               </h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -384,9 +384,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Design fees are usually a small share of a bungalow&apos;s total cost, and good planning often saves far more than the fee through better layouts and less rework. MTBoss provides an itemised quote, so there are no hidden charges. For a personal estimate, request a{" "}
+                Design fees are usually a small share of a bungalow&apos;s total cost, and good planning often saves far more than the fee through better layouts and less rework. MTBOSS provides an itemised quote, so there are no hidden charges. For a personal estimate, request a{" "}
                 <a
-                  href="https://www.MTBoss.in/CTASection/get-quote"
+                  href="https://www.MTBOSS.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -437,14 +437,14 @@ const Content = () => {
                 <li>Professional details are shown where they apply.</li>
               </ul>
               <p className="mt-3">
-                MTBoss welcomes every one of these checks and answers them openly during your free consultation.
+                MTBOSS welcomes every one of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MTBoss in Moradabad
+                Areas Served by MTBOSS in Moradabad
               </h3>
               <p className="mb-3">
                 We work with families across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with newer colonies and nearby plots.
@@ -457,21 +457,21 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Bungalow Architect FAQs
+                MTBOSS Bungalow Architect FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MTBoss design bungalows in Moradabad?</strong>
+                  <strong>Q1. Does MTBOSS design bungalows in Moradabad?</strong>
                   <br />
                   Yes. We design bungalows, villas, duplexes and independent houses.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MTBoss offers a free consultation and site visit.
+                  Yes. MTBOSS offers a free consultation and site visit.
                 </li>
                 <li>
-                  <strong>Q3. Can MTBoss also build my bungalow?</strong>
+                  <strong>Q3. Can MTBOSS also build my bungalow?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
@@ -506,7 +506,7 @@ const Content = () => {
                   Yes. You get a written breakup of materials, labour and finishes.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MTBoss?</strong>
+                  <strong>Q10. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

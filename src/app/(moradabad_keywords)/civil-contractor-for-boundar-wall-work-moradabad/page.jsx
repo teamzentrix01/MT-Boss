@@ -6,27 +6,27 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Civil Contractor for Boundary Wall Work Moradabad | MTBoss',
+  title: 'Civil Contractor for Boundary Wall Work Moradabad | MTBOSS',
   description:
-    'MTBoss is a civil contractor for boundary wall work in Moradabad. Site marking, foundation, masonry and finishing with engineer supervision and clear quotes.',
+    'MTBOSS is a civil contractor for boundary wall work in Moradabad. Site marking, foundation, masonry and finishing with engineer supervision and clear quotes.',
   keywords:
-    'civil contractor for boundary wall work Moradabad, boundary wall contractor Moradabad, compound wall contractor Moradabad, boundary wall construction Moradabad, brick boundary wall Moradabad, RCC boundary wall Moradabad, readymade boundary wall Moradabad, boundary wall repair Moradabad, gate pillar contractor Moradabad, MTBoss boundary wall Moradabad',
+    'civil contractor for boundary wall work Moradabad, boundary wall contractor Moradabad, compound wall contractor Moradabad, boundary wall construction Moradabad, brick boundary wall Moradabad, RCC boundary wall Moradabad, readymade boundary wall Moradabad, boundary wall repair Moradabad, gate pillar contractor Moradabad, MTBOSS boundary wall Moradabad',
   alternates: {
     canonical:
-      'https://www.MTBoss.in/civil-contractor-boundary-wall-work-moradabad',
+      'https://www.MTBOSS.in/civil-contractor-boundary-wall-work-moradabad',
   },
   openGraph: {
-    title: 'Civil Contractor for Boundary Wall Work Moradabad | MTBoss',
+    title: 'Civil Contractor for Boundary Wall Work Moradabad | MTBOSS',
     description:
-      'MTBoss is a civil contractor for boundary wall work in Moradabad. Site marking, foundation, masonry and finishing with engineer supervision and clear quotes.',
-    url: 'https://www.MTBoss.in/civil-contractor-boundary-wall-work-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'MTBOSS is a civil contractor for boundary wall work in Moradabad. Site marking, foundation, masonry and finishing with engineer supervision and clear quotes.',
+    url: 'https://www.MTBOSS.in/civil-contractor-boundary-wall-work-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-civil-contractor-boundary-wall-work-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-civil-contractor-boundary-wall-work-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Civil Contractor for Boundary Wall Work Moradabad - MTBoss',
+        alt: 'Civil Contractor for Boundary Wall Work Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -34,11 +34,11 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Civil Contractor for Boundary Wall Work Moradabad | MTBoss',
+    title: 'Civil Contractor for Boundary Wall Work Moradabad | MTBOSS',
     description:
-      'MTBoss is a civil contractor for boundary wall work in Moradabad. Site marking, foundation, masonry and finishing with engineer supervision and clear quotes.',
+      'MTBOSS is a civil contractor for boundary wall work in Moradabad. Site marking, foundation, masonry and finishing with engineer supervision and clear quotes.',
     images: [
-      'https://www.MTBoss.in/og-civil-contractor-boundary-wall-work-moradabad.jpg',
+      'https://www.MTBOSS.in/og-civil-contractor-boundary-wall-work-moradabad.jpg',
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/civil-contractor-boundary-wall-work-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/civil-contractor-boundary-wall-work-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

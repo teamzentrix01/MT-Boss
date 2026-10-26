@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Waterproofing Near Me in Moradabad: MTBoss
+            Waterproofing Near Me in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -24,7 +24,7 @@ const Content = () => {
               <p className="mt-3">
                 What they want is simple. A real company in their own city, one
                 that can visit soon, understand local buildings and come back if
-                the problem returns. MTBoss Construction Private Limited is based
+                the problem returns. MTBOSS Construction Private Limited is based
                 on Kanth Road, Moradabad, and treats leakage in terraces,
                 bathrooms, basements, tanks and walls across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
@@ -198,7 +198,7 @@ const Content = () => {
                 meantime, our engineers can advise on temporary measures, such as
                 clearing drains, covering the leaking area or managing the water
                 inside, and can inspect the site to plan the permanent fix
-                [confirm whether MTBoss offers rain-day inspections or temporary
+                [confirm whether MTBOSS offers rain-day inspections or temporary
                 measures].
               </p>
               <p className="mt-3">
@@ -243,7 +243,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  MTBoss.in, or call or WhatsApp us with photos, location and a
+                  MTBOSS.in, or call or WhatsApp us with photos, location and a
                   short description.
                 </li>
                 <li>
@@ -319,7 +319,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss welcomes these checks. [Add your Google rating and review
+                MTBOSS welcomes these checks. [Add your Google rating and review
                 count only if real and current.]
               </p>
             </section>
@@ -411,7 +411,7 @@ const Content = () => {
               <p className="mt-3">
                 We measure the area and prepare an itemised estimate [confirm
                 whether rates are per area or lump sum]. You can also use the
-                Budget Calculator on MTBoss.in for an early idea of overall
+                Budget Calculator on MTBOSS.in for an early idea of overall
                 construction or renovation cost.
               </p>
             </section>
@@ -433,7 +433,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients in Moradabad Call MTBoss
+                Reasons Clients in Moradabad Call MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -493,21 +493,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -522,7 +522,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss for waterproofing near you in Moradabad, with a
+                Choose MTBOSS for waterproofing near you in Moradabad, with a
                 local team, an honest diagnosis and work that is tested before
                 handover.
               </p>
@@ -538,7 +538,7 @@ const Content = () => {
                     Q1. Is there a waterproofing company near me in Moradabad?
                   </strong>
                   <br />
-                  Yes. MTBoss is based on Harthala, Kanth Road, and serves
+                  Yes. MTBOSS is based on Harthala, Kanth Road, and serves
                   Moradabad and Bareilly.
                 </li>
                 <li>
@@ -556,7 +556,7 @@ const Content = () => {
                   .
                 </li>
                 <li>
-                  <strong>Q3. Where is the MTBoss office?</strong>
+                  <strong>Q3. Where is the MTBOSS office?</strong>
                   <br />
                   Harthala, Kanth Road, Moradabad, behind KR Collection and near
                   Domino&apos;s.
@@ -593,7 +593,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

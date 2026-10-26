@@ -7,27 +7,27 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Interior Designer for Bedroom in Moradabad | MTBoss",
+  title: "Interior Designer for Bedroom in Moradabad | MTBOSS",
   description:
-    "Looking for a bedroom interior designer in Moradabad? MTBoss creates cozy, storage-smart bedrooms with quality materials and on-time delivery. Get a free quote.",
+    "Looking for a bedroom interior designer in Moradabad? MTBOSS creates cozy, storage-smart bedrooms with quality materials and on-time delivery. Get a free quote.",
   keywords:
-    "interior designer for bedroom in Moradabad, bedroom interior designer Moradabad, bedroom design Moradabad, bedroom interior work Moradabad, wardrobe designer Moradabad, bedroom wardrobe design Moradabad, master bedroom interior Moradabad, kids bedroom design Moradabad, false ceiling for bedroom Moradabad, bedroom renovation Moradabad, bedroom furniture designer Moradabad, bedroom makeover Moradabad, MTBoss bedroom interiors",
+    "interior designer for bedroom in Moradabad, bedroom interior designer Moradabad, bedroom design Moradabad, bedroom interior work Moradabad, wardrobe designer Moradabad, bedroom wardrobe design Moradabad, master bedroom interior Moradabad, kids bedroom design Moradabad, false ceiling for bedroom Moradabad, bedroom renovation Moradabad, bedroom furniture designer Moradabad, bedroom makeover Moradabad, MTBOSS bedroom interiors",
   alternates: {
     canonical:
-      "https://www.MTBoss.in/interior-designer-for-bedroom-in-moradabad",
+      "https://www.MTBOSS.in/interior-designer-for-bedroom-in-moradabad",
   },
   openGraph: {
-    title: "Interior Designer for Bedroom in Moradabad | MTBoss",
+    title: "Interior Designer for Bedroom in Moradabad | MTBOSS",
     description:
-      "Looking for a bedroom interior designer in Moradabad? MTBoss creates cozy, storage-smart bedrooms with quality materials and on-time delivery. Get a free quote.",
-    url: "https://www.MTBoss.in/interior-designer-for-bedroom-in-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "Looking for a bedroom interior designer in Moradabad? MTBOSS creates cozy, storage-smart bedrooms with quality materials and on-time delivery. Get a free quote.",
+    url: "https://www.MTBOSS.in/interior-designer-for-bedroom-in-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-interior-designer-bedroom-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-bedroom-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Interior Designer for Bedroom in Moradabad - MTBoss",
+        alt: "Interior Designer for Bedroom in Moradabad - MTBOSS",
       },
     ],
     locale: "en_IN",
@@ -35,11 +35,11 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Interior Designer for Bedroom in Moradabad | MTBoss",
+    title: "Interior Designer for Bedroom in Moradabad | MTBOSS",
     description:
-      "Looking for a bedroom interior designer in Moradabad? MTBoss creates cozy, storage-smart bedrooms with quality materials and on-time delivery. Get a free quote.",
+      "Looking for a bedroom interior designer in Moradabad? MTBOSS creates cozy, storage-smart bedrooms with quality materials and on-time delivery. Get a free quote.",
     images: [
-      "https://www.MTBoss.in/og-interior-designer-bedroom-moradabad.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-bedroom-moradabad.jpg",
     ],
   },
   robots: {
@@ -51,10 +51,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBoss Construction Private Limited",
-  url: "https://www.MTBoss.in/interior-designer-for-bedroom-in-moradabad",
+  name: "MTBOSS Construction Private Limited",
+  url: "https://www.MTBOSS.in/interior-designer-for-bedroom-in-moradabad",
   telephone: "+91-9458410866",
-  email: "MTBoss2016@gmail.com",
+  email: "MTBOSS2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",

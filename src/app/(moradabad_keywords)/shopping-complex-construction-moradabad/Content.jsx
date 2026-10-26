@@ -29,7 +29,7 @@ const Content = () => {
 
               <p className="mt-3">
                 This page explains how shopping complex construction in Moradabad
-                works and how MTBoss approaches it. MTBoss Construction Private
+                works and how MTBOSS approaches it. MTBOSS Construction Private
                 Limited is a Moradabad-based architect, interior designer and
                 construction company that builds residential projects from
                 affordable housing to luxury villas, serving Moradabad and
@@ -128,14 +128,14 @@ const Content = () => {
 
               <p className="mt-3">
                 Your plot, your customers and your leasing or selling plan matter
-                more than the label. MTBoss helps you plan a building that suits
+                more than the label. MTBOSS helps you plan a building that suits
                 your needs.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Construction Private Limited
+                MTBOSS Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -150,17 +150,17 @@ const Content = () => {
                 </li>
                 <li>
                   Residential projects form a dedicated service category on the
-                  MTBoss website, from affordable housing to luxury villas.
+                  MTBOSS website, from affordable housing to luxury villas.
                 </li>
                 <li>
-                  Project gallery and blog available on the MTBoss website.
+                  Project gallery and blog available on the MTBOSS website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Shopping Complex Construction Services Offered by MTBoss
+                Shopping Complex Construction Services Offered by MTBOSS
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -218,7 +218,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBoss wholesale supply.
+                  bricks, tiles and paints through MTBOSS wholesale supply.
                 </li>
                 <li>
                   <strong>Renovation and extension:</strong> Adding floors,
@@ -400,13 +400,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBoss Approaches a Shopping Complex Construction Project
+                How MTBOSS Approaches a Shopping Complex Construction Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Step 1 — Enquiry and discussion:</strong> Contact
-                  MTBoss with plot, plan and budget through website, phone or
+                  MTBOSS with plot, plan and budget through website, phone or
                   WhatsApp.
                 </li>
                 <li>
@@ -532,7 +532,7 @@ const Content = () => {
                 may also apply. If you plan to sell units to buyers, additional
                 real-estate rules may apply as well. Requirements vary by
                 location and current regulations, so confirm the latest rules
-                with the relevant authorities and your consultants. MTBoss builds
+                with the relevant authorities and your consultants. MTBOSS builds
                 according to approved drawings and specifications, while owners
                 and their consultants handle approvals specific to the property.
               </p>
@@ -588,7 +588,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBoss Budget Calculator, then request a
+                Start with the free MTBOSS Budget Calculator, then request a
                 detailed quote after site visit and design discussion.
               </p>
             </section>
@@ -643,7 +643,7 @@ const Content = () => {
 
               <p>
                 Commercial projects work to a commercial calendar, such as a
-                festival season or a tenant&apos;s move-in date. MTBoss supports
+                festival season or a tenant&apos;s move-in date. MTBOSS supports
                 a smooth project through stage-wise planning with clear
                 milestones, regular site visits by engineers and single-team
                 coordination of design, materials and construction.
@@ -704,7 +704,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Services for Property Owners
+                MTBOSS Services for Property Owners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -728,7 +728,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBoss for Shopping Complex Construction
+                Why Choose MTBOSS for Shopping Complex Construction
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -758,44 +758,44 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and
-                  blog on the MTBoss website.
+                  blog on the MTBOSS website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBoss: Shopping Complex Construction in Moradabad
+                Contact MTBOSS: Shopping Complex Construction in Moradabad
               </h3>
 
               <p className="mb-3">
-                If you are planning a shopping complex in Moradabad, MTBoss
+                If you are planning a shopping complex in Moradabad, MTBOSS
                 offers a single point of contact for design coordination,
                 materials, construction and handover.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.MTBoss.in
+                    https://www.MTBOSS.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -842,10 +842,10 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBoss build shopping complexes in Moradabad?
+                    Q2. Does MTBOSS build shopping complexes in Moradabad?
                   </strong>
                   <br />
-                  MTBoss builds residential projects, from affordable housing to
+                  MTBOSS builds residential projects, from affordable housing to
                   luxury villas, in Moradabad and Bareilly, and offers
                   construction services for other buildings. Share your plan
                   with the team to confirm the scope for your shopping complex.
@@ -888,11 +888,11 @@ const Content = () => {
                   Cost depends on built-up area, number of floors, structural
                   requirements, parking type, lift, material and finish level,
                   services scope and site conditions. Use the free Budget
-                  Calculator on the MTBoss website, or request a detailed quote.
+                  Calculator on the MTBOSS website, or request a detailed quote.
                 </li>
 
                 <li>
-                  <strong>Q7. Where is the MTBoss office located?</strong>
+                  <strong>Q7. Where is the MTBOSS office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

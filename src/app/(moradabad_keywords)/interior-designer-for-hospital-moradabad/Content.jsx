@@ -26,7 +26,7 @@ const Content = () => {
                 stressed than they need to.
               </p>
               <p className="mt-3">
-                MTBoss is an architecture, interior design and construction
+                MTBOSS is an architecture, interior design and construction
                 company serving Moradabad and Bareilly. As an interior designer
                 for hospitals in Moradabad, we plan healthcare spaces around three
                 things: patient comfort, staff efficiency and hygiene.
@@ -64,7 +64,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas MTBoss Designs Inside a Hospital
+                Areas MTBOSS Designs Inside a Hospital
               </h3>
               <p className="mb-3">
                 We handle the full range of interior spaces in a healthcare
@@ -198,7 +198,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Wet areas need extra care. Washrooms, sluice rooms and pantries
-                must be correctly waterproofed and drained. Because MTBoss also
+                must be correctly waterproofed and drained. Because MTBOSS also
                 coordinates waterproofing and plumbing, these details are planned
                 with the construction team instead of being patched up later.
               </p>
@@ -305,7 +305,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Cost Planning for Hospital Interiors With MTBoss
+                Cost Planning for Hospital Interiors With MTBOSS
               </h3>
               <p className="mb-3">
                 Hospital interior costs depend on the facility type, size and
@@ -361,7 +361,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How a Project Runs With MTBoss
+                How a Project Runs With MTBOSS
               </h3>
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
@@ -399,7 +399,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Hospital Owners Prefer MTBoss&apos;s Design-and-Build Approach
+                Why Hospital Owners Prefer MTBOSS&apos;s Design-and-Build Approach
               </h3>
               <p className="mb-3">
                 Healthcare projects involve civil work, plumbing, electrical
@@ -473,7 +473,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Talk to MTBoss About Your Healthcare Project
+                Talk to MTBOSS About Your Healthcare Project
               </h3>
               <p className="mb-3">
                 Whether you are opening a new hospital, upgrading a nursing home or
@@ -494,10 +494,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -507,12 +507,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -525,7 +525,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBoss provide interior design for hospitals in
+                    Q1. Does MTBOSS provide interior design for hospitals in
                     Moradabad?
                   </strong>
                   <br />
@@ -560,7 +560,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q6. Can MTBoss handle construction and interiors together?
+                    Q6. Can MTBOSS handle construction and interiors together?
                   </strong>
                   <br />
                   Yes. One team manages design, civil work and interiors for better
@@ -578,12 +578,12 @@ const Content = () => {
                   </a>
                   , or use the contact page on{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    MTBoss.in
+                    MTBOSS.in
                   </a>
                   .
                 </li>

@@ -7,27 +7,27 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Interior Designer for Office Moradabad | MTBoss Office Interiors",
+  title: "Interior Designer for Office Moradabad | MTBOSS Office Interiors",
   description:
-    "MTBoss is an interior designer for offices in Moradabad. We plan and build workstations, cabins, reception and meeting rooms with clear pricing and on-time delivery.",
+    "MTBOSS is an interior designer for offices in Moradabad. We plan and build workstations, cabins, reception and meeting rooms with clear pricing and on-time delivery.",
   keywords:
-    "interior designer for office Moradabad, office interior designer Moradabad, office interior design Moradabad, workspace interior designer Moradabad, office renovation Moradabad, workstation design Moradabad, office cabin interior designer Moradabad, meeting room interior designer Moradabad, commercial interior designer Moradabad, MTBoss office interiors Moradabad",
+    "interior designer for office Moradabad, office interior designer Moradabad, office interior design Moradabad, workspace interior designer Moradabad, office renovation Moradabad, workstation design Moradabad, office cabin interior designer Moradabad, meeting room interior designer Moradabad, commercial interior designer Moradabad, MTBOSS office interiors Moradabad",
   alternates: {
-    canonical: "https://www.MTBoss.in/interior-designer-for-office-moradabad",
+    canonical: "https://www.MTBOSS.in/interior-designer-for-office-moradabad",
   },
   openGraph: {
     title:
-      "Interior Designer for Office Moradabad | MTBoss Office Interiors",
+      "Interior Designer for Office Moradabad | MTBOSS Office Interiors",
     description:
-      "MTBoss is an interior designer for offices in Moradabad. We plan and build workstations, cabins, reception and meeting rooms with clear pricing and on-time delivery.",
-    url: "https://www.MTBoss.in/interior-designer-for-office-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "MTBOSS is an interior designer for offices in Moradabad. We plan and build workstations, cabins, reception and meeting rooms with clear pricing and on-time delivery.",
+    url: "https://www.MTBOSS.in/interior-designer-for-office-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-interior-designer-for-office-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-for-office-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Interior Designer for Office in Moradabad - MTBoss",
+        alt: "Interior Designer for Office in Moradabad - MTBOSS",
       },
     ],
     locale: "en_IN",
@@ -36,11 +36,11 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Interior Designer for Office Moradabad | MTBoss Office Interiors",
+      "Interior Designer for Office Moradabad | MTBOSS Office Interiors",
     description:
-      "MTBoss is an interior designer for offices in Moradabad. We plan and build workstations, cabins, reception and meeting rooms with clear pricing and on-time delivery.",
+      "MTBOSS is an interior designer for offices in Moradabad. We plan and build workstations, cabins, reception and meeting rooms with clear pricing and on-time delivery.",
     images: [
-      "https://www.MTBoss.in/og-interior-designer-for-office-moradabad.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-for-office-moradabad.jpg",
     ],
   },
   robots: {
@@ -52,10 +52,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBoss Construction Private Limited",
-  url: "https://www.MTBoss.in/interior-designer-for-office-moradabad",
+  name: "MTBOSS Construction Private Limited",
+  url: "https://www.MTBOSS.in/interior-designer-for-office-moradabad",
   telephone: "+91-9458410866",
-  email: "MTBoss2016@gmail.com",
+  email: "MTBOSS2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

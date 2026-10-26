@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Terrace Waterproofing in Moradabad: MTBoss
+            Terrace Waterproofing in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -26,7 +26,7 @@ const Content = () => {
                 ceilings, peeling paint, salt marks, rusting reinforcement and
                 ruined furniture. Good terrace waterproofing in Moradabad protects
                 the slab and the rooms beneath it while keeping the terrace
-                usable. MTBoss Construction Private Limited treats terraces for
+                usable. MTBOSS Construction Private Limited treats terraces for
                 homes, shops, offices, hotels, warehouses and factories across
                 Moradabad and Bareilly. Our work follows the promise on our
                 website: planning to completion, with quality work, transparent
@@ -50,10 +50,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBossConstruction Private Limited
+                About MTBOSSConstruction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -178,7 +178,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 The right method depends on the terrace condition, budget and how
-                much disturbance you accept [confirm systems and products MTBoss
+                much disturbance you accept [confirm systems and products MTBOSS
                 actually uses].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -305,7 +305,7 @@ const Content = () => {
                 For flat terraces, the standard proof is a ponding test. Outlets
                 are blocked and a shallow depth of water is held for a set period,
                 commonly 24 to 72 hours, while the ceiling below is watched for
-                damp patches [confirm the test duration MTBoss follows]. We also
+                damp patches [confirm the test duration MTBOSS follows]. We also
                 check for bubbles, lifted edges, uncoated spots and free drainage.
                 Testing before the protective layer goes on saves rework if a weak
                 spot appears.
@@ -345,7 +345,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 For ownership or legal questions, please consult a qualified legal
-                professional. MTBoss can prepare a clear scope and estimate that
+                professional. MTBOSS can prepare a clear scope and estimate that
                 all owners can review.
               </p>
             </section>
@@ -361,7 +361,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  MTBoss.in, or call or WhatsApp us with photos of the terrace and
+                  MTBOSS.in, or call or WhatsApp us with photos of the terrace and
                   the damp ceiling.
                 </li>
                 <li>
@@ -405,7 +405,7 @@ const Content = () => {
               <p>
                 Once the terrace is sealed, the damage below needs repair. Damp
                 plaster, peeling paint and stained ceilings should be treated
-                after the area has dried. MTBoss offers Building Repair, Painter
+                after the area has dried. MTBOSS offers Building Repair, Painter
                 and Tile &amp; Marble services, so the restoration can follow in
                 one flow.
               </p>
@@ -465,14 +465,14 @@ const Content = () => {
               <p className="mt-3">
                 We measure the terrace and prepare an itemised estimate [confirm
                 whether rates are per area or lump sum]. You can also use the
-                Budget Calculator on MTBoss.in for an early idea of overall
+                Budget Calculator on MTBOSS.in for an early idea of overall
                 construction cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -525,7 +525,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book a Terrace Inspection with MTBoss
+                Book a Terrace Inspection with MTBOSS
               </h3>
               <p className="mb-3">
                 Ready to protect your terrace and the rooms below? Contact us:
@@ -534,12 +534,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -557,10 +557,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -574,7 +574,7 @@ const Content = () => {
                 clear proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss for terrace waterproofing in Moradabad, with every
+                Choose MTBOSS for terrace waterproofing in Moradabad, with every
                 junction treated, the surface tested and the terrace ready to use
                 again.
               </p>
@@ -590,7 +590,7 @@ const Content = () => {
                     Q1. Who provides terrace waterproofing in Moradabad?
                   </strong>
                   <br />
-                  MTBoss Construction treats terrace leakage for homes, shops and
+                  MTBOSS Construction treats terrace leakage for homes, shops and
                   factories across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -639,7 +639,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

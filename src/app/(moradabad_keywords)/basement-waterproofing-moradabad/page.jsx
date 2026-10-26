@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Basement Waterproofing in Moradabad | MTBoss',
+  title: 'Basement Waterproofing in Moradabad | MTBOSS',
   description:
-    'Basement waterproofing in Moradabad by MTBoss. Seepage, damp wall and floor treatment, drainage and sump planning with inspection and clear itemised quotes.',
+    'Basement waterproofing in Moradabad by MTBOSS. Seepage, damp wall and floor treatment, drainage and sump planning with inspection and clear itemised quotes.',
   keywords:
-    'basement waterproofing Moradabad, basement seepage repair Moradabad, damp basement walls Moradabad, basement leakage solution Moradabad, basement waterproofing contractor Moradabad, basement drainage system Moradabad, sump pump installation Moradabad, underground basement waterproofing Moradabad, basement damp proofing Moradabad, MTBoss basement waterproofing Moradabad',
+    'basement waterproofing Moradabad, basement seepage repair Moradabad, damp basement walls Moradabad, basement leakage solution Moradabad, basement waterproofing contractor Moradabad, basement drainage system Moradabad, sump pump installation Moradabad, underground basement waterproofing Moradabad, basement damp proofing Moradabad, MTBOSS basement waterproofing Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/basement-waterproofing-moradabad',
+    canonical: 'https://www.MTBOSS.in/basement-waterproofing-moradabad',
   },
   openGraph: {
-    title: 'Basement Waterproofing in Moradabad | MTBoss',
+    title: 'Basement Waterproofing in Moradabad | MTBOSS',
     description:
-      'Basement waterproofing in Moradabad by MTBoss. Seepage, damp wall and floor treatment, drainage and sump planning with inspection and clear itemised quotes.',
-    url: 'https://www.MTBoss.in/basement-waterproofing-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Basement waterproofing in Moradabad by MTBOSS. Seepage, damp wall and floor treatment, drainage and sump planning with inspection and clear itemised quotes.',
+    url: 'https://www.MTBOSS.in/basement-waterproofing-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-basement-waterproofing-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-basement-waterproofing-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Basement Waterproofing in Moradabad - MTBoss',
+        alt: 'Basement Waterproofing in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Basement Waterproofing in Moradabad | MTBoss',
+    title: 'Basement Waterproofing in Moradabad | MTBOSS',
     description:
-      'Basement waterproofing in Moradabad by MTBoss. Seepage, damp wall and floor treatment, drainage and sump planning with inspection and clear itemised quotes.',
-    images: ['https://www.MTBoss.in/og-basement-waterproofing-moradabad.jpg'],
+      'Basement waterproofing in Moradabad by MTBOSS. Seepage, damp wall and floor treatment, drainage and sump planning with inspection and clear itemised quotes.',
+    images: ['https://www.MTBOSS.in/og-basement-waterproofing-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/basement-waterproofing-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/basement-waterproofing-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

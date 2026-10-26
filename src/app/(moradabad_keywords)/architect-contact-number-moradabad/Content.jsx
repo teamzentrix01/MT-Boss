@@ -21,7 +21,7 @@ const Content = () => {
                 built on my plot? How much will it cost? How long will it take?
               </p>
               <p className="mt-3">
-                MTBoss makes that first step easy. We are a construction company serving
+                MTBOSS makes that first step easy. We are a construction company serving
                 Moradabad and Bareilly, and we offer architecture, interior design,
                 construction, modular kitchens, waterproofing and home services under one
                 team. Instead of chasing separate designers, engineers and contractors,
@@ -82,7 +82,7 @@ const Content = () => {
                 Services You Can Enquire About
               </h3>
               <p className="mb-3">
-                When you contact MTBoss, you can ask about any stage of your project or
+                When you contact MTBOSS, you can ask about any stage of your project or
                 the complete journey.
               </p>
 
@@ -123,7 +123,7 @@ const Content = () => {
                 Construction and Project Management
               </h4>
               <p>
-                MTBoss builds what we design. Our engineers and site supervisors manage
+                MTBOSS builds what we design. Our engineers and site supervisors manage
                 materials, labour, schedule and quality checks.
               </p>
 
@@ -428,7 +428,7 @@ const Content = () => {
                 Areas We Serve
               </h3>
               <p>
-                MTBoss serves clients in Moradabad and Bareilly, along with nearby areas
+                MTBOSS serves clients in Moradabad and Bareilly, along with nearby areas
                 in Uttar Pradesh. Whether your plot is in the city centre, a developing
                 colony or an industrial zone, our team can visit, assess the site and
                 guide you. If you are unsure whether we cover your location, call or
@@ -438,10 +438,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Homeowners and Businesses Trust MTBoss
+                Why Homeowners and Businesses Trust MTBOSS
               </h3>
               <p className="mb-3">
-                People choose MTBoss because we focus on clarity, quality and complete
+                People choose MTBOSS because we focus on clarity, quality and complete
                 support.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -478,13 +478,13 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 If you were searching for an architect contact number in Moradabad that
-                leads to a real, helpful conversation, MTBoss is ready to take your call.
+                leads to a real, helpful conversation, MTBOSS is ready to take your call.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Call MTBoss Today for a Free Consultation
+                Call MTBOSS Today for a Free Consultation
               </h3>
               <p>
                 Your project deserves a clear plan from the very first day. Pick up the
@@ -507,21 +507,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.MTBoss.in/
+                    https://www.MTBOSS.in/
                   </a>
                 </li>
                 <li>
@@ -544,30 +544,30 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. What is the MTBoss architect contact number in Moradabad?
+                    Q1. What is the MTBOSS architect contact number in Moradabad?
                   </strong>
                   <br />
-                  You can call or WhatsApp MTBoss at +91 94584 10866.
+                  You can call or WhatsApp MTBOSS at +91 94584 10866.
                 </li>
                 <li>
-                  <strong>Q2. Can I contact MTBoss on WhatsApp?</strong>
+                  <strong>Q2. Can I contact MTBOSS on WhatsApp?</strong>
                   <br />
                   Yes. Send your plot details, photos and questions to +91 94584 10866.
                 </li>
                 <li>
-                  <strong>Q3. What is the MTBoss email address?</strong>
+                  <strong>Q3. What is the MTBOSS email address?</strong>
                   <br />
                   You can email us at{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                   .
                 </li>
                 <li>
-                  <strong>Q4. Where is the MTBoss office located?</strong>
+                  <strong>Q4. Where is the MTBOSS office located?</strong>
                   <br />
                   Our office is on Harthala Kanth Road, behind KR Collection, near
                   Domino&apos;s, Moradabad.
@@ -607,7 +607,7 @@ const Content = () => {
                   <strong>Q10. How can I get a construction quote?</strong>
                   <br />
                   Call us, message on WhatsApp or use the &quot;Get a Construction
-                  Quote&quot; option at MTBoss.in.
+                  Quote&quot; option at MTBOSS.in.
                 </li>
               </ul>
             </section>

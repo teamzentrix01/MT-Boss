@@ -7,26 +7,26 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Interior Designer for Home in Moradabad | MTBoss",
+  title: "Interior Designer for Home in Moradabad | MTBOSS",
   description:
-    "Need an interior designer for your home in Moradabad? MTBoss plans and builds living rooms, kitchens, bedrooms and full-home interiors with clear pricing and local support.",
+    "Need an interior designer for your home in Moradabad? MTBOSS plans and builds living rooms, kitchens, bedrooms and full-home interiors with clear pricing and local support.",
   keywords:
-    "interior designer for home Moradabad, home interior designer Moradabad, interior designer near me Moradabad, best interior designer Moradabad, full home interior design Moradabad, modular kitchen designer Moradabad, bedroom interior designer Moradabad, living room interior designer Moradabad, home renovation interior designer Moradabad, MTBoss interior designer Moradabad",
+    "interior designer for home Moradabad, home interior designer Moradabad, interior designer near me Moradabad, best interior designer Moradabad, full home interior design Moradabad, modular kitchen designer Moradabad, bedroom interior designer Moradabad, living room interior designer Moradabad, home renovation interior designer Moradabad, MTBOSS interior designer Moradabad",
   alternates: {
-    canonical: "https://www.MTBoss.in/interior-designer-for-home-moradabad",
+    canonical: "https://www.MTBOSS.in/interior-designer-for-home-moradabad",
   },
   openGraph: {
-    title: "Interior Designer for Home in Moradabad | MTBoss",
+    title: "Interior Designer for Home in Moradabad | MTBOSS",
     description:
-      "Need an interior designer for your home in Moradabad? MTBoss plans and builds living rooms, kitchens, bedrooms and full-home interiors with clear pricing and local support.",
-    url: "https://www.MTBoss.in/interior-designer-for-home-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "Need an interior designer for your home in Moradabad? MTBOSS plans and builds living rooms, kitchens, bedrooms and full-home interiors with clear pricing and local support.",
+    url: "https://www.MTBOSS.in/interior-designer-for-home-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-interior-designer-for-home-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-for-home-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Interior Designer for Home in Moradabad - MTBoss",
+        alt: "Interior Designer for Home in Moradabad - MTBOSS",
       },
     ],
     locale: "en_IN",
@@ -34,11 +34,11 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Interior Designer for Home in Moradabad | MTBoss",
+    title: "Interior Designer for Home in Moradabad | MTBOSS",
     description:
-      "Need an interior designer for your home in Moradabad? MTBoss plans and builds living rooms, kitchens, bedrooms and full-home interiors with clear pricing and local support.",
+      "Need an interior designer for your home in Moradabad? MTBOSS plans and builds living rooms, kitchens, bedrooms and full-home interiors with clear pricing and local support.",
     images: [
-      "https://www.MTBoss.in/og-interior-designer-for-home-moradabad.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-for-home-moradabad.jpg",
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBoss Construction Private Limited",
-  url: "https://www.MTBoss.in/interior-designer-for-home-moradabad",
+  name: "MTBOSS Construction Private Limited",
+  url: "https://www.MTBOSS.in/interior-designer-for-home-moradabad",
   telephone: "+91-9458410866",
-  email: "MTBoss2016@gmail.com",
+  email: "MTBOSS2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

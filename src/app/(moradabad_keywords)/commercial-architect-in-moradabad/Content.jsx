@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Commercial Architect in Moradabad: MTBoss
+            Commercial Architect in Moradabad: MTBOSS
           </h2>
 
 
@@ -22,10 +22,10 @@ const Content = () => {
                 A commercial architect in Moradabad plans the building so that it attracts tenants and customers, runs efficiently and holds its value.
               </p>
               <p className="mt-3">
-                MTBoss is a Moradabad-based construction, property and home services company. Our team designs and builds commercial buildings, including shops, shopping complexes, offices, showrooms, hotels and industrial units. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to handover.
+                MTBOSS is a Moradabad-based construction, property and home services company. Our team designs and builds commercial buildings, including shops, shopping complexes, offices, showrooms, hotels and industrial units. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to handover.
               </p>
               <p className="mt-3">
-                This page explains what a commercial architect does, what MTBoss offers, how our process works and what to check before you decide.
+                This page explains what a commercial architect does, what MTBOSS offers, how our process works and what to check before you decide.
               </p>
             </section>
 
@@ -68,10 +68,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss: Commercial Design and Construction Under One Roof
+                MTBOSS: Commercial Design and Construction Under One Roof
               </h3>
               <p className="mb-3">
-                Many owners hire an architect first and a builder later, and then find that the design costs more than expected or is hard to build. MTBoss avoids this by keeping both roles together.
+                Many owners hire an architect first and a builder later, and then find that the design costs more than expected or is hard to build. MTBOSS avoids this by keeping both roles together.
               </p>
               <p className="mb-3">
                 What you get when you work with us:
@@ -90,9 +90,9 @@ const Content = () => {
                   <strong>Local understanding.</strong> We know Moradabad&apos;s markets, footfall patterns, plot conditions and tenant expectations.
                 </li>
                 <li>
-                  <strong>Material access.</strong> Through the MTBoss{" "}
+                  <strong>Material access.</strong> Through the MTBOSS{" "}
                   <a
-                    href="https://www.MTBoss.in/ShopNow"
+                    href="https://www.MTBOSS.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -104,7 +104,7 @@ const Content = () => {
                 <li>
                   <strong>Support after handover.</strong> Our{" "}
                   <a
-                    href="https://www.MTBoss.in/quick"
+                    href="https://www.MTBOSS.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -119,7 +119,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Commercial Building Types Designed by MTBoss
+                Commercial Building Types Designed by MTBOSS
               </h3>
 
 
@@ -206,7 +206,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Commercial Architecture Services by MTBoss
+                Commercial Architecture Services by MTBOSS
               </h3>
 
 
@@ -270,7 +270,7 @@ const Content = () => {
                 Interior Design Coordination
               </h4>
               <p className="mb-3">
-                Because MTBoss also offers interior design, your architectural and interior plans can be developed together for a seamless result.
+                Because MTBOSS also offers interior design, your architectural and interior plans can be developed together for a seamless result.
               </p>
 
 
@@ -288,7 +288,7 @@ const Content = () => {
                 Safety and Compliance Planning in Commercial Design
               </h3>
               <p className="mb-3">
-                Safety must be designed in, not added later. MTBoss considers the following in every commercial project:
+                Safety must be designed in, not added later. MTBOSS considers the following in every commercial project:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -317,7 +317,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Commercial buildings usually need several permissions and clearances before opening. MTBoss prepares drawings and guides you on typical requirements, but final approvals depend on the relevant authorities and vary by building type, size and height, so please confirm current rules with them.
+                Commercial buildings usually need several permissions and clearances before opening. MTBOSS prepares drawings and guides you on typical requirements, but final approvals depend on the relevant authorities and vary by building type, size and height, so please confirm current rules with them.
               </p>
             </section>
 
@@ -372,7 +372,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Design and Construction Process, Step by Step
+                MTBOSS Design and Construction Process, Step by Step
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -438,9 +438,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Architect fees are usually a small share of the total cost, and good planning often saves far more than the fee through better area efficiency and less rework. MTBoss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
+                Architect fees are usually a small share of the total cost, and good planning often saves far more than the fee through better area efficiency and less rework. MTBOSS provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
                 <a
-                  href="https://www.MTBoss.in/CTASection/get-quote"
+                  href="https://www.MTBOSS.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -457,7 +457,7 @@ const Content = () => {
                 Climate-Smart and Energy-Efficient Commercial Design
               </h3>
               <p className="mb-3">
-                Commercial buildings run all day, so energy and comfort matter. For projects in Moradabad, MTBoss focuses on:
+                Commercial buildings run all day, so energy and comfort matter. For projects in Moradabad, MTBOSS focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -551,14 +551,14 @@ const Content = () => {
                 <li>Professional details are shown where they apply.</li>
               </ul>
               <p className="mt-3">
-                MTBoss welcomes every one of these checks and answers them openly during your free consultation.
+                MTBOSS welcomes every one of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MTBoss in Moradabad
+                Areas Served by MTBOSS in Moradabad
               </h3>
               <p className="mb-3">
                 We work with business owners and investors across Moradabad and nearby areas, including Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with highway-side and market locations.
@@ -571,23 +571,23 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Commercial Architect FAQs
+                MTBOSS Commercial Architect FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MTBoss design commercial buildings in Moradabad?</strong>
+                  <strong>Q1. Does MTBOSS design commercial buildings in Moradabad?</strong>
                   <br />
                   Yes. We design shops, complexes, offices, showrooms, hotels and industrial units.
                 </li>
                 <li>
-                  <strong>Q2. Can MTBoss also construct the building?</strong>
+                  <strong>Q2. Can MTBOSS also construct the building?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
                 <li>
                   <strong>Q3. Is the first consultation free?</strong>
                   <br />
-                  Yes. MTBoss offers a free consultation and site visit.
+                  Yes. MTBOSS offers a free consultation and site visit.
                 </li>
                 <li>
                   <strong>Q4. Do you design shopping complexes and shop rows?</strong>
@@ -620,7 +620,7 @@ const Content = () => {
                   Yes. We assess the structure and plan upgrades with minimal disruption.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MTBoss?</strong>
+                  <strong>Q10. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

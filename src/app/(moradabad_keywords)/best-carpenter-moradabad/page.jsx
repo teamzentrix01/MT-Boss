@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Best Carpenter in Moradabad',
   description:
-    'Find the best carpenter in Moradabad for furniture, doors, wardrobes and repairs. MTBoss offers skilled, well-planned woodwork with clear quotes. Call or WhatsApp.',
+    'Find the best carpenter in Moradabad for furniture, doors, wardrobes and repairs. MTBOSS offers skilled, well-planned woodwork with clear quotes. Call or WhatsApp.',
   keywords:
-    'best carpenter Moradabad, best carpenter near me Moradabad, carpenter services Moradabad, carpenter for furniture Moradabad, carpenter for wardrobe Moradabad, carpenter for doors Moradabad, carpenter for repairs Moradabad, custom carpenter Moradabad, woodwork contractor Moradabad, MTBoss carpenter Moradabad',
+    'best carpenter Moradabad, best carpenter near me Moradabad, carpenter services Moradabad, carpenter for furniture Moradabad, carpenter for wardrobe Moradabad, carpenter for doors Moradabad, carpenter for repairs Moradabad, custom carpenter Moradabad, woodwork contractor Moradabad, MTBOSS carpenter Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/best-carpenter-moradabad',
+    canonical: 'https://www.MTBOSS.in/best-carpenter-moradabad',
   },
   openGraph: {
     title: 'Best Carpenter in Moradabad',
     description:
-      'Find the best carpenter in Moradabad for furniture, doors, wardrobes and repairs. MTBoss offers skilled, well-planned woodwork with clear quotes. Call or WhatsApp.',
-    url: 'https://www.MTBoss.in/best-carpenter-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Find the best carpenter in Moradabad for furniture, doors, wardrobes and repairs. MTBOSS offers skilled, well-planned woodwork with clear quotes. Call or WhatsApp.',
+    url: 'https://www.MTBOSS.in/best-carpenter-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-best-carpenter-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-best-carpenter-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Best Carpenter in Moradabad - MTBoss',
+        alt: 'Best Carpenter in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Best Carpenter in Moradabad',
     description:
-      'Find the best carpenter in Moradabad for furniture, doors, wardrobes and repairs. MTBoss offers skilled, well-planned woodwork with clear quotes. Call or WhatsApp.',
-    images: ['https://www.MTBoss.in/og-best-carpenter-moradabad.jpg'],
+      'Find the best carpenter in Moradabad for furniture, doors, wardrobes and repairs. MTBOSS offers skilled, well-planned woodwork with clear quotes. Call or WhatsApp.',
+    images: ['https://www.MTBOSS.in/og-best-carpenter-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/best-carpenter-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/best-carpenter-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

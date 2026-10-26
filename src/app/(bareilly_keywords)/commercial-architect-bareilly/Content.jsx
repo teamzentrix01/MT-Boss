@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Commercial Architect in Bareilly: Business Spaces Planned for
-            Footfall, Function and Growth by MTBoss
+            Footfall, Function and Growth by MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -26,7 +26,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Commercial Architecture Services from MTBoss
+                Commercial Architecture Services from MTBOSS
               </h3>
               <p className="mb-3">
                 Our services cover the stages where planning decisions matter most:
@@ -534,7 +534,7 @@ const Content = () => {
                 <li>Interior fit-out</li>
               </ul>
               <p className="mt-3">
-                MTBoss offers building repair and renovation, waterproofing,
+                MTBOSS offers building repair and renovation, waterproofing,
                 plumbing, electrical and painting services, so recommendations can
                 be carried out by the same team.
               </p>
@@ -584,7 +584,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBoss Process for Commercial Projects
+                The MTBOSS Process for Commercial Projects
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -632,7 +632,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MTBoss
+                Reasons to Choose MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -642,7 +642,7 @@ const Content = () => {
                 <li>
                   <strong>One team for design and execution.</strong> Architecture,
                   interior design, civil work, plumbing, electrical, carpentry,
-                  painting and more are available through MTBoss.
+                  painting and more are available through MTBOSS.
                 </li>
                 <li>
                   <strong>Transparent communication.</strong> You know the scope,
@@ -668,7 +668,7 @@ const Content = () => {
                 Service Areas in Bareilly
               </h3>
               <p>
-                MTBoss serves clients in Bareilly, including areas such as Civil
+                MTBOSS serves clients in Bareilly, including areas such as Civil
                 Lines, Rampur Garden, Izzatnagar, Subhash Nagar, DD Puram and
                 Pilibhit Bypass Road. If your plot or property is elsewhere in or
                 around Bareilly, contact us and we will confirm availability.
@@ -677,7 +677,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Commercial Space with MTBoss
+                Plan Your Commercial Space with MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -694,10 +694,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -708,16 +708,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/"
+                  href="https://www.MTBOSS.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss website
+                  MTBOSS website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -727,7 +727,7 @@ const Content = () => {
                 to try the Budget Calculator and view our Portfolio.
               </p>
               <p className="mt-3">
-                Build a business space that works as hard as you do. Contact MTBoss
+                Build a business space that works as hard as you do. Contact MTBOSS
                 today for commercial architecture in Bareilly.
               </p>
             </section>
@@ -739,7 +739,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBoss provide a commercial architect in Bareilly?
+                    Q1. Does MTBOSS provide a commercial architect in Bareilly?
                   </strong>
                   <br />
                   Yes. We offer planning, design and construction guidance for
@@ -786,7 +786,7 @@ const Content = () => {
                   as budget and demand allow.
                 </li>
                 <li>
-                  <strong>Q8. Can MTBoss also construct the building?</strong>
+                  <strong>Q8. Can MTBOSS also construct the building?</strong>
                   <br />
                   Yes. We offer construction and finishing services alongside
                   design.
@@ -809,7 +809,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

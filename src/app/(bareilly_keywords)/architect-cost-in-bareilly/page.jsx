@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect Cost in Bareilly',
   description:
-    'Planning architect cost in Bareilly? See the full spend: design fee, consultants, approvals, supervision and extras, with clear written proposals from MTBoss.',
+    'Planning architect cost in Bareilly? See the full spend: design fee, consultants, approvals, supervision and extras, with clear written proposals from MTBOSS.',
   keywords:
-    'architect cost in Bareilly, architect cost Bareilly, architect fees Bareilly, architect charges Bareilly, architect price Bareilly, house design cost Bareilly, architect consultation fees Bareilly, architect cost per square foot Bareilly, structural design cost Bareilly, approval support Bareilly, site supervision charges Bareilly, MTBoss Bareilly, architect near me Bareilly',
+    'architect cost in Bareilly, architect cost Bareilly, architect fees Bareilly, architect charges Bareilly, architect price Bareilly, house design cost Bareilly, architect consultation fees Bareilly, architect cost per square foot Bareilly, structural design cost Bareilly, approval support Bareilly, site supervision charges Bareilly, MTBOSS Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/architect-cost-in-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-cost-in-bareilly',
   },
   openGraph: {
     title: 'Architect Cost in Bareilly',
     description:
-      'Planning architect cost in Bareilly? See the full spend: design fee, consultants, approvals, supervision and extras, with clear written proposals from MTBoss.',
-    url: 'https://www.MTBoss.in/architect-cost-in-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Planning architect cost in Bareilly? See the full spend: design fee, consultants, approvals, supervision and extras, with clear written proposals from MTBOSS.',
+    url: 'https://www.MTBOSS.in/architect-cost-in-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-cost-in-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-cost-in-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect Cost in Bareilly - MTBoss',
+        alt: 'Architect Cost in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect Cost in Bareilly',
     description:
-      'Planning architect cost in Bareilly? See the full spend: design fee, consultants, approvals, supervision and extras, with clear written proposals from MTBoss.',
-    images: ['https://www.MTBoss.in/og-architect-cost-in-bareilly.jpg'],
+      'Planning architect cost in Bareilly? See the full spend: design fee, consultants, approvals, supervision and extras, with clear written proposals from MTBOSS.',
+    images: ['https://www.MTBOSS.in/og-architect-cost-in-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-cost-in-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-cost-in-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

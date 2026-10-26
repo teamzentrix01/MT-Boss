@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Modular Kitchen Manufacturer in Moradabad | MTBoss',
+  title: 'Modular Kitchen Manufacturer in Moradabad | MTBOSS',
   description:
-    'Looking for a modular kitchen manufacturer in Moradabad? See how made-to-measure kitchens are cut, finished, checked and fitted by MTBoss. Call +91 94584 10866.',
+    'Looking for a modular kitchen manufacturer in Moradabad? See how made-to-measure kitchens are cut, finished, checked and fitted by MTBOSS. Call +91 94584 10866.',
   keywords:
-    'modular kitchen manufacturer Moradabad, modular kitchen manufacturer near me Moradabad, modular kitchen factory Moradabad, modular kitchen maker Moradabad, modular kitchen manufacturing Moradabad, made to measure modular kitchen Moradabad, modular kitchen supplier Moradabad, modular kitchen workshop Moradabad, modular kitchen production Moradabad, MTBoss modular kitchen manufacturer Moradabad',
+    'modular kitchen manufacturer Moradabad, modular kitchen manufacturer near me Moradabad, modular kitchen factory Moradabad, modular kitchen maker Moradabad, modular kitchen manufacturing Moradabad, made to measure modular kitchen Moradabad, modular kitchen supplier Moradabad, modular kitchen workshop Moradabad, modular kitchen production Moradabad, MTBOSS modular kitchen manufacturer Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/modular-kitchen-manufacturer-moradabad',
+    canonical: 'https://www.MTBOSS.in/modular-kitchen-manufacturer-moradabad',
   },
   openGraph: {
-    title: 'Modular Kitchen Manufacturer in Moradabad | MTBoss',
+    title: 'Modular Kitchen Manufacturer in Moradabad | MTBOSS',
     description:
-      'Looking for a modular kitchen manufacturer in Moradabad? See how made-to-measure kitchens are cut, finished, checked and fitted by MTBoss. Call +91 94584 10866.',
-    url: 'https://www.MTBoss.in/modular-kitchen-manufacturer-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Looking for a modular kitchen manufacturer in Moradabad? See how made-to-measure kitchens are cut, finished, checked and fitted by MTBOSS. Call +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/modular-kitchen-manufacturer-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-modular-kitchen-manufacturer-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-modular-kitchen-manufacturer-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Modular Kitchen Manufacturer in Moradabad - MTBoss',
+        alt: 'Modular Kitchen Manufacturer in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,11 +33,11 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Modular Kitchen Manufacturer in Moradabad | MTBoss',
+    title: 'Modular Kitchen Manufacturer in Moradabad | MTBOSS',
     description:
-      'Looking for a modular kitchen manufacturer in Moradabad? See how made-to-measure kitchens are cut, finished, checked and fitted by MTBoss. Call +91 94584 10866.',
+      'Looking for a modular kitchen manufacturer in Moradabad? See how made-to-measure kitchens are cut, finished, checked and fitted by MTBOSS. Call +91 94584 10866.',
     images: [
-      'https://www.MTBoss.in/og-modular-kitchen-manufacturer-moradabad.jpg',
+      'https://www.MTBOSS.in/og-modular-kitchen-manufacturer-moradabad.jpg',
     ],
   },
   robots: {
@@ -49,10 +49,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/modular-kitchen-manufacturer-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/modular-kitchen-manufacturer-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

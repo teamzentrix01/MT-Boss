@@ -59,8 +59,8 @@ export async function POST(req) {
       try {
         await sendMail({
           to: normalizedEmail,
-          subject: 'Verify your MTBoss vendor registration',
-          text: `Your MTBoss vendor registration OTP is ${otp}. It expires in ${PASSWORD_RESET_OTP_EXPIRY_MINUTES} minutes.`,
+          subject: 'Verify your MTBOSS vendor registration',
+          text: `Your MTBOSS vendor registration OTP is ${otp}. It expires in ${PASSWORD_RESET_OTP_EXPIRY_MINUTES} minutes.`,
         });
       } catch (error) {
         await pool.query(`UPDATE vendor_signup_otps SET used = TRUE WHERE email = $1 AND used = FALSE`, [normalizedEmail]);

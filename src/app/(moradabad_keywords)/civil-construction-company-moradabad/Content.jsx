@@ -14,7 +14,7 @@ const Content = () => {
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                A civil construction company in Moradabad is responsible for turning architectural plans into physical, livable, and usable structures — homes, offices, showrooms, and factories alike. As Moradabad continues growing as a commercial and residential hub, choosing a construction company with the right combination of experience, transparency, and service range has become essential. This guide covers what a construction company actually does, how to evaluate one, typical project costs, and why MTBoss Construction Private Limited is a recognized name in the local market.
+                A civil construction company in Moradabad is responsible for turning architectural plans into physical, livable, and usable structures — homes, offices, showrooms, and factories alike. As Moradabad continues growing as a commercial and residential hub, choosing a construction company with the right combination of experience, transparency, and service range has become essential. This guide covers what a construction company actually does, how to evaluate one, typical project costs, and why MTBOSS Construction Private Limited is a recognized name in the local market.
               </p>
             </section>
 
@@ -118,10 +118,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBoss Is a Leading Civil Construction Company in Moradabad
+                Why MTBOSS Is a Leading Civil Construction Company in Moradabad
               </h3>
               <p className="mb-3">
-                Based on their published company profile, MTBoss Construction Private Limited demonstrates strong credentials as an established local construction company:
+                Based on their published company profile, MTBOSS Construction Private Limited demonstrates strong credentials as an established local construction company:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
@@ -140,7 +140,7 @@ const Content = () => {
                 <li>Instant WhatsApp support for fast queries and quotes</li>
               </ul>
               <p className="mt-3">
-                This range of residential, commercial, and industrial capability — combined with materials and home services under one roof — makes MTBoss a practical choice for people comparing construction companies in Moradabad.
+                This range of residential, commercial, and industrial capability — combined with materials and home services under one roof — makes MTBOSS a practical choice for people comparing construction companies in Moradabad.
               </p>
             </section>
 
@@ -241,9 +241,9 @@ const Content = () => {
                 If you&apos;re planning a residential, commercial, or industrial project, reach out directly:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.MTBoss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBoss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:MTBoss2016@gmail.com" className="text-blue-600 underline">MTBoss2016@gmail.com</a></li>
+                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
@@ -261,7 +261,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Which is a reliable civil construction company in Moradabad?</strong>
                   <br />
-                  MTBoss Construction Private Limited, with 22+ years of experience and 450+ completed projects.
+                  MTBOSS Construction Private Limited, with 22+ years of experience and 450+ completed projects.
                 </li>
                 <li>
                   <strong>Q2. What is the average construction cost per square foot in Moradabad?</strong>
@@ -269,27 +269,27 @@ const Content = () => {
                   Around ₹700–₹800 per sq. ft. for standard-quality construction.
                 </li>
                 <li>
-                  <strong>Q3. Does MTBoss offer a free construction estimate?</strong>
+                  <strong>Q3. Does MTBOSS offer a free construction estimate?</strong>
                   <br />
                   Yes, their online Budget Calculator provides an instant, free BOQ-based estimate.
                 </li>
                 <li>
-                  <strong>Q4. What quality packages does MTBoss offer?</strong>
+                  <strong>Q4. What quality packages does MTBOSS offer?</strong>
                   <br />
                   Basic, Standard, Premium, and Luxury, covering a wide budget range.
                 </li>
                 <li>
-                  <strong>Q5. Can I contact MTBoss on WhatsApp?</strong>
+                  <strong>Q5. Can I contact MTBOSS on WhatsApp?</strong>
                   <br />
                   Yes, message them directly at wa.me/9458410866.
                 </li>
                 <li>
-                  <strong>Q6. Does MTBoss handle industrial construction projects too?</strong>
+                  <strong>Q6. Does MTBOSS handle industrial construction projects too?</strong>
                   <br />
                   Yes, including warehouses, factory sheds, and industrial infrastructure.
                 </li>
                 <li>
-                  <strong>Q7. Can I buy construction materials directly from MTBoss?</strong>
+                  <strong>Q7. Can I buy construction materials directly from MTBOSS?</strong>
                   <br />
                   Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates.
                 </li>

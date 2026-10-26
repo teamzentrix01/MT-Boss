@@ -287,7 +287,7 @@ export default function ServiceDetailPage() {
   const aboutBody     = service.about_body     || service.description;
   const ctaHeading    = service.cta_heading    || `Start Your ${service.title} Project`;
   const phone         = service.contact_phone || COMPANY_CONTACT.phone;
-  const email         = service.contact_email  || "MTBoss2016@gmail.com";
+  const email         = service.contact_email  || "MTBOSS2016@gmail.com";
 
   const getTomorrowIso = () => {
     const d = new Date();
@@ -307,7 +307,7 @@ export default function ServiceDetailPage() {
         {service.image && <Image src={service.image} alt={service.title} fill sizes="100vw" quality={80} priority className="object-cover" />}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
         <div className="relative z-10 max-w-7xl mx-auto px-6 pb-8 w-full">
-          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-2">MTBoss Construction</p>
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-2">MTBOSS Construction</p>
           <h1 className="text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-tighter text-white leading-[1.05] mb-2.5">
             {titleMain}<br /><span className="text-[var(--brand-blue)]">{titleLast}</span>
           </h1>
@@ -362,7 +362,7 @@ export default function ServiceDetailPage() {
             {/* ── Benefits ── */}
             <section className={`py-6 border-b ${isDark ? "border-zinc-900" : "border-zinc-200"}`}>
               <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Why Choose Us</p>
-              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-6">The MTBoss Advantage</h2>
+              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-6">The MTBOSS Advantage</h2>
               <div className="grid sm:grid-cols-2 gap-3">
                 {benefitsList.map((b, i) => (
                   <div key={i} className={`border p-4 hover:border-[var(--brand-blue)] transition-all ${card}`}>

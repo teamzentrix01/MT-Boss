@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Government Approved Contractor in Moradabad',
   description:
-    'Hire MTBoss, a government approved contractor in Moradabad, for government, commercial and residential construction. Transparent pricing, quality work, on-time delivery.',
+    'Hire MTBOSS, a government approved contractor in Moradabad, for government, commercial and residential construction. Transparent pricing, quality work, on-time delivery.',
   keywords:
-    'government approved contractor Moradabad, government contractor Moradabad, registered contractor Moradabad, PWD contractor Moradabad, civil contractor Moradabad, government building contractor Moradabad, road contractor Moradabad, construction company Moradabad, building contractor Moradabad, MTBoss Moradabad',
+    'government approved contractor Moradabad, government contractor Moradabad, registered contractor Moradabad, PWD contractor Moradabad, civil contractor Moradabad, government building contractor Moradabad, road contractor Moradabad, construction company Moradabad, building contractor Moradabad, MTBOSS Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/government-approved-contractor-moradabad',
+    canonical: 'https://www.MTBOSS.in/government-approved-contractor-moradabad',
   },
   openGraph: {
     title: 'Government Approved Contractor in Moradabad',
     description:
-      'Hire MTBoss, a government approved contractor in Moradabad, for government, commercial and residential construction. Transparent pricing, quality work, on-time delivery.',
-    url: 'https://www.MTBoss.in/government-approved-contractor-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Hire MTBOSS, a government approved contractor in Moradabad, for government, commercial and residential construction. Transparent pricing, quality work, on-time delivery.',
+    url: 'https://www.MTBOSS.in/government-approved-contractor-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-government-approved-contractor-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-government-approved-contractor-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Government Approved Contractor in Moradabad - MTBoss',
+        alt: 'Government Approved Contractor in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,9 +35,9 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Government Approved Contractor in Moradabad',
     description:
-      'Hire MTBoss, a government approved contractor in Moradabad, for government, commercial and residential construction. Transparent pricing, quality work, on-time delivery.',
+      'Hire MTBOSS, a government approved contractor in Moradabad, for government, commercial and residential construction. Transparent pricing, quality work, on-time delivery.',
     images: [
-      'https://www.MTBoss.in/og-government-approved-contractor-moradabad.jpg',
+      'https://www.MTBOSS.in/og-government-approved-contractor-moradabad.jpg',
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/government-approved-contractor-moradabad',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/government-approved-contractor-moradabad',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

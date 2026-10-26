@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect for School in Bareilly',
   description:
-    'Architect for school in Bareilly: planning, design and construction guidance for new schools, extensions and renovations. MTBoss supports safe, practical campuses. Call or WhatsApp.',
+    'Architect for school in Bareilly: planning, design and construction guidance for new schools, extensions and renovations. MTBOSS supports safe, practical campuses. Call or WhatsApp.',
   keywords:
-    'architect for school in Bareilly, school architect Bareilly, school design Bareilly, school planning Bareilly, school building design Bareilly, school construction Bareilly, school renovation architect Bareilly, school extension design Bareilly, campus design Bareilly, coaching institute architect Bareilly, MTBoss Bareilly, architect near me Bareilly',
+    'architect for school in Bareilly, school architect Bareilly, school design Bareilly, school planning Bareilly, school building design Bareilly, school construction Bareilly, school renovation architect Bareilly, school extension design Bareilly, campus design Bareilly, coaching institute architect Bareilly, MTBOSS Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/architect-for-school-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-for-school-bareilly',
   },
   openGraph: {
     title: 'Architect for School in Bareilly',
     description:
-      'Architect for school in Bareilly: planning, design and construction guidance for new schools, extensions and renovations. MTBoss supports safe, practical campuses. Call or WhatsApp.',
-    url: 'https://www.MTBoss.in/architect-for-school-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Architect for school in Bareilly: planning, design and construction guidance for new schools, extensions and renovations. MTBOSS supports safe, practical campuses. Call or WhatsApp.',
+    url: 'https://www.MTBOSS.in/architect-for-school-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-for-school-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-school-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect for School in Bareilly - MTBoss',
+        alt: 'Architect for School in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect for School in Bareilly',
     description:
-      'Architect for school in Bareilly: planning, design and construction guidance for new schools, extensions and renovations. MTBoss supports safe, practical campuses. Call or WhatsApp.',
-    images: ['https://www.MTBoss.in/og-architect-for-school-bareilly.jpg'],
+      'Architect for school in Bareilly: planning, design and construction guidance for new schools, extensions and renovations. MTBOSS supports safe, practical campuses. Call or WhatsApp.',
+    images: ['https://www.MTBOSS.in/og-architect-for-school-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-for-school-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-for-school-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

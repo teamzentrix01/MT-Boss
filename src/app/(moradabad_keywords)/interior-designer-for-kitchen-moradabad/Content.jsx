@@ -191,7 +191,7 @@ const Content = () => {
     },
   ];
 
-  const MTBossBenefits = [
+  const MTBOSSBenefits = [
     {
       title: "Construction-backed knowledge:",
       description:
@@ -298,7 +298,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Kitchen in Moradabad: MTBoss
+            Interior Designer for Kitchen in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -316,7 +316,7 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBoss, also known as MTBoss Construction Private Limited, is
+                MTBOSS, also known as MTBOSS Construction Private Limited, is
                 a Moradabad-based construction and interiors company. We plan
                 kitchens with both the design side and the building side in
                 mind.
@@ -704,7 +704,7 @@ const Content = () => {
               <p className="mt-4">
                 Our{" "}
                 <a
-                  href="https://www.MTBoss.in/quick"
+                  href="https://www.MTBOSS.in/quick"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -792,7 +792,7 @@ const Content = () => {
               <p className="mt-4">
                 Learn more in our{" "}
                 <a
-                  href="https://www.MTBoss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
+                  href="https://www.MTBOSS.in/blog/vastu-shastra-principles-for-modern-home-architecture"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -853,7 +853,7 @@ const Content = () => {
               <p className="mt-4">
                 Use our{" "}
                 <a
-                  href="https://www.MTBoss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -862,7 +862,7 @@ const Content = () => {
                 </a>{" "}
                 and read the{" "}
                 <a
-                  href="https://www.MTBoss.in/blog/house-construction-cost-estimation-guide-india-2026"
+                  href="https://www.MTBOSS.in/blog/house-construction-cost-estimation-guide-india-2026"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -875,7 +875,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                How MTBoss Designs Your Kitchen: Step by Step
+                How MTBOSS Designs Your Kitchen: Step by Step
               </SectionTitle>
 
               <div className="space-y-5">
@@ -967,15 +967,15 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                Why Choose MTBoss as Your Kitchen Interior Designer in
+                Why Choose MTBOSS as Your Kitchen Interior Designer in
                 Moradabad
               </SectionTitle>
-              <BulletList items={MTBossBenefits} />
+              <BulletList items={MTBOSSBenefits} />
 
               <p className="mt-4">
                 Explore materials through{" "}
                 <a
-                  href="https://www.MTBoss.in/ShopNow"
+                  href="https://www.MTBOSS.in/ShopNow"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -984,7 +984,7 @@ const Content = () => {
                 </a>
                 , find tradespeople through our{" "}
                 <a
-                  href="https://www.MTBoss.in/Services/professionals"
+                  href="https://www.MTBOSS.in/Services/professionals"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -993,7 +993,7 @@ const Content = () => {
                 </a>
                 , and view completed work in our{" "}
                 <a
-                  href="https://www.MTBoss.in/FeaturedProjects/ProjectGallery"
+                  href="https://www.MTBOSS.in/FeaturedProjects/ProjectGallery"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1111,7 +1111,7 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Contact MTBoss for Your Kitchen Project</SectionTitle>
+              <SectionTitle>Contact MTBOSS for Your Kitchen Project</SectionTitle>
               <p className="mb-3">
                 Share kitchen photos or measurements, your preferred layout,
                 style and budget. You will receive a clear discussion, a site
@@ -1120,7 +1120,7 @@ const Content = () => {
 
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Phone / WhatsApp:</strong>{" "}
@@ -1134,10 +1134,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -1147,7 +1147,7 @@ const Content = () => {
                 <li>
                   <strong>Contact Page:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/contact"
+                    href="https://www.MTBOSS.in/contact"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"

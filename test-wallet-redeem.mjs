@@ -30,7 +30,7 @@ async function run() {
 
     const uRes = await client.query(
       INSERT INTO users (name, email, phone, role, password) VALUES (, , , , ) RETURNING id,
-      ['Test User', 'test_' + Date.now() + '@MTBoss.com', '9999999999', 'user', 'hash']
+      ['Test User', 'test_' + Date.now() + '@MTBOSS.com', '9999999999', 'user', 'hash']
     );
     uId = uRes.rows[0].id;
 

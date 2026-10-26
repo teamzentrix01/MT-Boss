@@ -543,7 +543,7 @@ export default function Storefront({ categories, products, offers = [], content,
       <div className="storefront-desktop">
         <header className="store-header" ref={storeHeaderRef}>
           <div className="store-header-inner">
-            <Link href="/" className="store-brand" aria-label="MTBoss home"><picture className="store-brand-picture"><Image src="/logo.png" alt="MTBoss" width={46} height={46} sizes="(max-width: 560px) 34px, (max-width: 800px) 39px, 46px" /></picture><small>SHOP</small></Link>
+            <Link href="/" className="store-brand" aria-label="MTBOSS home"><picture className="store-brand-picture"><Image src="/logo.png" alt="MTBOSS" width={46} height={46} sizes="(max-width: 560px) 34px, (max-width: 800px) 39px, 46px" /></picture><small>SHOP</small></Link>
             <div className="store-location-wrap">
               <button type="button" className="store-location" onClick={() => setCityOpen(!cityOpen)} aria-expanded={cityOpen}>
                 <MapPin size={20} /><span><strong>Deliver to {selectedCity || "your city"}</strong><small>{selectedCity ? "Change location" : "Select delivery location"}</small></span><ChevronDown size={16} />

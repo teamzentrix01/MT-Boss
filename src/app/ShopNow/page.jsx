@@ -117,7 +117,7 @@ export default function ShopPage() {
 
   useEffect(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem("mtboss-shop-cart") || "[]");
+      const saved = JSON.parse(localStorage.getItem("MTBOSS-shop-cart") || "[]");
       if (Array.isArray(saved)) {
         const merged = new Map();
         for (const item of saved) {
@@ -147,7 +147,7 @@ export default function ShopPage() {
   }, []);
 
   useEffect(() => {
-    if (cartReady) localStorage.setItem("mtboss-shop-cart", JSON.stringify(cart));
+    if (cartReady) localStorage.setItem("MTBOSS-shop-cart", JSON.stringify(cart));
   }, [cart, cartReady]);
 
   useEffect(() => {
@@ -209,18 +209,18 @@ export default function ShopPage() {
       if (document.visibilityState === "visible") loadProducts();
     };
     const refreshFromProductChange = (event) => {
-      if (event.type !== "storage" || event.key === "mtboss-shop-products-updated") loadProducts(true);
+      if (event.type !== "storage" || event.key === "MTBOSS-shop-products-updated") loadProducts(true);
     };
 
     window.addEventListener("focus", refreshVisibleShop);
     window.addEventListener("storage", refreshFromProductChange);
-    window.addEventListener("mtbossShopProductsUpdated", refreshFromProductChange);
+    window.addEventListener("MTBOSSShopProductsUpdated", refreshFromProductChange);
     document.addEventListener("visibilitychange", refreshVisibleShop);
 
     return () => {
       window.removeEventListener("focus", refreshVisibleShop);
       window.removeEventListener("storage", refreshFromProductChange);
-      window.removeEventListener("mtbossShopProductsUpdated", refreshFromProductChange);
+      window.removeEventListener("MTBOSSShopProductsUpdated", refreshFromProductChange);
       document.removeEventListener("visibilitychange", refreshVisibleShop);
     };
   }, [loadProducts]);
@@ -284,10 +284,10 @@ export default function ShopPage() {
     };
 
     window.addEventListener("focus", handleRefresh);
-    window.addEventListener("mtbossShopProductsUpdated", handleRefresh);
+    window.addEventListener("MTBOSSShopProductsUpdated", handleRefresh);
     return () => {
       window.removeEventListener("focus", handleRefresh);
-      window.removeEventListener("mtbossShopProductsUpdated", handleRefresh);
+      window.removeEventListener("MTBOSSShopProductsUpdated", handleRefresh);
     };
   }, []);
 
@@ -701,7 +701,7 @@ export default function ShopPage() {
     }
 
     try {
-      const localAddrs = JSON.parse(localStorage.getItem("mtboss_saved_addresses") || "[]");
+      const localAddrs = JSON.parse(localStorage.getItem("MTBOSS_saved_addresses") || "[]");
       if (Array.isArray(localAddrs) && localAddrs.length > 0) {
         const existingLines = new Set(list.map((a) => (a.address_line || "").trim().toLowerCase()));
         for (const item of localAddrs) {
@@ -763,9 +763,9 @@ export default function ShopPage() {
     }
 
     try {
-      const existing = JSON.parse(localStorage.getItem("mtboss_saved_addresses") || "[]");
+      const existing = JSON.parse(localStorage.getItem("MTBOSS_saved_addresses") || "[]");
       const updated = [savedObj, ...existing.filter((a) => a.address_line !== savedObj.address_line)].slice(0, 10);
-      localStorage.setItem("mtboss_saved_addresses", JSON.stringify(updated));
+      localStorage.setItem("MTBOSS_saved_addresses", JSON.stringify(updated));
     } catch {}
 
     return savedObj;
@@ -786,9 +786,9 @@ export default function ShopPage() {
       }
     }
     try {
-      const existing = JSON.parse(localStorage.getItem("mtboss_saved_addresses") || "[]");
+      const existing = JSON.parse(localStorage.getItem("MTBOSS_saved_addresses") || "[]");
       const filtered = existing.filter((a) => a.id !== addressId);
-      localStorage.setItem("mtboss_saved_addresses", JSON.stringify(filtered));
+      localStorage.setItem("MTBOSS_saved_addresses", JSON.stringify(filtered));
     } catch {}
 
     const remaining = savedAddresses.filter((a) => a.id !== addressId);

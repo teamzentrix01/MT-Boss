@@ -24,7 +24,7 @@ const ensureBlogsTable = createInitializationGuard(async () => {
       cover_image TEXT,
       category VARCHAR(100) DEFAULT 'Construction Guide',
       tags TEXT[] DEFAULT ARRAY[]::TEXT[],
-      author_name VARCHAR(150) DEFAULT 'MTBoss Editorial',
+      author_name VARCHAR(150) DEFAULT 'MTBOSS Editorial',
       read_time VARCHAR(50) DEFAULT '5 min read',
       meta_title VARCHAR(255),
       meta_description TEXT,
@@ -152,7 +152,7 @@ export async function POST(req) {
     const cover_image = body.cover_image || 'https://images.unsplash.com/photo-1541888946425-d0fbb186156a?auto=format&fit=crop&w=1200&q=80';
     const category = body.category || 'Construction Guide';
     const tags = Array.isArray(body.tags) ? body.tags : (body.tags ? String(body.tags).split(',').map((t) => t.trim()) : []);
-    const author_name = body.author_name || 'MTBoss Editorial';
+    const author_name = body.author_name || 'MTBOSS Editorial';
     const read_time = body.read_time || '5 min read';
     const meta_title = body.meta_title || title;
     const meta_description = body.meta_description || excerpt;

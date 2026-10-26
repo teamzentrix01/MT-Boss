@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Structural Architect in Moradabad | MTBoss',
+  title: 'Structural Architect in Moradabad | MTBOSS',
   description:
-    'Need a structural architect in Moradabad for safe, code-compliant design? Learn about load calculations, retrofitting, audits, and MTBoss\'s engineering support.',
+    'Need a structural architect in Moradabad for safe, code-compliant design? Learn about load calculations, retrofitting, audits, and MTBOSS\'s engineering support.',
   keywords:
-    'structural architect Moradabad, structural design consultant near me, structural safety audit Moradabad, structural engineer near me, building structural design company, retrofitting contractor Moradabad, seismic design consultant near me, MTBoss Moradabad, structural certification Moradabad, structural drawing consultant',
+    'structural architect Moradabad, structural design consultant near me, structural safety audit Moradabad, structural engineer near me, building structural design company, retrofitting contractor Moradabad, seismic design consultant near me, MTBOSS Moradabad, structural certification Moradabad, structural drawing consultant',
   alternates: {
-    canonical: 'https://www.MTBoss.in/structural-architect-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/structural-architect-in-moradabad',
   },
   openGraph: {
-    title: 'Structural Architect in Moradabad | MTBoss',
+    title: 'Structural Architect in Moradabad | MTBOSS',
     description:
-      'Need a structural architect in Moradabad for safe, code-compliant design? Learn about load calculations, retrofitting, audits, and MTBoss\'s engineering support.',
-    url: 'https://www.MTBoss.in/structural-architect-in-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Need a structural architect in Moradabad for safe, code-compliant design? Learn about load calculations, retrofitting, audits, and MTBOSS\'s engineering support.',
+    url: 'https://www.MTBOSS.in/structural-architect-in-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-structural-architect-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-structural-architect-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Structural Architect in Moradabad - MTBoss',
+        alt: 'Structural Architect in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Structural Architect in Moradabad | MTBoss',
+    title: 'Structural Architect in Moradabad | MTBOSS',
     description:
-      'Need a structural architect in Moradabad for safe, code-compliant design? Learn about load calculations, retrofitting, audits, and MTBoss\'s engineering support.',
-    images: ['https://www.MTBoss.in/og-structural-architect-moradabad.jpg'],
+      'Need a structural architect in Moradabad for safe, code-compliant design? Learn about load calculations, retrofitting, audits, and MTBOSS\'s engineering support.',
+    images: ['https://www.MTBOSS.in/og-structural-architect-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/structural-architect-in-moradabad',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/structural-architect-in-moradabad',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

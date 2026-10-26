@@ -16,7 +16,7 @@ export const metadata = {
     "interior designer near me Bareilly, interior designer near me, local interior designer Bareilly, interior design services in Bareilly, home interior designer Bareilly, modular kitchen near me Bareilly, interior designer for flat Bareilly, interior designer for house Bareilly, office interior near me Bareilly, interior designer site visit Bareilly, MTBOSS Bareilly, MTBOSS Moradabad, MTBOSS budget calculator, interior design quote Bareilly",
 
   alternates: {
-    canonical: "https://www.mtboss.in/interior-designer-near-me-bareilly",
+    canonical: "https://www.MTBOSS.in/interior-designer-near-me-bareilly",
   },
 
   openGraph: {
@@ -25,13 +25,13 @@ export const metadata = {
     description:
       "Searching for an interior designer near you in Bareilly? Talk to MTBOSS on WhatsApp and plan your site visit. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-designer-near-me-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-near-me-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designer-near-me-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-near-me-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Designer Near Me in Bareilly - MTBOSS",
@@ -51,7 +51,7 @@ export const metadata = {
       "Searching for an interior designer near you in Bareilly? Talk to MTBOSS on WhatsApp and plan your site visit. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-interior-designer-near-me-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-near-me-bareilly.jpg",
     ],
   },
 
@@ -66,11 +66,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-designer-near-me-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-near-me-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-interior-designer-near-me-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-near-me-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,13 +117,13 @@ export default function Page() {
     name: "Interior Design Services in Bareilly",
     description:
       "MTBOSS provides interior design services for homes, flats, offices, showrooms and clinics in Bareilly. Services include site visits and measurement, space planning, living and dining areas, modular kitchens, bedrooms and wardrobes, puja room design, false ceilings and lighting, flooring and wall finishes, woodwork and custom furniture, bathroom interiors, construction coordination, material supply, renovation and remodelling.",
-    url: "https://www.mtboss.in/interior-designer-near-me-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-near-me-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -210,19 +210,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Designer Near Me in Bareilly",
-        item: "https://www.mtboss.in/interior-designer-near-me-bareilly",
+        item: "https://www.MTBOSS.in/interior-designer-near-me-bareilly",
       },
     ],
   };

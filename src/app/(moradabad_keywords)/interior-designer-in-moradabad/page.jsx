@@ -6,26 +6,26 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Interior Designer in Moradabad | MTBoss",
+  title: "Interior Designer in Moradabad | MTBOSS",
   description:
-    "Looking for an interior designer in Moradabad? MTBoss offers home, office and modular kitchen interiors along with construction. Call +91 94584 10866.",
+    "Looking for an interior designer in Moradabad? MTBOSS offers home, office and modular kitchen interiors along with construction. Call +91 94584 10866.",
   keywords:
-    "interior designer in Moradabad, interior design company Moradabad, modular kitchen design Moradabad, home interior designer Moradabad, office interior designer Moradabad, bungalow interior design Moradabad, MTBoss Moradabad, interior decoration Moradabad, affordable interior designer Moradabad, MTBoss budget calculator, interior design and construction Moradabad, MTBoss Kanth Road, false ceiling design Moradabad, interior design quote Moradabad, MTBoss interior projects",
+    "interior designer in Moradabad, interior design company Moradabad, modular kitchen design Moradabad, home interior designer Moradabad, office interior designer Moradabad, bungalow interior design Moradabad, MTBOSS Moradabad, interior decoration Moradabad, affordable interior designer Moradabad, MTBOSS budget calculator, interior design and construction Moradabad, MTBOSS Kanth Road, false ceiling design Moradabad, interior design quote Moradabad, MTBOSS interior projects",
   alternates: {
-    canonical: "https://www.MTBoss.in/interior-designer-in-moradabad",
+    canonical: "https://www.MTBOSS.in/interior-designer-in-moradabad",
   },
   openGraph: {
-    title: "Interior Designer in Moradabad | MTBoss",
+    title: "Interior Designer in Moradabad | MTBOSS",
     description:
-      "Looking for an interior designer in Moradabad? MTBoss offers home, office and modular kitchen interiors along with construction. Call +91 94584 10866.",
-    url: "https://www.MTBoss.in/interior-designer-in-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "Looking for an interior designer in Moradabad? MTBOSS offers home, office and modular kitchen interiors along with construction. Call +91 94584 10866.",
+    url: "https://www.MTBOSS.in/interior-designer-in-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-interior-designer-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Interior Designer in Moradabad - MTBoss Construction",
+        alt: "Interior Designer in Moradabad - MTBOSS Construction",
       },
     ],
     locale: "en_IN",
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Interior Designer in Moradabad | MTBoss",
+    title: "Interior Designer in Moradabad | MTBOSS",
     description:
-      "Looking for an interior designer in Moradabad? MTBoss offers home, office and modular kitchen interiors along with construction. Call +91 94584 10866.",
-    images: ["https://www.MTBoss.in/og-interior-designer-moradabad.jpg"],
+      "Looking for an interior designer in Moradabad? MTBOSS offers home, office and modular kitchen interiors along with construction. Call +91 94584 10866.",
+    images: ["https://www.MTBOSS.in/og-interior-designer-moradabad.jpg"],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBoss Construction Private Limited",
-    url: "https://www.MTBoss.in/interior-designer-in-moradabad",
+    name: "MTBOSS Construction Private Limited",
+    url: "https://www.MTBOSS.in/interior-designer-in-moradabad",
     telephone: "+91-9458410866",
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",
@@ -87,12 +87,12 @@ export default function Page() {
     "@type": "Service",
     name: "Interior Designer in Moradabad",
     description:
-      "MTBoss provides interior design services including home interiors, office interiors, modular kitchen design, bungalow interiors, false ceiling and lighting design, along with construction and material supply in Moradabad.",
+      "MTBOSS provides interior design services including home interiors, office interiors, modular kitchen design, bungalow interiors, false ceiling and lighting design, along with construction and material supply in Moradabad.",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.MTBoss.in",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: {
       "@type": "City",

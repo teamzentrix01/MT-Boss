@@ -60,14 +60,14 @@ const sections = [
   {
     title: "Intellectual property",
     body: [
-      "All website content, brand material, logos, layout, text, graphics, software, service flows, and digital assets are owned by or licensed to MTBoss construction private limited unless otherwise stated.",
+      "All website content, brand material, logos, layout, text, graphics, software, service flows, and digital assets are owned by or licensed to MTBOSS construction private limited unless otherwise stated.",
       "You may not copy, reproduce, sell, modify, distribute, or commercially exploit our content without prior written permission.",
     ],
   },
   {
     title: "Limitation of liability",
     body: [
-      "To the maximum extent permitted by law, MTBoss construction private limited will not be liable for indirect, incidental, consequential, punitive, or special losses arising from website use, delayed communication, third-party service issues, force majeure events, or information submitted by users.",
+      "To the maximum extent permitted by law, MTBOSS construction private limited will not be liable for indirect, incidental, consequential, punitive, or special losses arising from website use, delayed communication, third-party service issues, force majeure events, or information submitted by users.",
       "Nothing in these terms limits liability where such limitation is not permitted under applicable law.",
     ],
   },

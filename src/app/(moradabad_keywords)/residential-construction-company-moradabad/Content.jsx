@@ -9,7 +9,7 @@ const Content = () => {
         <div className="order-1 flex-1 px-4 py-12 sm:px-8 md:px-16 lg:order-1">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 sm:text-3xl md:text-3xl">
             Residential Construction Company in Moradabad: Homes Built Around
-            Your Family, by MTBoss
+            Your Family, by MTBOSS
           </h2>
 
           <div className="max-w-4xl space-y-6 leading-relaxed text-gray-700">
@@ -23,17 +23,17 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBoss Construction Private Limited is a Moradabad-based
+                MTBOSS Construction Private Limited is a Moradabad-based
                 architect, interior designer and construction company that builds
                 residential projects ranging from affordable homes to luxury
-                villas. MTBoss serves Moradabad and Bareilly with quality work,
+                villas. MTBOSS serves Moradabad and Bareilly with quality work,
                 transparent pricing and on-time delivery.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss at a Glance
+                MTBOSS at a Glance
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -60,7 +60,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>How to start:</strong> Use the free Budget Calculator
-                  or the Get a Construction Quote option on the MTBoss website.
+                  or the Get a Construction Quote option on the MTBOSS website.
                 </li>
               </ul>
             </section>
@@ -95,7 +95,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Residential Construction Services Offered by MTBoss in Moradabad
+                Residential Construction Services Offered by MTBOSS in Moradabad
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -128,7 +128,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBoss wholesale supply.
+                  bricks, tiles and paints through MTBOSS wholesale supply.
                 </li>
                 <li>
                   <strong>Renovation and repair:</strong> Extra floors,
@@ -138,7 +138,7 @@ const Content = () => {
 
               <p className="mt-3">
                 Final scope for each project is discussed and confirmed with the
-                MTBoss team before work begins.
+                MTBOSS team before work begins.
               </p>
             </section>
 
@@ -269,7 +269,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBoss Builds a Home
+                How MTBOSS Builds a Home
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -371,7 +371,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBoss Budget Calculator for a practical
+                Start with the free MTBOSS Budget Calculator for a practical
                 early estimate, then request a detailed quote after the plot and
                 plan are reviewed.
               </p>
@@ -393,7 +393,7 @@ const Content = () => {
               <p>
                 When one company coordinates design, material supply and
                 construction, there are fewer handovers, fewer gaps and one team
-                accountable for the result. MTBoss supplies cement, TMT steel
+                accountable for the result. MTBOSS supplies cement, TMT steel
                 bars, bricks, tiles and paints through its Shop Now section,
                 helping manage material availability and delivery timing.
               </p>
@@ -434,7 +434,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Beyond Construction: Other MTBoss Services
+                Beyond Construction: Other MTBOSS Services
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -459,7 +459,7 @@ const Content = () => {
               </h3>
 
               <p>
-                MTBoss works across Moradabad city, including established and
+                MTBOSS works across Moradabad city, including established and
                 newly developing residential colonies, Kanth Road and nearby
                 growth areas. The company also serves plots across Moradabad
                 district and Bareilly, as well as families in nearby Uttar
@@ -469,7 +469,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Families Choose MTBoss
+                Why Families Choose MTBOSS
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -511,45 +511,45 @@ const Content = () => {
 
               <p>
                 Request a quote through the Get a Construction Quote option on
-                the MTBoss website, or contact the team directly by phone or
+                the MTBOSS website, or contact the team directly by phone or
                 WhatsApp. Sharing your plot size, number of floors and rough
-                budget upfront helps MTBoss respond more accurately.
+                budget upfront helps MTBOSS respond more accurately.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBoss: Residential Construction Company in Moradabad
+                Contact MTBOSS: Residential Construction Company in Moradabad
               </h3>
 
               <p className="mb-3">
                 If you are looking for a residential construction company in
                 Moradabad that plans with you, builds with care and keeps you
-                informed, MTBoss is ready to help turn your plot into a home.
+                informed, MTBOSS is ready to help turn your plot into a home.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.MTBoss.in
+                    https://www.MTBOSS.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -597,14 +597,14 @@ const Content = () => {
                 </li>
 
                 <li>
-                  <strong>Q2. Does MTBoss build homes in Moradabad?</strong>
+                  <strong>Q2. Does MTBOSS build homes in Moradabad?</strong>
                   <br />
-                  Yes. MTBoss builds residential projects from affordable homes
+                  Yes. MTBOSS builds residential projects from affordable homes
                   to luxury villas in Moradabad and Bareilly.
                 </li>
 
                 <li>
-                  <strong>Q3. What types of homes can MTBoss build?</strong>
+                  <strong>Q3. What types of homes can MTBOSS build?</strong>
                   <br />
                   Independent houses, duplexes, villas and multi-storey family
                   homes, with Vastu-based planning where requested.
@@ -616,14 +616,14 @@ const Content = () => {
                   </strong>
                   <br />
                   Cost depends on built-up area, floors, material quality, design
-                  and finishing. Use the free MTBoss Budget Calculator or request
+                  and finishing. Use the free MTBOSS Budget Calculator or request
                   a detailed quote.
                 </li>
 
                 <li>
                   <strong>Q5. Can I get a free quote?</strong>
                   <br />
-                  Yes. Use the Get a Construction Quote option on the MTBoss
+                  Yes. Use the Get a Construction Quote option on the MTBOSS
                   website, call the team or message through WhatsApp.
                 </li>
 
@@ -636,7 +636,7 @@ const Content = () => {
                 </li>
 
                 <li>
-                  <strong>Q7. Where is the MTBoss office located?</strong>
+                  <strong>Q7. Where is the MTBOSS office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

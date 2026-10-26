@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect for Hotel in Moradabad | Design & Build',
   description:
-    'Planning a hotel in Moradabad? Learn what hotel design and construction involves, key compliance needs, costs, and how MTBoss supports design-to-build execution.',
+    'Planning a hotel in Moradabad? Learn what hotel design and construction involves, key compliance needs, costs, and how MTBOSS supports design-to-build execution.',
   keywords:
-    'architect for hotel Moradabad, hotel design and construction Moradabad, hotel building contractor Moradabad, hospitality project architect near me, hotel construction company Moradabad, resort architect Moradabad, hotel building cost Moradabad, MTBoss Moradabad, hospitality construction near me, hotel infrastructure contractor',
+    'architect for hotel Moradabad, hotel design and construction Moradabad, hotel building contractor Moradabad, hospitality project architect near me, hotel construction company Moradabad, resort architect Moradabad, hotel building cost Moradabad, MTBOSS Moradabad, hospitality construction near me, hotel infrastructure contractor',
   alternates: {
-    canonical: 'https://www.MTBoss.in/architect-for-hotel-construction-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/architect-for-hotel-construction-in-moradabad',
   },
   openGraph: {
     title: 'Architect for Hotel in Moradabad | Design & Build',
     description:
-      'Planning a hotel in Moradabad? Learn what hotel design and construction involves, key compliance needs, costs, and how MTBoss supports design-to-build execution.',
-    url: 'https://www.MTBoss.in/architect-for-hotel-construction-in-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Planning a hotel in Moradabad? Learn what hotel design and construction involves, key compliance needs, costs, and how MTBOSS supports design-to-build execution.',
+    url: 'https://www.MTBOSS.in/architect-for-hotel-construction-in-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-hotel-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-hotel-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect for Hotel Construction in Moradabad - MTBoss',
+        alt: 'Architect for Hotel Construction in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect for Hotel in Moradabad | Design & Build',
     description:
-      'Planning a hotel in Moradabad? Learn what hotel design and construction involves, key compliance needs, costs, and how MTBoss supports design-to-build execution.',
-    images: ['https://www.MTBoss.in/og-architect-hotel-moradabad.jpg'],
+      'Planning a hotel in Moradabad? Learn what hotel design and construction involves, key compliance needs, costs, and how MTBOSS supports design-to-build execution.',
+    images: ['https://www.MTBOSS.in/og-architect-hotel-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/architect-for-hotel-construction-in-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/architect-for-hotel-construction-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

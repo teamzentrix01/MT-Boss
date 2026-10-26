@@ -6,27 +6,27 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Building Contractor Quotation in Moradabad | MTBoss',
+  title: 'Building Contractor Quotation in Moradabad | MTBOSS',
   description:
-    'Get a clear building contractor quotation in Moradabad from MTBoss. Itemised estimates, free site visit and transparent pricing for homes, shops and factories.',
+    'Get a clear building contractor quotation in Moradabad from MTBOSS. Itemised estimates, free site visit and transparent pricing for homes, shops and factories.',
   keywords:
-    'building contractor quotation Moradabad, construction quotation Moradabad, building estimate Moradabad, house construction quotation Moradabad, civil contractor quotation Moradabad, construction cost estimate Moradabad, itemised construction quotation Moradabad, building contractor estimate Moradabad, MTBoss quotation Moradabad, construction quote Moradabad',
+    'building contractor quotation Moradabad, construction quotation Moradabad, building estimate Moradabad, house construction quotation Moradabad, civil contractor quotation Moradabad, construction cost estimate Moradabad, itemised construction quotation Moradabad, building contractor estimate Moradabad, MTBOSS quotation Moradabad, construction quote Moradabad',
   alternates: {
     canonical:
-      'https://www.MTBoss.in/building-contractor-quotation-moradabad',
+      'https://www.MTBOSS.in/building-contractor-quotation-moradabad',
   },
   openGraph: {
-    title: 'Building Contractor Quotation in Moradabad | MTBoss',
+    title: 'Building Contractor Quotation in Moradabad | MTBOSS',
     description:
-      'Get a clear building contractor quotation in Moradabad from MTBoss. Itemised estimates, free site visit and transparent pricing for homes, shops and factories.',
-    url: 'https://www.MTBoss.in/building-contractor-quotation-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Get a clear building contractor quotation in Moradabad from MTBOSS. Itemised estimates, free site visit and transparent pricing for homes, shops and factories.',
+    url: 'https://www.MTBOSS.in/building-contractor-quotation-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-building-contractor-quotation-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-building-contractor-quotation-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Building Contractor Quotation in Moradabad - MTBoss',
+        alt: 'Building Contractor Quotation in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -34,11 +34,11 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Building Contractor Quotation in Moradabad | MTBoss',
+    title: 'Building Contractor Quotation in Moradabad | MTBOSS',
     description:
-      'Get a clear building contractor quotation in Moradabad from MTBoss. Itemised estimates, free site visit and transparent pricing for homes, shops and factories.',
+      'Get a clear building contractor quotation in Moradabad from MTBOSS. Itemised estimates, free site visit and transparent pricing for homes, shops and factories.',
     images: [
-      'https://www.MTBoss.in/og-building-contractor-quotation-moradabad.jpg',
+      'https://www.MTBOSS.in/og-building-contractor-quotation-moradabad.jpg',
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/building-contractor-quotation-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/building-contractor-quotation-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

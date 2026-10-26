@@ -14,7 +14,7 @@ const Content = () => {
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Hiring the right building contractor in Moradabad shapes the entire outcome of your construction project — from how well the structure holds up over decades to how smoothly the process goes from planning to handover. As Moradabad continues to grow with new housing colonies, retail spaces, and industrial units, the number of building contractors in the market has increased too, making it more important than ever to know how to separate an experienced, reliable partner from an unverified one. This guide covers what a building contractor actually does, the services they typically offer, cost factors, and why MTBoss Construction Private Limited is a well-regarded name in the local building industry.
+                Hiring the right building contractor in Moradabad shapes the entire outcome of your construction project — from how well the structure holds up over decades to how smoothly the process goes from planning to handover. As Moradabad continues to grow with new housing colonies, retail spaces, and industrial units, the number of building contractors in the market has increased too, making it more important than ever to know how to separate an experienced, reliable partner from an unverified one. This guide covers what a building contractor actually does, the services they typically offer, cost factors, and why MTBOSS Construction Private Limited is a well-regarded name in the local building industry.
               </p>
             </section>
 
@@ -112,10 +112,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBoss Stands Out Among Building Contractors in Moradabad
+                Why MTBOSS Stands Out Among Building Contractors in Moradabad
               </h3>
               <p className="mb-3">
-                Based on their published company profile, MTBoss Construction Private Limited offers a combined construction-and-services ecosystem that goes beyond what a typical local building contractor provides:
+                Based on their published company profile, MTBOSS Construction Private Limited offers a combined construction-and-services ecosystem that goes beyond what a typical local building contractor provides:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of experience, having started as a small contracting firm back in 2002</li>
@@ -237,9 +237,9 @@ const Content = () => {
                 If you&apos;re ready to start your residential, commercial, or renovation project with a reliable building contractor in Moradabad, reach out directly using the details below:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.MTBoss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBoss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:MTBoss2016@gmail.com" className="text-blue-600 underline">MTBoss2016@gmail.com</a></li>
+                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
@@ -257,7 +257,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who is a reliable building contractor in Moradabad?</strong>
                   <br />
-                  MTBoss Construction Private Limited, with 22+ years of experience and 450+ completed projects.
+                  MTBOSS Construction Private Limited, with 22+ years of experience and 450+ completed projects.
                 </li>
                 <li>
                   <strong>Q2. What is the average building cost per square foot in Moradabad?</strong>
@@ -265,27 +265,27 @@ const Content = () => {
                   Around ₹700–₹800 per sq. ft. for standard-quality construction, depending on design and finish.
                 </li>
                 <li>
-                  <strong>Q3. Does MTBoss offer a free construction estimate?</strong>
+                  <strong>Q3. Does MTBOSS offer a free construction estimate?</strong>
                   <br />
                   Yes, their online Budget Calculator provides an instant BOQ-based estimate at no cost.
                 </li>
                 <li>
-                  <strong>Q4. What quality packages does MTBoss offer?</strong>
+                  <strong>Q4. What quality packages does MTBOSS offer?</strong>
                   <br />
                   Four packages — Basic, Standard, Premium, and Luxury — to fit different budgets.
                 </li>
                 <li>
-                  <strong>Q5. Does MTBoss handle home repairs too?</strong>
+                  <strong>Q5. Does MTBOSS handle home repairs too?</strong>
                   <br />
                   Yes, including electrical, plumbing, AC repair, painting, and pest control services.
                 </li>
                 <li>
-                  <strong>Q6. Can I purchase building materials directly from MTBoss?</strong>
+                  <strong>Q6. Can I purchase building materials directly from MTBOSS?</strong>
                   <br />
                   Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates.
                 </li>
                 <li>
-                  <strong>Q7. Does MTBoss assist with property buying or selling in Moradabad?</strong>
+                  <strong>Q7. Does MTBOSS assist with property buying or selling in Moradabad?</strong>
                   <br />
                   Yes, they provide verified property listings for buying, selling, and renting, with zero rental brokerage.
                 </li>

@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Architect for College in Bareilly: Campus Planning for Learning,
-            Movement and Growth by MTBoss
+            Movement and Growth by MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -22,14 +22,14 @@ const Content = () => {
                 crowded and tiring, and it becomes expensive to correct once built.
               </p>
               <p className="mt-3">
-                MTBoss is an architect, interior design and construction company
+                MTBOSS is an architect, interior design and construction company
                 serving Moradabad and Bareilly.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                College Architecture Services from MTBoss
+                College Architecture Services from MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -278,7 +278,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Because moisture and termites damage books and furniture,
-                waterproofing and pest control matter in library design. MTBoss
+                waterproofing and pest control matter in library design. MTBOSS
                 offers both services as part of the construction team.
               </p>
             </section>
@@ -585,7 +585,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                You can try the Budget Calculator on the MTBoss website to set
+                You can try the Budget Calculator on the MTBOSS website to set
                 realistic expectations. Final pricing and consultation terms are
                 shared after discussing your project.
               </p>
@@ -614,7 +614,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBoss Process for Colleges
+                The MTBOSS Process for Colleges
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -664,7 +664,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MTBoss
+                Reasons to Choose MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -674,7 +674,7 @@ const Content = () => {
                 <li>
                   <strong>One team for design and execution.</strong> Architecture,
                   interior design, civil work, plumbing, electrical, carpentry,
-                  painting and more are available through MTBoss.
+                  painting and more are available through MTBOSS.
                 </li>
                 <li>
                   <strong>Transparent communication.</strong> You know the scope
@@ -696,7 +696,7 @@ const Content = () => {
                 Service Areas in Bareilly
               </h3>
               <p>
-                MTBoss serves clients in Bareilly, including areas such as Civil
+                MTBOSS serves clients in Bareilly, including areas such as Civil
                 Lines, Rampur Garden, Izzatnagar, Subhash Nagar, DD Puram and
                 Pilibhit Bypass Road. If your plot or campus is elsewhere in or
                 around Bareilly, contact us and we will confirm availability.
@@ -705,7 +705,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your College with MTBoss
+                Plan Your College with MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -722,10 +722,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -736,16 +736,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/"
+                  href="https://www.MTBOSS.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss website
+                  MTBOSS website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -756,7 +756,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 Build a campus that supports learning today and grows with you
-                tomorrow. Contact MTBoss today for college architecture in
+                tomorrow. Contact MTBOSS today for college architecture in
                 Bareilly.
               </p>
             </section>
@@ -768,7 +768,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBoss provide an architect for college in Bareilly?
+                    Q1. Does MTBOSS provide an architect for college in Bareilly?
                   </strong>
                   <br />
                   Yes. We offer planning, design and construction guidance for
@@ -838,7 +838,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

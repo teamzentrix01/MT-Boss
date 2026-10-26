@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Best Modular Kitchen in Moradabad | MTBoss',
+  title: 'Best Modular Kitchen in Moradabad | MTBOSS',
   description:
-    'Choosing the best modular kitchen in Moradabad? Judge companies on planning, materials, installation and service. See how MTBoss measures up.',
+    'Choosing the best modular kitchen in Moradabad? Judge companies on planning, materials, installation and service. See how MTBOSS measures up.',
   keywords:
-    'best modular kitchen Moradabad, modular kitchen Moradabad, modular kitchen company Moradabad, modular kitchen design Moradabad, modular kitchen installation Moradabad, modular kitchen price Moradabad, modular kitchen contractor Moradabad, kitchen interior Moradabad, best modular kitchen near me Moradabad, MTBoss modular kitchen Moradabad',
+    'best modular kitchen Moradabad, modular kitchen Moradabad, modular kitchen company Moradabad, modular kitchen design Moradabad, modular kitchen installation Moradabad, modular kitchen price Moradabad, modular kitchen contractor Moradabad, kitchen interior Moradabad, best modular kitchen near me Moradabad, MTBOSS modular kitchen Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/best-modular-kitchen-moradabad',
+    canonical: 'https://www.MTBOSS.in/best-modular-kitchen-moradabad',
   },
   openGraph: {
-    title: 'Best Modular Kitchen in Moradabad | MTBoss',
+    title: 'Best Modular Kitchen in Moradabad | MTBOSS',
     description:
-      'Choosing the best modular kitchen in Moradabad? Judge companies on planning, materials, installation and service. See how MTBoss measures up.',
-    url: 'https://www.MTBoss.in/best-modular-kitchen-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Choosing the best modular kitchen in Moradabad? Judge companies on planning, materials, installation and service. See how MTBOSS measures up.',
+    url: 'https://www.MTBOSS.in/best-modular-kitchen-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-best-modular-kitchen-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-best-modular-kitchen-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Best Modular Kitchen in Moradabad - MTBoss',
+        alt: 'Best Modular Kitchen in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Best Modular Kitchen in Moradabad | MTBoss',
+    title: 'Best Modular Kitchen in Moradabad | MTBOSS',
     description:
-      'Choosing the best modular kitchen in Moradabad? Judge companies on planning, materials, installation and service. See how MTBoss measures up.',
-    images: ['https://www.MTBoss.in/og-best-modular-kitchen-moradabad.jpg'],
+      'Choosing the best modular kitchen in Moradabad? Judge companies on planning, materials, installation and service. See how MTBOSS measures up.',
+    images: ['https://www.MTBOSS.in/og-best-modular-kitchen-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/best-modular-kitchen-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/best-modular-kitchen-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

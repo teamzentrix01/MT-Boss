@@ -113,7 +113,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
 
       // Trigger cross-component sync event
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('mtbossShopProductsUpdated'));
+        window.dispatchEvent(new Event('MTBOSSShopProductsUpdated'));
       }
     } catch (err) {
       setError(err.message);
@@ -154,7 +154,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
       await fetchProducts();
 
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('mtbossShopProductsUpdated'));
+        window.dispatchEvent(new Event('MTBOSSShopProductsUpdated'));
       }
     } catch (err) {
       setError(err.message);

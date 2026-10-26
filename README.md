@@ -62,13 +62,13 @@ SMTP_HOST=smtp.example.com
 SMTP_PORT=587
 SMTP_USER=notifications@example.com
 SMTP_PASS=replace-with-app-password
-SMTP_FROM=MTBoss Construction <notifications@example.com>
+SMTP_FROM=MTBOSS Construction <notifications@example.com>
 
 WHATSAPP_PHONE_NUMBER_ID=your-meta-phone-number-id
 WHATSAPP_ACCESS_TOKEN=your-permanent-system-user-token
 ADMIN_WHATSAPP_NUMBER=919876543210
 
-COMPANY_NAME=MTBoss Construction
+COMPANY_NAME=MTBOSS Construction
 COMPANY_PHONE=919876543210
 COMPANY_LOGO_URL=https://your-domain.example/logo.png
 NEXT_PUBLIC_APP_URL=https://your-domain.example

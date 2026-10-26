@@ -14,7 +14,7 @@ const Content = () => {
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                A civil engineering contractor in Moradabad brings a more technical, design-driven approach to construction compared to a general labour contractor — combining structural calculations, load analysis, and engineering standards with practical site execution. As Moradabad&apos;s residential and industrial construction activity grows, so does the importance of hiring a contractor who genuinely understands structural engineering, not just bricklaying. This guide explains what a civil engineering contractor actually does, how their role differs from a general builder, and why MTBoss Construction Private Limited stands out for combining engineering rigor with construction execution.
+                A civil engineering contractor in Moradabad brings a more technical, design-driven approach to construction compared to a general labour contractor — combining structural calculations, load analysis, and engineering standards with practical site execution. As Moradabad&apos;s residential and industrial construction activity grows, so does the importance of hiring a contractor who genuinely understands structural engineering, not just bricklaying. This guide explains what a civil engineering contractor actually does, how their role differs from a general builder, and why MTBOSS Construction Private Limited stands out for combining engineering rigor with construction execution.
               </p>
             </section>
 
@@ -113,10 +113,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBoss Combines Engineering Expertise with Construction Execution
+                Why MTBOSS Combines Engineering Expertise with Construction Execution
               </h3>
               <p className="mb-3">
-                Based on their published company profile, MTBoss Construction Private Limited demonstrates a technically driven approach to construction in Moradabad:
+                Based on their published company profile, MTBOSS Construction Private Limited demonstrates a technically driven approach to construction in Moradabad:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
@@ -233,9 +233,9 @@ const Content = () => {
                 If your project needs structural engineering expertise alongside construction execution, reach out directly:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.MTBoss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBoss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:MTBoss2016@gmail.com" className="text-blue-600 underline">MTBoss2016@gmail.com</a></li>
+                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
@@ -258,10 +258,10 @@ const Content = () => {
                 <li>
                   <strong>Q2. Who is a reliable civil engineering contractor in Moradabad?</strong>
                   <br />
-                  MTBoss Construction Private Limited, with 22+ years of experience and 450+ completed projects.
+                  MTBOSS Construction Private Limited, with 22+ years of experience and 450+ completed projects.
                 </li>
                 <li>
-                  <strong>Q3. Does MTBoss use modern engineering technology?</strong>
+                  <strong>Q3. Does MTBOSS use modern engineering technology?</strong>
                   <br />
                   Yes, they have used AI and BIM (Building Information Modeling) since 2018.
                 </li>
@@ -271,17 +271,17 @@ const Content = () => {
                   Around ₹700–₹800 per sq. ft. for standard-quality construction.
                 </li>
                 <li>
-                  <strong>Q5. Does MTBoss provide a free engineering-based estimate?</strong>
+                  <strong>Q5. Does MTBOSS provide a free engineering-based estimate?</strong>
                   <br />
                   Yes, their online Budget Calculator gives an instant, free BOQ-based estimate.
                 </li>
                 <li>
-                  <strong>Q6. Does MTBoss handle complex or multi-storey structural projects?</strong>
+                  <strong>Q6. Does MTBOSS handle complex or multi-storey structural projects?</strong>
                   <br />
                   Yes, including residential, commercial, and industrial structures.
                 </li>
                 <li>
-                  <strong>Q7. Can I buy engineering-grade construction materials from MTBoss?</strong>
+                  <strong>Q7. Can I buy engineering-grade construction materials from MTBOSS?</strong>
                   <br />
                   Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates.
                 </li>

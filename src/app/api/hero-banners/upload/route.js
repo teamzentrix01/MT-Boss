@@ -15,13 +15,13 @@ export async function POST(req) {
     }
     const requestedFolder = body.get('folder');
     const allowedFolders = new Set([
-      'mtboss/quick-services',
-      'mtboss/quick-service-subcategories',
+      'MTBOSS/quick-services',
+      'MTBOSS/quick-service-subcategories',
     ]);
-    const folder = allowedFolders.has(requestedFolder) ? requestedFolder : 'mtboss/hero-banners';
+    const folder = allowedFolders.has(requestedFolder) ? requestedFolder : 'MTBOSS/hero-banners';
 
     let fileToUpload = file;
-    if (folder === 'mtboss/quick-services') {
+    if (folder === 'MTBOSS/quick-services') {
       try {
         const sharp = (await import('sharp')).default;
         const inputBuffer = Buffer.from(await file.arrayBuffer());

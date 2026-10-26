@@ -21,7 +21,7 @@ const Content = () => {
                 budget, instead of asking you to adjust your home to the furniture.
               </p>
               <p>
-                MTBoss is an architect, interior design and construction company
+                MTBOSS is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work, transparent
                 pricing and on-time delivery. Carpenter is one of our quick home
                 services, and furniture is one of the most common reasons customers
@@ -32,7 +32,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Custom Furniture Making at MTBoss
+                Custom Furniture Making at MTBOSS
               </h3>
               <p className="mb-3">
                 Custom furniture means designed for your space, made to your
@@ -258,7 +258,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Because MTBoss also offers painting, wallpaper installation and PVC
+                Because MTBOSS also offers painting, wallpaper installation and PVC
                 panel services, furniture finishes can be matched with walls and
                 ceilings in one project.
               </p>
@@ -389,7 +389,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBoss Furniture Process
+                The MTBOSS Furniture Process
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -433,7 +433,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Strengths of MTBoss as Your Furniture Carpenter
+                Strengths of MTBOSS as Your Furniture Carpenter
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -478,7 +478,7 @@ const Content = () => {
                 <li>Site conditions and installation effort</li>
               </ul>
               <p className="mt-3">
-                You can use the MTBoss Budget Calculator on our website to plan
+                You can use the MTBOSS Budget Calculator on our website to plan
                 renovation spending. Final furniture pricing is shared after the
                 site visit and design discussion.
               </p>
@@ -506,7 +506,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBoss provides furniture carpenter services across Moradabad,
+                MTBOSS provides furniture carpenter services across Moradabad,
                 including residential areas such as Civil Lines, Lajpat Nagar, Delhi
                 Road, Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -516,7 +516,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Furniture Project with MTBoss
+                Start Your Furniture Project with MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -533,10 +533,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -547,16 +547,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/quick/carpenter"
+                  href="https://www.MTBOSS.in/quick/carpenter"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss Carpenter page
+                  MTBOSS Carpenter page
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -566,7 +566,7 @@ const Content = () => {
                 .
               </p>
               <p className="mt-3">
-                Build furniture that fits your home and lasts. Contact MTBoss today
+                Build furniture that fits your home and lasts. Contact MTBOSS today
                 for a furniture carpenter in Moradabad.
               </p>
             </section>
@@ -578,7 +578,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBoss provide furniture carpenter services in
+                    Q1. Does MTBOSS provide furniture carpenter services in
                     Moradabad?
                   </strong>
                   <br />
@@ -630,12 +630,12 @@ const Content = () => {
                 <li>
                   <strong>Q9. Can you also handle painting or ceiling work?</strong>
                   <br />
-                  Yes. MTBoss offers painting, false ceiling, tiles and other
+                  Yes. MTBOSS offers painting, false ceiling, tiles and other
                   services alongside carpentry.
                 </li>
                 <li>
                   <strong>
-                    Q10. How do I book a furniture carpenter from MTBoss?
+                    Q10. How do I book a furniture carpenter from MTBOSS?
                   </strong>
                   <br />
                   Call or WhatsApp{" "}
@@ -647,7 +647,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

@@ -66,7 +66,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                At MTBoss, our office sits on Harthala Kanth Road, so clients can
+                At MTBOSS, our office sits on Harthala Kanth Road, so clients can
                 visit, see material samples and talk directly with the people who
                 will manage their project.
               </p>
@@ -211,7 +211,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A clear process saves time, money and frustration. Here is how
-                projects typically move at MTBoss.
+                projects typically move at MTBOSS.
               </p>
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
@@ -290,7 +290,7 @@ const Content = () => {
               <p className="mt-3">
                 You can also use the{" "}
                 <a
-                  href="https://www.MTBoss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -318,7 +318,7 @@ const Content = () => {
                 someone else.
               </p>
               <p className="mb-3">
-                A design-and-build company removes that gap. At MTBoss, planning,
+                A design-and-build company removes that gap. At MTBOSS, planning,
                 construction and interior execution sit under one roof. That gives
                 you:
               </p>
@@ -437,7 +437,7 @@ const Content = () => {
               </p>
               <p className="mb-3">
                 If you have been looking for a dependable interior designer near
-                you in Moradabad, MTBoss is ready to help you turn your ideas into
+                you in Moradabad, MTBOSS is ready to help you turn your ideas into
                 a home or workplace you enjoy every day.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -453,10 +453,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -466,12 +466,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -488,7 +488,7 @@ const Content = () => {
                     Moradabad?
                   </strong>
                   <br />
-                  Yes. MTBoss serves Moradabad and Bareilly with on-site visits,
+                  Yes. MTBOSS serves Moradabad and Bareilly with on-site visits,
                   design planning and complete project execution.
                 </li>
                 <li>

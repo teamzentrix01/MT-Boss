@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Contractor for Small Work in Moradabad: MTBoss
+            Civil Contractor for Small Work in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -32,7 +32,7 @@ const Content = () => {
                 planning, skilled workers and clear pricing even to modest jobs.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited serves clients across
+                MTBOSS Construction Private Limited serves clients across
                 Moradabad and Bareilly, with services that run from planning to
                 completion. Alongside full construction, we offer repair,
                 renovation, waterproofing and a wide list of quick home services,
@@ -112,10 +112,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work spans residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -200,7 +200,7 @@ const Content = () => {
                 Rebuilding a collapsed wall, raising height after foundation
                 checks, repairing gate pillars or installing readymade boundary
                 sections are all part of our small-work scope. The Readymade
-                Boundary service on MTBoss.in suits quick, economical installations
+                Boundary service on MTBOSS.in suits quick, economical installations
                 [confirm panel types and sizes].
               </p>
 
@@ -235,10 +235,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Quick Services Available Through MTBoss
+                Quick Services Available Through MTBOSS
               </h3>
               <p className="mb-3">
-                Many small jobs fall under the Quick Services listed on MTBoss.in.
+                Many small jobs fall under the Quick Services listed on MTBOSS.in.
                 These include:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -309,7 +309,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  MTBoss.in, call, or send a WhatsApp message with photos and a
+                  MTBOSS.in, call, or send a WhatsApp message with photos and a
                   short description.
                 </li>
                 <li>
@@ -385,7 +385,7 @@ const Content = () => {
                 <li>Number of workers and days needed</li>
               </ul>
               <p className="mt-3">
-                You can also use the Budget Calculator on MTBoss.in for an early
+                You can also use the Budget Calculator on MTBOSS.in for an early
                 idea of larger works. For small jobs, our team prepares a direct
                 estimate after reviewing photos or visiting the site [confirm
                 whether a minimum charge or minimum job size applies].
@@ -460,7 +460,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -513,7 +513,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book Your Small Civil Work with MTBoss
+                Book Your Small Civil Work with MTBOSS
               </h3>
               <p className="mb-3">
                 Ready to get your repair or small project done properly? Contact
@@ -523,12 +523,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -546,10 +546,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -562,7 +562,7 @@ const Content = () => {
                 respond with the next steps.
               </p>
               <p className="mt-3">
-                Choose MTBoss, your trusted civil contractor for small work in
+                Choose MTBOSS, your trusted civil contractor for small work in
                 Moradabad, for repairs and additions that are done properly,
                 priced clearly and finished neatly.
               </p>
@@ -594,7 +594,7 @@ const Content = () => {
                 <li>
                   <strong>Q4. How can I request a quote for a small job?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

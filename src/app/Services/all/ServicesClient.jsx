@@ -61,7 +61,7 @@ export default function AllServicesPage() {
             Construction <span className="text-[var(--brand-blue)]">Services</span>
           </h1>
           <p className={`text-xs sm:text-sm max-w-xl mx-auto leading-relaxed ${muted}`}>
-            MTBoss provides end-to-end engineering and infrastructure services — from conceptual design to final construction.
+            MTBOSS provides end-to-end engineering and infrastructure services — from conceptual design to final construction.
           </p>
         </div>
       </section>

@@ -34,7 +34,7 @@ const Content = () => {
     "Budget-friendly: smart material choices that look good and stay within your limit.",
   ];
 
-  const chooseMTBoss = [
+  const chooseMTBOSS = [
     "Construction and interior under one roof: one team understands both the structure and the finish.",
     "Transparent pricing: clear quotes and cost explanations from the start.",
     "Budget-friendly options: designs for every range, from affordable to premium.",
@@ -96,7 +96,7 @@ const Content = () => {
 
   const faqs = [
     {
-      question: "Q1. Does MTBoss offer home interior design in Moradabad?",
+      question: "Q1. Does MTBOSS offer home interior design in Moradabad?",
       answer:
         "Yes. We handle interior design and execution for flats, houses, villas and bungalows.",
     },
@@ -138,7 +138,7 @@ const Content = () => {
     {
       question: "Q9. How do I book a consultation?",
       answer:
-        "Call or WhatsApp +91 94584 10866, email MTBoss2016@gmail.com, or use the website enquiry form.",
+        "Call or WhatsApp +91 94584 10866, email MTBOSS2016@gmail.com, or use the website enquiry form.",
     },
   ];
 
@@ -147,7 +147,7 @@ const Content = () => {
       <div className="flex flex-col lg:flex-row">
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Home Interior Designer in Moradabad – MTBoss
+            Home Interior Designer in Moradabad – MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -157,7 +157,7 @@ const Content = () => {
               </h3>
 
               <p className="mb-3">
-                MTBoss (MTBoss Construction Private Limited) is a
+                MTBOSS (MTBOSS Construction Private Limited) is a
                 Moradabad-based construction and home services company. We
                 also help homeowners design and finish their interiors.
               </p>
@@ -181,7 +181,7 @@ const Content = () => {
 
               <p className="mb-3">
                 If you are searching for a home interior designer in Moradabad,
-                MTBoss gives you design, materials and execution through one
+                MTBOSS gives you design, materials and execution through one
                 team.
               </p>
 
@@ -413,9 +413,9 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                Why Choose MTBoss as Your Interior Designer in Moradabad
+                Why Choose MTBOSS as Your Interior Designer in Moradabad
               </SectionTitle>
-              <BulletList items={chooseMTBoss} />
+              <BulletList items={chooseMTBOSS} />
             </section>
 
             <section>
@@ -458,14 +458,14 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>More From MTBoss</SectionTitle>
+              <SectionTitle>More From MTBOSS</SectionTitle>
               <BulletList
                 items={[
                   "Construction services: build your house from the ground up with our residential construction team.",
                   "Property services: buy, sell or rent verified properties in and around Moradabad.",
                   "Quick home services: electrical, plumbing, painting, AC repair, pest control and more.",
                   "Materials: cement, TMT steel, bricks, tiles and paints for your project.",
-                  "Franchise and agent opportunities: join the MTBoss network.",
+                  "Franchise and agent opportunities: join the MTBOSS network.",
                 ]}
               />
 
@@ -476,7 +476,7 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Contact MTBoss for Home Interior Design</SectionTitle>
+              <SectionTitle>Contact MTBOSS for Home Interior Design</SectionTitle>
 
               <p className="mb-3">
                 Book a consultation for your flat, house, villa, bungalow or
@@ -485,7 +485,7 @@ const Content = () => {
 
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Phone / WhatsApp:</strong> +91 94584 10866
@@ -493,21 +493,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>

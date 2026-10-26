@@ -10,4 +10,4 @@ Disallow: /payment/
 Disallow: /material-orders/
 Disallow: /inventory/
 
-Sitemap: https://www.MTBoss.in/sitemap.xml
+Sitemap: https://www.MTBOSS.in/sitemap.xml

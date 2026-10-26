@@ -103,7 +103,7 @@ function CompanyStory({ dark }) {
           <div className="relative overflow-hidden">
             <img
               src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1000&q=80"
-              alt="Construction site managed by MTBoss construction private limited"
+              alt="Construction site managed by MTBOSS construction private limited"
               className="w-full h-72 object-cover"
             />
             <div className={`absolute inset-0 ${dark ? "bg-black/20" : "bg-[var(--brand-blue-deep)]/10"}`} />
@@ -288,7 +288,7 @@ function AboutContent({ dark, onShowTeam }) {
               <p className={`text-[10px] uppercase tracking-[0.3em] font-black mb-2 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>
                 Leadership
               </p>
-              <h2 className={`text-2xl font-black ${dark ? "text-white" : "text-zinc-900"}`}>Meet the people behind MTBoss</h2>
+              <h2 className={`text-2xl font-black ${dark ? "text-white" : "text-zinc-900"}`}>Meet the people behind MTBOSS</h2>
             </div>
             <button
               onClick={onShowTeam}

@@ -60,7 +60,7 @@ async function saveSiteImage(file) {
   const uploadData = new FormData();
   uploadData.append('file', file);
   uploadData.append('upload_preset', uploadPreset);
-  uploadData.append('folder', 'MTBoss/calculator-sites');
+  uploadData.append('folder', 'MTBOSS/calculator-sites');
 
   const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
     method: 'POST',
@@ -202,11 +202,11 @@ export async function POST(req) {
       try {
         await sendMail({
           to: String(email).trim(),
-          subject: 'Your MTBoss budget estimate OTP',
-          text: `Your MTBoss budget estimate OTP is ${otp}. It expires in ${EXPIRY_MINUTES} minutes.`,
+          subject: 'Your MTBOSS budget estimate OTP',
+          text: `Your MTBOSS budget estimate OTP is ${otp}. It expires in ${EXPIRY_MINUTES} minutes.`,
           html: `
           <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px;background:#fff;color:#111;">
-            <h2 style="margin:0 0 8px;font-size:22px;">MTBoss Budget Estimate OTP</h2>
+            <h2 style="margin:0 0 8px;font-size:22px;">MTBOSS Budget Estimate OTP</h2>
             <p style="color:#555;line-height:1.6;">Use this OTP to verify your quote request and download your construction budget estimate. It expires in <strong>${EXPIRY_MINUTES} minutes</strong>.</p>
             <div style="background:#f4f5f7;border-radius:10px;text-align:center;padding:22px;margin:18px 0;">
               <div style="font-size:34px;font-weight:900;letter-spacing:10px;">${otp}</div>

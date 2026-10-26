@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Pest Control Near Me in Moradabad',
   description:
-    'Searching for pest control near me in Moradabad? MTBoss treats cockroaches, termites, bed bugs, ants, mosquitoes and rodents at homes, shops and offices. Call or WhatsApp.',
+    'Searching for pest control near me in Moradabad? MTBOSS treats cockroaches, termites, bed bugs, ants, mosquitoes and rodents at homes, shops and offices. Call or WhatsApp.',
   keywords:
-    'pest control near me Moradabad, pest control Moradabad, pest control services near me Moradabad, pest control company Moradabad, cockroach control near me Moradabad, termite control near me Moradabad, bed bug control near me Moradabad, mosquito control near me Moradabad, rodent control near me Moradabad, MTBoss pest control Moradabad',
+    'pest control near me Moradabad, pest control Moradabad, pest control services near me Moradabad, pest control company Moradabad, cockroach control near me Moradabad, termite control near me Moradabad, bed bug control near me Moradabad, mosquito control near me Moradabad, rodent control near me Moradabad, MTBOSS pest control Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/pest-control-near-me-moradabad',
+    canonical: 'https://www.MTBOSS.in/pest-control-near-me-moradabad',
   },
   openGraph: {
     title: 'Pest Control Near Me in Moradabad',
     description:
-      'Searching for pest control near me in Moradabad? MTBoss treats cockroaches, termites, bed bugs, ants, mosquitoes and rodents at homes, shops and offices. Call or WhatsApp.',
-    url: 'https://www.MTBoss.in/pest-control-near-me-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Searching for pest control near me in Moradabad? MTBOSS treats cockroaches, termites, bed bugs, ants, mosquitoes and rodents at homes, shops and offices. Call or WhatsApp.',
+    url: 'https://www.MTBOSS.in/pest-control-near-me-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-pest-control-near-me-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-pest-control-near-me-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Pest Control Near Me in Moradabad - MTBoss',
+        alt: 'Pest Control Near Me in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Pest Control Near Me in Moradabad',
     description:
-      'Searching for pest control near me in Moradabad? MTBoss treats cockroaches, termites, bed bugs, ants, mosquitoes and rodents at homes, shops and offices. Call or WhatsApp.',
-    images: ['https://www.MTBoss.in/og-pest-control-near-me-moradabad.jpg'],
+      'Searching for pest control near me in Moradabad? MTBOSS treats cockroaches, termites, bed bugs, ants, mosquitoes and rodents at homes, shops and offices. Call or WhatsApp.',
+    images: ['https://www.MTBOSS.in/og-pest-control-near-me-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/pest-control-near-me-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/pest-control-near-me-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

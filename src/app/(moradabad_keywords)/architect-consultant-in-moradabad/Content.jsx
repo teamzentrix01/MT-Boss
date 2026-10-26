@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Consultant in Moradabad: MTBoss
+            Architect Consultant in Moradabad: MTBOSS
           </h2>
 
 
@@ -22,7 +22,7 @@ const Content = () => {
                 That is the value of an architect consultant in Moradabad: an experienced professional who advises you before you commit money, checks your plans and keeps your project on track.
               </p>
               <p className="mt-3">
-                MTBoss is a Moradabad-based construction, property and home services company. Our team advises on and designs homes, shops, showrooms, hotels, schools and industrial buildings, and can also build them. Consultancy and construction sit under one roof, so the advice you get is practical, priced realistically and backed by people who build every day.
+                MTBOSS is a Moradabad-based construction, property and home services company. Our team advises on and designs homes, shops, showrooms, hotels, schools and industrial buildings, and can also build them. Consultancy and construction sit under one roof, so the advice you get is practical, priced realistically and backed by people who build every day.
               </p>
            
             </section>
@@ -106,10 +106,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss: Architectural Consultancy with Construction Expertise
+                MTBOSS: Architectural Consultancy with Construction Expertise
               </h3>
               <p className="mb-3">
-                Many consultants only advise. Many builders only build. MTBoss does both, which makes our advice more practical.
+                Many consultants only advise. Many builders only build. MTBOSS does both, which makes our advice more practical.
               </p>
               <p className="mb-3">
                 What you get when you work with us:
@@ -136,7 +136,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Architect Consultant Services by MTBoss in Moradabad
+                Architect Consultant Services by MTBOSS in Moradabad
               </h3>
 
 
@@ -151,9 +151,9 @@ const Content = () => {
                 Budget Planning and Cost Estimation
               </h4>
               <p className="mb-3">
-                We prepare clear estimates and help you decide where to spend and where to save. You can also try the MTBoss{" "}
+                We prepare clear estimates and help you decide where to spend and where to save. You can also try the MTBOSS{" "}
                 <a
-                  href="https://www.MTBoss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -199,14 +199,14 @@ const Content = () => {
                 Interior Design Coordination
               </h4>
               <p className="mb-3">
-                Because MTBoss also offers interior design, your architectural and interior plans can be developed together for a seamless result.
+                Because MTBOSS also offers interior design, your architectural and interior plans can be developed together for a seamless result.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Design and Construction Advice from MTBoss That Saves Money
+                Design and Construction Advice from MTBOSS That Saves Money
               </h3>
               <p className="mb-3">
                 Some of the most useful advice is simple. Owners often save the most by acting on these points:
@@ -267,14 +267,14 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss is happy to help at any of these points, whether you need one meeting or a complete project.
+                MTBOSS is happy to help at any of these points, whether you need one meeting or a complete project.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Consultation Process at MTBoss, Step by Step
+                Consultation Process at MTBOSS, Step by Step
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -288,7 +288,7 @@ const Content = () => {
                 </li>
                
                 <li>
-                  <strong>Step 6: Construction guidance or execution.</strong> You can hire MTBoss to build, or use our advice and supervision with your own contractor.
+                  <strong>Step 6: Construction guidance or execution.</strong> You can hire MTBOSS to build, or use our advice and supervision with your own contractor.
                 </li>
                 <li>
                   <strong>Step 7: Inspection and handover.</strong> We check quality at key stages and support a clean, complete handover.
@@ -329,7 +329,7 @@ const Content = () => {
                 Climate-Smart Advice for Moradabad Buildings
               </h3>
               <p className="mb-3">
-                Good advice responds to local conditions. For projects in Moradabad, MTBoss focuses on:
+                Good advice responds to local conditions. For projects in Moradabad, MTBOSS focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -391,14 +391,14 @@ const Content = () => {
                 <li>Professional details are shown where they apply.</li>
               </ul>
               <p className="mt-3">
-                MTBoss welcomes every one of these checks and answers them openly during your free consultation.
+                MTBOSS welcomes every one of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MTBoss in Moradabad
+                Areas Served by MTBOSS in Moradabad
               </h3>
               <p className="mb-3">
                 We work with home and business owners across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies and commercial belts.
@@ -411,18 +411,18 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Architect Consultant FAQs
+                MTBOSS Architect Consultant FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MTBoss offer architect consultancy in Moradabad?</strong>
+                  <strong>Q1. Does MTBOSS offer architect consultancy in Moradabad?</strong>
                   <br />
                   Yes. We advise on design, plan review, budgets, quotations and site quality.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MTBoss offers a free consultation and site visit.
+                  Yes. MTBOSS offers a free consultation and site visit.
                 </li>
                 <li>
                   <strong>Q3. Can you review a plan I already have?</strong>
@@ -435,7 +435,7 @@ const Content = () => {
                   Yes. We review scope, quantities and rates, and point out missing items.
                 </li>
                 <li>
-                  <strong>Q5. Can MTBoss also build my project?</strong>
+                  <strong>Q5. Can MTBOSS also build my project?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
@@ -460,7 +460,7 @@ const Content = () => {
                   We prepare drawings and guide you on typical requirements. Final approvals depend on the relevant authorities.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MTBoss?</strong>
+                  <strong>Q10. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

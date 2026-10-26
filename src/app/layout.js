@@ -165,7 +165,7 @@ export default function RootLayout({ children }) {
         {/* Floating call support button */}
         {!isAdminDashboard && COMPANY_CONTACT.telHref && <a
           href={COMPANY_CONTACT.telHref}
-          aria-label={`Call MTBoss at ${COMPANY_CONTACT.phone}`}
+          aria-label={`Call MTBOSS at ${COMPANY_CONTACT.phone}`}
           title={`Call ${COMPANY_CONTACT.phone}`}
           className="fixed bottom-24 right-6 z-[9999] flex h-14 w-14 items-center justify-center rounded-full bg-[var(--brand-blue)] text-white shadow-lg transition-transform hover:scale-110"
         >

@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect and Builder in Bareilly: MTBoss
+            Architect and Builder in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -16,7 +16,7 @@ const Content = () => {
               <p>
                 An architect and builder in Bareilly is a single company that designs
                 your building and then constructs it, so one team answers for the
-                plan, the cost and the finished result. MTBoss Construction Private
+                plan, the cost and the finished result. MTBOSS Construction Private
                 Limited offers design and construction for Bareilly and Moradabad,
                 with stage-wise approvals and written terms{" "}
                 <span className="text-gray-500">
@@ -38,7 +38,7 @@ const Content = () => {
                 project from brief to handover.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial and industrial properties across
                 Moradabad and Bareilly. Our work follows the promise on our website:
                 planning to completion, with quality work, transparent pricing and
@@ -59,7 +59,7 @@ const Content = () => {
               <p className="mb-3">
                 With one team, three things improve{" "}
                 <span className="text-gray-500">
-                  [adjust to what MTBoss actually does]
+                  [adjust to what MTBOSS actually does]
                 </span>
                 :
               </p>
@@ -86,7 +86,7 @@ const Content = () => {
               <p className="mb-3">
                 Design-and-build is not one fixed arrangement{" "}
                 <span className="text-gray-500">
-                  [confirm which structures MTBoss offers]
+                  [confirm which structures MTBOSS offers]
                 </span>
                 .
               </p>
@@ -167,7 +167,7 @@ const Content = () => {
                 A gate is a pause where you approve the work before the next stage
                 begins{" "}
                 <span className="text-gray-500">
-                  [adjust to MTBoss&apos;s process]
+                  [adjust to MTBOSS&apos;s process]
                 </span>
                 .
               </p>
@@ -219,7 +219,7 @@ const Content = () => {
                 Cost control works best before drawings harden. A design-and-build
                 team can check cost at several points{" "}
                 <span className="text-gray-500">
-                  [state how MTBoss prepares estimates]
+                  [state how MTBOSS prepares estimates]
                 </span>
                 :
               </p>
@@ -242,7 +242,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Use the Budget Calculator on MTBoss.in for an early idea, then ask
+                Use the Budget Calculator on MTBOSS.in for an early idea, then ask
                 for an itemised estimate once the design is firm.
               </p>
             </section>
@@ -253,7 +253,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Our engineers review drawings before issue, looking at{" "}
-                <span className="text-gray-500">[confirm what MTBoss checks]</span>:
+                <span className="text-gray-500">[confirm what MTBOSS checks]</span>:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -287,7 +287,7 @@ const Content = () => {
                 Procurement and Site Control
               </h3>
               <p className="mb-3">
-                Because MTBoss builds, one team manages materials, labour and
+                Because MTBOSS builds, one team manages materials, labour and
                 supervision{" "}
                 <span className="text-gray-500">[confirm staffing model]</span>.
               </p>
@@ -368,7 +368,7 @@ const Content = () => {
               <p className="mb-3">
                 Completion is not the end of the relationship. A proper handover
                 includes{" "}
-                <span className="text-gray-500">[confirm what MTBoss provides]</span>
+                <span className="text-gray-500">[confirm what MTBOSS provides]</span>
                 :
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -394,7 +394,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Our Water Proofing, Building Repair and related services on MTBoss.in
+                Our Water Proofing, Building Repair and related services on MTBOSS.in
                 support later maintenance.
               </p>
             </section>
@@ -407,7 +407,7 @@ const Content = () => {
                 Design-and-build suits projects where speed, cost control and single
                 responsibility matter{" "}
                 <span className="text-gray-500">
-                  [keep only what MTBoss actually delivers]
+                  [keep only what MTBOSS actually delivers]
                 </span>
                 :
               </p>
@@ -451,7 +451,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss will say plainly if your project fits another route better,
+                MTBOSS will say plainly if your project fits another route better,
                 and will supply design-only drawings others can follow{" "}
                 <span className="text-gray-500">[confirm]</span>.
               </p>
@@ -500,11 +500,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Architecture, interior and building design
@@ -539,21 +539,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -574,7 +574,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Owners Consider MTBoss
+                Reasons Owners Consider MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -637,21 +637,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &ldquo;Get a Construction Quote&rdquo;)
                 </li>
@@ -669,7 +669,7 @@ const Content = () => {
                 and a written proposal.
               </p>
               <p className="mt-3">
-                Consider MTBoss as your architect and builder in Bareilly, with
+                Consider MTBOSS as your architect and builder in Bareilly, with
                 design and construction under one team and the terms written down
                 before work begins.
               </p>
@@ -685,7 +685,7 @@ const Content = () => {
                     Q1. Who offers architect and builder services in Bareilly?
                   </strong>
                   <br />
-                  MTBoss Construction offers design and construction for Bareilly
+                  MTBOSS Construction offers design and construction for Bareilly
                   and Moradabad{" "}
                   <span className="text-gray-500">[confirm registration]</span>.
                 </li>
@@ -739,7 +739,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I start?</strong>
                   <br />
-                  Click &ldquo;Get a Construction Quote&rdquo; on MTBoss.in, or call
+                  Click &ldquo;Get a Construction Quote&rdquo; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

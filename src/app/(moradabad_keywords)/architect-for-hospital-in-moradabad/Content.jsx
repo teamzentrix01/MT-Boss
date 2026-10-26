@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Hospital in Moradabad: MTBoss
+            Architect for Hospital in Moradabad: MTBOSS
           </h2>
 
 
@@ -22,7 +22,7 @@ const Content = () => {
                 That is why choosing the right architect for a hospital in Moradabad is a serious decision for any doctor, trust or investor.
               </p>
               <p className="mt-3">
-                MTBoss is a Moradabad-based construction, property and home services company. Our team plans, designs and builds commercial and institutional buildings, and we coordinate closely with the medical, structural and services consultants a healthcare project needs. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to the day the doors open.
+                MTBOSS is a Moradabad-based construction, property and home services company. Our team plans, designs and builds commercial and institutional buildings, and we coordinate closely with the medical, structural and services consultants a healthcare project needs. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to the day the doors open.
               </p>
               <p className="mt-3">
                 This page covers our healthcare design services, the planning process, cost factors and practical advice for anyone building a hospital, nursing home, clinic or diagnostic centre in Moradabad.
@@ -71,10 +71,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Approach to Hospital Design and Construction
+                MTBOSS Approach to Hospital Design and Construction
               </h3>
               <p className="mb-3">
-                Many owners hire an architect first and a builder later, and then find that the design costs more than expected or is hard to build. MTBoss avoids this by keeping both roles together.
+                Many owners hire an architect first and a builder later, and then find that the design costs more than expected or is hard to build. MTBOSS avoids this by keeping both roles together.
               </p>
               <p className="mb-3">
                 What you get when you work with us:
@@ -96,9 +96,9 @@ const Content = () => {
                   <strong>Local understanding.</strong> We know Moradabad&apos;s climate, plot patterns, material markets and patient catchment.
                 </li>
                 <li>
-                  <strong>Material access.</strong> Through the MTBoss{" "}
+                  <strong>Material access.</strong> Through the MTBOSS{" "}
                   <a
-                    href="https://www.MTBoss.in/ShopNow"
+                    href="https://www.MTBOSS.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -110,7 +110,7 @@ const Content = () => {
                 <li>
                   <strong>Support after handover.</strong> Our{" "}
                   <a
-                    href="https://www.MTBoss.in/quick"
+                    href="https://www.MTBOSS.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -205,7 +205,7 @@ const Content = () => {
                 Safety, Hygiene and Compliance Planning
               </h3>
               <p className="mb-3">
-                Safety must be designed in, not added later. MTBoss considers the following in every healthcare project:
+                Safety must be designed in, not added later. MTBOSS considers the following in every healthcare project:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -234,7 +234,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Hospitals usually need several registrations and clearances before they can operate. MTBoss prepares drawings and guides you on typical requirements, but final approvals depend on the relevant authorities and vary by hospital type and size, so please confirm current rules with them.
+                Hospitals usually need several registrations and clearances before they can operate. MTBOSS prepares drawings and guides you on typical requirements, but final approvals depend on the relevant authorities and vary by hospital type and size, so please confirm current rules with them.
               </p>
             </section>
 
@@ -289,7 +289,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Hospital Design Process at MTBoss, Step by Step
+                Hospital Design Process at MTBOSS, Step by Step
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -311,9 +311,9 @@ const Content = () => {
                   <strong>Step 5: Approvals guidance.</strong> We help you understand the documents and drawings typically needed for local approvals and registrations.
                 </li>
                 <li>
-                  <strong>Step 6: Budget and quotation.</strong> You receive an itemised written estimate. For a quick early figure, try the MTBoss{" "}
+                  <strong>Step 6: Budget and quotation.</strong> You receive an itemised written estimate. For a quick early figure, try the MTBOSS{" "}
                   <a
-                    href="https://www.MTBoss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -376,9 +376,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
+                MTBOSS provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
                 <a
-                  href="https://www.MTBoss.in/CTASection/get-quote"
+                  href="https://www.MTBOSS.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -395,7 +395,7 @@ const Content = () => {
                 Climate-Smart and Energy-Efficient Hospital Design
               </h3>
               <p className="mb-3">
-                Hospitals run day and night, so energy and comfort matter. For projects in Moradabad, MTBoss focuses on:
+                Hospitals run day and night, so energy and comfort matter. For projects in Moradabad, MTBOSS focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -495,14 +495,14 @@ const Content = () => {
                 <li>They offer after-service support once the building is complete.</li>
               </ul>
               <p className="mt-3">
-                MTBoss welcomes every one of these checks and answers them openly during your free consultation.
+                MTBOSS welcomes every one of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MTBoss in Moradabad
+                Areas Served by MTBOSS in Moradabad
               </h3>
               <p className="mb-3">
                 We work with doctors, trusts and healthcare investors across Moradabad and nearby areas, including Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with highway-side and commercial locations.
@@ -515,23 +515,23 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Hospital Architect FAQs
+                MTBOSS Hospital Architect FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MTBoss design hospitals in Moradabad?</strong>
+                  <strong>Q1. Does MTBOSS design hospitals in Moradabad?</strong>
                   <br />
                   Yes. We plan hospitals, nursing homes, clinics and diagnostic centres.
                 </li>
                 <li>
-                  <strong>Q2. Can MTBoss also construct the hospital?</strong>
+                  <strong>Q2. Can MTBOSS also construct the hospital?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
                 <li>
                   <strong>Q3. Is the first consultation free?</strong>
                   <br />
-                  Yes. MTBoss offers a free consultation and site visit.
+                  Yes. MTBOSS offers a free consultation and site visit.
                 </li>
                 <li>
                   <strong>Q4. Do you design small clinics and nursing homes?</strong>
@@ -564,7 +564,7 @@ const Content = () => {
                   Yes. We assess the structure and plan upgrades with minimal disruption.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MTBoss?</strong>
+                  <strong>Q10. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

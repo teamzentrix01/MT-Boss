@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Construction Service Provider in Moradabad',
   description:
-    'MTBoss is a construction service provider in Moradabad offering building, architecture, interiors, painting, plumbing and electrical services with quick quotes and clear pricing.',
+    'MTBOSS is a construction service provider in Moradabad offering building, architecture, interiors, painting, plumbing and electrical services with quick quotes and clear pricing.',
   keywords:
-    'construction service provider Moradabad, construction services Moradabad, building services Moradabad, architecture services Moradabad, interior design Moradabad, painting services Moradabad, plumbing services Moradabad, electrical services Moradabad, home services Moradabad, MTBoss Moradabad',
+    'construction service provider Moradabad, construction services Moradabad, building services Moradabad, architecture services Moradabad, interior design Moradabad, painting services Moradabad, plumbing services Moradabad, electrical services Moradabad, home services Moradabad, MTBOSS Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/construction-service-provider-moradabad',
+    canonical: 'https://www.MTBOSS.in/construction-service-provider-moradabad',
   },
   openGraph: {
     title: 'Construction Service Provider in Moradabad',
     description:
-      'MTBoss is a construction service provider in Moradabad offering building, architecture, interiors, painting, plumbing and electrical services with quick quotes and clear pricing.',
-    url: 'https://www.MTBoss.in/construction-service-provider-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'MTBOSS is a construction service provider in Moradabad offering building, architecture, interiors, painting, plumbing and electrical services with quick quotes and clear pricing.',
+    url: 'https://www.MTBOSS.in/construction-service-provider-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-construction-service-provider-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-construction-service-provider-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Construction Service Provider in Moradabad - MTBoss',
+        alt: 'Construction Service Provider in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,9 +35,9 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Construction Service Provider in Moradabad',
     description:
-      'MTBoss is a construction service provider in Moradabad offering building, architecture, interiors, painting, plumbing and electrical services with quick quotes and clear pricing.',
+      'MTBOSS is a construction service provider in Moradabad offering building, architecture, interiors, painting, plumbing and electrical services with quick quotes and clear pricing.',
     images: [
-      'https://www.MTBoss.in/og-construction-service-provider-moradabad.jpg',
+      'https://www.MTBOSS.in/og-construction-service-provider-moradabad.jpg',
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/construction-service-provider-moradabad',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/construction-service-provider-moradabad',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

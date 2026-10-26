@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Office Moradabad:MTBoss
+            Interior Designer for Office Moradabad:MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -20,7 +20,7 @@ const Content = () => {
                 leaves visitors unimpressed. 
               </p>
               <p className="mt-3">
-                MTBoss is an architecture, interior design and construction
+                MTBOSS is an architecture, interior design and construction
                 company serving Moradabad and Bareilly. As an interior designer
                 for offices in Moradabad, we plan workspaces around your team
                 size, work style and budget, then build them with a coordinated
@@ -75,7 +75,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Office Interior Services by MTBoss
+                Office Interior Services by MTBOSS
               </h3>
               <p className="mb-3">
                 We handle complete office fit-outs, from first sketch to handover:
@@ -351,7 +351,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBoss Design Process
+                The MTBOSS Design Process
               </h3>
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
@@ -390,7 +390,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Businesses Trust MTBoss for Design and Build
+                Why Businesses Trust MTBOSS for Design and Build
               </h3>
               <p className="mb-3">
                 Office fit-outs involve civil work, electrical systems,
@@ -399,7 +399,7 @@ const Content = () => {
                 delays and finger-pointing are common.
               </p>
               <p className="mb-3">
-                MTBoss brings planning, construction and interiors together. That
+                MTBOSS brings planning, construction and interiors together. That
                 gives you one accountable team, designs the builders know how to
                 execute, better coordination between structure and services, faster
                 decisions on site and support for related work such as
@@ -449,7 +449,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Talk to MTBoss About Your Office Project
+                Talk to MTBOSS About Your Office Project
               </h3>
               <p className="mb-3">
                 Whether you are setting up a new office, expanding a team or
@@ -470,10 +470,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -483,12 +483,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -501,7 +501,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBoss provide office interior design in Moradabad?
+                    Q1. Does MTBOSS provide office interior design in Moradabad?
                   </strong>
                   <br />
                   Yes. We design and build offices for businesses, startups,
@@ -528,7 +528,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q5. Can MTBoss handle construction and interiors together?
+                    Q5. Can MTBOSS handle construction and interiors together?
                   </strong>
                   <br />
                   Yes. One team manages design, civil work and interiors for better
@@ -552,12 +552,12 @@ const Content = () => {
                   </a>
                   , or use the contact page on{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    MTBoss.in
+                    MTBOSS.in
                   </a>
                   .
                 </li>

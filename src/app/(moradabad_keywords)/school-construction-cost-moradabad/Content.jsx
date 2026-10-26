@@ -21,7 +21,7 @@ const Content = () => {
                 finish quality and amenities all add to the total. This page
                 breaks down the real cost factors involved, shares general
                 industry benchmarks for school construction in India, and
-                explains how MTBoss Construction Private Limited, for whom
+                explains how MTBOSS Construction Private Limited, for whom
                 school construction is a dedicated service category, can help
                 you estimate and execute your school building project in
                 Moradabad.
@@ -30,13 +30,13 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Construction Private Limited
+                MTBOSS Construction Private Limited
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBoss is a Moradabad-based company offering construction services, doorstep home services, verified property transactions, and wholesale building materials under one company.</li>
+                <li>MTBOSS is a Moradabad-based company offering construction services, doorstep home services, verified property transactions, and wholesale building materials under one company.</li>
                 <li>The office is located at Harthala, Kanth Road, Behind KR Collection, near Domino&apos;s, Moradabad, close to the city&apos;s residential and institutional areas.</li>
-                <li>School construction is a specifically listed MTBoss service category, alongside home, hotel, college and mall construction services.</li>
-                <li>A project gallery and blog on the MTBoss website let prospective clients review completed work before reaching out.</li>
+                <li>School construction is a specifically listed MTBOSS service category, alongside home, hotel, college and mall construction services.</li>
+                <li>A project gallery and blog on the MTBOSS website let prospective clients review completed work before reaching out.</li>
               </ul>
             </section>
 
@@ -72,7 +72,7 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Land cost:</strong> Budgeted separately from construction, and one of the most location-dependent components.</li>
-                <li><strong>Civil and structural construction:</strong> Foundation, RCC framing, walls, flooring and the building envelope — the core portion MTBoss directly supports.</li>
+                <li><strong>Civil and structural construction:</strong> Foundation, RCC framing, walls, flooring and the building envelope — the core portion MTBOSS directly supports.</li>
                 <li><strong>Electrical and plumbing (MEP):</strong> Standard electrical wiring, lighting and plumbing infrastructure throughout the building.</li>
                 <li><strong>External development:</strong> Boundary walls, playground surfacing, parking areas and landscaping, often 15–30% on top of the core building cost.</li>
                 <li><strong>Interior finishing:</strong> Flooring, paint, false ceiling and fixtures across classrooms, labs, library and common areas.</li>
@@ -84,11 +84,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Where MTBoss Fits in This Cost Picture
+                Where MTBOSS Fits in This Cost Picture
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBoss&apos;s role covers the civil construction, structural build and material supply portion of this breakdown — the classroom blocks, administrative areas and general building structure.</li>
-                <li>Furniture, lab equipment, IT infrastructure and board-affiliation-specific compliance items are typically budgeted and sourced separately, outside MTBoss&apos;s civil construction estimate.</li>
+                <li>MTBOSS&apos;s role covers the civil construction, structural build and material supply portion of this breakdown — the classroom blocks, administrative areas and general building structure.</li>
+                <li>Furniture, lab equipment, IT infrastructure and board-affiliation-specific compliance items are typically budgeted and sourced separately, outside MTBOSS&apos;s civil construction estimate.</li>
                 <li>Because civil construction and materials make up a significant share of a school project&apos;s total cost, getting an accurate estimate for this portion early helps you plan the rest of the budget more realistically.</li>
               </ul>
             </section>
@@ -103,7 +103,7 @@ const Content = () => {
                 <li><strong>Finish specification:</strong> Basic, functional finishes cost less than premium interior finishes; this is one of the more flexible cost levers in a school project.</li>
                 <li><strong>Lab and specialized room requirements:</strong> Science labs, computer labs and libraries often need additional electrical points, ventilation or flooring specifications that add to cost.</li>
                 <li><strong>Site conditions:</strong> Soil quality, plot shape and access all affect foundation cost and overall construction difficulty.</li>
-                <li><strong>Material quality and sourcing:</strong> Direct wholesale sourcing, as MTBoss offers, can help manage this cost component more predictably than sourcing through multiple retail vendors.</li>
+                <li><strong>Material quality and sourcing:</strong> Direct wholesale sourcing, as MTBOSS offers, can help manage this cost component more predictably than sourcing through multiple retail vendors.</li>
                 <li><strong>External development scope:</strong> A larger playground, extensive boundary walls, or landscaped areas add meaningfully to the total project cost beyond the core building.</li>
                 <li><strong>Timeline pressure:</strong> Working toward a fixed academic session start date can increase cost due to the need for additional labour and resource allocation.</li>
               </ul>
@@ -111,45 +111,45 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How to Get an Accurate Civil Construction Estimate from MTBoss
+                How to Get an Accurate Civil Construction Estimate from MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Step 1 — Enquiry:</strong> Share your project details through the MTBoss website, phone or WhatsApp.</li>
+                <li><strong>Step 1 — Enquiry:</strong> Share your project details through the MTBOSS website, phone or WhatsApp.</li>
                 <li><strong>Step 2 — Requirement discussion:</strong> The team discusses your plot, planned school size (classrooms, floors, grade levels) and any existing drawings.</li>
-                <li><strong>Step 3 — Site visit:</strong> MTBoss engineers assess the plot, access, soil condition and surrounding structures.</li>
-                <li><strong>Step 4 — Budget estimation:</strong> The MTBoss Budget Calculator, along with current material rates, is used to produce a realistic civil construction cost outline specific to your project.</li>
-                <li><strong>Step 5 — Scope clarification:</strong> MTBoss clarifies exactly what is included in its estimate (civil construction and materials) versus what you will need to budget separately for furniture, labs and IT infrastructure.</li>
-                <li><strong>Step 6 — Material supply:</strong> Cement, steel, bricks, tiles and paints are sourced directly through MTBoss&apos;s own wholesale supply, helping keep the civil cost predictable.</li>
-                <li><strong>Step 7 — Construction and cost tracking:</strong> Civil work proceeds under MTBoss supervision, with costs tracked against the original estimate.</li>
+                <li><strong>Step 3 — Site visit:</strong> MTBOSS engineers assess the plot, access, soil condition and surrounding structures.</li>
+                <li><strong>Step 4 — Budget estimation:</strong> The MTBOSS Budget Calculator, along with current material rates, is used to produce a realistic civil construction cost outline specific to your project.</li>
+                <li><strong>Step 5 — Scope clarification:</strong> MTBOSS clarifies exactly what is included in its estimate (civil construction and materials) versus what you will need to budget separately for furniture, labs and IT infrastructure.</li>
+                <li><strong>Step 6 — Material supply:</strong> Cement, steel, bricks, tiles and paints are sourced directly through MTBOSS&apos;s own wholesale supply, helping keep the civil cost predictable.</li>
+                <li><strong>Step 7 — Construction and cost tracking:</strong> Civil work proceeds under MTBOSS supervision, with costs tracked against the original estimate.</li>
                 <li><strong>Step 8 — Handover:</strong> Final finishing of the civil structure, ready for furnishing and equipment installation within your planned budget.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why the MTBoss Budget Calculator Is a Useful Starting Point
+                Why the MTBOSS Budget Calculator Is a Useful Starting Point
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>It is a free tool available directly on the MTBoss website, designed to give an early, realistic estimate of civil construction costs before you commit to a detailed design.</li>
-                <li>Rather than relying only on general national benchmarks, the calculator reflects pricing closer to what MTBoss itself works with as a wholesale material supplier and civil contractor.</li>
+                <li>It is a free tool available directly on the MTBOSS website, designed to give an early, realistic estimate of civil construction costs before you commit to a detailed design.</li>
+                <li>Rather than relying only on general national benchmarks, the calculator reflects pricing closer to what MTBOSS itself works with as a wholesale material supplier and civil contractor.</li>
                 <li>Using it early in your planning helps you separate the civil construction budget from land cost, external development and furniture/equipment costs, giving you a clearer overall financial picture.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What to Share with MTBoss for an Accurate Cost Estimate
+                What to Share with MTBOSS for an Accurate Cost Estimate
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Plot size and location:</strong> This affects both site conditions and MTBoss&apos;s understanding of local access and logistics.</li>
+                <li><strong>Plot size and location:</strong> This affects both site conditions and MTBOSS&apos;s understanding of local access and logistics.</li>
                 <li><strong>Planned school scale:</strong> Approximate number of classrooms, floors and grade levels offered.</li>
                 <li><strong>Finish level expectations:</strong> Basic, standard or premium specification, since this significantly affects cost per square foot.</li>
                 <li><strong>External development needs:</strong> Whether a playground, extensive boundary wall or landscaping is part of the scope.</li>
-                <li><strong>Existing drawings, if available:</strong> Architectural layouts help MTBoss estimate more precisely.</li>
+                <li><strong>Existing drawings, if available:</strong> Architectural layouts help MTBOSS estimate more precisely.</li>
                 <li><strong>Timeline:</strong> Any fixed academic session deadlines that might affect labour and resource planning.</li>
               </ul>
               <p className="mt-3">
-                Sharing this information at the first enquiry helps MTBoss give
+                Sharing this information at the first enquiry helps MTBOSS give
                 you a cost estimate that reflects your actual project, rather
                 than a generic range.
               </p>
@@ -157,52 +157,52 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Property Services: Relevant to Your Total Project Budget
+                MTBOSS Property Services: Relevant to Your Total Project Budget
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBoss offers verified property buying, selling and renting services in and around Moradabad, relevant since land cost is budgeted separately and is often a major part of a school project&apos;s total investment.</li>
+                <li>MTBOSS offers verified property buying, selling and renting services in and around Moradabad, relevant since land cost is budgeted separately and is often a major part of a school project&apos;s total investment.</li>
                 <li>Having one company assist with both plot sourcing and construction cost estimation can help you plan your total investment more coherently.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MTBoss
+                Areas Served by MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Moradabad city and its developing residential and institutional zones.</li>
-                <li>Kanth Road and the surrounding areas, close to the MTBoss office itself.</li>
+                <li>Kanth Road and the surrounding areas, close to the MTBOSS office itself.</li>
                 <li>Larger plots across Moradabad district suitable for school construction with playgrounds and future expansion.</li>
-                <li>Trusts and education providers in nearby towns and districts of Uttar Pradesh coordinating remotely with the Moradabad-based MTBoss team.</li>
+                <li>Trusts and education providers in nearby towns and districts of Uttar Pradesh coordinating remotely with the Moradabad-based MTBOSS team.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Getting Your Cost Estimate from MTBoss
+                Getting Your Cost Estimate from MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBoss offers a &quot;Get a Construction Quote&quot; option directly on its website, letting you request a civil construction estimate without an in-person visit first.</li>
+                <li>MTBOSS offers a &quot;Get a Construction Quote&quot; option directly on its website, letting you request a civil construction estimate without an in-person visit first.</li>
                 <li>You can also reach the team directly by phone or WhatsApp to discuss your school&apos;s scale and budget.</li>
-                <li>Being clear about your facility size, finish expectations and external development scope helps MTBoss give the most accurate civil construction estimate.</li>
+                <li>Being clear about your facility size, finish expectations and external development scope helps MTBOSS give the most accurate civil construction estimate.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact MTBoss — School Construction Cost Estimates in Moradabad
+                Contact MTBOSS — School Construction Cost Estimates in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
+                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -219,16 +219,16 @@ const Content = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Chat with MTBoss on WhatsApp
+                    Chat with MTBOSS on WhatsApp
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -239,7 +239,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 <strong>Get a Free Construction Quote:</strong> Use the quote
-                option on the MTBoss website, or contact the team directly by
+                option on the MTBOSS website, or contact the team directly by
                 phone or WhatsApp.
               </p>
               <p className="mt-3">
@@ -250,7 +250,7 @@ const Content = () => {
                 ₹4,500 per square foot depending on specification level, though
                 your actual figure will differ based on your specific project.
                 Rather than planning around a general number, getting a
-                site-specific estimate early helps you budget accurately. MTBoss,
+                site-specific estimate early helps you budget accurately. MTBOSS,
                 for whom school construction is a dedicated service category,
                 supports the civil construction and material supply portion of
                 this cost through its free Budget Calculator and direct quote
@@ -272,16 +272,16 @@ const Content = () => {
                   sq ft.
                 </li>
                 <li>
-                  <strong>2. Does MTBoss provide a cost estimate for school construction in Moradabad?</strong>
+                  <strong>2. Does MTBOSS provide a cost estimate for school construction in Moradabad?</strong>
                   <br />
-                  Yes, MTBoss provides civil construction cost estimates using
+                  Yes, MTBOSS provides civil construction cost estimates using
                   its free Budget Calculator, specific to your plot and project
                   scale.
                 </li>
                 <li>
-                  <strong>3. Does the MTBoss estimate include furniture, labs and IT infrastructure?</strong>
+                  <strong>3. Does the MTBOSS estimate include furniture, labs and IT infrastructure?</strong>
                   <br />
-                  No, MTBoss&apos;s estimate covers civil construction and
+                  No, MTBOSS&apos;s estimate covers civil construction and
                   materials; furniture, lab equipment and IT infrastructure are
                   typically budgeted separately.
                 </li>
@@ -301,20 +301,20 @@ const Content = () => {
                 <li>
                   <strong>6. How can I get a precise cost estimate for my school project?</strong>
                   <br />
-                  Use the free online Budget Calculator on the MTBoss website,
+                  Use the free online Budget Calculator on the MTBOSS website,
                   or contact the team directly with your plot and facility
                   details.
                 </li>
                 <li>
-                  <strong>7. Where is the MTBoss office located?</strong>
+                  <strong>7. Where is the MTBOSS office located?</strong>
                   <br />
                   Harthala, Kanth Road, Behind KR Collection, near
                   Domino&apos;s, Moradabad, Uttar Pradesh.
                 </li>
                 <li>
-                  <strong>8. Can MTBoss help with land cost as well, since it&apos;s budgeted separately?</strong>
+                  <strong>8. Can MTBOSS help with land cost as well, since it&apos;s budgeted separately?</strong>
                   <br />
-                  Yes, MTBoss offers verified property buying, selling and
+                  Yes, MTBOSS offers verified property buying, selling and
                   renting services, relevant to the land portion of your budget.
                 </li>
               </ul>

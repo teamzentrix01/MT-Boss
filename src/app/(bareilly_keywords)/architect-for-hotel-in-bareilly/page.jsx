@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect for Hotel in Bareilly',
   description:
-    'Architect for hotel in Bareilly: planning, design and construction guidance for new hotels, guest houses and renovations. MTBoss supports practical, guest-ready projects. Call or WhatsApp.',
+    'Architect for hotel in Bareilly: planning, design and construction guidance for new hotels, guest houses and renovations. MTBOSS supports practical, guest-ready projects. Call or WhatsApp.',
   keywords:
-    'architect for hotel in Bareilly, hotel architect Bareilly, hotel design Bareilly, hotel planning Bareilly, guest house architect Bareilly, boutique hotel architect Bareilly, hotel renovation architect Bareilly, hotel construction Bareilly, hotel interior design Bareilly, banquet hall architect Bareilly, MTBoss Bareilly, architect near me Bareilly',
+    'architect for hotel in Bareilly, hotel architect Bareilly, hotel design Bareilly, hotel planning Bareilly, guest house architect Bareilly, boutique hotel architect Bareilly, hotel renovation architect Bareilly, hotel construction Bareilly, hotel interior design Bareilly, banquet hall architect Bareilly, MTBOSS Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/architect-for-hotel-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-for-hotel-bareilly',
   },
   openGraph: {
     title: 'Architect for Hotel in Bareilly',
     description:
-      'Architect for hotel in Bareilly: planning, design and construction guidance for new hotels, guest houses and renovations. MTBoss supports practical, guest-ready projects. Call or WhatsApp.',
-    url: 'https://www.MTBoss.in/architect-for-hotel-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Architect for hotel in Bareilly: planning, design and construction guidance for new hotels, guest houses and renovations. MTBOSS supports practical, guest-ready projects. Call or WhatsApp.',
+    url: 'https://www.MTBOSS.in/architect-for-hotel-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-for-hotel-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-hotel-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect for Hotel in Bareilly - MTBoss',
+        alt: 'Architect for Hotel in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect for Hotel in Bareilly',
     description:
-      'Architect for hotel in Bareilly: planning, design and construction guidance for new hotels, guest houses and renovations. MTBoss supports practical, guest-ready projects. Call or WhatsApp.',
-    images: ['https://www.MTBoss.in/og-architect-for-hotel-bareilly.jpg'],
+      'Architect for hotel in Bareilly: planning, design and construction guidance for new hotels, guest houses and renovations. MTBOSS supports practical, guest-ready projects. Call or WhatsApp.',
+    images: ['https://www.MTBOSS.in/og-architect-for-hotel-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-for-hotel-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-for-hotel-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

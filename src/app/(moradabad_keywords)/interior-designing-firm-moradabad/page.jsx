@@ -9,25 +9,25 @@ import Services from "../../components/Services";
 export const metadata = {
   title: "Interior Designing Firm in Moradabad | Trusted Home & Office Interiors",
   description:
-    "Hiring an interior designing firm in Moradabad? MTBoss offers home, office and shop interiors with clear pricing, quality work and on-time handover. Get a free quote.",
+    "Hiring an interior designing firm in Moradabad? MTBOSS offers home, office and shop interiors with clear pricing, quality work and on-time handover. Get a free quote.",
   keywords:
-    "interior designing firm in Moradabad, interior designer Moradabad, home interiors Moradabad, office interior designer Moradabad, shop interior design Moradabad, modular kitchen Moradabad, wardrobe design Moradabad, interior contractor Moradabad, commercial interiors Moradabad, showroom interior design Moradabad, turnkey interiors Moradabad, MTBoss interiors, best interior designer in Moradabad",
+    "interior designing firm in Moradabad, interior designer Moradabad, home interiors Moradabad, office interior designer Moradabad, shop interior design Moradabad, modular kitchen Moradabad, wardrobe design Moradabad, interior contractor Moradabad, commercial interiors Moradabad, showroom interior design Moradabad, turnkey interiors Moradabad, MTBOSS interiors, best interior designer in Moradabad",
   alternates: {
-    canonical: "https://www.MTBoss.in/interior-designing-firm-in-moradabad",
+    canonical: "https://www.MTBOSS.in/interior-designing-firm-in-moradabad",
   },
   openGraph: {
     title:
       "Interior Designing Firm in Moradabad | Trusted Home & Office Interiors",
     description:
-      "Hiring an interior designing firm in Moradabad? MTBoss offers home, office and shop interiors with clear pricing, quality work and on-time handover. Get a free quote.",
-    url: "https://www.MTBoss.in/interior-designing-firm-in-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "Hiring an interior designing firm in Moradabad? MTBOSS offers home, office and shop interiors with clear pricing, quality work and on-time handover. Get a free quote.",
+    url: "https://www.MTBOSS.in/interior-designing-firm-in-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-interior-designing-firm-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designing-firm-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Interior Designing Firm in Moradabad - MTBoss",
+        alt: "Interior Designing Firm in Moradabad - MTBOSS",
       },
     ],
     locale: "en_IN",
@@ -38,9 +38,9 @@ export const metadata = {
     title:
       "Interior Designing Firm in Moradabad | Trusted Home & Office Interiors",
     description:
-      "Hiring an interior designing firm in Moradabad? MTBoss offers home, office and shop interiors with clear pricing, quality work and on-time handover. Get a free quote.",
+      "Hiring an interior designing firm in Moradabad? MTBOSS offers home, office and shop interiors with clear pricing, quality work and on-time handover. Get a free quote.",
     images: [
-      "https://www.MTBoss.in/og-interior-designing-firm-moradabad.jpg",
+      "https://www.MTBOSS.in/og-interior-designing-firm-moradabad.jpg",
     ],
   },
   robots: {
@@ -53,10 +53,10 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBoss Construction Private Limited",
-    url: "https://www.MTBoss.in/interior-designing-firm-in-moradabad",
+    name: "MTBOSS Construction Private Limited",
+    url: "https://www.MTBOSS.in/interior-designing-firm-in-moradabad",
     telephone: "+91-9458410866",
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",
@@ -93,19 +93,19 @@ export default function Page() {
     "@type": "Service",
     name: "Interior Designing Services in Moradabad",
     description:
-      "MTBoss provides home, office, shop and showroom interior design services in Moradabad, including modular kitchens, wardrobes, false ceilings, lighting, civil work, carpentry and complete interior execution.",
+      "MTBOSS provides home, office, shop and showroom interior design services in Moradabad, including modular kitchens, wardrobes, false ceilings, lighting, civil work, carpentry and complete interior execution.",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.MTBoss.in",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: {
       "@type": "City",
       name: "Moradabad",
     },
     serviceType: "Interior Design and Interior Execution",
-    url: "https://www.MTBoss.in/interior-designing-firm-in-moradabad",
+    url: "https://www.MTBOSS.in/interior-designing-firm-in-moradabad",
   };
 
   return (

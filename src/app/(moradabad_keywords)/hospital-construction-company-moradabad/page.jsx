@@ -6,26 +6,26 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Hospital Construction Company in Moradabad | MTBoss",
+  title: "Hospital Construction Company in Moradabad | MTBOSS",
   description:
-    "Need a hospital construction company in Moradabad for civil work and materials? MTBoss supports structural build and supply. Call +91 94584 10866.",
+    "Need a hospital construction company in Moradabad for civil work and materials? MTBOSS supports structural build and supply. Call +91 94584 10866.",
   keywords:
-    "hospital construction company Moradabad, healthcare building construction Moradabad, hospital civil contractor Moradabad, medical building construction Moradabad, clinic construction Moradabad, hospital building materials Moradabad, MTBoss Moradabad, hospital construction cost Moradabad, MTBoss budget calculator, nursing home construction Moradabad, MTBoss Kanth Road, healthcare infrastructure Moradabad, hospital building contractor UP, hospital construction quote Moradabad, MTBoss commercial construction",
+    "hospital construction company Moradabad, healthcare building construction Moradabad, hospital civil contractor Moradabad, medical building construction Moradabad, clinic construction Moradabad, hospital building materials Moradabad, MTBOSS Moradabad, hospital construction cost Moradabad, MTBOSS budget calculator, nursing home construction Moradabad, MTBOSS Kanth Road, healthcare infrastructure Moradabad, hospital building contractor UP, hospital construction quote Moradabad, MTBOSS commercial construction",
   alternates: {
-    canonical: "https://www.MTBoss.in/hospital-construction-company-in-moradabad",
+    canonical: "https://www.MTBOSS.in/hospital-construction-company-in-moradabad",
   },
   openGraph: {
-    title: "Hospital Construction Company in Moradabad | MTBoss",
+    title: "Hospital Construction Company in Moradabad | MTBOSS",
     description:
-      "Need a hospital construction company in Moradabad for civil work and materials? MTBoss supports structural build and supply. Call +91 94584 10866.",
-    url: "https://www.MTBoss.in/hospital-construction-company-in-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "Need a hospital construction company in Moradabad for civil work and materials? MTBOSS supports structural build and supply. Call +91 94584 10866.",
+    url: "https://www.MTBOSS.in/hospital-construction-company-in-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-hospital-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-hospital-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Hospital Construction Company in Moradabad - MTBoss Construction",
+        alt: "Hospital Construction Company in Moradabad - MTBOSS Construction",
       },
     ],
     locale: "en_IN",
@@ -33,11 +33,11 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hospital Construction Company in Moradabad | MTBoss",
+    title: "Hospital Construction Company in Moradabad | MTBOSS",
     description:
-      "Need a hospital construction company in Moradabad for civil work and materials? MTBoss supports structural build and supply. Call +91 94584 10866.",
+      "Need a hospital construction company in Moradabad for civil work and materials? MTBOSS supports structural build and supply. Call +91 94584 10866.",
     images: [
-      "https://www.MTBoss.in/og-hospital-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-hospital-construction-moradabad.jpg",
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBoss Construction Private Limited",
-    url: "https://www.MTBoss.in/hospital-construction-company-in-moradabad",
+    name: "MTBOSS Construction Private Limited",
+    url: "https://www.MTBOSS.in/hospital-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",
@@ -88,12 +88,12 @@ export default function Page() {
     "@type": "Service",
     name: "Hospital Construction Company in Moradabad",
     description:
-      "MTBoss provides civil construction, structural build and wholesale material supply for hospital, clinic, nursing home and healthcare facility projects in Moradabad.",
+      "MTBOSS provides civil construction, structural build and wholesale material supply for hospital, clinic, nursing home and healthcare facility projects in Moradabad.",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.MTBoss.in",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: {
       "@type": "City",

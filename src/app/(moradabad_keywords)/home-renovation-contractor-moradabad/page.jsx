@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Home Renovation Contractor Moradabad',
   description:
-    'Hire a home renovation contractor in Moradabad for turnkey repair, civil work, interiors and finishing. MTBoss manages every trade for you. Call or WhatsApp.',
+    'Hire a home renovation contractor in Moradabad for turnkey repair, civil work, interiors and finishing. MTBOSS manages every trade for you. Call or WhatsApp.',
   keywords:
-    'home renovation contractor Moradabad, renovation contractor Moradabad, home renovation Moradabad, house renovation contractor Moradabad, turnkey renovation Moradabad, home remodelling Moradabad, renovation company Moradabad, home repair contractor Moradabad, interior renovation Moradabad, civil renovation contractor Moradabad, MTBoss renovation Moradabad',
+    'home renovation contractor Moradabad, renovation contractor Moradabad, home renovation Moradabad, house renovation contractor Moradabad, turnkey renovation Moradabad, home remodelling Moradabad, renovation company Moradabad, home repair contractor Moradabad, interior renovation Moradabad, civil renovation contractor Moradabad, MTBOSS renovation Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/home-renovation-contractor-moradabad',
+    canonical: 'https://www.MTBOSS.in/home-renovation-contractor-moradabad',
   },
   openGraph: {
     title: 'Home Renovation Contractor Moradabad',
     description:
-      'Hire a home renovation contractor in Moradabad for turnkey repair, civil work, interiors and finishing. MTBoss manages every trade for you. Call or WhatsApp.',
-    url: 'https://www.MTBoss.in/home-renovation-contractor-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Hire a home renovation contractor in Moradabad for turnkey repair, civil work, interiors and finishing. MTBOSS manages every trade for you. Call or WhatsApp.',
+    url: 'https://www.MTBOSS.in/home-renovation-contractor-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-home-renovation-contractor-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-home-renovation-contractor-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Home Renovation Contractor in Moradabad - MTBoss',
+        alt: 'Home Renovation Contractor in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,9 +35,9 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Home Renovation Contractor Moradabad',
     description:
-      'Hire a home renovation contractor in Moradabad for turnkey repair, civil work, interiors and finishing. MTBoss manages every trade for you. Call or WhatsApp.',
+      'Hire a home renovation contractor in Moradabad for turnkey repair, civil work, interiors and finishing. MTBOSS manages every trade for you. Call or WhatsApp.',
     images: [
-      'https://www.MTBoss.in/og-home-renovation-contractor-moradabad.jpg',
+      'https://www.MTBOSS.in/og-home-renovation-contractor-moradabad.jpg',
     ],
   },
   robots: {
@@ -49,10 +49,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/home-renovation-contractor-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/home-renovation-contractor-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

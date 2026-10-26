@@ -45,7 +45,7 @@ function consentElement() {
   wrapper.innerHTML = `
     <label class="privacy-consent-label">
       <input type="checkbox" name="privacy_consent" value="accepted" required data-privacy-consent-checkbox />
-      <span>I have read and agree to the <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>. I consent to MTBoss using my details to process and follow up on this request.<span aria-hidden="true" class="privacy-required"> *</span></span>
+      <span>I have read and agree to the <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>. I consent to MTBOSS using my details to process and follow up on this request.<span aria-hidden="true" class="privacy-required"> *</span></span>
     </label>
     <span class="privacy-consent-help">Required before submitting this form.</span>
   `;

@@ -7,27 +7,27 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Interior Designer for Living Room in Moradabad | MTBoss",
+  title: "Interior Designer for Living Room in Moradabad | MTBOSS",
   description:
-    "Need a living room interior designer in Moradabad? MTBoss creates stylish, comfortable living rooms with smart storage, TV units and lighting. Get a free quote.",
+    "Need a living room interior designer in Moradabad? MTBOSS creates stylish, comfortable living rooms with smart storage, TV units and lighting. Get a free quote.",
   keywords:
-    "interior designer for living room in Moradabad, living room interior designer Moradabad, living room design Moradabad, TV unit designer Moradabad, TV wall design Moradabad, false ceiling for living room Moradabad, living room renovation Moradabad, living room interior work Moradabad, wall paneling Moradabad, home interior designer Moradabad, living room lighting design Moradabad, MTBoss living room interiors",
+    "interior designer for living room in Moradabad, living room interior designer Moradabad, living room design Moradabad, TV unit designer Moradabad, TV wall design Moradabad, false ceiling for living room Moradabad, living room renovation Moradabad, living room interior work Moradabad, wall paneling Moradabad, home interior designer Moradabad, living room lighting design Moradabad, MTBOSS living room interiors",
   alternates: {
     canonical:
-      "https://www.MTBoss.in/interior-designer-for-living-room-in-moradabad",
+      "https://www.MTBOSS.in/interior-designer-for-living-room-in-moradabad",
   },
   openGraph: {
-    title: "Interior Designer for Living Room in Moradabad | MTBoss",
+    title: "Interior Designer for Living Room in Moradabad | MTBOSS",
     description:
-      "Need a living room interior designer in Moradabad? MTBoss creates stylish, comfortable living rooms with smart storage, TV units and lighting. Get a free quote.",
-    url: "https://www.MTBoss.in/interior-designer-for-living-room-in-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "Need a living room interior designer in Moradabad? MTBOSS creates stylish, comfortable living rooms with smart storage, TV units and lighting. Get a free quote.",
+    url: "https://www.MTBOSS.in/interior-designer-for-living-room-in-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-interior-designer-living-room-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-living-room-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Interior Designer for Living Room in Moradabad - MTBoss",
+        alt: "Interior Designer for Living Room in Moradabad - MTBOSS",
       },
     ],
     locale: "en_IN",
@@ -35,11 +35,11 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Interior Designer for Living Room in Moradabad | MTBoss",
+    title: "Interior Designer for Living Room in Moradabad | MTBOSS",
     description:
-      "Need a living room interior designer in Moradabad? MTBoss creates stylish, comfortable living rooms with smart storage, TV units and lighting. Get a free quote.",
+      "Need a living room interior designer in Moradabad? MTBOSS creates stylish, comfortable living rooms with smart storage, TV units and lighting. Get a free quote.",
     images: [
-      "https://www.MTBoss.in/og-interior-designer-living-room-moradabad.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-living-room-moradabad.jpg",
     ],
   },
   robots: {
@@ -51,10 +51,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBoss Construction Private Limited",
-  url: "https://www.MTBoss.in/interior-designer-for-living-room-in-moradabad",
+  name: "MTBOSS Construction Private Limited",
+  url: "https://www.MTBOSS.in/interior-designer-for-living-room-in-moradabad",
   telephone: "+91-9458410866",
-  email: "MTBoss2016@gmail.com",
+  email: "MTBOSS2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",

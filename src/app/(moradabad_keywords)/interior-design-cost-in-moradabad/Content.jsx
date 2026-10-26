@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Design Cost in Moradabad: MTBoss
+            Interior Design Cost in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -445,7 +445,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBoss Prices Your Interior Project
+                How MTBOSS Prices Your Interior Project
               </h3>
 
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -462,7 +462,7 @@ const Content = () => {
                   <strong>Budget planning:</strong> We use your priorities and
                   our{" "}
                   <a
-                    href="https://www.MTBoss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -492,9 +492,9 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                MTBoss offers one partner for construction, interiors,{" "}
+                MTBOSS offers one partner for construction, interiors,{" "}
                 <a
-                  href="https://www.MTBoss.in/quick"
+                  href="https://www.MTBOSS.in/quick"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -503,7 +503,7 @@ const Content = () => {
                 </a>
                 , building materials through{" "}
                 <a
-                  href="https://www.MTBoss.in/ShopNow"
+                  href="https://www.MTBOSS.in/ShopNow"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -608,7 +608,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBoss for Interior Design in Moradabad
+                Why Choose MTBOSS for Interior Design in Moradabad
               </h3>
 
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -621,7 +621,7 @@ const Content = () => {
                   <strong>Transparent communication:</strong> Our clear scope
                   and open pricing follow the principles shared on our{" "}
                   <a
-                    href="https://www.MTBoss.in/About-us"
+                    href="https://www.MTBOSS.in/About-us"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -637,7 +637,7 @@ const Content = () => {
                 <li>
                   <strong>Verified professionals:</strong> Our network of{" "}
                   <a
-                    href="https://www.MTBoss.in/Services/professionals"
+                    href="https://www.MTBOSS.in/Services/professionals"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -669,7 +669,7 @@ const Content = () => {
               <p className="mt-3">
                 Browse our{" "}
                 <a
-                  href="https://www.MTBoss.in/FeaturedProjects/ProjectGallery"
+                  href="https://www.MTBOSS.in/FeaturedProjects/ProjectGallery"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -678,7 +678,7 @@ const Content = () => {
                 </a>{" "}
                 and read our{" "}
                 <a
-                  href="https://www.MTBoss.in/blog/house-construction-cost-estimation-guide-india-2026"
+                  href="https://www.MTBOSS.in/blog/house-construction-cost-estimation-guide-india-2026"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -723,7 +723,7 @@ const Content = () => {
                   Many clients prefer Vastu-friendly layouts. You can also read
                   our{" "}
                   <a
-                    href="https://www.MTBoss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
+                    href="https://www.MTBOSS.in/blog/vastu-shastra-principles-for-modern-home-architecture"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -757,10 +757,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -770,7 +770,7 @@ const Content = () => {
                 <li>
                   <strong>Online:</strong> Use our{" "}
                   <a
-                    href="https://www.MTBoss.in/contact"
+                    href="https://www.MTBOSS.in/contact"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -779,7 +779,7 @@ const Content = () => {
                   </a>{" "}
                   or try the{" "}
                   <a
-                    href="https://www.MTBoss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -868,14 +868,14 @@ const Content = () => {
                     showrooms?
                   </strong>
                   <br />
-                  Yes. MTBoss handles interiors for shops, showrooms, offices,
+                  Yes. MTBOSS handles interiors for shops, showrooms, offices,
                   export houses, clinics, cafes, and hospitality spaces in
                   Moradabad.
                 </li>
 
                 <li>
                   <strong>
-                    Q9. How do I get an accurate quote from MTBoss?
+                    Q9. How do I get an accurate quote from MTBOSS?
                   </strong>
                   <br />
                   Call or WhatsApp us, share your floor plan or site photos,
@@ -886,7 +886,7 @@ const Content = () => {
                 <li>
                   <strong>Q10. Are there hidden charges?</strong>
                   <br />
-                  MTBoss provides a clear scope and itemised quote so you can
+                  MTBOSS provides a clear scope and itemised quote so you can
                   understand inclusions before work begins. Always confirm civil
                   work, electrical upgrades, appliances, GST, transport, and
                   cleaning requirements.

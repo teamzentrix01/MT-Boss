@@ -368,10 +368,10 @@ function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
     };
     fetchPending();
     const handleUpdate = () => fetchPending();
-    window.addEventListener("mtbossShopProductsUpdated", handleUpdate);
+    window.addEventListener("MTBOSSShopProductsUpdated", handleUpdate);
     return () => {
       active = false;
-      window.removeEventListener("mtbossShopProductsUpdated", handleUpdate);
+      window.removeEventListener("MTBOSSShopProductsUpdated", handleUpdate);
     };
   }, []);
 
@@ -589,8 +589,8 @@ export default function DashboardLayout({ children }) {
       >
         {/* Logo / Header */}
         <div className="admin-sidebar__brand flex items-center px-4 border-b">
-          <Link href="/" aria-label="Go to MTBoss website" className="admin-sidebar__brand-link">
-            MTBoss
+          <Link href="/" aria-label="Go to MTBOSS website" className="admin-sidebar__brand-link">
+            MTBOSS
           </Link>
         </div>
         {/* Menu Items with active indicator */}

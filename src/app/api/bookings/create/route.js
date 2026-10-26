@@ -347,7 +347,7 @@ export async function POST(req) {
     const payment = createPayURequest({
       txnid: paymentTxnId,
       amount: totalAmount,
-      productinfo: `MTBoss service booking ${bookingReference}`,
+      productinfo: `MTBOSS service booking ${bookingReference}`,
       firstname: cleanUserName.split(/\s+/)[0],
       email: cleanUserEmail,
       phone: cleanUserPhone,

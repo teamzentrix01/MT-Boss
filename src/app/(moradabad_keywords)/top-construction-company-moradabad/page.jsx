@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Top Construction Company in Moradabad |',
   description:
-    'Build with MTBoss, a top construction company in Moradabad for homes, shops, hotels and factories. Get clear costing, strong structures and timely handover.',
+    'Build with MTBOSS, a top construction company in Moradabad for homes, shops, hotels and factories. Get clear costing, strong structures and timely handover.',
   keywords:
-    'top construction company Moradabad, construction company in Moradabad, building contractor Moradabad, residential construction Moradabad, commercial construction Moradabad, industrial construction Moradabad, hotel construction Moradabad, MTBoss Moradabad, MTBoss Construction Moradabad, construction company near me',
+    'top construction company Moradabad, construction company in Moradabad, building contractor Moradabad, residential construction Moradabad, commercial construction Moradabad, industrial construction Moradabad, hotel construction Moradabad, MTBOSS Moradabad, MTBOSS Construction Moradabad, construction company near me',
   alternates: {
-    canonical: 'https://www.MTBoss.in/top-construction-company-moradabad',
+    canonical: 'https://www.MTBOSS.in/top-construction-company-moradabad',
   },
   openGraph: {
     title: 'Top Construction Company in Moradabad |',
     description:
-      'Build with MTBoss, a top construction company in Moradabad for homes, shops, hotels and factories. Get clear costing, strong structures and timely handover.',
-    url: 'https://www.MTBoss.in/top-construction-company-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Build with MTBOSS, a top construction company in Moradabad for homes, shops, hotels and factories. Get clear costing, strong structures and timely handover.',
+    url: 'https://www.MTBOSS.in/top-construction-company-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-top-construction-company-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-top-construction-company-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Top Construction Company in Moradabad - MTBoss',
+        alt: 'Top Construction Company in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Top Construction Company in Moradabad |',
     description:
-      'Build with MTBoss, a top construction company in Moradabad for homes, shops, hotels and factories. Get clear costing, strong structures and timely handover.',
-    images: ['https://www.MTBoss.in/og-top-construction-company-moradabad.jpg'],
+      'Build with MTBOSS, a top construction company in Moradabad for homes, shops, hotels and factories. Get clear costing, strong structures and timely handover.',
+    images: ['https://www.MTBOSS.in/og-top-construction-company-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/top-construction-company-moradabad',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/top-construction-company-moradabad',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

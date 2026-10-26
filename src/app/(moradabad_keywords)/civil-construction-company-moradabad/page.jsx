@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Civil Construction Company in Moradabad | MTBoss',
+  title: 'Civil Construction Company in Moradabad | MTBOSS',
   description:
-    'Looking for a trusted civil construction company in Moradabad? MTBoss delivers residential, commercial & industrial projects with transparent pricing. Call now!',
+    'Looking for a trusted civil construction company in Moradabad? MTBOSS delivers residential, commercial & industrial projects with transparent pricing. Call now!',
   keywords:
-    'civil construction company Moradabad, construction company in Moradabad, best construction company Moradabad, civil engineering company Moradabad, building company Moradabad, industrial construction company Moradabad, residential construction company Moradabad, MTBoss Moradabad, construction firm near me, top construction company Moradabad',
+    'civil construction company Moradabad, construction company in Moradabad, best construction company Moradabad, civil engineering company Moradabad, building company Moradabad, industrial construction company Moradabad, residential construction company Moradabad, MTBOSS Moradabad, construction firm near me, top construction company Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/civil-construction-company-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/civil-construction-company-in-moradabad',
   },
   openGraph: {
-    title: 'Civil Construction Company in Moradabad | MTBoss',
+    title: 'Civil Construction Company in Moradabad | MTBOSS',
     description:
-      'Looking for a trusted civil construction company in Moradabad? MTBoss delivers residential, commercial & industrial projects with transparent pricing. Call now!',
-    url: 'https://www.MTBoss.in/civil-construction-company-in-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Looking for a trusted civil construction company in Moradabad? MTBOSS delivers residential, commercial & industrial projects with transparent pricing. Call now!',
+    url: 'https://www.MTBOSS.in/civil-construction-company-in-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-civil-construction-company-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-civil-construction-company-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Civil Construction Company in Moradabad - MTBoss',
+        alt: 'Civil Construction Company in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Civil Construction Company in Moradabad | MTBoss',
+    title: 'Civil Construction Company in Moradabad | MTBOSS',
     description:
-      'Looking for a trusted civil construction company in Moradabad? MTBoss delivers residential, commercial & industrial projects with transparent pricing. Call now!',
-    images: ['https://www.MTBoss.in/og-civil-construction-company-moradabad.jpg'],
+      'Looking for a trusted civil construction company in Moradabad? MTBOSS delivers residential, commercial & industrial projects with transparent pricing. Call now!',
+    images: ['https://www.MTBOSS.in/og-civil-construction-company-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/civil-construction-company-in-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/civil-construction-company-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

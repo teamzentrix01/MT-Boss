@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Home Renovation Contractor in Moradabad: Turnkey Site Management by
-            MTBoss
+            MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -24,11 +24,11 @@ const Content = () => {
                 managing the trades and answering for the final result.
               </p>
               <p className="mt-3">
-                MTBoss is an architect, interior design and construction company
+                MTBOSS is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work,
                 transparent pricing and on-time delivery. This page explains what
                 a renovation contractor actually does, what you should expect from
-                one and how MTBoss runs a renovation project from start to
+                one and how MTBOSS runs a renovation project from start to
                 handover.
               </p>
             </section>
@@ -67,11 +67,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Turnkey Renovation Contracting at MTBoss
+                Turnkey Renovation Contracting at MTBOSS
               </h3>
               <p className="mb-3">
                 Turnkey means one team handles the project from the first
-                inspection to the final handover. MTBoss manages:
+                inspection to the final handover. MTBOSS manages:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -487,7 +487,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Homeowners Choose MTBoss as Contractor
+                Why Homeowners Choose MTBOSS as Contractor
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -498,7 +498,7 @@ const Content = () => {
                 <li>
                   <strong>All major trades through one company.</strong> Civil,
                   waterproofing, plumbing, electrical, tiles, carpentry, ceilings,
-                  painting and pest control are available through MTBoss.
+                  painting and pest control are available through MTBOSS.
                 </li>
                 <li>
                   <strong>Transparent pricing.</strong> You know the scope and
@@ -536,7 +536,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBoss Contracting Process
+                The MTBOSS Contracting Process
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -571,7 +571,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBoss provides renovation contracting across Moradabad, including
+                MTBOSS provides renovation contracting across Moradabad, including
                 residential areas such as Civil Lines, Lajpat Nagar, Delhi Road,
                 Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -582,7 +582,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Project with MTBoss
+                Start Your Project with MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -599,10 +599,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -613,16 +613,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/"
+                  href="https://www.MTBOSS.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss website
+                  MTBOSS website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -633,7 +633,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 Let one team manage your renovation from start to finish. Contact
-                MTBoss today for a home renovation contractor in Moradabad.
+                MTBOSS today for a home renovation contractor in Moradabad.
               </p>
             </section>
 
@@ -644,7 +644,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBoss work as a home renovation contractor in
+                    Q1. Does MTBOSS work as a home renovation contractor in
                     Moradabad?
                   </strong>
                   <br />
@@ -704,7 +704,7 @@ const Content = () => {
                   Final pricing follows the site inspection.
                 </li>
                 <li>
-                  <strong>Q10. How do I book MTBoss for renovation?</strong>
+                  <strong>Q10. How do I book MTBOSS for renovation?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -715,7 +715,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

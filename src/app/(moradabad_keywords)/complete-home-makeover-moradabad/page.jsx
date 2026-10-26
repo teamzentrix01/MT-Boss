@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Complete Home Makeover in Moradabad',
   description:
-    'Complete home makeover in Moradabad: exterior, interiors, kitchen, bathrooms and finishing planned as one project. MTBoss manages every trade. Call or WhatsApp.',
+    'Complete home makeover in Moradabad: exterior, interiors, kitchen, bathrooms and finishing planned as one project. MTBOSS manages every trade. Call or WhatsApp.',
   keywords:
-    'complete home makeover Moradabad, whole home makeover Moradabad, full home renovation Moradabad, home transformation Moradabad, exterior makeover Moradabad, interior makeover Moradabad, kitchen makeover Moradabad, bathroom makeover Moradabad, home exterior painting Moradabad, complete renovation Moradabad, MTBoss home makeover Moradabad',
+    'complete home makeover Moradabad, whole home makeover Moradabad, full home renovation Moradabad, home transformation Moradabad, exterior makeover Moradabad, interior makeover Moradabad, kitchen makeover Moradabad, bathroom makeover Moradabad, home exterior painting Moradabad, complete renovation Moradabad, MTBOSS home makeover Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/complete-home-makeover-moradabad',
+    canonical: 'https://www.MTBOSS.in/complete-home-makeover-moradabad',
   },
   openGraph: {
     title: 'Complete Home Makeover in Moradabad',
     description:
-      'Complete home makeover in Moradabad: exterior, interiors, kitchen, bathrooms and finishing planned as one project. MTBoss manages every trade. Call or WhatsApp.',
-    url: 'https://www.MTBoss.in/complete-home-makeover-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Complete home makeover in Moradabad: exterior, interiors, kitchen, bathrooms and finishing planned as one project. MTBOSS manages every trade. Call or WhatsApp.',
+    url: 'https://www.MTBOSS.in/complete-home-makeover-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-complete-home-makeover-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-complete-home-makeover-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Complete Home Makeover in Moradabad - MTBoss',
+        alt: 'Complete Home Makeover in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,9 +35,9 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Complete Home Makeover in Moradabad',
     description:
-      'Complete home makeover in Moradabad: exterior, interiors, kitchen, bathrooms and finishing planned as one project. MTBoss manages every trade. Call or WhatsApp.',
+      'Complete home makeover in Moradabad: exterior, interiors, kitchen, bathrooms and finishing planned as one project. MTBOSS manages every trade. Call or WhatsApp.',
     images: [
-      'https://www.MTBoss.in/og-complete-home-makeover-moradabad.jpg',
+      'https://www.MTBOSS.in/og-complete-home-makeover-moradabad.jpg',
     ],
   },
   robots: {
@@ -49,10 +49,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/complete-home-makeover-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/complete-home-makeover-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

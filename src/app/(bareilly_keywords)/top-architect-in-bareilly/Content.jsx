@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Top Architect in Bareilly: MTBoss
+            Top Architect in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -17,7 +17,7 @@ const Content = () => {
               <p>
                 A top architect in Bareilly is one you can verify: registered with
                 the Council of Architecture, backed by finished buildings, supported
-                by past clients and clear about scope and fees in writing. MTBoss
+                by past clients and clear about scope and fees in writing. MTBOSS
                 Construction Private Limited offers architecture and interior design
                 for Bareilly and Moradabad, and invites you to test it with the
                 shortlisting method below [confirm architect registration details].
@@ -41,7 +41,7 @@ const Content = () => {
                 like.
               </p>
               <p>
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -66,7 +66,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Design-and-build firm.</strong> Designs and builds under
-                  one roof, as MTBoss does. Cost and buildability are checked
+                  one roof, as MTBOSS does. Cost and buildability are checked
                   early, and responsibility sits with one company. Ask whether
                   design advice stays independent of construction pricing.
                 </li>
@@ -259,7 +259,7 @@ const Content = () => {
                 risk.
               </p>
               <p className="mb-3">
-                [State whether MTBoss offers a separate concept stage, its scope
+                [State whether MTBOSS offers a separate concept stage, its scope
                 and fee, and whether the fee is adjusted if you continue.]
               </p>
               <p>
@@ -355,7 +355,7 @@ const Content = () => {
                 design or a plan to recover money through construction. A very high
                 fee does not guarantee better design either. Compare scope,
                 deliverables, supervision and revisions, not only the amount [state
-                MTBoss&apos;s fee model and what each stage includes].
+                MTBOSS&apos;s fee model and what each stage includes].
               </p>
             </section>
 
@@ -377,9 +377,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss offers both routes: you may take design only and use
+                MTBOSS offers both routes: you may take design only and use
                 another builder, or continue into construction with us [confirm].
-                Use the Budget Calculator on MTBoss.in for an early idea of
+                Use the Budget Calculator on MTBOSS.in for an early idea of
                 construction cost.
               </p>
             </section>
@@ -388,10 +388,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Related Services From MTBoss
+                Related Services From MTBOSS
               </h3>
               <p>
-                Through MTBoss.in, MTBoss also offers Architecture &amp; Interior,
+                Through MTBOSS.in, MTBOSS also offers Architecture &amp; Interior,
                 Building Elevation, Building Contractor, Building Renovation,
                 Modular Kitchen, False Ceiling, Water Proofing, Painter, Electrician
                 and Plumber, so design, construction and finishing can be
@@ -401,7 +401,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Add MTBoss to Your Shortlist
+                Reasons to Add MTBOSS to Your Shortlist
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -466,21 +466,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -495,7 +495,7 @@ const Content = () => {
                 and compare the proposals side by side.
               </p>
               <p className="mt-3">
-                Add MTBoss to your shortlist for an architect in Bareilly, and
+                Add MTBOSS to your shortlist for an architect in Bareilly, and
                 judge the result on proof, not on slogans.
               </p>
             </section>
@@ -523,7 +523,7 @@ const Content = () => {
                   proposals.
                 </li>
                 <li>
-                  <strong>Q4. Is MTBoss&apos;s design lead a registered architect?</strong>
+                  <strong>Q4. Is MTBOSS&apos;s design lead a registered architect?</strong>
                   <br />
                   [State name and COA registration number, or say how design is
                   led.]
@@ -552,7 +552,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I arrange a meeting?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

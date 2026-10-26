@@ -22,11 +22,11 @@ const Content = () => {
                 advertisement. It is about skill, planning, honesty and finish.
               </p>
               <p>
-                MTBoss is an architect, interior design and construction company
+                MTBOSS is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work, transparent
                 pricing and on-time delivery. Carpenter is one of our quick home
                 services. This page explains what separates a good carpenter from an
-                average one, and how MTBoss applies those standards to every job.
+                average one, and how MTBOSS applies those standards to every job.
               </p>
             </section>
 
@@ -74,7 +74,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Craftsmanship Standards We Follow at MTBoss
+                Craftsmanship Standards We Follow at MTBOSS
               </h3>
               <p className="mb-3">
                 Quality is easier to judge when standards are clear. These are the
@@ -157,7 +157,7 @@ const Content = () => {
                 Full Range of Carpentry Services
               </h3>
               <p className="mb-3">
-                MTBoss handles a wide range of woodwork for homes and businesses.
+                MTBOSS handles a wide range of woodwork for homes and businesses.
               </p>
               <p className="mb-2">
                 <strong>For homes:</strong>
@@ -184,7 +184,7 @@ const Content = () => {
                 <li>Polish and refinishing</li>
               </ul>
               <p className="mt-3">
-                For specialised needs, MTBossalso offers modular kitchen, door and
+                For specialised needs, MTBOSSalso offers modular kitchen, door and
                 window installation, false ceiling, PVC panel and louvers, and
                 wallpaper installation services.
               </p>
@@ -218,7 +218,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Because MTBoss is also a construction company, we notice building
+                Because MTBOSS is also a construction company, we notice building
                 issues, such as damp walls or uneven floors, before they damage the
                 woodwork.
               </p>
@@ -350,7 +350,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBoss Carpentry Process
+                The MTBOSS Carpentry Process
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -395,7 +395,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Strengths of MTBoss as Your Carpentry Partner
+                Strengths of MTBOSS as Your Carpentry Partner
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -452,7 +452,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBoss provides carpenter services across Moradabad, including
+                MTBOSS provides carpenter services across Moradabad, including
                 residential areas such as Civil Lines, Lajpat Nagar, Delhi Road,
                 Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -462,7 +462,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Hire a Carpenter in Moradabad with MTBoss
+                Hire a Carpenter in Moradabad with MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -479,10 +479,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -493,16 +493,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/quick/carpenter"
+                  href="https://www.MTBOSS.in/quick/carpenter"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss Carpenter page
+                  MTBOSS Carpenter page
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -512,7 +512,7 @@ const Content = () => {
                 .
               </p>
               <p className="mt-3">
-                Choose skilled hands and clear communication. Contact MTBoss today
+                Choose skilled hands and clear communication. Contact MTBOSS today
                 for dependable carpentry in Moradabad.
               </p>
             </section>
@@ -523,7 +523,7 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MTBoss provide carpenter services in Moradabad?</strong>
+                  <strong>Q1. Does MTBOSS provide carpenter services in Moradabad?</strong>
                   <br />
                   Yes. We offer furniture, fitting, repair and custom woodwork for
                   homes and businesses in Moradabad.
@@ -577,7 +577,7 @@ const Content = () => {
                   commercial spaces.
                 </li>
                 <li>
-                  <strong>Q10. How do I book a carpenter from MTBoss?</strong>
+                  <strong>Q10. How do I book a carpenter from MTBOSS?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -588,7 +588,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

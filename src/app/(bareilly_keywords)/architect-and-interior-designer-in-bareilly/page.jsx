@@ -8,25 +8,25 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect and Interior Designer in Bareilly',
   description:
-    'Looking for an architect and interior designer in Bareilly? MTBoss plans structure and interiors together, with clear drawings, joinery and finishing support.',
+    'Looking for an architect and interior designer in Bareilly? MTBOSS plans structure and interiors together, with clear drawings, joinery and finishing support.',
   keywords:
-    'architect and interior designer in Bareilly, architect Bareilly, interior designer Bareilly, home interior designer Bareilly, house architect Bareilly, residential architect Bareilly, interior design Bareilly, architect and interior designer near me Bareilly, home design Bareilly, flat interior designer Bareilly, MTBoss Bareilly, architect interior designer Bareilly',
+    'architect and interior designer in Bareilly, architect Bareilly, interior designer Bareilly, home interior designer Bareilly, house architect Bareilly, residential architect Bareilly, interior design Bareilly, architect and interior designer near me Bareilly, home design Bareilly, flat interior designer Bareilly, MTBOSS Bareilly, architect interior designer Bareilly',
   alternates: {
     canonical:
-      'https://www.MTBoss.in/architect-and-interior-designer-in-bareilly',
+      'https://www.MTBOSS.in/architect-and-interior-designer-in-bareilly',
   },
   openGraph: {
     title: 'Architect and Interior Designer in Bareilly',
     description:
-      'Looking for an architect and interior designer in Bareilly? MTBoss plans structure and interiors together, with clear drawings, joinery and finishing support.',
-    url: 'https://www.MTBoss.in/architect-and-interior-designer-in-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Looking for an architect and interior designer in Bareilly? MTBOSS plans structure and interiors together, with clear drawings, joinery and finishing support.',
+    url: 'https://www.MTBOSS.in/architect-and-interior-designer-in-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-and-interior-designer-in-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-and-interior-designer-in-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect and Interior Designer in Bareilly - MTBoss',
+        alt: 'Architect and Interior Designer in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -36,9 +36,9 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect and Interior Designer in Bareilly',
     description:
-      'Looking for an architect and interior designer in Bareilly? MTBoss plans structure and interiors together, with clear drawings, joinery and finishing support.',
+      'Looking for an architect and interior designer in Bareilly? MTBOSS plans structure and interiors together, with clear drawings, joinery and finishing support.',
     images: [
-      'https://www.MTBoss.in/og-architect-and-interior-designer-in-bareilly.jpg',
+      'https://www.MTBOSS.in/og-architect-and-interior-designer-in-bareilly.jpg',
     ],
   },
   robots: {
@@ -51,10 +51,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-and-interior-designer-in-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-and-interior-designer-in-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

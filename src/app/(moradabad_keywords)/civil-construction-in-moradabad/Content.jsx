@@ -15,7 +15,7 @@ const Content = () => {
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Civil construction in Moradabad covers everything from small residential builds to large-scale commercial and industrial projects. As the city — famously known as the &quot;Brass City&quot; — continues expanding with new housing societies, retail hubs, and industrial zones, the demand for structured, professional civil construction services has grown significantly. This guide explains what civil construction actually involves, the range of services available in Moradabad, what drives construction costs, and why MTBoss Construction Private Limited is a recognized name in this space.
+                Civil construction in Moradabad covers everything from small residential builds to large-scale commercial and industrial projects. As the city — famously known as the &quot;Brass City&quot; — continues expanding with new housing societies, retail hubs, and industrial zones, the demand for structured, professional civil construction services has grown significantly. This guide explains what civil construction actually involves, the range of services available in Moradabad, what drives construction costs, and why MTBOSS Construction Private Limited is a recognized name in this space.
               </p>
             </section>
 
@@ -106,10 +106,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBoss Is a Trusted Civil Construction Company in Moradabad
+                Why MTBOSS Is a Trusted Civil Construction Company in Moradabad
               </h3>
               <p className="mb-3">
-                Based on their published company profile, MTBoss Construction Private Limited offers a comprehensive civil construction ecosystem covering multiple project types:
+                Based on their published company profile, MTBOSS Construction Private Limited offers a comprehensive civil construction ecosystem covering multiple project types:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
@@ -216,9 +216,9 @@ const Content = () => {
                 If you&apos;re planning a residential, commercial, or industrial civil construction project, get in touch directly:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.MTBoss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBoss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:MTBoss2016@gmail.com" className="text-blue-600 underline">MTBoss2016@gmail.com</a></li>
+                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
@@ -241,7 +241,7 @@ const Content = () => {
                 <li>
                   <strong>Q2. Who offers reliable civil construction services in Moradabad?</strong>
                   <br />
-                  MTBoss Construction Private Limited, with 22+ years of experience and 450+ completed projects.
+                  MTBOSS Construction Private Limited, with 22+ years of experience and 450+ completed projects.
                 </li>
                 <li>
                   <strong>Q3. What is the average civil construction cost per square foot in Moradabad?</strong>
@@ -249,27 +249,27 @@ const Content = () => {
                   Around ₹700–₹800 per sq. ft. for standard-quality construction.
                 </li>
                 <li>
-                  <strong>Q4. Does MTBoss provide a free construction estimate?</strong>
+                  <strong>Q4. Does MTBOSS provide a free construction estimate?</strong>
                   <br />
                   Yes, their online Budget Calculator gives an instant, free BOQ-based estimate.
                 </li>
                 <li>
-                  <strong>Q5. What quality packages does MTBoss offer?</strong>
+                  <strong>Q5. What quality packages does MTBOSS offer?</strong>
                   <br />
                   Basic, Standard, Premium, and Luxury, covering different budgets.
                 </li>
                 <li>
-                  <strong>Q6. Can I contact MTBoss on WhatsApp?</strong>
+                  <strong>Q6. Can I contact MTBOSS on WhatsApp?</strong>
                   <br />
                   Yes, message them directly at wa.me/9458410866.
                 </li>
                 <li>
-                  <strong>Q7. Does MTBoss handle industrial civil construction too?</strong>
+                  <strong>Q7. Does MTBOSS handle industrial civil construction too?</strong>
                   <br />
                   Yes, including warehouses, factory sheds, and industrial infrastructure.
                 </li>
                 <li>
-                  <strong>Q8. Can I buy construction materials directly from MTBoss?</strong>
+                  <strong>Q8. Can I buy construction materials directly from MTBOSS?</strong>
                   <br />
                   Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates.
                 </li>

@@ -26,7 +26,7 @@ const Content = () => {
                 property stand out from the competition.
               </p>
               <p className="mt-3">
-                MTBoss is an architecture, interior design and construction
+                MTBOSS is an architecture, interior design and construction
                 company serving Moradabad and Bareilly. As an interior designer
                 for hotels in Moradabad, we plan spaces that impress guests, help
                 staff work efficiently and stay attractive after years of heavy
@@ -78,7 +78,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Hotel and Hospitality Design Services
+                MTBOSS Hotel and Hospitality Design Services
               </h3>
               <p className="mb-3">
                 We manage complete hospitality interiors, from concept to handover.
@@ -376,7 +376,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Hoteliers Choose MTBoss
+                Why Hoteliers Choose MTBOSS
               </h3>
               <p className="mb-3">
                 A hotel fit-out involves civil work, electrical systems, plumbing,
@@ -385,7 +385,7 @@ const Content = () => {
                 to delays, missed details and disputes.
               </p>
               <p className="mb-3">
-                MTBoss handles planning, construction and interiors together. That
+                MTBOSS handles planning, construction and interiors together. That
                 gives you:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -443,7 +443,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Hotel Project With MTBoss
+                Start Your Hotel Project With MTBOSS
               </h3>
               <p className="mb-3">
                 Whether you are building a new hotel, upgrading an older property
@@ -464,10 +464,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -477,17 +477,17 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
               <p className="mt-3">
-                Let MTBoss help you create a hotel that guests enjoy and
+                Let MTBOSS help you create a hotel that guests enjoy and
                 recommend.
               </p>
             </section>
@@ -499,7 +499,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBoss provide interior design for hotels in
+                    Q1. Does MTBOSS provide interior design for hotels in
                     Moradabad?
                   </strong>
                   <br />
@@ -528,7 +528,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q5. Can MTBoss handle construction and interiors together?
+                    Q5. Can MTBOSS handle construction and interiors together?
                   </strong>
                   <br />
                   Yes. One team manages design, civil work and interiors for better
@@ -552,12 +552,12 @@ const Content = () => {
                   </a>
                   , or use the contact page on{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    MTBoss.in
+                    MTBOSS.in
                   </a>
                   .
                 </li>

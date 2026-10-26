@@ -31,7 +31,7 @@ const Content = () => {
                 team takes responsibility for the whole journey, from planning
                 and design to materials, construction, finishing and handover.
                 This page explains what end to end construction means in
-                Moradabad and how MTBoss approaches it. MTBoss Construction
+                Moradabad and how MTBOSS approaches it. MTBOSS Construction
                 Private Limited is a Moradabad-based architect, interior
                 designer and construction company that builds residential
                 projects from affordable housing to luxury villas, serving
@@ -153,14 +153,14 @@ const Content = () => {
 
               <p className="mt-3">
                 Your project, your involvement and your budget matter more than
-                the label. MTBoss helps you decide how much of the journey you
+                the label. MTBOSS helps you decide how much of the journey you
                 want covered.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Construction Private Limited
+                MTBOSS Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -175,23 +175,23 @@ const Content = () => {
                 </li>
                 <li>
                   Residential projects form a dedicated service category on the
-                  MTBoss website, from affordable housing to luxury villas.
+                  MTBOSS website, from affordable housing to luxury villas.
                 </li>
                 <li>
-                  Project gallery and blog available on the MTBoss website.
+                  Project gallery and blog available on the MTBOSS website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                The End to End Journey with MTBoss in Moradabad
+                The End to End Journey with MTBOSS in Moradabad
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Plot and property guidance:</strong> If you are still
-                  looking for land, MTBoss&apos;s verified property services in
+                  looking for land, MTBOSS&apos;s verified property services in
                   and around Moradabad can help you search.
                 </li>
                 <li>
@@ -210,7 +210,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints available through MTBoss&apos;s
+                  bricks, tiles and paints available through MTBOSS&apos;s
                   wholesale supply.
                 </li>
                 <li>
@@ -246,7 +246,7 @@ const Content = () => {
 
               <p className="mt-3">
                 Final scope for each project is discussed and confirmed with the
-                MTBoss team before work begins.
+                MTBOSS team before work begins.
               </p>
             </section>
 
@@ -447,13 +447,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBoss Approaches an End to End Construction Project
+                How MTBOSS Approaches an End to End Construction Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Step 1 — Enquiry and discussion:</strong> Contact
-                  MTBoss with plot, family or business needs and budget through
+                  MTBOSS with plot, family or business needs and budget through
                   website, phone or WhatsApp.
                 </li>
                 <li>
@@ -568,7 +568,7 @@ const Content = () => {
               <p className="mt-3">
                 Requirements vary by location and current regulations, so
                 confirm the latest rules with the relevant authorities and your
-                consultants. MTBoss builds according to approved drawings and
+                consultants. MTBOSS builds according to approved drawings and
                 specifications, while owners and their consultants handle
                 approvals specific to the property.
               </p>
@@ -619,7 +619,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBoss Budget Calculator, then request a
+                Start with the free MTBOSS Budget Calculator, then request a
                 detailed quote after site visit and design discussion.
               </p>
             </section>
@@ -668,7 +668,7 @@ const Content = () => {
               </h3>
 
               <p>
-                MTBoss supports a smooth project through stage-wise planning
+                MTBOSS supports a smooth project through stage-wise planning
                 with clear milestones, regular site visits by engineers and
                 single-team coordination of design, materials and construction.
               </p>
@@ -723,7 +723,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Services for Homeowners
+                MTBOSS Services for Homeowners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -746,7 +746,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBoss for End to End Construction Service
+                Why Choose MTBOSS for End to End Construction Service
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -776,44 +776,44 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and
-                  blog on the MTBoss website.
+                  blog on the MTBOSS website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBoss: End to End Construction Service in Moradabad
+                Contact MTBOSS: End to End Construction Service in Moradabad
               </h3>
 
               <p className="mb-3">
-                If you are planning a project in Moradabad, MTBoss offers a
+                If you are planning a project in Moradabad, MTBOSS offers a
                 single point of contact for design coordination, materials,
                 construction and handover.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.MTBoss.in
+                    https://www.MTBOSS.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -863,10 +863,10 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBoss offer end to end construction in Moradabad?
+                    Q2. Does MTBOSS offer end to end construction in Moradabad?
                   </strong>
                   <br />
-                  MTBoss is an architect, interior designer and construction
+                  MTBOSS is an architect, interior designer and construction
                   company that builds residential projects, from affordable
                   housing to luxury villas, in Moradabad and Bareilly, and also
                   supplies materials, property services and home services. Share
@@ -890,7 +890,7 @@ const Content = () => {
                     Q4. Are approvals included in the service?
                   </strong>
                   <br />
-                  MTBoss builds to the approved drawings and specifications.
+                  MTBOSS builds to the approved drawings and specifications.
                   Approvals specific to your property are usually handled by the
                   owner and their consultants, so confirm the details with the
                   team.
@@ -913,12 +913,12 @@ const Content = () => {
                   <br />
                   Cost depends on built-up area, floors, design, material and
                   finish level, interior scope, services scope and site
-                  conditions. Use the free Budget Calculator on the MTBoss
+                  conditions. Use the free Budget Calculator on the MTBOSS
                   website, or request a detailed quote.
                 </li>
 
                 <li>
-                  <strong>Q7. Where is the MTBoss office located?</strong>
+                  <strong>Q7. Where is the MTBOSS office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

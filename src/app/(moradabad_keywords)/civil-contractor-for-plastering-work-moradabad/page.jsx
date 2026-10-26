@@ -6,27 +6,27 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Civil Contractor for Plastering Work in Moradabad | MTBoss',
+  title: 'Civil Contractor for Plastering Work in Moradabad | MTBOSS',
   description:
-    'Need a civil contractor for plastering work in Moradabad? MTBoss offers internal and external plaster, repair and finishing with proper curing and clear quotes.',
+    'Need a civil contractor for plastering work in Moradabad? MTBOSS offers internal and external plaster, repair and finishing with proper curing and clear quotes.',
   keywords:
-    'civil contractor for plastering work Moradabad, plastering contractor Moradabad, internal plastering Moradabad, external plastering Moradabad, ceiling plastering Moradabad, plaster repair Moradabad, gypsum plaster contractor Moradabad, wall plaster contractor near me, plastering work contractor near me, MTBoss plastering Moradabad',
+    'civil contractor for plastering work Moradabad, plastering contractor Moradabad, internal plastering Moradabad, external plastering Moradabad, ceiling plastering Moradabad, plaster repair Moradabad, gypsum plaster contractor Moradabad, wall plaster contractor near me, plastering work contractor near me, MTBOSS plastering Moradabad',
   alternates: {
     canonical:
-      'https://www.MTBoss.in/civil-contractor-plastering-work-moradabad',
+      'https://www.MTBOSS.in/civil-contractor-plastering-work-moradabad',
   },
   openGraph: {
-    title: 'Civil Contractor for Plastering Work in Moradabad | MTBoss',
+    title: 'Civil Contractor for Plastering Work in Moradabad | MTBOSS',
     description:
-      'Need a civil contractor for plastering work in Moradabad? MTBoss offers internal and external plaster, repair and finishing with proper curing and clear quotes.',
-    url: 'https://www.MTBoss.in/civil-contractor-plastering-work-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Need a civil contractor for plastering work in Moradabad? MTBOSS offers internal and external plaster, repair and finishing with proper curing and clear quotes.',
+    url: 'https://www.MTBOSS.in/civil-contractor-plastering-work-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-civil-contractor-plastering-work-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-civil-contractor-plastering-work-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Civil Contractor for Plastering Work in Moradabad - MTBoss',
+        alt: 'Civil Contractor for Plastering Work in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -34,11 +34,11 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Civil Contractor for Plastering Work in Moradabad | MTBoss',
+    title: 'Civil Contractor for Plastering Work in Moradabad | MTBOSS',
     description:
-      'Need a civil contractor for plastering work in Moradabad? MTBoss offers internal and external plaster, repair and finishing with proper curing and clear quotes.',
+      'Need a civil contractor for plastering work in Moradabad? MTBOSS offers internal and external plaster, repair and finishing with proper curing and clear quotes.',
     images: [
-      'https://www.MTBoss.in/og-civil-contractor-plastering-work-moradabad.jpg',
+      'https://www.MTBOSS.in/og-civil-contractor-plastering-work-moradabad.jpg',
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/civil-contractor-plastering-work-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/civil-contractor-plastering-work-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

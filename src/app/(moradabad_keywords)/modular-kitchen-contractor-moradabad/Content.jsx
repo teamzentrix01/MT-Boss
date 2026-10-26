@@ -22,7 +22,7 @@ const Content = () => {
                 you are not left coordinating five different workers.
               </p>
               <p>
-                MTBoss is an architect, interior design and construction company
+                MTBOSS is an architect, interior design and construction company
                 serving Moradabad and Bareilly, with a focus on quality work,
                 transparent pricing and on-time delivery. Modular kitchen is one of
                 our quick home services, and our construction background means we
@@ -33,7 +33,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Turnkey Modular Kitchen Contracting at MTBoss
+                Turnkey Modular Kitchen Contracting at MTBOSS
               </h3>
               <p className="mb-3">
                 Turnkey means one team takes responsibility from the first
@@ -283,7 +283,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Final pricing depends on kitchen size, layout, materials, hardware
-                and the preparation work needed. You can use the MTBoss Budget
+                and the preparation work needed. You can use the MTBOSS Budget
                 Calculator on our website to plan renovation spending beforehand, and
                 a firm quotation is shared after the site visit.
               </p>
@@ -314,7 +314,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Advantages as Your Kitchen Contractor
+                MTBOSS Advantages as Your Kitchen Contractor
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -325,7 +325,7 @@ const Content = () => {
                 <li>
                   <strong>Multiple trades under one brand.</strong> Carpentry,
                   plumbing, electrical, tile and marble, painting, false ceiling and
-                  renovation are available through MTBoss, which reduces coordination
+                  renovation are available through MTBOSS, which reduces coordination
                   problems.
                 </li>
                 <li>
@@ -373,7 +373,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBoss provides modular kitchen contracting across Moradabad,
+                MTBOSS provides modular kitchen contracting across Moradabad,
                 including residential areas such as Civil Lines, Lajpat Nagar, Delhi
                 Road, Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -383,7 +383,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Kitchen Project with MTBoss
+                Start Your Kitchen Project with MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -400,10 +400,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -414,16 +414,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/quick/modular-kitchen"
+                  href="https://www.MTBOSS.in/quick/modular-kitchen"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss Modular Kitchen page
+                  MTBOSS Modular Kitchen page
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -434,7 +434,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 Get a kitchen that is planned, built and finished properly. Contact
-                MTBoss today for modular kitchen contracting in Moradabad.
+                MTBOSS today for modular kitchen contracting in Moradabad.
               </p>
             </section>
 
@@ -445,7 +445,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBoss work as a modular kitchen contractor in
+                    Q1. Does MTBOSS work as a modular kitchen contractor in
                     Moradabad?
                   </strong>
                   <br />
@@ -461,7 +461,7 @@ const Content = () => {
                 <li>
                   <strong>Q3. Do you handle plumbing, electrical and tile work?</strong>
                   <br />
-                  Yes. MTBoss offers these services, so one team manages the whole
+                  Yes. MTBOSS offers these services, so one team manages the whole
                   kitchen project.
                 </li>
                 <li>
@@ -505,7 +505,7 @@ const Content = () => {
                   confirm before proceeding.
                 </li>
                 <li>
-                  <strong>Q10. How do I book MTBoss for my kitchen?</strong>
+                  <strong>Q10. How do I book MTBOSS for my kitchen?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -516,7 +516,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

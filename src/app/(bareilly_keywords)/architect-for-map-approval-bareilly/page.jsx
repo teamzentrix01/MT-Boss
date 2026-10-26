@@ -6,27 +6,27 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Architect for Map Approval in Bareilly | MTBoss',
+  title: 'Architect for Map Approval in Bareilly | MTBOSS',
   description:
-    'Need an architect for map approval in Bareilly? MTBoss prepares sanction drawings, checks rules before submission and tracks your file. Call +91 94584 10866.',
+    'Need an architect for map approval in Bareilly? MTBOSS prepares sanction drawings, checks rules before submission and tracks your file. Call +91 94584 10866.',
   keywords:
-    'architect for map approval in Bareilly, map approval architect Bareilly, map approval Bareilly, building map approval Bareilly, sanction drawing Bareilly, building plan approval Bareilly, map sanction Bareilly, naksha approval Bareilly, building plan sanction Bareilly, map approval architect near me Bareilly, MTBoss Bareilly, architect for map approval Bareilly',
+    'architect for map approval in Bareilly, map approval architect Bareilly, map approval Bareilly, building map approval Bareilly, sanction drawing Bareilly, building plan approval Bareilly, map sanction Bareilly, naksha approval Bareilly, building plan sanction Bareilly, map approval architect near me Bareilly, MTBOSS Bareilly, architect for map approval Bareilly',
   alternates: {
     canonical:
-      'https://www.MTBoss.in/architect-for-map-approval-in-bareilly',
+      'https://www.MTBOSS.in/architect-for-map-approval-in-bareilly',
   },
   openGraph: {
-    title: 'Architect for Map Approval in Bareilly | MTBoss',
+    title: 'Architect for Map Approval in Bareilly | MTBOSS',
     description:
-      'Need an architect for map approval in Bareilly? MTBoss prepares sanction drawings, checks rules before submission and tracks your file. Call +91 94584 10866.',
-    url: 'https://www.MTBoss.in/architect-for-map-approval-in-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Need an architect for map approval in Bareilly? MTBOSS prepares sanction drawings, checks rules before submission and tracks your file. Call +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/architect-for-map-approval-in-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-for-map-approval-in-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-map-approval-in-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect for Map Approval in Bareilly - MTBoss',
+        alt: 'Architect for Map Approval in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -34,11 +34,11 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Architect for Map Approval in Bareilly | MTBoss',
+    title: 'Architect for Map Approval in Bareilly | MTBOSS',
     description:
-      'Need an architect for map approval in Bareilly? MTBoss prepares sanction drawings, checks rules before submission and tracks your file. Call +91 94584 10866.',
+      'Need an architect for map approval in Bareilly? MTBOSS prepares sanction drawings, checks rules before submission and tracks your file. Call +91 94584 10866.',
     images: [
-      'https://www.MTBoss.in/og-architect-for-map-approval-in-bareilly.jpg',
+      'https://www.MTBOSS.in/og-architect-for-map-approval-in-bareilly.jpg',
     ],
   },
   robots: {
@@ -51,10 +51,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-for-map-approval-in-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-for-map-approval-in-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

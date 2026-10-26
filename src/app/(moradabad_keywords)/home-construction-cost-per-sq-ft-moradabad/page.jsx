@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Home Construction Cost Per Sq Ft in Moradabad | MTBoss",
+  title: "Home Construction Cost Per Sq Ft in Moradabad | MTBOSS",
 
   description:
-    "Planning your home budget in Moradabad? Understand construction cost per sq ft and get an estimate from MTBoss. Call +91 94584 10866 for a quote.",
+    "Planning your home budget in Moradabad? Understand construction cost per sq ft and get an estimate from MTBOSS. Call +91 94584 10866 for a quote.",
 
   keywords:
-    "home construction cost per sq ft Moradabad, house construction cost Moradabad, construction rate per square feet Moradabad, house building cost Uttar Pradesh, 1000 sq ft house cost Moradabad, home construction budget Moradabad, MTBoss Moradabad, MTBoss budget calculator, building material cost Moradabad, MTBoss Kanth Road, house construction cost calculator, home construction quote Moradabad, MTBoss construction materials, duplex house cost Moradabad, construction cost estimate Moradabad",
+    "home construction cost per sq ft Moradabad, house construction cost Moradabad, construction rate per square feet Moradabad, house building cost Uttar Pradesh, 1000 sq ft house cost Moradabad, home construction budget Moradabad, MTBOSS Moradabad, MTBOSS budget calculator, building material cost Moradabad, MTBOSS Kanth Road, house construction cost calculator, home construction quote Moradabad, MTBOSS construction materials, duplex house cost Moradabad, construction cost estimate Moradabad",
 
   alternates: {
     canonical:
-      "https://www.MTBoss.in/home-construction-cost-per-sq-ft-in-moradabad",
+      "https://www.MTBOSS.in/home-construction-cost-per-sq-ft-in-moradabad",
   },
 
   openGraph: {
-    title: "Home Construction Cost Per Sq Ft in Moradabad | MTBoss",
+    title: "Home Construction Cost Per Sq Ft in Moradabad | MTBOSS",
 
     description:
-      "Planning your home budget in Moradabad? Understand construction cost per sq ft and get an estimate from MTBoss. Call +91 94584 10866 for a quote.",
+      "Planning your home budget in Moradabad? Understand construction cost per sq ft and get an estimate from MTBOSS. Call +91 94584 10866 for a quote.",
 
-    url: "https://www.MTBoss.in/home-construction-cost-per-sq-ft-in-moradabad",
+    url: "https://www.MTBOSS.in/home-construction-cost-per-sq-ft-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-home-construction-cost-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-home-construction-cost-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Home Construction Cost Per Sq Ft in Moradabad - MTBoss",
+        alt: "Home Construction Cost Per Sq Ft in Moradabad - MTBOSS",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Home Construction Cost Per Sq Ft in Moradabad | MTBoss",
+    title: "Home Construction Cost Per Sq Ft in Moradabad | MTBOSS",
 
     description:
-      "Planning your home budget in Moradabad? Understand construction cost per sq ft and get an estimate from MTBoss. Call +91 94584 10866 for a quote.",
+      "Planning your home budget in Moradabad? Understand construction cost per sq ft and get an estimate from MTBOSS. Call +91 94584 10866 for a quote.",
 
     images: [
-      "https://www.MTBoss.in/og-home-construction-cost-moradabad.jpg",
+      "https://www.MTBOSS.in/og-home-construction-cost-moradabad.jpg",
     ],
   },
 
@@ -67,16 +67,16 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
 
-    name: "MTBoss Construction Private Limited",
+    name: "MTBOSS Construction Private Limited",
 
-    url: "https://www.MTBoss.in/home-construction-cost-per-sq-ft-in-moradabad",
+    url: "https://www.MTBOSS.in/home-construction-cost-per-sq-ft-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
 
     image:
-      "https://www.MTBoss.in/og-home-construction-cost-moradabad.jpg",
+      "https://www.MTBOSS.in/og-home-construction-cost-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -126,16 +126,16 @@ export default function Page() {
     name: "Home Construction Cost Per Sq Ft Estimate in Moradabad",
 
     description:
-      "MTBoss provides home construction cost estimation in Moradabad, including per-square-foot budget planning, civil construction, wholesale building material supply and residential construction quotes.",
+      "MTBOSS provides home construction cost estimation in Moradabad, including per-square-foot budget planning, civil construction, wholesale building material supply and residential construction quotes.",
 
-    url: "https://www.MTBoss.in/home-construction-cost-per-sq-ft-in-moradabad",
+    url: "https://www.MTBOSS.in/home-construction-cost-per-sq-ft-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
 
     areaServed: {
@@ -162,10 +162,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss provide a per-sq-ft cost estimate for home construction?",
+        name: "Does MTBOSS provide a per-sq-ft cost estimate for home construction?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBoss provides home construction cost estimates using its free Budget Calculator, based on your plot, planned built-up area, number of floors and selected finish level.",
+          text: "Yes. MTBOSS provides home construction cost estimates using its free Budget Calculator, based on your plot, planned built-up area, number of floors and selected finish level.",
         },
       },
       {
@@ -178,7 +178,7 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does the MTBoss estimate include modular kitchens and interiors?",
+        name: "Does the MTBOSS estimate include modular kitchens and interiors?",
         acceptedAnswer: {
           "@type": "Answer",
           text: "Modular kitchens, wardrobes, premium furnishings, detailed false ceilings and specialised interiors are typically discussed and budgeted as separate line items from the core civil construction rate.",
@@ -189,7 +189,7 @@ export default function Page() {
         name: "How much would a 1000 sq ft house cost to build in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "General Uttar Pradesh benchmarks estimate approximately ₹18 to ₹22 lakh for a basic 1,000 sq ft house, while a premium finish can range from around ₹27 to ₹32 lakh. A plot-specific MTBoss estimate can provide a more accurate figure.",
+          text: "General Uttar Pradesh benchmarks estimate approximately ₹18 to ₹22 lakh for a basic 1,000 sq ft house, while a premium finish can range from around ₹27 to ₹32 lakh. A plot-specific MTBOSS estimate can provide a more accurate figure.",
         },
       },
       {
@@ -197,15 +197,15 @@ export default function Page() {
         name: "How can I get a precise construction cost estimate for my home?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Use the free MTBoss Budget Calculator or contact the team directly with your plot size, built-up area, number of floors, finish-level preference and interior requirements.",
+          text: "Use the free MTBOSS Budget Calculator or contact the team directly with your plot size, built-up area, number of floors, finish-level preference and interior requirements.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -220,19 +220,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Home Construction Cost Per Sq Ft in Moradabad",
-        item: "https://www.MTBoss.in/home-construction-cost-per-sq-ft-in-moradabad",
+        item: "https://www.MTBOSS.in/home-construction-cost-per-sq-ft-in-moradabad",
       },
     ],
   };

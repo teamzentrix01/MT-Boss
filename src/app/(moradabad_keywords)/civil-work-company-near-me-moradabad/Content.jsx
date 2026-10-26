@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Work Company Near Me in Moradabad: MTBoss
+            Civil Work Company Near Me in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -26,7 +26,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 That is why people search for a civil work company near me in
-                Moradabad. MTBoss Construction Private Limited is based on Kanth
+                Moradabad. MTBOSS Construction Private Limited is based on Kanth
                 Road in Moradabad and serves clients across Moradabad and Bareilly.
                 Our services run from planning to completion, with quality work,
                 transparent pricing and on-time delivery.
@@ -60,21 +60,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -118,10 +118,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs. Our work covers residential,
                 commercial, hotel and hospitality, industrial and warehousing, and
                 infrastructure and road projects, along with architecture and
@@ -205,7 +205,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Civil Work Services Offered by MTBoss
+                Civil Work Services Offered by MTBOSS
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -276,7 +276,7 @@ const Content = () => {
                 Quick Home Services Available Nearby
               </h3>
               <p className="mb-3">
-                Through MTBoss.in, you can also book services that often go
+                Through MTBOSS.in, you can also book services that often go
                 together with civil work:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -304,7 +304,7 @@ const Content = () => {
               </h3>
               <p>
                 Builders, contractors and homeowners can explore cement, steel,
-                bricks and more through the Shop Now section of MTBoss.in, and
+                bricks and more through the Shop Now section of MTBOSS.in, and
                 connect with suppliers for their projects. Our engineers can advise
                 on quantity and quality, and delivery depends on material type and
                 site location [confirm delivery coverage].
@@ -322,7 +322,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  MTBoss.in, call, or send a WhatsApp message with your location,
+                  MTBOSS.in, call, or send a WhatsApp message with your location,
                   photos and a short description.
                 </li>
                 <li>
@@ -337,7 +337,7 @@ const Content = () => {
                 <li>
                   <strong>Itemised estimate.</strong> You receive a quotation with
                   quantities, materials, labour, timeline and payment stages. You
-                  can also use the Budget Calculator on MTBoss.in for an early
+                  can also use the Budget Calculator on MTBOSS.in for an early
                   idea.
                 </li>
                 <li>
@@ -502,7 +502,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -546,7 +546,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact MTBoss Today
+                Contact MTBOSS Today
               </h3>
               <p className="mb-3">Ready to start? Reach the team now:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -564,21 +564,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -592,7 +592,7 @@ const Content = () => {
                 a site visit and send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss, your trusted civil work company near you in
+                Choose MTBOSS, your trusted civil work company near you in
                 Moradabad, for construction and repair that is planned well, built
                 correctly and supported locally.
               </p>
@@ -604,13 +604,13 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Where is MTBoss located in Moradabad?</strong>
+                  <strong>Q1. Where is MTBOSS located in Moradabad?</strong>
                   <br />
                   Harthala, Kanth Road, Moradabad, behind KR Collection and near
                   Domino&apos;s.
                 </li>
                 <li>
-                  <strong>Q2. What is the contact number of MTBoss?</strong>
+                  <strong>Q2. What is the contact number of MTBOSS?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -638,7 +638,7 @@ const Content = () => {
                 <li>
                   <strong>Q5. How can I request a site visit?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp us with your location.
                 </li>
                 <li>
@@ -655,7 +655,7 @@ const Content = () => {
                 <li>
                   <strong>Q8. Can I check my budget before calling?</strong>
                   <br />
-                  Yes. Use the Budget Calculator on MTBoss.in for an early idea.
+                  Yes. Use the Budget Calculator on MTBOSS.in for an early idea.
                 </li>
                 <li>
                   <strong>Q9. Do you supply materials?</strong>

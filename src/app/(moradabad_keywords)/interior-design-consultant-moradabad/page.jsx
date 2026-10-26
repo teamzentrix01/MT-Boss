@@ -7,26 +7,26 @@ import Services from '../../components/Services';
 
 
 export const metadata = {
-  title: 'Interior Design Consultant Moradabad | MTBoss',
+  title: 'Interior Design Consultant Moradabad | MTBOSS',
   description:
-    'MTBoss is a trusted interior design consultant in Moradabad for homes, shops and offices. Clear pricing, 3D designs and full execution. Book a free visit.',
+    'MTBOSS is a trusted interior design consultant in Moradabad for homes, shops and offices. Clear pricing, 3D designs and full execution. Book a free visit.',
   keywords:
-    'interior design consultant Moradabad, interior designer Moradabad, interior design consultant near me, home interior designer Moradabad, office interior designer Moradabad, shop interior designer Moradabad, modular kitchen designer Moradabad, interior design company Moradabad, MTBoss interior designer Moradabad, interior decoration Moradabad',
+    'interior design consultant Moradabad, interior designer Moradabad, interior design consultant near me, home interior designer Moradabad, office interior designer Moradabad, shop interior designer Moradabad, modular kitchen designer Moradabad, interior design company Moradabad, MTBOSS interior designer Moradabad, interior decoration Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/interior-design-consultant-moradabad',
+    canonical: 'https://www.MTBOSS.in/interior-design-consultant-moradabad',
   },
   openGraph: {
-    title: 'Interior Design Consultant Moradabad | MTBoss',
+    title: 'Interior Design Consultant Moradabad | MTBOSS',
     description:
-      'MTBoss is a trusted interior design consultant in Moradabad for homes, shops and offices. Clear pricing, 3D designs and full execution. Book a free visit.',
-    url: 'https://www.MTBoss.in/interior-design-consultant-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'MTBOSS is a trusted interior design consultant in Moradabad for homes, shops and offices. Clear pricing, 3D designs and full execution. Book a free visit.',
+    url: 'https://www.MTBOSS.in/interior-design-consultant-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-interior-design-consultant-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-interior-design-consultant-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Interior Design Consultant in Moradabad - MTBoss',
+        alt: 'Interior Design Consultant in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -34,10 +34,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Interior Design Consultant Moradabad | MTBoss',
+    title: 'Interior Design Consultant Moradabad | MTBOSS',
     description:
-      'MTBoss is a trusted interior design consultant in Moradabad for homes, shops and offices. Clear pricing, 3D designs and full execution. Book a free visit.',
-    images: ['https://www.MTBoss.in/og-interior-design-consultant-moradabad.jpg'],
+      'MTBOSS is a trusted interior design consultant in Moradabad for homes, shops and offices. Clear pricing, 3D designs and full execution. Book a free visit.',
+    images: ['https://www.MTBOSS.in/og-interior-design-consultant-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -49,10 +49,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/interior-design-consultant-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/interior-design-consultant-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

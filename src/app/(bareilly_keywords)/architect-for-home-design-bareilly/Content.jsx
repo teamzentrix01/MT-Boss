@@ -23,7 +23,7 @@ const Content = () => {
                 actually live.
               </p>
               <p className="mt-3">
-                MTBoss is an architect, interior design and construction company
+                MTBOSS is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work, transparent
                 pricing and on-time delivery. Because we also build, our designs are
                 checked against construction reality from the start.
@@ -32,7 +32,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Home Design Services from MTBoss
+                Home Design Services from MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -340,7 +340,7 @@ const Content = () => {
                 <li>Door and window sizes that suit furniture</li>
               </ul>
               <p className="mt-3">
-                MTBoss offers interior design with carpenter, false ceiling, tile
+                MTBOSS offers interior design with carpenter, false ceiling, tile
                 and marble, painter and wallpaper services, so design and delivery
                 stay connected.
               </p>
@@ -387,7 +387,7 @@ const Content = () => {
               <p className="mt-3">
                 Cost depends on: plot size, built-up area, number of floors,
                 materials, finishes and site conditions. You can try the Budget
-                Calculator on the MTBoss website to set realistic expectations.
+                Calculator on the MTBOSS website to set realistic expectations.
                 Final pricing and consultation terms are shared after discussing
                 your project.
               </p>
@@ -411,7 +411,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBoss Home Design Process
+                The MTBOSS Home Design Process
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -452,7 +452,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MTBoss
+                Reasons to Choose MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -462,7 +462,7 @@ const Content = () => {
                 <li>
                   <strong>One team for design and execution.</strong> Architecture,
                   interior design, civil work, plumbing, electrical, carpentry,
-                  painting and more are available through MTBoss.
+                  painting and more are available through MTBOSS.
                 </li>
                 <li>
                   <strong>Transparent communication.</strong> You know the scope and
@@ -484,7 +484,7 @@ const Content = () => {
                 Service Areas in Bareilly
               </h3>
               <p>
-                MTBoss serves clients in Bareilly, including areas such as Civil
+                MTBOSS serves clients in Bareilly, including areas such as Civil
                 Lines, Rampur Garden, Izzatnagar, Subhash Nagar, DD Puram and
                 Pilibhit Bypass Road. If your plot is elsewhere in or around
                 Bareilly, contact us and we will confirm availability.
@@ -493,7 +493,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Home Design with MTBoss
+                Plan Your Home Design with MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -510,10 +510,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -524,16 +524,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/"
+                  href="https://www.MTBOSS.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss website
+                  MTBOSS website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -544,7 +544,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 Get a home design that fits your plot, your family and your budget.
-                Contact MTBoss today for home design in Bareilly.
+                Contact MTBOSS today for home design in Bareilly.
               </p>
             </section>
 
@@ -555,7 +555,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBoss provide an architect for home design in
+                    Q1. Does MTBOSS provide an architect for home design in
                     Bareilly?
                   </strong>
                   <br />
@@ -599,7 +599,7 @@ const Content = () => {
                   ceilings and painting.
                 </li>
                 <li>
-                  <strong>Q8. Can MTBoss also build the house?</strong>
+                  <strong>Q8. Can MTBOSS also build the house?</strong>
                   <br />
                   Yes. We offer construction and finishing services alongside
                   design.
@@ -622,7 +622,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

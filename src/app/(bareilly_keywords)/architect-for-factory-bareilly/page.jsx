@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect for Factory in Bareilly',
   description:
-    'Planning a factory in Bareilly? MTBoss designs factory layouts, sheds and warehouses with truck flow, services and fire planning, then builds if you choose.',
+    'Planning a factory in Bareilly? MTBOSS designs factory layouts, sheds and warehouses with truck flow, services and fire planning, then builds if you choose.',
   keywords:
-    'architect for factory in Bareilly, factory architect Bareilly, industrial architect Bareilly, factory design Bareilly, factory shed design Bareilly, warehouse architect Bareilly, factory construction Bareilly, industrial building design Bareilly, workshop architect Bareilly, factory layout planning Bareilly, MTBoss Bareilly, architect near me Bareilly',
+    'architect for factory in Bareilly, factory architect Bareilly, industrial architect Bareilly, factory design Bareilly, factory shed design Bareilly, warehouse architect Bareilly, factory construction Bareilly, industrial building design Bareilly, workshop architect Bareilly, factory layout planning Bareilly, MTBOSS Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/architect-for-factory-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-for-factory-bareilly',
   },
   openGraph: {
     title: 'Architect for Factory in Bareilly',
     description:
-      'Planning a factory in Bareilly? MTBoss designs factory layouts, sheds and warehouses with truck flow, services and fire planning, then builds if you choose.',
-    url: 'https://www.MTBoss.in/architect-for-factory-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Planning a factory in Bareilly? MTBOSS designs factory layouts, sheds and warehouses with truck flow, services and fire planning, then builds if you choose.',
+    url: 'https://www.MTBOSS.in/architect-for-factory-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-for-factory-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-factory-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect for Factory in Bareilly - MTBoss',
+        alt: 'Architect for Factory in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect for Factory in Bareilly',
     description:
-      'Planning a factory in Bareilly? MTBoss designs factory layouts, sheds and warehouses with truck flow, services and fire planning, then builds if you choose.',
-    images: ['https://www.MTBoss.in/og-architect-for-factory-bareilly.jpg'],
+      'Planning a factory in Bareilly? MTBOSS designs factory layouts, sheds and warehouses with truck flow, services and fire planning, then builds if you choose.',
+    images: ['https://www.MTBOSS.in/og-architect-for-factory-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-for-factory-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-for-factory-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

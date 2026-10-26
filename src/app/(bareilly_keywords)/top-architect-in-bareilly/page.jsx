@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Top Architect in Bareilly | MTBoss Design & Build',
+  title: 'Top Architect in Bareilly | MTBOSS Design & Build',
   description:
-    'Shortlisting a top architect in Bareilly . Learn how to screen credentials, read portfolios, check references and compare proposals, and see how MTBoss answers.',
+    'Shortlisting a top architect in Bareilly . Learn how to screen credentials, read portfolios, check references and compare proposals, and see how MTBOSS answers.',
   keywords:
-    'top architect in Bareilly, best architect Bareilly, registered architect Bareilly, house architect Bareilly, commercial architect Bareilly, interior designer Bareilly, architectural drawings Bareilly, MTBoss Bareilly, design and build Bareilly, architect near me Bareilly, COA registered architect Bareilly, shortlist architect Bareilly',
+    'top architect in Bareilly, best architect Bareilly, registered architect Bareilly, house architect Bareilly, commercial architect Bareilly, interior designer Bareilly, architectural drawings Bareilly, MTBOSS Bareilly, design and build Bareilly, architect near me Bareilly, COA registered architect Bareilly, shortlist architect Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/top-architect-in-bareilly',
+    canonical: 'https://www.MTBOSS.in/top-architect-in-bareilly',
   },
   openGraph: {
-    title: 'Top Architect in Bareilly | MTBoss Design & Build',
+    title: 'Top Architect in Bareilly | MTBOSS Design & Build',
     description:
-      'Shortlisting a top architect in Bareilly . Learn how to screen credentials, read portfolios, check references and compare proposals, and see how MTBoss answers.',
-    url: 'https://www.MTBoss.in/top-architect-in-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Shortlisting a top architect in Bareilly . Learn how to screen credentials, read portfolios, check references and compare proposals, and see how MTBOSS answers.',
+    url: 'https://www.MTBOSS.in/top-architect-in-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-top-architect-in-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-top-architect-in-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Top Architect in Bareilly - MTBoss',
+        alt: 'Top Architect in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Top Architect in Bareilly | MTBoss Design & Build',
+    title: 'Top Architect in Bareilly | MTBOSS Design & Build',
     description:
-      'Shortlisting a top architect in Bareilly . Learn how to screen credentials, read portfolios, check references and compare proposals, and see how MTBoss answers.',
-    images: ['https://www.MTBoss.in/og-top-architect-in-bareilly.jpg'],
+      'Shortlisting a top architect in Bareilly . Learn how to screen credentials, read portfolios, check references and compare proposals, and see how MTBOSS answers.',
+    images: ['https://www.MTBOSS.in/og-top-architect-in-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/top-architect-in-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/top-architect-in-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

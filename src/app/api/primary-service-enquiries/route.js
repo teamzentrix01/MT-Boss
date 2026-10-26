@@ -9,7 +9,7 @@ import { notifyAdminSubmission } from '@/lib/customer-communications';
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
   process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-  'MTBoss2016@gmail.com';
+  'MTBOSS2016@gmail.com';
 
 export const runtime = 'nodejs';
 
@@ -142,7 +142,7 @@ async function savePropertyImage(file) {
   const uploadData = new FormData();
   uploadData.append('file', file);
   uploadData.append('upload_preset', uploadPreset);
-  uploadData.append('folder', 'MTBoss/primary-service-properties');
+  uploadData.append('folder', 'MTBOSS/primary-service-properties');
   const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
     method: 'POST',
     body: uploadData,

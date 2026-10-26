@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect for Office Building in Bareilly',
   description:
-    'Architect for office building in Bareilly: floor plans, core planning, parking, services and facade for owner-occupied or rental offices. MTBoss designs and builds. Call or WhatsApp.',
+    'Architect for office building in Bareilly: floor plans, core planning, parking, services and facade for owner-occupied or rental offices. MTBOSS designs and builds. Call or WhatsApp.',
   keywords:
-    'architect for office building in Bareilly, office building architect Bareilly, office building design Bareilly, office floor plan Bareilly, rental office building Bareilly, commercial office architect Bareilly, office construction Bareilly, office building renovation Bareilly, office interior design Bareilly, MTBoss Bareilly, architect near me Bareilly',
+    'architect for office building in Bareilly, office building architect Bareilly, office building design Bareilly, office floor plan Bareilly, rental office building Bareilly, commercial office architect Bareilly, office construction Bareilly, office building renovation Bareilly, office interior design Bareilly, MTBOSS Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/architect-for-office-building-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-for-office-building-bareilly',
   },
   openGraph: {
     title: 'Architect for Office Building in Bareilly',
     description:
-      'Architect for office building in Bareilly: floor plans, core planning, parking, services and facade for owner-occupied or rental offices. MTBoss designs and builds. Call or WhatsApp.',
-    url: 'https://www.MTBoss.in/architect-for-office-building-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Architect for office building in Bareilly: floor plans, core planning, parking, services and facade for owner-occupied or rental offices. MTBOSS designs and builds. Call or WhatsApp.',
+    url: 'https://www.MTBOSS.in/architect-for-office-building-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-for-office-building-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-office-building-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect for Office Building in Bareilly - MTBoss',
+        alt: 'Architect for Office Building in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,9 +35,9 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect for Office Building in Bareilly',
     description:
-      'Architect for office building in Bareilly: floor plans, core planning, parking, services and facade for owner-occupied or rental offices. MTBoss designs and builds. Call or WhatsApp.',
+      'Architect for office building in Bareilly: floor plans, core planning, parking, services and facade for owner-occupied or rental offices. MTBOSS designs and builds. Call or WhatsApp.',
     images: [
-      'https://www.MTBoss.in/og-architect-for-office-building-bareilly.jpg',
+      'https://www.MTBOSS.in/og-architect-for-office-building-bareilly.jpg',
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-for-office-building-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-for-office-building-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

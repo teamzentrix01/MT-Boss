@@ -118,8 +118,8 @@ export default function QuickServiceSlugPage() {
           setService(data.data);
           
           // Set meta tags dynamically
-          const seoTitle = data.data.seo_title || `${data.data.label} - Quick Service | MTBoss`;
-          const seoDesc = data.data.seo_description || data.data.description || `Book ${data.data.label} service from MTBoss. Professional, reliable, and affordable.`;
+          const seoTitle = data.data.seo_title || `${data.data.label} - Quick Service | MTBOSS`;
+          const seoDesc = data.data.seo_description || data.data.description || `Book ${data.data.label} service from MTBOSS. Professional, reliable, and affordable.`;
           
           document.title = seoTitle;
           document.querySelector('meta[name="description"]')?.setAttribute('content', seoDesc);
@@ -493,7 +493,7 @@ export default function QuickServiceSlugPage() {
         <img src={bannerImg} alt={service.label} className="absolute inset-0 w-full h-full object-cover blur-[1px]" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
         <div className="relative z-10 max-w-4xl mx-auto px-6 pb-12 w-full">
-          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-3">MTBoss Quick Service</p>
+          <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.5em] mb-3">MTBOSS Quick Service</p>
           <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-tighter text-white leading-none mb-4">
             {service.label}
           </h1>
@@ -975,7 +975,7 @@ export default function QuickServiceSlugPage() {
                     setPrivacyAccepted(event.target.checked);
                     if (event.target.checked) setErrors((current) => ({ ...current, privacy: '' }));
                   }} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--brand-blue)]" />
-                  <span className={`text-[10px] leading-relaxed ${muted}`}>I have read and agree to the <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-bold text-[var(--brand-blue)] underline">Privacy Policy</a>. I consent to MTBoss using my details to process this booking and payment.</span>
+                  <span className={`text-[10px] leading-relaxed ${muted}`}>I have read and agree to the <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-bold text-[var(--brand-blue)] underline">Privacy Policy</a>. I consent to MTBOSS using my details to process this booking and payment.</span>
                 </label>
                 {errors.privacy && <p className="text-left text-[10px] font-bold text-red-500">{errors.privacy}</p>}
 

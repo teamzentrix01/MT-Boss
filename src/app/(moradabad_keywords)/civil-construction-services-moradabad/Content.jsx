@@ -14,7 +14,7 @@ const Content = () => {
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Civil construction services in Moradabad cover a wide spectrum — from building a new home to renovating an old one, from setting up a commercial showroom to constructing an industrial warehouse. Rather than treating construction as a single generic task, it helps to understand it as a set of distinct services that can be combined based on your specific project. This guide breaks down the full range of civil construction services available in Moradabad, how to choose the right service provider, what drives costs, and why MTBoss Construction Private Limited offers one of the more complete service portfolios in the region.
+                Civil construction services in Moradabad cover a wide spectrum — from building a new home to renovating an old one, from setting up a commercial showroom to constructing an industrial warehouse. Rather than treating construction as a single generic task, it helps to understand it as a set of distinct services that can be combined based on your specific project. This guide breaks down the full range of civil construction services available in Moradabad, how to choose the right service provider, what drives costs, and why MTBOSS Construction Private Limited offers one of the more complete service portfolios in the region.
               </p>
             </section>
 
@@ -112,10 +112,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBoss Offers a Comprehensive Civil Construction Service Portfolio
+                Why MTBOSS Offers a Comprehensive Civil Construction Service Portfolio
               </h3>
               <p className="mb-3">
-                Based on their published company profile, MTBoss Construction Private Limited stands out for combining nearly every construction-related service under one company:
+                Based on their published company profile, MTBOSS Construction Private Limited stands out for combining nearly every construction-related service under one company:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
@@ -228,9 +228,9 @@ const Content = () => {
                 If you need one or more of these services — new construction, renovation, materials, or home repairs — reach out directly:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.MTBoss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBoss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:MTBoss2016@gmail.com" className="text-blue-600 underline">MTBoss2016@gmail.com</a></li>
+                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
@@ -253,7 +253,7 @@ const Content = () => {
                 <li>
                   <strong>Q2. Who offers a full range of construction services in Moradabad?</strong>
                   <br />
-                  MTBoss Construction Private Limited, with 22+ years of experience and 450+ completed projects.
+                  MTBOSS Construction Private Limited, with 22+ years of experience and 450+ completed projects.
                 </li>
                 <li>
                   <strong>Q3. What is the average cost per square foot for new construction?</strong>
@@ -261,27 +261,27 @@ const Content = () => {
                   Around ₹700–₹800 per sq. ft. for standard-quality construction.
                 </li>
                 <li>
-                  <strong>Q4. Does MTBoss provide a free service estimate?</strong>
+                  <strong>Q4. Does MTBOSS provide a free service estimate?</strong>
                   <br />
                   Yes, their online Budget Calculator gives an instant, free BOQ-based estimate.
                 </li>
                 <li>
-                  <strong>Q5. What quality packages does MTBoss offer?</strong>
+                  <strong>Q5. What quality packages does MTBOSS offer?</strong>
                   <br />
                   Basic, Standard, Premium, and Luxury, covering different budgets.
                 </li>
                 <li>
-                  <strong>Q6. Does MTBoss offer renovation services too?</strong>
+                  <strong>Q6. Does MTBOSS offer renovation services too?</strong>
                   <br />
                   Yes, including full home renovation, remodeling, and structural repairs.
                 </li>
                 <li>
-                  <strong>Q7. Can I buy construction materials directly from MTBoss?</strong>
+                  <strong>Q7. Can I buy construction materials directly from MTBOSS?</strong>
                   <br />
                   Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates.
                 </li>
                 <li>
-                  <strong>Q8. Does MTBoss assist with property buying, selling, or renting?</strong>
+                  <strong>Q8. Does MTBOSS assist with property buying, selling, or renting?</strong>
                   <br />
                   Yes, with verified listings and zero brokerage on rentals.
                 </li>

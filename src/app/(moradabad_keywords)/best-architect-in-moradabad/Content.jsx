@@ -15,7 +15,7 @@ const Content = () => {
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                MTBoss is a Moradabad-based architecture and construction
+                MTBOSS is a Moradabad-based architecture and construction
                 company that has planned and built homes, hospitals, schools,
                 hotels and commercial spaces across the city, handling
                 everything from the first drawing to final handover, under one
@@ -27,7 +27,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBoss Is a Leading Architect in Moradabad
+                Why MTBOSS Is a Leading Architect in Moradabad
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -36,7 +36,7 @@ const Content = () => {
               <p className="mb-3">
                 Most architects hand you off to a separate contractor once
                 drawings are ready, and that&apos;s usually where budgets and
-                timelines start slipping. At MTBoss, our architects and
+                timelines start slipping. At MTBOSS, our architects and
                 construction team work together from day one, so what&apos;s
                 designed is what actually gets built, without surprise cost
                 escalations mid-project.
@@ -111,14 +111,14 @@ const Content = () => {
                 What Our Clients Say
               </h3>
               <p className="mb-3">
-                Real feedback from clients who have worked with MTBoss on their
+                Real feedback from clients who have worked with MTBOSS on their
                 construction projects:
               </p>
 
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
                 <p className="text-yellow-500 mb-2">⭐⭐⭐⭐⭐</p>
                 <p className="italic mb-2">
-                  &quot;Had a great experience with MTBoss Construction Pvt.
+                  &quot;Had a great experience with MTBOSS Construction Pvt.
                   Ltd. The team is professional, responsive, and delivers
                   quality work on time. Highly impressed with their commitment
                   and service. Highly recommended.&quot;
@@ -131,7 +131,7 @@ const Content = () => {
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
                 <p className="text-yellow-500 mb-2">⭐⭐⭐⭐⭐</p>
                 <p className="italic mb-2">
-                  &quot;MTBoss Construction Pvt. Ltd. ke saath mera experience
+                  &quot;MTBOSS Construction Pvt. Ltd. ke saath mera experience
                   bahut hi behtareen raha. Inki team ka kaam karne ka tareeka
                   professional hai aur material ki quality par ye log koi
                   compromise nahi karte. Civil work ki technical knowledge aur
@@ -170,7 +170,7 @@ const Content = () => {
                 What to Check Before Hiring Any Architect in Moradabad
               </h3>
               <p className="mb-3">
-                Once you know what MTBoss offers, here&apos;s what to compare
+                Once you know what MTBOSS offers, here&apos;s what to compare
                 us against, if you&apos;re still evaluating other options:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -197,7 +197,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Most architects in Moradabad can offer one or two of these.
-                MTBoss is built to offer all six, which is why clients come
+                MTBOSS is built to offer all six, which is why clients come
                 back to us for repeat projects.
               </p>
             </section>
@@ -235,7 +235,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 This single-team process is the biggest structural difference
-                between MTBoss and most architecture firms operating in
+                between MTBOSS and most architecture firms operating in
                 Moradabad, who stop at drawings and hand you off to a separate
                 contractor.
               </p>
@@ -265,7 +265,7 @@ const Content = () => {
                   The right choice depends on your project type and priorities.
                   Look for a firm with a visible local portfolio, transparent
                   pricing, verified client reviews, and the ability to manage
-                  construction as well as design. MTBoss offers all four, with
+                  construction as well as design. MTBOSS offers all four, with
                   completed projects and verified Google reviews across
                   residential, healthcare, education and commercial categories
                   in Moradabad.
@@ -278,7 +278,7 @@ const Content = () => {
                   <br />
                   Costs vary by project type, size and finish level.
                   Residential design is typically charged per sq. ft. or as a
-                  percentage of the total project cost. Contact MTBoss for a
+                  percentage of the total project cost. Contact MTBOSS for a
                   written quote based on your plot and requirement.
                 </li>
                 <li>
@@ -287,20 +287,20 @@ const Content = () => {
                     one company for both?
                   </strong>
                   <br />
-                  Hiring one company for design and construction, like MTBoss,
+                  Hiring one company for design and construction, like MTBOSS,
                   reduces miscommunication between drawings and execution, and
                   usually keeps costs more predictable, since the same team is
                   accountable for both stages.
                 </li>
                 <li>
-                  <strong>Q4. Does MTBoss handle map approval in Moradabad?</strong>
+                  <strong>Q4. Does MTBOSS handle map approval in Moradabad?</strong>
                   <br />
                   Yes. We prepare the required documentation and drawings and
                   guide the process through to MDA sanction.
                 </li>
                 <li>
                   <strong>
-                    Q5. Can MTBoss design hospitals, schools and commercial
+                    Q5. Can MTBOSS design hospitals, schools and commercial
                     buildings, not just homes?
                   </strong>
                   <br />
@@ -332,7 +332,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Whether you&apos;re planning a home, hospital, school or
-                commercial space, MTBoss gives you design, approval and
+                commercial space, MTBOSS gives you design, approval and
                 construction from a single, accountable team, backed by
                 verified reviews from real clients.
               </p>

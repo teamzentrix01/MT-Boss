@@ -16,7 +16,7 @@ export const metadata = {
     "wall design interior Bareilly, wall design for living room Bareilly, bedroom wall design Bareilly, TV wall design Bareilly, wall panel design Bareilly, PVC louvers Bareilly, wallpaper installation Bareilly, wall texture design Bareilly, feature wall design Bareilly, wall design cost Bareilly, home interior Bareilly, MTBOSS Bareilly, MTBOSS Moradabad, MTBOSS budget calculator, wall design quote Bareilly",
 
   alternates: {
-    canonical: "https://www.mtboss.in/wall-design-interior-in-bareilly",
+    canonical: "https://www.MTBOSS.in/wall-design-interior-in-bareilly",
   },
 
   openGraph: {
@@ -25,13 +25,13 @@ export const metadata = {
     description:
       "Planning wall design interior Bareilly? MTBOSS creates panels, wallpaper and texture walls with clear costs. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/wall-design-interior-in-bareilly",
+    url: "https://www.MTBOSS.in/wall-design-interior-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-wall-design-interior-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-wall-design-interior-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Wall Design Interior in Bareilly - MTBOSS",
@@ -50,7 +50,7 @@ export const metadata = {
     description:
       "Planning wall design interior Bareilly? MTBOSS creates panels, wallpaper and texture walls with clear costs. Call +91 94584 10866.",
 
-    images: ["https://www.mtboss.in/og-wall-design-interior-bareilly.jpg"],
+    images: ["https://www.MTBOSS.in/og-wall-design-interior-bareilly.jpg"],
   },
 
   robots: {
@@ -64,10 +64,10 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/wall-design-interior-in-bareilly",
+    url: "https://www.MTBOSS.in/wall-design-interior-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-wall-design-interior-bareilly.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-wall-design-interior-bareilly.jpg",
     priceRange: "₹₹₹",
     address: {
       "@type": "PostalAddress",
@@ -113,13 +113,13 @@ export default function Page() {
     name: "Wall Design Interior Services in Bareilly",
     description:
       "MTBOSS provides wall design interior services in Bareilly. Services include site visit and wall inspection, wall design planning, concept and 3D views, PVC panels and louvers, wallpaper installation, texture and accent painting, wooden and laminate panelling, tile and marble cladding, TV wall and display units, false ceiling and lighting coordination, waterproofing and wall repair, renovation of existing walls, material supply and home services.",
-    url: "https://www.mtboss.in/wall-design-interior-in-bareilly",
+    url: "https://www.MTBOSS.in/wall-design-interior-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -214,19 +214,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Wall Design Interior in Bareilly",
-        item: "https://www.mtboss.in/wall-design-interior-in-bareilly",
+        item: "https://www.MTBOSS.in/wall-design-interior-in-bareilly",
       },
     ],
   };

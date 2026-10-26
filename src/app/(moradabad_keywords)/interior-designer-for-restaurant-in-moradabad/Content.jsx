@@ -24,7 +24,7 @@ const Content = () => {
                 owner can make.
               </p>
               <p className="mt-3">
-                MTBoss is an architecture, interior design and construction
+                MTBOSS is an architecture, interior design and construction
                 company serving Moradabad and Bareilly. We plan restaurant
                 interiors as working systems, where kitchen, service floor,
                 seating and branding support each other.
@@ -223,7 +223,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Because MTBoss also handles construction, plumbing, electrical
+                Because MTBOSS also handles construction, plumbing, electrical
                 and waterproofing coordination, kitchen requirements such as
                 drainage slopes, gas lines and power loads are planned early
                 rather than fixed later.
@@ -401,7 +401,7 @@ const Content = () => {
                 clashes and blame games can delay opening.
               </p>
               <p className="mb-3">
-                MTBoss handles planning, construction and interiors under one
+                MTBOSS handles planning, construction and interiors under one
                 roof. Restaurant owners benefit from:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -486,10 +486,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -499,17 +499,17 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
               <p className="mt-3">
-                Let MTBoss help you create a restaurant that guests enjoy and
+                Let MTBOSS help you create a restaurant that guests enjoy and
                 remember.
               </p>
             </section>
@@ -527,7 +527,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q2. Does MTBoss design cafes and small food outlets too?
+                    Q2. Does MTBOSS design cafes and small food outlets too?
                   </strong>
                   <br />
                   Yes. We design restaurants, cafes, sweet shops, bakeries, fast
@@ -573,12 +573,12 @@ const Content = () => {
                   </a>
                   , or use the contact page on{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    MTBoss.in
+                    MTBOSS.in
                   </a>
                   .
                 </li>

@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Best Pest Control in Moradabad | MTBoss',
+  title: 'Best Pest Control in Moradabad | MTBOSS',
   description:
-    'Looking for the best pest control in Moradabad? Judge companies on inspection, method, safety and follow-up. See how MTBoss measures up. Call +91 94584 10866.',
+    'Looking for the best pest control in Moradabad? Judge companies on inspection, method, safety and follow-up. See how MTBOSS measures up. Call +91 94584 10866.',
   keywords:
-    'best pest control Moradabad, best pest control company Moradabad, pest control services Moradabad, top pest control Moradabad, pest control near me Moradabad, cockroach control Moradabad, termite treatment Moradabad, bed bug treatment Moradabad, rodent control Moradabad, MTBoss pest control Moradabad',
+    'best pest control Moradabad, best pest control company Moradabad, pest control services Moradabad, top pest control Moradabad, pest control near me Moradabad, cockroach control Moradabad, termite treatment Moradabad, bed bug treatment Moradabad, rodent control Moradabad, MTBOSS pest control Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/best-pest-control-moradabad',
+    canonical: 'https://www.MTBOSS.in/best-pest-control-moradabad',
   },
   openGraph: {
-    title: 'Best Pest Control in Moradabad | MTBoss',
+    title: 'Best Pest Control in Moradabad | MTBOSS',
     description:
-      'Looking for the best pest control in Moradabad? Judge companies on inspection, method, safety and follow-up. See how MTBoss measures up. Call +91 94584 10866.',
-    url: 'https://www.MTBoss.in/best-pest-control-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Looking for the best pest control in Moradabad? Judge companies on inspection, method, safety and follow-up. See how MTBOSS measures up. Call +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/best-pest-control-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-best-pest-control-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-best-pest-control-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Best Pest Control in Moradabad - MTBoss',
+        alt: 'Best Pest Control in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Best Pest Control in Moradabad | MTBoss',
+    title: 'Best Pest Control in Moradabad | MTBOSS',
     description:
-      'Looking for the best pest control in Moradabad? Judge companies on inspection, method, safety and follow-up. See how MTBoss measures up. Call +91 94584 10866.',
-    images: ['https://www.MTBoss.in/og-best-pest-control-moradabad.jpg'],
+      'Looking for the best pest control in Moradabad? Judge companies on inspection, method, safety and follow-up. See how MTBOSS measures up. Call +91 94584 10866.',
+    images: ['https://www.MTBOSS.in/og-best-pest-control-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/best-pest-control-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/best-pest-control-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

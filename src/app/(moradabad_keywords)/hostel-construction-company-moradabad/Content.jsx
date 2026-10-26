@@ -29,7 +29,7 @@ const Content = () => {
 
               <p className="mt-3">
                 This page explains how hostel construction in Moradabad works and
-                how MTBoss approaches it as a construction company. MTBoss
+                how MTBOSS approaches it as a construction company. MTBOSS
                 Construction Private Limited is a Moradabad-based architect,
                 interior designer and construction company that builds
                 residential projects from affordable housing to luxury villas,
@@ -126,13 +126,13 @@ const Content = () => {
 
               <p className="mt-3">
                 Your land, residents and budget matter more than the label.
-                MTBoss helps you plan a building that suits your needs.
+                MTBOSS helps you plan a building that suits your needs.
               </p>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Construction Private Limited
+                MTBOSS Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -147,17 +147,17 @@ const Content = () => {
                 </li>
                 <li>
                   Residential projects form a dedicated service category on the
-                  MTBoss website, from affordable housing to luxury villas.
+                  MTBOSS website, from affordable housing to luxury villas.
                 </li>
                 <li>
-                  Project gallery and blog available on the MTBoss website.
+                  Project gallery and blog available on the MTBOSS website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Hostel Construction Services Offered by MTBoss
+                Hostel Construction Services Offered by MTBOSS
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -215,7 +215,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBoss wholesale supply.
+                  bricks, tiles and paints through MTBOSS wholesale supply.
                 </li>
                 <li>
                   <strong>Renovation and extension:</strong> Adding rooms or
@@ -399,13 +399,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBoss Approaches a Hostel Construction Project
+                How MTBOSS Approaches a Hostel Construction Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Step 1 — Enquiry and discussion:</strong> Contact
-                  MTBoss with plot, resident type and budget through website,
+                  MTBOSS with plot, resident type and budget through website,
                   phone or WhatsApp.
                 </li>
                 <li>
@@ -521,7 +521,7 @@ const Content = () => {
                 hostel or PG as a business may involve additional registrations.
                 Requirements vary by location and current regulations, so confirm
                 the latest rules with the relevant authorities and your
-                consultants. MTBoss builds according to approved drawings and
+                consultants. MTBOSS builds according to approved drawings and
                 specifications, while owners and their consultants handle
                 approvals specific to the property.
               </p>
@@ -572,7 +572,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBoss Budget Calculator, then request a
+                Start with the free MTBOSS Budget Calculator, then request a
                 detailed quote after site visit and design discussion.
               </p>
             </section>
@@ -628,7 +628,7 @@ const Content = () => {
 
               <p>
                 Hostel owners often want the building ready before an admission
-                season or academic session. MTBoss supports a smooth project
+                season or academic session. MTBOSS supports a smooth project
                 through stage-wise planning with clear milestones, regular site
                 visits by engineers and single-team coordination of design,
                 materials and construction.
@@ -686,7 +686,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Services for Property Owners
+                MTBOSS Services for Property Owners
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -709,7 +709,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBoss as Your Hostel Construction Company
+                Why Choose MTBOSS as Your Hostel Construction Company
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -739,44 +739,44 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and
-                  blog on the MTBoss website.
+                  blog on the MTBOSS website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBoss: Hostel Construction Company in Moradabad
+                Contact MTBOSS: Hostel Construction Company in Moradabad
               </h3>
 
               <p className="mb-3">
-                If you are planning a hostel in Moradabad, MTBoss offers a single
+                If you are planning a hostel in Moradabad, MTBOSS offers a single
                 point of contact for design coordination, materials, construction
                 and handover.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.MTBoss.in
+                    https://www.MTBOSS.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -822,9 +822,9 @@ const Content = () => {
                 </li>
 
                 <li>
-                  <strong>Q2. Does MTBoss build hostels in Moradabad?</strong>
+                  <strong>Q2. Does MTBOSS build hostels in Moradabad?</strong>
                   <br />
-                  MTBoss builds residential projects, from affordable housing to
+                  MTBOSS builds residential projects, from affordable housing to
                   luxury villas, in Moradabad and Bareilly, and offers
                   construction services for other buildings. Share your plan
                   with the team to confirm the scope for your hostel.
@@ -866,12 +866,12 @@ const Content = () => {
                   <br />
                   Cost depends on built-up area, number of floors, room types,
                   washrooms, material and finish level, services scope and site
-                  conditions. Use the free Budget Calculator on the MTBoss
+                  conditions. Use the free Budget Calculator on the MTBOSS
                   website, or request a detailed quote.
                 </li>
 
                 <li>
-                  <strong>Q7. Where is the MTBoss office located?</strong>
+                  <strong>Q7. Where is the MTBOSS office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

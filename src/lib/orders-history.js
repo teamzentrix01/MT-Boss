@@ -847,7 +847,7 @@ function companyInvoiceConfig() {
     gstin: String(process.env.COMPANY_GSTIN || '').trim(),
     pan: String(process.env.COMPANY_PAN || '').trim(),
     phone: process.env.COMPANY_PHONE || process.env.NEXT_PUBLIC_COMPANY_PHONE || '+91 9410225039',
-    email: process.env.COMPANY_SUPPORT_EMAIL || process.env.SMTP_REPLY_TO || 'support@mtboss.in',
+    email: process.env.COMPANY_SUPPORT_EMAIL || process.env.SMTP_REPLY_TO || 'support@MTBOSS.in',
     placeOfSupply: process.env.COMPANY_PLACE_OF_SUPPLY || 'Uttar Pradesh (09)',
     productHsn: String(process.env.INVOICE_DEFAULT_PRODUCT_HSN || '2523').trim(),
     shippingHsn: String(process.env.INVOICE_SHIPPING_HSN || '996812').trim(),

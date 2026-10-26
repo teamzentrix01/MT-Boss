@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Apartment  Bareilly: MTBoss
+            Architect for Apartment  Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -16,7 +16,7 @@ const Content = () => {
               <p>
                 An architect for an apartment in Bareilly plans the units, stairs,
                 lifts, parking, common areas and services so that every flat sells
-                well and the building works for decades. MTBoss Construction Private
+                well and the building works for decades. MTBOSS Construction Private
                 Limited serves Bareilly and Moradabad with residential design and
                 construction under one team{" "}
                 <span className="text-gray-500">
@@ -37,7 +37,7 @@ const Content = () => {
                 while keeping the building&apos;s cost and maintenance in check.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -80,7 +80,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 <span className="text-gray-500">
-                  [Keep only the types MTBoss actually designs.]
+                  [Keep only the types MTBOSS actually designs.]
                 </span>{" "}
                 Each type carries different rules, costs and buyers.
               </p>
@@ -144,7 +144,7 @@ const Content = () => {
               <p className="mb-3">
                 The mix of flats decides how fast you sell{" "}
                 <span className="text-gray-500">
-                  [state how MTBoss helps decide the mix]
+                  [state how MTBOSS helps decide the mix]
                 </span>
                 .
               </p>
@@ -377,7 +377,7 @@ const Content = () => {
               <p className="mb-3">
                 Structural design must come from a qualified structural engineer{" "}
                 <span className="text-gray-500">
-                  [confirm MTBoss&apos;s in-house or partner arrangement]
+                  [confirm MTBOSS&apos;s in-house or partner arrangement]
                 </span>
                 .
               </p>
@@ -421,7 +421,7 @@ const Content = () => {
                   <strong>Water:</strong> Supply, underground and overhead tanks,
                   pumps, and separate meters where possible{" "}
                   <span className="text-gray-500">
-                    [Plumber service available through MTBoss]
+                    [Plumber service available through MTBOSS]
                   </span>
                 </li>
                 <li>
@@ -433,7 +433,7 @@ const Content = () => {
                   <strong>Power:</strong> Load estimate, meter room, common-area
                   supply and backup for lifts and pumps{" "}
                   <span className="text-gray-500">
-                    [Electrician service available through MTBoss]
+                    [Electrician service available through MTBOSS]
                   </span>
                 </li>
                 <li>
@@ -612,7 +612,7 @@ const Content = () => {
               <p className="mb-3">
                 Main factors include{" "}
                 <span className="text-gray-500">
-                  [state how MTBoss prepares estimates]
+                  [state how MTBOSS prepares estimates]
                 </span>
                 :
               </p>
@@ -635,7 +635,7 @@ const Content = () => {
                 <li>Contingency</li>
               </ul>
               <p className="mt-3">
-                Use the Budget Calculator on MTBoss.in for an early idea, then ask
+                Use the Budget Calculator on MTBOSS.in for an early idea, then ask
                 for an itemised estimate once the layout is fixed.
               </p>
             </section>
@@ -647,7 +647,7 @@ const Content = () => {
               <p className="mb-3">
                 A usable set may include{" "}
                 <span className="text-gray-500">
-                  [adjust to what MTBoss provides]
+                  [adjust to what MTBOSS provides]
                 </span>
                 :
               </p>
@@ -721,11 +721,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Residential design and construction,
@@ -757,21 +757,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -791,7 +791,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Builders Consider MTBoss
+                Reasons Builders Consider MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -833,7 +833,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Apartment Building With MTBoss
+                Plan Your Apartment Building With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -850,21 +850,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &ldquo;Get a Construction Quote&rdquo;)
                 </li>
@@ -879,7 +879,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Consider MTBoss for your apartment building in Bareilly, with the
+                Consider MTBOSS for your apartment building in Bareilly, with the
                 units planned to sell, the core planned to work and the structure
                 planned to last.
               </p>
@@ -893,7 +893,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who designs apartment buildings in Bareilly?</strong>
                   <br />
-                  MTBoss Construction offers residential design and construction for
+                  MTBOSS Construction offers residential design and construction for
                   Bareilly and Moradabad{" "}
                   <span className="text-gray-500">[confirm registration]</span>.
                 </li>
@@ -941,7 +941,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a site study?</strong>
                   <br />
-                  Click &ldquo;Get a Construction Quote&rdquo; on MTBoss.in, or call
+                  Click &ldquo;Get a Construction Quote&rdquo; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

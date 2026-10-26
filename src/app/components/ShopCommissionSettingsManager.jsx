@@ -1864,7 +1864,7 @@ export default function ShopCommissionSettingsManager({ isDarkMode = false }) {
                 </div>
 
                 <div style={{ background: '#ecfdf5', padding: '12px', borderRadius: '8px', border: '1px solid #a7f3d0' }}>
-                  <div style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 700, color: '#047857' }}>Commission (MTBoss)</div>
+                  <div style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 700, color: '#047857' }}>Commission (MTBOSS)</div>
                   <div style={{ fontSize: '16px', fontWeight: 900, marginTop: '4px', color: '#16a34a' }}>
                     ₹{Number(selectedRecord.commission_amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </div>

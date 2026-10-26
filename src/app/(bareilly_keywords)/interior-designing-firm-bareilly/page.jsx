@@ -16,7 +16,7 @@ export const metadata = {
     "interior designing firm Bareilly, interior design firm Bareilly, interior project process Bareilly, interior design brief Bareilly, interior execution Bareilly, interior site supervision Bareilly, interior design timeline Bareilly, home interior firm Bareilly, interior firm for flats Bareilly, interior firm for offices Bareilly, MTBOSS Bareilly, MTBOSS Moradabad, MTBOSS budget calculator, interior design quote Bareilly",
 
   alternates: {
-    canonical: "https://www.mtboss.in/interior-designing-firm-bareilly",
+    canonical: "https://www.MTBOSS.in/interior-designing-firm-bareilly",
   },
 
   openGraph: {
@@ -25,13 +25,13 @@ export const metadata = {
     description:
       "Interior designing firm in Bareilly: see how a project runs from brief to handover with MTBOSS. Call +91 94584 10866 for a quote.",
 
-    url: "https://www.mtboss.in/interior-designing-firm-bareilly",
+    url: "https://www.MTBOSS.in/interior-designing-firm-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designing-firm-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designing-firm-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Designing Firm in Bareilly - MTBOSS",
@@ -51,7 +51,7 @@ export const metadata = {
       "Interior designing firm in Bareilly: see how a project runs from brief to handover with MTBOSS. Call +91 94584 10866 for a quote.",
 
     images: [
-      "https://www.mtboss.in/og-interior-designing-firm-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designing-firm-bareilly.jpg",
     ],
   },
 
@@ -66,11 +66,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-designing-firm-bareilly",
+    url: "https://www.MTBOSS.in/interior-designing-firm-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-interior-designing-firm-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designing-firm-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,13 +116,13 @@ export default function Page() {
     name: "Interior Designing Firm Services in Bareilly",
     description:
       "MTBOSS provides interior design services in Bareilly for flats, houses, villas, offices, shops and clinics. Services include project brief and planning, site study and measurement, layouts and 3D views, estimates and written scope, coordination of civil and services work, false ceilings, carpentry, modular kitchens, wardrobes, flooring, painting, lighting, quality checks, handover and aftercare.",
-    url: "https://www.mtboss.in/interior-designing-firm-bareilly",
+    url: "https://www.MTBOSS.in/interior-designing-firm-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -209,19 +209,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Designing Firm in Bareilly",
-        item: "https://www.mtboss.in/interior-designing-firm-bareilly",
+        item: "https://www.MTBOSS.in/interior-designing-firm-bareilly",
       },
     ],
   };

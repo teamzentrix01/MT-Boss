@@ -3364,7 +3364,7 @@
   .shop-route a[href*="whatsapp"],
   .shop-route a[title*="WhatsApp"],
   .shop-route a[href^="tel:"],
-  .shop-route a[aria-label*="Call MTBoss"],
+  .shop-route a[aria-label*="Call MTBOSS"],
   .shop-route a[title*="Call"],
   .shop-route [aria-label*="MTBOSS Assistant Chat"],
   .shop-route div:has(> button[aria-label*="MTBOSS Assistant Chat"]) {

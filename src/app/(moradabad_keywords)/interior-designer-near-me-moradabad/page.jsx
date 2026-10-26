@@ -7,26 +7,26 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Interior Designer Near Me in Moradabad | MTBoss Design & Build",
+  title: "Interior Designer Near Me in Moradabad | MTBOSS Design & Build",
   description:
-    "Looking for an interior designer near you in Moradabad? MTBoss offers home, kitchen and office interiors with clear pricing, local site support and on-time delivery.",
+    "Looking for an interior designer near you in Moradabad? MTBOSS offers home, kitchen and office interiors with clear pricing, local site support and on-time delivery.",
   keywords:
-    "interior designer near me Moradabad, interior designer Moradabad, best interior designer near me Moradabad, home interior designer Moradabad, modular kitchen designer Moradabad, office interior designer Moradabad, shop interior designer Moradabad, interior design company Moradabad, interior contractor Moradabad, MTBoss interior designer",
+    "interior designer near me Moradabad, interior designer Moradabad, best interior designer near me Moradabad, home interior designer Moradabad, modular kitchen designer Moradabad, office interior designer Moradabad, shop interior designer Moradabad, interior design company Moradabad, interior contractor Moradabad, MTBOSS interior designer",
   alternates: {
-    canonical: "https://www.MTBoss.in/interior-designer-near-me-moradabad",
+    canonical: "https://www.MTBOSS.in/interior-designer-near-me-moradabad",
   },
   openGraph: {
-    title: "Interior Designer Near Me in Moradabad | MTBoss Design & Build",
+    title: "Interior Designer Near Me in Moradabad | MTBOSS Design & Build",
     description:
-      "Looking for an interior designer near you in Moradabad? MTBoss offers home, kitchen and office interiors with clear pricing, local site support and on-time delivery.",
-    url: "https://www.MTBoss.in/interior-designer-near-me-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "Looking for an interior designer near you in Moradabad? MTBOSS offers home, kitchen and office interiors with clear pricing, local site support and on-time delivery.",
+    url: "https://www.MTBOSS.in/interior-designer-near-me-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-interior-designer-near-me-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-near-me-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Interior Designer Near Me in Moradabad - MTBoss",
+        alt: "Interior Designer Near Me in Moradabad - MTBOSS",
       },
     ],
     locale: "en_IN",
@@ -34,11 +34,11 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Interior Designer Near Me in Moradabad | MTBoss Design & Build",
+    title: "Interior Designer Near Me in Moradabad | MTBOSS Design & Build",
     description:
-      "Looking for an interior designer near you in Moradabad? MTBoss offers home, kitchen and office interiors with clear pricing, local site support and on-time delivery.",
+      "Looking for an interior designer near you in Moradabad? MTBOSS offers home, kitchen and office interiors with clear pricing, local site support and on-time delivery.",
     images: [
-      "https://www.MTBoss.in/og-interior-designer-near-me-moradabad.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-near-me-moradabad.jpg",
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBoss Construction Private Limited",
-  url: "https://www.MTBoss.in/interior-designer-near-me-moradabad",
+  name: "MTBOSS Construction Private Limited",
+  url: "https://www.MTBOSS.in/interior-designer-near-me-moradabad",
   telephone: "+91-9458410866",
-  email: "MTBoss2016@gmail.com",
+  email: "MTBOSS2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

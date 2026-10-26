@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Pest Control Services in Moradabad: MTBoss
+            Pest Control Services in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -27,10 +27,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p>
-                MTBoss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -155,7 +155,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Different problems call for different delivery methods [confirm
-                the methods MTBoss actually offers].
+                the methods MTBOSS actually offers].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -320,7 +320,7 @@ const Content = () => {
                 than to retrofit later.
               </p>
               <p className="mt-3">
-                Because MTBoss is also a construction company, owners planning a
+                Because MTBOSS is also a construction company, owners planning a
                 new house or extension can discuss termite protection together
                 with the building plan [confirm if offered as part of construction
                 or as a separate service]. For existing buildings, inspection and
@@ -424,7 +424,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  MTBoss.in, or call or WhatsApp us with a description of the pest
+                  MTBOSS.in, or call or WhatsApp us with a description of the pest
                   problem, your location and property type.
                 </li>
                 <li>
@@ -471,16 +471,16 @@ const Content = () => {
               <p>
                 Pests often connect to building condition. Damp walls attract
                 insects, cracks let rodents in and wooden fittings invite
-                termites. MTBoss can help with Waterproofing, Building Repair,
+                termites. MTBOSS can help with Waterproofing, Building Repair,
                 Plumber, Carpenter, Painter and Door &amp; Window Install from the
-                same MTBoss.in services list, so entry points and damp areas can
+                same MTBOSS.in services list, so entry points and damp areas can
                 be fixed alongside the treatment.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -517,7 +517,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book Pest Control with MTBoss
+                Book Pest Control with MTBOSS
               </h3>
               <p className="mb-3">
                 Ready to get rid of pests and keep them away? Contact us:
@@ -526,12 +526,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -549,10 +549,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -565,7 +565,7 @@ const Content = () => {
                 and we will arrange an inspection and send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss for pest control services in Moradabad, with the
+                Choose MTBOSS for pest control services in Moradabad, with the
                 pest identified, the right treatment chosen and your home or
                 business protected afterward.
               </p>
@@ -581,7 +581,7 @@ const Content = () => {
                     Q1. Who provides pest control services in Moradabad?
                   </strong>
                   <br />
-                  MTBoss Construction offers pest control for homes, shops,
+                  MTBOSS Construction offers pest control for homes, shops,
                   offices and godowns across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -631,7 +631,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a service?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

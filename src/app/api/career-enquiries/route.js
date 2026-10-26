@@ -13,7 +13,7 @@ import {
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
   process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-  'MTBoss2016@gmail.com';
+  'MTBOSS2016@gmail.com';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
@@ -299,7 +299,7 @@ export async function POST(req) {
         applicationId: result.rows[0].id,
         status: 'New',
         title: 'Application submitted',
-        note: 'Your application has been received by the MTBoss HR team.',
+        note: 'Your application has been received by the MTBOSS HR team.',
         actorRole: 'user',
         actorId: user.id,
         actorName: cleanName,
@@ -522,7 +522,7 @@ export async function PUT(req) {
       actorRole: admin ? 'admin' : 'user',
       actorId: admin ? admin.id : user.id,
       actorName: admin
-        ? admin.name || admin.email || 'MTBoss HR'
+        ? admin.name || admin.email || 'MTBOSS HR'
         : payload.name,
     });
     const refreshed = await getApplicationWithHistory(id, client);
@@ -584,7 +584,7 @@ export async function PATCH(req) {
       note,
       actorRole: 'admin',
       actorId: admin.id,
-      actorName: admin.name || admin.email || 'MTBoss HR',
+      actorName: admin.name || admin.email || 'MTBOSS HR',
     });
     await client.query('COMMIT');
 

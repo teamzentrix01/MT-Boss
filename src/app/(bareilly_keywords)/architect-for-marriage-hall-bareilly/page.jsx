@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect for Marriage Hall in Bareilly',
   description:
-    'Planning a marriage hall in Bareilly? MTBoss designs banquet halls and wedding lawns with guest flow, parking, kitchens and safety. Call +91 94584 10866.',
+    'Planning a marriage hall in Bareilly? MTBOSS designs banquet halls and wedding lawns with guest flow, parking, kitchens and safety. Call +91 94584 10866.',
   keywords:
-    'architect for marriage hall in Bareilly, marriage hall architect Bareilly, marriage hall design Bareilly, banquet hall architect Bareilly, wedding lawn design Bareilly, banquet hall construction Bareilly, marriage garden architect Bareilly, wedding venue architect Bareilly, marriage hall builder Bareilly, banquet hall design Bareilly, MTBoss Bareilly, marriage hall Bareilly',
+    'architect for marriage hall in Bareilly, marriage hall architect Bareilly, marriage hall design Bareilly, banquet hall architect Bareilly, wedding lawn design Bareilly, banquet hall construction Bareilly, marriage garden architect Bareilly, wedding venue architect Bareilly, marriage hall builder Bareilly, banquet hall design Bareilly, MTBOSS Bareilly, marriage hall Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/architect-for-marriage-hall-in-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-for-marriage-hall-in-bareilly',
   },
   openGraph: {
     title: 'Architect for Marriage Hall in Bareilly',
     description:
-      'Planning a marriage hall in Bareilly? MTBoss designs banquet halls and wedding lawns with guest flow, parking, kitchens and safety. Call +91 94584 10866.',
-    url: 'https://www.MTBoss.in/architect-for-marriage-hall-in-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Planning a marriage hall in Bareilly? MTBOSS designs banquet halls and wedding lawns with guest flow, parking, kitchens and safety. Call +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/architect-for-marriage-hall-in-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-for-marriage-hall-in-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-marriage-hall-in-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect for Marriage Hall in Bareilly - MTBoss',
+        alt: 'Architect for Marriage Hall in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,9 +35,9 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect for Marriage Hall in Bareilly',
     description:
-      'Planning a marriage hall in Bareilly? MTBoss designs banquet halls and wedding lawns with guest flow, parking, kitchens and safety. Call +91 94584 10866.',
+      'Planning a marriage hall in Bareilly? MTBOSS designs banquet halls and wedding lawns with guest flow, parking, kitchens and safety. Call +91 94584 10866.',
     images: [
-      'https://www.MTBoss.in/og-architect-for-marriage-hall-in-bareilly.jpg',
+      'https://www.MTBOSS.in/og-architect-for-marriage-hall-in-bareilly.jpg',
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-for-marriage-hall-in-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-for-marriage-hall-in-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

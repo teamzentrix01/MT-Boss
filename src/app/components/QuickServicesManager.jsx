@@ -223,7 +223,7 @@ export default function QuickServicesManager({ isDarkMode }) {
     setServiceImageError('');
     setError('');
     try {
-      const uploadedUrl = await uploadQuickServiceImage(file, 'mtboss/quick-services', formData.image_fit === 'contain' ? 'contain' : 'cover');
+      const uploadedUrl = await uploadQuickServiceImage(file, 'MTBOSS/quick-services', formData.image_fit === 'contain' ? 'contain' : 'cover');
       setFormData(current => ({
         ...current,
         iconType: 'image',
@@ -255,7 +255,7 @@ export default function QuickServicesManager({ isDarkMode }) {
     try {
       const body = new FormData();
       body.append('file', file);
-      body.append('folder', 'mtboss/quick-service-subcategories');
+      body.append('folder', 'MTBOSS/quick-service-subcategories');
       const token = localStorage.getItem('token');
       const response = await fetch('/api/hero-banners/upload', {
         method: 'POST',

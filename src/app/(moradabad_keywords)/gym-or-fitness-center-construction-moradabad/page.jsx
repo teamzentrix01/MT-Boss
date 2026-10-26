@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Gym & Fitness Center Construction Moradabad | MTBoss",
+  title: "Gym & Fitness Center Construction Moradabad | MTBOSS",
 
   description:
-    "Planning gym or fitness center construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
+    "Planning gym or fitness center construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "gym or fitness center construction Moradabad, gym construction Moradabad, fitness center construction Moradabad, gym builder Moradabad, gym contractor Moradabad, gym interior and construction Moradabad, yoga studio construction Moradabad, health club construction Moradabad, gym building design Moradabad, gym construction cost Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
+    "gym or fitness center construction Moradabad, gym construction Moradabad, fitness center construction Moradabad, gym builder Moradabad, gym contractor Moradabad, gym interior and construction Moradabad, yoga studio construction Moradabad, health club construction Moradabad, gym building design Moradabad, gym construction cost Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.MTBoss.in/gym-and-fitness-center-construction-in-moradabad",
+      "https://www.MTBOSS.in/gym-and-fitness-center-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Gym & Fitness Center Construction Moradabad | MTBoss",
+    title: "Gym & Fitness Center Construction Moradabad | MTBOSS",
 
     description:
-      "Planning gym or fitness center construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning gym or fitness center construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.MTBoss.in/gym-and-fitness-center-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/gym-and-fitness-center-construction-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-gym-fitness-center-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-gym-fitness-center-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Gym and Fitness Center Construction in Moradabad - MTBoss",
+        alt: "Gym and Fitness Center Construction in Moradabad - MTBOSS",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Gym & Fitness Center Construction Moradabad | MTBoss",
+    title: "Gym & Fitness Center Construction Moradabad | MTBOSS",
 
     description:
-      "Planning gym or fitness center construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning gym or fitness center construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.MTBoss.in/og-gym-fitness-center-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-gym-fitness-center-construction-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBoss Construction Private Limited",
-    url: "https://www.MTBoss.in/gym-and-fitness-center-construction-in-moradabad",
+    name: "MTBOSS Construction Private Limited",
+    url: "https://www.MTBOSS.in/gym-and-fitness-center-construction-in-moradabad",
     telephone: "+91-9458410866",
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.MTBoss.in/og-gym-fitness-center-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-gym-fitness-center-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,14 +117,14 @@ export default function Page() {
     "@type": "Service",
     name: "Gym and Fitness Center Construction Services in Moradabad",
     description:
-      "MTBoss provides gym and fitness center construction in Moradabad for standalone gyms, fitness centers, yoga and aerobics studios, basement or upper-floor gyms and boutique studios, including design coordination, structure, floor preparation, facade, reception and lounge, studio spaces, changing rooms and washrooms, wellness provisions, services provisions, ventilation and cooling, waterproofing, flooring, finishing, interiors, outdoor works and final handover.",
-    url: "https://www.MTBoss.in/gym-and-fitness-center-construction-in-moradabad",
+      "MTBOSS provides gym and fitness center construction in Moradabad for standalone gyms, fitness centers, yoga and aerobics studios, basement or upper-floor gyms and boutique studios, including design coordination, structure, floor preparation, facade, reception and lounge, studio spaces, changing rooms and washrooms, wellness provisions, services provisions, ventilation and cooling, waterproofing, flooring, finishing, interiors, outdoor works and final handover.",
+    url: "https://www.MTBOSS.in/gym-and-fitness-center-construction-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -154,10 +154,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss build gyms and fitness centers in Moradabad?",
+        name: "Does MTBOSS build gyms and fitness centers in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBoss builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your gym.",
+          text: "MTBOSS builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your gym.",
         },
       },
       {
@@ -181,7 +181,7 @@ export default function Page() {
         name: "Do you supply gym equipment and flooring?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Equipment, specialist gym flooring and steam or sauna units are usually supplied and installed by specialist vendors. MTBoss plans and builds the civil and services work, and coordinates with your vendors so provisions fit together.",
+          text: "Equipment, specialist gym flooring and steam or sauna units are usually supplied and installed by specialist vendors. MTBOSS plans and builds the civil and services work, and coordinates with your vendors so provisions fit together.",
         },
       },
       {
@@ -189,15 +189,15 @@ export default function Page() {
         name: "How much does gym construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Gym construction cost depends on built-up area, floor level, structural needs, air conditioning, flooring system, changing rooms and wellness areas, material and finish level, and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
+          text: "Gym construction cost depends on built-up area, floor level, structural needs, air conditioning, flooring system, changing rooms and wellness areas, material and finish level, and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -211,19 +211,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Gym and Fitness Center Construction in Moradabad",
-        item: "https://www.MTBoss.in/gym-and-fitness-center-construction-in-moradabad",
+        item: "https://www.MTBOSS.in/gym-and-fitness-center-construction-in-moradabad",
       },
     ],
   };

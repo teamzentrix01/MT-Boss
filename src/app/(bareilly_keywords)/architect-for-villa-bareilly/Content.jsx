@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Villa in Bareilly: MTBoss
+            Architect for Villa in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -16,7 +16,7 @@ const Content = () => {
               <p>
                 An architect for a villa in Bareilly plans a private home around
                 your family, your plot and the local climate, then produces
-                drawings for approval and construction. MTBoss Construction
+                drawings for approval and construction. MTBOSS Construction
                 Private Limited serves Bareilly and Moradabad with villa design and
                 construction support, from the first sketch to handover.
               </p>
@@ -34,7 +34,7 @@ const Content = () => {
                 resale value.
               </p>
               <p>
-                Good villa design turns that freedom into a clear plan. MTBoss
+                Good villa design turns that freedom into a clear plan. MTBOSS
                 Construction Private Limited builds, renovates and repairs homes,
                 shops and commercial properties across Moradabad and Bareilly.
               </p>
@@ -201,7 +201,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A villa runs on services that should stay discreet. Please confirm
-                what MTBoss designs itself.
+                what MTBOSS designs itself.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -328,7 +328,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss offers Building Elevation design alongside the architecture
+                MTBOSS offers Building Elevation design alongside the architecture
                 work.
               </p>
             </section>
@@ -422,7 +422,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Use the Budget Calculator on MTBoss.in for an early idea, then ask
+                Use the Budget Calculator on MTBOSS.in for an early idea, then ask
                 for an itemised estimate once the design is firm.
               </p>
             </section>
@@ -454,7 +454,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A villa set normally includes the following. Please adjust to what
-                MTBoss provides:
+                MTBOSS provides:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -481,7 +481,7 @@ const Content = () => {
               </h3>
               <p>
                 Approvals come from the relevant authority for your plot. Please
-                confirm the authority, the documents it needs and what MTBoss
+                confirm the authority, the documents it needs and what MTBOSS
                 handles. Typical steps include building plan sanction, electricity
                 and water connections, and any other local clearances. Timelines
                 depend on the authority, and we give estimates, not promises. For
@@ -497,7 +497,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> Call, WhatsApp or click Get a
-                  Construction Quote on MTBoss.in, with your location pin, plot
+                  Construction Quote on MTBOSS.in, with your location pin, plot
                   papers and brief.
                 </li>
                 <li>
@@ -559,11 +559,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited.
+                  <strong>Business:</strong> MTBOSS Construction Private Limited.
                 </li>
                 <li>
                   <strong>Service:</strong> Villa and building design, alongside
@@ -586,17 +586,17 @@ const Content = () => {
                   <strong>Phone / WhatsApp:</strong> +91 94584 10866.
                 </li>
                 <li>
-                  <strong>Email:</strong> MTBoss2016@gmail.com.
+                  <strong>Email:</strong> MTBOSS2016@gmail.com.
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                   .
                 </li>
@@ -613,7 +613,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Villa Owners Consider MTBoss
+                Reasons Villa Owners Consider MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -656,7 +656,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Villa With MTBoss
+                Plan Your Villa With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -673,21 +673,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   — click &quot;Get a Construction Quote&quot;.
                 </li>
@@ -701,7 +701,7 @@ const Content = () => {
                 range, and we&apos;ll arrange a site study and a written proposal.
               </p>
               <p className="mt-3">
-                Consider MTBoss for your villa in Bareilly, with the plot studied,
+                Consider MTBOSS for your villa in Bareilly, with the plot studied,
                 the plan built around your family and the house designed to stay
                 cool and last.
               </p>
@@ -715,7 +715,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who designs villas in Bareilly?</strong>
                   <br />
-                  MTBoss Construction offers villa design and construction support
+                  MTBOSS Construction offers villa design and construction support
                   for Bareilly and Moradabad. Please confirm registration.
                 </li>
                 <li>
@@ -760,7 +760,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a site study?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

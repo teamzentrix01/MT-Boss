@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Top Building Contractor in Moradabad | MTBoss',
+  title: 'Top Building Contractor in Moradabad | MTBOSS',
   description:
-    'Looking for a top building contractor in Moradabad? MTBoss offers proven construction, materials & doorstep services with 22+ years of trust. Call now!',
+    'Looking for a top building contractor in Moradabad? MTBOSS offers proven construction, materials & doorstep services with 22+ years of trust. Call now!',
   keywords:
-    'top building contractor Moradabad, leading building contractor Moradabad, top rated contractor near me, experienced building contractor Moradabad, well known contractor Moradabad, top construction contractor Moradabad, MTBoss Moradabad, building contractor near me, top construction company Moradabad, contractor near me',
+    'top building contractor Moradabad, leading building contractor Moradabad, top rated contractor near me, experienced building contractor Moradabad, well known contractor Moradabad, top construction contractor Moradabad, MTBOSS Moradabad, building contractor near me, top construction company Moradabad, contractor near me',
   alternates: {
-    canonical: 'https://www.MTBoss.in/top-building-contractor-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/top-building-contractor-in-moradabad',
   },
   openGraph: {
-    title: 'Top Building Contractor in Moradabad | MTBoss',
+    title: 'Top Building Contractor in Moradabad | MTBOSS',
     description:
-      'Looking for a top building contractor in Moradabad? MTBoss offers proven construction, materials & doorstep services with 22+ years of trust. Call now!',
-    url: 'https://www.MTBoss.in/top-building-contractor-in-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Looking for a top building contractor in Moradabad? MTBOSS offers proven construction, materials & doorstep services with 22+ years of trust. Call now!',
+    url: 'https://www.MTBOSS.in/top-building-contractor-in-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-top-building-contractor-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-top-building-contractor-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Top Building Contractor in Moradabad - MTBoss',
+        alt: 'Top Building Contractor in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Top Building Contractor in Moradabad | MTBoss',
+    title: 'Top Building Contractor in Moradabad | MTBOSS',
     description:
-      'Looking for a top building contractor in Moradabad? MTBoss offers proven construction, materials & doorstep services with 22+ years of trust. Call now!',
-    images: ['https://www.MTBoss.in/og-top-building-contractor-moradabad.jpg'],
+      'Looking for a top building contractor in Moradabad? MTBOSS offers proven construction, materials & doorstep services with 22+ years of trust. Call now!',
+    images: ['https://www.MTBOSS.in/og-top-building-contractor-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/top-building-contractor-in-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/top-building-contractor-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

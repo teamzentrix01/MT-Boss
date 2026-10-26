@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'PWD Approved Contractor in Moradabad | MTBoss Construction',
+  title: 'PWD Approved Contractor in Moradabad | MTBOSS Construction',
   description:
-    'Looking for a PWD approved contractor in Moradabad? MTBoss delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
+    'Looking for a PWD approved contractor in Moradabad? MTBOSS delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
   keywords:
-    'PWD approved contractor Moradabad, PWD registered contractor Moradabad, government contractor Moradabad, Public Works Department contractor Moradabad, civil contractor Moradabad, road contractor Moradabad, drainage contractor Moradabad, government building contractor Moradabad, construction company Moradabad, MTBoss Moradabad',
+    'PWD approved contractor Moradabad, PWD registered contractor Moradabad, government contractor Moradabad, Public Works Department contractor Moradabad, civil contractor Moradabad, road contractor Moradabad, drainage contractor Moradabad, government building contractor Moradabad, construction company Moradabad, MTBOSS Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/pwd-approved-contractor-moradabad',
+    canonical: 'https://www.MTBOSS.in/pwd-approved-contractor-moradabad',
   },
   openGraph: {
-    title: 'PWD Approved Contractor in Moradabad | MTBoss Construction',
+    title: 'PWD Approved Contractor in Moradabad | MTBOSS Construction',
     description:
-      'Looking for a PWD approved contractor in Moradabad? MTBoss delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
-    url: 'https://www.MTBoss.in/pwd-approved-contractor-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Looking for a PWD approved contractor in Moradabad? MTBOSS delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
+    url: 'https://www.MTBOSS.in/pwd-approved-contractor-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-pwd-approved-contractor-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-pwd-approved-contractor-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'PWD Approved Contractor in Moradabad - MTBoss',
+        alt: 'PWD Approved Contractor in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'PWD Approved Contractor in Moradabad | MTBoss Construction',
+    title: 'PWD Approved Contractor in Moradabad | MTBOSS Construction',
     description:
-      'Looking for a PWD approved contractor in Moradabad? MTBoss delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
-    images: ['https://www.MTBoss.in/og-pwd-approved-contractor-moradabad.jpg'],
+      'Looking for a PWD approved contractor in Moradabad? MTBOSS delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
+    images: ['https://www.MTBOSS.in/og-pwd-approved-contractor-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/pwd-approved-contractor-moradabad',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/pwd-approved-contractor-moradabad',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

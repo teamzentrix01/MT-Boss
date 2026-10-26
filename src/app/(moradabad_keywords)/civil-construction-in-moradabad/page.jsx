@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Civil Construction in Moradabad | MTBoss Construction Company',
+  title: 'Civil Construction in Moradabad | MTBOSS Construction Company',
   description:
-    'Planning civil construction in Moradabad? MTBoss offers residential, commercial & industrial building solutions with transparent pricing. Get a free quote!',
+    'Planning civil construction in Moradabad? MTBOSS offers residential, commercial & industrial building solutions with transparent pricing. Get a free quote!',
   keywords:
-    'civil construction in Moradabad, civil construction company Moradabad, construction services Moradabad, civil engineering Moradabad, building construction Moradabad, industrial construction Moradabad, residential civil work Moradabad, commercial construction Moradabad, MTBoss Moradabad, construction company near me',
+    'civil construction in Moradabad, civil construction company Moradabad, construction services Moradabad, civil engineering Moradabad, building construction Moradabad, industrial construction Moradabad, residential civil work Moradabad, commercial construction Moradabad, MTBOSS Moradabad, construction company near me',
   alternates: {
-    canonical: 'https://www.MTBoss.in/civil-construction-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/civil-construction-in-moradabad',
   },
   openGraph: {
-    title: 'Civil Construction in Moradabad | MTBoss Construction Company',
+    title: 'Civil Construction in Moradabad | MTBOSS Construction Company',
     description:
-      'Planning civil construction in Moradabad? MTBoss offers residential, commercial & industrial building solutions with transparent pricing. Get a free quote!',
-    url: 'https://www.MTBoss.in/civil-construction-in-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Planning civil construction in Moradabad? MTBOSS offers residential, commercial & industrial building solutions with transparent pricing. Get a free quote!',
+    url: 'https://www.MTBOSS.in/civil-construction-in-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-civil-construction-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-civil-construction-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Civil Construction in Moradabad - MTBoss',
+        alt: 'Civil Construction in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Civil Construction in Moradabad | MTBoss Construction Company',
+    title: 'Civil Construction in Moradabad | MTBOSS Construction Company',
     description:
-      'Planning civil construction in Moradabad? MTBoss offers residential, commercial & industrial building solutions with transparent pricing. Get a free quote!',
-    images: ['https://www.MTBoss.in/og-civil-construction-moradabad.jpg'],
+      'Planning civil construction in Moradabad? MTBOSS offers residential, commercial & industrial building solutions with transparent pricing. Get a free quote!',
+    images: ['https://www.MTBOSS.in/og-civil-construction-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/civil-construction-in-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/civil-construction-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

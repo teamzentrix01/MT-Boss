@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Showroom Construction Company in Moradabad | MTBoss",
+  title: "Showroom Construction Company in Moradabad | MTBOSS",
 
   description:
-    "Build your showroom with MTBoss, a showroom construction company in Moradabad. Design, build and fit-out. Call +91 94584 10866 for a free quote.",
+    "Build your showroom with MTBOSS, a showroom construction company in Moradabad. Design, build and fit-out. Call +91 94584 10866 for a free quote.",
 
   keywords:
-    "showroom construction company Moradabad, showroom construction Moradabad, showroom builder Moradabad, showroom contractor Moradabad, showroom building design Moradabad, showroom interior Moradabad, showroom facade Moradabad, car showroom construction Moradabad, furniture showroom construction Moradabad, showroom construction cost Moradabad, commercial construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
+    "showroom construction company Moradabad, showroom construction Moradabad, showroom builder Moradabad, showroom contractor Moradabad, showroom building design Moradabad, showroom interior Moradabad, showroom facade Moradabad, car showroom construction Moradabad, furniture showroom construction Moradabad, showroom construction cost Moradabad, commercial construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.MTBoss.in/showroom-construction-company-in-moradabad",
+      "https://www.MTBOSS.in/showroom-construction-company-in-moradabad",
   },
 
   openGraph: {
-    title: "Showroom Construction Company in Moradabad | MTBoss",
+    title: "Showroom Construction Company in Moradabad | MTBOSS",
 
     description:
-      "Build your showroom with MTBoss, a showroom construction company in Moradabad. Design, build and fit-out. Call +91 94584 10866 for a free quote.",
+      "Build your showroom with MTBOSS, a showroom construction company in Moradabad. Design, build and fit-out. Call +91 94584 10866 for a free quote.",
 
-    url: "https://www.MTBoss.in/showroom-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/showroom-construction-company-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-showroom-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-showroom-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Showroom Construction Company in Moradabad - MTBoss",
+        alt: "Showroom Construction Company in Moradabad - MTBOSS",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Showroom Construction Company in Moradabad | MTBoss",
+    title: "Showroom Construction Company in Moradabad | MTBOSS",
 
     description:
-      "Build your showroom with MTBoss, a showroom construction company in Moradabad. Design, build and fit-out. Call +91 94584 10866 for a free quote.",
+      "Build your showroom with MTBOSS, a showroom construction company in Moradabad. Design, build and fit-out. Call +91 94584 10866 for a free quote.",
 
     images: [
-      "https://www.MTBoss.in/og-showroom-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-showroom-construction-moradabad.jpg",
     ],
   },
 
@@ -66,11 +66,11 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBoss Construction Private Limited",
-    url: "https://www.MTBoss.in/showroom-construction-company-in-moradabad",
+    name: "MTBOSS Construction Private Limited",
+    url: "https://www.MTBOSS.in/showroom-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "MTBoss2016@gmail.com",
-    image: "https://www.MTBoss.in/og-showroom-construction-moradabad.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-showroom-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -119,14 +119,14 @@ export default function Page() {
     "@type": "Service",
     name: "Showroom Construction Services in Moradabad",
     description:
-      "MTBoss provides showroom construction in Moradabad for vehicle, furniture, electronics, clothing, jewellery and multi-brand showrooms, including planning, structure, facade, flooring, finishing, services provisions, interior coordination and final handover.",
-    url: "https://www.MTBoss.in/showroom-construction-company-in-moradabad",
+      "MTBOSS provides showroom construction in Moradabad for vehicle, furniture, electronics, clothing, jewellery and multi-brand showrooms, including planning, structure, facade, flooring, finishing, services provisions, interior coordination and final handover.",
+    url: "https://www.MTBOSS.in/showroom-construction-company-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -156,18 +156,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss offer showroom construction in Moradabad?",
+        name: "Does MTBOSS offer showroom construction in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Commercial construction is part of the MTBoss service list. MTBoss also works as an architect and interior designer, so showroom building and interiors can be coordinated within one company.",
+          text: "Yes. Commercial construction is part of the MTBOSS service list. MTBOSS also works as an architect and interior designer, so showroom building and interiors can be coordinated within one company.",
         },
       },
       {
         "@type": "Question",
-        name: "What types of showrooms can MTBoss build?",
+        name: "What types of showrooms can MTBOSS build?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBoss can discuss construction scope for vehicle showrooms, furniture and home decor showrooms, electronics and appliance showrooms, clothing and lifestyle showrooms, jewellery and premium retail showrooms, building materials and hardware showrooms and multi-brand or multi-floor showrooms.",
+          text: "MTBOSS can discuss construction scope for vehicle showrooms, furniture and home decor showrooms, electronics and appliance showrooms, clothing and lifestyle showrooms, jewellery and premium retail showrooms, building materials and hardware showrooms and multi-brand or multi-floor showrooms.",
         },
       },
       {
@@ -175,31 +175,31 @@ export default function Page() {
         name: "How much does showroom construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Showroom construction cost depends on built-up area, number of floors, facade design and glazing, structural needs, finishing level, services scope, interior and fit-out, parking and external development and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
+          text: "Showroom construction cost depends on built-up area, number of floors, facade design and glazing, structural needs, finishing level, services scope, interior and fit-out, parking and external development and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Does MTBoss supply building materials?",
+        name: "Does MTBOSS supply building materials?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during showroom construction.",
+          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate key materials during showroom construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Can MTBoss renovate an existing showroom or change its facade?",
+        name: "Can MTBOSS renovate an existing showroom or change its facade?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBoss offers renovation, repair, waterproofing and extension work for existing buildings, including facade upgrades and showroom makeovers. Share your requirements for a site assessment.",
+          text: "Yes. MTBOSS offers renovation, repair, waterproofing and extension work for existing buildings, including facade upgrades and showroom makeovers. Share your requirements for a site assessment.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -213,19 +213,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Showroom Construction Company in Moradabad",
-        item: "https://www.MTBoss.in/showroom-construction-company-in-moradabad",
+        item: "https://www.MTBOSS.in/showroom-construction-company-in-moradabad",
       },
     ],
   };

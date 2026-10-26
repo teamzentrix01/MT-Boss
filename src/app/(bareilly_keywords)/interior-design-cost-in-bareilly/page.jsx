@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-design-cost-in-bareilly",
+      "https://www.MTBOSS.in/interior-design-cost-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Wondering about interior design cost in Bareilly? See what affects pricing and get a clear estimate from MTBOSS. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-design-cost-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-design-cost-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-design-cost-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-design-cost-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Design Cost in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Wondering about interior design cost in Bareilly? See what affects pricing and get a clear estimate from MTBOSS. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-interior-design-cost-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-design-cost-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-design-cost-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-design-cost-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-interior-design-cost-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-design-cost-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,13 +117,13 @@ export default function Page() {
     name: "Interior Design Cost and Estimate Services in Bareilly",
     description:
       "MTBOSS provides interior design cost and estimate services in Bareilly. Services include space planning and design, modular kitchen, wardrobes and storage, living room, bedrooms, bathrooms, false ceiling and lighting, painting, wallpaper and PVC panels, flooring and tiling, electrical and plumbing, doors, windows and woodwork, civil and renovation work, project supervision and handover.",
-    url: "https://www.mtboss.in/interior-design-cost-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-design-cost-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -218,19 +218,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Design Cost in Bareilly",
-        item: "https://www.mtboss.in/interior-design-cost-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-design-cost-in-bareilly",
       },
     ],
   };

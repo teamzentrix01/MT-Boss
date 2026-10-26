@@ -16,7 +16,7 @@ export const metadata = {
     "top interior designer Bareilly, interior design ideas Bareilly, home interior ideas Bareilly, 2BHK interior design Bareilly, 3BHK interior design Bareilly, villa interior design Bareilly, living room design Bareilly, modular kitchen ideas Bareilly, bedroom design ideas Bareilly, office interior design Bareilly, false ceiling ideas Bareilly, interior design trends Bareilly, MTBOSS Bareilly, MTBOSS Moradabad, MTBOSS budget calculator, interior design quote Bareilly",
 
   alternates: {
-    canonical: "https://www.mtboss.in/top-interior-designer-bareilly",
+    canonical: "https://www.MTBOSS.in/top-interior-designer-bareilly",
   },
 
   openGraph: {
@@ -25,13 +25,13 @@ export const metadata = {
     description:
       "Explore top interior design ideas for Bareilly homes and offices. MTBOSS plans kitchens, wardrobes, ceilings and full interiors. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/top-interior-designer-bareilly",
+    url: "https://www.MTBOSS.in/top-interior-designer-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-top-interior-designer-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-top-interior-designer-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Top Interior Designer Bareilly - MTBOSS",
@@ -50,7 +50,7 @@ export const metadata = {
     description:
       "Explore top interior design ideas for Bareilly homes and offices. MTBOSS plans kitchens, wardrobes, ceilings and full interiors. Call +91 94584 10866.",
 
-    images: ["https://www.mtboss.in/og-top-interior-designer-bareilly.jpg"],
+    images: ["https://www.MTBOSS.in/og-top-interior-designer-bareilly.jpg"],
   },
 
   robots: {
@@ -64,10 +64,10 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/top-interior-designer-bareilly",
+    url: "https://www.MTBOSS.in/top-interior-designer-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-top-interior-designer-bareilly.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-top-interior-designer-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -115,13 +115,13 @@ export default function Page() {
     name: "Top Interior Design Services in Bareilly",
     description:
       "MTBOSS provides top interior design services in Bareilly for 1BHK, 2BHK and 3BHK flats, independent houses, villas, offices, shops and clinics, including full home interiors, living and dining areas, modular kitchens, bedrooms and wardrobes, puja room design, false ceiling and lighting plans, flooring and wall finishes, woodwork and custom furniture, bathroom interiors, commercial interiors, coordination with construction, material supply and renovation and remodelling.",
-    url: "https://www.mtboss.in/top-interior-designer-bareilly",
+    url: "https://www.MTBOSS.in/top-interior-designer-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -208,19 +208,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Top Interior Designer Bareilly",
-        item: "https://www.mtboss.in/top-interior-designer-bareilly",
+        item: "https://www.MTBOSS.in/top-interior-designer-bareilly",
       },
     ],
   };

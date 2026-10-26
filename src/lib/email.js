@@ -13,7 +13,7 @@ export async function sendMail({ to, subject, html, text, replyTo }) {
   const port = parseInt(process.env.SMTP_PORT || '587', 10);
   const user = process.env.SMTP_USER || process.env.EMAIL_USER;
   const pass = process.env.SMTP_PASS || process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD;
-  const from = process.env.SMTP_FROM || process.env.EMAIL_FROM || user || 'noreply@MTBoss.in';
+  const from = process.env.SMTP_FROM || process.env.EMAIL_FROM || user || 'noreply@MTBOSS.in';
   const configuredReplyTo = replyTo || process.env.SMTP_REPLY_TO || user;
 
   if (!isSmtpConfigured()) {
@@ -73,7 +73,7 @@ export async function sendMail({ to, subject, html, text, replyTo }) {
 export async function sendEnquiryAcceptedEmail({ to, userName, shopName, categoryName, phone }) {
   await sendMail({
     to,
-    subject: `Your ${categoryName} enquiry has been accepted — MTBoss`,
+    subject: `Your ${categoryName} enquiry has been accepted — MTBOSS`,
     html: `
       <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;border-radius:8px;">
         <h2 style="color:#111;margin-bottom:8px;">Great news, ${userName}! 🎉</h2>
@@ -94,7 +94,7 @@ export async function sendEnquiryAcceptedEmail({ to, userName, shopName, categor
           </ol>
         </div>
         <p style="color:#999;font-size:12px;margin-top:24px;">
-          — MTBossMaterial Marketplace
+          — MTBOSSMaterial Marketplace
         </p>
       </div>
     `,

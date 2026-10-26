@@ -235,7 +235,7 @@ const Content = () => {
       title: "Step 5: Quotation and Approval",
       items: [
         "You receive a clear, itemised quote.",
-        "Our Budget Calculator on the MTBoss website can give you an early estimate.",
+        "Our Budget Calculator on the MTBOSS website can give you an early estimate.",
       ],
     },
     {
@@ -255,12 +255,12 @@ const Content = () => {
     },
   ];
 
-  const whyChooseMTBoss = [
+  const whyChooseMTBOSS = [
     "Construction know-how: we understand walls, plumbing, wiring and structure, which helps modular units fit correctly.",
     "One-team convenience: planning, materials, coordination and finishing come from a single company.",
     "Clear pricing: itemised quotes and simple explanations.",
     "Local service: based in Moradabad, so visits and follow-ups are easy.",
-    "Material network: access to tiles, paints, cement and other essentials through the MTBoss shop.",
+    "Material network: access to tiles, paints, cement and other essentials through the MTBOSS shop.",
     "Flexible budgets: options from economy to premium.",
     "Timely delivery: realistic timelines with regular updates by call or WhatsApp.",
     "After-work support: we also provide electrician, plumber, painting, AC repair and pest control services.",
@@ -327,7 +327,7 @@ const Content = () => {
   const faqs = [
     {
       question:
-        "Q1. Does MTBoss provide modular interior design in Moradabad?",
+        "Q1. Does MTBOSS provide modular interior design in Moradabad?",
       answer:
         "Yes. We plan and deliver modular kitchens, wardrobes, TV units and other home interiors.",
     },
@@ -378,7 +378,7 @@ const Content = () => {
       <div className="flex flex-col lg:flex-row">
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Modular Interior Designer in Moradabad – MTBoss
+            Modular Interior Designer in Moradabad – MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -391,7 +391,7 @@ const Content = () => {
               </p>
 
               <p className="mb-3">
-                MTBoss (MTBoss Construction Private Limited) is a
+                MTBOSS (MTBOSS Construction Private Limited) is a
                 Moradabad-based company offering construction, materials, home
                 services and property solutions. Modular interiors are a
                 natural fit with this range.
@@ -575,11 +575,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-               Choose MTBoss for Modular Interiors in Moradabad
+               Choose MTBOSS for Modular Interiors in Moradabad
               </h3>
 
               <ul className="list-disc list-inside space-y-1 ml-4">
-                {whyChooseMTBoss.map((reason) => (
+                {whyChooseMTBOSS.map((reason) => (
                   <li key={reason}>{reason}</li>
                 ))}
               </ul>
@@ -666,7 +666,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                More From MTBoss
+                More From MTBOSS
               </h3>
 
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -682,7 +682,7 @@ const Content = () => {
                   Materials: cement, TMT steel, bricks, tiles and paints.
                 </li>
                 <li>
-                  Franchise and agent opportunities: join the MTBoss network.
+                  Franchise and agent opportunities: join the MTBOSS network.
                 </li>
               </ul>
 
@@ -694,7 +694,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact MTBoss for Modular Interiors
+                Contact MTBOSS for Modular Interiors
               </h3>
 
               <p className="mb-3">
@@ -705,28 +705,28 @@ const Content = () => {
 
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
 
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.MTBoss.in
+                    https://www.MTBOSS.in
                   </a>
                 </li>
 
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
 

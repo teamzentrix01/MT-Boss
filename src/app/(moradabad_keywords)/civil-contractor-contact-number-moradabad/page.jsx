@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Civil Contractor Contact Number Moradabad | MTBoss',
+  title: 'Civil Contractor Contact Number Moradabad | MTBOSS',
   description:
-    'Need a civil contractor&apos;s contact number in Moradabad? Call, email or WhatsApp MTBoss Construction for a fast, free quote on your project today!',
+    'Need a civil contractor&apos;s contact number in Moradabad? Call, email or WhatsApp MTBOSS Construction for a fast, free quote on your project today!',
   keywords:
-    'civil contractor contact number Moradabad, contractor phone number Moradabad, construction company contact number, civil contractor whatsapp number, builder contact number Moradabad, contractor mobile number near me, MTBoss contact number, construction company email Moradabad, civil contractor helpline, contractor near me contact',
+    'civil contractor contact number Moradabad, contractor phone number Moradabad, construction company contact number, civil contractor whatsapp number, builder contact number Moradabad, contractor mobile number near me, MTBOSS contact number, construction company email Moradabad, civil contractor helpline, contractor near me contact',
   alternates: {
-    canonical: 'https://www.MTBoss.in/civil-contractor-contact-number-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/civil-contractor-contact-number-in-moradabad',
   },
   openGraph: {
-    title: 'Civil Contractor Contact Number Moradabad | MTBoss',
+    title: 'Civil Contractor Contact Number Moradabad | MTBOSS',
     description:
-      'Need a civil contractor&apos;s contact number in Moradabad? Call, email or WhatsApp MTBoss Construction for a fast, free quote on your project today!',
-    url: 'https://www.MTBoss.in/civil-contractor-contact-number-in-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Need a civil contractor&apos;s contact number in Moradabad? Call, email or WhatsApp MTBOSS Construction for a fast, free quote on your project today!',
+    url: 'https://www.MTBOSS.in/civil-contractor-contact-number-in-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-civil-contractor-contact-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-civil-contractor-contact-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Civil Contractor Contact Number in Moradabad - MTBoss',
+        alt: 'Civil Contractor Contact Number in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Civil Contractor Contact Number Moradabad | MTBoss',
+    title: 'Civil Contractor Contact Number Moradabad | MTBOSS',
     description:
-      'Need a civil contractor&apos;s contact number in Moradabad? Call, email or WhatsApp MTBoss Construction for a fast, free quote on your project today!',
-    images: ['https://www.MTBoss.in/og-civil-contractor-contact-moradabad.jpg'],
+      'Need a civil contractor&apos;s contact number in Moradabad? Call, email or WhatsApp MTBOSS Construction for a fast, free quote on your project today!',
+    images: ['https://www.MTBOSS.in/og-civil-contractor-contact-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/civil-contractor-contact-number-in-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/civil-contractor-contact-number-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

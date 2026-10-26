@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Home Renovation in Moradabad | MTBoss',
+  title: 'Home Renovation in Moradabad | MTBOSS',
   description:
-    'Planning a home renovation in Moradabad? MTBoss handles repair, remodelling, waterproofing, flooring, interiors and finishing, with clear quotes. Call +91 94584 10866.',
+    'Planning a home renovation in Moradabad? MTBOSS handles repair, remodelling, waterproofing, flooring, interiors and finishing, with clear quotes. Call +91 94584 10866.',
   keywords:
-    'home renovation Moradabad, house renovation Moradabad, home remodelling Moradabad, renovation contractor Moradabad, home repair Moradabad, waterproofing Moradabad, flooring contractor Moradabad, interior renovation Moradabad, home finishing Moradabad, bathroom renovation Moradabad, kitchen renovation Moradabad, MTBoss renovation Moradabad',
+    'home renovation Moradabad, house renovation Moradabad, home remodelling Moradabad, renovation contractor Moradabad, home repair Moradabad, waterproofing Moradabad, flooring contractor Moradabad, interior renovation Moradabad, home finishing Moradabad, bathroom renovation Moradabad, kitchen renovation Moradabad, MTBOSS renovation Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/home-renovation-moradabad',
+    canonical: 'https://www.MTBOSS.in/home-renovation-moradabad',
   },
   openGraph: {
-    title: 'Home Renovation in Moradabad | MTBoss',
+    title: 'Home Renovation in Moradabad | MTBOSS',
     description:
-      'Planning a home renovation in Moradabad? MTBoss handles repair, remodelling, waterproofing, flooring, interiors and finishing, with clear quotes. Call +91 94584 10866.',
-    url: 'https://www.MTBoss.in/home-renovation-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Planning a home renovation in Moradabad? MTBOSS handles repair, remodelling, waterproofing, flooring, interiors and finishing, with clear quotes. Call +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/home-renovation-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-home-renovation-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-home-renovation-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Home Renovation in Moradabad - MTBoss',
+        alt: 'Home Renovation in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Home Renovation in Moradabad | MTBoss',
+    title: 'Home Renovation in Moradabad | MTBOSS',
     description:
-      'Planning a home renovation in Moradabad? MTBoss handles repair, remodelling, waterproofing, flooring, interiors and finishing, with clear quotes. Call +91 94584 10866.',
-    images: ['https://www.MTBoss.in/og-home-renovation-moradabad.jpg'],
+      'Planning a home renovation in Moradabad? MTBOSS handles repair, remodelling, waterproofing, flooring, interiors and finishing, with clear quotes. Call +91 94584 10866.',
+    images: ['https://www.MTBOSS.in/og-home-renovation-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/home-renovation-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/home-renovation-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

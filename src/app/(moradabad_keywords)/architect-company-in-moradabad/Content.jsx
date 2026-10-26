@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Company in Moradabad: MTBoss
+            Architect Company in Moradabad: MTBOSS
           </h2>
 
 
@@ -22,7 +22,7 @@ const Content = () => {
                 That is why many families and businesses now look for a proper architect company in Moradabad: an organised business with a written scope, a clear price, a team and a reason to stay accountable after handover.
               </p>
               <p className="mt-3">
-                MTBoss is a Moradabad-based construction, property and home services company, operating as MTBoss Construction Private Limited. We design and build homes, shops, showrooms, hotels, schools and industrial buildings. Design and construction sit under one roof, so you deal with one accountable company from the first sketch to the final handover.
+                MTBOSS is a Moradabad-based construction, property and home services company, operating as MTBOSS Construction Private Limited. We design and build homes, shops, showrooms, hotels, schools and industrial buildings. Design and construction sit under one roof, so you deal with one accountable company from the first sketch to the final handover.
               </p>
             </section>
 
@@ -63,13 +63,13 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Company Credentials and Documents MTBoss Can Share
+                Company Credentials and Documents MTBOSS Can Share
               </h3>
               <p className="mb-3">
-                A trustworthy company is comfortable showing its paperwork. During your consultation, you can ask MTBoss for:
+                A trustworthy company is comfortable showing its paperwork. During your consultation, you can ask MTBOSS for:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Company registration details for MTBoss Construction Private Limited.</li>
+                <li>Company registration details for MTBOSS Construction Private Limited.</li>
                 <li>GST and tax registration, where applicable.</li>
                 <li>Professional details of the architects and engineers on your project.</li>
                 <li>Client references, where clients agree to be contacted.</li>
@@ -83,7 +83,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Architect Company Services by MTBoss in Moradabad
+                Architect Company Services by MTBOSS in Moradabad
               </h3>
 
 
@@ -122,7 +122,7 @@ const Content = () => {
                 Interior Design Coordination
               </h4>
               <p className="mb-3">
-                Because MTBoss also offers interiors, your architectural and interior plans can be developed together for a seamless result.
+                Because MTBOSS also offers interiors, your architectural and interior plans can be developed together for a seamless result.
               </p>
 
 
@@ -154,14 +154,14 @@ const Content = () => {
                 <li>Handover support, including inspection, cleaning and final documentation.</li>
               </ul>
               <p className="mt-3">
-                MTBoss provides these as part of a complete project, not as expensive extras.
+                MTBOSS provides these as part of a complete project, not as expensive extras.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Working Process, Step by Step
+                MTBOSS Working Process, Step by Step
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -180,9 +180,9 @@ const Content = () => {
                   <strong>Step 4: Approvals guidance.</strong> We guide you on the drawings and documents typically needed for local approvals. Requirements vary by project and area, so please confirm final rules with the relevant authorities.
                 </li>
                 <li>
-                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate. For a quick early figure, try the MTBoss{" "}
+                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate. For a quick early figure, try the MTBOSS{" "}
                   <a
-                    href="https://www.MTBoss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -222,7 +222,7 @@ const Content = () => {
                 <li>Defect and after-service terms, describing what is covered after handover.</li>
               </ul>
               <p className="mt-3">
-                MTBoss shares these terms openly before you commit, so there are no hidden surprises.
+                MTBOSS shares these terms openly before you commit, so there are no hidden surprises.
               </p>
             </section>
 
@@ -260,7 +260,7 @@ const Content = () => {
 
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Smart Spending Advice from MTBoss
+                Smart Spending Advice from MTBOSS
               </h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -273,7 +273,7 @@ const Content = () => {
               <p className="mt-3">
                 Design fees are usually a small share of the total project cost, and good planning often saves far more than the fee through better use of space and less rework. Be cautious of very low fees, since they often lead to missing details or extra charges later. For a personal estimate, request a{" "}
                 <a
-                  href="https://www.MTBoss.in/CTASection/get-quote"
+                  href="https://www.MTBOSS.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -287,7 +287,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Quality Standards and After-Sales Support at MTBoss
+                Quality Standards and After-Sales Support at MTBOSS
               </h3>
               <p className="mb-3">
                 A good company is judged by what happens on site and after handover.
@@ -312,7 +312,7 @@ const Content = () => {
                 <li>
                   <strong>Support after handover.</strong> Our{" "}
                   <a
-                    href="https://www.MTBoss.in/quick"
+                    href="https://www.MTBOSS.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -323,7 +323,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Structural design should always be done or verified by qualified structural professionals, and MTBoss coordinates this as part of every project.
+                Structural design should always be done or verified by qualified structural professionals, and MTBOSS coordinates this as part of every project.
               </p>
             </section>
 
@@ -333,7 +333,7 @@ const Content = () => {
                 Climate-Smart Design for Moradabad
               </h3>
               <p className="mb-3">
-                Good architecture responds to its surroundings. For projects in Moradabad, MTBoss focuses on:
+                Good architecture responds to its surroundings. For projects in Moradabad, MTBOSS focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -387,7 +387,7 @@ const Content = () => {
                 How to Verify an Architect Company in Moradabad Before Signing
               </h3>
               <p className="mb-3">
-                Run through this checklist with any company, including MTBoss:
+                Run through this checklist with any company, including MTBOSS:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -410,14 +410,14 @@ const Content = () => {
                 <li>Ask about after-sales support and what is covered once the building is complete.</li>
               </ul>
               <p className="mt-3">
-                A trustworthy company welcomes these checks, and MTBoss answers each of them openly during your free consultation.
+                A trustworthy company welcomes these checks, and MTBOSS answers each of them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MTBoss in Moradabad
+                Areas Served by MTBOSS in Moradabad
               </h3>
               <p className="mb-3">
                 We work with home and business owners across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies and commercial belts.
@@ -430,21 +430,21 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Architect Company FAQs
+                MTBOSS Architect Company FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Is MTBoss a registered company?</strong>
+                  <strong>Q1. Is MTBOSS a registered company?</strong>
                   <br />
-                  Yes. We operate as MTBoss Construction Private Limited.
+                  Yes. We operate as MTBOSS Construction Private Limited.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MTBoss offers a free consultation and site visit.
+                  Yes. MTBOSS offers a free consultation and site visit.
                 </li>
                 <li>
-                  <strong>Q3. Does MTBoss handle both design and construction?</strong>
+                  <strong>Q3. Does MTBOSS handle both design and construction?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
@@ -479,7 +479,7 @@ const Content = () => {
                   Yes. Our home services team can help with electrical, plumbing, painting and AC needs.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MTBoss?</strong>
+                  <strong>Q10. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

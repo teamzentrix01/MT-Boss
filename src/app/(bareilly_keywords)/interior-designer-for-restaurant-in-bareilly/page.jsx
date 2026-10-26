@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-designer-for-restaurant-in-bareilly",
+      "https://www.MTBOSS.in/interior-designer-for-restaurant-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Need an interior designer for your restaurant in Bareilly? Plan layout, kitchen flow, lighting and ambience with MTBOSS. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-designer-for-restaurant-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-restaurant-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designer-restaurant-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-restaurant-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Designer for Restaurant in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Need an interior designer for your restaurant in Bareilly? Plan layout, kitchen flow, lighting and ambience with MTBOSS. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-interior-designer-restaurant-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-restaurant-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-designer-for-restaurant-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-restaurant-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-interior-designer-restaurant-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-restaurant-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,13 +117,13 @@ export default function Page() {
     name: "Restaurant Interior Design Services in Bareilly",
     description:
       "MTBOSS provides restaurant and cafe interior design services in Bareilly, including concept and space planning, dining layouts, kitchen and service planning, facade and entrance design, ceiling and lighting design, wall and furniture design, flooring and finishes, washroom planning, services provisions, branding elements, construction coordination, material supply, renovation and remodelling.",
-    url: "https://www.mtboss.in/interior-designer-for-restaurant-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-restaurant-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -218,19 +218,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Designer for Restaurant in Bareilly",
-        item: "https://www.mtboss.in/interior-designer-for-restaurant-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-designer-for-restaurant-in-bareilly",
       },
     ],
   };

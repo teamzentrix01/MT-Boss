@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-designer-for-living-room-in-bareilly",
+      "https://www.MTBOSS.in/interior-designer-for-living-room-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Need an interior designer for living room Bareilly? MTBOSS plans TV walls, seating, ceilings and lighting for stylish family spaces. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-designer-for-living-room-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-living-room-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designer-living-room-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-living-room-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Designer for Living Room in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Need an interior designer for living room Bareilly? MTBOSS plans TV walls, seating, ceilings and lighting for stylish family spaces. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-interior-designer-living-room-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-living-room-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-designer-for-living-room-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-living-room-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-interior-designer-living-room-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-living-room-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,13 +116,13 @@ export default function Page() {
     name: "Living Room Interior Design Services in Bareilly",
     description:
       "MTBOSS provides living room interior design services in Bareilly. Services include living room layout planning, TV wall and unit design, feature wall, false ceiling and lighting, seating and furniture planning, custom woodwork, flooring, wall finishes, curtains and window treatment, puja unit or mandir, open living and dining design, electrical planning, AC and fan planning, living room renovation and full home interiors.",
-    url: "https://www.mtboss.in/interior-designer-for-living-room-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-living-room-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -217,19 +217,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Designer for Living Room in Bareilly",
-        item: "https://www.mtboss.in/interior-designer-for-living-room-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-designer-for-living-room-in-bareilly",
       },
     ],
   };

@@ -8,13 +8,13 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Contact Number in Bareilly: MTBoss
+            Architect Contact Number in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                To contact an architect for a Bareilly project through MTBoss, call
+                To contact an architect for a Bareilly project through MTBOSS, call
                 or WhatsApp{" "}
                 <a
                   href="https://wa.me/9458410866"
@@ -26,12 +26,12 @@ const Content = () => {
                 </a>
                 , email{" "}
                 <a
-                  href="mailto:MTBoss2016@gmail.com"
+                  href="mailto:MTBOSS2016@gmail.com"
                   className="text-blue-600 underline"
                 >
-                  MTBoss2016@gmail.com
+                  MTBOSS2016@gmail.com
                 </a>
-                , or click &ldquo;Get a Construction Quote&rdquo; on MTBoss.in. Send
+                , or click &ldquo;Get a Construction Quote&rdquo; on MTBOSS.in. Send
                 your location pin, plot photos and a short brief, and the team will
                 arrange a site study and a written proposal{" "}
                 <span className="text-gray-500">[confirm reply time]</span>.
@@ -57,21 +57,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &ldquo;Get a Construction Quote&rdquo;)
                 </li>
@@ -101,17 +101,17 @@ const Content = () => {
                 What This Number Connects You To
               </h3>
               <p>
-                The number above reaches the MTBoss team at our Moradabad office. We
+                The number above reaches the MTBOSS team at our Moradabad office. We
                 serve Bareilly clients through site visits, video reviews and shared
                 drawings, and we say so plainly, because honest information about
                 location is the base of trust.{" "}
                 <span className="text-gray-500">
-                  [If MTBoss has a Bareilly site office or branch, state its real
+                  [If MTBOSS has a Bareilly site office or branch, state its real
                   address here. If not, leave this as written.]
                 </span>
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -121,7 +121,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Five Ways to Reach MTBoss
+                Five Ways to Reach MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -145,17 +145,17 @@ const Content = () => {
                 <li>
                   <strong>Email.</strong> Write to{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>{" "}
                   with drawings, papers and a detailed brief. Best for larger
                   projects, businesses and anything that needs a written record.
                 </li>
                 <li>
                   <strong>Website enquiry.</strong> Click &ldquo;Get a Construction
-                  Quote&rdquo; on MTBoss.in and submit your requirement. Best when you
+                  Quote&rdquo; on MTBOSS.in and submit your requirement. Best when you
                   are browsing services and want to enquire without switching apps.
                 </li>
                 <li>
@@ -437,7 +437,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss welcomes these checks.{" "}
+                MTBOSS welcomes these checks.{" "}
                 <span className="text-gray-500">
                   [Add your Google rating and review count only if real, current and
                   visible on your Google Business Profile.]
@@ -486,7 +486,7 @@ const Content = () => {
                 Services You Can Ask About
               </h3>
               <p className="mb-3">
-                Through MTBoss.in, MTBoss offers:
+                Through MTBOSS.in, MTBOSS offers:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -499,7 +499,7 @@ const Content = () => {
                 </li>
                 <li>Building elevation design</li>
                 <li>
-                  Construction through MTBoss, if you choose design and build
+                  Construction through MTBOSS, if you choose design and build
                 </li>
                 <li>Renovation and extension planning</li>
                 <li>
@@ -543,21 +543,21 @@ const Content = () => {
                 Related Services From the Same Number
               </h3>
               <p>
-                One call can start several services. MTBoss also offers Architecture
+                One call can start several services. MTBOSS also offers Architecture
                 &amp; Interior, Building Elevation, Building Contractor, Building
                 Renovation, Modular Kitchen, False Ceiling, Water Proofing, Painter,
-                Electrician and Plumber. Use the Budget Calculator on MTBoss.in for
+                Electrician and Plumber. Use the Budget Calculator on MTBOSS.in for
                 an early idea of construction cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Architecture, interior and building
@@ -592,21 +592,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -626,7 +626,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Contact MTBoss
+                Reasons Clients Contact MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -692,21 +692,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &ldquo;Get a Construction Quote&rdquo;)
                 </li>
@@ -720,7 +720,7 @@ const Content = () => {
                 arrange a site study and a written proposal.
               </p>
               <p className="mt-3">
-                Call or WhatsApp MTBoss for design support in Bareilly, with the
+                Call or WhatsApp MTBOSS for design support in Bareilly, with the
                 number verified, the location stated plainly and the proposal put in
                 writing.
               </p>
@@ -732,7 +732,7 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. What is the architect contact number for MTBoss?</strong>
+                  <strong>Q1. What is the architect contact number for MTBOSS?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -755,10 +755,10 @@ const Content = () => {
                   <br />
                   Write to{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>{" "}
                   with drawings and your brief.
                 </li>
@@ -798,7 +798,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a written proposal?</strong>
                   <br />
-                  Click &ldquo;Get a Construction Quote&rdquo; on MTBoss.in, or call
+                  Click &ldquo;Get a Construction Quote&rdquo; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

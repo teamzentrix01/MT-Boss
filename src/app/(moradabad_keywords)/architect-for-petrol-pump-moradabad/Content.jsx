@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Petrol Pump in Moradabad:MTBoss
+            Architect for Petrol Pump in Moradabad:MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -26,7 +26,7 @@ const Content = () => {
                 But a good site alone does not guarantee a good outlet.
               </p>
               <p className="mt-3">
-                MTBoss is a construction company serving Moradabad and Bareilly with
+                MTBOSS is a construction company serving Moradabad and Bareilly with
                 commercial, industrial, hospitality, residential and infrastructure
                 projects.
               </p>
@@ -260,7 +260,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Choose MTBoss as Your Petrol Pump Architect
+                Choose MTBOSS as Your Petrol Pump Architect
               </h3>
               <p className="mb-3">
                 Fuel station projects need clear planning, dependable execution and honest
@@ -305,7 +305,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 If you are searching for an architect for petrol pump Moradabad who can
-                plan, design and build with care, MTBoss is ready to help.
+                plan, design and build with care, MTBOSS is ready to help.
               </p>
             </section>
 
@@ -346,7 +346,7 @@ const Content = () => {
                   <strong>Step 6: Budget estimation.</strong> We share a transparent
                   estimate covering materials, labour and finishing. You can also use the{" "}
                   <a href="/calculator" className="text-blue-600 underline">
-                    MTBoss construction cost calculator
+                    MTBOSS construction cost calculator
                   </a>{" "}
                   for an early idea.
                 </li>
@@ -507,7 +507,7 @@ const Content = () => {
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Contact MTBoss
+                Contact MTBOSS
               </h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -524,21 +524,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.MTBoss.in/
+                    https://www.MTBOSS.in/
                   </a>
                 </li>
                 <li>
@@ -580,9 +580,9 @@ const Content = () => {
                   layout or approval requirements.
                 </li>
                 <li>
-                  <strong>Q3. Does MTBoss handle both design and construction?</strong>
+                  <strong>Q3. Does MTBOSS handle both design and construction?</strong>
                   <br />
-                  Yes. MTBoss manages architecture, construction, finishing and
+                  Yes. MTBOSS manages architecture, construction, finishing and
                   waterproofing under one team.
                 </li>
                 <li>
@@ -626,7 +626,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q10. How can I contact MTBoss for a petrol pump project?
+                    Q10. How can I contact MTBOSS for a petrol pump project?
                   </strong>
                   <br />
                   Call or WhatsApp{" "}
@@ -640,19 +640,19 @@ const Content = () => {
                   </a>
                   , email{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                   , or request a quote at{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    MTBoss.in
+                    MTBOSS.in
                   </a>
                   .
                 </li>

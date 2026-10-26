@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Carpenter for Home in Moradabad',
   description:
-    'Need a carpenter for your home in Moradabad MTBoss handles doors, wardrobes, beds, shelves, repairs and polish, with clear quotes. Call +91 94584 10866.',
+    'Need a carpenter for your home in Moradabad MTBOSS handles doors, wardrobes, beds, shelves, repairs and polish, with clear quotes. Call +91 94584 10866.',
   keywords:
-    'carpenter for home Moradabad, home carpenter Moradabad, carpenter near me Moradabad, carpenter services Moradabad, carpenter for doors Moradabad, carpenter for wardrobes Moradabad, carpenter for beds Moradabad, carpenter for shelves Moradabad, furniture repair Moradabad, carpenter polish Moradabad, MTBoss carpenter Moradabad',
+    'carpenter for home Moradabad, home carpenter Moradabad, carpenter near me Moradabad, carpenter services Moradabad, carpenter for doors Moradabad, carpenter for wardrobes Moradabad, carpenter for beds Moradabad, carpenter for shelves Moradabad, furniture repair Moradabad, carpenter polish Moradabad, MTBOSS carpenter Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/carpenter-for-home-moradabad',
+    canonical: 'https://www.MTBOSS.in/carpenter-for-home-moradabad',
   },
   openGraph: {
     title: 'Carpenter for Home in Moradabad',
     description:
-      'Need a carpenter for your home in Moradabad MTBoss handles doors, wardrobes, beds, shelves, repairs and polish, with clear quotes. Call +91 94584 10866.',
-    url: 'https://www.MTBoss.in/carpenter-for-home-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Need a carpenter for your home in Moradabad MTBOSS handles doors, wardrobes, beds, shelves, repairs and polish, with clear quotes. Call +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/carpenter-for-home-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-carpenter-for-home-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-carpenter-for-home-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Carpenter for Home in Moradabad - MTBoss',
+        alt: 'Carpenter for Home in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Carpenter for Home in Moradabad',
     description:
-      'Need a carpenter for your home in Moradabad MTBoss handles doors, wardrobes, beds, shelves, repairs and polish, with clear quotes. Call +91 94584 10866.',
-    images: ['https://www.MTBoss.in/og-carpenter-for-home-moradabad.jpg'],
+      'Need a carpenter for your home in Moradabad MTBOSS handles doors, wardrobes, beds, shelves, repairs and polish, with clear quotes. Call +91 94584 10866.',
+    images: ['https://www.MTBOSS.in/og-carpenter-for-home-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/carpenter-for-home-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/carpenter-for-home-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

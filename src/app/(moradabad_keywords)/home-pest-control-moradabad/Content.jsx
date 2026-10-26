@@ -17,11 +17,11 @@ const Content = () => {
                 A home should feel safe, clean and comfortable. Pests quietly
                 break that comfort, whether it is cockroaches in the kitchen,
                 termites in a wooden door, bed bugs in a mattress or rats behind
-                the wardrobe. Home pest control in Moradabad from MTBoss gives
+                the wardrobe. Home pest control in Moradabad from MTBOSS gives
                 families a structured, safe and local solution.
               </p>
               <p className="mt-3">
-                MTBoss is a construction and home-services company serving
+                MTBOSS is a construction and home-services company serving
                 Moradabad and Bareilly, known for quality work, transparent
                 pricing and on-time delivery. Pest control is part of our quick
                 home services, supported by a team that understands how houses are
@@ -234,7 +234,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBoss Home Pest Control Process
+                The MTBOSS Home Pest Control Process
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -332,7 +332,7 @@ const Content = () => {
                 <li>Blocked or uncovered drains</li>
               </ul>
               <p className="mt-3">
-                Because MTBoss is also a construction and repair company, we can
+                Because MTBOSS is also a construction and repair company, we can
                 recommend and carry out building repair, waterproofing and
                 plumbing work alongside pest treatment. Fixing the cause protects
                 your home for longer than treatment alone.
@@ -410,7 +410,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Strengths of MTBoss Home Pest Control
+                Strengths of MTBOSS Home Pest Control
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -443,7 +443,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBoss provides home pest control across Moradabad, including
+                MTBOSS provides home pest control across Moradabad, including
                 residential colonies and neighbourhoods such as Civil Lines,
                 Lajpat Nagar, Delhi Road, Kanth Road, Ramganga Vihar and Buddhi
                 Vihar. Our office is at Harthala Kanth Road, behind KR Collection,
@@ -476,16 +476,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/quick/pest-control"
+                  href="https://www.MTBOSS.in/quick/pest-control"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss Pest Control page
+                  MTBOSS Pest Control page
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -494,15 +494,15 @@ const Content = () => {
                 </a>
                 , or email{" "}
                 <a
-                  href="mailto:MTBoss2016@gmail.com"
+                  href="mailto:MTBOSS2016@gmail.com"
                   className="text-blue-600 underline"
                 >
-                  MTBoss2016@gmail.com
+                  MTBOSS2016@gmail.com
                 </a>
                 .
               </p>
               <p className="mt-3">
-                Give your family a cleaner, safer home. Contact MTBoss today for
+                Give your family a cleaner, safer home. Contact MTBOSS today for
                 dependable home pest control in Moradabad.
               </p>
             </section>
@@ -514,7 +514,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBoss provide home pest control in Moradabad?
+                    Q1. Does MTBOSS provide home pest control in Moradabad?
                   </strong>
                   <br />
                   Yes. We serve flats, houses and kothis across Moradabad. Contact
@@ -557,7 +557,7 @@ const Content = () => {
                   and keep children and pets away from treated rooms.
                 </li>
                 <li>
-                  <strong>Q8. Can MTBoss repair damage caused by pests?</strong>
+                  <strong>Q8. Can MTBOSS repair damage caused by pests?</strong>
                   <br />
                   Yes. We can handle wall, plaster, wood and plumbing repairs,
                   depending on the work needed.
@@ -569,7 +569,7 @@ const Content = () => {
                   gives an accurate quote.
                 </li>
                 <li>
-                  <strong>Q10. How do I book MTBoss home pest control?</strong>
+                  <strong>Q10. How do I book MTBOSS home pest control?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -580,7 +580,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

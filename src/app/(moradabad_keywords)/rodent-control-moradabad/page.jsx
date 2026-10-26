@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Rodent Control in Moradabad',
   description:
-    'Professional rodent control in Moradabad for homes, shops and godowns. MTBoss offers inspection, rat removal, sealing and prevention. Book by call or WhatsApp.',
+    'Professional rodent control in Moradabad for homes, shops and godowns. MTBOSS offers inspection, rat removal, sealing and prevention. Book by call or WhatsApp.',
   keywords:
-    'rodent control Moradabad, rat control Moradabad, mice control Moradabad, rat removal Moradabad, rodent pest control Moradabad, rat proofing Moradabad, rodent control near me Moradabad, rat control for godowns Moradabad, rodent control for shops Moradabad, MTBoss rodent control Moradabad',
+    'rodent control Moradabad, rat control Moradabad, mice control Moradabad, rat removal Moradabad, rodent pest control Moradabad, rat proofing Moradabad, rodent control near me Moradabad, rat control for godowns Moradabad, rodent control for shops Moradabad, MTBOSS rodent control Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/rodent-control-moradabad',
+    canonical: 'https://www.MTBOSS.in/rodent-control-moradabad',
   },
   openGraph: {
     title: 'Rodent Control in Moradabad',
     description:
-      'Professional rodent control in Moradabad for homes, shops and godowns. MTBoss offers inspection, rat removal, sealing and prevention. Book by call or WhatsApp.',
-    url: 'https://www.MTBoss.in/rodent-control-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Professional rodent control in Moradabad for homes, shops and godowns. MTBOSS offers inspection, rat removal, sealing and prevention. Book by call or WhatsApp.',
+    url: 'https://www.MTBOSS.in/rodent-control-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-rodent-control-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-rodent-control-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Rodent Control in Moradabad - MTBoss',
+        alt: 'Rodent Control in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Rodent Control in Moradabad',
     description:
-      'Professional rodent control in Moradabad for homes, shops and godowns. MTBoss offers inspection, rat removal, sealing and prevention. Book by call or WhatsApp.',
-    images: ['https://www.MTBoss.in/og-rodent-control-moradabad.jpg'],
+      'Professional rodent control in Moradabad for homes, shops and godowns. MTBOSS offers inspection, rat removal, sealing and prevention. Book by call or WhatsApp.',
+    images: ['https://www.MTBOSS.in/og-rodent-control-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/rodent-control-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/rodent-control-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

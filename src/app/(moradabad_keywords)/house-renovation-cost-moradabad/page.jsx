@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'House Renovation Cost Moradabad',
   description:
-    'Understand house renovation cost in Moradabad: what affects pricing, hidden costs and how to plan your budget. Get an inspection-based quote from MTBoss.',
+    'Understand house renovation cost in Moradabad: what affects pricing, hidden costs and how to plan your budget. Get an inspection-based quote from MTBOSS.',
   keywords:
-    'house renovation cost Moradabad, home renovation cost Moradabad, renovation cost Moradabad, house renovation budget Moradabad, renovation price Moradabad, home renovation estimate Moradabad, renovation quotation Moradabad, home makeover cost Moradabad, renovation contractor Moradabad, MTBoss renovation Moradabad',
+    'house renovation cost Moradabad, home renovation cost Moradabad, renovation cost Moradabad, house renovation budget Moradabad, renovation price Moradabad, home renovation estimate Moradabad, renovation quotation Moradabad, home makeover cost Moradabad, renovation contractor Moradabad, MTBOSS renovation Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/house-renovation-cost-moradabad',
+    canonical: 'https://www.MTBOSS.in/house-renovation-cost-moradabad',
   },
   openGraph: {
     title: 'House Renovation Cost Moradabad',
     description:
-      'Understand house renovation cost in Moradabad: what affects pricing, hidden costs and how to plan your budget. Get an inspection-based quote from MTBoss.',
-    url: 'https://www.MTBoss.in/house-renovation-cost-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Understand house renovation cost in Moradabad: what affects pricing, hidden costs and how to plan your budget. Get an inspection-based quote from MTBOSS.',
+    url: 'https://www.MTBOSS.in/house-renovation-cost-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-house-renovation-cost-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-house-renovation-cost-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'House Renovation Cost in Moradabad - MTBoss',
+        alt: 'House Renovation Cost in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'House Renovation Cost Moradabad',
     description:
-      'Understand house renovation cost in Moradabad: what affects pricing, hidden costs and how to plan your budget. Get an inspection-based quote from MTBoss.',
-    images: ['https://www.MTBoss.in/og-house-renovation-cost-moradabad.jpg'],
+      'Understand house renovation cost in Moradabad: what affects pricing, hidden costs and how to plan your budget. Get an inspection-based quote from MTBOSS.',
+    images: ['https://www.MTBOSS.in/og-house-renovation-cost-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/house-renovation-cost-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/house-renovation-cost-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

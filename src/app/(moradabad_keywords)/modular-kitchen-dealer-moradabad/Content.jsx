@@ -22,7 +22,7 @@ const Content = () => {
                 install everything neatly.
               </p>
               <p>
-                MTBoss is an architect, interior design and construction company
+                MTBOSS is an architect, interior design and construction company
                 serving Moradabad and Bareilly, with a focus on quality work,
                 transparent pricing and on-time delivery. Modular kitchen is one of
                 our quick home services, backed by a team that understands walls,
@@ -33,7 +33,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Modular Kitchen Solutions from MTBoss
+                Modular Kitchen Solutions from MTBOSS
               </h3>
               <p className="mb-3">
                 A modular kitchen is built from factory-finished or workshop-made
@@ -54,7 +54,7 @@ const Content = () => {
                 <li>Final fitting, adjustment and handover</li>
               </ul>
               <p className="mt-3">
-                Because MTBoss also offers carpentry, plumbing, electrical, tile and
+                Because MTBOSS also offers carpentry, plumbing, electrical, tile and
                 marble, painting and false ceiling services, your kitchen does not
                 become a project split across five different contractors.
               </p>
@@ -221,7 +221,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Flooring.</strong> Anti-skid, easy-clean tiles or stone
-                  work best in kitchens. Because MTBoss offers tile and marble
+                  work best in kitchens. Because MTBOSS offers tile and marble
                   services, floor, wall and counter finishes can be matched in one
                   plan.
                 </li>
@@ -276,7 +276,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                For renovation planning, you can use the MTBoss Budget Calculator on
+                For renovation planning, you can use the MTBOSS Budget Calculator on
                 our website to estimate project spending before the design stage.
                 Final kitchen pricing is shared after the site visit and design scope
                 are confirmed.
@@ -290,7 +290,7 @@ const Content = () => {
               <p className="mb-3">
                 <strong>New construction.</strong> If you are building a house or
                 flat, kitchen planning should begin before plumbing, electrical and
-                tile work. MTBoss can plan service points early so the final
+                tile work. MTBOSS can plan service points early so the final
                 installation fits properly.
               </p>
               <p>
@@ -355,7 +355,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBoss for a Modular Kitchen
+                Why Choose MTBOSS for a Modular Kitchen
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -366,7 +366,7 @@ const Content = () => {
                 <li>
                   <strong>One team for many trades.</strong> Carpentry, plumbing,
                   electrical, tile and marble, painting, false ceiling and renovation
-                  are all available through MTBoss, which reduces delays and
+                  are all available through MTBOSS, which reduces delays and
                   coordination problems.
                 </li>
                 <li>
@@ -439,7 +439,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBoss provides modular kitchen services across Moradabad, including
+                MTBOSS provides modular kitchen services across Moradabad, including
                 residential areas such as Civil Lines, Lajpat Nagar, Delhi Road,
                 Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -466,10 +466,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -480,16 +480,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/quick/modular-kitchen"
+                  href="https://www.MTBOSS.in/quick/modular-kitchen"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss Modular Kitchen page
+                  MTBOSS Modular Kitchen page
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -499,7 +499,7 @@ const Content = () => {
                 .
               </p>
               <p className="mt-3">
-                Plan a kitchen that works as well as it looks. Contact MTBoss today
+                Plan a kitchen that works as well as it looks. Contact MTBOSS today
                 for modular kitchen design and installation in Moradabad.
               </p>
             </section>
@@ -510,7 +510,7 @@ const Content = () => {
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MTBoss provide modular kitchens in Moradabad?</strong>
+                  <strong>Q1. Does MTBOSS provide modular kitchens in Moradabad?</strong>
                   <br />
                   Yes. We plan, design and install modular kitchens for homes and
                   apartments in Moradabad.
@@ -542,7 +542,7 @@ const Content = () => {
                 <li>
                   <strong>Q6. Do you handle plumbing, electrical and tile work?</strong>
                   <br />
-                  Yes. MTBoss offers these services, so your kitchen project stays
+                  Yes. MTBOSS offers these services, so your kitchen project stays
                   coordinated.
                 </li>
                 <li>
@@ -564,7 +564,7 @@ const Content = () => {
                   scope and quotation.
                 </li>
                 <li>
-                  <strong>Q10. How do I book a modular kitchen with MTBoss?</strong>
+                  <strong>Q10. How do I book a modular kitchen with MTBOSS?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -575,7 +575,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Shopping Complex Bareilly: MTBoss
+            Architect for Shopping Complex Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -16,7 +16,7 @@ const Content = () => {
               <p>
                 An architect for a shopping complex in Bareilly plans the units,
                 frontage, circulation, parking and services so that shops lease or
-                sell well and the building earns for decades. MTBoss Construction
+                sell well and the building earns for decades. MTBOSS Construction
                 Private Limited serves Bareilly and Moradabad with commercial design
                 and construction under one team.
               </p>
@@ -33,7 +33,7 @@ const Content = () => {
                 directly in income.
               </p>
               <p className="mt-3">
-                Good design lets every unit be seen, reached and served. MTBoss
+                Good design lets every unit be seen, reached and served. MTBOSS
                 Construction Private Limited builds, renovates and repairs homes,
                 shops and commercial properties across Moradabad and Bareilly.
               </p>
@@ -67,7 +67,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 <span className="text-gray-500">
-                  [Keep only the types MTBoss actually designs.]
+                  [Keep only the types MTBOSS actually designs.]
                 </span>{" "}
                 Scale decides the structure, services and approvals, so settle it
                 first.
@@ -116,7 +116,7 @@ const Content = () => {
               <p className="mb-3">
                 The right mix lets you lease quickly and keep rent steady{" "}
                 <span className="text-gray-500">
-                  [state how MTBoss helps owners decide the mix]
+                  [state how MTBOSS helps owners decide the mix]
                 </span>
                 .
               </p>
@@ -254,7 +254,7 @@ const Content = () => {
                 Larger complexes often need a basement and a long-span frame{" "}
                 <span className="text-gray-500">
                   [structural design must come from a qualified structural engineer;
-                  confirm MTBoss&apos;s in-house or partner arrangement]
+                  confirm MTBOSS&apos;s in-house or partner arrangement]
                 </span>
                 .
               </p>
@@ -294,7 +294,7 @@ const Content = () => {
                   <strong>Power:</strong> Load estimate, transformer or sub-station,
                   meter rooms, backup generator and sub-metering for each unit{" "}
                   <span className="text-gray-500">
-                    [Electrician service available through MTBoss]
+                    [Electrician service available through MTBOSS]
                   </span>
                 </li>
                 <li>
@@ -305,7 +305,7 @@ const Content = () => {
                   <strong>Water:</strong> Supply, storage, pumping, fire water and
                   separate tenant meters where possible{" "}
                   <span className="text-gray-500">
-                    [Plumber service available through MTBoss]
+                    [Plumber service available through MTBOSS]
                   </span>
                 </li>
                 <li>
@@ -435,7 +435,7 @@ const Content = () => {
               <p className="mb-3">
                 Written fit-out rules keep tenants consistent and the building safe{" "}
                 <span className="text-gray-500">
-                  [state what MTBoss can prepare]
+                  [state what MTBOSS can prepare]
                 </span>
                 .
               </p>
@@ -542,7 +542,7 @@ const Content = () => {
                 Costs depend on area, structure, finish and approvals. Main factors
                 include{" "}
                 <span className="text-gray-500">
-                  [state how MTBoss prepares estimates]
+                  [state how MTBOSS prepares estimates]
                 </span>
                 :
               </p>
@@ -564,7 +564,7 @@ const Content = () => {
               <p className="mb-3">
                 A usable set normally includes{" "}
                 <span className="text-gray-500">
-                  [adjust to what MTBoss provides]
+                  [adjust to what MTBOSS provides]
                 </span>
                 :
               </p>
@@ -637,11 +637,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Commercial design and construction,
@@ -676,21 +676,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -710,7 +710,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Owners Consider MTBoss
+                Reasons Owners Consider MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -752,7 +752,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Shopping Complex With MTBoss
+                Plan Your Shopping Complex With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -769,21 +769,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &ldquo;Get a Construction Quote&rdquo;)
                 </li>
@@ -798,7 +798,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Consider MTBoss for your shopping complex in Bareilly, with the
+                Consider MTBOSS for your shopping complex in Bareilly, with the
                 units planned to lease, the parking planned to work and the services
                 built to last.
               </p>
@@ -812,7 +812,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who designs shopping complexes in Bareilly?</strong>
                   <br />
-                  MTBoss Construction offers commercial design and construction for
+                  MTBOSS Construction offers commercial design and construction for
                   Bareilly and Moradabad{" "}
                   <span className="text-gray-500">[confirm registration]</span>.
                 </li>
@@ -863,7 +863,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a site study?</strong>
                   <br />
-                  Click &ldquo;Get a Construction Quote&rdquo; on MTBoss.in, or call
+                  Click &ldquo;Get a Construction Quote&rdquo; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

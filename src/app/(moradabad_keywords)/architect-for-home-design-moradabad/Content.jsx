@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Home Design in Moradabad: MTBoss
+            Architect for Home Design in Moradabad: MTBOSS
           </h2>
 
 
@@ -22,7 +22,7 @@ const Content = () => {
                 An architect for home design in Moradabad prevents these problems on paper, where fixing them costs nothing.
               </p>
               <p className="mt-3">
-                MTBoss is a Moradabad-based construction, property and home services company. Our team designs independent houses, duplexes, villas and builder floors, and then builds them. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to the day you move in.
+                MTBOSS is a Moradabad-based construction, property and home services company. Our team designs independent houses, duplexes, villas and builder floors, and then builds them. Design and construction sit under one roof, so you deal with one accountable team from the first sketch to the day you move in.
               </p>
            
             </section>
@@ -30,7 +30,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Home Design Services in Moradabad
+                MTBOSS Home Design Services in Moradabad
               </h3>
 
 
@@ -70,7 +70,7 @@ const Content = () => {
                 Interior Coordination
               </h4>
               <p className="mb-3">
-                Because MTBoss also offers interior design, your architectural and interior plans can be developed together, from kitchen layout to lighting points.
+                Because MTBOSS also offers interior design, your architectural and interior plans can be developed together, from kitchen layout to lighting points.
               </p>
 
 
@@ -78,9 +78,9 @@ const Content = () => {
                 Budget Planning and Estimates
               </h4>
               <p className="mb-3">
-                We give a clear written estimate and help you decide where to spend and where to save. You can also try the MTBoss{" "}
+                We give a clear written estimate and help you decide where to spend and where to save. You can also try the MTBOSS{" "}
                 <a
-                  href="https://www.MTBoss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -179,14 +179,14 @@ const Content = () => {
                 Odd shapes and corner plots can become the most interesting homes when planned well. We use angled walls, wraparound balconies and clever courtyards to turn awkward corners into features.
               </p>
               <p className="mb-3">
-                MTBoss studies your actual plot papers and site before recommending a layout.
+                MTBOSS studies your actual plot papers and site before recommending a layout.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Room-by-Room Home Planning by MTBoss
+                Room-by-Room Home Planning by MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 
@@ -223,7 +223,7 @@ const Content = () => {
                 Elevation and Exterior Design Options
               </h3>
               <p className="mb-3">
-                The front of your home is its first impression. MTBoss designs elevations in several popular styles:
+                The front of your home is its first impression. MTBOSS designs elevations in several popular styles:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -256,7 +256,7 @@ const Content = () => {
                 Vastu-Friendly Home Design
               </h3>
               <p className="mb-3">
-                Many families in Moradabad want a home that follows Vastu principles. MTBoss plans the main entrance, kitchen, pooja room, bedrooms, staircase and toilets according to the guidance you follow, while keeping the layout practical.
+                Many families in Moradabad want a home that follows Vastu principles. MTBOSS plans the main entrance, kitchen, pooja room, bedrooms, staircase and toilets according to the guidance you follow, while keeping the layout practical.
               </p>
               <p className="mt-3">
                 If your family follows a particular Vastu consultant, we can work with their recommendations. If Vastu is not a priority, we design for light, ventilation and comfort instead. In either case, we explain trade-offs honestly, so you can decide with full information.
@@ -269,7 +269,7 @@ const Content = () => {
                 Climate-Smart Home Design for Moradabad
               </h3>
               <p className="mb-3">
-                Good home design responds to the place you live in. For homes in Moradabad, MTBoss focuses on:
+                Good home design responds to the place you live in. For homes in Moradabad, MTBOSS focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -336,7 +336,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Home Design Process, Step by Step
+                MTBOSS Home Design Process, Step by Step
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -391,7 +391,7 @@ const Content = () => {
 
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Smart Spending Advice from MTBoss
+                Smart Spending Advice from MTBOSS
               </h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -402,9 +402,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss provides an itemised quote, so there are no hidden charges. For a personal estimate, request a{" "}
+                MTBOSS provides an itemised quote, so there are no hidden charges. For a personal estimate, request a{" "}
                 <a
-                  href="https://www.MTBoss.in/CTASection/get-quote"
+                  href="https://www.MTBOSS.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -454,14 +454,14 @@ const Content = () => {
                 <li>Professional details are shown where they apply.</li>
               </ul>
               <p className="mt-3">
-                MTBoss welcomes every one of these checks and answers them openly during your free consultation.
+                MTBOSS welcomes every one of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MTBoss in Moradabad
+                Areas Served by MTBOSS in Moradabad
               </h3>
               <p className="mb-3">
                 We work with families across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies.
@@ -474,21 +474,21 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Home Design FAQs
+                MTBOSS Home Design FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MTBoss design houses in Moradabad?</strong>
+                  <strong>Q1. Does MTBOSS design houses in Moradabad?</strong>
                   <br />
                   Yes. We design independent houses, duplexes, villas and builder floors.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MTBoss offers a free consultation and site visit.
+                  Yes. MTBOSS offers a free consultation and site visit.
                 </li>
                 <li>
-                  <strong>Q3. Can MTBoss also build my home?</strong>
+                  <strong>Q3. Can MTBOSS also build my home?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
@@ -523,7 +523,7 @@ const Content = () => {
                   Yes. You get a written breakup of materials, labour and finishes.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MTBoss?</strong>
+                  <strong>Q10. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

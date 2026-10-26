@@ -193,7 +193,7 @@ export default function RentingPage() {
     if (!phoneRegex.test(enquiryForm.phone)) { alert('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
     setEnquiryLoading(true);
     try {
-      const res = await fetch("https://formsubmit.co/ajax/MTBoss2016@gmail.com", {
+      const res = await fetch("https://formsubmit.co/ajax/MTBOSS2016@gmail.com", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
@@ -259,7 +259,7 @@ export default function RentingPage() {
           }}
         >
           <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
-            MTBoss Construction
+            MTBOSS Construction
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
             Find Your
@@ -567,7 +567,7 @@ export default function RentingPage() {
           <div className="text-center mb-14">
             <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Our Promise</span>
             <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-zinc-800"}`}>
-              Why Rent With MTBoss
+              Why Rent With MTBOSS
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">

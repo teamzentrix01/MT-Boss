@@ -6,26 +6,26 @@ import Services from '../../components/Services';
 
 const title = 'Landscape Architect in Bareilly';
 const description =
-  'Plan gardens, outdoor areas and landscape features for homes and businesses in Bareilly with MTBoss. Get practical design and construction guidance for your site.';
-const canonical = 'https://www.MTBoss.in/landscape-architect-bareilly';
+  'Plan gardens, outdoor areas and landscape features for homes and businesses in Bareilly with MTBOSS. Get practical design and construction guidance for your site.';
+const canonical = 'https://www.MTBOSS.in/landscape-architect-bareilly';
 
 export const metadata = {
   title,
   description,
   keywords:
-    'landscape architect in Bareilly, landscape design Bareilly, garden design Bareilly, outdoor space planning Bareilly, residential landscape architect Bareilly, commercial landscape design Bareilly, MTBoss Bareilly',
+    'landscape architect in Bareilly, landscape design Bareilly, garden design Bareilly, outdoor space planning Bareilly, residential landscape architect Bareilly, commercial landscape design Bareilly, MTBOSS Bareilly',
   alternates: { canonical },
   openGraph: {
     title,
     description,
     url: canonical,
-    siteName: 'MTBoss Construction Private Limited',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-landscape-architect-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-landscape-architect-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Landscape Architect in Bareilly - MTBoss',
+        alt: 'Landscape Architect in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,7 +35,7 @@ export const metadata = {
     card: 'summary_large_image',
     title,
     description,
-    images: ['https://www.MTBoss.in/og-landscape-architect-bareilly.jpg'],
+    images: ['https://www.MTBOSS.in/og-landscape-architect-bareilly.jpg'],
   },
   robots: { index: true, follow: true },
 };
@@ -44,10 +44,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
+    name: 'MTBOSS Construction Private Limited',
     url: canonical,
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

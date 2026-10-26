@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Residential Project Construction in Moradabad | MTBoss",
+  title: "Residential Project Construction in Moradabad | MTBOSS",
 
   description:
-    "Planning a residential project in Moradabad? MTBoss handles design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
+    "Planning a residential project in Moradabad? MTBOSS handles design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
 
   keywords:
-    "residential project construction Moradabad, residential projects Moradabad, residential building construction Moradabad, builder floor construction Moradabad, multi-storey residential building Moradabad, apartment building construction Moradabad, housing project construction Moradabad, residential construction company Moradabad, residential construction cost Moradabad, rental building construction Moradabad, MTBoss residential projects, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
+    "residential project construction Moradabad, residential projects Moradabad, residential building construction Moradabad, builder floor construction Moradabad, multi-storey residential building Moradabad, apartment building construction Moradabad, housing project construction Moradabad, residential construction company Moradabad, residential construction cost Moradabad, rental building construction Moradabad, MTBOSS residential projects, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.MTBoss.in/residential-project-construction-in-moradabad",
+      "https://www.MTBOSS.in/residential-project-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Residential Project Construction in Moradabad | MTBoss",
+    title: "Residential Project Construction in Moradabad | MTBOSS",
 
     description:
-      "Planning a residential project in Moradabad? MTBoss handles design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
+      "Planning a residential project in Moradabad? MTBOSS handles design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
 
-    url: "https://www.MTBoss.in/residential-project-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/residential-project-construction-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-residential-project-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-residential-project-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Residential Project Construction in Moradabad - MTBoss",
+        alt: "Residential Project Construction in Moradabad - MTBOSS",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Residential Project Construction in Moradabad | MTBoss",
+    title: "Residential Project Construction in Moradabad | MTBOSS",
 
     description:
-      "Planning a residential project in Moradabad? MTBoss handles design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
+      "Planning a residential project in Moradabad? MTBOSS handles design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
 
     images: [
-      "https://www.MTBoss.in/og-residential-project-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-residential-project-construction-moradabad.jpg",
     ],
   },
 
@@ -67,17 +67,17 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
 
-    name: "MTBoss Construction Private Limited",
+    name: "MTBOSS Construction Private Limited",
 
     url:
-      "https://www.MTBoss.in/residential-project-construction-in-moradabad",
+      "https://www.MTBOSS.in/residential-project-construction-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
 
     image:
-      "https://www.MTBoss.in/og-residential-project-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-residential-project-construction-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -135,17 +135,17 @@ export default function Page() {
     name: "Residential Project Construction Services in Moradabad",
 
     description:
-      "MTBoss provides residential project construction in Moradabad, including builder floors, multi-storey residential buildings, rental buildings, independent houses, duplexes, villas, design coordination, RCC structure, material supply, finishing and final handover.",
+      "MTBOSS provides residential project construction in Moradabad, including builder floors, multi-storey residential buildings, rental buildings, independent houses, duplexes, villas, design coordination, RCC structure, material supply, finishing and final handover.",
 
     url:
-      "https://www.MTBoss.in/residential-project-construction-in-moradabad",
+      "https://www.MTBOSS.in/residential-project-construction-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
 
     areaServed: [
@@ -178,18 +178,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss handle residential projects in Moradabad?",
+        name: "Does MTBOSS handle residential projects in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Residential projects are a listed MTBoss service category, covering affordable homes, independent houses, duplexes, villas and multi-storey residential buildings in Moradabad and Bareilly.",
+          text: "Yes. Residential projects are a listed MTBOSS service category, covering affordable homes, independent houses, duplexes, villas and multi-storey residential buildings in Moradabad and Bareilly.",
         },
       },
       {
         "@type": "Question",
-        name: "Can MTBoss build builder floors or multi-storey residential buildings?",
+        name: "Can MTBOSS build builder floors or multi-storey residential buildings?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBoss can discuss multi-storey residential construction, builder floors, rental buildings and family buildings based on your plot, approved drawings, number of floors, project requirements and applicable permissions.",
+          text: "MTBOSS can discuss multi-storey residential construction, builder floors, rental buildings and family buildings based on your plot, approved drawings, number of floors, project requirements and applicable permissions.",
         },
       },
       {
@@ -197,7 +197,7 @@ export default function Page() {
         name: "How much does residential project construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Residential project cost depends on built-up area, number of floors, number of units, structure, material quality, finishing level, interiors, design complexity and site conditions. MTBoss provides a free Budget Calculator and detailed quote option.",
+          text: "Residential project cost depends on built-up area, number of floors, number of units, structure, material quality, finishing level, interiors, design complexity and site conditions. MTBOSS provides a free Budget Calculator and detailed quote option.",
         },
       },
       {
@@ -205,7 +205,7 @@ export default function Page() {
         name: "How long does a residential construction project take?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Project timeline depends on built-up area, number of floors, design complexity, site conditions, material availability, weather and finishing scope. MTBoss discusses milestones, timeline and payment stages before construction begins.",
+          text: "Project timeline depends on built-up area, number of floors, design complexity, site conditions, material availability, weather and finishing scope. MTBOSS discusses milestones, timeline and payment stages before construction begins.",
         },
       },
       {
@@ -218,18 +218,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss supply building materials for residential projects?",
+        name: "Does MTBOSS supply building materials for residential projects?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate material delivery during residential construction.",
+          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its wholesale material supply network, helping coordinate material delivery during residential construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -244,19 +244,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Residential Project Construction in Moradabad",
-        item: "https://www.MTBoss.in/residential-project-construction-in-moradabad",
+        item: "https://www.MTBOSS.in/residential-project-construction-in-moradabad",
       },
     ],
   };

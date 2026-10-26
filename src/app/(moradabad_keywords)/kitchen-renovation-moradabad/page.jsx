@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Kitchen Renovation in Moradabad',
   description:
-    'Kitchen renovation in Moradabad: replace old platforms, fix leaks, upgrade plumbing, tiles and cabinets. MTBoss manages every trade for you. Call or WhatsApp for a quote.',
+    'Kitchen renovation in Moradabad: replace old platforms, fix leaks, upgrade plumbing, tiles and cabinets. MTBOSS manages every trade for you. Call or WhatsApp for a quote.',
   keywords:
-    'kitchen renovation Moradabad, kitchen remodelling Moradabad, kitchen renovation contractor Moradabad, kitchen repair Moradabad, kitchen upgrade Moradabad, old kitchen renovation Moradabad, kitchen platform replacement Moradabad, kitchen plumbing upgrade Moradabad, kitchen tiles Moradabad, kitchen cabinets Moradabad, kitchen renovation cost Moradabad, MTBoss kitchen renovation Moradabad',
+    'kitchen renovation Moradabad, kitchen remodelling Moradabad, kitchen renovation contractor Moradabad, kitchen repair Moradabad, kitchen upgrade Moradabad, old kitchen renovation Moradabad, kitchen platform replacement Moradabad, kitchen plumbing upgrade Moradabad, kitchen tiles Moradabad, kitchen cabinets Moradabad, kitchen renovation cost Moradabad, MTBOSS kitchen renovation Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/kitchen-renovation-moradabad',
+    canonical: 'https://www.MTBOSS.in/kitchen-renovation-moradabad',
   },
   openGraph: {
     title: 'Kitchen Renovation in Moradabad',
     description:
-      'Kitchen renovation in Moradabad: replace old platforms, fix leaks, upgrade plumbing, tiles and cabinets. MTBoss manages every trade for you. Call or WhatsApp for a quote.',
-    url: 'https://www.MTBoss.in/kitchen-renovation-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Kitchen renovation in Moradabad: replace old platforms, fix leaks, upgrade plumbing, tiles and cabinets. MTBOSS manages every trade for you. Call or WhatsApp for a quote.',
+    url: 'https://www.MTBOSS.in/kitchen-renovation-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-kitchen-renovation-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-kitchen-renovation-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Kitchen Renovation in Moradabad - MTBoss',
+        alt: 'Kitchen Renovation in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Kitchen Renovation in Moradabad',
     description:
-      'Kitchen renovation in Moradabad: replace old platforms, fix leaks, upgrade plumbing, tiles and cabinets. MTBoss manages every trade for you. Call or WhatsApp for a quote.',
-    images: ['https://www.MTBoss.in/og-kitchen-renovation-moradabad.jpg'],
+      'Kitchen renovation in Moradabad: replace old platforms, fix leaks, upgrade plumbing, tiles and cabinets. MTBOSS manages every trade for you. Call or WhatsApp for a quote.',
+    images: ['https://www.MTBOSS.in/og-kitchen-renovation-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/kitchen-renovation-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/kitchen-renovation-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Hotel Building Contractor in Moradabad | MTBoss",
+  title: "Hotel Building Contractor in Moradabad | MTBOSS",
 
   description:
-    "Hire a trusted hotel building contractor in Moradabad. MTBoss manages structure, finishing, materials and handover. Call +91 94584 10866 for a free quote.",
+    "Hire a trusted hotel building contractor in Moradabad. MTBOSS manages structure, finishing, materials and handover. Call +91 94584 10866 for a free quote.",
 
   keywords:
-    "hotel building contractor Moradabad, hotel contractor Moradabad, hotel construction contractor Moradabad, hotel civil contractor Moradabad, building contractor Moradabad, commercial building contractor Moradabad, resort contractor Moradabad, guest house contractor Moradabad, banquet hall contractor Moradabad, multi-storey building contractor Moradabad, hotel renovation contractor Moradabad, hotel construction cost Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
+    "hotel building contractor Moradabad, hotel contractor Moradabad, hotel construction contractor Moradabad, hotel civil contractor Moradabad, building contractor Moradabad, commercial building contractor Moradabad, resort contractor Moradabad, guest house contractor Moradabad, banquet hall contractor Moradabad, multi-storey building contractor Moradabad, hotel renovation contractor Moradabad, hotel construction cost Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.MTBoss.in/hotel-building-contractor-in-moradabad",
+      "https://www.MTBOSS.in/hotel-building-contractor-in-moradabad",
   },
 
   openGraph: {
-    title: "Hotel Building Contractor in Moradabad | MTBoss",
+    title: "Hotel Building Contractor in Moradabad | MTBOSS",
 
     description:
-      "Hire a trusted hotel building contractor in Moradabad. MTBoss manages structure, finishing, materials and handover. Call +91 94584 10866 for a free quote.",
+      "Hire a trusted hotel building contractor in Moradabad. MTBOSS manages structure, finishing, materials and handover. Call +91 94584 10866 for a free quote.",
 
-    url: "https://www.MTBoss.in/hotel-building-contractor-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-building-contractor-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-hotel-building-contractor-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-hotel-building-contractor-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Hotel Building Contractor in Moradabad - MTBoss Construction",
+        alt: "Hotel Building Contractor in Moradabad - MTBOSS Construction",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Hotel Building Contractor in Moradabad | MTBoss",
+    title: "Hotel Building Contractor in Moradabad | MTBOSS",
 
     description:
-      "Hire a trusted hotel building contractor in Moradabad. MTBoss manages structure, finishing, materials and handover. Call +91 94584 10866 for a free quote.",
+      "Hire a trusted hotel building contractor in Moradabad. MTBOSS manages structure, finishing, materials and handover. Call +91 94584 10866 for a free quote.",
 
     images: [
-      "https://www.MTBoss.in/og-hotel-building-contractor-moradabad.jpg",
+      "https://www.MTBOSS.in/og-hotel-building-contractor-moradabad.jpg",
     ],
   },
 
@@ -67,16 +67,16 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
 
-    name: "MTBoss Construction Private Limited",
+    name: "MTBOSS Construction Private Limited",
 
-    url: "https://www.MTBoss.in/hotel-building-contractor-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-building-contractor-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
 
     image:
-      "https://www.MTBoss.in/og-hotel-building-contractor-moradabad.jpg",
+      "https://www.MTBOSS.in/og-hotel-building-contractor-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -134,16 +134,16 @@ export default function Page() {
     name: "Hotel Building Contractor Services in Moradabad",
 
     description:
-      "MTBoss is a hotel building contractor in Moradabad providing foundation work, RCC structure, multi-storey hotel construction, masonry, electrical and plumbing coordination, waterproofing, flooring, finishing, banquet hall construction, renovation and final handover.",
+      "MTBOSS is a hotel building contractor in Moradabad providing foundation work, RCC structure, multi-storey hotel construction, masonry, electrical and plumbing coordination, waterproofing, flooring, finishing, banquet hall construction, renovation and final handover.",
 
-    url: "https://www.MTBoss.in/hotel-building-contractor-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-building-contractor-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
 
     areaServed: [
@@ -176,18 +176,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss work as a hotel building contractor in Moradabad?",
+        name: "Does MTBOSS work as a hotel building contractor in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Hotel construction is part of the MTBoss service list, which also covers residential, commercial, industrial and institutional construction projects in Moradabad and Bareilly.",
+          text: "Yes. Hotel construction is part of the MTBOSS service list, which also covers residential, commercial, industrial and institutional construction projects in Moradabad and Bareilly.",
         },
       },
       {
         "@type": "Question",
-        name: "What types of hotel projects can MTBoss build?",
+        name: "What types of hotel projects can MTBOSS build?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBoss can discuss construction scope for budget hotels, business hotels, resorts, guest houses, service apartments, banquet halls and wedding venues. Share your hotel concept and plot details with the team to confirm project scope.",
+          text: "MTBOSS can discuss construction scope for budget hotels, business hotels, resorts, guest houses, service apartments, banquet halls and wedding venues. Share your hotel concept and plot details with the team to confirm project scope.",
         },
       },
       {
@@ -200,18 +200,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss supply building materials for hotel construction?",
+        name: "Does MTBOSS supply building materials for hotel construction?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and paints through its material supply network, helping coordinate material delivery during hotel construction.",
+          text: "Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints through its material supply network, helping coordinate material delivery during hotel construction.",
         },
       },
       {
         "@type": "Question",
-        name: "Can MTBoss renovate or extend an existing hotel?",
+        name: "Can MTBOSS renovate or extend an existing hotel?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBoss offers renovation, repair and waterproofing services for existing hotels and guest houses. The team can discuss extra floors, room upgrades, leakage repair, facade upgrades and hospitality-property renovation based on site requirements.",
+          text: "MTBOSS offers renovation, repair and waterproofing services for existing hotels and guest houses. The team can discuss extra floors, room upgrades, leakage repair, facade upgrades and hospitality-property renovation based on site requirements.",
         },
       },
       {
@@ -219,15 +219,15 @@ export default function Page() {
         name: "How much does hotel construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Hotel construction cost depends on built-up area, number of floors, room count, facilities, structural requirements, material quality, finishing level, interior scope and site conditions. MTBoss provides a free Budget Calculator and construction quote option.",
+          text: "Hotel construction cost depends on built-up area, number of floors, room count, facilities, structural requirements, material quality, finishing level, interior scope and site conditions. MTBOSS provides a free Budget Calculator and construction quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -242,19 +242,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Hotel Building Contractor in Moradabad",
-        item: "https://www.MTBoss.in/hotel-building-contractor-in-moradabad",
+        item: "https://www.MTBOSS.in/hotel-building-contractor-in-moradabad",
       },
     ],
   };

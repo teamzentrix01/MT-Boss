@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "College Building Construction in Moradabad | MTBoss",
+  title: "College Building Construction in Moradabad | MTBOSS",
 
   description:
-    "Planning college building construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
+    "Planning college building construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "college building construction Moradabad, college campus construction Moradabad, college building contractor Moradabad, college building design Moradabad, educational building construction Moradabad, classroom block construction Moradabad, hostel building construction Moradabad, institutional building construction Moradabad, college building construction cost Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
+    "college building construction Moradabad, college campus construction Moradabad, college building contractor Moradabad, college building design Moradabad, educational building construction Moradabad, classroom block construction Moradabad, hostel building construction Moradabad, institutional building construction Moradabad, college building construction cost Moradabad, commercial construction company Moradabad, construction company in Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.MTBoss.in/college-building-construction-in-moradabad",
+      "https://www.MTBOSS.in/college-building-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "College Building Construction in Moradabad | MTBoss",
+    title: "College Building Construction in Moradabad | MTBOSS",
 
     description:
-      "Planning college building construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning college building construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.MTBoss.in/college-building-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/college-building-construction-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-college-building-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-college-building-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "College Building Construction in Moradabad - MTBoss",
+        alt: "College Building Construction in Moradabad - MTBOSS",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "College Building Construction in Moradabad | MTBoss",
+    title: "College Building Construction in Moradabad | MTBOSS",
 
     description:
-      "Planning college building construction in Moradabad? MTBoss offers design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning college building construction in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.MTBoss.in/og-college-building-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-college-building-construction-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBoss Construction Private Limited",
-    url: "https://www.MTBoss.in/college-building-construction-in-moradabad",
+    name: "MTBOSS Construction Private Limited",
+    url: "https://www.MTBOSS.in/college-building-construction-in-moradabad",
     telephone: "+91-9458410866",
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.MTBoss.in/og-college-building-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-college-building-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,14 +117,14 @@ export default function Page() {
     "@type": "Service",
     name: "College Building Construction Services in Moradabad",
     description:
-      "MTBoss provides college building construction in Moradabad for academic blocks, laboratory and library blocks, auditoriums, hostels, canteens and full campuses, including design coordination, structure, facade, services provisions, laboratory provisions, waterproofing, flooring, finishing, interiors, outdoor works and final handover.",
-    url: "https://www.MTBoss.in/college-building-construction-in-moradabad",
+      "MTBOSS provides college building construction in Moradabad for academic blocks, laboratory and library blocks, auditoriums, hostels, canteens and full campuses, including design coordination, structure, facade, services provisions, laboratory provisions, waterproofing, flooring, finishing, interiors, outdoor works and final handover.",
+    url: "https://www.MTBOSS.in/college-building-construction-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -154,10 +154,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss build college buildings in Moradabad?",
+        name: "Does MTBOSS build college buildings in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBoss builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your college building.",
+          text: "MTBOSS builds residential projects, from affordable housing to luxury villas, in Moradabad and Bareilly, and offers construction services for other buildings. Share your plan with the team to confirm the scope for your college building.",
         },
       },
       {
@@ -189,15 +189,15 @@ export default function Page() {
         name: "How much does college building construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "College building construction cost depends on built-up area, number of floors, type of blocks, structural requirements, material and finish level, services scope and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
+          text: "College building construction cost depends on built-up area, number of floors, type of blocks, structural requirements, material and finish level, services scope and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -211,19 +211,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "College Building Construction in Moradabad",
-        item: "https://www.MTBoss.in/college-building-construction-in-moradabad",
+        item: "https://www.MTBOSS.in/college-building-construction-in-moradabad",
       },
     ],
   };

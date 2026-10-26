@@ -1,5 +1,5 @@
 /**
- * Pure calculation logic for MTBoss Cashback System.
+ * Pure calculation logic for MTBOSS Cashback System.
  * Free of side-effects or DB dependencies for easy unit-testing and determinism.
  */
 

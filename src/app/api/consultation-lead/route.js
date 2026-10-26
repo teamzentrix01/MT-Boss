@@ -60,7 +60,7 @@ export async function POST(req) {
 
     const ref = `CONSULT-${result.rows[0].id}`;
 
-    // Send instant admin email notification to MTBoss2016@gmail.com
+    // Send instant admin email notification to MTBOSS2016@gmail.com
     await notifyAdminSubmission({
       type: 'On-Arrival Consultation Modal Lead',
       name: cleanName,

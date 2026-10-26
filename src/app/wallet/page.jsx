@@ -196,7 +196,7 @@ export default function WalletPage() {
         <div className={`p-4 rounded-xl border flex items-center gap-3 text-xs ${isDark ? 'bg-zinc-900/60 border-zinc-800 text-slate-400' : 'bg-blue-50/60 border-blue-200 text-[#12283F]'}`}>
           <TrendingUp size={18} className="text-[#2196F3] shrink-0" />
           <span>
-            <strong>How Cashback Works:</strong> Place orders on MTBoss to earn dynamic cashback. Once delivered, cashback is credited to your wallet according to store policy.
+            <strong>How Cashback Works:</strong> Place orders on MTBOSS to earn dynamic cashback. Once delivered, cashback is credited to your wallet according to store policy.
           </span>
         </div>
 

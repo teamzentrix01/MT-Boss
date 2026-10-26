@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect Consultant in Bareilly',
   description:
-    'Architect consultant in Bareilly for home planning, design, drawings and construction guidance. MTBoss supports plots, houses and commercial projects. Call or WhatsApp.',
+    'Architect consultant in Bareilly for home planning, design, drawings and construction guidance. MTBOSS supports plots, houses and commercial projects. Call or WhatsApp.',
   keywords:
-    'architect consultant in Bareilly, architect consultation Bareilly, architect near me Bareilly, house plan consultant Bareilly, home design consultant Bareilly, plot planning Bareilly, building consultant Bareilly, construction consultant Bareilly, commercial architect consultant Bareilly, renovation consultant Bareilly, MTBoss Bareilly, architect for house Bareilly',
+    'architect consultant in Bareilly, architect consultation Bareilly, architect near me Bareilly, house plan consultant Bareilly, home design consultant Bareilly, plot planning Bareilly, building consultant Bareilly, construction consultant Bareilly, commercial architect consultant Bareilly, renovation consultant Bareilly, MTBOSS Bareilly, architect for house Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/architect-consultant-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-consultant-bareilly',
   },
   openGraph: {
     title: 'Architect Consultant in Bareilly',
     description:
-      'Architect consultant in Bareilly for home planning, design, drawings and construction guidance. MTBoss supports plots, houses and commercial projects. Call or WhatsApp.',
-    url: 'https://www.MTBoss.in/architect-consultant-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Architect consultant in Bareilly for home planning, design, drawings and construction guidance. MTBOSS supports plots, houses and commercial projects. Call or WhatsApp.',
+    url: 'https://www.MTBOSS.in/architect-consultant-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-consultant-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-consultant-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect Consultant in Bareilly - MTBoss',
+        alt: 'Architect Consultant in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect Consultant in Bareilly',
     description:
-      'Architect consultant in Bareilly for home planning, design, drawings and construction guidance. MTBoss supports plots, houses and commercial projects. Call or WhatsApp.',
-    images: ['https://www.MTBoss.in/og-architect-consultant-bareilly.jpg'],
+      'Architect consultant in Bareilly for home planning, design, drawings and construction guidance. MTBOSS supports plots, houses and commercial projects. Call or WhatsApp.',
+    images: ['https://www.MTBOSS.in/og-architect-consultant-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-consultant-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-consultant-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

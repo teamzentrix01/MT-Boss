@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Civil Work in Moradabad | MTBoss Construction Company',
+  title: 'Civil Work in Moradabad | MTBOSS Construction Company',
   description:
-    'Planning civil work in Moradabad? MTBoss offers foundation, masonry, MEP & finishing work for homes and businesses. Get a free quote today!',
+    'Planning civil work in Moradabad? MTBOSS offers foundation, masonry, MEP & finishing work for homes and businesses. Get a free quote today!',
   keywords:
-    'civil work in Moradabad, civil work contractor Moradabad, civil work company Moradabad, masonry work Moradabad, foundation work Moradabad, building civil work near me, residential civil work Moradabad, commercial civil work Moradabad, MTBoss Moradabad, civil work rate near me',
+    'civil work in Moradabad, civil work contractor Moradabad, civil work company Moradabad, masonry work Moradabad, foundation work Moradabad, building civil work near me, residential civil work Moradabad, commercial civil work Moradabad, MTBOSS Moradabad, civil work rate near me',
   alternates: {
-    canonical: 'https://www.MTBoss.in/civil-work-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/civil-work-in-moradabad',
   },
   openGraph: {
-    title: 'Civil Work in Moradabad | MTBoss Construction Company',
+    title: 'Civil Work in Moradabad | MTBOSS Construction Company',
     description:
-      'Planning civil work in Moradabad? MTBoss offers foundation, masonry, MEP & finishing work for homes and businesses. Get a free quote today!',
-    url: 'https://www.MTBoss.in/civil-work-in-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Planning civil work in Moradabad? MTBOSS offers foundation, masonry, MEP & finishing work for homes and businesses. Get a free quote today!',
+    url: 'https://www.MTBOSS.in/civil-work-in-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-civil-work-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-civil-work-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Civil Work in Moradabad - MTBoss',
+        alt: 'Civil Work in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Civil Work in Moradabad | MTBoss Construction Company',
+    title: 'Civil Work in Moradabad | MTBOSS Construction Company',
     description:
-      'Planning civil work in Moradabad? MTBoss offers foundation, masonry, MEP & finishing work for homes and businesses. Get a free quote today!',
-    images: ['https://www.MTBoss.in/og-civil-work-moradabad.jpg'],
+      'Planning civil work in Moradabad? MTBOSS offers foundation, masonry, MEP & finishing work for homes and businesses. Get a free quote today!',
+    images: ['https://www.MTBOSS.in/og-civil-work-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/civil-work-in-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/civil-work-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             House Renovation Cost in Moradabad: Budget Factors, Planning Tips and
-            Clear Quotes from MTBoss
+            Clear Quotes from MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -22,7 +22,7 @@ const Content = () => {
                 figure given without seeing the property is a guess.
               </p>
               <p className="mt-3">
-                MTBoss is an architect, interior design and construction company
+                MTBOSS is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work,
                 transparent pricing and on-time delivery. This guide explains how
                 renovation cost is built, what pushes it up or down and how to
@@ -182,7 +182,7 @@ const Content = () => {
               <p className="mb-3">
                 Tile quality, size, pattern, laying method and floor preparation
                 all matter. Removing old flooring and levelling the base adds work
-                before new tiles go down. MTBoss tile and marble services can
+                before new tiles go down. MTBOSS tile and marble services can
                 handle this together.
               </p>
 
@@ -449,10 +449,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Planning with the MTBoss Budget Calculator
+                Planning with the MTBOSS Budget Calculator
               </h3>
               <p>
-                MTBoss offers a Budget Calculator on its website, which helps you
+                MTBOSS offers a Budget Calculator on its website, which helps you
                 get a rough idea of renovation spending before a site visit. It is
                 a useful starting point for setting expectations. Final pricing is
                 shared only after a site inspection, because the actual condition
@@ -462,7 +462,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBoss Quotation Process
+                The MTBOSS Quotation Process
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -511,7 +511,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Homeowners Choose MTBoss
+                Why Homeowners Choose MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -522,7 +522,7 @@ const Content = () => {
                 <li>
                   <strong>Many trades, one team.</strong> Civil repair,
                   waterproofing, plumbing, electrical, tiles, carpentry, ceilings,
-                  painting and pest control are available through MTBoss.
+                  painting and pest control are available through MTBOSS.
                 </li>
                 <li>
                   <strong>Transparent pricing.</strong> You know the scope and
@@ -548,7 +548,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBoss provides renovation services across Moradabad, including
+                MTBOSS provides renovation services across Moradabad, including
                 residential areas such as Civil Lines, Lajpat Nagar, Delhi Road,
                 Kanth Road, Ramganga Vihar and Buddhi Vihar. Our office is at
                 Harthala Kanth Road, behind KR Collection, near Domino&apos;s. If
@@ -559,7 +559,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Get a Clear Renovation Quote from MTBoss
+                Get a Clear Renovation Quote from MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -576,10 +576,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -590,16 +590,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/"
+                  href="https://www.MTBOSS.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss website
+                  MTBOSS website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -609,7 +609,7 @@ const Content = () => {
                 to try the Budget Calculator and view our Portfolio.
               </p>
               <p className="mt-3">
-                Know your renovation cost before you commit. Contact MTBoss today
+                Know your renovation cost before you commit. Contact MTBOSS today
                 for an inspection-based quote in Moradabad.
               </p>
             </section>
@@ -668,7 +668,7 @@ const Content = () => {
                 <li>
                   <strong>Q7. Can I plan my budget online first?</strong>
                   <br />
-                  Yes. The Budget Calculator on MTBoss.in gives a rough idea
+                  Yes. The Budget Calculator on MTBOSS.in gives a rough idea
                   before the site visit.
                 </li>
                 <li>
@@ -686,7 +686,7 @@ const Content = () => {
                   after your approval.
                 </li>
                 <li>
-                  <strong>Q10. How do I request a quote from MTBoss?</strong>
+                  <strong>Q10. How do I request a quote from MTBOSS?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -697,7 +697,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Building Contractor Quotation in Moradabad: MTBoss
+            Building Contractor Quotation in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -24,7 +24,7 @@ const Content = () => {
                 If you are searching for a building contractor quotation in
                 Moradabad, you want more than a price. You want to know what is
                 included, how the cost was calculated and whether the contractor
-                will stand behind it. MTBoss Construction Private Limited
+                will stand behind it. MTBOSS Construction Private Limited
                 prepares itemised quotations for homes, shops, offices,
                 factories, warehouses, hotels, roads and repair work across
                 Moradabad and Bareilly. Our approach follows the promise on our
@@ -32,7 +32,7 @@ const Content = () => {
                 pricing and on-time delivery.
               </p>
               <p className="mt-3">
-                This page explains how to request a quotation from MTBoss, what
+                This page explains how to request a quotation from MTBOSS, what
                 it contains, how to compare quotes and how to avoid costly
                 misunderstandings.
               </p>
@@ -79,7 +79,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Ways to Request a Quotation from MTBoss
+                Ways to Request a Quotation from MTBOSS
               </h3>
               <p className="mb-3">
                 You can reach us through whichever channel suits you.
@@ -89,12 +89,12 @@ const Content = () => {
                   <strong>Website:</strong> Click &quot;Get a Construction
                   Quote&quot; on{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    MTBoss.in
+                    MTBOSS.in
                   </a>{" "}
                   and submit your requirement.
                 </li>
@@ -123,10 +123,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong> Write to{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>{" "}
                   with documents and details.
                 </li>
@@ -175,10 +175,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a one-stop destination for construction, home
+                MTBOSS is a one-stop destination for construction, home
                 services, materials and property needs, serving Moradabad and
                 Bareilly. Our work covers residential, commercial, hotel and
                 hospitality, industrial and warehousing, and infrastructure and
@@ -200,7 +200,7 @@ const Content = () => {
                 Quotation Types and Contract Models
               </h3>
               <p className="mb-3">
-                Quotations differ according to the contract model. MTBoss
+                Quotations differ according to the contract model. MTBOSS
                 explains the options so you can choose with confidence.
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -233,7 +233,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Components of an MTBoss Quotation
+                Components of an MTBOSS Quotation
               </h3>
               <p className="mb-3">
                 Our quotations are itemised so you can see where every rupee
@@ -388,7 +388,7 @@ const Content = () => {
                 Budget Calculator Versus Formal Quotation
               </h3>
               <p className="mb-3">
-                The Budget Calculator on MTBoss.in helps you form an early idea
+                The Budget Calculator on MTBOSS.in helps you form an early idea
                 of your construction budget before contacting anyone. It is
                 useful for planning and for deciding how much to invest.
               </p>
@@ -576,7 +576,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -632,18 +632,18 @@ const Content = () => {
                 Request Your Quotation Today
               </h3>
               <p className="mb-3">
-                Ready for a clear, itemised proposal? Contact MTBoss:
+                Ready for a clear, itemised proposal? Contact MTBOSS:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -659,10 +659,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -676,7 +676,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss, your trusted building contractor in Moradabad,
+                Choose MTBOSS, your trusted building contractor in Moradabad,
                 for a quotation you can understand, compare and rely on.
               </p>
             </section>
@@ -692,7 +692,7 @@ const Content = () => {
                     Moradabad?
                   </strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or
                   call or WhatsApp{" "}
                   <a
                     href="tel:+919458410866"
@@ -724,7 +724,7 @@ const Content = () => {
                     Q5. Can I check my budget before requesting a quotation?
                   </strong>
                   <br />
-                  Yes. Use the Budget Calculator on MTBoss.in for an early idea.
+                  Yes. Use the Budget Calculator on MTBOSS.in for an early idea.
                 </li>
                 <li>
                   <strong>Q6. How long does it take to receive a quotation?</strong>

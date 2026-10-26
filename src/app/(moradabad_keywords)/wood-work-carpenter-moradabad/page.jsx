@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Wood Work Carpenter in Moradabad',
   description:
-    'Hire a wood work carpenter in Moradabad for doors, frames, panelling, partitions and interior woodwork. MTBoss plans and fits woodwork for homes and shops.',
+    'Hire a wood work carpenter in Moradabad for doors, frames, panelling, partitions and interior woodwork. MTBOSS plans and fits woodwork for homes and shops.',
   keywords:
-    'wood work carpenter Moradabad, woodwork carpenter Moradabad, wood work carpenter near me Moradabad, door carpenter Moradabad, door frame carpenter Moradabad, wall panelling Moradabad, wooden partition Moradabad, interior woodwork Moradabad, wooden partition Moradabad, woodwork contractor Moradabad, MTBoss wood work carpenter Moradabad',
+    'wood work carpenter Moradabad, woodwork carpenter Moradabad, wood work carpenter near me Moradabad, door carpenter Moradabad, door frame carpenter Moradabad, wall panelling Moradabad, wooden partition Moradabad, interior woodwork Moradabad, wooden partition Moradabad, woodwork contractor Moradabad, MTBOSS wood work carpenter Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/wood-work-carpenter-moradabad',
+    canonical: 'https://www.MTBOSS.in/wood-work-carpenter-moradabad',
   },
   openGraph: {
     title: 'Wood Work Carpenter in Moradabad',
     description:
-      'Hire a wood work carpenter in Moradabad for doors, frames, panelling, partitions and interior woodwork. MTBoss plans and fits woodwork for homes and shops.',
-    url: 'https://www.MTBoss.in/wood-work-carpenter-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Hire a wood work carpenter in Moradabad for doors, frames, panelling, partitions and interior woodwork. MTBOSS plans and fits woodwork for homes and shops.',
+    url: 'https://www.MTBOSS.in/wood-work-carpenter-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-wood-work-carpenter-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-wood-work-carpenter-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Wood Work Carpenter in Moradabad - MTBoss',
+        alt: 'Wood Work Carpenter in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Wood Work Carpenter in Moradabad',
     description:
-      'Hire a wood work carpenter in Moradabad for doors, frames, panelling, partitions and interior woodwork. MTBoss plans and fits woodwork for homes and shops.',
-    images: ['https://www.MTBoss.in/og-wood-work-carpenter-moradabad.jpg'],
+      'Hire a wood work carpenter in Moradabad for doors, frames, panelling, partitions and interior woodwork. MTBOSS plans and fits woodwork for homes and shops.',
+    images: ['https://www.MTBOSS.in/og-wood-work-carpenter-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/wood-work-carpenter-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/wood-work-carpenter-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

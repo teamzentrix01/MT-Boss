@@ -50,7 +50,7 @@ async function uploadPrimaryServiceImage(file) {
   const fd = new FormData();
   fd.append('file', optimizedFile);
   fd.append('upload_preset', uploadPreset);
-  fd.append('folder', 'MTBoss/primary-services');
+  fd.append('folder', 'MTBOSS/primary-services');
 
   async function sendUpload() {
     const controller = new AbortController();
@@ -690,7 +690,7 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                       </div>
                       <div className="ps-field">
                         <label className="ps-field-label">Email</label>
-                        <input className="ps-input" type="text" placeholder="MTBoss2016@gmail.com"
+                        <input className="ps-input" type="text" placeholder="MTBOSS2016@gmail.com"
                           value={formData.contact_email} onChange={e => set('contact_email', e.target.value)} />
                       </div>
                     </div>

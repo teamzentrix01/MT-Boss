@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MTBoss: Top Construction Company in Moradabad Building Spaces That
+            MTBOSS: Top Construction Company in Moradabad Building Spaces That
             Perform for Decades
           </h2>
 
@@ -22,7 +22,7 @@ const Content = () => {
                 money through repairs, leakage and lost time.
               </p>
               <p className="mt-3">
-                MTBoss (MTBoss Construction Private Limited) is a top
+                MTBOSS (MTBOSS Construction Private Limited) is a top
                 construction company in Moradabad that focuses on buildings
                 that perform well long after the opening day. The company
                 handles residential, commercial, hospitality and industrial
@@ -47,7 +47,7 @@ const Content = () => {
                 This growth brings more choice, but it also brings more
                 variation in contractor quality. Property owners need a builder
                 with reliable engineering, clear paperwork and the capacity to
-                manage work properly. MTBoss was built to meet this need,
+                manage work properly. MTBOSS was built to meet this need,
                 combining construction expertise with a modern, transparent way
                 of working.
               </p>
@@ -55,7 +55,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What MTBoss Commits to Every Client
+                What MTBOSS Commits to Every Client
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -73,7 +73,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Foundations, columns, beams and slabs are designed to carry
-                their loads safely. MTBoss does not cut corners on steel
+                their loads safely. MTBOSS does not cut corners on steel
                 quantity, concrete quality or curing to save a little money in
                 the short term.
               </p>
@@ -91,7 +91,7 @@ const Content = () => {
                 Respect for the Client&apos;s Budget
               </h4>
               <p className="mb-3">
-                MTBoss helps clients set priorities, so money goes where it
+                MTBOSS helps clients set priorities, so money goes where it
                 creates the most value, such as structure, waterproofing and
                 services, rather than into elements that can wait.
               </p>
@@ -100,21 +100,21 @@ const Content = () => {
                 Responsibility Beyond Handover
               </h4>
               <p className="mb-3">
-                A building is a long-term asset. MTBoss remains available for
+                A building is a long-term asset. MTBOSS remains available for
                 genuine post-handover concerns, repairs and future upgrades.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Construction Solutions by Property Type
+                MTBOSS Construction Solutions by Property Type
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 For Homeowners
               </h4>
               <p className="mb-3">
-                MTBoss builds independent houses, villas, duplexes and builder
+                MTBOSS builds independent houses, villas, duplexes and builder
                 floors. Planning covers room sizes, kitchen and bathroom
                 placement, staircases, parking, terrace use and room for future
                 growth. Natural light and cross-ventilation are built into the
@@ -126,7 +126,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Retail buildings succeed when customers find them easily and
-                move through them comfortably. MTBoss plans frontage, signage
+                move through them comfortably. MTBOSS plans frontage, signage
                 zones, display space, storage and parking, along with durable
                 finishes that handle heavy daily footfall.
               </p>
@@ -136,7 +136,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Offices need efficient layouts, reliable power, proper lighting
-                and room for growth. MTBoss designs and builds business
+                and room for growth. MTBOSS designs and builds business
                 premises that suit teams of different sizes and leave a
                 professional impression on visitors.
               </p>
@@ -146,7 +146,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Hospitality buildings depend on guest comfort and smooth
-                service. MTBoss coordinates kitchens, dining areas, service
+                service. MTBOSS coordinates kitchens, dining areas, service
                 corridors, fire safety, acoustics and interior finishing within
                 one construction plan.
               </p>
@@ -157,7 +157,7 @@ const Content = () => {
               <p className="mb-3">
                 Factories and warehouses need strong floors, wide column
                 spacing, dependable electrical systems and easy truck access.
-                MTBoss builds industrial spaces that support packing, storage
+                MTBOSS builds industrial spaces that support packing, storage
                 and dispatch operations.
               </p>
 
@@ -166,7 +166,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Institutional buildings need safe circulation, good
-                ventilation, accessible layouts and hygienic finishes. MTBoss
+                ventilation, accessible layouts and hygienic finishes. MTBOSS
                 plans these projects with the daily comfort of students,
                 patients and staff in mind.
               </p>
@@ -176,7 +176,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Old buildings can gain new life through extension, remodelling,
-                structural repair and waterproofing. MTBoss assesses the
+                structural repair and waterproofing. MTBOSS assesses the
                 existing structure first, then recommends changes that are safe
                 and cost-effective.
               </p>
@@ -184,11 +184,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Construction Quality Practices at the MTBoss Worksite
+                Construction Quality Practices at the MTBOSS Worksite
               </h3>
               <p className="mb-3">
                 A building&apos;s strength is created on site, one task at a
-                time. These practices shape daily work at MTBoss projects.
+                time. These practices shape daily work at MTBOSS projects.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -231,7 +231,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Documents and Preparation Before You Hire MTBoss
+                Documents and Preparation Before You Hire MTBOSS
               </h3>
               <p className="mb-3">
                 Good preparation saves weeks of delay. Before starting,
@@ -250,7 +250,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss reviews these documents and guides clients through the
+                MTBOSS reviews these documents and guides clients through the
                 approval process with the Moradabad Development Authority and
                 other relevant bodies, where applicable.
               </p>
@@ -258,7 +258,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Season-Smart Scheduling With MTBoss
+                Season-Smart Scheduling With MTBOSS
               </h3>
               <p className="mb-3">
                 Weather and local calendars influence construction progress. MT
@@ -301,7 +301,7 @@ const Content = () => {
                 Smart Ways to Reduce Construction Cost Without Losing Strength
               </h3>
               <p className="mb-3">
-                Saving money should never mean weakening the structure. MTBoss
+                Saving money should never mean weakening the structure. MTBOSS
                 advises clients on practical savings.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -336,7 +336,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                The budget calculator on the MTBoss website helps owners test
+                The budget calculator on the MTBOSS website helps owners test
                 different scenarios before they request a formal quotation.
               </p>
             </section>
@@ -367,17 +367,17 @@ const Content = () => {
                 <li>Offers no clear process for changes or defects</li>
               </ul>
               <p className="mt-3">
-                MTBoss maintains an established office in Moradabad and
+                MTBOSS maintains an established office in Moradabad and
                 follows written, stage-linked and transparent practices.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Digital Tools That Make Building With MTBoss Easier
+                Digital Tools That Make Building With MTBOSS Easier
               </h3>
               <p className="mb-3">
-                Modern property owners value convenience. The MTBoss platform
+                Modern property owners value convenience. The MTBOSS platform
                 includes:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -399,7 +399,7 @@ const Content = () => {
                 </li>
                 <li>
                   Agent and franchise programmes for professionals who wish to
-                  join the MTBoss network
+                  join the MTBOSS network
                 </li>
               </ul>
               <p className="mt-3">
@@ -413,7 +413,7 @@ const Content = () => {
                 Long-Term Value: Maintenance and Upgrades After Construction
               </h3>
               <p className="mb-3">
-                A well-built structure still benefits from care. MTBoss
+                A well-built structure still benefits from care. MTBOSS
                 supports the full life of your property with:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -443,12 +443,12 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Talk to MTBoss About Your Building
+                Talk to MTBOSS About Your Building
               </h3>
               <p className="mb-3">
                 A top construction company earns trust by being clear, capable
                 and consistent. Share your plot details, requirements and
-                budget with MTBoss, and our team will propose a practical plan
+                budget with MTBOSS, and our team will propose a practical plan
                 with transparent costing.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -462,21 +462,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -492,19 +492,19 @@ const Content = () => {
                     Q1. Which is a top construction company in Moradabad?
                   </strong>
                   <br />
-                  MTBoss is a trusted builder for residential, commercial,
+                  MTBOSS is a trusted builder for residential, commercial,
                   hotel and industrial projects, known for transparent pricing
                   and quality control.
                 </li>
                 <li>
-                  <strong>Q2. Which projects can MTBoss build?</strong>
+                  <strong>Q2. Which projects can MTBOSS build?</strong>
                   <br />
                   We build homes, villas, shops, offices, hotels, clinics,
                   schools, factories and warehouses.
                 </li>
                 <li>
                   <strong>
-                    Q3. Does MTBoss handle design and construction together?
+                    Q3. Does MTBOSS handle design and construction together?
                   </strong>
                   <br />
                   Yes. Planning, drawings, construction, finishing and handover
@@ -513,7 +513,7 @@ const Content = () => {
                 <li>
                   <strong>Q4. How is the construction cost decided?</strong>
                   <br />
-                  Cost depends on built-up area, materials and design. MTBoss
+                  Cost depends on built-up area, materials and design. MTBOSS
                   provides an itemised quotation after reviewing your
                   requirements.
                 </li>
@@ -522,17 +522,17 @@ const Content = () => {
                   <br />
                   Yes. Use the budget calculator on{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   for a quick estimate.
                 </li>
                 <li>
-                  <strong>Q6. Does MTBoss assist with approvals?</strong>
+                  <strong>Q6. Does MTBOSS assist with approvals?</strong>
                   <br />
                   Yes. We prepare drawings and documents required for local
                   authority approvals.
@@ -540,21 +540,21 @@ const Content = () => {
                 <li>
                   <strong>Q7. Is waterproofing included in construction?</strong>
                   <br />
-                  MTBoss integrates waterproofing during construction and also
+                  MTBOSS integrates waterproofing during construction and also
                   offers it separately for existing buildings.
                 </li>
                 <li>
-                  <strong>Q8. How can I contact MTBoss?</strong>
+                  <strong>Q8. How can I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp +91 94584 10866, email
-                  MTBoss2016@gmail.com, or visit{" "}
+                  MTBOSS2016@gmail.com, or visit{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                   .
                 </li>

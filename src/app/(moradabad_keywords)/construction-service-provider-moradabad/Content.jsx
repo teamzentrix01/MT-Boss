@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MTBoss: Construction Service Provider in Moradabad for Every Stage
+            MTBOSS: Construction Service Provider in Moradabad for Every Stage
             of Your Property
           </h2>
 
@@ -23,13 +23,13 @@ const Content = () => {
                 and a different set of promises.
               </p>
               <p className="mt-3">
-                MTBoss (MTBoss Construction Private Limited) is a construction
+                MTBOSS (MTBOSS Construction Private Limited) is a construction
                 service provider in Moradabad that brings these needs together.
                 The company serves Moradabad and Bareilly with construction,
                 architecture, interior design, painting, plumbing, electrical
                 and installation services. Owners can ask for a construction
                 quote online, book quick home services, or discuss a full
-                project with the team directly. This page explains what MTBoss
+                project with the team directly. This page explains what MTBOSS
                 provides, how to request a service, and what standards guide
                 the work.
               </p>
@@ -37,10 +37,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBoss Service Catalogue at a Glance
+                The MTBOSS Service Catalogue at a Glance
               </h3>
               <p className="mb-3">
-                MTBoss organises its offering into clear groups, which makes it
+                MTBOSS organises its offering into clear groups, which makes it
                 easy to find the right service.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -91,7 +91,7 @@ const Content = () => {
                 Services for Owners Who Are Starting From an Empty Plot
               </h3>
               <p className="mb-3">
-                An empty plot needs a plan before anything else. MTBoss
+                An empty plot needs a plan before anything else. MTBOSS
                 supports this stage with:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -130,7 +130,7 @@ const Content = () => {
                 Services for Owners Ready to Build
               </h3>
               <p className="mb-3">
-                Once plans are approved, construction begins. MTBoss offers:
+                Once plans are approved, construction begins. MTBOSS offers:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -175,7 +175,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 After the structure comes the finishing, which decides how the
-                property looks and feels. MTBoss provides:
+                property looks and feels. MTBOSS provides:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -216,7 +216,7 @@ const Content = () => {
                 Services for Owners With an Existing Property
               </h3>
               <p className="mb-3">
-                Not every project is new. MTBoss also serves owners who want to
+                Not every project is new. MTBOSS also serves owners who want to
                 repair, upgrade or maintain what they already have.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -257,7 +257,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Commercial owners and investors need buildings that make money.
-                MTBoss supports them with:
+                MTBOSS supports them with:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -276,7 +276,7 @@ const Content = () => {
                 <li>Property listings to buy, sell or rent completed buildings</li>
                 <li>
                   Franchise and agent programmes for those who want to build a
-                  business around MTBoss services
+                  business around MTBOSS services
                 </li>
               </ul>
               <p className="mt-3">
@@ -287,10 +287,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How to Request a Service From MTBoss
+                How to Request a Service From MTBOSS
               </h3>
               <p className="mb-3">
-                MTBoss makes it easy to start. The website offers several entry
+                MTBOSS makes it easy to start. The website offers several entry
                 points.
               </p>
 
@@ -342,14 +342,14 @@ const Content = () => {
                 Visit the Office
               </h4>
               <p className="mb-3">
-                The MTBoss office on Harthala Kanth Road, behind KR Collection,
+                The MTBOSS office on Harthala Kanth Road, behind KR Collection,
                 near Domino&apos;s, Moradabad, welcomes in-person meetings.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Happens After You Contact MTBoss
+                What Happens After You Contact MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -389,10 +389,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Service Standards That MTBoss Works To
+                Service Standards That MTBOSS Works To
               </h3>
               <p className="mb-3">
-                The MTBoss website highlights quality work, transparent pricing
+                The MTBOSS website highlights quality work, transparent pricing
                 and on-time delivery. These commitments translate into practical
                 standards.
               </p>
@@ -442,10 +442,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Where MTBoss Provides Service
+                Where MTBOSS Provides Service
               </h3>
               <p className="mb-3">
-                MTBoss serves Moradabad and Bareilly, and describes its aim as
+                MTBOSS serves Moradabad and Bareilly, and describes its aim as
                 delivering premium construction across India. The head office is
                 in Moradabad, which keeps engineers, supervisors and suppliers
                 within easy reach of local projects.
@@ -462,7 +462,7 @@ const Content = () => {
                 Choosing the Right Service Package
               </h3>
               <p className="mb-3">
-                Because MTBoss offers many services, owners can build a package
+                Because MTBOSS offers many services, owners can build a package
                 that matches their needs.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -535,7 +535,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Start with the budget calculator on the MTBoss website, then
+                Start with the budget calculator on the MTBOSS website, then
                 request a quotation for an accurate figure. If funds are
                 limited, phasing the work, such as completing structure and
                 essential finishing first, can keep the project manageable.
@@ -544,10 +544,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start With MTBoss
+                Start With MTBOSS
               </h3>
               <p className="mb-3">
-                Tell the MTBoss team what your property needs, whether it is a
+                Tell the MTBOSS team what your property needs, whether it is a
                 new building, a repair, a repaint or a full interior. We will
                 recommend the right service package and prepare a clear
                 quotation.
@@ -563,21 +563,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -594,20 +594,20 @@ const Content = () => {
                     many services?
                   </strong>
                   <br />
-                  MTBoss provides construction, architecture, interiors,
+                  MTBOSS provides construction, architecture, interiors,
                   painting, plumbing, electrical work and installation services.
                 </li>
                 <li>
-                  <strong>Q2. How do I request a quote from MTBoss?</strong>
+                  <strong>Q2. How do I request a quote from MTBOSS?</strong>
                   <br />
                   Use the Get a Construction Quote option on{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                   , or call or WhatsApp +91 94584 10866.
                 </li>
@@ -621,13 +621,13 @@ const Content = () => {
                   electrical and painting professionals.
                 </li>
                 <li>
-                  <strong>Q4. Which areas does MTBoss serve?</strong>
+                  <strong>Q4. Which areas does MTBOSS serve?</strong>
                   <br />
-                  MTBoss serves Moradabad and Bareilly.
+                  MTBOSS serves Moradabad and Bareilly.
                 </li>
                 <li>
                   <strong>
-                    Q5. Does MTBoss offer services for existing buildings?
+                    Q5. Does MTBOSS offer services for existing buildings?
                   </strong>
                   <br />
                   Yes. We provide waterproofing, renovation, repainting,
@@ -644,21 +644,21 @@ const Content = () => {
                 <li>
                   <strong>Q7. How is pricing handled?</strong>
                   <br />
-                  MTBoss provides itemised quotations, with optional items
+                  MTBOSS provides itemised quotations, with optional items
                   listed separately and extra work approved before it begins.
                 </li>
                 <li>
-                  <strong>Q8. How do I contact MTBoss?</strong>
+                  <strong>Q8. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp +91 94584 10866, email
-                  MTBoss2016@gmail.com, or visit{" "}
+                  MTBOSS2016@gmail.com, or visit{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                   .
                 </li>

@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Rodent Control in Moradabad: Professional Rat and Mice Removal by
-            MTBoss
+            MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -18,12 +18,12 @@ const Content = () => {
                 A single rat in the kitchen can quickly become a family of twenty
                 behind your walls. Rodents contaminate food, chew electrical
                 wiring, damage furniture and spread disease, and they rarely leave
-                on their own. MTBoss provides dependable rodent control in
+                on their own. MTBOSS provides dependable rodent control in
                 Moradabad for homes, shops, restaurants, offices and godowns, with
                 a clear process, safe methods and lasting results.
               </p>
               <p className="mt-3">
-                MTBoss is a construction and home-services company working in
+                MTBOSS is a construction and home-services company working in
                 Moradabad and Bareilly, known for quality work, transparent
                 pricing and on-time delivery. We bring that same discipline to
                 pest control. Our team does not just remove the rodents you can
@@ -34,7 +34,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Rodent Control Services at MTBoss
+                Rodent Control Services at MTBOSS
               </h3>
               <p className="mb-3">
                 Our rodent control service is built around three goals: remove the
@@ -60,7 +60,7 @@ const Content = () => {
               <p className="mt-3">
                 You can book rodent control as a standalone service or combine it
                 with other work, such as building repair, plumbing or
-                waterproofing, through the MTBoss quick services page.
+                waterproofing, through the MTBOSS quick services page.
               </p>
             </section>
 
@@ -234,7 +234,7 @@ const Content = () => {
                 Removing rodents without closing entry points invites a new
                 infestation. We seal gaps around pipes, doors, vents, drains and
                 cracks with durable materials. Where rodents have damaged plaster,
-                skirting, floor edges or drain covers, MTBoss building-repair
+                skirting, floor edges or drain covers, MTBOSS building-repair
                 teams can restore them.
               </p>
 
@@ -342,7 +342,7 @@ const Content = () => {
                 Rodent Proofing for New Construction and Renovation
               </h3>
               <p className="mb-3">
-                Because MTBoss is also a construction company, we understand how
+                Because MTBOSS is also a construction company, we understand how
                 buildings develop weak points. During construction or renovation,
                 we can recommend rodent-resistant details such as:
               </p>
@@ -363,7 +363,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Benefits of Choosing MTBoss
+                Benefits of Choosing MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -390,7 +390,7 @@ const Content = () => {
                   with families, pets and food safety in mind.
                 </li>
                 <li>
-                  <strong>Local presence.</strong> MTBoss is based in Uttar
+                  <strong>Local presence.</strong> MTBOSS is based in Uttar
                   Pradesh and serves Moradabad and Bareilly, so we understand
                   local building styles and conditions.
                 </li>
@@ -450,7 +450,7 @@ const Content = () => {
                 Service Areas in Moradabad
               </h3>
               <p>
-                MTBoss provides rodent control throughout Moradabad, including
+                MTBOSS provides rodent control throughout Moradabad, including
                 residential colonies, market areas and commercial zones such as
                 Civil Lines, Lajpat Nagar, Delhi Road, Kanth Road, Ramganga Vihar
                 and Buddhi Vihar. If your locality is not mentioned, contact us
@@ -485,16 +485,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/quick/pest-control"
+                  href="https://www.MTBOSS.in/quick/pest-control"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss Pest Control page
+                  MTBOSS Pest Control page
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -504,7 +504,7 @@ const Content = () => {
                 .
               </p>
               <p className="mt-3">
-                Protect your home, family and business from rodents. Call MTBoss
+                Protect your home, family and business from rodents. Call MTBOSS
                 today for professional rodent control in Moradabad.
               </p>
             </section>
@@ -553,7 +553,7 @@ const Content = () => {
                 <li>
                   <strong>Q7. Can you repair damage caused by rodents?</strong>
                   <br />
-                  Yes. MTBoss can repair walls, plaster, drains and similar
+                  Yes. MTBOSS can repair walls, plaster, drains and similar
                   damage, depending on the work needed.
                 </li>
                 <li>
@@ -571,7 +571,7 @@ const Content = () => {
                   children and pets away and note where you saw rodents.
                 </li>
                 <li>
-                  <strong>Q10. How do I book MTBoss rodent control?</strong>
+                  <strong>Q10. How do I book MTBOSS rodent control?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -582,7 +582,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

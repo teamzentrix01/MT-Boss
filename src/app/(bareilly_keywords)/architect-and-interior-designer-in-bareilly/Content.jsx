@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect and Interior Designer in Bareilly: MTBoss
+            Architect and Interior Designer in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -16,7 +16,7 @@ const Content = () => {
               <p>
                 An architect and interior designer in Bareilly plans the building and
                 its interiors together, so rooms, ceilings, lighting, storage and
-                finishes fit the structure from the start. MTBoss Construction
+                finishes fit the structure from the start. MTBOSS Construction
                 Private Limited offers architecture and interior design for Bareilly
                 and Moradabad, with joinery, ceiling, painting and construction
                 support under one team{" "}
@@ -38,7 +38,7 @@ const Content = () => {
                 furniture and the feel of each room.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -117,7 +117,7 @@ const Content = () => {
               <p className="mb-3">
                 The scope can range from a single room to a complete home{" "}
                 <span className="text-gray-500">
-                  [state the scope MTBoss actually offers]
+                  [state the scope MTBOSS actually offers]
                 </span>
                 .
               </p>
@@ -170,7 +170,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 <span className="text-gray-500">
-                  [Complete the remaining sequence as per MTBoss&apos;s process.]
+                  [Complete the remaining sequence as per MTBOSS&apos;s process.]
                 </span>
               </p>
             </section>
@@ -257,7 +257,7 @@ const Content = () => {
                 Materials must look good and last through humid monsoons and hot
                 summers{" "}
                 <span className="text-gray-500">
-                  [confirm the materials and brands MTBoss offers]
+                  [confirm the materials and brands MTBOSS offers]
                 </span>
                 .
               </p>
@@ -366,7 +366,7 @@ const Content = () => {
                 afterthought. A better approach sets a combined budget and splits it
                 early{" "}
                 <span className="text-gray-500">
-                  [state how MTBoss helps with this]
+                  [state how MTBOSS helps with this]
                 </span>
                 .
               </p>
@@ -394,7 +394,7 @@ const Content = () => {
               <p className="mt-3">
                 If money is tight, finish the structure, services and waterproofing
                 properly, then furnish in phases. Use the Budget Calculator on
-                MTBoss.in for an early idea, and ask for an itemised estimate once
+                MTBOSS.in for an early idea, and ask for an itemised estimate once
                 the design is firm.
               </p>
             </section>
@@ -430,7 +430,7 @@ const Content = () => {
               <p className="mb-3">
                 A proper interior package produces documents{" "}
                 <span className="text-gray-500">
-                  [adjust to what MTBoss provides]
+                  [adjust to what MTBOSS provides]
                 </span>
                 :
               </p>
@@ -451,7 +451,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Working With MTBoss From Bareilly
+                Working With MTBOSS From Bareilly
               </h3>
               <p className="mb-3">
                 Distance should not slow the project. Our usual arrangements include{" "}
@@ -530,11 +530,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Architecture and interior design,
@@ -569,21 +569,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -603,7 +603,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Owners Consider MTBoss
+                Reasons Owners Consider MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -647,7 +647,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plan Your Home With MTBoss
+                Plan Your Home With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -664,21 +664,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &ldquo;Get a Construction Quote&rdquo;)
                 </li>
@@ -693,7 +693,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Consider MTBoss as your architect and interior designer in Bareilly,
+                Consider MTBOSS as your architect and interior designer in Bareilly,
                 with the building and interiors planned together and the details
                 settled before they become expensive.
               </p>
@@ -710,7 +710,7 @@ const Content = () => {
                     Bareilly?
                   </strong>
                   <br />
-                  MTBoss Construction offers both for Bareilly and Moradabad{" "}
+                  MTBOSS Construction offers both for Bareilly and Moradabad{" "}
                   <span className="text-gray-500">[confirm registration]</span>.
                 </li>
                 <li>
@@ -759,7 +759,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I start?</strong>
                   <br />
-                  Click &ldquo;Get a Construction Quote&rdquo; on MTBoss.in, or call
+                  Click &ldquo;Get a Construction Quote&rdquo; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

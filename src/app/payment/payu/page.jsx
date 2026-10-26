@@ -9,7 +9,7 @@ export default async function PayUResultPage({ searchParams }) {
     ? params.returnTo
     : '/userdashboard';
   const receiptText = [
-    'MTBoss Construction - Payment Receipt',
+    'MTBOSS Construction - Payment Receipt',
     params.booking ? `Reference: ${params.booking}` : null,
     params.service ? `Service / Plan: ${params.service}` : null,
     params.amount ? `Amount paid: INR ${Number(params.amount).toLocaleString('en-IN')}` : null,

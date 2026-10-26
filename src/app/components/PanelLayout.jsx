@@ -87,7 +87,7 @@ export default function PanelLayout({
         <div className={`flex items-center justify-between h-16 px-4 border-b ${borderColor}`}>
           {sidebarOpen ? (
             <div className="flex items-center gap-2 min-w-0">
-              <span className={`font-black text-xl tracking-tight ${textPrimary}`}>MTBoss</span>
+              <span className={`font-black text-xl tracking-tight ${textPrimary}`}>MTBOSS</span>
               {roleDisplay && (
                 <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[rgba(33,150,243,0.12)] text-[#0284c7]">
                   {roleDisplay}

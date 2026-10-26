@@ -29,7 +29,7 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBoss Construction Private Limited is a Moradabad-based
+                MTBOSS Construction Private Limited is a Moradabad-based
                 architect, interior designer and construction company that
                 builds residential projects from affordable housing to luxury
                 villas, along with commercial, hospitality, institutional and
@@ -40,7 +40,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Construction Private Limited
+                MTBOSS Construction Private Limited
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -55,18 +55,18 @@ const Content = () => {
                 </li>
                 <li>
                   Residential projects form a dedicated service category on the
-                  MTBoss website, alongside commercial, hotel, school, college,
+                  MTBOSS website, alongside commercial, hotel, school, college,
                   mall, industrial and infrastructure work.
                 </li>
                 <li>
-                  Project gallery and blog available on the MTBoss website.
+                  Project gallery and blog available on the MTBOSS website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Apartment Construction Services Offered by MTBoss
+                Apartment Construction Services Offered by MTBOSS
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -103,7 +103,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Material supply:</strong> Cement, TMT steel bars,
-                  bricks, tiles and paints through MTBoss wholesale supply.
+                  bricks, tiles and paints through MTBOSS wholesale supply.
                 </li>
                 <li>
                   <strong>Renovation and extension:</strong> Extra floors,
@@ -252,12 +252,12 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                How MTBoss Approaches an Apartment Construction Project
+                How MTBOSS Approaches an Apartment Construction Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Step 1 — Enquiry:</strong> Contact MTBoss with plot
+                  <strong>Step 1 — Enquiry:</strong> Contact MTBOSS with plot
                   and project plans through website, phone or WhatsApp.
                 </li>
                 <li>
@@ -321,7 +321,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                MTBoss plans these cycles in advance, and its wholesale supply
+                MTBOSS plans these cycles in advance, and its wholesale supply
                 of cement, TMT steel bars, bricks, tiles and paints helps keep
                 deliveries aligned with construction progress.
               </p>
@@ -344,7 +344,7 @@ const Content = () => {
               <p className="mt-3">
                 Rules vary by location, project size and current regulations, so
                 confirm the latest requirements with relevant authorities and
-                your legal and technical consultants before you begin. MTBoss
+                your legal and technical consultants before you begin. MTBOSS
                 builds according to approved drawings and specifications, while
                 owners and their consultants handle approvals and legal
                 compliance specific to the project.
@@ -384,7 +384,7 @@ const Content = () => {
               </ul>
 
               <p className="mt-3">
-                Start with the free MTBoss Budget Calculator, then request a
+                Start with the free MTBOSS Budget Calculator, then request a
                 detailed quote after site visit and drawing review.
               </p>
             </section>
@@ -495,7 +495,7 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                MTBoss Services That Support Your Project
+                MTBOSS Services That Support Your Project
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
@@ -518,13 +518,13 @@ const Content = () => {
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Why Choose MTBoss as Your Apartment Construction Company
+                Why Choose MTBOSS as Your Apartment Construction Company
               </h3>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Dedicated residential category:</strong> Residential
-                  projects are a listed MTBoss service, from affordable housing
+                  projects are a listed MTBOSS service, from affordable housing
                   to luxury villas.
                 </li>
                 <li>
@@ -549,44 +549,44 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Visible track record:</strong> Project gallery and
-                  blog on the MTBoss website.
+                  blog on the MTBOSS website.
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Contact MTBoss: Apartment Construction Company in Moradabad
+                Contact MTBOSS: Apartment Construction Company in Moradabad
               </h3>
 
               <p className="mb-3">
-                If you are planning an apartment building in Moradabad, MTBoss
+                If you are planning an apartment building in Moradabad, MTBOSS
                 offers a single point of contact for design coordination,
                 materials, construction and handover.
               </p>
 
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.MTBoss.in
+                    https://www.MTBOSS.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -635,10 +635,10 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q2. Does MTBoss build apartments in Moradabad?
+                    Q2. Does MTBOSS build apartments in Moradabad?
                   </strong>
                   <br />
-                  MTBoss builds residential projects, including multi-storey
+                  MTBOSS builds residential projects, including multi-storey
                   residential buildings, in Moradabad and Bareilly. Share your
                   plan with the team to confirm the scope for your apartment
                   project.
@@ -646,7 +646,7 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q3. Can MTBoss build builder floors or small flat buildings?
+                    Q3. Can MTBOSS build builder floors or small flat buildings?
                   </strong>
                   <br />
                   Yes, multi-storey residential buildings and builder-floor
@@ -675,9 +675,9 @@ const Content = () => {
                 </li>
 
                 <li>
-                  <strong>Q6. Does MTBoss supply building materials?</strong>
+                  <strong>Q6. Does MTBOSS supply building materials?</strong>
                   <br />
-                  Yes. MTBoss supplies cement, TMT steel bars, bricks, tiles and
+                  Yes. MTBOSS supplies cement, TMT steel bars, bricks, tiles and
                   paints, helping reduce material-related delays.
                 </li>
 
@@ -692,7 +692,7 @@ const Content = () => {
                 </li>
 
                 <li>
-                  <strong>Q8. Where is the MTBoss office located?</strong>
+                  <strong>Q8. Where is the MTBOSS office located?</strong>
                   <br />
                   The office is located at Harthala, Kanth Road, Behind KR
                   Collection, near Domino&apos;s, Moradabad, Uttar Pradesh.

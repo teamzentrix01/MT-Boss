@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Contractor for Building Construction in Moradabad: MTBoss
+            Contractor for Building Construction in Moradabad: MTBOSS
             Construction
           </h2>
 
@@ -22,7 +22,7 @@ const Content = () => {
                 long-term value of your property.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited is a full-service building
+                MTBOSS Construction Private Limited is a full-service building
                 contractor serving Moradabad, Bareilly and nearby districts of
                 Uttar Pradesh. We construct houses, apartments, shops, offices,
                 showrooms, factories, warehouses, hotels and institutional
@@ -113,10 +113,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a construction and home-solutions company known for
+                MTBOSS is a construction and home-solutions company known for
                 architecture, interior design, modular kitchens, waterproofing,
                 building renovation and complete building construction. We work
                 across residential, commercial, hospitality, industrial and
@@ -278,7 +278,7 @@ const Content = () => {
                 Our Building Construction Process
               </h3>
               <p className="mb-3">
-                MTBoss follows a transparent working process so you always know
+                MTBOSS follows a transparent working process so you always know
                 what is happening on your site.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -297,7 +297,7 @@ const Content = () => {
                   <strong>Itemised estimate and agreement.</strong> You receive
                   a detailed quotation and a written agreement covering scope,
                   material standards, timeline and payment milestones. You can
-                  also use the Construction Budget Calculator on MTBoss.in for
+                  also use the Construction Budget Calculator on MTBOSS.in for
                   an early estimate.
                 </li>
                 <li>
@@ -328,7 +328,7 @@ const Content = () => {
                 Contract Options Available
               </h3>
               <p className="mb-3">
-                Different owners prefer different working models. MTBoss offers
+                Different owners prefer different working models. MTBOSS offers
                 flexible options.
               </p>
               <div className="overflow-x-auto">
@@ -406,7 +406,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Material quality has a direct effect on how long a building
-                lasts. MTBoss maintains firm standards.
+                lasts. MTBOSS maintains firm standards.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -459,7 +459,7 @@ const Content = () => {
                 <li>Project timeline</li>
               </ul>
               <p className="mt-3">
-                MTBoss prepares a project-specific estimate instead of a rough
+                MTBOSS prepares a project-specific estimate instead of a rough
                 guess, so your budget stays realistic.
               </p>
             </section>
@@ -511,19 +511,19 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss welcomes these checks and is happy to share information
+                MTBOSS welcomes these checks and is happy to share information
                 openly.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MTBoss in Moradabad
+                Reasons to Choose MTBOSS in Moradabad
               </h3>
               <p>
                 Plenty of contractors can pour concrete and lay bricks. What
                 sets a dependable building contractor apart is planning, honesty
-                and discipline. MTBoss combines skilled teams, design
+                and discipline. MTBOSS combines skilled teams, design
                 capability, transparent pricing and respect for deadlines. We
                 keep sites clean and organised, explain every stage in plain
                 language and treat your building as if it were our own.
@@ -547,17 +547,17 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Book a Free Site Visit for Your Building Project
               </h3>
-              <p className="mb-3">Contact MTBoss today to discuss your plan:</p>
+              <p className="mb-3">Contact MTBOSS today to discuss your plan:</p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -567,10 +567,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -583,7 +583,7 @@ const Content = () => {
                 our team will arrange a site visit and send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss, your trusted contractor for building
+                Choose MTBOSS, your trusted contractor for building
                 construction in Moradabad, and build something strong, safe and
                 made to last.
               </p>
@@ -600,13 +600,13 @@ const Content = () => {
                     Moradabad?
                   </strong>
                   <br />
-                  MTBoss Construction is a trusted building contractor in
+                  MTBOSS Construction is a trusted building contractor in
                   Moradabad, known for quality work, transparent pricing and
                   on-time delivery.
                 </li>
                 <li>
                   <strong>
-                    Q2. What types of buildings does MTBoss construct?
+                    Q2. What types of buildings does MTBOSS construct?
                   </strong>
                   <br />
                   We build houses, apartments, shops, offices, showrooms,
@@ -624,7 +624,7 @@ const Content = () => {
                 <li>
                   <strong>Q4. How can I get a building construction quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or
                   call or WhatsApp +91 94584 10866 for a free site visit.
                 </li>
                 <li>

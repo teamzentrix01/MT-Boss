@@ -2,26 +2,26 @@
 import PropertyBuyClient from './PropertyBuyClient';
 
 export const metadata = {
-  title: 'MTBoss | Buy Verified Properties - Flats, Plots & Homes',
+  title: 'MTBOSS | Buy Verified Properties - Flats, Plots & Homes',
   description:
     'Browse verified residential flats, plots, and commercial properties for sale. 100% verified listings, transparent pricing, direct owner/agent contact.',
   keywords:
     'buy property, flats for sale, plots for sale, residential property, commercial property, verified property listings',
   alternates: {
-    canonical: 'https://www.MTBoss.in/property/buy',
+    canonical: 'https://www.MTBOSS.in/property/buy',
   },
   openGraph: {
-    title: 'MTBoss | Buy Verified Properties',
+    title: 'MTBOSS | Buy Verified Properties',
     description:
       'Browse verified flats, plots, and commercial properties for sale — 100% verified, transparent pricing.',
-    url: 'https://www.MTBoss.in/property/buy',
-    siteName: 'MTBoss Construction Private Limited',
+    url: 'https://www.MTBOSS.in/property/buy',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/icon.png',
+        url: 'https://www.MTBOSS.in/icon.png',
         width: 1200,
         height: 630,
-        alt: 'Buy Property - MTBoss',
+        alt: 'Buy Property - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -29,10 +29,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MTBoss | Buy Verified Properties',
+    title: 'MTBOSS | Buy Verified Properties',
     description:
       'Browse verified flats, plots, and commercial properties for sale — 100% verified, transparent pricing.',
-    images: ['https://www.MTBoss.in/icon.png'],
+    images: ['https://www.MTBOSS.in/icon.png'],
   },
   robots: {
     index: true,

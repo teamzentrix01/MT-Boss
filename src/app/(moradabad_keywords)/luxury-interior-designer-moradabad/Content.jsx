@@ -170,7 +170,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Luxury Interior Designer in Moradabad:MTBoss
+            Luxury Interior Designer in Moradabad:MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -197,7 +197,7 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MTBoss, also known as MTBoss Construction Private Limited, is a
+                MTBOSS, also known as MTBOSS Construction Private Limited, is a
                 Moradabad-based construction and interiors company. Because we
                 build as well as design, we understand how a luxurious look is
                 actually achieved behind the walls.
@@ -206,7 +206,7 @@ const Content = () => {
               <p className="mt-3">
                 This guide explains what luxury interior design involves, the
                 materials and details that define it, how to plan the budget,
-                and how MTBoss handles premium projects from start to finish.
+                and how MTBOSS handles premium projects from start to finish.
               </p>
             </section>
 
@@ -812,7 +812,7 @@ const Content = () => {
               <p className="mt-4">
                 Estimate early using our{" "}
                 <a
-                  href="https://www.MTBoss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -821,7 +821,7 @@ const Content = () => {
                 </a>{" "}
                 and read our{" "}
                 <a
-                  href="https://www.MTBoss.in/blog/house-construction-cost-estimation-guide-india-2026"
+                  href="https://www.MTBOSS.in/blog/house-construction-cost-estimation-guide-india-2026"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -834,7 +834,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                How MTBoss Delivers Luxury Interiors: Step by Step
+                How MTBOSS Delivers Luxury Interiors: Step by Step
               </SectionTitle>
 
               <div className="space-y-5">
@@ -876,7 +876,7 @@ const Content = () => {
                   <p className="mt-3">
                     Read our{" "}
                     <a
-                      href="https://www.MTBoss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
+                      href="https://www.MTBOSS.in/blog/vastu-shastra-principles-for-modern-home-architecture"
                       className="text-blue-600 underline"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -956,7 +956,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                 Choose MTBoss as Your Luxury Interior Designer in Moradabad
+                 Choose MTBOSS as Your Luxury Interior Designer in Moradabad
               </SectionTitle>
               <BulletList
                 items={[
@@ -1001,7 +1001,7 @@ const Content = () => {
               <p className="mt-4">
                 Explore materials through{" "}
                 <a
-                  href="https://www.MTBoss.in/ShopNow"
+                  href="https://www.MTBOSS.in/ShopNow"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1010,7 +1010,7 @@ const Content = () => {
                 </a>
                 , connect with trained tradespeople through our{" "}
                 <a
-                  href="https://www.MTBoss.in/Services/professionals"
+                  href="https://www.MTBOSS.in/Services/professionals"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1019,7 +1019,7 @@ const Content = () => {
                 </a>
                 , and browse completed work in our{" "}
                 <a
-                  href="https://www.MTBoss.in/FeaturedProjects/ProjectGallery"
+                  href="https://www.MTBOSS.in/FeaturedProjects/ProjectGallery"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1140,7 +1140,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                Contact MTBoss for Your Luxury Interior Project
+                Contact MTBOSS for Your Luxury Interior Project
               </SectionTitle>
 
               <p className="mb-3">
@@ -1151,7 +1151,7 @@ const Content = () => {
 
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Company:</strong> MTBoss Construction Private Limited
+                  <strong>Company:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Phone / WhatsApp:</strong>{" "}
@@ -1165,10 +1165,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -1178,7 +1178,7 @@ const Content = () => {
                 <li>
                   <strong>Contact Page:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/contact"
+                    href="https://www.MTBOSS.in/contact"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"

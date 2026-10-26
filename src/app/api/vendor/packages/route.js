@@ -64,7 +64,7 @@ export async function POST(req) {
     await createPayUIntent({ txnid, purpose: 'vendor_package', entityId: vendor.id, packageId: pkg.id, amount: pkg.price });
     const callbackUrl = getPayUCallbackUrl(req);
     const payment = createPayURequest({
-      txnid, amount: pkg.price, productinfo: `MTBoss vendor ${pkg.label}`,
+      txnid, amount: pkg.price, productinfo: `MTBOSS vendor ${pkg.label}`,
       firstname: String(customer.customer_name).split(/\s+/)[0], email: customer.email,
       phone: customer.phone, surl: callbackUrl, furl: callbackUrl,
       udf1: String(vendor.id), udf2: pkg.id, udf3: 'vendor_package',

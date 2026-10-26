@@ -9,26 +9,26 @@ import { defaultHeroBanners, CONSTRUCTION_HERO_IMAGE_URL } from '@/lib/hero-bann
 
 // ---------- METADATA ----------
 export const metadata = {
-  title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBoss',
+  title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBOSS',
   description:
-    'MTBoss - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
+    'MTBOSS - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
   keywords:
     'construction company near me, home services near me, electrician plumber near me, AC repair near me, pest control near me, building renovation near me, water tank cleaning near me, buy sell rent property near me, building materials online, construction cost calculator, contractor near me',
   alternates: {
-    canonical: 'https://www.MTBoss.in/',
+    canonical: 'https://www.MTBOSS.in/',
   },
   openGraph: {
-    title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBoss',
+    title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBOSS',
     description:
-      'MTBoss - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
-    url: 'https://www.MTBoss.in/',
-    siteName: 'MTBoss Construction Private Limited',
+      'MTBOSS - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
+    url: 'https://www.MTBOSS.in/',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/icon.png',
+        url: 'https://www.MTBOSS.in/icon.png',
         width: 1200,
         height: 630,
-        alt: 'MTBoss - Construction, Home Services & Property',
+        alt: 'MTBOSS - Construction, Home Services & Property',
       },
     ],
     locale: 'en_IN',
@@ -36,10 +36,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBoss',
+    title: 'Best Architect, Interior Designer & Construction Company in Moradabad & Bareilly | MTBOSS',
     description:
-      'MTBoss - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
-    images: ['https://www.MTBoss.in/icon.png'],
+      'MTBOSS - architect & interior designer and construction company offering modular kitchen and waterproofing experts in Moradabad & Bareilly. Quality work, transparent pricing, on-time delivery.',
+    images: ['https://www.MTBOSS.in/icon.png'],
   },
 };
 
@@ -47,11 +47,11 @@ export const metadata = {
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/',
-  logo: 'https://www.MTBoss.in/logo.png',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/',
+  logo: 'https://www.MTBOSS.in/logo.png',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",
@@ -67,10 +67,10 @@ const organizationSchema = {
   ],
   sameAs: [
     'https://www.facebook.com/share/19QJ3uZKtq/',
-    'https://www.instagram.com/MTBoss.in',
-    'https://in.linkedin.com/company/MTBoss-construction-company',
-    'https://x.com/MTBoss',
-    'https://youtube.com/@MTBossconstruction4906',
+    'https://www.instagram.com/MTBOSS.in',
+    'https://in.linkedin.com/company/MTBOSS-construction-company',
+    'https://x.com/MTBOSS',
+    'https://youtube.com/@MTBOSSconstruction4906',
   ],
 };
 
@@ -80,7 +80,7 @@ const homeServicesSchema = {
   serviceType: 'Home & Building Services',
   provider: {
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
+    name: 'MTBOSS Construction Private Limited',
   },
   areaServed: [
     { '@type': 'City', name: 'Moradabad' },

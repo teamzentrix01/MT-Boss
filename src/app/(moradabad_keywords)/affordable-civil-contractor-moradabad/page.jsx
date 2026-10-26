@@ -7,27 +7,27 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Affordable Civil Contractor in Moradabad | MTBoss",
+  title: "Affordable Civil Contractor in Moradabad | MTBOSS",
   description:
-    "Looking for an affordable civil contractor in Moradabad? MTBoss offers transparent pricing, smart budgeting and quality civil work for homes, shops and factories.",
+    "Looking for an affordable civil contractor in Moradabad? MTBOSS offers transparent pricing, smart budgeting and quality civil work for homes, shops and factories.",
   keywords:
-    "affordable civil contractor Moradabad, budget civil contractor Moradabad, low cost construction contractor Moradabad, economical building contractor Moradabad, affordable house construction Moradabad, affordable commercial construction Moradabad, civil work contractor Moradabad, construction cost estimate Moradabad, MTBoss civil contractor Moradabad",
+    "affordable civil contractor Moradabad, budget civil contractor Moradabad, low cost construction contractor Moradabad, economical building contractor Moradabad, affordable house construction Moradabad, affordable commercial construction Moradabad, civil work contractor Moradabad, construction cost estimate Moradabad, MTBOSS civil contractor Moradabad",
   alternates: {
     canonical:
-      "https://www.MTBoss.in/affordable-civil-contractor-moradabad",
+      "https://www.MTBOSS.in/affordable-civil-contractor-moradabad",
   },
   openGraph: {
-    title: "Affordable Civil Contractor in Moradabad | MTBoss",
+    title: "Affordable Civil Contractor in Moradabad | MTBOSS",
     description:
-      "Looking for an affordable civil contractor in Moradabad? MTBoss offers transparent pricing, smart budgeting and quality civil work for homes, shops and factories.",
-    url: "https://www.MTBoss.in/affordable-civil-contractor-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "Looking for an affordable civil contractor in Moradabad? MTBOSS offers transparent pricing, smart budgeting and quality civil work for homes, shops and factories.",
+    url: "https://www.MTBOSS.in/affordable-civil-contractor-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-affordable-civil-contractor-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-affordable-civil-contractor-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Affordable Civil Contractor in Moradabad - MTBoss",
+        alt: "Affordable Civil Contractor in Moradabad - MTBOSS",
       },
     ],
     locale: "en_IN",
@@ -35,11 +35,11 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Affordable Civil Contractor in Moradabad | MTBoss",
+    title: "Affordable Civil Contractor in Moradabad | MTBOSS",
     description:
-      "Looking for an affordable civil contractor in Moradabad? MTBoss offers transparent pricing, smart budgeting and quality civil work for homes, shops and factories.",
+      "Looking for an affordable civil contractor in Moradabad? MTBOSS offers transparent pricing, smart budgeting and quality civil work for homes, shops and factories.",
     images: [
-      "https://www.MTBoss.in/og-affordable-civil-contractor-moradabad.jpg",
+      "https://www.MTBOSS.in/og-affordable-civil-contractor-moradabad.jpg",
     ],
   },
   robots: {
@@ -51,10 +51,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBoss Construction Private Limited",
-  url: "https://www.MTBoss.in/affordable-civil-contractor-moradabad",
+  name: "MTBOSS Construction Private Limited",
+  url: "https://www.MTBOSS.in/affordable-civil-contractor-moradabad",
   telephone: "+91-9458410866",
-  email: "MTBoss2016@gmail.com",
+  email: "MTBOSS2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

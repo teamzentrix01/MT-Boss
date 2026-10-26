@@ -49,7 +49,7 @@ export async function POST(req, { params }) {
     await createPayUIntent({ txnid, purpose: 'booking_final', entityId: booking.id, amount });
     const callbackUrl = getPayUCallbackUrl(req);
     const payment = createPayURequest({
-      txnid, amount, productinfo: `MTBoss final payment ${booking.booking_reference}`,
+      txnid, amount, productinfo: `MTBOSS final payment ${booking.booking_reference}`,
       firstname: booking.user_name.split(/\s+/)[0], email: booking.user_email,
       phone: booking.user_phone, surl: callbackUrl, furl: callbackUrl,
       udf1: String(booking.id), udf2: booking.booking_reference, udf3: 'booking_final',

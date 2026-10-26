@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Turnkey Construction Company in Moradabad | MTBoss",
+  title: "Turnkey Construction Company in Moradabad | MTBOSS",
 
   description:
-    "Looking for a turnkey construction company in Moradabad? MTBoss manages design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
+    "Looking for a turnkey construction company in Moradabad? MTBOSS manages design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
 
   keywords:
-    "turnkey construction company Moradabad, turnkey construction Moradabad, turnkey contractor Moradabad, turnkey project company Moradabad, construction company in Moradabad, building contractor Moradabad, commercial construction Moradabad, residential construction Moradabad, hotel construction Moradabad, industrial construction Moradabad, warehouse construction Moradabad, design and build company Moradabad, construction cost Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
+    "turnkey construction company Moradabad, turnkey construction Moradabad, turnkey contractor Moradabad, turnkey project company Moradabad, construction company in Moradabad, building contractor Moradabad, commercial construction Moradabad, residential construction Moradabad, hotel construction Moradabad, industrial construction Moradabad, warehouse construction Moradabad, design and build company Moradabad, construction cost Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.MTBoss.in/turnkey-construction-company-in-moradabad",
+      "https://www.MTBOSS.in/turnkey-construction-company-in-moradabad",
   },
 
   openGraph: {
-    title: "Turnkey Construction Company in Moradabad | MTBoss",
+    title: "Turnkey Construction Company in Moradabad | MTBOSS",
 
     description:
-      "Looking for a turnkey construction company in Moradabad? MTBoss manages design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
+      "Looking for a turnkey construction company in Moradabad? MTBOSS manages design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
 
-    url: "https://www.MTBoss.in/turnkey-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/turnkey-construction-company-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-turnkey-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-turnkey-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Turnkey Construction Company in Moradabad - MTBoss",
+        alt: "Turnkey Construction Company in Moradabad - MTBOSS",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Turnkey Construction Company in Moradabad | MTBoss",
+    title: "Turnkey Construction Company in Moradabad | MTBOSS",
 
     description:
-      "Looking for a turnkey construction company in Moradabad? MTBoss manages design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
+      "Looking for a turnkey construction company in Moradabad? MTBOSS manages design, construction, materials and handover. Call +91 94584 10866 for a free quote.",
 
     images: [
-      "https://www.MTBoss.in/og-turnkey-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-turnkey-construction-moradabad.jpg",
     ],
   },
 
@@ -67,15 +67,15 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
 
-    name: "MTBoss Construction Private Limited",
+    name: "MTBOSS Construction Private Limited",
 
-    url: "https://www.MTBoss.in/turnkey-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/turnkey-construction-company-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
 
-    image: "https://www.MTBoss.in/og-turnkey-construction-moradabad.jpg",
+    image: "https://www.MTBOSS.in/og-turnkey-construction-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -135,16 +135,16 @@ export default function Page() {
     name: "Turnkey Construction Services in Moradabad",
 
     description:
-      "MTBoss provides turnkey construction services in Moradabad, including design coordination, floor planning, elevation, civil construction, material supply, electrical work, plumbing, waterproofing, finishing, interiors and final handover for residential, commercial, hospitality and industrial projects.",
+      "MTBOSS provides turnkey construction services in Moradabad, including design coordination, floor planning, elevation, civil construction, material supply, electrical work, plumbing, waterproofing, finishing, interiors and final handover for residential, commercial, hospitality and industrial projects.",
 
-    url: "https://www.MTBoss.in/turnkey-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/turnkey-construction-company-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
 
     areaServed: [
@@ -177,18 +177,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Is MTBoss a turnkey construction company in Moradabad?",
+        name: "Is MTBOSS a turnkey construction company in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBoss combines design coordination, civil construction, material supply, finishing and handover under one company for projects in Moradabad and Bareilly.",
+          text: "Yes. MTBOSS combines design coordination, civil construction, material supply, finishing and handover under one company for projects in Moradabad and Bareilly.",
         },
       },
       {
         "@type": "Question",
-        name: "What types of turnkey construction projects does MTBoss handle?",
+        name: "What types of turnkey construction projects does MTBOSS handle?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "MTBoss handles residential homes and villas, duplexes, commercial buildings, shops, showrooms, offices, hotels, hospitality projects, industrial buildings, warehouse projects, godowns and supporting infrastructure work.",
+          text: "MTBOSS handles residential homes and villas, duplexes, commercial buildings, shops, showrooms, offices, hotels, hospitality projects, industrial buildings, warehouse projects, godowns and supporting infrastructure work.",
         },
       },
       {
@@ -204,7 +204,7 @@ export default function Page() {
         name: "How much does turnkey construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Turnkey construction cost depends on built-up area, building type, number of floors, material quality, design complexity, finishing level, interior scope and site conditions. MTBoss offers a free Budget Calculator and project-specific construction quotes.",
+          text: "Turnkey construction cost depends on built-up area, building type, number of floors, material quality, design complexity, finishing level, interior scope and site conditions. MTBOSS offers a free Budget Calculator and project-specific construction quotes.",
         },
       },
       {
@@ -217,18 +217,18 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Can I get a free construction quote from MTBoss?",
+        name: "Can I get a free construction quote from MTBOSS?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. You can use the Get a Construction Quote option on the MTBoss website or contact the team directly through phone or WhatsApp for an initial project discussion and quote request.",
+          text: "Yes. You can use the Get a Construction Quote option on the MTBOSS website or contact the team directly through phone or WhatsApp for an initial project discussion and quote request.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -243,19 +243,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Turnkey Construction Company in Moradabad",
-        item: "https://www.MTBoss.in/turnkey-construction-company-in-moradabad",
+        item: "https://www.MTBOSS.in/turnkey-construction-company-in-moradabad",
       },
     ],
   };

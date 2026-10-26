@@ -68,7 +68,7 @@ export default function BuySalePage() {
         />
         <div className="relative z-10">
           <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest">
-            MTBoss Construction
+            MTBOSS Construction
           </span>
           <h1 className="text-white text-3xl md:text-5xl font-black uppercase tracking-widest mt-2 mb-4">
             Buy and Sale

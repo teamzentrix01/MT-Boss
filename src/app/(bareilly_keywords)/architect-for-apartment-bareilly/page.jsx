@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect for Apartment Bareilly',
   description:
-    'Planning an apartment building in Bareilly? MTBoss plans efficient flats, parking, lifts, services and structure for sale or rental. Call +91 94584 10866.',
+    'Planning an apartment building in Bareilly? MTBOSS plans efficient flats, parking, lifts, services and structure for sale or rental. Call +91 94584 10866.',
   keywords:
-    'architect for apartment Bareilly, apartment architect Bareilly, apartment design Bareilly, apartment planning Bareilly, builder floor architect Bareilly, apartment building design Bareilly, flat design Bareilly, apartment construction Bareilly, apartment builder Bareilly, apartment architect near me Bareilly, MTBoss Bareilly, apartment Bareilly',
+    'architect for apartment Bareilly, apartment architect Bareilly, apartment design Bareilly, apartment planning Bareilly, builder floor architect Bareilly, apartment building design Bareilly, flat design Bareilly, apartment construction Bareilly, apartment builder Bareilly, apartment architect near me Bareilly, MTBOSS Bareilly, apartment Bareilly',
   alternates: {
-    canonical: 'https://www.MTBoss.in/architect-for-apartment-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-for-apartment-bareilly',
   },
   openGraph: {
     title: 'Architect for Apartment Bareilly',
     description:
-      'Planning an apartment building in Bareilly? MTBoss plans efficient flats, parking, lifts, services and structure for sale or rental. Call +91 94584 10866.',
-    url: 'https://www.MTBoss.in/architect-for-apartment-bareilly',
-    siteName: 'MTBoss Construction Private Limited',
+      'Planning an apartment building in Bareilly? MTBOSS plans efficient flats, parking, lifts, services and structure for sale or rental. Call +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/architect-for-apartment-bareilly',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-architect-for-apartment-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-apartment-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect for Apartment Bareilly - MTBoss',
+        alt: 'Architect for Apartment Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,9 +35,9 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect for Apartment Bareilly',
     description:
-      'Planning an apartment building in Bareilly? MTBoss plans efficient flats, parking, lifts, services and structure for sale or rental. Call +91 94584 10866.',
+      'Planning an apartment building in Bareilly? MTBOSS plans efficient flats, parking, lifts, services and structure for sale or rental. Call +91 94584 10866.',
     images: [
-      'https://www.MTBoss.in/og-architect-for-apartment-bareilly.jpg',
+      'https://www.MTBOSS.in/og-architect-for-apartment-bareilly.jpg',
     ],
   },
   robots: {
@@ -50,10 +50,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/architect-for-apartment-bareilly',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/architect-for-apartment-bareilly',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

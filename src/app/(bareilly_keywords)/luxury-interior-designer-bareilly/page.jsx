@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/luxury-interior-designer-in-bareilly",
+      "https://www.MTBOSS.in/luxury-interior-designer-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Looking for a luxury interior designer Bareilly? MTBOSS plans premium villa, apartment and home interiors with fine finish. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/luxury-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/luxury-interior-designer-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-luxury-interior-designer-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-luxury-interior-designer-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Luxury Interior Designer in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Looking for a luxury interior designer Bareilly? MTBOSS plans premium villa, apartment and home interiors with fine finish. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-luxury-interior-designer-bareilly.jpg",
+      "https://www.MTBOSS.in/og-luxury-interior-designer-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/luxury-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/luxury-interior-designer-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-luxury-interior-designer-bareilly.jpg",
+      "https://www.MTBOSS.in/og-luxury-interior-designer-bareilly.jpg",
     priceRange: "₹₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,13 +116,13 @@ export default function Page() {
     name: "Luxury Interior Design Services in Bareilly",
     description:
       "MTBOSS provides luxury interior design services in Bareilly. Services include complete luxury home interiors, luxury villa interiors, premium apartment interiors, living and dining spaces, master suites, premium modular kitchens, custom woodwork and panelling, stone and marble work, false ceiling and lighting design, home office and study, entertainment and media rooms, puja room and mandir, bathrooms and dressing areas, smart home provisions, and renovation and remodelling.",
-    url: "https://www.mtboss.in/luxury-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/luxury-interior-designer-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -217,19 +217,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Luxury Interior Designer in Bareilly",
-        item: "https://www.mtboss.in/luxury-interior-designer-in-bareilly",
+        item: "https://www.MTBOSS.in/luxury-interior-designer-in-bareilly",
       },
     ],
   };

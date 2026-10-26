@@ -7,28 +7,28 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Construction Company Contact Number Moradabad | MTBoss",
+  title: "Construction Company Contact Number Moradabad | MTBOSS",
   description:
-    "Need a construction company contact number in Moradabad? Call or WhatsApp MTBoss on +91 94584 10866 for quotes, site visits and civil, home and industrial projects.",
+    "Need a construction company contact number in Moradabad? Call or WhatsApp MTBOSS on +91 94584 10866 for quotes, site visits and civil, home and industrial projects.",
   keywords:
-    "construction company contact number Moradabad, construction company phone number Moradabad, builder contact number Moradabad, civil contractor contact number Moradabad, construction company near me Moradabad, MTBoss contact number Moradabad, construction quote Moradabad, building contractor contact Moradabad, construction company WhatsApp Moradabad, construction office Moradabad",
+    "construction company contact number Moradabad, construction company phone number Moradabad, builder contact number Moradabad, civil contractor contact number Moradabad, construction company near me Moradabad, MTBOSS contact number Moradabad, construction quote Moradabad, building contractor contact Moradabad, construction company WhatsApp Moradabad, construction office Moradabad",
   alternates: {
     canonical:
-      "https://www.MTBoss.in/construction-company-contact-number-moradabad",
+      "https://www.MTBOSS.in/construction-company-contact-number-moradabad",
   },
   openGraph: {
-    title: "Construction Company Contact Number Moradabad | MTBoss",
+    title: "Construction Company Contact Number Moradabad | MTBOSS",
     description:
-      "Need a construction company contact number in Moradabad? Call or WhatsApp MTBoss on +91 94584 10866 for quotes, site visits and civil, home and industrial projects.",
+      "Need a construction company contact number in Moradabad? Call or WhatsApp MTBOSS on +91 94584 10866 for quotes, site visits and civil, home and industrial projects.",
     url:
-      "https://www.MTBoss.in/construction-company-contact-number-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "https://www.MTBOSS.in/construction-company-contact-number-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-construction-company-contact-number-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-construction-company-contact-number-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Construction Company Contact Number in Moradabad - MTBoss",
+        alt: "Construction Company Contact Number in Moradabad - MTBOSS",
       },
     ],
     locale: "en_IN",
@@ -36,11 +36,11 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Construction Company Contact Number Moradabad | MTBoss",
+    title: "Construction Company Contact Number Moradabad | MTBOSS",
     description:
-      "Need a construction company contact number in Moradabad? Call or WhatsApp MTBoss on +91 94584 10866 for quotes, site visits and civil, home and industrial projects.",
+      "Need a construction company contact number in Moradabad? Call or WhatsApp MTBOSS on +91 94584 10866 for quotes, site visits and civil, home and industrial projects.",
     images: [
-      "https://www.MTBoss.in/og-construction-company-contact-number-moradabad.jpg",
+      "https://www.MTBOSS.in/og-construction-company-contact-number-moradabad.jpg",
     ],
   },
   robots: {
@@ -52,10 +52,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBoss Construction Private Limited",
-  url: "https://www.MTBoss.in/construction-company-contact-number-moradabad",
+  name: "MTBOSS Construction Private Limited",
+  url: "https://www.MTBOSS.in/construction-company-contact-number-moradabad",
   telephone: "+91-9458410866",
-  email: "MTBoss2016@gmail.com",
+  email: "MTBOSS2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

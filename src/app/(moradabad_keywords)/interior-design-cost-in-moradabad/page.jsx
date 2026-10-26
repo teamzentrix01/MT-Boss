@@ -6,26 +6,26 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Interior Design Cost in Moradabad 2026 | MTBoss Pricing Guide",
+  title: "Interior Design Cost in Moradabad 2026 | MTBOSS Pricing Guide",
   description:
-    "Know the interior design cost in Moradabad per sq ft for 1BHK, 2BHK, 3BHK, kitchen and offices. Get a free quote from MTBoss – transparent, on-time work.",
+    "Know the interior design cost in Moradabad per sq ft for 1BHK, 2BHK, 3BHK, kitchen and offices. Get a free quote from MTBOSS – transparent, on-time work.",
   keywords:
-    "interior design cost in Moradabad, interior cost Moradabad, 2BHK interior cost Moradabad, 3BHK interior cost Moradabad, modular kitchen cost Moradabad, office interior cost Moradabad, home interior designer Moradabad, interior designer near me, MTBoss interiors Moradabad",
+    "interior design cost in Moradabad, interior cost Moradabad, 2BHK interior cost Moradabad, 3BHK interior cost Moradabad, modular kitchen cost Moradabad, office interior cost Moradabad, home interior designer Moradabad, interior designer near me, MTBOSS interiors Moradabad",
   alternates: {
-    canonical: "https://www.MTBoss.in/interior-design-cost-in-moradabad",
+    canonical: "https://www.MTBOSS.in/interior-design-cost-in-moradabad",
   },
   openGraph: {
-    title: "Interior Design Cost in Moradabad 2026 | MTBoss Pricing Guide",
+    title: "Interior Design Cost in Moradabad 2026 | MTBOSS Pricing Guide",
     description:
-      "Know the interior design cost in Moradabad per sq ft for 1BHK, 2BHK, 3BHK, kitchen and offices. Get a free quote from MTBoss – transparent, on-time work.",
-    url: "https://www.MTBoss.in/interior-design-cost-in-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "Know the interior design cost in Moradabad per sq ft for 1BHK, 2BHK, 3BHK, kitchen and offices. Get a free quote from MTBOSS – transparent, on-time work.",
+    url: "https://www.MTBOSS.in/interior-design-cost-in-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-top-builder-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-top-builder-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Interior Design Cost in Moradabad - MTBoss",
+        alt: "Interior Design Cost in Moradabad - MTBOSS",
       },
     ],
     locale: "en_IN",
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Interior Design Cost in Moradabad 2026 | MTBoss Pricing Guide",
+    title: "Interior Design Cost in Moradabad 2026 | MTBOSS Pricing Guide",
     description:
-      "Know the interior design cost in Moradabad per sq ft for 1BHK, 2BHK, 3BHK, kitchen and offices. Get a free quote from MTBoss – transparent, on-time work.",
-    images: ["https://www.MTBoss.in/og-top-builder-moradabad.jpg"],
+      "Know the interior design cost in Moradabad per sq ft for 1BHK, 2BHK, 3BHK, kitchen and offices. Get a free quote from MTBOSS – transparent, on-time work.",
+    images: ["https://www.MTBOSS.in/og-top-builder-moradabad.jpg"],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBoss Construction Private Limited",
-  url: "https://www.MTBoss.in/interior-design-cost-in-moradabad",
+  name: "MTBOSS Construction Private Limited",
+  url: "https://www.MTBOSS.in/interior-design-cost-in-moradabad",
   telephone: "+91-9458410866",
-  email: "MTBoss2016@gmail.com",
+  email: "MTBOSS2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

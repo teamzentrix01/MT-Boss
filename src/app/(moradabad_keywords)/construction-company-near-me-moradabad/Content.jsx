@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MTBoss: Your Local Construction Company Near Me in Moradabad
+            MTBOSS: Your Local Construction Company Near Me in Moradabad
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -22,21 +22,21 @@ const Content = () => {
                 attention, fast decisions and trusted people on the ground.
               </p>
               <p className="mt-3">
-                MTBoss (MTBoss Construction Private Limited) is a construction
+                MTBOSS (MTBOSS Construction Private Limited) is a construction
                 company near you in Moradabad, with its office on Harthala
                 Kanth Road. The company builds homes, shops, offices, hotels,
                 factories and warehouses, and also serves nearby cities such as
                 Bareilly. This page explains how a nearby builder helps your
-                project, what MTBoss offers, and how to get started.
+                project, what MTBOSS offers, and how to get started.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Where MTBoss Is Located and Who We Serve
+                Where MTBOSS Is Located and Who We Serve
               </h3>
               <p className="mb-3">
-                The MTBoss office is on Harthala Kanth Road, behind KR
+                The MTBOSS office is on Harthala Kanth Road, behind KR
                 Collection, near Domino&apos;s, Moradabad. From here, our
                 engineers and supervisors reach projects across the city,
                 including residential colonies, main commercial roads and
@@ -85,7 +85,7 @@ const Content = () => {
                 Regular Presence of Engineers
               </h4>
               <p className="mb-3">
-                Supervision is the heart of good construction. With MTBoss
+                Supervision is the heart of good construction. With MTBOSS
                 nearby, engineers can visit more often, check reinforcement
                 before concrete is poured and confirm alignment before walls
                 rise.
@@ -130,14 +130,14 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Building Types MTBoss Constructs Near You
+                Building Types MTBOSS Constructs Near You
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Houses, Villas and Builder Floors
               </h4>
               <p className="mb-3">
-                Home construction at MTBoss starts with how your family lives.
+                Home construction at MTBOSS starts with how your family lives.
                 We plan room sizes, kitchen and bathroom positions, staircase
                 layout, parking and terrace use, while leaving room for future
                 floors where the plot allows.
@@ -148,7 +148,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 On commercial roads, frontage and parking decide a
-                property&apos;s value. MTBoss designs shopfronts, storage
+                property&apos;s value. MTBOSS designs shopfronts, storage
                 areas, loading access and staircases so that businesses run
                 smoothly and tenants find the space attractive.
               </p>
@@ -158,7 +158,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 These buildings need reliable electrical systems, good natural
-                light, proper ventilation and safe circulation. MTBoss builds
+                light, proper ventilation and safe circulation. MTBOSS builds
                 them with daily comfort and long-term maintenance in mind.
               </p>
 
@@ -167,7 +167,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Hospitality buildings depend on guest comfort and efficient
-                service. MTBoss coordinates kitchens, dining areas, service
+                service. MTBOSS coordinates kitchens, dining areas, service
                 corridors, safety systems and finishes within one construction
                 plan.
               </p>
@@ -177,7 +177,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Industrial buildings need strong floors, wide column spacing,
-                safe wiring and easy truck movement. MTBoss builds spaces that
+                safe wiring and easy truck movement. MTBOSS builds spaces that
                 suit manufacturing, packing and dispatch, which matters in a
                 city known for its export trade.
               </p>
@@ -187,14 +187,14 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Existing buildings can be strengthened, extended or refreshed.
-                MTBoss inspects the structure first, then recommends changes
+                MTBOSS inspects the structure first, then recommends changes
                 that are safe and cost-effective.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                From First Call to Final Handover: How Working With MTBoss
+                From First Call to Final Handover: How Working With MTBOSS
                 Feels
               </h3>
               <p className="mb-3">
@@ -217,7 +217,7 @@ const Content = () => {
                   details are prepared and refined with your feedback.
                 </li>
                 <li>
-                  <strong>Approvals.</strong> MTBoss helps prepare drawings
+                  <strong>Approvals.</strong> MTBOSS helps prepare drawings
                   and documents for local authority approval, including the
                   Moradabad Development Authority where applicable.
                 </li>
@@ -245,7 +245,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 One of the biggest advantages of a nearby builder is that you
-                can see the work yourself. MTBoss welcomes site visits at
+                can see the work yourself. MTBOSS welcomes site visits at
                 agreed times, and these are the areas worth checking:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -289,7 +289,7 @@ const Content = () => {
                 Materials and Supply Advantages in Moradabad
               </h3>
               <p className="mb-3">
-                MTBoss sources materials through established local channels
+                MTBOSS sources materials through established local channels
                 and checks them on arrival. The main categories include:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -315,7 +315,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                The MTBoss website also has an online materials shop, where
+                The MTBOSS website also has an online materials shop, where
                 customers can explore cement, steel, bricks and related
                 supplies for their own projects.
               </p>
@@ -359,7 +359,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                For a first idea, the budget calculator on the MTBoss website
+                For a first idea, the budget calculator on the MTBOSS website
                 offers a quick estimate. A formal itemised quotation follows
                 after the team reviews your requirements. We suggest keeping a
                 reserve of about 10 percent for unexpected needs.
@@ -371,7 +371,7 @@ const Content = () => {
                 Planning Around Moradabad&apos;s Weather and Conditions
               </h3>
               <p className="mb-3">
-                Local knowledge shapes construction decisions. MTBoss plans
+                Local knowledge shapes construction decisions. MTBOSS plans
                 for conditions that are specific to the region.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -405,7 +405,7 @@ const Content = () => {
                 Services That Come Along With Construction
               </h3>
               <p className="mb-3">
-                MTBoss goes beyond the main structure, so you can finish your
+                MTBOSS goes beyond the main structure, so you can finish your
                 building with one team.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -423,11 +423,11 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Quick home services.</strong> Plumbing, electrical
-                  work and painting through the MTBoss platform.
+                  work and painting through the MTBOSS platform.
                 </li>
                 <li>
                   <strong>Property listings.</strong> Buy, sell or rent
-                  properties through the MTBoss marketplace.
+                  properties through the MTBOSS marketplace.
                 </li>
                 <li>
                   <strong>Franchise and agent opportunities.</strong>{" "}
@@ -442,7 +442,7 @@ const Content = () => {
                 Checklist Before You Sign With Any Local Builder
               </h3>
               <p className="mb-3">
-                Whether you choose MTBoss or compare other options, review
+                Whether you choose MTBOSS or compare other options, review
                 these points first:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -471,19 +471,19 @@ const Content = () => {
                 <li>Verify the company&apos;s office address and contact details.</li>
               </ul>
               <p className="mt-3">
-                MTBoss is comfortable with this level of scrutiny, and we
+                MTBOSS is comfortable with this level of scrutiny, and we
                 encourage clients to ask for any of these details.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact the MTBoss Team Near You
+                Contact the MTBOSS Team Near You
               </h3>
               <p className="mb-3">
                 Starting a project is easier when you can talk to a real team
                 nearby. Share your plot details, requirements and budget, and
-                MTBoss will guide you toward a practical, transparent plan.
+                MTBOSS will guide you toward a practical, transparent plan.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -496,21 +496,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -526,11 +526,11 @@ const Content = () => {
                     Q1. Is there a construction company near me in Moradabad?
                   </strong>
                   <br />
-                  Yes. MTBoss is based on Harthala Kanth Road, Moradabad, and
+                  Yes. MTBOSS is based on Harthala Kanth Road, Moradabad, and
                   serves the city and nearby areas such as Bareilly.
                 </li>
                 <li>
-                  <strong>Q2. What construction services does MTBoss offer?</strong>
+                  <strong>Q2. What construction services does MTBOSS offer?</strong>
                   <br />
                   We build homes, shops, offices, hotels, schools, clinics,
                   factories and warehouses, and also offer renovation and
@@ -544,7 +544,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q4. Does MTBoss provide design along with construction?
+                    Q4. Does MTBOSS provide design along with construction?
                   </strong>
                   <br />
                   Yes. Planning, drawings, construction, finishing and handover
@@ -553,7 +553,7 @@ const Content = () => {
                 <li>
                   <strong>Q5. How much does construction cost in Moradabad?</strong>
                   <br />
-                  Cost depends on area, materials and design. MTBoss provides
+                  Cost depends on area, materials and design. MTBOSS provides
                   an itemised quote after reviewing your needs.
                 </li>
                 <li>
@@ -561,33 +561,33 @@ const Content = () => {
                   <br />
                   Yes. Use the construction budget calculator on{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   for a quick early estimate.
                 </li>
                 <li>
-                  <strong>Q7. Does MTBoss help with approvals?</strong>
+                  <strong>Q7. Does MTBOSS help with approvals?</strong>
                   <br />
                   Yes. We prepare drawings and documents required for local
                   authority approvals.
                 </li>
                 <li>
-                  <strong>Q8. How do I contact MTBoss?</strong>
+                  <strong>Q8. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp +91 94584 10866, email
-                  MTBoss2016@gmail.com, or visit{" "}
+                  MTBOSS2016@gmail.com, or visit{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                   .
                 </li>

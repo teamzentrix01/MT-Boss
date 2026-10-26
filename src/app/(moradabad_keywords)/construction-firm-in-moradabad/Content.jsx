@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MTBoss: A Construction Firm in Moradabad Organised Around Five
+            MTBOSS: A Construction Firm in Moradabad Organised Around Five
             Service Divisions
           </h2>
 
@@ -21,7 +21,7 @@ const Content = () => {
                 repair and even trade a property through one firm.
               </p>
               <p className="mt-3">
-                MTBoss (MTBoss Construction Private Limited) is a construction
+                MTBOSS (MTBOSS Construction Private Limited) is a construction
                 firm in Moradabad serving Moradabad and Bareilly. Its website
                 describes the journey as &quot;planning to completion,&quot; and
                 the firm&apos;s structure supports that idea. This page explains
@@ -32,10 +32,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How the MTBoss Firm Is Organised
+                How the MTBOSS Firm Is Organised
               </h3>
               <p className="mb-3">
-                The MTBoss platform groups its work into five divisions.
+                The MTBOSS platform groups its work into five divisions.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -71,18 +71,18 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Division One: Construction at MTBoss
+                Division One: Construction at MTBOSS
               </h3>
               <p className="mb-3">
                 The construction division has three main verticals, which the
-                MTBoss website highlights.
+                MTBOSS website highlights.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Commercial Buildings
               </h4>
               <p className="mb-3">
-                From corporate offices to retail complexes, MTBoss designs and
+                From corporate offices to retail complexes, MTBOSS designs and
                 constructs commercial spaces. These projects focus on frontage,
                 parking, circulation, services and long-term usability.
               </p>
@@ -91,7 +91,7 @@ const Content = () => {
                 Hotel and Hospitality
               </h4>
               <p className="mb-3">
-                MTBoss builds hotels and resorts with attention to interiors
+                MTBOSS builds hotels and resorts with attention to interiors
                 and guest experience. Planning covers rooms, kitchens, service
                 access and finishes that handle heavy daily use.
               </p>
@@ -106,7 +106,7 @@ const Content = () => {
               </p>
 
               <p className="mb-3">
-                Beyond these three, MTBoss also lists industrial and
+                Beyond these three, MTBOSS also lists industrial and
                 warehousing work and infrastructure and roads among its
                 solutions, which suits factories, godowns and site development.
               </p>
@@ -115,7 +115,7 @@ const Content = () => {
                 Detailed Construction Services
               </h4>
               <p className="mb-3">
-                On its business listing, MTBoss describes a broader range of
+                On its business listing, MTBOSS describes a broader range of
                 construction services, including:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -133,7 +133,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Division Two: Home Services Under the MTBoss Name
+                Division Two: Home Services Under the MTBOSS Name
               </h3>
               <p className="mb-3">
                 Buildings need care after construction. The home services
@@ -169,7 +169,7 @@ const Content = () => {
                 Division Three: Materials for Builders and Owners
               </h3>
               <p className="mb-3">
-                Material quality decides how long a building lasts. The MTBoss
+                Material quality decides how long a building lasts. The MTBOSS
                 materials division, called Shop Now on the website, connects
                 customers with suppliers of:
               </p>
@@ -193,7 +193,7 @@ const Content = () => {
                 Division Four: Property Buy, Sell and Rent
               </h3>
               <p className="mb-3">
-                MTBoss also operates a property section that lets users:
+                MTBOSS also operates a property section that lets users:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -246,10 +246,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Tools on the MTBoss Platform That Save Owners Time
+                Tools on the MTBOSS Platform That Save Owners Time
               </h3>
               <p className="mb-3">
-                Several practical tools sit on the MTBoss website.
+                Several practical tools sit on the MTBOSS website.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -297,7 +297,7 @@ const Content = () => {
                 Social Presence
               </h4>
               <p className="mb-3">
-                MTBoss maintains profiles on Facebook, Instagram, LinkedIn, X
+                MTBOSS maintains profiles on Facebook, Instagram, LinkedIn, X
                 and YouTube, where owners can follow updates and view work.
               </p>
               <p className="mt-3">
@@ -308,7 +308,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Where MTBoss Operates
+                Where MTBOSS Operates
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -329,20 +329,20 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Growth Opportunities Within the MTBoss Network
+                Growth Opportunities Within the MTBOSS Network
               </h3>
               <p className="mb-3">
-                MTBoss is not only for property owners. The firm also opens
+                MTBOSS is not only for property owners. The firm also opens
                 doors for professionals.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Agent programme.</strong> People can become MTBoss
+                  <strong>Agent programme.</strong> People can become MTBOSS
                   agents, with a separate login for agents on the website.
                 </li>
                 <li>
                   <strong>Franchise opportunities.</strong> The firm offers a
-                  franchise model for those who want to run MTBoss services in
+                  franchise model for those who want to run MTBOSS services in
                   their own area.
                 </li>
                 <li>
@@ -358,7 +358,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Working Principles Followed by the MTBoss Firm
+                Working Principles Followed by the MTBOSS Firm
               </h3>
               <p className="mb-3">
                 The firm&apos;s website highlights three commitments that guide
@@ -386,7 +386,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Typical Customer Journeys Across the MTBoss Divisions
+                Typical Customer Journeys Across the MTBOSS Divisions
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -444,7 +444,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A firm with several divisions can give you a fuller cost
-                picture. When you speak with MTBoss, consider these budget
+                picture. When you speak with MTBOSS, consider these budget
                 components:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -485,11 +485,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact the MTBoss Firm
+                Contact the MTBOSS Firm
               </h3>
               <p className="mb-3">
                 Tell the team whether you need a new building, a repair,
-                materials or a property listing, and MTBoss will point you to
+                materials or a property listing, and MTBOSS will point you to
                 the right division.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -503,21 +503,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -534,59 +534,59 @@ const Content = () => {
                     just building?
                   </strong>
                   <br />
-                  MTBoss offers construction, home services, materials and
+                  MTBOSS offers construction, home services, materials and
                   property listings under one firm.
                 </li>
                 <li>
-                  <strong>Q2. What types of projects does MTBoss construct?</strong>
+                  <strong>Q2. What types of projects does MTBOSS construct?</strong>
                   <br />
                   We construct commercial buildings, hotels, residential
                   projects, industrial units, farmhouses, institutions and
                   boundary walls.
                 </li>
                 <li>
-                  <strong>Q3. Which cities does MTBoss serve?</strong>
+                  <strong>Q3. Which cities does MTBOSS serve?</strong>
                   <br />
-                  MTBoss serves Moradabad and Bareilly.
+                  MTBOSS serves Moradabad and Bareilly.
                 </li>
                 <li>
-                  <strong>Q4. Does MTBoss provide architecture and interiors?</strong>
+                  <strong>Q4. Does MTBOSS provide architecture and interiors?</strong>
                   <br />
                   Yes. We offer house, commercial and hotel architecture, along
                   with home, shop, restaurant and café interiors.
                 </li>
                 <li>
-                  <strong>Q5. Can I buy construction materials from MTBoss?</strong>
+                  <strong>Q5. Can I buy construction materials from MTBOSS?</strong>
                   <br />
-                  Yes. The MTBoss online shop connects you with suppliers of
+                  Yes. The MTBOSS online shop connects you with suppliers of
                   cement, steel, bricks and more.
                 </li>
                 <li>
-                  <strong>Q6. Can I list my property with MTBoss?</strong>
+                  <strong>Q6. Can I list my property with MTBOSS?</strong>
                   <br />
                   Yes. You can list a property to sell or rent, and browse
                   verified listings to buy.
                 </li>
                 <li>
                   <strong>
-                    Q7. Does MTBoss offer franchise or agent opportunities?
+                    Q7. Does MTBOSS offer franchise or agent opportunities?
                   </strong>
                   <br />
-                  Yes. MTBoss has agent and franchise programmes for
+                  Yes. MTBOSS has agent and franchise programmes for
                   professionals who want to join its network.
                 </li>
                 <li>
-                  <strong>Q8. How do I contact MTBoss?</strong>
+                  <strong>Q8. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp +91 94584 10866, email
-                  MTBoss2016@gmail.com, or visit{" "}
+                  MTBOSS2016@gmail.com, or visit{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                   .
                 </li>

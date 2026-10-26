@@ -92,7 +92,7 @@ function notificationCopyForOrderEvent(order, event) {
     return {
       type: 'order_delivered',
       title: 'Order delivered',
-      message: `Your order ${ref} has been delivered. Thank you for shopping with MTBoss.`,
+      message: `Your order ${ref} has been delivered. Thank you for shopping with MTBOSS.`,
     };
   }
   if (deliveryText && ['confirmed', 'processing', 'accepted', 'packed', 'dispatched', 'out_for_delivery'].includes(status)) {

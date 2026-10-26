@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Modular Kitchen Design in Moradabad | MTBoss',
+  title: 'Modular Kitchen Design in Moradabad | MTBOSS',
   description:
-    'Modular kitchen design in Moradabad by MTBoss. Ergonomics, storage, lighting and style planned around how you cook, with clear plans before work begins.',
+    'Modular kitchen design in Moradabad by MTBOSS. Ergonomics, storage, lighting and style planned around how you cook, with clear plans before work begins.',
   keywords:
-    'modular kitchen design Moradabad, kitchen design Moradabad, modular kitchen designer Moradabad, kitchen interior design Moradabad, modular kitchen layout Moradabad, L shaped modular kitchen Moradabad, U shaped modular kitchen Moradabad, kitchen planner Moradabad, 3D kitchen design Moradabad, MTBoss modular kitchen design Moradabad',
+    'modular kitchen design Moradabad, kitchen design Moradabad, modular kitchen designer Moradabad, kitchen interior design Moradabad, modular kitchen layout Moradabad, L shaped modular kitchen Moradabad, U shaped modular kitchen Moradabad, kitchen planner Moradabad, 3D kitchen design Moradabad, MTBOSS modular kitchen design Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/modular-kitchen-design-moradabad',
+    canonical: 'https://www.MTBOSS.in/modular-kitchen-design-moradabad',
   },
   openGraph: {
-    title: 'Modular Kitchen Design in Moradabad | MTBoss',
+    title: 'Modular Kitchen Design in Moradabad | MTBOSS',
     description:
-      'Modular kitchen design in Moradabad by MTBoss. Ergonomics, storage, lighting and style planned around how you cook, with clear plans before work begins.',
-    url: 'https://www.MTBoss.in/modular-kitchen-design-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Modular kitchen design in Moradabad by MTBOSS. Ergonomics, storage, lighting and style planned around how you cook, with clear plans before work begins.',
+    url: 'https://www.MTBOSS.in/modular-kitchen-design-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-modular-kitchen-design-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-modular-kitchen-design-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Modular Kitchen Design in Moradabad - MTBoss',
+        alt: 'Modular Kitchen Design in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Modular Kitchen Design in Moradabad | MTBoss',
+    title: 'Modular Kitchen Design in Moradabad | MTBOSS',
     description:
-      'Modular kitchen design in Moradabad by MTBoss. Ergonomics, storage, lighting and style planned around how you cook, with clear plans before work begins.',
-    images: ['https://www.MTBoss.in/og-modular-kitchen-design-moradabad.jpg'],
+      'Modular kitchen design in Moradabad by MTBOSS. Ergonomics, storage, lighting and style planned around how you cook, with clear plans before work begins.',
+    images: ['https://www.MTBOSS.in/og-modular-kitchen-design-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -47,10 +47,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/modular-kitchen-design-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/modular-kitchen-design-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Near Me in Moradabad: MTBoss
+            Architect Near Me in Moradabad: MTBOSS
           </h2>
 
 
@@ -19,7 +19,7 @@ const Content = () => {
                 When you type &quot;architect near me&quot; into your phone, you are looking for more than a name. You want someone close enough to visit your plot, familiar enough with Moradabad to plan for local conditions, and reliable enough to guide you from a rough idea to a finished building.
               </p>
               <p className="mt-3">
-                MTBoss is a Moradabad-based construction, property and home services company with its office on Harthala Kanth Road. Our team plans and designs homes, shops, showrooms, hotels and industrial buildings, and then builds them. That means one local team handles your drawings, approvals guidance, materials and construction, so you never have to coordinate between an architect, a contractor and a supplier.
+                MTBOSS is a Moradabad-based construction, property and home services company with its office on Harthala Kanth Road. Our team plans and designs homes, shops, showrooms, hotels and industrial buildings, and then builds them. That means one local team handles your drawings, approvals guidance, materials and construction, so you never have to coordinate between an architect, a contractor and a supplier.
               </p>
               <p className="mt-3">
                 This page explains our architectural services, the process we follow, cost factors and practical advice for choosing the right architect near you.
@@ -56,7 +56,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Architectural Services by MTBoss in Moradabad
+                Architectural Services by MTBOSS in Moradabad
               </h3>
 
 
@@ -107,17 +107,17 @@ const Content = () => {
                 Interior Design Coordination
               </h4>
               <p className="mb-3">
-                Because MTBoss also offers interiors, your architectural plan and your interior plan can be developed together for a seamless final result.
+                Because MTBOSS also offers interiors, your architectural plan and your interior plan can be developed together for a seamless final result.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Architect and Builder Under One Roof at MTBoss
+                Architect and Builder Under One Roof at MTBOSS
               </h3>
               <p className="mb-3">
-                Many owners hire an architect first and a builder later, and then find that the design costs more to build than expected, or that details do not match on site. MTBoss avoids this by keeping both roles in one company.
+                Many owners hire an architect first and a builder later, and then find that the design costs more to build than expected, or that details do not match on site. MTBOSS avoids this by keeping both roles in one company.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -133,9 +133,9 @@ const Content = () => {
                   <strong>Faster decisions.</strong> There is no delay while an architect and builder debate who is right.
                 </li>
                 <li>
-                  <strong>Material access.</strong> Through the MTBoss{" "}
+                  <strong>Material access.</strong> Through the MTBOSS{" "}
                   <a
-                    href="https://www.MTBoss.in/ShopNow"
+                    href="https://www.MTBOSS.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -147,7 +147,7 @@ const Content = () => {
                 <li>
                   <strong>Support after handover.</strong> Our{" "}
                   <a
-                    href="https://www.MTBoss.in/quick"
+                    href="https://www.MTBOSS.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -201,7 +201,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Design and Construction Process
+                MTBOSS Design and Construction Process
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -217,9 +217,9 @@ const Content = () => {
                   <strong>Step 3: 3D elevation and detailed drawings.</strong> Once the concept is approved, we prepare 3D views and working drawings.
                 </li>
                 <li>
-                  <strong>Step 4: Budget and quotation.</strong> You receive a clear written estimate. For a quick early figure, try the MTBoss{" "}
+                  <strong>Step 4: Budget and quotation.</strong> You receive a clear written estimate. For a quick early figure, try the MTBOSS{" "}
                   <a
-                    href="https://www.MTBoss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -229,7 +229,7 @@ const Content = () => {
                   .
                 </li>
                 <li>
-                  <strong>Step 5: Construction and supervision.</strong> If you choose MTBoss for construction, our team builds exactly to the approved design with regular site checks.
+                  <strong>Step 5: Construction and supervision.</strong> If you choose MTBOSS for construction, our team builds exactly to the approved design with regular site checks.
                 </li>
                 <li>
                   <strong>Step 6: Finishing and handover.</strong> We complete finishing, inspection and cleaning, and hand over a building that is ready to use.
@@ -268,7 +268,7 @@ const Content = () => {
               <p className="mt-3">
                 Architect fees are typically a small share of the total project cost, and good planning often saves far more than the fee itself by avoiding rework, wastage and structural mistakes. For a personal figure, request a{" "}
                 <a
-                  href="https://www.MTBoss.in/CTASection/get-quote"
+                  href="https://www.MTBOSS.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -285,7 +285,7 @@ const Content = () => {
                 Designing for Moradabad&apos;s Climate and Lifestyle
               </h3>
               <p className="mb-3">
-                Good architecture responds to its surroundings. For projects in Moradabad, MTBoss focuses on:
+                Good architecture responds to its surroundings. For projects in Moradabad, MTBOSS focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -362,7 +362,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MTBoss in Moradabad
+                Areas Served by MTBOSS in Moradabad
               </h3>
               <p className="mb-3">
                 We work with home and business owners across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies and commercial belts.
@@ -375,21 +375,21 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Architect FAQs
+                MTBOSS Architect FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MTBoss offer architect services in Moradabad?</strong>
+                  <strong>Q1. Does MTBOSS offer architect services in Moradabad?</strong>
                   <br />
                   Yes. We handle house plans, 3D elevations, commercial design and construction.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MTBoss offers a free consultation and site visit.
+                  Yes. MTBOSS offers a free consultation and site visit.
                 </li>
                 <li>
-                  <strong>Q3. Can MTBoss also build my house?</strong>
+                  <strong>Q3. Can MTBOSS also build my house?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
@@ -414,7 +414,7 @@ const Content = () => {
                   Yes. You get a written breakup of materials, labour and finishes.
                 </li>
                 <li>
-                  <strong>Q8. How do I contact MTBoss?</strong>
+                  <strong>Q8. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

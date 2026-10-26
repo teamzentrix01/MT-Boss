@@ -7,35 +7,35 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Duplex House Construction in Moradabad | MTBoss",
+  title: "Duplex House Construction in Moradabad | MTBOSS",
 
   description:
-    "Planning duplex house construction in Moradabad? MTBoss offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
+    "Planning duplex house construction in Moradabad? MTBOSS offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "duplex house construction Moradabad, duplex house builder Moradabad, duplex house design Moradabad, duplex house contractor Moradabad, duplex house construction cost Moradabad, two floor house construction Moradabad, G+1 house construction Moradabad, duplex elevation design Moradabad, small plot duplex Moradabad, independent house construction Moradabad, residential construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
+    "duplex house construction Moradabad, duplex house builder Moradabad, duplex house design Moradabad, duplex house contractor Moradabad, duplex house construction cost Moradabad, two floor house construction Moradabad, G+1 house construction Moradabad, duplex elevation design Moradabad, small plot duplex Moradabad, independent house construction Moradabad, residential construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
     canonical:
-      "https://www.MTBoss.in/duplex-house-construction-in-moradabad",
+      "https://www.MTBOSS.in/duplex-house-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Duplex House Construction in Moradabad | MTBoss",
+    title: "Duplex House Construction in Moradabad | MTBOSS",
 
     description:
-      "Planning duplex house construction in Moradabad? MTBoss offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning duplex house construction in Moradabad? MTBOSS offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.MTBoss.in/duplex-house-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/duplex-house-construction-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-duplex-house-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-duplex-house-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Duplex House Construction in Moradabad - MTBoss",
+        alt: "Duplex House Construction in Moradabad - MTBOSS",
       },
     ],
 
@@ -46,13 +46,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Duplex House Construction in Moradabad | MTBoss",
+    title: "Duplex House Construction in Moradabad | MTBOSS",
 
     description:
-      "Planning duplex house construction in Moradabad? MTBoss offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning duplex house construction in Moradabad? MTBOSS offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.MTBoss.in/og-duplex-house-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-duplex-house-construction-moradabad.jpg",
     ],
   },
 
@@ -66,12 +66,12 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBoss Construction Private Limited",
-    url: "https://www.MTBoss.in/duplex-house-construction-in-moradabad",
+    name: "MTBOSS Construction Private Limited",
+    url: "https://www.MTBOSS.in/duplex-house-construction-in-moradabad",
     telephone: "+91-9458410866",
-    email: "MTBoss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.MTBoss.in/og-duplex-house-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-duplex-house-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -118,14 +118,14 @@ export default function Page() {
     "@type": "Service",
     name: "Duplex House Construction Services in Moradabad",
     description:
-      "MTBoss provides duplex house construction in Moradabad for two-floor independent homes, including design coordination, structure, staircase, facade, services provisions, waterproofing, flooring, finishing, modular kitchen, interiors, outdoor works and final handover.",
-    url: "https://www.MTBoss.in/duplex-house-construction-in-moradabad",
+      "MTBOSS provides duplex house construction in Moradabad for two-floor independent homes, including design coordination, structure, staircase, facade, services provisions, waterproofing, flooring, finishing, modular kitchen, interiors, outdoor works and final handover.",
+    url: "https://www.MTBOSS.in/duplex-house-construction-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -155,10 +155,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss build duplex houses in Moradabad?",
+        name: "Does MTBOSS build duplex houses in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBoss builds residential projects, including independent houses and luxury villas, in Moradabad and Bareilly. Share your plan with the team to confirm the scope for your duplex.",
+          text: "Yes. MTBOSS builds residential projects, including independent houses and luxury villas, in Moradabad and Bareilly. Share your plan with the team to confirm the scope for your duplex.",
         },
       },
       {
@@ -190,15 +190,15 @@ export default function Page() {
         name: "How much does duplex house construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Duplex house construction cost depends on built-up area, design complexity, material and finish level, interior scope and site conditions. MTBoss offers a free Budget Calculator and detailed quote option.",
+          text: "Duplex house construction cost depends on built-up area, design complexity, material and finish level, interior scope and site conditions. MTBOSS offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -212,19 +212,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Duplex House Construction in Moradabad",
-        item: "https://www.MTBoss.in/duplex-house-construction-in-moradabad",
+        item: "https://www.MTBOSS.in/duplex-house-construction-in-moradabad",
       },
     ],
   };

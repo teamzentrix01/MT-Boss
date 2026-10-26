@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/residential-interior-designer-in-bareilly",
+      "https://www.MTBOSS.in/residential-interior-designer-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Looking for a residential interior designer Bareilly? MTBOSS designs flats, villas and houses around your family. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/residential-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/residential-interior-designer-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-residential-interior-designer-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-residential-interior-designer-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Residential Interior Designer in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Looking for a residential interior designer Bareilly? MTBOSS designs flats, villas and houses around your family. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-residential-interior-designer-bareilly.jpg",
+      "https://www.MTBOSS.in/og-residential-interior-designer-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/residential-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/residential-interior-designer-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-residential-interior-designer-bareilly.jpg",
+      "https://www.MTBOSS.in/og-residential-interior-designer-bareilly.jpg",
     priceRange: "₹₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,13 +116,13 @@ export default function Page() {
     name: "Residential Interior Design Services in Bareilly",
     description:
       "MTBOSS provides residential interior design services in Bareilly. Services include family and lifestyle discussion, site visit and measurement, space planning, concept and 3D views, living and dining interiors, modular kitchen, bedrooms and kids' rooms, bathrooms, puja room or mandir, false ceiling and lighting, painting, wallpaper and PVC panels, flooring and tiling, electrical, plumbing and waterproofing, renovation and remodelling, material supply and home services.",
-    url: "https://www.mtboss.in/residential-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/residential-interior-designer-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -217,19 +217,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Residential Interior Designer in Bareilly",
-        item: "https://www.mtboss.in/residential-interior-designer-in-bareilly",
+        item: "https://www.MTBOSS.in/residential-interior-designer-in-bareilly",
       },
     ],
   };

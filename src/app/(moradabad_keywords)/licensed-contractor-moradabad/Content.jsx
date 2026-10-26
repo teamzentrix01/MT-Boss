@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Licensed Contractor in Moradabad: MTBoss
+            Licensed Contractor in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,7 +23,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 A licensed contractor in Moradabad gives you a clear, verifiable
-                identity to work with. MTBoss Construction Private Limited
+                identity to work with. MTBOSS Construction Private Limited
                 serves clients across Moradabad and Bareilly with residential,
                 commercial, hospitality, industrial and infrastructure
                 construction. Our work follows the promise on our website:
@@ -91,10 +91,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a one-stop destination for construction, home
+                MTBOSS is a one-stop destination for construction, home
                 services, materials and property needs, serving Moradabad and
                 Bareilly. Our work covers residential, commercial, hotel and
                 hospitality, industrial and warehousing, and infrastructure and
@@ -207,7 +207,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Compliance Practices Followed by MTBoss
+                Compliance Practices Followed by MTBOSS
               </h3>
               <p className="mb-3">
                 Paperwork must be backed by practice. Our approach includes:
@@ -236,7 +236,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Services Offered by MTBoss
+                Services Offered by MTBOSS
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -295,7 +295,7 @@ const Content = () => {
                 Supporting Home Services
               </h4>
               <p className="mb-3">
-                Through MTBoss.in, clients can also book architecture and
+                Through MTBOSS.in, clients can also book architecture and
                 interior design, building elevation, carpenter, painter,
                 electrician and plumber services, tile and marble work, false
                 ceilings, PVC panels, door and window installation, modular
@@ -388,7 +388,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Use the Get a Construction Quote
-                  button on MTBoss.in, or call or WhatsApp us.
+                  button on MTBOSS.in, or call or WhatsApp us.
                 </li>
                 <li>
                   <strong>Site visit.</strong> Engineers inspect the plot, soil
@@ -401,7 +401,7 @@ const Content = () => {
                 <li>
                   <strong>Itemised estimate.</strong> You receive a quotation
                   with quantities, rates and payment stages. You can also use
-                  the Budget Calculator on MTBoss.in for an early idea.
+                  the Budget Calculator on MTBOSS.in for an early idea.
                 </li>
                 <li>
                   <strong>Written agreement.</strong> Scope, material standards,
@@ -456,7 +456,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Owners who prefer to source materials can also explore the Shop
-                Now section on MTBoss.in for cement, steel, bricks and more.
+                Now section on MTBOSS.in for cement, steel, bricks and more.
               </p>
             </section>
 
@@ -489,7 +489,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -552,12 +552,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -573,10 +573,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -590,7 +590,7 @@ const Content = () => {
                 proposal. Ask for our business documents at any time.
               </p>
               <p className="mt-3">
-                Choose MTBoss, your trusted licensed contractor in Moradabad,
+                Choose MTBOSS, your trusted licensed contractor in Moradabad,
                 for construction that is documented, supervised and delivered on
                 time.
               </p>
@@ -604,7 +604,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who is a licensed contractor in Moradabad?</strong>
                   <br />
-                  MTBoss Construction is a registered company serving Moradabad
+                  MTBOSS Construction is a registered company serving Moradabad
                   and Bareilly.
                 </li>
                 <li>
@@ -614,13 +614,13 @@ const Content = () => {
                   plus labour compliance where applicable.
                 </li>
                 <li>
-                  <strong>Q3. Which documents can I ask MTBoss for?</strong>
+                  <strong>Q3. Which documents can I ask MTBOSS for?</strong>
                   <br />
                   Company registration, GST, PAN and other registrations we
                   hold.
                 </li>
                 <li>
-                  <strong>Q4. Is MTBoss registered with government departments?</strong>
+                  <strong>Q4. Is MTBOSS registered with government departments?</strong>
                   <br />
                   Please ask our team for the current registration details
                   applicable to your project.
@@ -645,7 +645,7 @@ const Content = () => {
                 <li>
                   <strong>Q8. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or
                   call or WhatsApp{" "}
                   <a
                     href="tel:+919458410866"

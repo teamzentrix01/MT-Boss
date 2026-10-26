@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Government Approved Contractor in Moradabad: MTBoss Construction
+            Government Approved Contractor in Moradabad: MTBOSS Construction
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -21,7 +21,7 @@ const Content = () => {
                 already been reviewed by an official body.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited is a registered
+                MTBOSS Construction Private Limited is a registered
                 construction company serving Moradabad, Bareilly and nearby
                 districts of Uttar Pradesh. We deliver government buildings,
                 roads and drainage, residential homes, commercial complexes,
@@ -31,7 +31,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 This guide covers the meaning of government approval, its
-                importance in Moradabad, the services MTBoss offers and the
+                importance in Moradabad, the services MTBOSS offers and the
                 steps to start your project with us.
               </p>
             </section>
@@ -46,7 +46,7 @@ const Content = () => {
                 department or public body. In Uttar Pradesh, these include the
                 Public Works Department (PWD), municipal bodies (Nagar Nigam /
                 Nagar Palika), Jal Nigam, irrigation and rural development
-                departments, and central agencies. [Add the departments MTBoss
+                departments, and central agencies. [Add the departments MTBOSS
                 is actually registered with.]
               </p>
               <p className="mb-3">
@@ -121,10 +121,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a full-service construction and home-solutions brand
+                MTBOSS is a full-service construction and home-solutions brand
                 known for architecture, interior design, modular kitchens,
                 waterproofing, building renovation and complete construction. We
                 serve residential, commercial, hospitality, industrial and
@@ -177,7 +177,7 @@ const Content = () => {
                 Residential Construction
               </h4>
               <p className="mb-3">
-                MTBoss builds homes of every size, from budget-friendly houses
+                MTBOSS builds homes of every size, from budget-friendly houses
                 to premium villas and multi-storey apartments. Our residential
                 services include:
               </p>
@@ -233,7 +233,7 @@ const Content = () => {
                 Complete Home Services
               </h4>
               <p className="mb-3">
-                MTBoss also offers carpentry, painting, electrical work,
+                MTBOSS also offers carpentry, painting, electrical work,
                 plumbing, false ceilings, PVC panels, tile and marble fitting,
                 door and window installation, modular kitchens and more. You can
                 explore and book these services on our website.
@@ -242,7 +242,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Benefits of Hiring MTBoss as Your Government Approved
+                Benefits of Hiring MTBOSS as Your Government Approved
                 Contractor
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -304,7 +304,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss keeps its documentation organised and up to date, so
+                MTBOSS keeps its documentation organised and up to date, so
                 tenders and approvals move without delay.
               </p>
             </section>
@@ -314,7 +314,7 @@ const Content = () => {
                 Our Construction Process
               </h3>
               <p className="mb-3">
-                A clear process prevents delays and disputes. Every MTBoss
+                A clear process prevents delays and disputes. Every MTBOSS
                 project follows these steps.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -331,7 +331,7 @@ const Content = () => {
                 <li>
                   <strong>3. Transparent estimate.</strong> You receive an
                   itemised quote. You can also try the Construction Budget
-                  Calculator on MTBoss.in for a quick starting figure.
+                  Calculator on MTBOSS.in for a quick starting figure.
                 </li>
                 <li>
                   <strong>4. Material procurement.</strong> We source cement,
@@ -385,11 +385,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MTBoss in Moradabad
+                Reasons to Choose MTBOSS in Moradabad
               </h3>
               <p>
                 Many contractors promise quality. Few combine credentials,
-                capability and customer care. MTBoss offers all three. Our
+                capability and customer care. MTBOSS offers all three. Our
                 clients value our straightforward communication, neat site
                 management and respect for deadlines. A good contractor should
                 leave you with a strong building, clear paperwork and complete
@@ -414,17 +414,17 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Get Started with a Free Site Visit
               </h3>
-              <p className="mb-3">Contact MTBoss today to discuss your project:</p>
+              <p className="mb-3">Contact MTBOSS today to discuss your project:</p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -434,10 +434,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -450,7 +450,7 @@ const Content = () => {
                 respond with a site visit and a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss, your trusted government approved contractor in
+                Choose MTBOSS, your trusted government approved contractor in
                 Moradabad, and build with confidence.
               </p>
             </section>
@@ -478,15 +478,15 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q3. Is MTBoss a government approved contractor in
+                    Q3. Is MTBOSS a government approved contractor in
                     Moradabad?
                   </strong>
                   <br />
-                  Yes. MTBoss is a registered contractor serving Moradabad and
+                  Yes. MTBOSS is a registered contractor serving Moradabad and
                   Bareilly [add registration class and number].
                 </li>
                 <li>
-                  <strong>Q4. What projects does MTBoss take up?</strong>
+                  <strong>Q4. What projects does MTBOSS take up?</strong>
                   <br />
                   Government buildings, roads, homes, commercial complexes,
                   industrial sheds, hotels, renovation and waterproofing.
@@ -500,7 +500,7 @@ const Content = () => {
                 <li>
                   <strong>Q6. How can I get a construction quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or
                   call or WhatsApp +91 94584 10866 for a free site visit.
                 </li>
                 <li>

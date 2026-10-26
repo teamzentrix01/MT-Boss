@@ -7,34 +7,34 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Farmhouse Construction in Moradabad | MTBoss",
+  title: "Farmhouse Construction in Moradabad | MTBOSS",
 
   description:
-    "Planning farmhouse construction in Moradabad? MTBoss offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
+    "Planning farmhouse construction in Moradabad? MTBOSS offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
 
   keywords:
-    "farmhouse construction Moradabad, farmhouse builder Moradabad, farmhouse design Moradabad, farmhouse contractor Moradabad, farmhouse construction cost Moradabad, weekend home Moradabad, farm house on agricultural land Moradabad, farmhouse boundary wall Moradabad, farmhouse with garden Moradabad, luxury farmhouse Moradabad, residential construction company Moradabad, MTBoss Moradabad, MTBoss Kanth Road, MTBoss budget calculator, construction quote Moradabad",
+    "farmhouse construction Moradabad, farmhouse builder Moradabad, farmhouse design Moradabad, farmhouse contractor Moradabad, farmhouse construction cost Moradabad, weekend home Moradabad, farm house on agricultural land Moradabad, farmhouse boundary wall Moradabad, farmhouse with garden Moradabad, luxury farmhouse Moradabad, residential construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
-    canonical: "https://www.MTBoss.in/farmhouse-construction-in-moradabad",
+    canonical: "https://www.MTBOSS.in/farmhouse-construction-in-moradabad",
   },
 
   openGraph: {
-    title: "Farmhouse Construction in Moradabad | MTBoss",
+    title: "Farmhouse Construction in Moradabad | MTBOSS",
 
     description:
-      "Planning farmhouse construction in Moradabad? MTBoss offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning farmhouse construction in Moradabad? MTBOSS offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.MTBoss.in/farmhouse-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/farmhouse-construction-in-moradabad",
 
-    siteName: "MTBoss Construction Private Limited",
+    siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.MTBoss.in/og-farmhouse-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-farmhouse-construction-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Farmhouse Construction in Moradabad - MTBoss",
+        alt: "Farmhouse Construction in Moradabad - MTBOSS",
       },
     ],
 
@@ -45,13 +45,13 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Farmhouse Construction in Moradabad | MTBoss",
+    title: "Farmhouse Construction in Moradabad | MTBOSS",
 
     description:
-      "Planning farmhouse construction in Moradabad? MTBoss offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
+      "Planning farmhouse construction in Moradabad? MTBOSS offers custom design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.MTBoss.in/og-farmhouse-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-farmhouse-construction-moradabad.jpg",
     ],
   },
 
@@ -65,11 +65,11 @@ export default function Page() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
-    name: "MTBoss Construction Private Limited",
-    url: "https://www.MTBoss.in/farmhouse-construction-in-moradabad",
+    name: "MTBOSS Construction Private Limited",
+    url: "https://www.MTBOSS.in/farmhouse-construction-in-moradabad",
     telephone: "+91-9458410866",
-    email: "MTBoss2016@gmail.com",
-    image: "https://www.MTBoss.in/og-farmhouse-construction-moradabad.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-farmhouse-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,14 +116,14 @@ export default function Page() {
     "@type": "Service",
     name: "Farmhouse Construction Services in Moradabad",
     description:
-      "MTBoss provides farmhouse construction in Moradabad for weekend homes and permanent countryside residences, including site layout, design coordination, structure, facade, services provisions, waterproofing, flooring, finishing, modular kitchen, interiors, boundary wall, gate, outdoor works and final handover.",
-    url: "https://www.MTBoss.in/farmhouse-construction-in-moradabad",
+      "MTBOSS provides farmhouse construction in Moradabad for weekend homes and permanent countryside residences, including site layout, design coordination, structure, facade, services provisions, waterproofing, flooring, finishing, modular kitchen, interiors, boundary wall, gate, outdoor works and final handover.",
+    url: "https://www.MTBOSS.in/farmhouse-construction-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
-      name: "MTBoss Construction Private Limited",
+      name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "MTBoss2016@gmail.com",
-      url: "https://www.MTBoss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -153,10 +153,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Does MTBoss build farmhouses in Moradabad?",
+        name: "Does MTBOSS build farmhouses in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. MTBoss builds residential projects, including independent houses and luxury villas, in Moradabad and Bareilly. Share your land details with the team to confirm the scope for your farmhouse.",
+          text: "Yes. MTBOSS builds residential projects, including independent houses and luxury villas, in Moradabad and Bareilly. Share your land details with the team to confirm the scope for your farmhouse.",
         },
       },
       {
@@ -180,7 +180,7 @@ export default function Page() {
         name: "How much does farmhouse construction cost in Moradabad?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Farmhouse construction cost depends on built-up area, design, material and finish level, site access, utilities and outdoor development. MTBoss offers a free Budget Calculator and detailed quote option.",
+          text: "Farmhouse construction cost depends on built-up area, design, material and finish level, site access, utilities and outdoor development. MTBOSS offers a free Budget Calculator and detailed quote option.",
         },
       },
       {
@@ -193,10 +193,10 @@ export default function Page() {
       },
       {
         "@type": "Question",
-        name: "Where is the MTBoss office located?",
+        name: "Where is the MTBOSS office located?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The MTBoss office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
+          text: "The MTBOSS office is located at Harthala, Kanth Road, Behind KR Collection, near Domino's, Moradabad, Uttar Pradesh.",
         },
       },
     ],
@@ -210,19 +210,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.MTBoss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.MTBoss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Farmhouse Construction in Moradabad",
-        item: "https://www.MTBoss.in/farmhouse-construction-in-moradabad",
+        item: "https://www.MTBOSS.in/farmhouse-construction-in-moradabad",
       },
     ],
   };

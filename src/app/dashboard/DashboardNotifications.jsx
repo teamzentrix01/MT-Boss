@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell, CheckCheck, Trash2, X } from "lucide-react";
 
-const STORAGE_KEY = "mtboss-admin-notifications-v1";
+const STORAGE_KEY = "MTBOSS-admin-notifications-v1";
 const POLL_INTERVAL = 60_000;
 
 function eventSignature(item) {

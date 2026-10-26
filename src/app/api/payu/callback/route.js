@@ -19,7 +19,7 @@ function resultRedirect(req, status, reference, message, returnTo = '/userdashbo
 }
 
 function withPaymentParams(path, status, message) {
-  const url = new URL(path, 'https://MTBoss.local');
+  const url = new URL(path, 'https://MTBOSS.local');
   url.searchParams.set('payment', status);
   if (message) url.searchParams.set('message', message);
   return `${url.pathname}${url.search}`;

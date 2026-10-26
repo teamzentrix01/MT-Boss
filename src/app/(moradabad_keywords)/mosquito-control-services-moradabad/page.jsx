@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Mosquito Control Services in Moradabad | MTBoss',
+  title: 'Mosquito Control Services in Moradabad | MTBOSS',
   description:
-    'Mosquito control services in Moradabad by MTBoss. Breeding-spot inspection, larvicide, fogging and barrier treatment for homes, societies and sites. Call +91 94584 10866.',
+    'Mosquito control services in Moradabad by MTBOSS. Breeding-spot inspection, larvicide, fogging and barrier treatment for homes, societies and sites. Call +91 94584 10866.',
   keywords:
-    'mosquito control services Moradabad, mosquito control Moradabad, mosquito fogging Moradabad, mosquito larvicide treatment Moradabad, mosquito control near me Moradabad, society mosquito control Moradabad, mosquito treatment for construction sites Moradabad, mosquito control for homes Moradabad, mosquito pest control Moradabad, MTBoss mosquito control Moradabad',
+    'mosquito control services Moradabad, mosquito control Moradabad, mosquito fogging Moradabad, mosquito larvicide treatment Moradabad, mosquito control near me Moradabad, society mosquito control Moradabad, mosquito treatment for construction sites Moradabad, mosquito control for homes Moradabad, mosquito pest control Moradabad, MTBOSS mosquito control Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/mosquito-control-services-moradabad',
+    canonical: 'https://www.MTBOSS.in/mosquito-control-services-moradabad',
   },
   openGraph: {
-    title: 'Mosquito Control Services in Moradabad | MTBoss',
+    title: 'Mosquito Control Services in Moradabad | MTBOSS',
     description:
-      'Mosquito control services in Moradabad by MTBoss. Breeding-spot inspection, larvicide, fogging and barrier treatment for homes, societies and sites. Call +91 94584 10866.',
-    url: 'https://www.MTBoss.in/mosquito-control-services-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Mosquito control services in Moradabad by MTBOSS. Breeding-spot inspection, larvicide, fogging and barrier treatment for homes, societies and sites. Call +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/mosquito-control-services-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-mosquito-control-services-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-mosquito-control-services-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Mosquito Control Services in Moradabad - MTBoss',
+        alt: 'Mosquito Control Services in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,11 +33,11 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Mosquito Control Services in Moradabad | MTBoss',
+    title: 'Mosquito Control Services in Moradabad | MTBOSS',
     description:
-      'Mosquito control services in Moradabad by MTBoss. Breeding-spot inspection, larvicide, fogging and barrier treatment for homes, societies and sites. Call +91 94584 10866.',
+      'Mosquito control services in Moradabad by MTBOSS. Breeding-spot inspection, larvicide, fogging and barrier treatment for homes, societies and sites. Call +91 94584 10866.',
     images: [
-      'https://www.MTBoss.in/og-mosquito-control-services-moradabad.jpg',
+      'https://www.MTBOSS.in/og-mosquito-control-services-moradabad.jpg',
     ],
   },
   robots: {
@@ -49,10 +49,10 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
-  name: 'MTBoss Construction Private Limited',
-  url: 'https://www.MTBoss.in/mosquito-control-services-moradabad',
+  name: 'MTBOSS Construction Private Limited',
+  url: 'https://www.MTBOSS.in/mosquito-control-services-moradabad',
   telephone: '+91-9458410866',
-  email: 'MTBoss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

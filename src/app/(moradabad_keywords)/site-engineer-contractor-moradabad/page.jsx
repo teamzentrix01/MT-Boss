@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Site Engineer Contractor in Moradabad',
   description:
-    'Looking for a site engineer contractor in Moradabad? MTBoss provides engineer-supervised construction for homes, shops and industrial projects with quality control.',
+    'Looking for a site engineer contractor in Moradabad? MTBOSS provides engineer-supervised construction for homes, shops and industrial projects with quality control.',
   keywords:
-    'site engineer contractor Moradabad, site engineer Moradabad, construction site engineer Moradabad, engineer supervision Moradabad, civil engineer contractor Moradabad, site supervision Moradabad, construction quality control Moradabad, building supervision Moradabad, MTBoss Moradabad, site engineer contact Moradabad',
+    'site engineer contractor Moradabad, site engineer Moradabad, construction site engineer Moradabad, engineer supervision Moradabad, civil engineer contractor Moradabad, site supervision Moradabad, construction quality control Moradabad, building supervision Moradabad, MTBOSS Moradabad, site engineer contact Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/site-engineer-contractor-moradabad',
+    canonical: 'https://www.MTBOSS.in/site-engineer-contractor-moradabad',
   },
   openGraph: {
     title: 'Site Engineer Contractor in Moradabad',
     description:
-      'Looking for a site engineer contractor in Moradabad? MTBoss provides engineer-supervised construction for homes, shops and industrial projects with quality control.',
-    url: 'https://www.MTBoss.in/site-engineer-contractor-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Looking for a site engineer contractor in Moradabad? MTBOSS provides engineer-supervised construction for homes, shops and industrial projects with quality control.',
+    url: 'https://www.MTBOSS.in/site-engineer-contractor-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-site-engineer-contractor-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-site-engineer-contractor-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Site Engineer Contractor in Moradabad - MTBoss',
+        alt: 'Site Engineer Contractor in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Site Engineer Contractor in Moradabad',
     description:
-      'Looking for a site engineer contractor in Moradabad? MTBoss provides engineer-supervised construction for homes, shops and industrial projects with quality control.',
-    images: ['https://www.MTBoss.in/og-site-engineer-contractor-moradabad.jpg'],
+      'Looking for a site engineer contractor in Moradabad? MTBOSS provides engineer-supervised construction for homes, shops and industrial projects with quality control.',
+    images: ['https://www.MTBOSS.in/og-site-engineer-contractor-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/site-engineer-contractor-moradabad',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/site-engineer-contractor-moradabad',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

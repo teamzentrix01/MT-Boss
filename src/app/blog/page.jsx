@@ -69,7 +69,7 @@ export default function BlogListingPage() {
             <span>📰</span>{'Construction & Real Estate Insights'}
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight max-w-4xl mx-auto">
-            <span className="inline-block mr-3">MTBoss</span>
+            <span className="inline-block mr-3">MTBOSS</span>
             <span className="inline-block mr-3 text-[var(--brand-blue)]">Knowledge Hub</span>
             <span className="inline-block">&amp; Guides</span>
           </h1>

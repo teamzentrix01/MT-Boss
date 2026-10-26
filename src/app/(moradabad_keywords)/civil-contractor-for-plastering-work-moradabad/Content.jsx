@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Contractor for Plastering Work in Moradabad: MTBoss
+            Civil Contractor for Plastering Work in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -65,10 +65,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MTBoss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MTBoss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -90,7 +90,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Plastering Services Offered by MTBoss
+                Plastering Services Offered by MTBOSS
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -147,7 +147,7 @@ const Content = () => {
               <p>
                 For internal dry areas, gypsum or similar smooth-finish systems
                 can reduce putty effort and give a neat surface. They are not
-                suited to wet areas or external use [confirm if MTBoss offers
+                suited to wet areas or external use [confirm if MTBOSS offers
                 gypsum plaster].
               </p>
 
@@ -216,7 +216,7 @@ const Content = () => {
                 coats. External walls usually need a thicker, stronger application.
                 Exact thickness and mix proportions depend on the surface, the
                 material and the design, so our engineers decide them for each job
-                rather than applying one fixed rule [confirm MTBoss standard
+                rather than applying one fixed rule [confirm MTBOSS standard
                 thickness and mix specifications].
               </p>
               <p>
@@ -288,7 +288,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Owners who prefer to source materials can explore the Shop Now
-                section on MTBoss.in for cement, steel, bricks and more, and our
+                section on MTBOSS.in for cement, steel, bricks and more, and our
                 engineers can advise on quantity and quality [confirm delivery
                 coverage].
               </p>
@@ -354,7 +354,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  MTBoss.in, or call or WhatsApp us with your location, photos and
+                  MTBOSS.in, or call or WhatsApp us with your location, photos and
                   a short description.
                 </li>
                 <li>
@@ -443,11 +443,11 @@ const Content = () => {
               </h3>
               <p>
                 Plaster is the base for putty, primer and paint. Poor plaster
-                makes even expensive paint look bad. MTBoss coordinates
+                makes even expensive paint look bad. MTBOSS coordinates
                 plastering with painting, building elevation and wallpaper
                 services, so plaster is allowed enough time to dry, and surface
                 preparation matches the finish you plan. Our Painter and Building
-                Elevation quick services on MTBoss.in make this easy to arrange in
+                Elevation quick services on MTBOSS.in make this easy to arrange in
                 one flow.
               </p>
             </section>
@@ -495,20 +495,20 @@ const Content = () => {
                 </li>
                 <li>Height and access, including scaffolding for upper floors</li>
                 <li>Material grades and quality</li>
-                <li>Whether materials are supplied by MTBoss or by you</li>
+                <li>Whether materials are supplied by MTBOSS or by you</li>
                 <li>Project timeline and number of workers needed</li>
               </ul>
               <p className="mt-3">
                 We measure the area and prepare an itemised estimate instead of
                 guessing [confirm whether rates are per area or lump sum]. You can
-                also use the Budget Calculator on MTBoss.in for an early idea of
+                also use the Budget Calculator on MTBOSS.in for an early idea of
                 overall construction cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -561,7 +561,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book Your Plastering Work with MTBoss
+                Book Your Plastering Work with MTBOSS
               </h3>
               <p className="mb-3">
                 Ready for plaster that looks good and lasts? Contact us:
@@ -570,12 +570,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -593,10 +593,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -610,7 +610,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MTBoss, your trusted civil contractor for plastering work
+                Choose MTBOSS, your trusted civil contractor for plastering work
                 in Moradabad, for smooth walls, proper curing and a finish that
                 stays sound.
               </p>
@@ -624,7 +624,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who offers plastering work in Moradabad?</strong>
                   <br />
-                  MTBoss Construction provides internal and external plastering,
+                  MTBOSS Construction provides internal and external plastering,
                   plus repair plaster, across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -663,7 +663,7 @@ const Content = () => {
                   <strong>Q7. Do you supply the plaster materials?</strong>
                   <br />
                   Yes, or you can source them yourself. Explore Shop Now on
-                  MTBoss.in for materials [confirm delivery coverage].
+                  MTBOSS.in for materials [confirm delivery coverage].
                 </li>
                 <li>
                   <strong>Q8. How is plastering work priced?</strong>
@@ -674,7 +674,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

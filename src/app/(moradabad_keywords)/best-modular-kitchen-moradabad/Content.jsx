@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Best Modular Kitchen in Moradabad: MTBoss
+            Best Modular Kitchen in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -19,7 +19,7 @@ const Content = () => {
                 measures your site, plans around how you cook, writes every
                 material and hardware item into the quotation, prepares plumbing
                 and electrics properly, installs neatly and stands behind the work
-                afterward. MTBoss Construction Private Limited, based on Kanth
+                afterward. MTBOSS Construction Private Limited, based on Kanth
                 Road, invites you to compare it against the seven criteria below.
               </p>
             </section>
@@ -37,7 +37,7 @@ const Content = () => {
                 test, whichever company you choose.
               </p>
               <p>
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly, and offers modular kitchen design and installation as a
                 quick service. Our work follows the promise on our website:
@@ -93,7 +93,7 @@ const Content = () => {
                 decide how it ages. A trustworthy quotation names the board type
                 and grade, shutter finish, countertop material, hinge and channel
                 brand, and load ratings [confirm the boards, brands and hardware
-                MTBoss actually uses].
+                MTBOSS actually uses].
               </p>
               <p>
                 <strong>Test it:</strong> ask for these details in writing, with
@@ -114,7 +114,7 @@ const Content = () => {
                 flooring levels, tiling and the chimney duct before installation.
               </p>
               <p className="mb-3">
-                MTBoss is a construction company, and our Plumber, Electrician,
+                MTBOSS is a construction company, and our Plumber, Electrician,
                 Tile &amp; Marble and Water Proofing services can prepare the
                 kitchen so the units go into a sound room.
               </p>
@@ -138,7 +138,7 @@ const Content = () => {
               <p>
                 <strong>Test it:</strong> ask to see completed kitchens, close-up
                 photos or an ongoing site, and look at the corners, gaps and
-                joints [confirm what MTBoss can show].
+                joints [confirm what MTBOSS can show].
               </p>
             </section>
 
@@ -181,7 +181,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Measured Against the Seven Criteria
+                MTBOSS Measured Against the Seven Criteria
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -269,7 +269,7 @@ const Content = () => {
                 </li>
                 <li>
                   A visit to a sample display, showroom or finished kitchen, where
-                  possible [confirm what MTBoss can offer]
+                  possible [confirm what MTBOSS can offer]
                 </li>
                 <li>Samples of boards, shutter finishes, hinges and channels</li>
                 <li>
@@ -402,11 +402,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Modular kitchen design and
@@ -431,21 +431,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -461,7 +461,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MTBoss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -521,7 +521,7 @@ const Content = () => {
                   </strong>
                   <br />
                   Judge on measurement, design logic, written specification,
-                  installation and service. MTBoss welcomes comparison.
+                  installation and service. MTBOSS welcomes comparison.
                 </li>
                 <li>
                   <strong>
@@ -570,7 +570,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a site visit?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

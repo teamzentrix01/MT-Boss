@@ -8,14 +8,14 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Affordable Architect in Bareilly: MTBoss
+            Affordable Architect in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
                 An affordable architect in Bareilly gives you sound, buildable design
-                at a fair price, with a clear scope and no surprise charges. MTBoss
+                at a fair price, with a clear scope and no surprise charges. MTBOSS
                 Construction Private Limited offers stage-wise, itemised design
                 proposals for Bareilly and Moradabad, so you can pay for what you
                 need and add more later{" "}
@@ -32,7 +32,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 <span className="text-gray-500">
-                  [Fill this block only with terms MTBoss will honour. Suggested
+                  [Fill this block only with terms MTBOSS will honour. Suggested
                   format:]
                 </span>
               </p>
@@ -84,7 +84,7 @@ const Content = () => {
                 spend: clear scope, honest advice, efficient design and no padding.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -171,7 +171,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 <span className="text-gray-500">
-                  [State the tiers MTBoss actually offers.]
+                  [State the tiers MTBOSS actually offers.]
                 </span>
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -218,7 +218,7 @@ const Content = () => {
               <p className="mt-3">
                 A middle path is adapting a good base plan to your plot, with a
                 registered professional checking structure, approvals and
-                orientation. Ask whether MTBoss offers an adaptation service, and
+                orientation. Ask whether MTBOSS offers an adaptation service, and
                 what it includes{" "}
                 <span className="text-gray-500">[confirm]</span>.
               </p>
@@ -314,7 +314,7 @@ const Content = () => {
               </h3>
               <p>
                 When one company designs and builds, coordination is simpler, and
-                cost can be checked while drawing, which may reduce redesign. MTBoss
+                cost can be checked while drawing, which may reduce redesign. MTBOSS
                 offers design-and-build or design-only{" "}
                 <span className="text-gray-500">[confirm]</span>. For fairness, ask
                 for a separate design fee and construction quotation, so you can
@@ -426,7 +426,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 A clear proposal answers all of these before you sign{" "}
-                <span className="text-gray-500">[state MTBoss&apos;s terms]</span>.
+                <span className="text-gray-500">[state MTBOSS&apos;s terms]</span>.
               </p>
             </section>
 
@@ -437,7 +437,7 @@ const Content = () => {
               <p>
                 Approvals can add cost and delay if mishandled{" "}
                 <span className="text-gray-500">
-                  [confirm the authority and what MTBoss handles]
+                  [confirm the authority and what MTBOSS handles]
                 </span>
                 . Ask who prepares and submits the drawings, who pays authority fees
                 and how long the process normally takes. Having drawings ready and
@@ -448,12 +448,12 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBoss Keeps Proposals Fair
+                How MTBOSS Keeps Proposals Fair
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> Call, WhatsApp or click Get a
-                  Construction Quote on MTBoss.in, with your location pin, plot
+                  Construction Quote on MTBOSS.in, with your location pin, plot
                   papers and a short brief
                 </li>
                 <li>
@@ -479,17 +479,17 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Use the Budget Calculator on MTBoss.in for an early idea of
+                Use the Budget Calculator on MTBOSS.in for an early idea of
                 construction cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Related Services From MTBoss
+                Related Services From MTBOSS
               </h3>
               <p>
-                Through MTBoss.in, MTBoss also offers Architecture &amp; Interior,
+                Through MTBOSS.in, MTBOSS also offers Architecture &amp; Interior,
                 Building Elevation, Building Contractor, Building Renovation,
                 Modular Kitchen, False Ceiling, Water Proofing, Painter, Electrician
                 and Plumber, so design, construction and finishing can be
@@ -499,11 +499,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Architecture, interior and building
@@ -538,21 +538,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -572,7 +572,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Owners Consider MTBoss
+                Reasons Owners Consider MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -638,21 +638,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &ldquo;Get a Construction Quote&rdquo;)
                 </li>
@@ -667,7 +667,7 @@ const Content = () => {
                 stage.
               </p>
               <p className="mt-3">
-                Ask MTBoss for an affordable design proposal in Bareilly, with the
+                Ask MTBOSS for an affordable design proposal in Bareilly, with the
                 scope written down, the safety items kept in and the price clear
                 before work begins.
               </p>
@@ -681,7 +681,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who is an affordable architect in Bareilly?</strong>
                   <br />
-                  MTBoss offers stage-wise, clearly priced design for Bareilly and
+                  MTBOSS offers stage-wise, clearly priced design for Bareilly and
                   Moradabad{" "}
                   <span className="text-gray-500">[confirm registration]</span>.
                 </li>
@@ -727,7 +727,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a proposal?</strong>
                   <br />
-                  Click &ldquo;Get a Construction Quote&rdquo; on MTBoss.in, or call
+                  Click &ldquo;Get a Construction Quote&rdquo; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

@@ -14,7 +14,7 @@ const Content = () => {
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Typing &quot;building contractor near me&quot; into a search bar while sitting in Moradabad usually means you want someone local — reachable quickly, familiar with the area, and not a distant company that takes days to respond. Proximity matters in construction because it directly affects response time, frequency of site visits, material delivery speed, and overall accountability. This guide explains why choosing a nearby building contractor matters, what to check before hiring one, and why MTBoss Construction Private Limited based in Moradabad, is a strong local option worth considering.
+                Typing &quot;building contractor near me&quot; into a search bar while sitting in Moradabad usually means you want someone local — reachable quickly, familiar with the area, and not a distant company that takes days to respond. Proximity matters in construction because it directly affects response time, frequency of site visits, material delivery speed, and overall accountability. This guide explains why choosing a nearby building contractor matters, what to check before hiring one, and why MTBOSS Construction Private Limited based in Moradabad, is a strong local option worth considering.
               </p>
             </section>
 
@@ -130,10 +130,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBoss Is a Strong &quot;Building Contractor Near Me&quot; Option in Moradabad
+                Why MTBOSS Is a Strong &quot;Building Contractor Near Me&quot; Option in Moradabad
               </h3>
               <p className="mb-3">
-                Based on their published company profile, MTBoss Construction Private Limited operates directly out of Moradabad and offers a wide service ecosystem for local customers:
+                Based on their published company profile, MTBOSS Construction Private Limited operates directly out of Moradabad and offers a wide service ecosystem for local customers:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Locally based office in Moradabad, making site visits and communication faster</li>
@@ -256,9 +256,9 @@ const Content = () => {
                 If you&apos;re ready to start your project with a contractor based right here in Moradabad, reach out directly:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Company:</strong> MTBoss Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.MTBoss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBoss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:MTBoss2016@gmail.com" className="text-blue-600 underline">MTBoss2016@gmail.com</a></li>
+                <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>
@@ -276,7 +276,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who is a reliable &quot;building contractor near me&quot; in Moradabad?</strong>
                   <br />
-                  MTBoss Construction Private Limited, locally based in Moradabad with 22+ years of experience.
+                  MTBOSS Construction Private Limited, locally based in Moradabad with 22+ years of experience.
                 </li>
                 <li>
                   <strong>Q2. Why should I choose a local contractor instead of an outside company?</strong>
@@ -289,22 +289,22 @@ const Content = () => {
                   Approximately ₹700–₹800 per sq. ft. for standard-quality construction.
                 </li>
                 <li>
-                  <strong>Q4. Does MTBoss offer a free local cost estimate?</strong>
+                  <strong>Q4. Does MTBOSS offer a free local cost estimate?</strong>
                   <br />
                   Yes, their Construction Budget Calculator gives an instant, free BOQ-based estimate.
                 </li>
                 <li>
-                  <strong>Q5. What quality packages does MTBoss provide?</strong>
+                  <strong>Q5. What quality packages does MTBOSS provide?</strong>
                   <br />
                   Basic, Standard, Premium, and Luxury, suited to different budgets.
                 </li>
                 <li>
-                  <strong>Q7. Does MTBoss also offer home repair services locally?</strong>
+                  <strong>Q7. Does MTBOSS also offer home repair services locally?</strong>
                   <br />
                   Yes, including electrical, plumbing, AC repair, painting, and pest control.
                 </li>
                 <li>
-                  <strong>Q8. Can I buy construction materials directly from MTBoss?</strong>
+                  <strong>Q8. Can I buy construction materials directly from MTBOSS?</strong>
                   <br />
                   Yes, they supply cement, TMT steel, bricks, tiles, and paints at wholesale rates.
                 </li>

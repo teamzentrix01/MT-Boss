@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for 3D Elevation in Bareilly: MTBoss
+            Architect for 3D Elevation in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -16,7 +16,7 @@ const Content = () => {
               <p>
                 An architect for 3D elevation in Bareilly designs the outside face of
                 your building and shows it in realistic three-dimensional views before
-                construction. MTBoss Construction Private Limited offers elevation
+                construction. MTBOSS Construction Private Limited offers elevation
                 design for houses, shops and commercial buildings in Bareilly and
                 Moradabad, with drawings and build support from the same team.
               </p>
@@ -34,7 +34,7 @@ const Content = () => {
                 spending on construction.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -78,7 +78,7 @@ const Content = () => {
               <p className="mb-3">
                 A clear brief and good photographs save revisions{" "}
                 <span className="text-gray-500">
-                  [adjust to MTBoss&apos;s process]
+                  [adjust to MTBOSS&apos;s process]
                 </span>
                 .
               </p>
@@ -108,7 +108,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 <span className="text-gray-500">
-                  [State the outputs MTBoss actually provides.]
+                  [State the outputs MTBOSS actually provides.]
                 </span>
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -161,7 +161,7 @@ const Content = () => {
               <p className="mb-3">
                 A facade must look good after the monsoon, not just in the render{" "}
                 <span className="text-gray-500">
-                  [confirm the finishes MTBoss offers]
+                  [confirm the finishes MTBOSS offers]
                 </span>
                 .
               </p>
@@ -208,7 +208,7 @@ const Content = () => {
                   <strong>Lighting plan:</strong> Positions of lights, so conduits can
                   be laid during construction{" "}
                   <span className="text-gray-500">
-                    [Electrician service available through MTBoss]
+                    [Electrician service available through MTBOSS]
                   </span>
                 </li>
               </ul>
@@ -367,7 +367,7 @@ const Content = () => {
               <p className="mb-3">
                 Good elevation design is iterative{" "}
                 <span className="text-gray-500">
-                  [state how many revisions MTBoss includes]
+                  [state how many revisions MTBOSS includes]
                 </span>
                 .
               </p>
@@ -441,7 +441,7 @@ const Content = () => {
               <p className="mb-3">
                 Elevation cost depends on{" "}
                 <span className="text-gray-500">
-                  [state how MTBoss prices elevation work]
+                  [state how MTBOSS prices elevation work]
                 </span>
                 :
               </p>
@@ -476,7 +476,7 @@ const Content = () => {
               </h3>
               <p>
                 A low price per view can hide missing drawings. Use the Budget
-                Calculator on MTBoss.in for an early idea of construction cost, since
+                Calculator on MTBOSS.in for an early idea of construction cost, since
                 the materials in your elevation drive that budget.
               </p>
             </section>
@@ -545,11 +545,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Building elevation, architecture and
@@ -584,21 +584,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -618,7 +618,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Owners Consider MTBoss
+                Reasons Owners Consider MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -681,21 +681,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &ldquo;Get a Construction Quote&rdquo;)
                 </li>
@@ -709,7 +709,7 @@ const Content = () => {
                 budget range, and we will send a written proposal.
               </p>
               <p className="mt-3">
-                Consider MTBoss for 3D elevation design in Bareilly, with the look
+                Consider MTBOSS for 3D elevation design in Bareilly, with the look
                 shown honestly before you build and the details drawn so it can be
                 built right.
               </p>
@@ -723,7 +723,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who designs 3D elevations in Bareilly?</strong>
                   <br />
-                  MTBoss Construction offers elevation design for Bareilly and
+                  MTBOSS Construction offers elevation design for Bareilly and
                   Moradabad{" "}
                   <span className="text-gray-500">[confirm registration]</span>.
                 </li>
@@ -775,7 +775,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I start?</strong>
                   <br />
-                  Click &ldquo;Get a Construction Quote&rdquo; on MTBoss.in, or call
+                  Click &ldquo;Get a Construction Quote&rdquo; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

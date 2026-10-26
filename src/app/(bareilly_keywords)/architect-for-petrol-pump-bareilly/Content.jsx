@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Petrol Pump in Bareilly: MTBoss
+            Architect for Petrol Pump in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -31,7 +31,7 @@ const Content = () => {
                 customers comfortably and meet strict rules.
               </p>
               <p>
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial and industrial properties across
                 Moradabad and Bareilly. Our work follows the promise on our
                 website: planning to completion, with quality work, transparent
@@ -46,7 +46,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Clear roles prevent costly mistakes. Please confirm with your oil
-                marketing company, and describe MTBoss&apos;s actual role.
+                marketing company, and describe MTBOSS&apos;s actual role.
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -417,7 +417,7 @@ const Content = () => {
               <p className="mb-3">
                 A fuel outlet usually passes through several approvals. Please
                 confirm each with the OMC and the relevant authority, and state
-                clearly what MTBoss handles:
+                clearly what MTBOSS handles:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>OMC site approval and layout approval.</li>
@@ -469,7 +469,7 @@ const Content = () => {
                 Design and Build Phasing
               </h3>
               <p className="mb-3">
-                Phasing keeps the project moving. Please adjust to MTBoss&apos;s
+                Phasing keeps the project moving. Please adjust to MTBOSS&apos;s
                 process:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -507,7 +507,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Costs vary widely with the site and OMC specification. Main factors
-                include the following. Please state how MTBoss prepares estimates:
+                include the following. Please state how MTBOSS prepares estimates:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Plot size and ground preparation.</li>
@@ -520,7 +520,7 @@ const Content = () => {
                 <li>Contingency for site surprises.</li>
               </ul>
               <p className="mt-3">
-                Use the Budget Calculator on MTBoss.in for an early idea of
+                Use the Budget Calculator on MTBOSS.in for an early idea of
                 building and civil costs, and ask for an itemised estimate once the
                 layout is fixed.
               </p>
@@ -599,11 +599,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited.
+                  <strong>Business:</strong> MTBOSS Construction Private Limited.
                 </li>
                 <li>
                   <strong>Service:</strong> Architecture, building design and civil
@@ -626,17 +626,17 @@ const Content = () => {
                   <strong>Phone / WhatsApp:</strong> +91 94584 10866.
                 </li>
                 <li>
-                  <strong>Email:</strong> MTBoss2016@gmail.com.
+                  <strong>Email:</strong> MTBOSS2016@gmail.com.
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                   .
                 </li>
@@ -657,7 +657,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Owners Consider MTBoss
+                Reasons Owners Consider MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -697,7 +697,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Discuss Your Fuel Outlet With MTBoss
+                Discuss Your Fuel Outlet With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -714,21 +714,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   — click &quot;Get a Construction Quote&quot;.
                 </li>
@@ -742,7 +742,7 @@ const Content = () => {
                 we will arrange a site study and a written proposal.
               </p>
               <p className="mt-3">
-                Consider MTBoss for the building and site side of your petrol pump
+                Consider MTBOSS for the building and site side of your petrol pump
                 in Bareilly, with the oil company&apos;s rules respected, the civil
                 work done carefully and every step written down.
               </p>
@@ -756,7 +756,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who plans petrol pump buildings in Bareilly?</strong>
                   <br />
-                  MTBoss Construction offers building and civil support for fuel
+                  MTBOSS Construction offers building and civil support for fuel
                   outlets. Please confirm registration and experience.
                 </li>
                 <li>
@@ -806,7 +806,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a site study?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Residential Architect in Moradabad | Design & Build',
   description:
-    'Looking for a residential architect in Moradabad? Learn what home design involves, typical costs, and how design-and-build firms like MTBoss can help. Call now!',
+    'Looking for a residential architect in Moradabad? Learn what home design involves, typical costs, and how design-and-build firms like MTBOSS can help. Call now!',
   keywords:
-    'residential architect Moradabad, house architect near me, home design architect Moradabad, independent house architect Moradabad, villa architect Moradabad, residential design and build Moradabad, house plan architect near me, MTBoss Moradabad, home architect contact number, residential design company Moradabad',
+    'residential architect Moradabad, house architect near me, home design architect Moradabad, independent house architect Moradabad, villa architect Moradabad, residential design and build Moradabad, house plan architect near me, MTBOSS Moradabad, home architect contact number, residential design company Moradabad',
   alternates: {
-    canonical: 'https://www.MTBoss.in/residential-architect-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/residential-architect-in-moradabad',
   },
   openGraph: {
     title: 'Residential Architect in Moradabad | Design & Build',
     description:
-      'Looking for a residential architect in Moradabad? Learn what home design involves, typical costs, and how design-and-build firms like MTBoss can help. Call now!',
-    url: 'https://www.MTBoss.in/residential-architect-in-moradabad',
-    siteName: 'MTBoss Construction Private Limited',
+      'Looking for a residential architect in Moradabad? Learn what home design involves, typical costs, and how design-and-build firms like MTBOSS can help. Call now!',
+    url: 'https://www.MTBOSS.in/residential-architect-in-moradabad',
+    siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBoss.in/og-residential-architect-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-residential-architect-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Residential Architect in Moradabad - MTBoss',
+        alt: 'Residential Architect in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Residential Architect in Moradabad | Design & Build',
     description:
-      'Looking for a residential architect in Moradabad? Learn what home design involves, typical costs, and how design-and-build firms like MTBoss can help. Call now!',
-    images: ['https://www.MTBoss.in/og-residential-architect-moradabad.jpg'],
+      'Looking for a residential architect in Moradabad? Learn what home design involves, typical costs, and how design-and-build firms like MTBOSS can help. Call now!',
+    images: ['https://www.MTBOSS.in/og-residential-architect-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export default function Page() {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
-    name: 'MTBoss Construction Private Limited',
-    url: 'https://www.MTBoss.in/residential-architect-in-moradabad',
+    name: 'MTBOSS Construction Private Limited',
+    url: 'https://www.MTBOSS.in/residential-architect-in-moradabad',
     telephone: '+91-9458410866',
-    email: 'MTBoss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

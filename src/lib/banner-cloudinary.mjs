@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env', override: false, quiet: true });
 dotenv.config({ path: 'src/.env', override: false, quiet: true });
 
-export async function uploadBannerImage(file, folder = 'mtboss/hero-banners') {
+export async function uploadBannerImage(file, folder = 'MTBOSS/hero-banners') {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
   if (!cloudName || !preset) throw new Error('Cloudinary image upload is not configured.');
@@ -19,7 +19,7 @@ export async function uploadBannerImage(file, folder = 'mtboss/hero-banners') {
   const body = new FormData();
   body.append('file', file);
   body.append('upload_preset', preset);
-  body.append('folder', String(folder).replace(/[^a-zA-Z0-9/_-]/g, '').replace(/^\/+|\/+$/g, '') || 'mtboss/uploads');
+  body.append('folder', String(folder).replace(/[^a-zA-Z0-9/_-]/g, '').replace(/^\/+|\/+$/g, '') || 'MTBOSS/uploads');
   const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
     method: 'POST', body, signal: AbortSignal.timeout(120000),
   });

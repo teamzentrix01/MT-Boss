@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Company in Bareilly: MTBoss
+            Architect Company in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -17,7 +17,7 @@ const Content = () => {
                 An architect company in Bareilly is a registered business that
                 delivers design services under a contract, with invoices,
                 milestones and reporting suited to developers, businesses and
-                institutions. MTBoss Construction Private Limited serves Bareilly
+                institutions. MTBOSS Construction Private Limited serves Bareilly
                 and Moradabad with architecture and building design, backed by an
                 in-house construction team [confirm architect registration and
                 credentials].
@@ -37,7 +37,7 @@ const Content = () => {
                 to quote, contract, invoice, report and deliver on a schedule.
               </p>
               <p>
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -75,7 +75,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                [State the client types MTBoss actually serves, and delete the
+                [State the client types MTBOSS actually serves, and delete the
                 rest.] Each type needs a different conversation, and a commercial
                 client wants numbers and schedules first.
               </p>
@@ -88,7 +88,7 @@ const Content = () => {
               <p className="mb-3">
                 A commercial project starts with business goals, not room names. A
                 good design company translates them into a written programme
-                covering [adjust to MTBoss&apos;s process]:
+                covering [adjust to MTBOSS&apos;s process]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -181,7 +181,7 @@ const Content = () => {
                 Approvals come from the relevant authority for the plot, which may
                 be the Bareilly Development Authority or another local body, and
                 may include fire, pollution, electricity and other departments for
-                certain building types [confirm which apply and what MTBoss
+                certain building types [confirm which apply and what MTBOSS
                 handles]. A commercial client should ask the company to state:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -213,7 +213,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Business clients usually need documents on file before engaging a
-                consultant [state what MTBoss can provide]:
+                consultant [state what MTBOSS can provide]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Company registration details and registered address</li>
@@ -229,7 +229,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A commercial engagement runs on a written agreement. A strong one
-                states [adjust to MTBoss&apos;s terms]:
+                states [adjust to MTBOSS&apos;s terms]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Scope, with deliverables by stage</li>
@@ -254,7 +254,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Larger clients want visibility. Useful practices include [confirm
-                what MTBoss provides]:
+                what MTBOSS provides]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -314,7 +314,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Cost control improves when the estimate is refined at each stage
-                [state how MTBoss prepares estimates and their accuracy]:
+                [state how MTBOSS prepares estimates and their accuracy]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -339,7 +339,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Use the Budget Calculator on MTBoss.in for an early idea of
+                Use the Budget Calculator on MTBOSS.in for an early idea of
                 construction cost, and ask for stage-wise estimates in the
                 proposal.
               </p>
@@ -351,7 +351,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Some clients want the design company to help choose the builder.
-                Support can include [confirm what MTBoss offers]:
+                Support can include [confirm what MTBOSS offers]:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -366,7 +366,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                If MTBoss is also bidding to build, the client should see that the
+                If MTBOSS is also bidding to build, the client should see that the
                 process stays fair, as described below.
               </p>
             </section>
@@ -404,7 +404,7 @@ const Content = () => {
                 Design-Build Option and Independence
               </h3>
               <p className="mb-3">
-                MTBoss both designs and builds, which offers one point of
+                MTBOSS both designs and builds, which offers one point of
                 responsibility and early cost checking. Clients should expect
                 safeguards [confirm policy]:
               </p>
@@ -433,7 +433,7 @@ const Content = () => {
               <p className="mb-3">
                 Professional responsibility means the company answers for its design
                 advice. Some firms carry professional indemnity insurance [state
-                whether MTBoss does and the cover, or delete this item]. Ask the
+                whether MTBOSS does and the cover, or delete this item]. Ask the
                 company to explain:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -476,19 +476,19 @@ const Content = () => {
                 <li>A repeat-project schedule and fee arrangement</li>
               </ul>
               <p className="mt-3">
-                [State whether MTBoss takes up multi-site or repeat work and any
+                [State whether MTBOSS takes up multi-site or repeat work and any
                 minimums.]
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Onboarding Steps With MTBoss
+                Onboarding Steps With MTBOSS
               </h3>
               <ol className="list-decimal list-inside space-y-1 ml-4">
                 <li>
                   <strong>Enquiry:</strong> call, WhatsApp or click Get a
-                  Construction Quote on MTBoss.in, and share your location pin, plot
+                  Construction Quote on MTBOSS.in, and share your location pin, plot
                   papers and a short brief
                 </li>
                 <li>
@@ -513,10 +513,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Related Services From MTBoss
+                Related Services From MTBOSS
               </h3>
               <p>
-                Through MTBoss.in, MTBoss also offers Architecture &amp; Interior,
+                Through MTBOSS.in, MTBOSS also offers Architecture &amp; Interior,
                 Building Elevation, Building Contractor, Building Renovation,
                 Modular Kitchen, False Ceiling, Water Proofing, Painter, Electrician
                 and Plumber, so design, construction and finishing can be
@@ -528,7 +528,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Businesses Engage MTBoss
+                Reasons Businesses Engage MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -591,21 +591,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -619,7 +619,7 @@ const Content = () => {
                 we will send a written proposal after a site study.
               </p>
               <p className="mt-3">
-                Consider MTBoss as your architect company in Bareilly, with the
+                Consider MTBOSS as your architect company in Bareilly, with the
                 brief written, the milestones agreed and the drawings ready to build
                 from.
               </p>
@@ -637,7 +637,7 @@ const Content = () => {
                   contract, with a team, invoices and milestones.
                 </li>
                 <li>
-                  <strong>Q2. Is MTBoss&apos;s design lead a registered architect?</strong>
+                  <strong>Q2. Is MTBOSS&apos;s design lead a registered architect?</strong>
                   <br />
                   [State name and COA registration number, or say how design is
                   led.]
@@ -675,7 +675,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I request a proposal?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on MTBoss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

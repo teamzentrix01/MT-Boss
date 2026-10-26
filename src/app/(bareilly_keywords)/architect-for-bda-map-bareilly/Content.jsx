@@ -9,7 +9,7 @@ const Content = () => {
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
             Architect for BDA Map in Bareilly: Building Plan Drawings and Sanction
-            Guidance by MTBoss
+            Guidance by MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,7 +23,7 @@ const Content = () => {
                 before construction begins.
               </p>
               <p className="mt-3">
-                MTBoss is an architect, interior design and construction company
+                MTBOSS is an architect, interior design and construction company
                 serving Moradabad and Bareilly, known for quality work, transparent
                 pricing and on-time delivery. We prepare drawings and guide planning,
                 and we can continue into construction under the same team.
@@ -32,7 +32,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Map and Drawing Services from MTBoss
+                Map and Drawing Services from MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -452,7 +452,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A sanctioned map is the beginning, not the end. As a construction
-                company, MTBoss can help turn it into a finished building.
+                company, MTBOSS can help turn it into a finished building.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -507,7 +507,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss offers interior design with modular kitchen, carpenter, false
+                MTBOSS offers interior design with modular kitchen, carpenter, false
                 ceiling, tile and marble, painter and wallpaper services.
               </p>
             </section>
@@ -541,7 +541,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                You can try the Budget Calculator on the MTBoss website to set
+                You can try the Budget Calculator on the MTBOSS website to set
                 realistic expectations for construction. Authority charges are set by
                 the authority, and our consultation terms are shared after discussing
                 your project.
@@ -573,7 +573,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MTBoss Process for Map Drawings
+                The MTBOSS Process for Map Drawings
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -618,7 +618,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MTBoss
+                Reasons to Choose MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -628,7 +628,7 @@ const Content = () => {
                 <li>
                   <strong>One team from map to move-in.</strong> Architecture, interior
                   design, civil work, plumbing, electrical, carpentry, painting and
-                  more are available through MTBoss.
+                  more are available through MTBOSS.
                 </li>
                 <li>
                   <strong>Transparent communication.</strong> You know the scope and
@@ -650,7 +650,7 @@ const Content = () => {
                 Service Areas in Bareilly
               </h3>
               <p>
-                MTBoss serves clients in Bareilly, including areas such as Civil Lines,
+                MTBOSS serves clients in Bareilly, including areas such as Civil Lines,
                 Rampur Garden, Izzatnagar, Subhash Nagar, DD Puram and Pilibhit Bypass
                 Road. If your plot is elsewhere in or around Bareilly, contact us and
                 we will confirm availability.
@@ -659,7 +659,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Map with MTBoss
+                Start Your Map with MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -676,10 +676,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -690,16 +690,16 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.MTBoss.in/"
+                  href="https://www.MTBOSS.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss website
+                  MTBOSS website
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.MTBoss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -710,7 +710,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 Start with drawings that are clear, correct and ready to build. Contact
-                MTBoss today for BDA map drawings in Bareilly.
+                MTBOSS today for BDA map drawings in Bareilly.
               </p>
             </section>
 
@@ -721,7 +721,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. Does MTBoss provide an architect for BDA map in Bareilly?
+                    Q1. Does MTBOSS provide an architect for BDA map in Bareilly?
                   </strong>
                   <br />
                   Yes. We prepare building plan drawings and guide planning for plots
@@ -765,7 +765,7 @@ const Content = () => {
                   local rules and the authority.
                 </li>
                 <li>
-                  <strong>Q8. Can MTBoss also construct the building?</strong>
+                  <strong>Q8. Can MTBOSS also construct the building?</strong>
                   <br />
                   Yes. We offer construction and finishing services alongside design.
                 </li>
@@ -787,7 +787,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on MTBoss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

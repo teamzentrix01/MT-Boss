@@ -32,7 +32,7 @@ export default function PortfolioProjectCard({
           {image ? (
             <Image
               src={image}
-              alt={project.title || project.name || "MTBoss project"}
+              alt={project.title || project.name || "MTBOSS project"}
               fill
               sizes="(max-width: 767px) 100vw, 33vw"
               loading="lazy"

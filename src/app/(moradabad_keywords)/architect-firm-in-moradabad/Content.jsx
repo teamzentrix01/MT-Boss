@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Firm in Moradabad: MTBoss
+            Architect Firm in Moradabad: MTBOSS
           </h2>
 
 
@@ -19,17 +19,17 @@ const Content = () => {
                 Some projects can be handled by one person with a drawing board. Many cannot. A house with three floors, a shopping complex, a hotel or a school needs architecture, structure, electrical and plumbing design, estimation, approvals guidance and site supervision, all working together. That coordination is what an architect firm in Moradabad provides.
               </p>
               <p className="mt-3">
-                MTBoss is a Moradabad-based construction, property and home services company. Our team designs and builds homes, shops, showrooms, hotels, schools and industrial buildings. Design and construction sit under one roof, so you deal with one accountable company from the first sketch to the final handover.
+                MTBOSS is a Moradabad-based construction, property and home services company. Our team designs and builds homes, shops, showrooms, hotels, schools and industrial buildings. Design and construction sit under one roof, so you deal with one accountable company from the first sketch to the final handover.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss: Architecture and Construction Firm in Moradabad
+                MTBOSS: Architecture and Construction Firm in Moradabad
               </h3>
               <p className="mb-3">
-                MTBoss is a construction company first, and that shapes how we design. Our drawings are made by people who also build, so they are grounded in real materials, real labour and real costs.
+                MTBOSS is a construction company first, and that shapes how we design. Our drawings are made by people who also build, so they are grounded in real materials, real labour and real costs.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -45,9 +45,9 @@ const Content = () => {
                   <strong>Itemised quotations.</strong> You see exactly where your money goes.
                 </li>
                 <li>
-                  <strong>Material access.</strong> Through the MTBoss{" "}
+                  <strong>Material access.</strong> Through the MTBOSS{" "}
                   <a
-                    href="https://www.MTBoss.in/ShopNow"
+                    href="https://www.MTBOSS.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -59,7 +59,7 @@ const Content = () => {
                 <li>
                   <strong>Support after handover.</strong> Our{" "}
                   <a
-                    href="https://www.MTBoss.in/quick"
+                    href="https://www.MTBOSS.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -104,7 +104,7 @@ const Content = () => {
                 Team and Departments Inside a Design and Build Firm
               </h3>
               <p className="mb-3">
-                A well-run firm is organised so that each part of the project has a clear owner. At MTBoss, work typically flows through these functions:
+                A well-run firm is organised so that each part of the project has a clear owner. At MTBOSS, work typically flows through these functions:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -132,7 +132,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Project Types Handled by MTBoss
+                Project Types Handled by MTBOSS
               </h3>
 
 
@@ -211,14 +211,14 @@ const Content = () => {
                 <li>Handover support, including inspection, cleaning and final documentation.</li>
               </ul>
               <p className="mt-3">
-                MTBoss provides these as part of a complete project, not as expensive extras.
+                MTBOSS provides these as part of a complete project, not as expensive extras.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Working Process, Step by Step
+                MTBOSS Working Process, Step by Step
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -237,9 +237,9 @@ const Content = () => {
                   <strong>Step 4: Approvals guidance.</strong> We guide you on the drawings and documents typically needed for local approvals. Requirements vary by project and area, so please confirm final rules with the relevant authorities.
                 </li>
                 <li>
-                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate. For a quick early figure, try the MTBoss{" "}
+                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate. For a quick early figure, try the MTBOSS{" "}
                   <a
-                    href="https://www.MTBoss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -294,7 +294,7 @@ const Content = () => {
 
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Smart Spending Advice from MTBoss
+                Smart Spending Advice from MTBOSS
               </h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -305,9 +305,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss explains its scope and charges clearly before you commit, so there are no hidden costs. For a personal estimate, request a{" "}
+                MTBOSS explains its scope and charges clearly before you commit, so there are no hidden costs. For a personal estimate, request a{" "}
                 <a
-                  href="https://www.MTBoss.in/CTASection/get-quote"
+                  href="https://www.MTBOSS.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -321,10 +321,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Quality Standards and Site Supervision at MTBoss
+                Quality Standards and Site Supervision at MTBOSS
               </h3>
               <p className="mb-3">
-                Good drawings mean little if the site does not follow them. MTBoss focuses on quality in these areas:
+                Good drawings mean little if the site does not follow them. MTBOSS focuses on quality in these areas:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -350,7 +350,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Structural design should always be done or verified by qualified structural professionals, and MTBoss coordinates this as part of every project.
+                Structural design should always be done or verified by qualified structural professionals, and MTBOSS coordinates this as part of every project.
               </p>
             </section>
 
@@ -360,7 +360,7 @@ const Content = () => {
                 Climate-Smart Design for Moradabad
               </h3>
               <p className="mb-3">
-                Good architecture responds to its surroundings. For projects in Moradabad, MTBoss focuses on:
+                Good architecture responds to its surroundings. For projects in Moradabad, MTBOSS focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -431,7 +431,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MTBoss in Moradabad
+                Areas Served by MTBOSS in Moradabad
               </h3>
               <p className="mb-3">
                 We work with home and business owners across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies and commercial belts.
@@ -444,21 +444,21 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Architect Firm FAQs
+                MTBOSS Architect Firm FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Is MTBoss an architect firm in Moradabad?</strong>
+                  <strong>Q1. Is MTBOSS an architect firm in Moradabad?</strong>
                   <br />
-                  MTBoss is a construction and design company that plans and builds homes and commercial buildings.
+                  MTBOSS is a construction and design company that plans and builds homes and commercial buildings.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MTBoss offers a free consultation and site visit.
+                  Yes. MTBOSS offers a free consultation and site visit.
                 </li>
                 <li>
-                  <strong>Q3. Does MTBoss handle both design and construction?</strong>
+                  <strong>Q3. Does MTBOSS handle both design and construction?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
@@ -485,7 +485,7 @@ const Content = () => {
                   Yes. We assess the structure and redesign it to add space and light.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MTBoss?</strong>
+                  <strong>Q10. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

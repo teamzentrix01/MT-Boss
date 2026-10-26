@@ -66,7 +66,7 @@ const Content = () => {
     {
       title: "Can I see similar completed projects?",
       description:
-        "A firm should show work that resembles your size, style and budget. You can browse the MTBoss project gallery.",
+        "A firm should show work that resembles your size, style and budget. You can browse the MTBOSS project gallery.",
     },
     {
       title: "What exactly is included in the quote?",
@@ -141,7 +141,7 @@ const Content = () => {
     },
   ];
 
-  const MTBossBenefits = [
+  const MTBOSSBenefits = [
     {
       title: "Construction expertise:",
       description:
@@ -249,7 +249,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designing Firm in Moradabad: MTBoss
+            Interior Designing Firm in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -261,13 +261,13 @@ const Content = () => {
                 Prices, promises and portfolios all look different.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited is a Moradabad-based
+                MTBOSS Construction Private Limited is a Moradabad-based
                 company that helps customers plan, build and finish their
                 spaces with clear communication and dependable support.
               </p>
               <p className="mt-3">
                 This guide explains what a good interior designing firm should
-                offer, how to compare firms, and how MTBoss handles interiors
+                offer, how to compare firms, and how MTBOSS handles interiors
                 for homes, shops, showrooms and offices. Whether you are
                 furnishing a new flat, renovating an older house or setting up
                 a business space, this guide helps you decide with confidence.
@@ -327,9 +327,9 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Where MTBoss Fits</SectionTitle>
+              <SectionTitle>Where MTBOSS Fits</SectionTitle>
               <p>
-                MTBoss works as a construction-backed firm, so we can support
+                MTBOSS works as a construction-backed firm, so we can support
                 both design and execution.
               </p>
               <p className="mt-3">
@@ -341,7 +341,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                Interior Design Services Offered by MTBoss
+                Interior Design Services Offered by MTBOSS
               </SectionTitle>
 
               <div className="space-y-5">
@@ -507,12 +507,12 @@ const Content = () => {
               <p className="mt-4">
                 View completed work in the{" "}
                 <a
-                  href="https://www.MTBoss.in/FeaturedProjects/ProjectGallery"
+                  href="https://www.MTBOSS.in/FeaturedProjects/ProjectGallery"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  MTBoss project gallery
+                  MTBOSS project gallery
                 </a>
                 .
               </p>
@@ -700,7 +700,7 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Start Your Project with MTBoss</SectionTitle>
+              <SectionTitle>Start Your Project with MTBOSS</SectionTitle>
               <p className="mb-3">
                 Share your floor plan or photos, preferred style and approximate
                 budget. Our team can discuss your requirements, arrange a site
@@ -711,7 +711,7 @@ const Content = () => {
                 items={[
                   {
                     title: "Company:",
-                    description: "MTBoss Construction Private Limited",
+                    description: "MTBOSS Construction Private Limited",
                   },
                 ]}
               />
@@ -729,10 +729,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -742,18 +742,18 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
                   <strong>Contact Page:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in/contact"
+                    href="https://www.MTBOSS.in/contact"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -793,7 +793,7 @@ const Content = () => {
 
                 <div>
                   <h4 className="font-semibold text-gray-900">
-                    Q3. Does MTBoss handle both design and construction work?
+                    Q3. Does MTBOSS handle both design and construction work?
                   </h4>
                   <p className="mt-1">
                     Yes. Our construction background lets us manage design,
@@ -848,7 +848,7 @@ const Content = () => {
                   </h4>
                   <p className="mt-1">
                     Use our Budget Calculator and then discuss the project
-                    details with the MTBoss team.
+                    details with the MTBOSS team.
                   </p>
                 </div>
 
@@ -864,12 +864,12 @@ const Content = () => {
 
                 <div>
                   <h4 className="font-semibold text-gray-900">
-                    Q10. Can I buy building materials from MTBoss?
+                    Q10. Can I buy building materials from MTBOSS?
                   </h4>
                   <p className="mt-1">
                     Yes. Visit the{" "}
                     <a
-                      href="https://www.MTBoss.in/ShopNow"
+                      href="https://www.MTBOSS.in/ShopNow"
                       className="text-blue-600 underline"
                       target="_blank"
                       rel="noopener noreferrer"

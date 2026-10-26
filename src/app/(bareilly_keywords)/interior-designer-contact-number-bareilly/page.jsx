@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-designer-contact-number-in-bareilly",
+      "https://www.MTBOSS.in/interior-designer-contact-number-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Need an interior designer contact number Bareilly? Call or WhatsApp MTBOSS at +91 94584 10866 for home interior design and quotes.",
 
-    url: "https://www.mtboss.in/interior-designer-contact-number-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-contact-number-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designer-contact-number-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-contact-number-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Designer Contact Number in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Need an interior designer contact number Bareilly? Call or WhatsApp MTBOSS at +91 94584 10866 for home interior design and quotes.",
 
     images: [
-      "https://www.mtboss.in/og-interior-designer-contact-number-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-contact-number-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-designer-contact-number-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-contact-number-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-interior-designer-contact-number-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-contact-number-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -115,13 +115,13 @@ export default function Page() {
     name: "Interior Design Contact and Quote Services in Bareilly",
     description:
       "MTBOSS provides interior design contact and quote services for Bareilly clients. You can call or WhatsApp +91 94584 10866 for apartment and flat interiors, villa and independent house interiors, modular kitchen, wardrobes and storage, living room and TV unit design, bedroom interiors, bathroom renovation, false ceiling and lighting, puja room and mandir, painting, wallpaper and PVC panels, electrical and plumbing, renovation and upgrades, building materials, and doorstep home services.",
-    url: "https://www.mtboss.in/interior-designer-contact-number-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-contact-number-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -146,7 +146,7 @@ export default function Page() {
         name: "What is the contact number of MTBOSS for interior design in Bareilly?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "You can call or WhatsApp MTBOSS at +91 94584 10866, or email mtboss2016@gmail.com. You can also use the quote form on www.mtboss.in.",
+          text: "You can call or WhatsApp MTBOSS at +91 94584 10866, or email MTBOSS2016@gmail.com. You can also use the quote form on www.MTBOSS.in.",
         },
       },
       {
@@ -202,7 +202,7 @@ export default function Page() {
         name: "How can I be sure I am contacting the right number?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Check the phone number and email on the official website, www.mtboss.in, before sharing documents or making any payment.",
+          text: "Check the phone number and email on the official website, www.MTBOSS.in, before sharing documents or making any payment.",
         },
       },
     ],
@@ -216,19 +216,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Designer Contact Number in Bareilly",
-        item: "https://www.mtboss.in/interior-designer-contact-number-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-designer-contact-number-in-bareilly",
       },
     ],
   };

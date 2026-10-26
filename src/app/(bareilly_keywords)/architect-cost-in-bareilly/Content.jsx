@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Cost in Bareilly: MTBoss
+            Architect Cost in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -17,7 +17,7 @@ const Content = () => {
                 Architect cost in Bareilly is the total you spend on design
                 professionals for a project: the design fee, consultant charges,
                 approval costs, supervision and extras. It varies with project size,
-                stages hired and detail. MTBoss Construction Private Limited gives
+                stages hired and detail. MTBOSS Construction Private Limited gives
                 a written, itemised cost proposal after a site study{" "}
                 <span className="text-gray-500">
                   [confirm fee model and COA registration]
@@ -32,7 +32,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 <span className="text-gray-500">
-                  [Fill this block only with terms MTBoss will honour. Suggested
+                  [Fill this block only with terms MTBOSS will honour. Suggested
                   format:]
                 </span>
               </p>
@@ -93,7 +93,7 @@ const Content = () => {
                 processes, from first sketch to completion.
               </p>
               <p className="mt-3">
-                MTBoss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -140,7 +140,7 @@ const Content = () => {
               <p className="mb-3">
                 These describe how cost behaves, not what it is{" "}
                 <span className="text-gray-500">
-                  [state how MTBoss prices each type you take up]
+                  [state how MTBOSS prices each type you take up]
                 </span>
                 .
               </p>
@@ -218,7 +218,7 @@ const Content = () => {
               <p className="mb-3">
                 Cash-flow timing matters as much as the total{" "}
                 <span className="text-gray-500">
-                  [state MTBoss&apos;s actual schedule]
+                  [state MTBOSS&apos;s actual schedule]
                 </span>
                 .
               </p>
@@ -261,7 +261,7 @@ const Content = () => {
                 Design cost is usually a modest share of what you spend on
                 construction, and it influences how that larger sum is spent. A good
                 design can reduce structure, avoid wasted area and cut changes on
-                site, while a weak one can inflate all of those. MTBoss&apos;s
+                site, while a weak one can inflate all of those. MTBOSS&apos;s
                 typical range for design cost is{" "}
                 <span className="text-gray-500">
                   [state a range such as __% to __% of construction cost, only if
@@ -405,7 +405,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MTBoss offers both routes{" "}
+                MTBOSS offers both routes{" "}
                 <span className="text-gray-500">
                   [confirm policy and drawing-ownership terms]
                 </span>
@@ -510,12 +510,12 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBoss Prepares a Cost Estimate
+                How MTBOSS Prepares a Cost Estimate
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> Call, WhatsApp or click Get a
-                  Construction Quote on MTBoss.in, with your location pin, plot
+                  Construction Quote on MTBOSS.in, with your location pin, plot
                   papers and a short brief
                 </li>
                 <li>
@@ -542,17 +542,17 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Use the Budget Calculator on MTBoss.in for an early idea of
+                Use the Budget Calculator on MTBOSS.in for an early idea of
                 construction cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Related Services From MTBoss
+                Related Services From MTBOSS
               </h3>
               <p>
-                Through MTBoss.in, MTBoss also offers Architecture &amp; Interior,
+                Through MTBOSS.in, MTBOSS also offers Architecture &amp; Interior,
                 Building Elevation, Building Contractor, Building Renovation,
                 Modular Kitchen, False Ceiling, Water Proofing, Painter, Electrician
                 and Plumber, so design, construction and finishing can be
@@ -562,11 +562,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBoss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
-                  <strong>Business:</strong> MTBoss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Architecture, interior and building
@@ -601,21 +601,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -635,7 +635,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Owners Consider MTBoss
+                Reasons Owners Consider MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -696,21 +696,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:MTBoss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    MTBoss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.MTBoss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.MTBoss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &ldquo;Get a Construction Quote&rdquo;)
                 </li>
@@ -724,7 +724,7 @@ const Content = () => {
                 and we will arrange a site study and send an itemised proposal.
               </p>
               <p className="mt-3">
-                Ask MTBoss for an itemised architect cost proposal in Bareilly, with
+                Ask MTBOSS for an itemised architect cost proposal in Bareilly, with
                 every layer named and the total clear before work begins.
               </p>
             </section>
@@ -788,7 +788,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a cost proposal?</strong>
                   <br />
-                  Click &ldquo;Get a Construction Quote&rdquo; on MTBoss.in, or call
+                  Click &ldquo;Get a Construction Quote&rdquo; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

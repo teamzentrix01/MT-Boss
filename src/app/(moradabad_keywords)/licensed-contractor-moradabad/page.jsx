@@ -7,26 +7,26 @@ import CalculatorCTA from "../../components/CalculatorCTA";
 import Services from "../../components/Services";
 
 export const metadata = {
-  title: "Licensed Contractor in Moradabad | MTBoss Construction",
+  title: "Licensed Contractor in Moradabad | MTBOSS Construction",
   description:
-    "Hire MTBoss, a licensed contractor in Moradabad for homes, shops, factories and roads. Registered, compliant, transparent pricing and engineer-led delivery.",
+    "Hire MTBOSS, a licensed contractor in Moradabad for homes, shops, factories and roads. Registered, compliant, transparent pricing and engineer-led delivery.",
   keywords:
-    "licensed contractor Moradabad, licensed civil contractor Moradabad, registered construction company Moradabad, GST registered contractor Moradabad, government registered contractor Moradabad, compliant contractor Moradabad, building contractor Moradabad, civil contractor Moradabad, construction company Moradabad, MTBoss licensed contractor Moradabad",
+    "licensed contractor Moradabad, licensed civil contractor Moradabad, registered construction company Moradabad, GST registered contractor Moradabad, government registered contractor Moradabad, compliant contractor Moradabad, building contractor Moradabad, civil contractor Moradabad, construction company Moradabad, MTBOSS licensed contractor Moradabad",
   alternates: {
-    canonical: "https://www.MTBoss.in/licensed-contractor-moradabad",
+    canonical: "https://www.MTBOSS.in/licensed-contractor-moradabad",
   },
   openGraph: {
-    title: "Licensed Contractor in Moradabad | MTBoss Construction",
+    title: "Licensed Contractor in Moradabad | MTBOSS Construction",
     description:
-      "Hire MTBoss, a licensed contractor in Moradabad for homes, shops, factories and roads. Registered, compliant, transparent pricing and engineer-led delivery.",
-    url: "https://www.MTBoss.in/licensed-contractor-moradabad",
-    siteName: "MTBoss Construction Private Limited",
+      "Hire MTBOSS, a licensed contractor in Moradabad for homes, shops, factories and roads. Registered, compliant, transparent pricing and engineer-led delivery.",
+    url: "https://www.MTBOSS.in/licensed-contractor-moradabad",
+    siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.MTBoss.in/og-licensed-contractor-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-licensed-contractor-moradabad.jpg",
         width: 1200,
         height: 630,
-        alt: "Licensed Contractor in Moradabad - MTBoss Construction",
+        alt: "Licensed Contractor in Moradabad - MTBOSS Construction",
       },
     ],
     locale: "en_IN",
@@ -34,10 +34,10 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Licensed Contractor in Moradabad | MTBoss Construction",
+    title: "Licensed Contractor in Moradabad | MTBOSS Construction",
     description:
-      "Hire MTBoss, a licensed contractor in Moradabad for homes, shops, factories and roads. Registered, compliant, transparent pricing and engineer-led delivery.",
-    images: ["https://www.MTBoss.in/og-licensed-contractor-moradabad.jpg"],
+      "Hire MTBOSS, a licensed contractor in Moradabad for homes, shops, factories and roads. Registered, compliant, transparent pricing and engineer-led delivery.",
+    images: ["https://www.MTBOSS.in/og-licensed-contractor-moradabad.jpg"],
   },
   robots: {
     index: true,
@@ -48,10 +48,10 @@ export const metadata = {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "GeneralContractor",
-  name: "MTBoss Construction Private Limited",
-  url: "https://www.MTBoss.in/licensed-contractor-moradabad",
+  name: "MTBOSS Construction Private Limited",
+  url: "https://www.MTBOSS.in/licensed-contractor-moradabad",
   telephone: "+91-9458410866",
-  email: "MTBoss2016@gmail.com",
+  email: "MTBOSS2016@gmail.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",
