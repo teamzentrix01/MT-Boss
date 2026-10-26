@@ -78,6 +78,17 @@ const menuStructure = [
     ],
   },
 
+  // Agent
+  // {
+  //   id: 'agents',
+  //   label: 'Agent',
+  //   icon: UserCog,
+  //   children: [
+  //     { label: 'All Agents', tab: 'agents' },
+  //     { label: 'Agent Leads', tab: 'lead-management' },
+  //   ],
+  // },
+
   // Services
   {
     id: 'services',
@@ -204,6 +215,7 @@ const menuStructure = [
 function isTabAllowedForAgent(tab, user) {
   if (user?.role === "agent") {
     if (tab === "product-approvals" || tab === "packages") return false;
+    if (tab === "agents") return false;
     if (
       tab.includes("project-management") ||
       tab.startsWith("pm-") ||
@@ -215,6 +227,114 @@ function isTabAllowedForAgent(tab, user) {
     return false;
   }
   return true;
+}
+
+function SidebarGroup({
+  item,
+  isOpen,
+  onToggle,
+  currentTab,
+  closeSidebarOnMobile,
+  pendingApprovalsCount,
+}) {
+  const IconComponent = item.icon;
+  const isChildActive = item.children.some(
+    (child) => (child.tab || "") === currentTab
+  );
+  const hasApprovalsBadge =
+    item.id === "approvals" && pendingApprovalsCount > 0;
+  const submenuId = `submenu-${item.id}`;
+
+  return (
+    <div className="admin-sidebar__dropdown-group">
+      <button
+        type="button"
+        id={`group-btn-${item.id}`}
+        aria-expanded={isOpen}
+        aria-controls={submenuId}
+        onClick={onToggle}
+        className={`w-full min-h-[44px] flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-sm font-medium ${
+          isChildActive
+            ? "bg-brand-50 text-brand-600 font-semibold"
+            : "text-ink-700 hover:bg-app"
+        }`}
+      >
+        <span className="flex items-center gap-3 min-w-0">
+          <span
+            className={`flex items-center justify-center shrink-0 w-8 h-8 rounded-lg ${
+              isChildActive ? "text-brand-600" : "text-current"
+            }`}
+          >
+            {IconComponent ? (
+              <IconComponent
+                size={20}
+                strokeWidth={1.7}
+                aria-hidden="true"
+              />
+            ) : null}
+          </span>
+          <span className="truncate select-none text-left">
+            {item.label}
+          </span>
+        </span>
+
+        <span className="flex items-center gap-2 shrink-0">
+          {hasApprovalsBadge && (
+            <AdminStatusBadge tone="danger">
+              {pendingApprovalsCount}
+            </AdminStatusBadge>
+          )}
+          <ChevronDown
+            size={16}
+            className={`text-ink-500 transition-transform duration-200 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+            aria-hidden="true"
+          />
+        </span>
+      </button>
+
+      {isOpen && (
+        <ul
+          id={submenuId}
+          role="region"
+          aria-labelledby={`group-btn-${item.id}`}
+          className="mt-1 ml-4 pl-3 border-l-2 border-zinc-200 space-y-1 list-none"
+        >
+          {item.children.map((child) => {
+            const isChildTabActive = (child.tab || "") === currentTab;
+            return (
+              <li key={child.label || child.tab}>
+                <Link
+                  href={
+                    child.tab
+                      ? `/dashboard?tab=${child.tab}`
+                      : "/dashboard"
+                  }
+                  onClick={closeSidebarOnMobile}
+                  title={child.label}
+                  aria-current={isChildTabActive ? "page" : undefined}
+                  className={`flex items-center justify-between min-h-[38px] px-3 py-2 rounded-lg text-xs transition-colors ${
+                    isChildTabActive
+                      ? "bg-brand-100 text-brand-600 font-bold"
+                      : "text-ink-700 hover:text-ink-900 hover:bg-app font-medium"
+                  }`}
+                >
+                  <span className="truncate">{child.label}</span>
+                  {child.tab === "product-approvals" &&
+                    pendingApprovalsCount > 0 && (
+                      <AdminStatusBadge tone="danger" className="ml-2">
+                        {pendingApprovalsCount}
+                      </AdminStatusBadge>
+                    )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
@@ -297,101 +417,22 @@ function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
   return (
     <nav className="admin-sidebar__nav flex-1 overflow-y-auto px-3 py-4 space-y-1.5">
       {visibleItems.map((item) => {
-        const IconComponent = item.icon;
-
         if (item.children) {
-          const isOpen = !!openGroups[item.id];
-          const isChildActive = item.children.some(
-            (child) => (child.tab || "") === currentTab
-          );
-          const hasApprovalsBadge =
-            item.id === "approvals" && pendingApprovalsCount > 0;
-
           return (
-            <div key={item.id} className="admin-sidebar__dropdown-group">
-              <button
-                type="button"
-                onClick={() => toggleGroup(item.id)}
-                aria-expanded={isOpen}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-sm font-medium ${
-                  isChildActive
-                    ? "bg-brand-50 text-brand-600 font-semibold"
-                    : "text-ink-700 hover:bg-app"
-                }`}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span
-                    className={`flex items-center justify-center shrink-0 w-8 h-8 rounded-lg ${
-                      isChildActive ? "text-brand-600" : "text-current"
-                    }`}
-                  >
-                    {IconComponent ? (
-                      <IconComponent
-                        size={20}
-                        strokeWidth={1.7}
-                        aria-hidden="true"
-                      />
-                    ) : null}
-                  </span>
-                  <span className="truncate select-none text-left">
-                    {item.label}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2 shrink-0">
-                  {hasApprovalsBadge && (
-                    <AdminStatusBadge tone="danger">
-                      {pendingApprovalsCount}
-                    </AdminStatusBadge>
-                  )}
-                  <ChevronDown
-                    size={16}
-                    className={`text-ink-500 transition-transform duration-200 ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </div>
-              </button>
-
-              {isOpen && (
-                <div className="mt-1 ml-4 pl-3 border-l-2 border-zinc-200 space-y-1">
-                  {item.children.map((child) => {
-                    const isChildTabActive =
-                      (child.tab || "") === currentTab;
-                    return (
-                      <Link
-                        key={child.label}
-                        href={
-                          child.tab
-                            ? `/dashboard?tab=${child.tab}`
-                            : "/dashboard"
-                        }
-                        onClick={closeSidebarOnMobile}
-                        title={child.label}
-                        aria-current={isChildTabActive ? "page" : undefined}
-                        className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors ${
-                          isChildTabActive
-                            ? "bg-brand-100 text-brand-600 font-bold"
-                            : "text-ink-700 hover:text-ink-900 hover:bg-app font-medium"
-                        }`}
-                      >
-                        <span className="truncate">{child.label}</span>
-                        {child.tab === "product-approvals" &&
-                          pendingApprovalsCount > 0 && (
-                            <AdminStatusBadge tone="danger" className="ml-2">
-                              {pendingApprovalsCount}
-                            </AdminStatusBadge>
-                          )}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            <SidebarGroup
+              key={item.id}
+              item={item}
+              isOpen={!!openGroups[item.id]}
+              onToggle={() => toggleGroup(item.id)}
+              currentTab={currentTab}
+              closeSidebarOnMobile={closeSidebarOnMobile}
+              pendingApprovalsCount={pendingApprovalsCount}
+            />
           );
         }
 
         // Standalone Items (e.g. Overview, Users)
+        const IconComponent = item.icon;
         const isActive = (item.tab || "") === currentTab;
         return (
           <div key={item.id || item.label}>
@@ -401,7 +442,7 @@ function SidebarNav({ sidebarOpen, closeSidebarOnMobile, isDarkMode, user }) {
               title={item.label}
               aria-current={isActive ? "page" : undefined}
               data-active={isActive ? "true" : undefined}
-              className={`admin-sidebar__item relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+              className={`admin-sidebar__item relative min-h-[44px] flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
                 isActive
                   ? "bg-brand-100 text-brand-600 font-semibold"
                   : "text-ink-700 hover:bg-app font-medium"

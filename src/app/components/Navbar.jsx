@@ -1,29 +1,82 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import GlobalSearch from "./GlobalSearch";
 import { ShoppingCart } from "@/app/components/ui/icons";
 
-function DropdownButton({ label, children, text, textHover, dropdownBg }) {
+function DropdownButton({ label, children, text, textHover, dropdownBg, id }) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handlePointerDown = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  const handleMouseEnter = () => {
+    if (typeof window !== "undefined" && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      setOpen(true);
+    }
+  };
+  const handleMouseLeave = () => {
+    if (typeof window !== "undefined" && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      setOpen(false);
+    }
+  };
+
+  const menuId = id || `dropdown-${label.toLowerCase().replace(/\s+/g, "-")}`;
+
   return (
-    <div className="relative group">
+    <div
+      ref={containerRef}
+      className="relative"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <button
-        className={`nav-control flex items-center gap-1 px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium ${text} ${textHover} transition-colors rounded-md`}
+        type="button"
+        aria-expanded={open}
+        aria-haspopup="true"
+        aria-controls={menuId}
+        onClick={() => setOpen((prev) => !prev)}
+        className={`nav-control min-h-[44px] flex items-center gap-1 px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-medium ${text} ${textHover} transition-colors rounded-md select-none`}
       >
-        {label}
+        <span>{label}</span>
         <svg
-          className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180"
+          className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
-          <path strokeLinecap="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
       <div
-        className={`absolute top-full left-0 mt-1 rounded-md border shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 group-hover:translate-y-0 z-[110] ${dropdownBg}`}
+        id={menuId}
+        role="region"
+        aria-label={`${label} menu`}
+        onClick={() => setOpen(false)}
+        className={`absolute top-full left-0 mt-1 rounded-md border shadow-lg transition-all duration-200 z-[110] ${dropdownBg} ${
+          open
+            ? "opacity-100 visible translate-y-0 pointer-events-auto"
+            : "opacity-0 invisible translate-y-1 pointer-events-none"
+        }`}
       >
         <div className="py-1">{children}</div>
       </div>
@@ -36,6 +89,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [propertyOpen, setPropertyOpen] = useState(false);
+  const [agentOpen, setAgentOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -114,6 +168,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
     const frame = requestAnimationFrame(() => {
       setIsOpen(false);
       setPropertyOpen(false);
+      setAgentOpen(false);
     });
     return () => cancelAnimationFrame(frame);
   }, [pathname]);
@@ -128,6 +183,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   const closeMobileMenu = () => {
     setIsOpen(false);
     setPropertyOpen(false);
+    setAgentOpen(false);
   };
 
   const handleLogout = async () => {
@@ -525,19 +581,23 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           {/* Mobile Property */}
           <div>
             <button
+              type="button"
+              aria-expanded={propertyOpen}
+              aria-controls="mobile-submenu-property"
               onClick={() => setPropertyOpen(!propertyOpen)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              className={`w-full min-h-[44px] flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
                 ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
                 : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
                 }`}
             >
-              Property
+              <span>Property</span>
               <svg
-                className={`w-4 h-4 transition-transform ${propertyOpen ? 'rotate-180' : ''
+                className={`w-4 h-4 transition-transform duration-200 ${propertyOpen ? 'rotate-180' : ''
                   }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -548,13 +608,13 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               </svg>
             </button>
             {propertyOpen && (
-              <div className="ml-4 mt-1 space-y-1">
+              <div id="mobile-submenu-property" className="ml-4 mt-1 space-y-1">
                 {propertyDropdown.map((s) => (
                   <Link
                     key={s.label}
                     href={s.href}
                     onClick={closeMobileMenu}
-                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${isDarkMode
+                    className={`block min-h-[44px] flex items-center px-3 py-2 text-sm rounded-md transition-colors ${isDarkMode
                       ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
                       : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
                       }`}
@@ -577,7 +637,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               key={link.label}
               href={link.href}
               onClick={closeMobileMenu}
-              className={`flex items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+              className={`flex items-center gap-2 min-h-[44px] px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
                 ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
                 : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
                 }`}
@@ -589,30 +649,65 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </Link>
           ))}
 
-          <Link
-            href="/agent"
-            onClick={closeMobileMenu}
-            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
-              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
-          >
-            Become an Agent
-          </Link>
-          <Link
-            href="/agent/login"
-            onClick={closeMobileMenu}
-            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
-              ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
-              : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
-              }`}
-          >
-            Agent Login
-          </Link>
+          {/* Mobile Agent */}
+          <div>
+            <button
+              type="button"
+              aria-expanded={agentOpen}
+              aria-controls="mobile-submenu-agent"
+              onClick={() => setAgentOpen(!agentOpen)}
+              className={`w-full min-h-[44px] flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+                ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
+                }`}
+            >
+              <span>Agent</span>
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${agentOpen ? 'rotate-180' : ''
+                  }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+            {agentOpen && (
+              <div id="mobile-submenu-agent" className="ml-4 mt-1 space-y-1">
+                <Link
+                  href="/agent"
+                  onClick={closeMobileMenu}
+                  className={`block min-h-[44px] flex items-center px-3 py-2 text-sm rounded-md transition-colors ${isDarkMode
+                    ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                    : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
+                    }`}
+                >
+                  Become an Agent
+                </Link>
+                <Link
+                  href="/agent/login"
+                  onClick={closeMobileMenu}
+                  className={`block min-h-[44px] flex items-center px-3 py-2 text-sm rounded-md transition-colors ${isDarkMode
+                    ? 'text-zinc-400 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
+                    : 'text-zinc-500 hover:text-zinc-900 hover:bg-gray-50'
+                    }`}
+                >
+                  Agent Login
+                </Link>
+              </div>
+            )}
+          </div>
+
           <Link
             href="/franchise"
             onClick={closeMobileMenu}
-            className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
+            className={`block min-h-[44px] flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isDarkMode
               ? 'text-zinc-300 hover:text-[var(--brand-blue)] hover:bg-zinc-800'
               : 'text-zinc-600 hover:text-zinc-900 hover:bg-gray-50'
               }`}
