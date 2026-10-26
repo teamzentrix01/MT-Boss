@@ -75,6 +75,10 @@ export async function POST(req) {
     const auth = await assertAgentAccess(req, projectId, 'payments');
     if (!auth.allowed) return auth.response;
 
+    try {
+      await pool.query('ALTER TABLE pm_vendor_payments ADD COLUMN IF NOT EXISTS transaction_reference VARCHAR(255)');
+    } catch {}
+
     const client = await pool.connect();
     try {
       await client.query('BEGIN');

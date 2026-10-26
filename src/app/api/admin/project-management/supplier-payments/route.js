@@ -135,6 +135,10 @@ export async function POST(req) {
       }
     }
 
+    try {
+      await pool.query('ALTER TABLE pm_supplier_payments ADD COLUMN IF NOT EXISTS transaction_reference TEXT');
+    } catch {}
+
     const r = await pool.query(
       `INSERT INTO pm_supplier_payments (
         project_id, supplier_id, supplier_name, amount, payment_date, mode, transaction_reference, note, created_by
