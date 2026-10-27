@@ -2,7 +2,15 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
-const VALID_ADJUSTMENT_TYPES = ['wastage', 'damage', 'return_to_supplier', 'transfer_out'];
+const VALID_ADJUSTMENT_TYPES = [
+  'wastage',
+  'damage',
+  'return_to_supplier',
+  'return_material',
+  'scrap_material',
+  'scrap',
+  'transfer_out'
+];
 
 export async function GET(req) {
   try {
@@ -21,6 +29,7 @@ export async function GET(req) {
     const materialId = s.get('materialId') ? Number(s.get('materialId')) : null;
     const startDate = s.get('startDate') || null;
     const endDate = s.get('endDate') || null;
+    const adjTypeQuery = s.get('type') || null;
 
     let where = 'a.project_id = $1 AND NOT a.is_deleted';
     const params = [projectId];
@@ -36,6 +45,18 @@ export async function GET(req) {
     if (endDate) {
       params.push(endDate);
       where += ` AND a.adjustment_date <= $${params.length}`;
+    }
+    if (adjTypeQuery) {
+      if (adjTypeQuery === 'wastage') {
+        where += ` AND a.adjustment_type IN ('wastage', 'damage', 'transfer_out')`;
+      } else if (adjTypeQuery === 'return' || adjTypeQuery === 'return_material') {
+        where += ` AND a.adjustment_type IN ('return_to_supplier', 'return_material')`;
+      } else if (adjTypeQuery === 'scrap' || adjTypeQuery === 'scrap_material') {
+        where += ` AND a.adjustment_type IN ('scrap_material', 'scrap')`;
+      } else {
+        params.push(adjTypeQuery);
+        where += ` AND a.adjustment_type = $${params.length}`;
+      }
     }
 
     params.push(pageSize, offset);
@@ -72,6 +93,8 @@ export async function POST(req) {
     const q = Number(b.quantity);
     const adjType = String(b.adjustment_type || '').trim();
     const toProjId = b.to_project_id ? Number(b.to_project_id) : null;
+    const amount = b.amount !== undefined && b.amount !== null && b.amount !== '' ? Number(b.amount) : null;
+    const supplierName = b.supplier_name ? String(b.supplier_name).trim() : null;
 
     if (
       !Number.isInteger(p) ||
@@ -92,7 +115,9 @@ export async function POST(req) {
       await pool.query(`
         ALTER TABLE pm_material_adjustments 
         ADD COLUMN IF NOT EXISTS bill_url text,
-        ADD COLUMN IF NOT EXISTS bill_filename text
+        ADD COLUMN IF NOT EXISTS bill_filename text,
+        ADD COLUMN IF NOT EXISTS amount NUMERIC(14,2),
+        ADD COLUMN IF NOT EXISTS supplier_name text
       `);
     } catch {}
 
@@ -116,10 +141,11 @@ export async function POST(req) {
       const adjRes = await c.query(
         `INSERT INTO pm_material_adjustments(
            project_id, material_id, adjustment_type, quantity,
-           adjustment_date, to_project_id, note, bill_url, bill_filename, created_by, over_used
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+           adjustment_date, to_project_id, note, bill_url, bill_filename, created_by, over_used,
+           amount, supplier_name
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
          RETURNING *`,
-        [p, m, adjType, q, b.adjustment_date, toProjId, b.note || null, b.bill_url || null, b.bill_filename || null, actor, isOverUsed]
+        [p, m, adjType, q, b.adjustment_date, toProjId, b.note || null, b.bill_url || null, b.bill_filename || null, actor, isOverUsed, amount, supplierName]
       );
       const adjRow = adjRes.rows[0];
 

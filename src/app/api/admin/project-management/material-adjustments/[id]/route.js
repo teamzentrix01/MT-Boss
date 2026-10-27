@@ -3,7 +3,15 @@ import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
-const VALID_ADJUSTMENT_TYPES = ['wastage', 'damage', 'return_to_supplier', 'transfer_out'];
+const VALID_ADJUSTMENT_TYPES = [
+  'wastage',
+  'damage',
+  'return_to_supplier',
+  'return_material',
+  'scrap_material',
+  'scrap',
+  'transfer_out'
+];
 
 export async function PATCH(req, { params }) {
   try {
@@ -17,7 +25,9 @@ export async function PATCH(req, { params }) {
       await pool.query(`
         ALTER TABLE pm_material_adjustments 
         ADD COLUMN IF NOT EXISTS bill_url text,
-        ADD COLUMN IF NOT EXISTS bill_filename text
+        ADD COLUMN IF NOT EXISTS bill_filename text,
+        ADD COLUMN IF NOT EXISTS amount NUMERIC(14,2),
+        ADD COLUMN IF NOT EXISTS supplier_name text
       `);
     } catch {}
 
@@ -39,6 +49,8 @@ export async function PATCH(req, { params }) {
       const b = await req.json();
       const q = Number(b.quantity);
       const adjType = String(b.adjustment_type || '').trim();
+      const amount = b.amount !== undefined && b.amount !== null && b.amount !== '' ? Number(b.amount) : null;
+      const supplierName = b.supplier_name !== undefined ? (b.supplier_name ? String(b.supplier_name).trim() : null) : old.supplier_name;
 
       if (
         !Number.isFinite(q) ||
@@ -52,10 +64,11 @@ export async function PATCH(req, { params }) {
 
       const r = await c.query(
         `UPDATE pm_material_adjustments
-         SET quantity = $1, adjustment_type = $2, adjustment_date = $3, note = $4
-         WHERE id = $5
+         SET quantity = $1, adjustment_type = $2, adjustment_date = $3, note = $4,
+             amount = $5, supplier_name = $6
+         WHERE id = $7
          RETURNING *`,
-        [q, adjType, b.adjustment_date, b.note || null, id]
+        [q, adjType, b.adjustment_date, b.note || null, amount, supplierName, id]
       );
 
       const actor = actorFromAdmin(auth.user);

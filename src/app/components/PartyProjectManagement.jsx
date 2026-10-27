@@ -143,7 +143,7 @@ const matchesContractorType = (trade, filter) => {
   return v.includes(f) || f.includes(v);
 };
 const usedBlank = { material_id: '', material_name: '', quantity: '', used_date: today(), used_for: '', note: '' };
-const adjustmentBlank = { material_id: '', material_name: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', note: '', bill_url: '', bill_filename: '' };
+const adjustmentBlank = { material_id: '', material_name: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', supplier_name: '', amount: '', note: '', bill_url: '', bill_filename: '' };
 const expenseBlank = { category: 'transport', amount: '', expense_date: today(), note: '' };
 
 export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
@@ -273,6 +273,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     if (!sub) return null;
     const s = sub.toLowerCase().trim();
     if (s === 'adjustments' || s === 'adjustment' || s === 'wastage') return 'adjustments';
+    if (s === 'return' || s === 'return_material' || s === 'return-material' || s === 'returns') return 'return';
+    if (s === 'scrap' || s === 'scrap_material' || s === 'scrap-material') return 'scrap';
     if (s === 'expenses' || s === 'other-expenses' || s === 'other_expenses') return 'expenses';
     return null;
   };
@@ -562,6 +564,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [receivedRows, setReceivedRows] = useState([]);
   const [usedRows, setUsedRows] = useState([]);
   const [adjustmentRows, setAdjustmentRows] = useState([]);
+  const wastageAdjRows = adjustmentRows.filter((r) =>
+    ['wastage', 'damage', 'transfer_out'].includes(r.adjustment_type) ||
+    (!['return_to_supplier', 'return_material', 'scrap_material', 'scrap'].includes(r.adjustment_type))
+  );
+  const returnMaterialRows = adjustmentRows.filter((r) =>
+    ['return_to_supplier', 'return_material'].includes(r.adjustment_type)
+  );
+  const scrapMaterialRows = adjustmentRows.filter((r) =>
+    ['scrap_material', 'scrap'].includes(r.adjustment_type)
+  );
 
   // Filters for materials tables
   const [matFilterId, setMatFilterId] = useState('');
@@ -1200,7 +1212,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       }
       
       const material_id = await resolveMaterialId(adjustmentForm.material_name, adjustmentForm.material_id);
-      const payload = { ...adjustmentForm, material_id, project_id: project.id, bill_url, bill_filename };
+      const payload = {
+        ...adjustmentForm,
+        material_id,
+        project_id: project.id,
+        amount: adjustmentForm.amount ? Number(adjustmentForm.amount) : null,
+        supplier_name: adjustmentForm.supplier_name ? String(adjustmentForm.supplier_name).trim() : null,
+        bill_url,
+        bill_filename,
+      };
 
       let res;
       if (editingAdjId) {
@@ -1214,8 +1234,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           body: JSON.stringify(payload),
         });
       }
-      setMessage(res.warning ? `${res.warning} The adjustment entry was saved.` : 'Material adjustment recorded');
-      if (res.data) setAdjustmentRows((previous) => [res.data, ...previous.filter((row) => Number(row.id) !== Number(res.data.id))]);
+      setMessage(res.warning ? `${res.warning} Entry saved.` : 'Entry recorded successfully');
+      if (res.data) {
+        const returnedRow = {
+          ...res.data,
+          material_name: adjustmentForm.material_name || res.data.material_name,
+          supplier_name: adjustmentForm.supplier_name || res.data.supplier_name,
+          amount: adjustmentForm.amount ? Number(adjustmentForm.amount) : res.data.amount,
+        };
+        setAdjustmentRows((previous) => [returnedRow, ...previous.filter((row) => Number(row.id) !== Number(res.data.id))]);
+      }
       setAdjustmentModal(false);
       setEditingAdjId(null);
       setAdjustmentForm(adjustmentBlank);
@@ -4709,7 +4737,19 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             className={constructionSubTab === 'adjustments' ? 'active-btn' : 'muted'}
                             onClick={() => handleConstructionSubChange('adjustments')}
                           >
-                            Wastage / Adjustments ({adjustmentRows.length})
+                            Wastage / Adjustments ({wastageAdjRows.length})
+                          </button>
+                          <button
+                            className={constructionSubTab === 'return' ? 'active-btn' : 'muted'}
+                            onClick={() => handleConstructionSubChange('return')}
+                          >
+                            Return Material ({returnMaterialRows.length})
+                          </button>
+                          <button
+                            className={constructionSubTab === 'scrap' ? 'active-btn' : 'muted'}
+                            onClick={() => handleConstructionSubChange('scrap')}
+                          >
+                            Scrap Material ({scrapMaterialRows.length})
                           </button>
                           <button
                             className={constructionSubTab === 'expenses' ? 'active-btn' : 'muted'}
@@ -4720,18 +4760,40 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         </div>
 
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                          {constructionSubTab !== 'expenses' ? (
-                              <button
-                                className="muted"
-                                onClick={() => {
-                                  setAdjustmentForm(adjustmentBlank);
-                                  setEditingAdjId(null);
-                                  setAdjustmentModal(true);
-                                }}
-                              >
-                                ⚡ Adjustment / Wastage
-                              </button>
-                          ) : (
+                          {constructionSubTab === 'adjustments' && (
+                            <button
+                              onClick={() => {
+                                setAdjustmentForm({ ...adjustmentBlank, adjustment_type: 'wastage' });
+                                setEditingAdjId(null);
+                                setAdjustmentModal(true);
+                              }}
+                            >
+                              ⚡ + Record Wastage / Adjustment
+                            </button>
+                          )}
+                          {constructionSubTab === 'return' && (
+                            <button
+                              onClick={() => {
+                                setAdjustmentForm({ ...adjustmentBlank, adjustment_type: 'return_material' });
+                                setEditingAdjId(null);
+                                setAdjustmentModal(true);
+                              }}
+                            >
+                              🔄 + Record Return Material
+                            </button>
+                          )}
+                          {constructionSubTab === 'scrap' && (
+                            <button
+                              onClick={() => {
+                                setAdjustmentForm({ ...adjustmentBlank, adjustment_type: 'scrap_material' });
+                                setEditingAdjId(null);
+                                setAdjustmentModal(true);
+                              }}
+                            >
+                              ♻️ + Record Scrap Material
+                            </button>
+                          )}
+                          {constructionSubTab === 'expenses' && (
                             <button
                               onClick={() => {
                                 setExpenseForm(expenseBlank);
@@ -5042,7 +5104,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
                   {/* SUBTAB 4: ADJUSTMENTS HISTORY */}
 
-                      {materialsSubTab === 'adjustments' && (
+                      {constructionSubTab === 'adjustments' && (
                     <table>
                       <thead>
                         <tr>
@@ -5058,7 +5120,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         </tr>
                       </thead>
                       <tbody>
-                        {adjustmentRows.map((r) => (
+                        {wastageAdjRows.map((r) => (
                           <tr
                             key={r.id}
                             className="clickable-row"
@@ -5068,7 +5130,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             }}
                             title="Click to view material ledger & transaction timeline"
                           >
-                            <td>{r.adjustment_date}</td>
+                            <td>{r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : '—'}</td>
                             <td><b>{r.material_name}</b></td>
                             <td>
                               <span className="badge badge-active" style={{ textTransform: 'capitalize' }}>
@@ -5096,9 +5158,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
                                     adjustment_type: r.adjustment_type,
                                     quantity: r.quantity,
-                                    adjustment_date: r.adjustment_date,
+                                    adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
                                     to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                    supplier_name: r.supplier_name || '',
+                                    amount: r.amount || '',
                                     note: r.note || '',
+                                    bill_url: r.bill_url || '',
+                                    bill_filename: r.bill_filename || '',
                                   });
                                   setAdjustmentModal(true);
                                 }}
@@ -5113,10 +5179,186 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             </td>
                           </tr>
                         ))}
-                        {adjustmentRows.length === 0 && (
+                        {wastageAdjRows.length === 0 && (
                           <tr>
-                            <td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                              No adjustments or wastage entries recorded.
+                            <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                              No adjustments or wastage entries recorded. Click &ldquo;⚡ + Record Wastage / Adjustment&rdquo; above.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  )}
+
+                  {constructionSubTab === 'return' && (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Material</th>
+                          <th>Type</th>
+                          <th>Quantity</th>
+                          <th>Returned To / Supplier</th>
+                          <th>Refund / Credit Amount</th>
+                          <th>Challan / Bill</th>
+                          <th>Note</th>
+                          <th style={{ textAlign: 'right' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {returnMaterialRows.map((r) => (
+                          <tr
+                            key={r.id}
+                            className="clickable-row"
+                            onClick={() => {
+                              const mat = stockRows.find((s) => Number(s.id) === Number(r.material_id)) || { id: r.material_id, name: r.material_name, unit: r.material_unit };
+                              openMaterialTimeline(mat);
+                            }}
+                            title="Click to view material ledger & transaction timeline"
+                          >
+                            <td>{r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : '—'}</td>
+                            <td><b>{r.material_name}</b></td>
+                            <td>
+                              <span className="badge badge-active" style={{ background: '#e0f2fe', color: '#0369a1', fontWeight: 600, textTransform: 'capitalize' }}>
+                                {r.adjustment_type === 'return_to_supplier' ? 'Return to Supplier' : 'Return Material'}
+                              </span>
+                            </td>
+                            <td style={{ fontWeight: 600 }}>{Number(r.quantity).toFixed(2)} {r.material_unit}</td>
+                            <td>{r.supplier_name || '—'}</td>
+                            <td style={{ fontWeight: 600, color: r.amount ? '#16a34a' : '#64748b' }}>
+                              {r.amount ? INR(r.amount) : '—'}
+                            </td>
+                            <td onClick={(e) => e.stopPropagation()}>
+                              {r.bill_url ? (
+                                <a href={r.bill_url} target="_blank" rel="noreferrer" title={r.bill_filename} style={{ textDecoration: 'none' }}>
+                                  📄 View Slip
+                                </a>
+                              ) : '—'}
+                            </td>
+                            <td>{r.note || '—'}</td>
+                            <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
+                              <button
+                                className="muted"
+                                onClick={() => {
+                                  setEditingAdjId(r.id);
+                                  setAdjustmentForm({
+                                    material_id: String(r.material_id),
+                                    material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                    adjustment_type: r.adjustment_type,
+                                    quantity: r.quantity,
+                                    adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
+                                    to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                    supplier_name: r.supplier_name || '',
+                                    amount: r.amount || '',
+                                    note: r.note || '',
+                                    bill_url: r.bill_url || '',
+                                    bill_filename: r.bill_filename || '',
+                                  });
+                                  setAdjustmentModal(true);
+                                }}
+                              >
+                                Edit
+                              </button>
+                              {!isAgent && (
+                                <button className="danger" onClick={() => del('adjustment', r.id)}>
+                                  Delete
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                        {returnMaterialRows.length === 0 && (
+                          <tr>
+                            <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                              No material returns recorded yet. Click &ldquo;🔄 + Record Return Material&rdquo; above.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  )}
+
+                  {constructionSubTab === 'scrap' && (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Material</th>
+                          <th>Type</th>
+                          <th>Quantity</th>
+                          <th>Scrap Sold Amount</th>
+                          <th>Buyer / Dealer</th>
+                          <th>Receipt / Bill</th>
+                          <th>Note</th>
+                          <th style={{ textAlign: 'right' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {scrapMaterialRows.map((r) => (
+                          <tr
+                            key={r.id}
+                            className="clickable-row"
+                            onClick={() => {
+                              const mat = stockRows.find((s) => Number(s.id) === Number(r.material_id)) || { id: r.material_id, name: r.material_name, unit: r.material_unit };
+                              openMaterialTimeline(mat);
+                            }}
+                            title="Click to view material ledger & transaction timeline"
+                          >
+                            <td>{r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : '—'}</td>
+                            <td><b>{r.material_name}</b></td>
+                            <td>
+                              <span className="badge badge-active" style={{ background: '#fef3c7', color: '#b45309', fontWeight: 600, textTransform: 'capitalize' }}>
+                                Scrap Material
+                              </span>
+                            </td>
+                            <td style={{ fontWeight: 600 }}>{Number(r.quantity).toFixed(2)} {r.material_unit}</td>
+                            <td style={{ fontWeight: 700, color: r.amount ? '#16a34a' : '#64748b' }}>
+                              {r.amount ? INR(r.amount) : '—'}
+                            </td>
+                            <td>{r.supplier_name || '—'}</td>
+                            <td onClick={(e) => e.stopPropagation()}>
+                              {r.bill_url ? (
+                                <a href={r.bill_url} target="_blank" rel="noreferrer" title={r.bill_filename} style={{ textDecoration: 'none' }}>
+                                  📄 View Slip
+                                </a>
+                              ) : '—'}
+                            </td>
+                            <td>{r.note || '—'}</td>
+                            <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
+                              <button
+                                className="muted"
+                                onClick={() => {
+                                  setEditingAdjId(r.id);
+                                  setAdjustmentForm({
+                                    material_id: String(r.material_id),
+                                    material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                    adjustment_type: r.adjustment_type,
+                                    quantity: r.quantity,
+                                    adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
+                                    to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                    supplier_name: r.supplier_name || '',
+                                    amount: r.amount || '',
+                                    note: r.note || '',
+                                    bill_url: r.bill_url || '',
+                                    bill_filename: r.bill_filename || '',
+                                  });
+                                  setAdjustmentModal(true);
+                                }}
+                              >
+                                Edit
+                              </button>
+                              {!isAgent && (
+                                <button className="danger" onClick={() => del('adjustment', r.id)}>
+                                  Delete
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                        {scrapMaterialRows.length === 0 && (
+                          <tr>
+                            <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                              No scrap material entries recorded yet. Click &ldquo;♻️ + Record Scrap Material&rdquo; above.
                             </td>
                           </tr>
                         )}
@@ -6592,15 +6834,21 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             </div>
           )}
 
-          {/* ── MODAL: ADJUSTMENT / WASTAGE ─────────────────────────────────── */}
+          {/* ── MODAL: ADJUSTMENT / WASTAGE / RETURN / SCRAP ────────────────── */}
           {adjustmentModal && (
             <div className="modal-overlay">
-              <form onSubmit={(e) => submitAction.submit('adjustment', () => saveAdjustmentEntry(e), { successMessage: 'Material adjustment saved successfully', onError: setModalError })} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('adjustment', () => saveAdjustmentEntry(e), { successMessage: 'Entry saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {editingAdjId ? 'Edit' : 'Record'} Material Adjustment / Wastage
+                  {editingAdjId ? 'Edit' : 'Record'} {
+                    ['return_material', 'return_to_supplier'].includes(adjustmentForm.adjustment_type)
+                      ? 'Return Material'
+                      : ['scrap_material', 'scrap'].includes(adjustmentForm.adjustment_type)
+                      ? 'Scrap Material'
+                      : 'Material Adjustment / Wastage'
+                  }
                 </h3>
                 <div className="grid">
-                  <Input label="Material Name" name="material_name" value={adjustmentForm.material_name} set={setAdjustmentForm} required placeholder="e.g. Cement 53 Grade" />
+                  <Input label="Material Name" name="material_name" value={adjustmentForm.material_name} set={setAdjustmentForm} required placeholder="e.g. Cement, Steel, Bricks, Copper Wire" />
 
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
@@ -6612,13 +6860,72 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     >
                       <option value="wastage">Wastage</option>
                       <option value="damage">Damage</option>
-                      <option value="return_to_supplier">Return to Supplier</option>
+                      <option value="return_material">Return Material (Return to Supplier / Site)</option>
+                      <option value="scrap_material">Scrap Material</option>
                       <option value="transfer_out">Transfer to Another Project</option>
                     </select>
                   </label>
 
                   <Input label="Quantity" name="quantity" type="number" step="any" min="0.001" value={adjustmentForm.quantity} set={setAdjustmentForm} required />
-                  <Input label="Adjustment Date" name="adjustment_date" type="date" value={adjustmentForm.adjustment_date} set={setAdjustmentForm} required />
+                  <Input label="Date" name="adjustment_date" type="date" value={adjustmentForm.adjustment_date} set={setAdjustmentForm} required />
+
+                  {['return_material', 'return_to_supplier'].includes(adjustmentForm.adjustment_type) && (
+                    <>
+                      <label>
+                        <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
+                          Returned To / Supplier Name (Optional)
+                        </small>
+                        <input
+                          type="text"
+                          list="project-suppliers-list"
+                          placeholder="Select or enter supplier name"
+                          value={adjustmentForm.supplier_name || ''}
+                          onChange={(e) => setAdjustmentForm({ ...adjustmentForm, supplier_name: e.target.value })}
+                        />
+                        <datalist id="project-suppliers-list">
+                          {projectSuppliers.map((s) => (
+                            <option key={s.id || s.supplier_id} value={s.supplier_name || s.name} />
+                          ))}
+                        </datalist>
+                      </label>
+                      <Input
+                        label="Refund / Credit Amount (₹) (Optional)"
+                        name="amount"
+                        type="number"
+                        step="any"
+                        min="0"
+                        value={adjustmentForm.amount || ''}
+                        set={setAdjustmentForm}
+                        placeholder="e.g. 1500"
+                      />
+                    </>
+                  )}
+
+                  {['scrap_material', 'scrap'].includes(adjustmentForm.adjustment_type) && (
+                    <>
+                      <Input
+                        label="Scrap Sold Amount (₹) (Optional)"
+                        name="amount"
+                        type="number"
+                        step="any"
+                        min="0"
+                        value={adjustmentForm.amount || ''}
+                        set={setAdjustmentForm}
+                        placeholder="e.g. 500"
+                      />
+                      <label>
+                        <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
+                          Buyer / Scrap Dealer Name (Optional)
+                        </small>
+                        <input
+                          type="text"
+                          placeholder="e.g. Gupta Scrap Center"
+                          value={adjustmentForm.supplier_name || ''}
+                          onChange={(e) => setAdjustmentForm({ ...adjustmentForm, supplier_name: e.target.value })}
+                        />
+                      </label>
+                    </>
+                  )}
 
                   {adjustmentForm.adjustment_type === 'transfer_out' && (
                     <label>
@@ -6640,21 +6947,23 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     </label>
                   )}
 
-                  <Input label="Note / Reason" name="note" value={adjustmentForm.note} set={setAdjustmentForm} placeholder="e.g. Rain damage during storm" />
+                  <Input label="Note / Reason" name="note" value={adjustmentForm.note} set={setAdjustmentForm} placeholder="e.g. Rain damage / scrap pieces / returned unused bags" />
                   
-                  {adjustmentForm.adjustment_type === 'return_to_supplier' && (
-                    <label>
-                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Upload Bill / Return Note (optional)</small>
-                      <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(e) => setBillFile(e.target.files[0] || null)} />
-                    </label>
-                  )}
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
+                      Upload Bill / Return Slip / Receipt (optional)
+                    </small>
+                    <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(e) => setBillFile(e.target.files[0] || null)} />
+                  </label>
                 </div>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
                   <button type="button" className="muted" disabled={submitAction.isSubmitting('adjustment')} onClick={() => setAdjustmentModal(false)}>
                     Cancel
                   </button>
-                  <button type="submit" disabled={submitAction.isSubmitting('adjustment')}>{submitAction.isSubmitting('adjustment') ? 'Saving…' : 'Record Adjustment'}</button>
+                  <button type="submit" disabled={submitAction.isSubmitting('adjustment')}>
+                    {submitAction.isSubmitting('adjustment') ? 'Saving…' : 'Save Entry'}
+                  </button>
                 </div>
               </form>
             </div>
