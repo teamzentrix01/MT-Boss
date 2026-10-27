@@ -539,7 +539,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [laborPaymentFilterFrom, setLaborPaymentFilterFrom] = useState('');
   const [laborPaymentFilterTo, setLaborPaymentFilterTo] = useState('');
   const [laborPaymentModal, setLaborPaymentModal] = useState(false);
-  const [laborPaymentForm, setLaborPaymentForm] = useState({ labor_id: '', amount: '', payment_date: today(), mode: 'cash', note: '', transaction_reference: '' });
+  const [laborPaymentForm, setLaborPaymentForm] = useState({ labor_id: '', amount: '', payment_date: today(), mode: 'cash', payment_type: 'wage', note: '', transaction_reference: '' });
   const [editingLaborPaymentId, setEditingLaborPaymentId] = useState(null);
   const [laborCalendarMonth, setLaborCalendarMonth] = useState(() => today().slice(0, 7));
   const [laborAttendanceHistory, setLaborAttendanceHistory] = useState([]);
@@ -1492,7 +1492,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         const workers = isMarked ? Number(ex.workers_count || 1) : 1;
         const rate = isMarked ? Number(ex.rate_per_worker || pv.daily_rate || 0) : Number(pv.daily_rate || 0);
         const mult = initialStatus === 'present' ? 1 : initialStatus === 'half_day' ? 0.5 : 0;
-        const wage = hasLinkedLabor ? 0 : (isMarked ? Number(ex.wage_amount) : mult * workers * rate);
+        const wage = isMarked ? Number(ex.wage_amount) : mult * workers * rate;
 
         return {
           project_vendor_id: pv.id,
@@ -1532,7 +1532,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     setSavingAttendance(true);
     try {
       const payloadEntries = attendanceRows
-        .filter((r) => !r.has_linked_labor && r.dirty)
+        .filter((r) => r.dirty)
         .map((r) => ({
           project_vendor_id: r.project_vendor_id,
           attendance_date: attendanceDate,
@@ -1781,6 +1781,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             amount: Number(laborPaymentForm.amount),
             payment_date: laborPaymentForm.payment_date,
             mode: laborPaymentForm.mode,
+            payment_type: laborPaymentForm.payment_type || 'wage',
+            transaction_reference: laborPaymentForm.transaction_reference || null,
             note: laborPaymentForm.note,
           }),
         });
@@ -1793,14 +1795,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             amount: Number(laborPaymentForm.amount),
             payment_date: laborPaymentForm.payment_date,
             mode: laborPaymentForm.mode,
+            payment_type: laborPaymentForm.payment_type || 'wage',
+            transaction_reference: laborPaymentForm.transaction_reference || null,
             note: laborPaymentForm.note,
           }),
         });
         setMessage('Labor payment recorded successfully');
       }
-      setLaborPaymentForm(false);
+      setLaborPaymentModal(false);
       setEditingLaborPaymentId(null);
-      setLaborPaymentForm({ labor_id: '', amount: '', payment_date: today(), mode: 'cash', note: '', transaction_reference: '' });
+      setLaborPaymentForm({ labor_id: '', amount: '', payment_date: today(), mode: 'cash', payment_type: 'wage', note: '', transaction_reference: '' });
       loadLaborPayments(project.id, laborPaymentFilterLabor, laborPaymentFilterFrom, laborPaymentFilterTo);
       loadProjectLabors(project.id);
       if (selectedLabor) {
@@ -2571,7 +2575,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         {(!isAgent || hasAgentPayment) && <th>Rate / Contract</th>}
                         {(!isAgent || hasAgentPayment) && <th>Total Earned</th>}
                         {!isSupervisor && (!isAgent || hasAgentPayment) && <th>Total Paid</th>}
-                        {!isSupervisor && (!isAgent || hasAgentPayment) && <th>Balance Due</th>}
+                        {!isSupervisor && (!isAgent || hasAgentPayment) && <th>Balance</th>}
                         <th>Status</th>
                         <th style={{ textAlign: 'right' }}>Actions</th>
                       </tr>
@@ -2581,7 +2585,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         const earnedVal = pv.total_earned ?? pv.earned ?? 0;
                         const paidVal = pv.total_paid ?? pv.paid ?? 0;
                         const dueVal = pv.balance_due ?? pv.balance ?? (Number(earnedVal) - Number(paidVal));
-                        const isOverpaid = Number(dueVal || 0) < 0;
+                        const isAdvance = Number(dueVal || 0) < 0;
+                        const isDue = Number(dueVal || 0) > 0;
                         return (
                           <tr
                             key={pv.id}
@@ -2612,13 +2617,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             {!isSupervisor && (!isAgent || hasAgentPayment) && <td style={{ color: '#16a34a' }}>{INR(paidVal)}</td>}
                             {!isSupervisor && (!isAgent || hasAgentPayment) && (
                               <td>
-                                <b style={{ color: isOverpaid ? '#dc2626' : '#0f172a' }}>
-                                  {INR(dueVal)}
-                                </b>
-                                {isOverpaid && (
-                                  <span className="badge badge-overused" style={{ marginLeft: 4 }}>
-                                    ⚠️ Overpaid
+                                {isDue ? (
+                                  <span style={{ fontWeight: 700, color: '#ea580c' }}>
+                                    Due: {INR(dueVal)}
                                   </span>
+                                ) : isAdvance ? (
+                                  <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                    Advance: {INR(Math.abs(dueVal))}
+                                  </span>
+                                ) : (
+                                  <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
                                 )}
                               </td>
                             )}
@@ -2728,7 +2736,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           <th>Daily Rate</th>
                           <th>Total Earned</th>
                           {!isSupervisor && <th>Total Paid</th>}
-                          {!isSupervisor && <th>Balance Due</th>}
+                          {!isSupervisor && <th>Balance</th>}
                           <th>Status</th>
                           <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
@@ -2742,7 +2750,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             return String(lab.project_vendor_id) === String(laborTypeFilter);
                           })
                           .map((lab) => {
-                          const isOverpaid = Number(lab.balance_due || 0) < 0;
+                          const balVal = Number(lab.balance_due ?? (Number(lab.total_earned || 0) - Number(lab.total_paid || 0)));
+                          const isAdvance = balVal < 0;
+                          const isDue = balVal > 0;
                           return (
                             <tr
                               key={lab.id}
@@ -2771,13 +2781,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               {!isSupervisor && <td style={{ color: '#16a34a', fontWeight: 600 }}>{INR(lab.total_paid)}</td>}
                               {!isSupervisor && (
                                 <td>
-                                  <b style={{ color: isOverpaid ? '#dc2626' : '#0f172a' }}>
-                                    {INR(lab.balance_due)}
-                                  </b>
-                                  {isOverpaid && (
-                                    <span className="badge badge-overused" style={{ marginLeft: 4 }}>
-                                      ⚠️ Overpaid
+                                  {isDue ? (
+                                    <span style={{ fontWeight: 700, color: '#ea580c' }}>
+                                      Due: {INR(balVal)}
                                     </span>
+                                  ) : isAdvance ? (
+                                    <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                      Advance: {INR(Math.abs(balVal))}
+                                    </span>
+                                  ) : (
+                                    <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
                                   )}
                                 </td>
                               )}
@@ -2874,8 +2887,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               }}
                               style={{ maxWidth: 170 }}
                             />
-                            <button onClick={saveAllAttendance} disabled={savingAttendance || !attendanceRows.some((row) => row.dirty && !row.has_linked_labor)}>
-                              {savingAttendance ? 'Saving...' : `💾 Save Attendance (${attendanceRows.filter((row) => row.dirty && !row.has_linked_labor).length} marked)`}
+                            <button onClick={saveAllAttendance} disabled={savingAttendance || !attendanceRows.some((row) => row.dirty)}>
+                              {savingAttendance ? 'Saving...' : `💾 Save Attendance (${attendanceRows.filter((row) => row.dirty).length} marked)`}
                             </button>
                             {attendanceRows.some((r) => r.is_marked) ? (
                               <span style={{ fontSize: 12, padding: '4px 8px', borderRadius: 4, background: '#dcfce7', color: '#166534', fontWeight: 600 }}>
@@ -2972,41 +2985,37 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     </thead>
                     <tbody>
                       {attendanceRows.map((row, idx) => (
-                        <tr key={row.project_vendor_id} style={{ opacity: row.has_linked_labor ? 0.75 : 1 }}>
+                        <tr key={row.project_vendor_id}>
                           <td>
                             <b>{row.vendor_name}</b>
                             {row.has_linked_labor && (
-                              <div style={{ fontSize: 11, color: '#b45309', background: '#fef3c7', padding: '2px 6px', borderRadius: 4, display: 'inline-block', marginTop: 3 }}>
-                                ⚠️ Tracked under Labor tab
+                              <div style={{ fontSize: 11, color: '#1d4ed8', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '2px 6px', borderRadius: 4, display: 'inline-block', marginTop: 3 }}>
+                                👥 Has Team
                               </div>
                             )}
                           </td>
                           <td>{row.trade || '—'}</td>
                           <td>
-                            {row.has_linked_labor ? (
-                              <span style={{ fontSize: 11, color: '#64748b', fontStyle: 'italic' }}>Individual Workers Active</span>
-                            ) : (
-                              <div style={{ display: 'flex', gap: 4 }}>
-                                {['present', 'half_day', 'absent'].map((st) => (
-                                  <button
-                                    key={st}
-                                    type="button"
-                                    onClick={() => {
-                                      const next = [...attendanceRows];
-                                      next[idx].status = st;
-                                      next[idx].dirty = true;
-                                      const mult = st === 'present' ? 1 : st === 'half_day' ? 0.5 : 0;
-                                      next[idx].wage_amount = mult * Number(next[idx].workers_count) * Number(next[idx].rate_per_worker);
-                                      setAttendanceRows(next);
-                                    }}
-                                    className={row.status === st ? 'active-btn' : 'muted'}
-                                    style={{ padding: '3px 8px', fontSize: 11 }}
-                                  >
-                                    {st === 'present' ? 'Present' : st === 'half_day' ? 'Half Day' : 'Absent'}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
+                            <div style={{ display: 'flex', gap: 4 }}>
+                              {['present', 'half_day', 'absent'].map((st) => (
+                                <button
+                                  key={st}
+                                  type="button"
+                                  onClick={() => {
+                                    const next = [...attendanceRows];
+                                    next[idx].status = st;
+                                    next[idx].dirty = true;
+                                    const mult = st === 'present' ? 1 : st === 'half_day' ? 0.5 : 0;
+                                    next[idx].wage_amount = mult * Number(next[idx].workers_count) * Number(next[idx].rate_per_worker);
+                                    setAttendanceRows(next);
+                                  }}
+                                  className={row.status === st ? 'active-btn' : 'muted'}
+                                  style={{ padding: '3px 8px', fontSize: 11 }}
+                                >
+                                  {st === 'present' ? 'Present' : st === 'half_day' ? 'Half Day' : 'Absent'}
+                                </button>
+                              ))}
+                            </div>
                           </td>
                           <td>
                             <input
@@ -3014,7 +3023,6 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               min="0.5"
                               step="0.5"
                               value={row.workers_count}
-                              disabled={row.has_linked_labor}
                               onChange={(e) => {
                                 const next = [...attendanceRows];
                                 next[idx].workers_count = e.target.value;
@@ -3030,7 +3038,6 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               type="number"
                               min="0"
                               value={row.rate_per_worker}
-                              disabled={row.has_linked_labor}
                               onChange={(e) => {
                                 const next = [...attendanceRows];
                                 next[idx].rate_per_worker = e.target.value;
@@ -3041,15 +3048,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               style={{ width: 90 }}
                             />
                           </td>
-                          <td style={{ fontWeight: 700, color: row.has_linked_labor ? '#64748b' : '#16a34a' }}>
-                            {row.has_linked_labor ? '₹0 (via Labor)' : INR(row.wage_amount)}
+                          <td style={{ fontWeight: 700, color: '#16a34a' }}>
+                            {INR(row.wage_amount)}
                           </td>
                           <td>
                             <input
                               type="text"
                               placeholder="Note..."
                               value={row.note}
-                              disabled={row.has_linked_labor}
                               onChange={(e) => {
                                 const next = [...attendanceRows];
                                 next[idx].note = e.target.value;
@@ -3826,16 +3832,71 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         <select
                           required
                           value={vendorPaymentForm.project_vendor_id}
-                          onChange={(e) => setVendorPaymentForm({ ...vendorPaymentForm, project_vendor_id: e.target.value })}
+                          onChange={(e) => {
+                            const pvid = e.target.value;
+                            const pv = projectVendors.find((v) => String(v.id) === String(pvid));
+                            const earned = pv ? Number(pv.total_earned ?? pv.earned ?? 0) : 0;
+                            const paid = pv ? Number(pv.total_paid ?? pv.paid ?? 0) : 0;
+                            const bal = pv ? Number(pv.balance_due ?? pv.balance ?? (earned - paid)) : 0;
+                            const defType = pv ? (bal <= 0 ? 'advance' : pv.pay_type === 'contract' ? 'contract' : 'labour') : 'labour';
+                            setVendorPaymentForm({ ...vendorPaymentForm, project_vendor_id: pvid, payment_type: defType });
+                          }}
                         >
                           <option value="">Select Vendor</option>
-                          {projectVendors.map((pv) => (
-                            <option value={pv.id} key={pv.id}>
-                              {pv.vendor_name} ({pv.pay_type === 'daily_wage' ? 'Daily Wage' : 'Contract'}) &bull; Due: {INR(pv.balance_due ?? pv.balance)}
-                            </option>
-                          ))}
+                          {projectVendors.map((pv) => {
+                            const earned = Number(pv.total_earned ?? pv.earned ?? 0);
+                            const paid = Number(pv.total_paid ?? pv.paid ?? 0);
+                            const bal = Number(pv.balance_due ?? pv.balance ?? (earned - paid));
+                            const balLabel = bal > 0 ? `Due: ${INR(bal)}` : bal < 0 ? `Advance: ${INR(Math.abs(bal))}` : 'Settled (₹0)';
+                            const rateLabel = pv.pay_type === 'daily_wage' ? `Daily Wage: ${INR(pv.daily_rate)}/day` : `Contract: ${INR(pv.contract_amount)}`;
+                            return (
+                              <option value={pv.id} key={pv.id}>
+                                {pv.vendor_name} ({rateLabel}) &bull; {balLabel}
+                              </option>
+                            );
+                          })}
                         </select>
                       </label>
+                      {(() => {
+                        const sel = projectVendors.find((pv) => String(pv.id) === String(vendorPaymentForm.project_vendor_id));
+                        if (!sel) return null;
+                        const earned = Number(sel.total_earned ?? sel.earned ?? 0);
+                        const paid = Number(sel.total_paid ?? sel.paid ?? 0);
+                        const bal = Number(sel.balance_due ?? sel.balance ?? (earned - paid));
+                        const rateLabel = sel.pay_type === 'daily_wage' ? `Daily Wage: ${INR(sel.daily_rate)}/day` : `Contract Amount: ${INR(sel.contract_amount)}`;
+                        return (
+                          <div style={{ gridColumn: '1 / -1', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 14px', display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
+                            <div>
+                              <small style={{ color: '#64748b', display: 'block' }}>Contractor / Vendor</small>
+                              <b>{sel.vendor_name}</b> <span style={{ fontSize: 12, color: '#64748b' }}>({sel.trade || 'General'})</span>
+                            </div>
+                            <div>
+                              <small style={{ color: '#64748b', display: 'block' }}>Rate / Contract Value</small>
+                              <span style={{ fontWeight: 600, color: '#0f172a' }}>{rateLabel}</span>
+                            </div>
+                            <div>
+                              <small style={{ color: '#64748b', display: 'block' }}>Vendor Earned</small>
+                              <span style={{ fontWeight: 600, color: '#0f172a' }}>{INR(earned)}</span>
+                            </div>
+                            <div>
+                              <small style={{ color: '#64748b', display: 'block' }}>Total Paid</small>
+                              <span style={{ fontWeight: 600, color: '#16a34a' }}>{INR(paid)}</span>
+                            </div>
+                            <div>
+                              <small style={{ color: '#64748b', display: 'block' }}>Current Balance</small>
+                              {bal > 0 ? (
+                                <span style={{ fontWeight: 700, color: '#ea580c' }}>Due: {INR(bal)}</span>
+                              ) : bal < 0 ? (
+                                <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700 }}>
+                                  Advance: {INR(Math.abs(bal))}
+                                </span>
+                              ) : (
+                                <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
                       <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={vendorPaymentForm.amount} set={setVendorPaymentForm} required />
                       <Input label="Payment Date" name="payment_date" type="date" value={vendorPaymentForm.payment_date} set={setVendorPaymentForm} required />
                       <label>
@@ -3916,47 +3977,83 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         <th>Vendor</th>
                         <th>Type</th>
                         <th>Amount</th>
+                        <th>Advance Payment</th>
+                        <th>Balance</th>
                         <th>Mode</th>
                         <th>Note</th>
                         <th style={{ textAlign: 'right' }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {vendorPaymentsList.map((p) => (
-                        <tr
-                          key={p.id}
-                          className="clickable-row"
-                          onClick={() => {
-                            const pv = projectVendors.find((v) => Number(v.id) === Number(p.project_vendor_id));
-                            if (pv) openVendorDetail(pv);
-                          }}
-                          title="Click to open contractor detail page"
-                        >
-                          <td>{p.payment_date}</td>
-                          <td><b>{p.vendor_name}</b></td>
-                          <td>
-                            <span className="badge badge-active" style={{ textTransform: 'capitalize' }}>
-                              {p.payment_type}
-                            </span>
-                          </td>
-                          <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
-                          <td style={{ textTransform: 'uppercase', fontSize: 11 }}>{p.mode}</td>
-                          <td>
-                            {p.note || '—'}
-                            {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
-                          </td>
-                          <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                            {!isAgent && (
-                              <button className="danger" onClick={() => del('vendorPayment', p.id)}>
-                                Delete
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                      {vendorPaymentsList.map((p) => {
+                        const pv = projectVendors.find((v) => Number(v.id) === Number(p.project_vendor_id));
+                        const bal = Number(pv?.balance_due ?? pv?.balance ?? (Number(pv?.total_earned ?? pv?.earned ?? 0) - Number(pv?.total_paid ?? pv?.paid ?? 0)));
+                        const isAdvance = p.payment_type === 'advance';
+                        return (
+                          <tr
+                            key={p.id}
+                            className="clickable-row"
+                            onClick={() => {
+                              if (pv) openVendorDetail(pv);
+                            }}
+                            title="Click to open contractor detail page"
+                          >
+                            <td>{p.payment_date ? String(p.payment_date).slice(0, 10) : '—'}</td>
+                            <td><b>{p.vendor_name}</b></td>
+                            <td>
+                              <span
+                                className="badge badge-active"
+                                style={{
+                                  textTransform: 'capitalize',
+                                  background: isAdvance ? '#dcfce7' : undefined,
+                                  color: isAdvance ? '#15803d' : undefined,
+                                  fontWeight: isAdvance ? 700 : undefined,
+                                }}
+                              >
+                                {p.payment_type}
+                              </span>
+                            </td>
+                            <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
+                            <td>
+                              {isAdvance ? (
+                                <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                  Advance: {INR(p.amount)}
+                                </span>
+                              ) : (
+                                <span style={{ color: '#94a3b8' }}>—</span>
+                              )}
+                            </td>
+                            <td>
+                              {bal < 0 ? (
+                                <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                  Advance: {INR(Math.abs(bal))}
+                                </span>
+                              ) : bal > 0 ? (
+                                <span style={{ fontWeight: 700, color: '#ea580c', whiteSpace: 'nowrap' }}>
+                                  Due: {INR(bal)}
+                                </span>
+                              ) : (
+                                <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
+                              )}
+                            </td>
+                            <td style={{ textTransform: 'uppercase', fontSize: 11 }}>{p.mode}</td>
+                            <td>
+                              {p.note || '—'}
+                              {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
+                            </td>
+                            <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
+                              {!isAgent && (
+                                <button className="danger" onClick={() => del('vendorPayment', p.id)}>
+                                  Delete
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                       {vendorPaymentsList.length === 0 && (
                         <tr>
-                          <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                          <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
                             No vendor payments recorded yet.
                           </td>
                         </tr>
@@ -4016,61 +4113,108 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             <th>Date</th>
                             <th>Laborer</th>
                             <th>Trade</th>
+                            <th>Type</th>
                             <th>Amount</th>
+                            <th>Advance Payment</th>
+                            <th>Balance</th>
                             <th>Mode</th>
                             <th>Note</th>
                             <th style={{ textAlign: 'right' }}>Actions</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {laborPaymentsList.map((p) => (
-                            <tr
-                              key={p.id}
-                              className="clickable-row"
-                              onClick={() => {
-                                const lab = projectLabors.find((l) => Number(l.id) === Number(p.labor_id));
-                                if (lab) openLaborDetail(lab);
-                              }}
-                              title="Click to open laborer detail page"
-                            >
-                              <td>{p.payment_date}</td>
-                              <td><b>{p.labor_name}</b></td>
-                              <td>{p.trade || '—'}</td>
-                              <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
-                              <td>
-                                <span className="badge badge-active" style={{ textTransform: 'uppercase', fontSize: 10 }}>
-                                  {p.mode}
-                                </span>
-                              </td>
-                              <td>{p.note || '—'}</td>
-                              <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                                <button
-                                  className="muted"
-                                  onClick={() => {
-                                    setLaborPaymentForm({
-                                      labor_id: p.labor_id,
-                                      amount: p.amount,
-                                      payment_date: p.payment_date,
-                                      mode: p.mode,
-                                      note: p.note || '',
-                                    });
-                                    setEditingLaborPaymentId(p.id);
-                                    setLaborPaymentModal(true);
-                                  }}
-                                >
-                                  Edit
-                                </button>
-                                {!isAgent && (
-                                  <button className="danger" onClick={() => del('laborPayment', p.id)}>
-                                    Delete
+                          {laborPaymentsList.map((p) => {
+                            const lab = projectLabors.find((l) => Number(l.id) === Number(p.labor_id));
+                            const balVal = Number(lab?.balance_due ?? (Number(lab?.total_earned || 0) - Number(lab?.total_paid || 0)));
+                            const isAdvancePay = p.payment_type === 'advance';
+                            return (
+                              <tr
+                                key={p.id}
+                                className="clickable-row"
+                                onClick={() => {
+                                  if (lab) openLaborDetail(lab);
+                                }}
+                                title="Click to open laborer detail page"
+                              >
+                                <td>{p.payment_date ? String(p.payment_date).slice(0, 10) : '—'}</td>
+                                <td><b>{p.labor_name}</b></td>
+                                <td>{p.trade || '—'}</td>
+                                <td>
+                                  <span
+                                    className="badge badge-active"
+                                    style={{
+                                      textTransform: 'capitalize',
+                                      background: isAdvancePay ? '#dcfce7' : undefined,
+                                      color: isAdvancePay ? '#15803d' : undefined,
+                                      fontWeight: isAdvancePay ? 700 : undefined,
+                                    }}
+                                  >
+                                    {p.payment_type || 'wage'}
+                                  </span>
+                                </td>
+                                <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
+                                <td>
+                                  {isAdvancePay ? (
+                                    <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                      Advance: {INR(p.amount)}
+                                    </span>
+                                  ) : (
+                                    <span style={{ color: '#94a3b8' }}>—</span>
+                                  )}
+                                </td>
+                                <td>
+                                  {balVal < 0 ? (
+                                    <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                      Advance: {INR(Math.abs(balVal))}
+                                    </span>
+                                  ) : balVal > 0 ? (
+                                    <span style={{ fontWeight: 700, color: '#ea580c', whiteSpace: 'nowrap' }}>
+                                      Due: {INR(balVal)}
+                                    </span>
+                                  ) : (
+                                    <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
+                                  )}
+                                </td>
+                                <td>
+                                  <span className="badge badge-active" style={{ textTransform: 'uppercase', fontSize: 10 }}>
+                                    {p.mode}
+                                  </span>
+                                </td>
+                                <td>
+                                  {p.note || '—'}
+                                  {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
+                                </td>
+                                <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
+                                  <button
+                                    className="muted"
+                                    onClick={() => {
+                                      setLaborPaymentForm({
+                                        labor_id: p.labor_id,
+                                        amount: p.amount,
+                                        payment_date: p.payment_date ? String(p.payment_date).slice(0, 10) : today(),
+                                        mode: p.mode || 'cash',
+                                        payment_type: p.payment_type || 'wage',
+                                        note: p.note || '',
+                                        transaction_reference: p.transaction_reference || '',
+                                      });
+                                      setEditingLaborPaymentId(p.id);
+                                      setLaborPaymentModal(true);
+                                    }}
+                                  >
+                                    Edit
                                   </button>
-                                )}
-                              </td>
-                            </tr>
-                          ))}
+                                  {!isAgent && (
+                                    <button className="danger" onClick={() => del('laborPayment', p.id)}>
+                                      Delete
+                                    </button>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
                           {laborPaymentsList.length === 0 && (
                             <tr>
-                              <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                              <td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
                                 No labor payments recorded yet. Click &ldquo;+ Record Labor Payment&rdquo; above.
                               </td>
                             </tr>
@@ -5110,10 +5254,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           <b style={{ color: '#16a34a' }}>{INR(selectedVendor.total_paid ?? selectedVendor.paid)}</b>
                         </div>
                         <div className="stat">
-                          <small>Balance Due</small>
-                          <b style={{ color: Number(selectedVendor.balance_due ?? selectedVendor.balance) < 0 ? '#dc2626' : '#0f172a' }}>
-                            {INR(selectedVendor.balance_due ?? selectedVendor.balance)}
-                          </b>
+                          <small>Balance</small>
+                          {(() => {
+                            const bal = Number(selectedVendor.balance_due ?? selectedVendor.balance ?? (Number(selectedVendor.total_earned ?? selectedVendor.earned ?? 0) - Number(selectedVendor.total_paid ?? selectedVendor.paid ?? 0)));
+                            if (bal > 0) return <b style={{ color: '#ea580c' }}>Due: {INR(bal)}</b>;
+                            if (bal < 0) return <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, fontSize: 13, padding: '3px 8px' }}>Advance: {INR(Math.abs(bal))}</span>;
+                            return <b style={{ color: '#64748b' }}>Settled (₹0)</b>;
+                          })()}
                         </div>
                       </>
                     )}
@@ -5172,6 +5319,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       <th>Daily Rate</th>
                       <th>Days Present</th>
                       <th>Total Earned</th>
+                      {!isSupervisor && <th>Total Paid</th>}
+                      {!isSupervisor && <th>Balance</th>}
                       <th>Status</th>
                       <th style={{ textAlign: 'right' }}>Actions</th>
                     </tr>
@@ -5179,40 +5328,61 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <tbody>
                     {projectLabors
                       .filter((l) => String(l.project_vendor_id) === String(selectedVendor.id))
-                      .map((lab) => (
-                        <tr
-                          key={lab.id}
-                          className="clickable-row"
-                          onClick={() => openLaborDetail(lab)}
-                          title="Click to view worker details and attendance calendar"
-                        >
-                          <td>
-                            <b>{lab.name}</b>
-                            {lab.phone && <span style={{ fontSize: 11, color: '#64748b', display: 'block' }}>{lab.phone}</span>}
-                          </td>
-                          <td>{lab.trade || 'Helper'}</td>
-                          <td style={{ fontWeight: 600 }}>{INR(lab.daily_rate)}/day</td>
-                          <td>{lab.days_present || 0}</td>
-                          <td style={{ fontWeight: 600, color: '#16a34a' }}>{INR(lab.total_earned)}</td>
-                          <td>
-                            <span className={`badge ${lab.is_active ? 'badge-active' : 'badge-completed'}`}>
-                              {lab.is_active ? 'Active' : 'Inactive'}
-                            </span>
-                          </td>
-                          <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                            <button
-                              type="button"
-                              className="muted"
-                              onClick={() => openLaborDetail(lab)}
-                            >
-                              View Details &rarr;
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                      .map((lab) => {
+                        const bal = Number(lab.balance_due ?? (Number(lab.total_earned || 0) - Number(lab.total_paid || 0)));
+                        return (
+                          <tr
+                            key={lab.id}
+                            className="clickable-row"
+                            onClick={() => openLaborDetail(lab)}
+                            title="Click to view worker details and attendance calendar"
+                          >
+                            <td>
+                              <b>{lab.name}</b>
+                              {lab.phone && <span style={{ fontSize: 11, color: '#64748b', display: 'block' }}>{lab.phone}</span>}
+                            </td>
+                            <td>{lab.trade || 'Helper'}</td>
+                            <td style={{ fontWeight: 600 }}>{INR(lab.daily_rate)}/day</td>
+                            <td>{lab.days_present || 0}</td>
+                            <td style={{ fontWeight: 600, color: '#16a34a' }}>{INR(lab.total_earned)}</td>
+                            {!isSupervisor && (
+                              <>
+                                <td style={{ fontWeight: 600, color: '#16a34a' }}>{INR(lab.total_paid)}</td>
+                                <td>
+                                  {bal < 0 ? (
+                                    <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                      Advance: {INR(Math.abs(bal))}
+                                    </span>
+                                  ) : bal > 0 ? (
+                                    <span style={{ fontWeight: 700, color: '#ea580c', whiteSpace: 'nowrap' }}>
+                                      Due: {INR(bal)}
+                                    </span>
+                                  ) : (
+                                    <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
+                                  )}
+                                </td>
+                              </>
+                            )}
+                            <td>
+                              <span className={`badge ${lab.is_active ? 'badge-active' : 'badge-completed'}`}>
+                                {lab.is_active ? 'Active' : 'Inactive'}
+                              </span>
+                            </td>
+                            <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                className="muted"
+                                onClick={() => openLaborDetail(lab)}
+                              >
+                                View Details &rarr;
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     {projectLabors.filter((l) => String(l.project_vendor_id) === String(selectedVendor.id)).length === 0 && (
                       <tr>
-                        <td colSpan={7} style={{ textAlign: 'center', padding: '1.5rem', color: '#64748b' }}>
+                        <td colSpan={isSupervisor ? 7 : 9} style={{ textAlign: 'center', padding: '1.5rem', color: '#64748b' }}>
                           No laborers added for this contractor yet. Click &ldquo;+ Add Worker to Team&rdquo; above.
                         </td>
                       </tr>
@@ -5346,23 +5516,48 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         <th>Date</th>
                         <th>Type</th>
                         <th>Amount</th>
+                        <th>Advance Payment</th>
                         <th>Mode</th>
                         <th>Note</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {vendorPaymentsHistory.map((p) => (
-                        <tr key={p.id}>
-                          <td>{p.payment_date}</td>
-                          <td><span className="badge badge-active">{p.payment_type}</span></td>
-                          <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
-                          <td>{p.mode}</td>
-                          <td>{p.note || '—'}</td>
-                        </tr>
-                      ))}
+                      {vendorPaymentsHistory.map((p) => {
+                        const isAdvance = p.payment_type === 'advance';
+                        return (
+                          <tr key={p.id}>
+                            <td>{p.payment_date ? String(p.payment_date).slice(0, 10) : '—'}</td>
+                            <td>
+                              <span
+                                className="badge badge-active"
+                                style={{
+                                  textTransform: 'capitalize',
+                                  background: isAdvance ? '#dcfce7' : undefined,
+                                  color: isAdvance ? '#15803d' : undefined,
+                                  fontWeight: isAdvance ? 700 : undefined,
+                                }}
+                              >
+                                {p.payment_type}
+                              </span>
+                            </td>
+                            <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
+                            <td>
+                              {isAdvance ? (
+                                <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                  Advance: {INR(p.amount)}
+                                </span>
+                              ) : (
+                                <span style={{ color: '#94a3b8' }}>—</span>
+                              )}
+                            </td>
+                            <td style={{ textTransform: 'uppercase', fontSize: 11 }}>{p.mode}</td>
+                            <td>{p.note || '—'}</td>
+                          </tr>
+                        );
+                      })}
                       {vendorPaymentsHistory.length === 0 && (
                         <tr>
-                          <td colSpan={5} style={{ textAlign: 'center', padding: '1.5rem', color: '#64748b' }}>
+                          <td colSpan={6} style={{ textAlign: 'center', padding: '1.5rem', color: '#64748b' }}>
                             No payments recorded yet for this vendor.
                           </td>
                         </tr>
@@ -5401,10 +5596,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         <b style={{ color: '#16a34a' }}>{INR(selectedLabor.total_paid)}</b>
                       </div>
                       <div className="stat">
-                        <small>Balance Due</small>
-                        <b style={{ color: selectedLabor.balance_due < 0 ? '#dc2626' : '#0f172a' }}>
-                          {INR(selectedLabor.balance_due)}
-                        </b>
+                        <small>Balance</small>
+                        {(() => {
+                          const bal = Number(selectedLabor.balance_due ?? (Number(selectedLabor.total_earned || 0) - Number(selectedLabor.total_paid || 0)));
+                          if (bal > 0) return <b style={{ color: '#ea580c' }}>Due: {INR(bal)}</b>;
+                          if (bal < 0) return <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, fontSize: 13, padding: '3px 8px' }}>Advance: {INR(Math.abs(bal))}</span>;
+                          return <b style={{ color: '#64748b' }}>Settled (₹0)</b>;
+                        })()}
                       </div>
                     </>
                   )}
@@ -5487,41 +5685,68 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     <thead>
                       <tr>
                         <th>Date</th>
+                        <th>Type</th>
                         <th>Amount</th>
+                        <th>Advance Payment</th>
                         <th>Mode</th>
                         <th>Note</th>
                         <th style={{ textAlign: 'right' }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {laborPaymentsHistory.map((p) => (
-                        <tr key={p.id}>
-                          <td>{p.payment_date}</td>
-                          <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
-                          <td>
-                            <span className="badge badge-active" style={{ textTransform: 'uppercase', fontSize: 10 }}>
-                              {p.mode}
-                            </span>
-                          </td>
-                          <td>
-                            {p.note || '—'}
-                            {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
-                          </td>
-                          <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                            {!isAgent && (
-                              <button
-                                className="danger"
-                                onClick={() => del('laborPayment', p.id)}
+                      {laborPaymentsHistory.map((p) => {
+                        const isAdvance = p.payment_type === 'advance';
+                        return (
+                          <tr key={p.id}>
+                            <td>{p.payment_date ? String(p.payment_date).slice(0, 10) : '—'}</td>
+                            <td>
+                              <span
+                                className="badge badge-active"
+                                style={{
+                                  textTransform: 'capitalize',
+                                  background: isAdvance ? '#dcfce7' : undefined,
+                                  color: isAdvance ? '#15803d' : undefined,
+                                  fontWeight: isAdvance ? 700 : undefined,
+                                }}
                               >
-                                Delete
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                                {p.payment_type || 'wage'}
+                              </span>
+                            </td>
+                            <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
+                            <td>
+                              {isAdvance ? (
+                                <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                  Advance: {INR(p.amount)}
+                                </span>
+                              ) : (
+                                <span style={{ color: '#94a3b8' }}>—</span>
+                              )}
+                            </td>
+                            <td>
+                              <span className="badge badge-active" style={{ textTransform: 'uppercase', fontSize: 10 }}>
+                                {p.mode}
+                              </span>
+                            </td>
+                            <td>
+                              {p.note || '—'}
+                              {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
+                            </td>
+                            <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                              {!isAgent && (
+                                <button
+                                  className="danger"
+                                  onClick={() => del('laborPayment', p.id)}
+                                >
+                                  Delete
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                       {laborPaymentsHistory.length === 0 && (
                         <tr>
-                          <td colSpan={5} style={{ textAlign: 'center', padding: '1.5rem', color: '#64748b' }}>
+                          <td colSpan={7} style={{ textAlign: 'center', padding: '1.5rem', color: '#64748b' }}>
                             No payments recorded yet for this worker.
                           </td>
                         </tr>
@@ -5742,17 +5967,68 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       required
                       value={laborPaymentForm.labor_id}
                       disabled={Boolean(editingLaborPaymentId || (selectedLabor && !editingLaborPaymentId))}
-                      onChange={(e) => setLaborPaymentForm({ ...laborPaymentForm, labor_id: e.target.value })}
+                      onChange={(e) => {
+                        const labId = e.target.value;
+                        const lab = projectLabors.find((l) => String(l.id) === String(labId));
+                        const bal = lab ? Number(lab.balance_due ?? (Number(lab.total_earned || 0) - Number(lab.total_paid || 0))) : 0;
+                        setLaborPaymentForm({
+                          ...laborPaymentForm,
+                          labor_id: labId,
+                          payment_type: bal <= 0 ? 'advance' : 'wage',
+                        });
+                      }}
                     >
                       <option value="">-- Choose Worker --</option>
-                      {projectLabors.map((lab) => (
-                        <option key={lab.id} value={lab.id}>
-                          {lab.name} ({lab.trade || 'Helper'}) — Bal: {INR(lab.balance_due)}
-                        </option>
-                      ))}
+                      {projectLabors.map((lab) => {
+                        const bal = Number(lab.balance_due ?? (Number(lab.total_earned || 0) - Number(lab.total_paid || 0)));
+                        const balLabel = bal > 0 ? `Due: ${INR(bal)}` : bal < 0 ? `Advance: ${INR(Math.abs(bal))}` : 'Settled (₹0)';
+                        return (
+                          <option key={lab.id} value={lab.id}>
+                            {lab.name} ({lab.trade || 'Helper'} &bull; {INR(lab.daily_rate)}/day) &bull; {balLabel}
+                          </option>
+                        );
+                      })}
                     </select>
                   </label>
                 </div>
+
+                {(() => {
+                  const selLab = projectLabors.find((l) => String(l.id) === String(laborPaymentForm.labor_id));
+                  if (!selLab) return null;
+                  const bal = Number(selLab.balance_due ?? (Number(selLab.total_earned || 0) - Number(selLab.total_paid || 0)));
+                  return (
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 14px', marginBottom: 12, display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center' }}>
+                      <div>
+                        <small style={{ color: '#64748b', display: 'block' }}>Laborer</small>
+                        <b>{selLab.name}</b> <span style={{ fontSize: 11, color: '#64748b' }}>({selLab.trade || 'Helper'})</span>
+                      </div>
+                      <div>
+                        <small style={{ color: '#64748b', display: 'block' }}>Daily Wage</small>
+                        <span style={{ fontWeight: 600, color: '#0f172a' }}>{INR(selLab.daily_rate)}/day</span>
+                      </div>
+                      <div>
+                        <small style={{ color: '#64748b', display: 'block' }}>Total Earned</small>
+                        <span style={{ fontWeight: 600, color: '#0f172a' }}>{INR(selLab.total_earned)}</span>
+                      </div>
+                      <div>
+                        <small style={{ color: '#64748b', display: 'block' }}>Total Paid</small>
+                        <span style={{ fontWeight: 600, color: '#16a34a' }}>{INR(selLab.total_paid)}</span>
+                      </div>
+                      <div>
+                        <small style={{ color: '#64748b', display: 'block' }}>Current Balance</small>
+                        {bal > 0 ? (
+                          <span style={{ fontWeight: 700, color: '#ea580c' }}>Due: {INR(bal)}</span>
+                        ) : bal < 0 ? (
+                          <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700 }}>
+                            Advance: {INR(Math.abs(bal))}
+                          </span>
+                        ) : (
+                          <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
                   <Input
@@ -5776,6 +6052,19 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
+                      Payment Type
+                    </small>
+                    <select
+                      value={laborPaymentForm.payment_type || 'wage'}
+                      onChange={(e) => setLaborPaymentForm({ ...laborPaymentForm, payment_type: e.target.value })}
+                    >
+                      <option value="wage">Wage Payment</option>
+                      <option value="advance">Advance Payment</option>
+                    </select>
+                  </label>
+
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
                       Payment Mode

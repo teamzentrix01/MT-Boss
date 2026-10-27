@@ -18,6 +18,7 @@ export async function PATCH(req, { params }) {
     const paymentDate = String(b.payment_date || '');
     const mode = b.mode !== undefined ? (b.mode ? String(b.mode).trim() : null) : undefined;
     const note = b.note !== undefined ? (b.note ? String(b.note).trim() : null) : undefined;
+    const paymentType = b.payment_type !== undefined ? (b.payment_type ? String(b.payment_type).trim().toLowerCase() : 'wage') : undefined;
 
     if (!Number.isFinite(amount) || amount <= 0) {
       return NextResponse.json({ success: false, error: 'Valid amount (> 0) is required' }, { status: 400 });
@@ -54,10 +55,11 @@ export async function PATCH(req, { params }) {
              payment_date = $2,
              mode = COALESCE($3, mode),
              note = CASE WHEN $4 = true THEN $5 ELSE note END,
+             payment_type = CASE WHEN $6 = true THEN $7 ELSE payment_type END,
              updated_at = NOW()
-         WHERE id = $6
+         WHERE id = $8
          RETURNING *`,
-        [amount, paymentDate, mode ?? null, note !== undefined, note ?? null, id]
+        [amount, paymentDate, mode ?? null, note !== undefined, note ?? null, paymentType !== undefined, paymentType ?? 'wage', id]
       );
 
       const actor = actorFromAdmin(auth.user);

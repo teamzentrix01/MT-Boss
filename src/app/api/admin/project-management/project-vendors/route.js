@@ -53,19 +53,10 @@ export async function GET(req) {
          LIMIT $2 OFFSET $3
        ),
        labour AS (
-         SELECT p.id AS project_vendor_id,
-                COALESCE(SUM(a.wage_amount), 0) + COALESCE(MAX(la_sum.amount), 0) amount
-         FROM paged p
-         LEFT JOIN pm_attendance a ON a.project_vendor_id = p.id
-         LEFT JOIN (
-           SELECT COALESCE(l.project_vendor_id, l.contractor_id) AS project_vendor_id,
-                  COALESCE(SUM(la.wage_amount), 0) AS amount
-           FROM pm_labor_attendance la
-           JOIN pm_labor l ON l.id = la.labor_id
-           WHERE COALESCE(l.project_vendor_id, l.contractor_id) IS NOT NULL
-           GROUP BY COALESCE(l.project_vendor_id, l.contractor_id)
-         ) la_sum ON la_sum.project_vendor_id = p.id
-         GROUP BY p.id
+         SELECT a.project_vendor_id, COALESCE(SUM(a.wage_amount), 0) amount
+         FROM pm_attendance a
+         JOIN paged p ON p.id = a.project_vendor_id
+         GROUP BY a.project_vendor_id
        ),
        materials AS (
          SELECT m.project_vendor_id, SUM(m.amount) amount

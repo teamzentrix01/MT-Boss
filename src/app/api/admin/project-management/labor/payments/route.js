@@ -78,8 +78,11 @@ export async function POST(req) {
     const auth = await assertAgentAccess(req, projectId, 'labor');
     if (!auth.allowed) return auth.response;
 
+    const paymentType = b.payment_type ? String(b.payment_type).trim().toLowerCase() : 'wage';
+
     try {
       await pool.query('ALTER TABLE pm_labor_payments ADD COLUMN IF NOT EXISTS transaction_reference VARCHAR(255)');
+      await pool.query('ALTER TABLE pm_labor_payments ADD COLUMN IF NOT EXISTS payment_type VARCHAR(50) DEFAULT \'wage\'');
     } catch {}
 
     const client = await pool.connect();
@@ -87,10 +90,10 @@ export async function POST(req) {
       await client.query('BEGIN');
       const actor = actorFromAdmin(auth.user);
       const r = await client.query(
-        `INSERT INTO pm_labor_payments(labor_id, amount, payment_date, mode, note, transaction_reference, created_by)
-         VALUES($1, $2, $3, $4, $5, $6, $7)
+        `INSERT INTO pm_labor_payments(labor_id, amount, payment_date, mode, note, transaction_reference, payment_type, created_by)
+         VALUES($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING *`,
-        [laborId, amount, paymentDate, mode, note, transactionReference, actor]
+        [laborId, amount, paymentDate, mode, note, transactionReference, paymentType, actor]
       );
       await writePmPhase2Audit(client, 'pm_labor_payments', r.rows[0].id, 'created', actor, null, r.rows[0]);
       await client.query('COMMIT');

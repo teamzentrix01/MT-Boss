@@ -177,9 +177,6 @@ export async function PUT(req) {
         );
         const pv = pvRes.rows[0];
         if (!pv) throw new Error('Daily-wage vendor assignment not found');
-        if (pv.has_linked_labor && status !== 'absent') {
-          throw new Error(`Vendor "${pv.vendor_name}" has individual laborers linked. Please record attendance in the Labor tab to avoid double counting.`);
-        }
 
         const snapshot = rate ?? Number(pv.daily_rate);
         const wage = status === 'present' ? workers * snapshot : status === 'half_day' ? workers * snapshot * 0.5 : 0;

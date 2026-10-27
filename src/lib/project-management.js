@@ -450,6 +450,7 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
       updated_at TIMESTAMPTZ
     );
   `);
+  await pool.query(`ALTER TABLE pm_labor_payments ADD COLUMN IF NOT EXISTS payment_type VARCHAR(50) DEFAULT 'wage'`);
   for (const sql of [
     `CREATE INDEX IF NOT EXISTS pm_labor_proj_idx ON pm_labor(project_id)`,
     `CREATE INDEX IF NOT EXISTS pm_labor_vendor_idx ON pm_labor(vendor_id)`,
